@@ -2,44 +2,53 @@ package de.uol.swp.common.chat;
 
 import de.uol.swp.common.user.User;
 
+import java.util.Date;
+
 /**
- * The interface Chat message.
+ * The type Chat message.
  */
-public interface ChatMessage {
+public class ChatMessage {
+
+    private User Sender;
+    private String Message;
+    private Date TimeStamp;
+
+    /**
+     * Instantiates a new Chat message.
+     *
+     * @param sender  the sender
+     * @param message the message
+     */
+    public ChatMessage(User sender, String message) {
+        this.Sender = sender;
+        this.Message = message;
+        this.TimeStamp = new Date();
+    }
 
     /**
      * Gets message.
      *
      * @return the message
      */
-    String getMessage();
-
-    /**
-     * Gets chat id.
-     *
-     * @return the chat id
-     */
-    long getChatId();
+    public String getMessage() {
+        return Message;
+    }
 
     /**
      * Gets sender.
      *
      * @return the sender
      */
-    User getSender();
+    public User getSender() {
+        return Sender;
+    }
 
     /**
-     * Sets message.
+     * Gets time stamp.
+     *
+     * @return the time stamp
      */
-    void setMessage(String message);
-
-    /**
-     * Sets chat id.
-     */
-    void setChatId(long chatid);
-
-    /**
-     * Sets sender.
-     */
-    void setSender(User sender);
+    public Date getTimeStamp() {
+        return TimeStamp;
+    }
 }

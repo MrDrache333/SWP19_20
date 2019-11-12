@@ -7,19 +7,22 @@ import java.util.ArrayList;
 /**
  * The type Chat.
  */
-public class Chat {
+public class Chat implements de.uol.swp.common.chat.Chat {
 
-    private long ChatId;
+    private String ChatId;
     private ArrayList<ChatMessage> Messages = new ArrayList<>();
 
+    public Chat(String chatId) {
+        this.ChatId = chatId;
+    }
 
     /**
-     * Sets new ChatId.
+     * Gets ChatId.
      *
-     * @param ChatId New value of ChatId.
+     * @return Value of ChatId.
      */
-    public void setChatId(long ChatId) {
-        this.ChatId = ChatId;
+    public String getChatId() {
+        return ChatId;
     }
 
     /**
@@ -41,11 +44,11 @@ public class Chat {
     }
 
     /**
-     * Gets ChatId.
+     * Sets new ChatId.
      *
-     * @return Value of ChatId.
+     * @param ChatId New value of ChatId.
      */
-    public long getChatId() {
-        return ChatId;
+    public void setChatId(String ChatId) {
+        this.ChatId = ChatId;
     }
 }
