@@ -5,6 +5,7 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import de.uol.swp.common.chat.exception.ChatException;
 import de.uol.swp.common.chat.message.ChatExceptionMessage;
+import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.chat.request.ChatHistoryRequest;
 import de.uol.swp.common.chat.request.NewChatMessageRequest;
 import de.uol.swp.common.chat.response.ChatResponseMessage;
@@ -43,7 +44,13 @@ public class ChatService extends AbstractService {
             if (request.getMessageContext().isPresent())
                 returnMessage.setMessageContext(request.getMessageContext().get());
             post(returnMessage);
+            return;
         }
+        NewChatMessage message = new NewChatMessage(request.getChatid(), request.getMessage());
+        if (request.getMessageContext().isPresent())
+            message.setMessageContext(request.getMessageContext().get());
+        post(message);
+
     }
 
     @Subscribe
