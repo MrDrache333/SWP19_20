@@ -36,7 +36,7 @@ public class ChatManagement {
      *
      * @return the ChatId
      */
-    public String createChat() {
+    synchronized public String createChat() {
         String id = String.valueOf(UUID.randomUUID());
         Chats.put(id, new Chat(id));
         return id;
@@ -48,7 +48,7 @@ public class ChatManagement {
      * @param ChatId the chat id
      * @throws ChatException the chat exception
      */
-    public void createChat(String ChatId) throws ChatException {
+    synchronized public void createChat(String ChatId) throws ChatException {
         if (getChat(ChatId) != null) throw new ChatException("Chat with Id " + ChatId + " allready exists!");
         Chats.put(ChatId, new Chat(ChatId));
     }
@@ -69,7 +69,7 @@ public class ChatManagement {
      * @param chatId  the chat id
      * @param message the message
      */
-    public void addMessage(String chatId, ChatMessage message) throws ChatException {
+    synchronized public void addMessage(String chatId, ChatMessage message) throws ChatException {
         Chat chat = getChat(chatId);
         //CHeck if this is an existing chat
         if (chat != null) {
