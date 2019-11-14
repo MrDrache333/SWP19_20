@@ -60,6 +60,8 @@ public class SceneManager {
         initRegistrationView();
     }
 
+
+
     private Parent initPresenter(String fxmlFile) {
         Parent rootPane;
         FXMLLoader loader = injector.getInstance(FXMLLoader.class);
