@@ -8,6 +8,8 @@ import com.google.inject.assistedinject.Assisted;
 import de.uol.swp.client.auth.LoginPresenter;
 import de.uol.swp.client.auth.events.ShowLoginViewEvent;
 import de.uol.swp.client.main.MainMenuPresenter;
+
+import de.uol.swp.client.register.LobbyPresenter;
 import de.uol.swp.client.register.RegistrationPresenter;
 import de.uol.swp.client.register.event.RegistrationCanceledEvent;
 import de.uol.swp.client.register.event.RegistrationErrorEvent;
@@ -39,10 +41,13 @@ public class SceneManager {
     private Scene mainScene;
     private Scene lastScene = null;
     private Scene currentScene = null;
+    private Scene lobbyScene;
 
     private User currentUser;
 
     private Injector injector;
+
+
 
     @Inject
     public SceneManager(EventBus eventBus, UserService userService, Injector injected, @Assisted Stage primaryStage) {
@@ -54,10 +59,11 @@ public class SceneManager {
         initViews();
     }
 
-    private void initViews() {
+    private void initViews()  {
         initLoginView();
         initMainView();
         initRegistrationView();
+        initLobbyView();
     }
 
     private Parent initPresenter(String fxmlFile) {
@@ -100,6 +106,19 @@ public class SceneManager {
             registrationScene.getStylesheets().add(styleSheet);
         }
     }
+   private void initLobbyView () {
+
+        if (lobbyScene == null ) {
+            Parent rootPane = initPresenter(LobbyPresenter.fxml);
+            lobbyScene = new Scene(rootPane, 400,200);
+            lobbyScene.getStylesheets().add(styleSheet);
+
+
+
+        }
+    }
+
+
 
     @Subscribe
     public void onShowRegistrationViewEvent(ShowRegistrationViewEvent event){
@@ -108,6 +127,7 @@ public class SceneManager {
 
     @Subscribe
     public void onShowLoginViewEvent(ShowLoginViewEvent event){
+
         showLoginScreen();
     }
 
@@ -120,6 +140,8 @@ public class SceneManager {
     public void onRegistrationErrorEvent(RegistrationErrorEvent event) {
         showError(event.getMessage());
     }
+
+
 
     public void showError(String message, String e) {
         Platform.runLater(() -> {
@@ -169,4 +191,9 @@ public class SceneManager {
     public void showRegistrationScreen() {
     showScene(registrationScene,"Registration");
     }
+
+    public void showLobbyScreen(String title) {
+        showScene(lobbyScene, title);
+    }
+
 }

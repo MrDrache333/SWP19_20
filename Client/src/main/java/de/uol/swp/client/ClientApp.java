@@ -6,9 +6,11 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import de.uol.swp.client.di.ClientModule;
+import de.uol.swp.common.lobby.message.CreateLobbyMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.exception.RegistrationExceptionMessage;
+import de.uol.swp.common.user.message.LobbyCreatedMessage;
 import de.uol.swp.common.user.response.LoginSuccessfulMessage;
 import de.uol.swp.common.user.response.RegistrationSuccessfulEvent;
 import io.netty.channel.Channel;
@@ -137,6 +139,15 @@ public class ClientApp extends Application implements ConnectionListener {
 		LOG.info("Registration successful.");
 		sceneManager.showLoginScreen();
 	}
+	@Subscribe
+	public void CreatLobbyMessage( CreateLobbyMessage message) {
+		sceneManager.showLobbyScreen(message.getName());
+
+
+
+
+	}
+
 
 	@Subscribe
 	private void handleEventBusError(DeadEvent deadEvent){

@@ -5,7 +5,11 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.message.*;
+import de.uol.swp.common.message.ResponseMessage;
 import de.uol.swp.common.message.ServerMessage;
+import de.uol.swp.common.user.message.LobbyCreatedMessage;
+import de.uol.swp.common.user.message.UserLoggedInMessage;
+import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 
@@ -24,8 +28,11 @@ public class LobbyService extends AbstractService {
     }
 
     @Subscribe
-    public void onCreateLobbyRequest(CreateLobbyRequest createLobbyRequest) {
-        lobbyManagement.createLobby(createLobbyRequest.getName(), createLobbyRequest.getOwner());
+    public void onCreateLobbyRequest(CreateLobbyRequest msg) {
+        lobbyManagement.createLobby(msg.getName(), msg.getOwner());
+        ServerMessage returnMessage = new CreateLobbyMessage(msg.getName(), msg.getUser());
+        post(returnMessage);
+
     }
 
     @Subscribe

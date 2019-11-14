@@ -3,9 +3,12 @@ package de.uol.swp.server.usermanagement;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import de.uol.swp.common.lobby.Lobby;
+import de.uol.swp.common.lobby.message.CreateLobbyRequest;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.Session;
 import de.uol.swp.common.user.User;
+import de.uol.swp.common.user.message.LobbyCreatedMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import de.uol.swp.common.user.request.LoginRequest;
 import de.uol.swp.common.user.request.LogoutRequest;
@@ -13,6 +16,8 @@ import de.uol.swp.common.user.request.RetrieveAllOnlineUsersRequest;
 import de.uol.swp.common.user.response.AllOnlineUsersResponse;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.communication.UUIDSession;
+import de.uol.swp.server.lobby.LobbyManagement;
+import de.uol.swp.server.lobby.LobbyService;
 import de.uol.swp.server.message.ClientAuthorizedMessage;
 import de.uol.swp.server.message.ServerExceptionMessage;
 import de.uol.swp.server.message.ServerInternalMessage;
@@ -105,6 +110,15 @@ public class AuthenticationService extends AbstractService {
         AllOnlineUsersResponse response = new AllOnlineUsersResponse(userSessions.values());
         response.initWithMessage(msg);
         post(response);
+    }
+    @Subscribe
+    public void  CreatedLobbyRequest (CreateLobbyRequest msg) {
+
+        LobbyCreatedMessage returnMessage = new LobbyCreatedMessage();
+
+
+
+
     }
 
 

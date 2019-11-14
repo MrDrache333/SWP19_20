@@ -1,18 +1,29 @@
 package de.uol.swp.client.main;
 
 import com.google.common.eventbus.Subscribe;
+import com.google.inject.Inject;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.register.event.ShowLobbyViewEvent;
+import de.uol.swp.client.register.event.ShowRegistrationViewEvent;
+import de.uol.swp.common.lobby.message.CreateLobbyMessage;
+import de.uol.swp.common.lobby.message.CreateLobbyRequest;
 import de.uol.swp.common.user.User;
+import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.dto.UserDTO;
+import de.uol.swp.common.user.message.LobbyCreatedMessage;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
+import de.uol.swp.common.user.request.LoginRequest;
 import de.uol.swp.common.user.response.AllOnlineUsersResponse;
 import de.uol.swp.common.user.response.LoginSuccessfulMessage;
+import de.uol.swp.server.lobby.LobbyService;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,8 +39,13 @@ public class MainMenuPresenter extends AbstractPresenter {
 
     private User loggedInUser;
 
+    private static final ShowLobbyViewEvent showLobbyViewMessage = new ShowLobbyViewEvent();
     @FXML
     private ListView<String> usersView;
+
+    @FXML
+    private TextField lobbyName;
+
 
     @Subscribe
     public void loginSuccessful(LoginSuccessfulMessage message) {
@@ -70,6 +86,18 @@ public class MainMenuPresenter extends AbstractPresenter {
             userList.forEach(u -> users.add(u.getUsername()));
         });
     }
+
+
+    @FXML
+    public void OnCreateLobbyButtonPressed(ActionEvent event) {
+        CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), loggedInUser);
+       eventBus.post(msg);
+
+
+
+    }
+
+
 
 
 }

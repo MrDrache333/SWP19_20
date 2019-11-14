@@ -2,12 +2,18 @@ package de.uol.swp.client.user;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
+import de.uol.swp.common.lobby.Lobby;
+import de.uol.swp.common.lobby.message.CreateLobbyRequest;
 import de.uol.swp.common.user.User;
+import de.uol.swp.common.user.message.LobbyCreatedMessage;
 import de.uol.swp.common.user.request.*;
+import de.uol.swp.server.lobby.LobbyManagement;
+import de.uol.swp.server.lobby.LobbyService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class is used to hide the communication details
@@ -72,6 +78,17 @@ public class UserService implements de.uol.swp.common.user.UserService {
 		bus.post(cmd);
 		return null; // asynch call
 	}
+
+
+
+public void createLobby (String name, User owner) {
+		CreateLobbyRequest  request = new CreateLobbyRequest(name, owner);
+		bus.post(request);
+
+
+
+}
+
 
 
 

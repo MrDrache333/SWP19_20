@@ -29,7 +29,7 @@ class LobbyDTOTest {
 
     @Test
     void createLobbyTest() {
-        Lobby lobby = new LobbyDTO("test", defaultUser);
+        Lobby lobby = new LobbyDTO("test", defaultUser, 1);
 
         assertEquals(lobby.getName(), "test");
         assertEquals(lobby.getUsers().size(), 1);
@@ -39,7 +39,7 @@ class LobbyDTOTest {
 
     @Test
     void joinUserLobbyTest() {
-        Lobby lobby = new LobbyDTO("test", defaultUser);
+        Lobby lobby = new LobbyDTO("test", defaultUser,1);
 
         lobby.joinUser(users.get(0));
         assertEquals(lobby.getUsers().size(), 2);
@@ -55,7 +55,7 @@ class LobbyDTOTest {
 
     @Test
     void leaveUserLobbyTest() {
-        Lobby lobby = new LobbyDTO("test", defaultUser);
+        Lobby lobby = new LobbyDTO("test", defaultUser,1);
         users.forEach(lobby::joinUser);
 
         assertEquals(lobby.getUsers().size(), users.size() + 1);
@@ -67,7 +67,7 @@ class LobbyDTOTest {
 
     @Test
     void removeOwnerFromLobbyTest() {
-        Lobby lobby = new LobbyDTO("test", defaultUser);
+        Lobby lobby = new LobbyDTO("test", defaultUser,1);
         users.forEach(lobby::joinUser);
 
         lobby.leaveUser(defaultUser);
@@ -79,7 +79,7 @@ class LobbyDTOTest {
 
     @Test
     void updateOwnerTest() {
-        Lobby lobby = new LobbyDTO("test", defaultUser);
+        Lobby lobby = new LobbyDTO("test", defaultUser,1);
         users.forEach(lobby::joinUser);
 
         lobby.updateOwner(users.get(6));
@@ -90,7 +90,7 @@ class LobbyDTOTest {
 
     @Test
     void assureNonEmptyLobbyTest() {
-        Lobby lobby = new LobbyDTO("test", defaultUser);
+        Lobby lobby = new LobbyDTO("test", defaultUser,1);
 
         assertThrows(IllegalArgumentException.class, () -> lobby.leaveUser(defaultUser));
     }

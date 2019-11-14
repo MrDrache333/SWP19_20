@@ -12,11 +12,15 @@ public class LobbyDTO implements Lobby {
     private final String name;
     private User owner;
     private Set<User> users = new TreeSet<>();
+    private int lobbyID;
 
-    public LobbyDTO(String name, User creator) {
+
+    public LobbyDTO(String name, User creator, int lobbyID) {
         this.name = name;
         this.owner = creator;
         this.users.add(creator);
+        this.lobbyID = lobbyID;
+
     }
 
     @Override
@@ -26,7 +30,10 @@ public class LobbyDTO implements Lobby {
 
     @Override
     public void joinUser(User user) {
-        this.users.add(user);
+        if (users.size() < 4) {
+            this.users.add(user);
+        }
+       // ToDo = Fehlermeldung?
     }
 
     @Override
@@ -59,5 +66,13 @@ public class LobbyDTO implements Lobby {
     public Set<User> getUsers() {
         return Collections.unmodifiableSet(users);
     }
+    public int getLobbyID() {
+        return lobbyID;
+    }
+
+    public void setLobbyID(int lobbyID) {
+        this.lobbyID = lobbyID;
+    }
+
 
 }
