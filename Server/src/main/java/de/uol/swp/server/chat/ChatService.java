@@ -30,9 +30,7 @@ public class ChatService extends AbstractService {
 
     @Subscribe
     public void onNewChatMessageRequest(NewChatMessageRequest request){
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("New Message from " + request.getMessage().getSender().getUsername() + " in Chat " + request.getChatid());
-        }
+        LOG.debug("New Message from " + request.getMessage().getSender().getUsername() + " in Chat " + request.getChatid());
         AbstractResponseMessage returnMessage;
         try {
             chatManagement.addMessage(request.getChatid(), request.getMessage());

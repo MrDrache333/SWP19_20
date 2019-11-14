@@ -4,6 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import de.uol.swp.common.user.dto.UserDTO;
 import de.uol.swp.server.chat.ChatManagement;
+import de.uol.swp.server.chat.ChatService;
 import de.uol.swp.server.communication.Server;
 import de.uol.swp.server.di.ServerModule;
 import de.uol.swp.server.usermanagement.AuthenticationService;
@@ -51,6 +52,7 @@ class ServerApp {
 		// Remark: As these services are not referenced by any other class
 		// we will need to create instances here (and inject dependencies)
 		injector.getInstance(UserService.class);
+		injector.getInstance(ChatService.class);
 		injector.getInstance(AuthenticationService.class);
 	}
 
