@@ -2,12 +2,16 @@ package de.uol.swp.client;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
+import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.common.user.UserService;
 
 public class AbstractPresenter {
 
     @Inject
     protected UserService userService;
+
+    @Inject
+    protected ChatService chatService;
 
     protected EventBus eventBus;
 
