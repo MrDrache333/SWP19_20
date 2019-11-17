@@ -89,6 +89,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     public void OnCreateLobbyButtonPressed(ActionEvent event) {
         CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), loggedInUser);
         eventBus.post(msg);
+        LOG.info("Request wurde gesendet.");
     }
 
 
