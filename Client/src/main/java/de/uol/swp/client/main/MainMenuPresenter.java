@@ -60,7 +60,6 @@ public class MainMenuPresenter extends AbstractPresenter {
 
     @Subscribe
     public void newUser(UserLoggedInMessage message) {
-
         LOG.debug("New user " + message.getUsername() + " logged in");
         Platform.runLater(() -> {
             if (users != null && loggedInUser != null && !loggedInUser.equals(message.getUsername()))

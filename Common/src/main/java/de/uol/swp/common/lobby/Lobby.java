@@ -19,8 +19,8 @@ public interface Lobby {
 
     Set<User> getUsers();
 
-    public UUID getLobbyID();
+    UUID getLobbyID();
 
-    public void setLobbyID(UUID lobbyID);
+    void setLobbyID(UUID lobbyID);
 
 }
