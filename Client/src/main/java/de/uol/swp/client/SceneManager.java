@@ -14,6 +14,7 @@ import de.uol.swp.client.register.RegistrationPresenter;
 import de.uol.swp.client.register.event.RegistrationCanceledEvent;
 import de.uol.swp.client.register.event.RegistrationErrorEvent;
 import de.uol.swp.client.register.event.ShowRegistrationViewEvent;
+import de.uol.swp.common.lobby.LobbyService;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import javafx.application.Platform;
@@ -35,6 +36,7 @@ public class SceneManager {
     final private Stage primaryStage;
     final private EventBus eventBus;
     final private UserService userService;
+    final private LobbyService lobbyService;
     private Scene loginScene;
     private String lastTitle;
     private Scene registrationScene;
@@ -49,10 +51,11 @@ public class SceneManager {
 
 
     @Inject
-    public SceneManager(EventBus eventBus, UserService userService, Injector injected, @Assisted Stage primaryStage) {
+    public SceneManager(EventBus eventBus, UserService userService, LobbyService lobbyService, Injector injected, @Assisted Stage primaryStage) {
         this.eventBus = eventBus;
         this.eventBus.register(this);
         this.userService = userService;
+        this.lobbyService = lobbyService;
         this.primaryStage = primaryStage;
         this.injector = injected;
         initViews();
