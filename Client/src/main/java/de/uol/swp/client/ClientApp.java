@@ -6,6 +6,7 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import de.uol.swp.client.di.ClientModule;
+import de.uol.swp.common.chat.ChatService;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.exception.RegistrationExceptionMessage;
@@ -27,6 +28,8 @@ public class ClientApp extends Application implements ConnectionListener {
 	private int port;
 
 	private UserService userService;
+
+	private ChatService chatService;
 
 	private User user;
 
@@ -70,6 +73,7 @@ public class ClientApp extends Application implements ConnectionListener {
 
         // get user service from guice, is needed for logout
         this.userService = injector.getInstance(UserService.class);
+        this.chatService = injector.getInstance(ChatService.class);
 
         // get event bus from guice
 		eventBus = injector.getInstance(EventBus.class);

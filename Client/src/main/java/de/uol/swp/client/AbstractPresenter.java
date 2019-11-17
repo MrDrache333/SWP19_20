@@ -8,7 +8,8 @@ import de.uol.swp.common.user.UserService;
 
 public class AbstractPresenter {
 
-    protected User loggedInUser;
+
+    protected static User loggedInUser;
 
     @Inject
     protected UserService userService;
