@@ -1,10 +1,8 @@
 package de.uol.swp.client.chat;
 
 import de.uol.swp.client.AbstractPresenter;
-import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.common.chat.ChatMessage;
-import de.uol.swp.common.chat.message.NewChatMessage;
-import javafx.event.ActionEvent;
+import de.uol.swp.client.chat.ChatService;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import org.apache.logging.log4j.LogManager;
@@ -19,14 +17,19 @@ public class ChatViewPresenter extends AbstractPresenter {
     private TextField chatTextField;
 
     @FXML
-    public void onSendChatButtonPressed(ActionEvent actionEvent) {
+    public void onSendChatButtonPressed() {
         String message;
 
-        message = chatTextField.getText();
+        message = (String) chatTextField.getText();
 
         if (message != "") {
-            ChatMessage newMsg = new ChatMessage(loggedInUser);
-            chatService.sendMessage(newMsg);
+            ChatMessage newChatMessage = new ChatMessage(loggedInUser, message);
+
+            LOG.debug("new Message to send: "+ message);
+
+            chatTextField.clear();
+
+            chatService.sendMessage(newChatMessage);
         }
     }
 }
