@@ -9,6 +9,7 @@ import de.uol.swp.client.di.ClientModule;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
+import de.uol.swp.common.lobby.LobbyService;
 import de.uol.swp.common.user.exception.RegistrationExceptionMessage;
 import de.uol.swp.common.user.response.LoginSuccessfulMessage;
 import de.uol.swp.common.user.response.RegistrationSuccessfulEvent;
@@ -28,6 +29,7 @@ public class ClientApp extends Application implements ConnectionListener {
     private int port;
 
     private UserService userService;
+    private LobbyService lobbyService;
 
     private User user;
 
@@ -71,6 +73,7 @@ public class ClientApp extends Application implements ConnectionListener {
 
         // get user service from guice, is needed for logout
         this.userService = injector.getInstance(UserService.class);
+        this.lobbyService = injector.getInstance(LobbyService.class);
 
         // get event bus from guice
         eventBus = injector.getInstance(EventBus.class);
