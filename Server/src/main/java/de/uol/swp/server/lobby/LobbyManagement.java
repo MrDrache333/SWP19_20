@@ -26,7 +26,7 @@ public class LobbyManagement {
     /**
      * @author Paula, Haschem, Ferit
      * @version 0.1
-     * lobbyID hat folgende Form: 067e6162-3b6f-4ae2-a171-2470b63dff00  (Beispiel)
+     * lobbyID hat folgende Form: 067e6162-3b6f-4ae2-a171-2470b63dff00  (Beispiel) / UUID Object
      */
 
     public void createLobby(String name, User owner) {
@@ -35,7 +35,7 @@ public class LobbyManagement {
         }
         // Erstellen der UUID für die Lobbys.
         UUID lobbyID = UUID.randomUUID();
-        LOG.debug("Die Lobby " + name + "hat folgende UUID erstellt bekommen: " + lobbyID);
+        LOG.info("Die Lobby " + name + " hat folgende UUID erstellt bekommen: " + lobbyID);
         lobbies.put(lobbies.size(), new LobbyDTO(name, owner, lobbyID));
     }
 

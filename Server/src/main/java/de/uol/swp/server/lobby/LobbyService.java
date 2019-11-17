@@ -31,7 +31,7 @@ public class LobbyService extends AbstractService {
         lobbyManagement.createLobby(msg.getName(), msg.getOwner());
         ServerMessage returnMessage = new CreateLobbyMessage(msg.getName(), msg.getUser());
         post(returnMessage);
-        LOG.debug("onCreateLobbyRequest wird auf dem Server aufgerufen! :)");
+        LOG.info("onCreateLobbyRequest wird auf dem Server aufgerufen.");
     }
 
     @Subscribe
