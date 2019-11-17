@@ -23,6 +23,7 @@ public class ChatViewPresenter extends AbstractPresenter {
         message = (String) chatTextField.getText();
 
         if (message != "") {
+            LOG.debug("Sending message as User: "+loggedInUser.getUsername());
             ChatMessage newChatMessage = new ChatMessage(loggedInUser, message);
 
             LOG.debug("new Message to send: "+ message);

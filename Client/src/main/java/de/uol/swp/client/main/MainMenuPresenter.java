@@ -46,7 +46,8 @@ public class MainMenuPresenter extends AbstractPresenter {
 
     @Subscribe
     public void loginSuccessful(LoginSuccessfulMessage message) {
-        this.loggedInUser = message.getUser();
+        loggedInUser = message.getUser();
+        LOG.debug("Logged in user: " + loggedInUser.getUsername());
         userService.retrieveAllUsers();
     }
 
