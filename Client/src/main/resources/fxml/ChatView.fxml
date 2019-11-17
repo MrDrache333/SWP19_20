@@ -8,7 +8,7 @@
 <AnchorPane prefHeight="215.0" prefWidth="171.0" xmlns="http://javafx.com/javafx/10.0.2-internal"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.uol.swp.client.chat.ChatViewPresenter">
     <children>
-        <ListView layoutX="-7.0" prefHeight="302.0" prefWidth="376.0" AnchorPane.bottomAnchor="29.0"
+        <ListView layoutX="-7.0" prefHeight="302.0" prefWidth="376.0" AnchorPane.bottomAnchor="29.0" id="messages_chat"
                   AnchorPane.leftAnchor="-7.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 
             <stylesheets>

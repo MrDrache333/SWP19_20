@@ -49,7 +49,7 @@ public class ChatManagement {
      * @throws ChatException the chat exception
      */
     synchronized public void createChat(String ChatId) throws ChatException {
-        if (getChat(ChatId) != null) throw new ChatException("Chat with Id " + ChatId + " allready exists!");
+        if (getChat(ChatId) != null) throw new ChatException("Chat with Id " + ChatId + " already exists!");
         Chats.put(ChatId, new Chat(ChatId));
     }
 

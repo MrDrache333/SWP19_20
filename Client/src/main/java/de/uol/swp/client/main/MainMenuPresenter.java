@@ -3,6 +3,9 @@ package de.uol.swp.client.main;
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.chat.ChatViewPresenter;
+import de.uol.swp.common.chat.ChatMessage;
+import de.uol.swp.common.chat.message.NewChatMessage;
+import de.uol.swp.common.chat.response.ChatResponseMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.dto.UserDTO;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
@@ -73,6 +76,8 @@ public class MainMenuPresenter extends AbstractPresenter {
         LOG.debug("Update of user list " + allUsersResponse.getUsers());
         updateUsersList(allUsersResponse.getUsers());
     }
+
+
 
     private void updateUsersList(List<UserDTO> userList) {
         // Attention: This must be done on the FX Thread!
