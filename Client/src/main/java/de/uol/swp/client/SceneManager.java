@@ -9,7 +9,7 @@ import de.uol.swp.client.auth.LoginPresenter;
 import de.uol.swp.client.auth.events.ShowLoginViewEvent;
 import de.uol.swp.client.main.MainMenuPresenter;
 
-import de.uol.swp.client.register.LobbyPresenter;
+import de.uol.swp.client.lobby.LobbyPresenter;
 import de.uol.swp.client.register.RegistrationPresenter;
 import de.uol.swp.client.register.event.RegistrationCanceledEvent;
 import de.uol.swp.client.register.event.RegistrationErrorEvent;
@@ -48,7 +48,6 @@ public class SceneManager {
     private Injector injector;
 
 
-
     @Inject
     public SceneManager(EventBus eventBus, UserService userService, Injector injected, @Assisted Stage primaryStage) {
         this.eventBus = eventBus;
@@ -59,7 +58,7 @@ public class SceneManager {
         initViews();
     }
 
-    private void initViews()  {
+    private void initViews() {
         initLoginView();
         initMainView();
         initRegistrationView();
@@ -99,40 +98,38 @@ public class SceneManager {
         }
     }
 
-    private void initRegistrationView(){
-        if (registrationScene == null){
+    private void initRegistrationView() {
+        if (registrationScene == null) {
             Parent rootPane = initPresenter(RegistrationPresenter.fxml);
-            registrationScene = new Scene(rootPane, 400,200);
+            registrationScene = new Scene(rootPane, 400, 200);
             registrationScene.getStylesheets().add(styleSheet);
         }
     }
-   private void initLobbyView () {
 
-        if (lobbyScene == null ) {
+    private void initLobbyView() {
+
+        if (lobbyScene == null) {
             Parent rootPane = initPresenter(LobbyPresenter.fxml);
-            lobbyScene = new Scene(rootPane, 400,200);
+            lobbyScene = new Scene(rootPane, 800, 600);
             lobbyScene.getStylesheets().add(styleSheet);
-
 
 
         }
     }
 
-
-
     @Subscribe
-    public void onShowRegistrationViewEvent(ShowRegistrationViewEvent event){
+    public void onShowRegistrationViewEvent(ShowRegistrationViewEvent event) {
         showRegistrationScreen();
     }
 
     @Subscribe
-    public void onShowLoginViewEvent(ShowLoginViewEvent event){
+    public void onShowLoginViewEvent(ShowLoginViewEvent event) {
 
         showLoginScreen();
     }
 
     @Subscribe
-    public void onRegistrationCanceledEvent(RegistrationCanceledEvent event){
+    public void onRegistrationCanceledEvent(RegistrationCanceledEvent event) {
         showScene(lastScene, lastTitle);
     }
 
@@ -141,8 +138,6 @@ public class SceneManager {
         showError(event.getMessage());
     }
 
-
-
     public void showError(String message, String e) {
         Platform.runLater(() -> {
             Alert a = new Alert(Alert.AlertType.ERROR, message + e);
@@ -150,13 +145,12 @@ public class SceneManager {
         });
     }
 
-
     public void showServerError(String e) {
-        showError("Server returned an error:\n" , e);
+        showError("Server returned an error:\n", e);
     }
 
     public void showError(String e) {
-        showError("Error:\n" , e);
+        showError("Error:\n", e);
     }
 
     private void showScene(final Scene scene, final String title) {
@@ -185,11 +179,11 @@ public class SceneManager {
 
 
     public void showLoginScreen() {
-        showScene(loginScene,"Login");
+        showScene(loginScene, "Login");
     }
 
     public void showRegistrationScreen() {
-    showScene(registrationScene,"Registration");
+        showScene(registrationScene, "Registration");
     }
 
     public void showLobbyScreen(String title) {

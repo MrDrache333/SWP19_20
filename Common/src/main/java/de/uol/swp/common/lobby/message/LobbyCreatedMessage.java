@@ -1,4 +1,4 @@
-package de.uol.swp.common.user.message;
+package de.uol.swp.common.lobby.message;
 
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.message.AbstractServerMessage;

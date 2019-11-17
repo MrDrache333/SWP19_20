@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,7 +16,7 @@ class LobbyDTOTest {
 
     private static final User defaultUser = new UserDTO("marco", "marco", "marco@grawunder.de");
     private static final User notInLobbyUser = new UserDTO("no", "marco", "no@grawunder.de");
-
+    private static final UUID testUUID = UUID.randomUUID();
     private static final int NO_USERS = 10;
     private static final List<UserDTO> users;
 
@@ -29,7 +30,7 @@ class LobbyDTOTest {
 
     @Test
     void createLobbyTest() {
-        Lobby lobby = new LobbyDTO("test", defaultUser, 1);
+        Lobby lobby = new LobbyDTO("test", defaultUser, testUUID);
 
         assertEquals(lobby.getName(), "test");
         assertEquals(lobby.getUsers().size(), 1);
@@ -39,7 +40,7 @@ class LobbyDTOTest {
 
     @Test
     void joinUserLobbyTest() {
-        Lobby lobby = new LobbyDTO("test", defaultUser,1);
+        Lobby lobby = new LobbyDTO("test", defaultUser, testUUID);
 
         lobby.joinUser(users.get(0));
         assertEquals(lobby.getUsers().size(), 2);
@@ -55,7 +56,7 @@ class LobbyDTOTest {
 
     @Test
     void leaveUserLobbyTest() {
-        Lobby lobby = new LobbyDTO("test", defaultUser,1);
+        Lobby lobby = new LobbyDTO("test", defaultUser,testUUID);
         users.forEach(lobby::joinUser);
 
         assertEquals(lobby.getUsers().size(), users.size() + 1);
@@ -67,7 +68,7 @@ class LobbyDTOTest {
 
     @Test
     void removeOwnerFromLobbyTest() {
-        Lobby lobby = new LobbyDTO("test", defaultUser,1);
+        Lobby lobby = new LobbyDTO("test", defaultUser,testUUID);
         users.forEach(lobby::joinUser);
 
         lobby.leaveUser(defaultUser);
@@ -79,7 +80,7 @@ class LobbyDTOTest {
 
     @Test
     void updateOwnerTest() {
-        Lobby lobby = new LobbyDTO("test", defaultUser,1);
+        Lobby lobby = new LobbyDTO("test", defaultUser,testUUID);
         users.forEach(lobby::joinUser);
 
         lobby.updateOwner(users.get(6));
@@ -90,7 +91,7 @@ class LobbyDTOTest {
 
     @Test
     void assureNonEmptyLobbyTest() {
-        Lobby lobby = new LobbyDTO("test", defaultUser,1);
+        Lobby lobby = new LobbyDTO("test", defaultUser,testUUID);
 
         assertThrows(IllegalArgumentException.class, () -> lobby.leaveUser(defaultUser));
     }

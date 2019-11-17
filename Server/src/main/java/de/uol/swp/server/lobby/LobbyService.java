@@ -5,17 +5,16 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.message.*;
-import de.uol.swp.common.message.ResponseMessage;
 import de.uol.swp.common.message.ServerMessage;
-import de.uol.swp.common.user.message.LobbyCreatedMessage;
-import de.uol.swp.common.user.message.UserLoggedInMessage;
-import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.usermanagement.AuthenticationService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
 
 public class LobbyService extends AbstractService {
+    private static final Logger LOG = LogManager.getLogger(LobbyService.class);
 
     private final LobbyManagement lobbyManagement;
     private final AuthenticationService authenticationService;
@@ -32,7 +31,7 @@ public class LobbyService extends AbstractService {
         lobbyManagement.createLobby(msg.getName(), msg.getOwner());
         ServerMessage returnMessage = new CreateLobbyMessage(msg.getName(), msg.getUser());
         post(returnMessage);
-
+        LOG.debug("onCreateLobbyRequest wird auf dem Server aufgerufen! :)");
     }
 
     @Subscribe
