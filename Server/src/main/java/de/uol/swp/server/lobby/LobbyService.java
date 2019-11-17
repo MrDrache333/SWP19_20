@@ -5,6 +5,8 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.message.*;
+import de.uol.swp.common.lobby.request.RetrieveAllOnlineLobbiesRequest;
+import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.usermanagement.AuthenticationService;
@@ -68,5 +70,13 @@ public class LobbyService extends AbstractService {
 
         // TODO: error handling not existing lobby
     }
+
+    @Subscribe
+    public void onRetrieveAllOnlineLobbiesRequest(RetrieveAllOnlineLobbiesRequest msg) {
+        AllOnlineLobbiesResponse response = new AllOnlineLobbiesResponse(lobbyManagement.getLobbies());
+        response.initWithMessage(msg);
+        post(response);
+    }
+
 
 }

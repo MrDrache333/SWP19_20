@@ -68,10 +68,12 @@ public class LobbyDTO implements Lobby {
         return Collections.unmodifiableSet(users);
     }
 
+    @Override
     public UUID getLobbyID() {
         return lobbyID;
     }
 
+    @Override
     public void setLobbyID(UUID lobbyID) {
         this.lobbyID = lobbyID;
     }

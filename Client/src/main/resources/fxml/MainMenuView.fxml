@@ -22,6 +22,12 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
             </rowConstraints>
 
+            <ListView fx:id="lobbiesView" prefHeight="250" prefWidth="250" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                <GridPane.margin>
+                    <Insets left="20"></Insets>
+                </GridPane.margin>
+            </ListView>
+
             <ListView fx:id="usersView" prefHeight="200.0" prefWidth="200.0"/>
             <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="1">
                 <buttons>

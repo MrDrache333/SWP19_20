@@ -3,7 +3,10 @@ package de.uol.swp.client.main;
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
+import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.lobby.message.CreateLobbyRequest;
+import de.uol.swp.common.lobby.message.LobbyCreatedMessage;
+import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.dto.UserDTO;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
@@ -29,6 +32,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
 
     private ObservableList<String> users;
+    private ObservableList<String> lobbies;
 
     private User loggedInUser;
 
@@ -38,6 +42,8 @@ public class MainMenuPresenter extends AbstractPresenter {
     // Textfeld, welches den eingegebenen Lobbynamen enthält.
     @FXML
     private TextField lobbyName;
+    @FXML
+    private ListView<String> lobbiesView;
 
 
     @Subscribe
@@ -45,6 +51,12 @@ public class MainMenuPresenter extends AbstractPresenter {
         this.loggedInUser = message.getUser();
         userService.retrieveAllUsers();
     }
+
+    @Subscribe
+    public void newLobbyCreated(LobbyCreatedMessage message) {
+        lobbyService.retrieveAllLobbies();
+    }
+
 
     @Subscribe
     public void newUser(UserLoggedInMessage message) {
@@ -79,6 +91,24 @@ public class MainMenuPresenter extends AbstractPresenter {
             userList.forEach(u -> users.add(u.getUsername()));
         });
     }
+
+    @Subscribe
+    public void lobbyList(AllOnlineLobbiesResponse allLobbiesResponse) {
+        LOG.debug("Update of lobbies list" + allLobbiesResponse.getLobbies());
+        updateLobbiesList(allLobbiesResponse.getLobbies());
+    }
+
+    private void updateLobbiesList(List<LobbyDTO> lobbyList) {
+        Platform.runLater(() -> {
+            if(lobbies == null) {
+                lobbies = FXCollections.observableArrayList();
+                lobbiesView.setItems(lobbies);
+            }
+            lobbies.clear();
+            lobbyList.forEach(l -> lobbies.add(l.getName()));
+        });
+    }
+
 
     /**
      * @author Paula, Haschem, Ferit
