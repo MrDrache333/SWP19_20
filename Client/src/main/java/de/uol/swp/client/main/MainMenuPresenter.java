@@ -31,8 +31,6 @@ public class MainMenuPresenter extends AbstractPresenter {
 
     private ObservableList<String> users;
 
-    private User loggedInUser;
-
     @FXML
     private ListView<String> usersView;
 

@@ -3,9 +3,12 @@ package de.uol.swp.client;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import de.uol.swp.client.chat.ChatService;
+import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 
 public class AbstractPresenter {
+
+    protected User loggedInUser;
 
     @Inject
     protected UserService userService;

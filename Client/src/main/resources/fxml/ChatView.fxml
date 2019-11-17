@@ -15,9 +15,9 @@
                 <URL value="@../css/swp.css"/>
             </stylesheets>
         </ListView>
-        <Button layoutX="278.0" layoutY="304.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="91.0"
+        <Button onAction="#onSendChatButtonPressed" layoutX="278.0" layoutY="304.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="91.0"
                 stylesheets="@../css/swp.css" text="Senden"/>
-        <TextField layoutY="312.0" prefHeight="26.0" prefWidth="275.0" promptText="Was möchtest du sagen?">
+        <TextField fx:id="chatTextField" layoutY="312.0" prefHeight="26.0" prefWidth="275.0" promptText="Was möchtest du sagen?">
             <stylesheets>
                 <URL value="@../css/swp.css"/>
             </stylesheets>
