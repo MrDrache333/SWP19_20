@@ -22,25 +22,26 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
             </rowConstraints>
 
-            <ListView fx:id="lobbiesView" prefHeight="250" prefWidth="250" GridPane.columnIndex="1" GridPane.rowIndex="0">
+            <ListView fx:id="lobbiesView" prefHeight="250" prefWidth="600" GridPane.columnIndex="0" GridPane.rowIndex="0">
                 <GridPane.margin>
-                    <Insets left="20"></Insets>
+                    <Insets left="25" top="25"></Insets>
                 </GridPane.margin>
             </ListView>
 
-            <ListView fx:id="usersView" prefHeight="200.0" prefWidth="200.0"/>
-            <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="1">
+            <ListView fx:id="usersView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                <GridPane.margin>
+                    <Insets top="25"></Insets>
+                </GridPane.margin>
+            </ListView>
+            <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
                 <buttons>
+                    <TextField fx:id="lobbyName"/>
                     <Button fx:id="CreateLobby" mnemonicParsing="false" onAction="#OnCreateLobbyButtonPressed"
                             prefHeight="27.0" prefWidth="347.0" text="Lobby erstellen"/>
-                    <TextField fx:id="lobbyName"/>
                 </buttons>
-                <opaqueInsets>
-                    <Insets/>
-                </opaqueInsets>
-                <padding>
-                    <Insets top="350.0"/>
-                </padding>
+                <GridPane.margin>
+                    <Insets top="15" left="5"></Insets>
+                </GridPane.margin>
             </ButtonBar>
         </GridPane>
     </children>
