@@ -97,7 +97,9 @@ public class ClientApp extends Application implements ConnectionListener {
         });
         t.setDaemon(true);
         t.start();
+
     }
+
 
     @Override
     public void connectionEstablished(Channel ch) {

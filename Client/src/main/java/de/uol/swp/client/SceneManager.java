@@ -14,6 +14,7 @@ import de.uol.swp.client.register.RegistrationPresenter;
 import de.uol.swp.client.register.event.RegistrationCanceledEvent;
 import de.uol.swp.client.register.event.RegistrationErrorEvent;
 import de.uol.swp.client.register.event.ShowRegistrationViewEvent;
+import de.uol.swp.common.lobby.message.LobbyCreatedMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import javafx.application.Platform;
@@ -21,6 +22,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,6 +35,7 @@ public class SceneManager {
     static final String styleSheet = "css/swp.css";
 
     final private Stage primaryStage;
+    final private Stage lobbyStage;
     final private EventBus eventBus;
     final private UserService userService;
     private Scene loginScene;
@@ -49,12 +52,14 @@ public class SceneManager {
 
 
     @Inject
-    public SceneManager(EventBus eventBus, UserService userService, Injector injected, @Assisted Stage primaryStage) {
+    public SceneManager(EventBus eventBus, UserService userService, Injector injected, @Assisted Stage primaryStage, Stage lobbyStage) {
         this.eventBus = eventBus;
+        this.lobbyStage = lobbyStage;
         this.eventBus.register(this);
         this.userService = userService;
         this.primaryStage = primaryStage;
         this.injector = injected;
+
         initViews();
     }
 
@@ -112,6 +117,18 @@ public class SceneManager {
             Parent rootPane = initPresenter(LobbyPresenter.fxml);
             lobbyScene = new Scene(rootPane, 800, 600);
             lobbyScene.getStylesheets().add(styleSheet);
+
+
+
+            // Neues Fenster erstellen
+            // Problem: Fenster wird direkt bei Start geöffnet.
+
+            lobbyStage.setTitle("Lobby");
+            lobbyStage.setScene(lobbyScene);
+            lobbyStage.setX(primaryStage.getX() + 200);
+            lobbyStage.setY(primaryStage.getY() + 100);
+            lobbyStage.show();
+
 
 
         }
