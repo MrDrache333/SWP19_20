@@ -46,6 +46,8 @@ public class MainMenuPresenter extends AbstractPresenter {
     @Subscribe
     public void loginSuccessful(LoginSuccessfulMessage message) {
         loggedInUser = message.getUser();
+        ChatViewPresenter.setloggedInUser(loggedInUser);
+        ChatViewPresenter.setChatService(chatService);
         LOG.debug("Logged in user: " + loggedInUser.getUsername());
         userService.retrieveAllUsers();
     }
