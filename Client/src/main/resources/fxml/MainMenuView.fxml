@@ -40,7 +40,7 @@
                             prefHeight="27.0" prefWidth="347.0" text="Lobby erstellen"/>
                 </buttons>
                 <GridPane.margin>
-                    <Insets top="15" left="5"></Insets>
+                    <Insets top="5" left="5"></Insets>
                 </GridPane.margin>
             </ButtonBar>
         </GridPane>
