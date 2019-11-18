@@ -61,6 +61,15 @@ public class ChatViewPresenter extends AbstractPresenter {
     }
 
     /**
+     * Sets logged in user.
+     *
+     * @param user the user
+     */
+    public static void setLoggedInUser(User user) {
+        loggedInUser = user;
+    }
+
+    /**
      * On send chat button pressed.
      */
     @FXML
@@ -82,4 +91,6 @@ public class ChatViewPresenter extends AbstractPresenter {
             chatService.sendMessage(newChatMessage);
         }
     }
+
+
 }
