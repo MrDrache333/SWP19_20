@@ -3,6 +3,7 @@ package de.uol.swp.client.main;
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.chat.ChatViewPresenter;
+import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.user.dto.UserDTO;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
@@ -40,7 +41,6 @@ public class MainMenuPresenter extends AbstractPresenter {
     public void initialize() throws IOException {
        Pane newChatView = FXMLLoader.load(getClass().getResource(ChatViewPresenter.fxml));
         chatView.getChildren().add(newChatView);
-
     }
 
     @Subscribe
@@ -84,6 +84,11 @@ public class MainMenuPresenter extends AbstractPresenter {
             users.clear();
             userList.forEach(u -> users.add(u.getUsername()));
         });
+    }
+
+    @Subscribe
+    public void onNewChatMessage(NewChatMessage msg) {
+        ChatViewPresenter.onNewChatMessage(msg);
     }
 
 

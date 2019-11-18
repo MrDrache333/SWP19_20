@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.net.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.effect.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.*?>
-
-<AnchorPane prefHeight="215.0" prefWidth="171.0" xmlns="http://javafx.com/javafx/10.0.2-internal"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.uol.swp.client.chat.ChatViewPresenter">
+<?import java.net.URL?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="215.0" prefWidth="171.0"
+            xmlns="http://javafx.com/javafx/10.0.2-internal" fx:controller="de.uol.swp.client.chat.ChatViewPresenter">
     <children>
-        <ListView layoutX="-7.0" prefHeight="302.0" prefWidth="376.0" AnchorPane.bottomAnchor="29.0"
+        <ListView fx:id="messageView" layoutX="-7.0" prefHeight="302.0" prefWidth="376.0" AnchorPane.bottomAnchor="29.0"
                   AnchorPane.leftAnchor="-7.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 
             <stylesheets>
                 <URL value="@../css/swp.css"/>
             </stylesheets>
         </ListView>
-        <Button onAction="#onSendChatButtonPressed" layoutX="278.0" layoutY="304.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="91.0"
-                stylesheets="@../css/swp.css" text="Senden"/>
+        <Button layoutX="278.0" layoutY="304.0" mnemonicParsing="false" onAction="#onSendChatButtonPressed"
+                prefHeight="35.0" prefWidth="91.0" stylesheets="@../css/swp.css" text="Senden"/>
         <TextField fx:id="chatTextField" layoutY="312.0" prefHeight="26.0" prefWidth="275.0" promptText="Was möchtest du sagen?">
             <stylesheets>
                 <URL value="@../css/swp.css"/>

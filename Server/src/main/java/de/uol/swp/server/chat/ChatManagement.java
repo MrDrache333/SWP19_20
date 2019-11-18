@@ -2,6 +2,7 @@ package de.uol.swp.server.chat;
 
 import de.uol.swp.common.chat.ChatMessage;
 import de.uol.swp.common.chat.exception.ChatException;
+import de.uol.swp.common.user.User;
 
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -10,7 +11,7 @@ import java.util.UUID;
 /**
  * The type Chat management.
  */
-public class ChatManagement {
+public class ChatManagement extends AbstractChatManagement {
 
     private final short CHATMESSAGEHISTORYSIZE = 20;
 
@@ -79,4 +80,23 @@ public class ChatManagement {
         } else throw new ChatException("Chat with Id " + chatId + " does not exist!");
     }
 
+    @Override
+    public void sendMessage(ChatMessage message) {
+        addMessage("global", message);
+    }
+
+    @Override
+    public void sendMessage(String ChatId, ChatMessage message) {
+        addMessage(ChatId, message);
+    }
+
+    @Override
+    public Chat getChatHistory(User sender) {
+        return getChatHistory(sender);
+    }
+
+    @Override
+    public Chat getChatHistory(String ChatId, User sender) {
+        return getChatHistory(ChatId, sender);
+    }
 }

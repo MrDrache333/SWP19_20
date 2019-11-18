@@ -25,7 +25,6 @@ public class ChatHistoryRequest extends AbstractRequestMessage {
     /**
      * Instantiates a new Chat history request.
      *
-     * @param chatId the chat id
      * @param sender the sender
      */
     public ChatHistoryRequest(User sender) {

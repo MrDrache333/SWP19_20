@@ -2,12 +2,13 @@ package de.uol.swp.common.chat;
 
 import de.uol.swp.common.user.User;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * The type Chat message.
  */
-public class ChatMessage {
+public class ChatMessage implements Serializable {
 
     private User Sender;
     private String Message;

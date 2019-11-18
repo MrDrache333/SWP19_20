@@ -32,6 +32,7 @@ public class ChatService extends AbstractService {
     public void onNewChatMessageRequest(NewChatMessageRequest request){
         LOG.debug("New Message from " + request.getMessage().getSender().getUsername() + " in Chat " + request.getChatid());
         AbstractResponseMessage returnMessage;
+        if (request.getMessage().getMessage().equals("")) return;
         try {
             chatManagement.addMessage(request.getChatid(), request.getMessage());
         } catch (ChatException e) {
@@ -45,10 +46,9 @@ public class ChatService extends AbstractService {
             return;
         }
         NewChatMessage message = new NewChatMessage(request.getChatid(), request.getMessage());
-        if (request.getMessageContext().isPresent())
-            message.setMessageContext(request.getMessageContext().get());
+        //if (request.getMessageContext().isPresent())
+        //message.setMessageContext(request.getMessageContext().get());
         post(message);
-
     }
 
     @Subscribe

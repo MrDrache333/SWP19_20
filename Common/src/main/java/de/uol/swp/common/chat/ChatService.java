@@ -25,12 +25,12 @@ public interface ChatService {
     /**
      * Gets chat history.
      */
-    void getChatHistory(User sender);
+    Chat getChatHistory(User sender);
 
     /**
      * Gets chat history.
      *
      * @param ChatId the chat id
      */
-    void getChatHistory(String ChatId, User sender);
+    Chat getChatHistory(String ChatId, User sender);
 }

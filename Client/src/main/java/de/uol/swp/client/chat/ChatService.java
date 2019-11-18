@@ -2,6 +2,7 @@ package de.uol.swp.client.chat;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
+import de.uol.swp.common.chat.Chat;
 import de.uol.swp.common.chat.ChatMessage;
 import de.uol.swp.common.chat.request.NewChatMessageRequest;
 import de.uol.swp.common.user.User;
@@ -21,7 +22,7 @@ public class ChatService implements de.uol.swp.common.chat.ChatService {
     @Override
     public void sendMessage(ChatMessage message) {
         NewChatMessageRequest request = new NewChatMessageRequest(message);
-        LOG.debug("posting NewChatMessageRequest to bus with parameter message");
+        LOG.debug("posting ChatMessageRequest to bus with parameter message");
         bus.post(request);
     }
 
@@ -33,12 +34,12 @@ public class ChatService implements de.uol.swp.common.chat.ChatService {
     }
 
     @Override
-    public void getChatHistory(User sender) {
-
+    public Chat getChatHistory(User sender) {
+        return null;
     }
 
     @Override
-    public void getChatHistory(String ChatId, User sender) {
-
+    public Chat getChatHistory(String ChatId, User sender) {
+        return null;
     }
 }
