@@ -30,6 +30,7 @@ public class MainMenuPresenter extends AbstractPresenter {
 
     private ObservableList<String> users;
 
+
     private User loggedInUser;
 
     private static final ShowLobbyViewEvent showLobbyViewMessage = new ShowLobbyViewEvent();
