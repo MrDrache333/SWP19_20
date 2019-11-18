@@ -50,10 +50,6 @@ public class MainMenuPresenter extends AbstractPresenter {
     public void loginSuccessful(LoginSuccessfulMessage message) {
         this.loggedInUser = message.getUser();
         userService.retrieveAllUsers();
-    }
-
-    @Subscribe
-    public void newLobbyCreated(LobbyCreatedMessage message) {
         lobbyService.retrieveAllLobbies();
     }
 
@@ -89,6 +85,14 @@ public class MainMenuPresenter extends AbstractPresenter {
             users.clear();
             userList.forEach(u -> users.add(u.getUsername()));
         });
+    }
+
+    @Subscribe
+    public void onLobbyCreatedMessage(LobbyCreatedMessage message) {
+        Platform.runLater(() -> {
+            lobbies.add(message.getLobby().getName());
+        });
+
     }
 
     @Subscribe
