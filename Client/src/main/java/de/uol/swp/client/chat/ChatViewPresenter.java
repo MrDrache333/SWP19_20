@@ -99,10 +99,13 @@ public class ChatViewPresenter extends AbstractPresenter {
      */
     private static HBox chatMessagetoHBox(ChatMessage msg) {
         String plainMessage = msg.getMessage();
+        //Teile die Nachricht bei Leerzeichen
         String[] messagePiece = plainMessage.split(" ");
         String formatedMessage = "";
         int piece = 0;
         pieces:
+        //Iteriere durch die Nachrichtenstücke und fuege der Formatierten Nachricht solange weitere hinzu
+        //bis die maximale Zeilenlänge überschritten wurde. Dann haenge ein Zeilenvorschub dran.
         for (int i = 0; i <= plainMessage.length() / 40; i++) {
             while (formatedMessage.length() + messagePiece[piece].length() <= 40 * (i + 1) + i * 6) {
                 formatedMessage += messagePiece[piece];
@@ -113,11 +116,14 @@ public class ChatViewPresenter extends AbstractPresenter {
             formatedMessage += " \n  ";
         }
 
+        //Inhalt der HBox festlegen und mit passenden Styles versehen
         Label sender = new Label(msg.getSender().getUsername());
         Label message = new Label("  " + formatedMessage + "  ");
         sender.setStyle("-fx-text-fill: dimgrey; -fx-font-size: 10");
+        //Wenn die Nachricht mehrere Zeilen umfasst, dann aendere den Radius der Ecken
         message.setStyle("-fx-background-radius: " + (formatedMessage.contains("\n") ? "10" : "90") + ";-fx-background-color: dodgerblue;-fx-text-fill: white; -fx-font-size: 13");
 
+        //Je nachdem wer die Nachriht gesendet hat, diese auf der richtigen Seite darstellen
         HBox box = new HBox();
         if (msg.getSender().getUsername().equals(loggedInUser.getUsername())) {
             sender.setText("Du");
