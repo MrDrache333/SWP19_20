@@ -13,15 +13,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class LobbyManagement {
     static final Logger LOG = LogManager.getLogger(LobbyManagement.class);
 
     private Map<Integer, Lobby> lobbies = new HashMap<>();
+
+    public Collection<Lobby> getLobbies() {
+        return lobbies.values();
+    }
 
     /**
      * @author Paula, Haschem, Ferit
