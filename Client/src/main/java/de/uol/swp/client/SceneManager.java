@@ -90,7 +90,7 @@ public class SceneManager {
     private void initMainView() {
         if (mainScene == null) {
             Parent rootPane = initPresenter(MainMenuPresenter.fxml);
-            mainScene = new Scene(rootPane, 800, 600);
+            mainScene = new Scene(rootPane, 600, 400);
             mainScene.getStylesheets().add(styleSheet);
         }
     }
@@ -115,22 +115,8 @@ public class SceneManager {
 
         if (lobbyScene == null) {
             Parent rootPane = initPresenter(LobbyPresenter.fxml);
-            lobbyScene = new Scene(rootPane, 800, 600);
+            lobbyScene = new Scene(rootPane, 600, 400);
             lobbyScene.getStylesheets().add(styleSheet);
-
-
-
-            // Neues Fenster erstellen
-            // Problem: Fenster wird direkt bei Start geöffnet.
-
-            lobbyStage.setTitle("Lobby");
-            lobbyStage.setScene(lobbyScene);
-            lobbyStage.setX(primaryStage.getX() + 200);
-            lobbyStage.setY(primaryStage.getY() + 100);
-            lobbyStage.show();
-
-
-
         }
     }
 
@@ -204,7 +190,14 @@ public class SceneManager {
     }
 
     public void showLobbyScreen(String title) {
-        showScene(lobbyScene, title);
+        Platform.runLater(() -> {
+            lobbyStage.setTitle(title);
+            lobbyStage.setScene(lobbyScene);
+            lobbyStage.setX(primaryStage.getX() + 200);
+            lobbyStage.setY(primaryStage.getY() + 100);
+            lobbyStage.show();
+        });
+
     }
 
 }
