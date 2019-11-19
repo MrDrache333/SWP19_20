@@ -3,6 +3,7 @@ package de.uol.swp.client.main;
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
+import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.lobby.message.CreateLobbyRequest;
 import de.uol.swp.common.lobby.message.LobbyCreatedMessage;
@@ -14,11 +15,14 @@ import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import de.uol.swp.common.user.response.AllOnlineUsersResponse;
 import de.uol.swp.common.user.response.LoginSuccessfulMessage;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,7 +36,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
 
     private ObservableList<String> users;
-    private ObservableList<String> lobbies;
+    private ObservableList<Lobby> lobbies;
 
     private User loggedInUser;
 
@@ -42,8 +46,26 @@ public class MainMenuPresenter extends AbstractPresenter {
     // Textfeld, welches den eingegebenen Lobbynamen enthält.
     @FXML
     private TextField lobbyName;
+
     @FXML
-    private ListView<String> lobbiesView;
+    private TableView<Lobby> lobbiesView;
+    @FXML
+    TableColumn<Lobby, String> name = new TableColumn<>("Name");
+    @FXML
+    TableColumn<Lobby, String> owner = new TableColumn<>("Owner");
+    @FXML
+    TableColumn<Lobby, String> members = new TableColumn<>("Members");
+
+    /**
+     * Creates lobby table and assigns columns to attributes of Lobby class
+     */
+    @FXML
+    private void initialize(){
+        name.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
+        owner.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getOwner().getUsername()));
+        members.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getUsers().size() + "/4"));
+        lobbiesView.getColumns().addAll(name, owner, members);
+    }
 
 
     @Subscribe
@@ -90,9 +112,8 @@ public class MainMenuPresenter extends AbstractPresenter {
     @Subscribe
     public void onLobbyCreatedMessage(LobbyCreatedMessage message) {
         Platform.runLater(() -> {
-            lobbies.add(message.getLobby().getName());
+            lobbies.add(message.getLobby());
         });
-
     }
 
     @Subscribe
@@ -108,7 +129,7 @@ public class MainMenuPresenter extends AbstractPresenter {
                 lobbiesView.setItems(lobbies);
             }
             lobbies.clear();
-            lobbyList.forEach(l -> lobbies.add(l.getName()));
+            lobbyList.forEach(l -> lobbies.add(l));
         });
     }
 
