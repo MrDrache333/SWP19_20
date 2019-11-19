@@ -19,6 +19,12 @@ public class ChatService implements de.uol.swp.common.chat.ChatService {
         this.bus = bus;
     }
 
+    /**
+     *
+     * Posts a New Message Request to the bus
+     *
+     * @param message the message
+     */
     @Override
     public void sendMessage(ChatMessage message) {
         NewChatMessageRequest request = new NewChatMessageRequest(message);
@@ -26,6 +32,13 @@ public class ChatService implements de.uol.swp.common.chat.ChatService {
         bus.post(request);
     }
 
+    /**
+     *
+     * Posts a New Message Request to the bus for specified ChatID
+     *
+     * @param ChatId  the chat id of any Specific ChatID
+     * @param message the message
+     */
     @Override
     public void sendMessage(String ChatId, ChatMessage message) {
         NewChatMessageRequest request = new NewChatMessageRequest(ChatId, message);
