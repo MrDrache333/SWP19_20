@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import de.uol.swp.common.chat.Chat;
 import de.uol.swp.common.chat.ChatMessage;
+import de.uol.swp.common.chat.request.ChatHistoryRequest;
 import de.uol.swp.common.chat.request.NewChatMessageRequest;
 import de.uol.swp.common.user.User;
 import org.apache.logging.log4j.LogManager;
@@ -19,6 +20,12 @@ public class ChatService implements de.uol.swp.common.chat.ChatService {
         this.bus = bus;
     }
 
+    /**
+     *
+     * Posts a New Message Request to the bus
+     *
+     * @param message the message
+     */
     @Override
     public void sendMessage(ChatMessage message) {
         NewChatMessageRequest request = new NewChatMessageRequest(message);
@@ -26,6 +33,13 @@ public class ChatService implements de.uol.swp.common.chat.ChatService {
         bus.post(request);
     }
 
+    /**
+     *
+     * Posts a New Message Request to the bus for specified ChatID
+     *
+     * @param ChatId  the chat id of any Specific ChatID
+     * @param message the message
+     */
     @Override
     public void sendMessage(String ChatId, ChatMessage message) {
         NewChatMessageRequest request = new NewChatMessageRequest(ChatId, message);
@@ -35,11 +49,17 @@ public class ChatService implements de.uol.swp.common.chat.ChatService {
 
     @Override
     public Chat getChatHistory(User sender) {
+        ChatHistoryRequest req = new ChatHistoryRequest(sender);
+        LOG.debug("posting ChatHistoryRequest to bus with parameter sender");
+        bus.post(req);
         return null;
     }
 
     @Override
     public Chat getChatHistory(String ChatId, User sender) {
+        ChatHistoryRequest req = new ChatHistoryRequest(ChatId, sender);
+        LOG.debug("posting ChatHistoryRequest to bus with parameter ChatId, sender");
+        bus.post(req);
         return null;
     }
 }

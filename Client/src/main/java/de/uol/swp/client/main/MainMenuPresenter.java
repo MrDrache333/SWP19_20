@@ -2,7 +2,9 @@ package de.uol.swp.client.main;
 
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
-import de.uol.swp.common.user.User;
+import de.uol.swp.client.chat.ChatViewPresenter;
+import de.uol.swp.common.chat.message.NewChatMessage;
+import de.uol.swp.common.chat.response.ChatResponseMessage;
 import de.uol.swp.common.user.dto.UserDTO;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
@@ -15,6 +17,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ListView;
+import javafx.scene.layout.Pane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -47,11 +50,29 @@ public class MainMenuPresenter extends AbstractPresenter {
         chatView.getChildren().add(newChatView);
     }
 
+    private void updateUsersList(List<UserDTO> userList) {
+        // Attention: This must be done on the FX Thread!
+        Platform.runLater(() -> {
+            if (users == null) {
+                users = FXCollections.observableArrayList();
+                usersView.setItems(users);
+            }
+            users.clear();
+            userList.forEach(u -> users.add(u.getUsername()));
+        });
+    }
+
+    //--------------------------------------
+    // EVENTBUS
+    //--------------------------------------
+
     @Subscribe
     public void loginSuccessful(LoginSuccessfulMessage message) {
         loggedInUser = message.getUser();
         ChatViewPresenter.setloggedInUser(loggedInUser);
         ChatViewPresenter.setChatService(chatService);
+        //TODO Implementiere ChatHistory-Update
+        //chatService.getChatHistory(loggedInUser);
         LOG.debug("Logged in user: " + loggedInUser.getUsername());
         userService.retrieveAllUsers();
     }
@@ -111,4 +132,13 @@ public class MainMenuPresenter extends AbstractPresenter {
     public void onNewChatMessage(NewChatMessage msg) {
         ChatViewPresenter.onNewChatMessage(msg);
     }
+
+    @Subscribe
+    public void onChatResponseMessage(ChatResponseMessage msg) {
+        if (msg.getChat().getChatId().equals("global") && msg.getSender().equals(loggedInUser.getUsername())) {
+            ChatViewPresenter.updateChat(msg.getChat().getMessages());
+        }
+    }
+
+
 }
