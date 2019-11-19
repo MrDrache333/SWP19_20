@@ -88,10 +88,15 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @FXML
     public void OnCreateLobbyButtonPressed(ActionEvent event) {
-        CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), loggedInUser);
-        eventBus.post(msg);
-        LOG.info("Request wurde gesendet.");
+        if (!lobbyName.getText().equals("")) {
+            CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), loggedInUser);
+            eventBus.post(msg);
+            LOG.info("Request wurde gesendet.");
+        } else {
+            LOG.info("Leerer Lobbyname wurde abgeschickt! :(");
+            // TODO: Implementierung eines Popups, dass Lobbyname nicht leer sein darf oder rotes Feld markieren?
+            //  Je nachdem was einfacher ist.
+
+        }
     }
-
-
 }
