@@ -50,11 +50,11 @@ public class MainMenuPresenter extends AbstractPresenter {
     @FXML
     private TableView<Lobby> lobbiesView;
     @FXML
-    TableColumn<Lobby, String> name = new TableColumn<>("Name");
+    private TableColumn<Lobby, String> name = new TableColumn<>("Name");
     @FXML
-    TableColumn<Lobby, String> owner = new TableColumn<>("Host");
+    private TableColumn<Lobby, String> owner = new TableColumn<>("Host");
     @FXML
-    TableColumn<Lobby, String> members = new TableColumn<>("Spieler");
+    private TableColumn<Lobby, String> members = new TableColumn<>("Spieler");
 
     /**
      * Creates lobby table and assigns columns to attributes of Lobby class
