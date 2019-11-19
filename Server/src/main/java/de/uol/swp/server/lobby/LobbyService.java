@@ -8,10 +8,13 @@ import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.usermanagement.AuthenticationService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
 
 public class LobbyService extends AbstractService {
+    private static final Logger LOG = LogManager.getLogger(LobbyService.class);
 
     private final LobbyManagement lobbyManagement;
     private final AuthenticationService authenticationService;
@@ -24,8 +27,11 @@ public class LobbyService extends AbstractService {
     }
 
     @Subscribe
-    public void onCreateLobbyRequest(CreateLobbyRequest createLobbyRequest) {
-        lobbyManagement.createLobby(createLobbyRequest.getName(), createLobbyRequest.getOwner());
+    public void onCreateLobbyRequest(CreateLobbyRequest msg) {
+        lobbyManagement.createLobby(msg.getName(), msg.getOwner());
+        ServerMessage returnMessage = new CreateLobbyMessage(msg.getName(), msg.getUser());
+        post(returnMessage);
+        LOG.info("onCreateLobbyRequest wird auf dem Server aufgerufen.");
     }
 
     @Subscribe

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.uol.swp.client.main.MainMenuPresenter">
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.*?>
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="de.uol.swp.client.main.MainMenuPresenter">
    <children>
       <GridPane layoutX="-5.0" layoutY="-4.0" prefHeight="410.0" prefWidth="600.0">
         <columnConstraints>
@@ -15,9 +16,18 @@
         </rowConstraints>
          <children>
             <ListView fx:id="usersView" prefHeight="200.0" prefWidth="200.0" />
-            <AnchorPane fx:id="chatView" prefHeight="410.0" prefWidth="470.0" stylesheets="@../css/swp.css" GridPane.columnIndex="1" />
-
-         </children>
-      </GridPane>
-   </children>
+            <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="1">
+                <buttons>
+                    <Button fx:id="CreateLobby" mnemonicParsing="false" onAction="#OnCreateLobbyButtonPressed" prefHeight="27.0" prefWidth="347.0" text="Lobby erstellen" />
+                    <TextField fx:id="lobbyName" promptText="Lobbynamen eingeben" />
+                </buttons>
+                <opaqueInsets>
+                    <Insets />
+                </opaqueInsets>
+                <padding>
+                    <Insets top="350.0" />
+                </padding>
+            </ButtonBar>
+        </GridPane>
+    </children>
 </AnchorPane>

@@ -6,17 +6,22 @@ import de.uol.swp.common.user.User;
 import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.UUID;
 
 public class LobbyDTO implements Lobby {
 
     private final String name;
     private User owner;
     private Set<User> users = new TreeSet<>();
+    private UUID lobbyID;
 
-    public LobbyDTO(String name, User creator) {
+
+    public LobbyDTO(String name, User creator, UUID lobbyID) {
         this.name = name;
         this.owner = creator;
         this.users.add(creator);
+        this.lobbyID = lobbyID;
+
     }
 
     @Override
@@ -26,7 +31,10 @@ public class LobbyDTO implements Lobby {
 
     @Override
     public void joinUser(User user) {
-        this.users.add(user);
+        if (users.size() < 4) {
+            this.users.add(user);
+        }
+        // TODO: Hier Fehlermeldung implementieren?
     }
 
     @Override
@@ -59,5 +67,14 @@ public class LobbyDTO implements Lobby {
     public Set<User> getUsers() {
         return Collections.unmodifiableSet(users);
     }
+
+    public UUID getLobbyID() {
+        return lobbyID;
+    }
+
+    public void setLobbyID(UUID lobbyID) {
+        this.lobbyID = lobbyID;
+    }
+
 
 }
