@@ -58,16 +58,12 @@ public class ChatService extends AbstractService {
         }
         AbstractResponseMessage returnMessage;
         try {
-            returnMessage = new ChatResponseMessage(chatManagement.getChat(request.getChatId()));
+            returnMessage = new ChatResponseMessage(chatManagement.getChat(request.getChatId()), request.getSender().getUsername());
         } catch (ChatException e) {
             returnMessage = new ChatExceptionMessage(request.getSender(), e);
             LOG.error(e);
         }
-        if (request.getSession().isPresent())
-            returnMessage.setSession(request.getSession().get());
-        returnMessage.setSession(request.getSession().get());
-        if (request.getMessageContext().isPresent())
-            returnMessage.setMessageContext(request.getMessageContext().get());
+        returnMessage.initWithMessage(request);
         post(returnMessage);
     }
 

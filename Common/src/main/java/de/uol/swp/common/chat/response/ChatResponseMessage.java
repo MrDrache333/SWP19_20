@@ -10,6 +10,7 @@ import de.uol.swp.common.message.ResponseMessage;
 public class ChatResponseMessage extends AbstractResponseMessage implements ResponseMessage {
 
     private Chat chat;
+    private String sender;
 
     /**
      * Instantiates a new Chat response message.
@@ -22,10 +23,10 @@ public class ChatResponseMessage extends AbstractResponseMessage implements Resp
      *
      * @param chat the chat
      */
-    public ChatResponseMessage(Chat chat) {
+    public ChatResponseMessage(Chat chat, String sender) {
         this.chat = chat;
+        this.sender = sender;
     }
-
 
     /**
      * Gets chat.
@@ -37,11 +38,11 @@ public class ChatResponseMessage extends AbstractResponseMessage implements Resp
     }
 
     /**
-     * Sets new chat.
+     * Gets sender.
      *
-     * @param chat New value of chat.
+     * @return Value of sender.
      */
-    public void setChat(Chat chat) {
-        this.chat = chat;
+    public String getSender() {
+        return sender;
     }
 }

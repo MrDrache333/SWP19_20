@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import de.uol.swp.common.chat.Chat;
 import de.uol.swp.common.chat.ChatMessage;
+import de.uol.swp.common.chat.request.ChatHistoryRequest;
 import de.uol.swp.common.chat.request.NewChatMessageRequest;
 import de.uol.swp.common.user.User;
 import org.apache.logging.log4j.LogManager;
@@ -48,11 +49,17 @@ public class ChatService implements de.uol.swp.common.chat.ChatService {
 
     @Override
     public Chat getChatHistory(User sender) {
+        ChatHistoryRequest req = new ChatHistoryRequest(sender);
+        LOG.debug("posting ChatHistoryRequest to bus with parameter sender");
+        bus.post(req);
         return null;
     }
 
     @Override
     public Chat getChatHistory(String ChatId, User sender) {
+        ChatHistoryRequest req = new ChatHistoryRequest(ChatId, sender);
+        LOG.debug("posting ChatHistoryRequest to bus with parameter ChatId, sender");
+        bus.post(req);
         return null;
     }
 }
