@@ -10,20 +10,14 @@
     <children>
         <ListView fx:id="messageView" layoutX="-7.0" prefHeight="302.0" prefWidth="376.0" AnchorPane.bottomAnchor="29.0"
                   AnchorPane.leftAnchor="-7.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-
-            <stylesheets>
-                <URL value="@../css/swp.css"/>
-            </stylesheets>
         </ListView>
-        <Button layoutX="278.0" layoutY="304.0" mnemonicParsing="false" onAction="#onSendChatButtonPressed"
-                prefHeight="35.0" prefWidth="91.0" stylesheets="@../css/swp.css" text="Senden"/>
+        <Button layoutX="279.0" layoutY="312.0" mnemonicParsing="false" onAction="#onSendChatButtonPressed"
+                prefHeight="27.0" prefWidth="90.0" text="Senden"/>
         <TextField fx:id="chatTextField" layoutY="312.0" prefHeight="26.0" prefWidth="275.0" promptText="Was möchtest du sagen?">
-            <stylesheets>
-                <URL value="@../css/swp.css"/>
-            </stylesheets>
         </TextField>
     </children>
     <stylesheets>
         <URL value="@../css/swp.css"/>
+        <URL value="@../css/ChatViewPresenter.css"/>
     </stylesheets>
 </AnchorPane>

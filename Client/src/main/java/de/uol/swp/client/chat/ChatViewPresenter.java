@@ -8,6 +8,7 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -36,6 +37,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      * The constant fxml.
      */
     public static final String fxml = "/fxml/ChatView.fxml";
+    public static final String styleSheet = "css/ChatViewPresenter.css";
 
     private static final Logger LOG = LogManager.getLogger(ChatViewPresenter.class);
 
@@ -46,7 +48,7 @@ public class ChatViewPresenter extends AbstractPresenter {
 
 
     //Liste mit formatierten Chatnachrichten
-    private static ObservableList<VBox> chatMessages;
+    private static ObservableList<VBox> chatMessages = FXCollections.observableArrayList();
     private static List<ChatMessage> chatMessageHistory = new ArrayList<>();
 
     //Services
@@ -104,6 +106,7 @@ public class ChatViewPresenter extends AbstractPresenter {
     // STATIC METHODS
     //--------------------------------------
 
+
     /**
      * Creates a HBox with Labels from a given ChatMessage
      *
@@ -132,7 +135,7 @@ public class ChatViewPresenter extends AbstractPresenter {
         //Inhalt der HBox festlegen und mit passenden Styles versehen
         Label sender = new Label(msg.getSender().getUsername());
         Label message = new Label("  " + formatedMessage + "  ");
-        sender.setStyle("-fx-text-fill: dimgrey; -fx-font-size: 12");
+        sender.setStyle("-fx-text-fill: lightgrey; -fx-font-size: 12");
 
         //Je nachdem wer die Nachriht gesendet hat, diese auf der richtigen Seite darstellen
         VBox box = new VBox();
@@ -144,11 +147,11 @@ public class ChatViewPresenter extends AbstractPresenter {
 
         if (msg.getSender().getUsername().equals(loggedInUser.getUsername())) {
             //Wenn die Nachricht mehrere Zeilen umfasst, dann aendere den Radius der Ecken
-            message.setStyle("-fx-background-radius: " + (formatedMessage.contains("\n") ? "10" : "90") + ";-fx-background-color: #135BE5;-fx-text-fill: white; -fx-font-size: 16");
+            message.setStyle("-fx-background-radius: " + (formatedMessage.contains("\n") ? "10" : "90") + ";-fx-background-color: #2C7FFE;-fx-text-fill: white; -fx-font-size: 16");
             sender.setText("Du");
             sender.setAlignment(Pos.BOTTOM_RIGHT);
             message.setAlignment(Pos.BOTTOM_RIGHT);
-            message.setPadding(new Insets(3, 0, 3, 0));
+            message.setPadding(new Insets(5, 5, 5, 5));
             hbox.getChildren().add(message);
             box.alignmentProperty().setValue(Pos.BOTTOM_RIGHT);
             hbox.alignmentProperty().setValue(Pos.BOTTOM_RIGHT);
@@ -156,11 +159,11 @@ public class ChatViewPresenter extends AbstractPresenter {
 
         } else {
             //Wenn die Nachricht mehrere Zeilen umfasst, dann aendere den Radius der Ecken
-            message.setStyle("-fx-background-radius: " + (formatedMessage.contains("\n") ? "10" : "90") + ";-fx-background-color: #676767;-fx-text-fill: white; -fx-font-size: 16");
+            message.setStyle("-fx-background-radius: " + (formatedMessage.contains("\n") ? "10" : "90") + ";-fx-background-color: #4D4C4F;-fx-text-fill: white; -fx-font-size: 16");
             sender.setAlignment(Pos.BOTTOM_LEFT);
             sender.setPadding(new Insets(0, 0, 0, 40));
             message.setAlignment(Pos.BOTTOM_LEFT);
-            message.setPadding(new Insets(3, 0, 3, 0));
+            message.setPadding(new Insets(5, 5, 5, 5));
             hbox.setSpacing(5);
 
             //Vorrangegangene Eintraege ggf. bearbeiten
@@ -224,8 +227,13 @@ public class ChatViewPresenter extends AbstractPresenter {
     public void initialize() {
         updateChatMessages(new ArrayList<>());
         messageView.setItems(chatMessages);
-
         chatTextField.setOnKeyPressed(onKeyPressedinchatTextFieldEvent);
+        chatMessages.addListener((ListChangeListener<VBox>) change -> {
+            Platform.runLater(() -> {
+                messageView.scrollTo(messageView.getItems().size() - 1);
+            });
+        });
+
     }
 
     //--------------------------------------

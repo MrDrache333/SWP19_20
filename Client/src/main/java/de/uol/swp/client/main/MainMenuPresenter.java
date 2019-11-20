@@ -41,6 +41,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     @FXML
     public void initialize() throws IOException {
        Pane newChatView = FXMLLoader.load(getClass().getResource(ChatViewPresenter.fxml));
+        chatView.getStylesheets().add(ChatViewPresenter.styleSheet);
         chatView.getChildren().add(newChatView);
     }
 
