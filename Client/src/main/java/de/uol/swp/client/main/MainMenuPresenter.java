@@ -20,8 +20,10 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import javax.swing.JOptionPane;
 
+import java.awt.*;
 import java.util.List;
 
 public class MainMenuPresenter extends AbstractPresenter {
@@ -88,11 +90,19 @@ public class MainMenuPresenter extends AbstractPresenter {
      * @version 0.1
      * Fängt den Button ab und sendet den Request zur Erstellung der Lobby an den Server.
      */
+
+    // Debugging für macOS / Probably a fix:
     @FXML
     public void OnCreateLobbyButtonPressed(ActionEvent event) {
-        if(lobbyName.getText().equals("")) {
-            JOptionPane.showMessageDialog(null,"Bitte geben Sie einen Lobby Namen ein!");
-        }else{
+        if (lobbyName.getText().equals("")) {
+            EventQueue.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    JOptionPane.showMessageDialog(null, "Bitte geben Sie einen Lobby Namen ein!");
+                }
+            });
+
+        } else {
             CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), loggedInUser);
             eventBus.post(msg);
             LOG.info("Request wurde gesendet.");
