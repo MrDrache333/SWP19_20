@@ -7,8 +7,6 @@
       prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="de.uol.swp.client.lobby.LobbyPresenter">
     <children>
-        <ProgressIndicator layoutX="286.0" layoutY="180.0" progress="0.75"/>
-        <ProgressBar layoutX="200.0" layoutY="232.0" prefWidth="200.0" progress="0.75"/>
         <TitledPane animated="false" layoutX="14.0" layoutY="14.0" text="Lobby: Check!">
             <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
