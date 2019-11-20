@@ -16,11 +16,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.stage.Modality;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import javax.swing.JOptionPane;
 
 import java.util.List;
 
@@ -88,11 +89,22 @@ public class MainMenuPresenter extends AbstractPresenter {
      * @version 0.1
      * Fängt den Button ab und sendet den Request zur Erstellung der Lobby an den Server.
      */
+
+    public static void showAlert(Alert.AlertType type, String message, String title) {
+        Alert alert = new Alert(type, "");
+        alert.setResizable(false);
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.getDialogPane().setContentText(message);
+        alert.getDialogPane().setHeaderText(title);
+        alert.show();
+    }
+
     @FXML
     public void OnCreateLobbyButtonPressed(ActionEvent event) {
-        if(lobbyName.getText().equals("")) {
-            JOptionPane.showMessageDialog(null,"Bitte geben Sie einen Lobby Namen ein!");
-        }else{
+        if (lobbyName.getText().equals("")) {
+
+            showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen Lobby Namen ein! ", "Fehler");
+        } else {
             CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), loggedInUser);
             eventBus.post(msg);
             LOG.info("Request wurde gesendet.");
