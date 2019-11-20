@@ -31,6 +31,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
 
+import static java.awt.Color.black;
+
 public class SceneManager {
 
     static final Logger LOG = LogManager.getLogger(SceneManager.class);

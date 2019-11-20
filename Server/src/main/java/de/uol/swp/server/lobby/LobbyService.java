@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import de.uol.swp.common.lobby.Lobby;
+import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.server.AbstractService;
@@ -12,6 +13,7 @@ import de.uol.swp.server.usermanagement.AuthenticationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.HashMap;
 import java.util.Optional;
 
 public class LobbyService extends AbstractService {
@@ -32,7 +34,8 @@ public class LobbyService extends AbstractService {
     @Subscribe
     public void onCreateLobbyRequest(CreateLobbyRequest msg) {
         lobbyManagement.createLobby(msg.getName(), msg.getOwner());
-        chatManagement.createChat();
+        String chatID = chatManagement.createChat();
+        chatManagement.getChat(chatID);
 
         ServerMessage returnMessage = new CreateLobbyMessage(msg.getName(), msg.getUser());
         post(returnMessage);

@@ -5,6 +5,8 @@ import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
 import de.uol.swp.common.lobby.message.CreateLobbyRequest;
 import de.uol.swp.common.user.User;
+import de.uol.swp.server.chat.Chat;
+import de.uol.swp.server.chat.ChatManagement;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -53,4 +55,6 @@ public class LobbyManagement {
         }
         return Optional.empty();
     }
+
+
 }
