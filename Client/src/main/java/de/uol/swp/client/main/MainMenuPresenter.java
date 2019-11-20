@@ -1,6 +1,7 @@
 package de.uol.swp.client.main;
 
 import com.google.common.eventbus.Subscribe;
+import com.sun.nio.sctp.HandlerResult;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
 import de.uol.swp.common.lobby.message.CreateLobbyRequest;
@@ -19,6 +20,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import javax.swing.JOptionPane;
 
 import java.util.List;
 
@@ -88,9 +90,14 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @FXML
     public void OnCreateLobbyButtonPressed(ActionEvent event) {
-        CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), loggedInUser);
-        eventBus.post(msg);
-        LOG.info("Request wurde gesendet.");
+        if(lobbyName.getText().equals("")) {
+            JOptionPane.showMessageDialog(null,"Bitte geben Sie einen Lobby Namen ein!");
+        }else{
+            CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), loggedInUser);
+            eventBus.post(msg);
+            LOG.info("Request wurde gesendet.");
+        }
+
     }
 
 
