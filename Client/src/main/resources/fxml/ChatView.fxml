@@ -7,15 +7,14 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<?import java.net.URL?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="421.0" prefWidth="380.0"
-            style="-fx-background-color: black;" xmlns="http://javafx.com/javafx/8"
-            fx:controller="de.uol.swp.client.chat.ChatViewPresenter">
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="chatViewAnchorPane" prefHeight="702.0" prefWidth="457.0"
+            style="-fx-background-color: black;" stylesheets="@../css/ChatViewPresenter.css"
+            xmlns="http://javafx.com/javafx/8" fx:controller="de.uol.swp.client.chat.ChatViewPresenter">
     <children>
-        <VBox alignment="CENTER" prefHeight="421.0" prefWidth="380.0" AnchorPane.bottomAnchor="0.0"
+        <VBox alignment="CENTER" prefHeight="702.0" prefWidth="457.0" AnchorPane.bottomAnchor="0.0"
               AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <Label alignment="CENTER" text="GLOBAL CHAT" textFill="WHITE">
+                <Label fx:id="titleLabel" alignment="CENTER" text="GLOBAL CHAT" textFill="WHITE">
                     <padding>
                         <Insets bottom="5.0" top="5.0"/>
                     </padding>
@@ -23,19 +22,19 @@
                         <Font name="Arial Bold" size="15.0"/>
                     </font>
                 </Label>
-                <ListView fx:id="messageView" prefHeight="414.0" prefWidth="380.0"
+                <ListView fx:id="messageView" prefHeight="667.0" prefWidth="457.0"
                           style="-fx-background-color: black; -fx-border-color: white;">
         </ListView>
                 <HBox maxHeight="50.0" prefHeight="50.0" prefWidth="200.0">
                     <children>
-                        <TextField fx:id="chatTextField" prefHeight="26.0" prefWidth="275.0"
+                        <TextField fx:id="chatTextField" prefHeight="27.0" prefWidth="351.0"
                                    promptText="Was möchtest du sagen?">
                             <HBox.margin>
                                 <Insets right="5.0"/>
                             </HBox.margin>
                         </TextField>
-                        <Button defaultButton="true" mnemonicParsing="false" onAction="#onSendChatButtonPressed" prefHeight="27.0"
-                                prefWidth="90.0" text="Senden"/>
+                        <Button defaultButton="true" mnemonicParsing="false" onAction="#onSendChatButtonPressed"
+                                prefHeight="27.0" prefWidth="90.0" text="Senden"/>
                     </children>
                     <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
@@ -44,8 +43,4 @@
             </children>
         </VBox>
     </children>
-    <stylesheets>
-        <URL value="@../css/swp.css"/>
-        <URL value="@../css/ChatViewPresenter.css"/>
-    </stylesheets>
 </AnchorPane>
