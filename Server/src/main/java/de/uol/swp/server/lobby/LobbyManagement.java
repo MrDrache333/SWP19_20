@@ -20,10 +20,6 @@ public class LobbyManagement {
 
     private Map<Integer, Lobby> lobbies = new HashMap<>();
 
-    public Collection<Lobby> getLobbies() {
-        return lobbies.values();
-    }
-
     /**
      * @author Paula, Haschem, Ferit
      * @version 0.1
@@ -53,5 +49,9 @@ public class LobbyManagement {
             return Optional.of(lobby);
         }
         return Optional.empty();
+    }
+
+    public Collection<Lobby> getLobbies() {
+        return lobbies.values();
     }
 }

@@ -52,21 +52,25 @@ public class MainMenuPresenter extends AbstractPresenter {
     @FXML
     private TableColumn<Lobby, String> name = new TableColumn<>("Name");
     @FXML
-    private TableColumn<Lobby, String> owner = new TableColumn<>("Host");
+    private TableColumn<Lobby, String> host = new TableColumn<>("Host");
     @FXML
-    private TableColumn<Lobby, String> members = new TableColumn<>("Spieler");
+    private TableColumn<Lobby, String> players = new TableColumn<>("Spieler");
 
     /**
      * Creates lobby table and assigns columns to attributes of Lobby class
      */
     @FXML
     private void initialize(){
-        name.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
-        owner.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getOwner().getUsername()));
-        members.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getUsers().size() + "/4"));
-        lobbiesView.getColumns().addAll(name, owner, members);
+        name.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getName()));
+        host.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getOwner().getUsername()));
+        players.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getUsers().size() + "/4"));
+        lobbiesView.getColumns().addAll(name, host, players);
+        name.setResizable(false);
+        host.setResizable(false);
+        players.setResizable(false);
+        name.setPrefWidth(110);
+        host.setPrefWidth(90);
     }
-
 
     @Subscribe
     public void loginSuccessful(LoginSuccessfulMessage message) {
@@ -74,7 +78,6 @@ public class MainMenuPresenter extends AbstractPresenter {
         userService.retrieveAllUsers();
         lobbyService.retrieveAllLobbies();
     }
-
 
     @Subscribe
     public void newUser(UserLoggedInMessage message) {
@@ -109,6 +112,10 @@ public class MainMenuPresenter extends AbstractPresenter {
         });
     }
 
+    /**
+     * Update of lobby list when a new lobby is created
+     * @param message
+     */
     @Subscribe
     public void onLobbyCreatedMessage(LobbyCreatedMessage message) {
         Platform.runLater(() -> {
@@ -116,6 +123,10 @@ public class MainMenuPresenter extends AbstractPresenter {
         });
     }
 
+    /**
+     * Fetching of lobby list, done upon login
+     * @param allLobbiesResponse
+     */
     @Subscribe
     public void lobbyList(AllOnlineLobbiesResponse allLobbiesResponse) {
         LOG.debug("Update of lobbies list" + allLobbiesResponse.getLobbies());
