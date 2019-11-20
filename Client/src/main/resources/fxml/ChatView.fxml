@@ -34,7 +34,7 @@
                                 <Insets right="5.0"/>
                             </HBox.margin>
                         </TextField>
-                        <Button mnemonicParsing="false" onAction="#onSendChatButtonPressed" prefHeight="27.0"
+                        <Button defaultButton="true" mnemonicParsing="false" onAction="#onSendChatButtonPressed" prefHeight="27.0"
                                 prefWidth="90.0" text="Senden"/>
                     </children>
                     <padding>
