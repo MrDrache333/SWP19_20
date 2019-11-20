@@ -6,6 +6,7 @@ import de.uol.swp.common.chat.ChatService;
 import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
+import de.uol.swp.server.chat.Chat;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -43,6 +44,10 @@ public class ChatViewPresenter extends AbstractPresenter {
     //Services
     private static ChatService chatService;
     private static UserService userService;
+    private static Chat chat;
+
+    //Erhalten der Chat-ID
+    String chatID = chat.getChatId();
 
     /**
      * Instantiates a new Chat view presenter.
@@ -63,16 +68,14 @@ public class ChatViewPresenter extends AbstractPresenter {
         message = chatTextField.getText();
 
         if (message != "") {
-            ChatMessage newMsg = new ChatMessage(loggedInUser,"");
-            chatService.sendMessage(newMsg);
-            LOG.debug("Sending message as User: "+loggedInUser.getUsername());
+
             ChatMessage newChatMessage = new ChatMessage(loggedInUser, message);
 
+            LOG.debug("Sending message as User: "+loggedInUser.getUsername());
             LOG.debug("new Message to send: "+ message);
 
             chatTextField.clear();
-
-            chatService.sendMessage(newChatMessage);
+            chatService.sendMessage(chatID, newChatMessage);
         }
     }
 

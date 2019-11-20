@@ -7,6 +7,7 @@ import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.server.AbstractService;
+import de.uol.swp.server.chat.ChatManagement;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,18 +18,22 @@ public class LobbyService extends AbstractService {
     private static final Logger LOG = LogManager.getLogger(LobbyService.class);
 
     private final LobbyManagement lobbyManagement;
+    private final ChatManagement chatManagement;
     private final AuthenticationService authenticationService;
 
     @Inject
-    public LobbyService(LobbyManagement lobbyManagement, AuthenticationService authenticationService, EventBus eventBus) {
+    public LobbyService(LobbyManagement lobbyManagement, AuthenticationService authenticationService, ChatManagement chatManagement, EventBus eventBus) {
         super(eventBus);
         this.lobbyManagement = lobbyManagement;
         this.authenticationService = authenticationService;
+        this.chatManagement = chatManagement;
     }
 
     @Subscribe
     public void onCreateLobbyRequest(CreateLobbyRequest msg) {
         lobbyManagement.createLobby(msg.getName(), msg.getOwner());
+        chatManagement.createChat();
+
         ServerMessage returnMessage = new CreateLobbyMessage(msg.getName(), msg.getUser());
         post(returnMessage);
         LOG.info("onCreateLobbyRequest wird auf dem Server aufgerufen.");
