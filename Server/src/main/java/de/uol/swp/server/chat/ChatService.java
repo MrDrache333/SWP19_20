@@ -10,6 +10,7 @@ import de.uol.swp.common.chat.request.ChatHistoryRequest;
 import de.uol.swp.common.chat.request.NewChatMessageRequest;
 import de.uol.swp.common.chat.response.ChatResponseMessage;
 import de.uol.swp.common.message.AbstractResponseMessage;
+import de.uol.swp.common.message.ResponseMessage;
 import de.uol.swp.server.AbstractService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -56,7 +57,7 @@ public class ChatService extends AbstractService {
         if (LOG.isDebugEnabled()) {
             LOG.debug("New ChatHistoryRequest from " + request.getSender().getUsername() + " for Chat " + request.getChatId());
         }
-        AbstractResponseMessage returnMessage;
+        ResponseMessage returnMessage;
         try {
             returnMessage = new ChatResponseMessage(chatManagement.getChat(request.getChatId()), request.getSender().getUsername());
         } catch (ChatException e) {
@@ -64,6 +65,8 @@ public class ChatService extends AbstractService {
             LOG.error(e);
         }
         returnMessage.initWithMessage(request);
+        if (request.getMessageContext().isPresent())
+            returnMessage.setMessageContext(request.getMessageContext().get());
         post(returnMessage);
     }
 
