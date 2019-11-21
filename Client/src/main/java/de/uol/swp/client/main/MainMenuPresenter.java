@@ -124,6 +124,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     public void onLobbyCreatedMessage(LobbyCreatedMessage message) {
         Platform.runLater(() -> {
             lobbies.add(message.getLobby());
+            lobbiesView.refresh();
         });
     }
 
