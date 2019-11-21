@@ -5,7 +5,6 @@ import de.uol.swp.common.chat.ChatMessage;
 import de.uol.swp.common.chat.ChatService;
 import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.user.User;
-import de.uol.swp.common.user.UserService;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -35,35 +34,36 @@ import java.util.List;
  */
 public class ChatViewPresenter extends AbstractPresenter {
     /**
-     * The constant fxml.
+     * Pfad zur zu verwendenen FXML.
      */
     public static final String fxml = "/fxml/ChatView.fxml";
     /**
-     * The constant styleSheet.
+     * Pfad zum zu verwendenen Stylesheet.
      */
     public static final String styleSheet = "css/ChatViewPresenter.css";
 
+    //Festlegen der Maximalen Chat-Historie
+    private static final int MAXCHATMESSAGEHISTORY = 100;
+    private static int maxChatMessageWidth;
+
     private static final Logger LOG = LogManager.getLogger(ChatViewPresenter.class);
 
+    //FXML elemente
+    @FXML
+    private AnchorPane chatViewAnchorPane;
     @FXML
     private TextField chatTextField;
     @FXML
-    private ListView messageView;
-    private static int maxChatMessageWidth;
-
-    @FXML
-    private Label titleLabel;
+    private ListView<VBox> messageView;
 
 
     //Liste mit formatierten Chatnachrichten
     private static ObservableList<VBox> chatMessages = FXCollections.observableArrayList();
     private static List<ChatMessage> chatMessageHistory = new ArrayList<>();
-    @FXML
-    private AnchorPane chatViewAnchorPane;
+
 
     //Services
     private static ChatService chatService;
-    private static UserService userService;
 
     /**
      * Instantiates a new Chat view presenter.
@@ -73,7 +73,10 @@ public class ChatViewPresenter extends AbstractPresenter {
     //--------------------------------------
     // FXML
     //--------------------------------------
+
+    //Wenn abei der Benutzung des TextFeldes eine Taste gedrueckt wird
     private EventHandler<KeyEvent> onKeyPressedinchatTextFieldEvent = event -> {
+        //Abschicken der Nachricht, wenn die ENTER-Taste gedrueckt wurde
         if (event.getCode() == KeyCode.ENTER) {
             onSendChatButtonPressed();
         }
@@ -86,35 +89,16 @@ public class ChatViewPresenter extends AbstractPresenter {
      */
     public static void onNewChatMessage(NewChatMessage msg) {
         Platform.runLater(() -> {
+            //Loesche alte Nachrichten bei bedarf
+            if (chatMessages.size() >= MAXCHATMESSAGEHISTORY) {
+                chatMessages.remove(0);
+                chatMessageHistory.remove(0);
+            }
+            //Fuege neue ChatNachricht hinzu
             chatMessageHistory.add(msg.getMessage());
             chatMessages.add(chatMessagetoBox(msg.getMessage()));
         });
     }
-
-    /**
-     * On send chat button pressed.
-     */
-    @FXML
-    public void onSendChatButtonPressed() {
-        String message;
-
-        message = chatTextField.getText();
-
-        if (message != "") {
-            LOG.debug("Sending message as User: "+loggedInUser.getUsername());
-            ChatMessage newChatMessage = new ChatMessage(loggedInUser, message);
-
-            LOG.debug("new Message to send: "+ message);
-
-            chatTextField.clear();
-
-            chatService.sendMessage(newChatMessage);
-        }
-    }
-
-    //--------------------------------------
-    // STATIC METHODS
-    //--------------------------------------
 
     /**
      * Creates a HBox with Labels from a given ChatMessage
@@ -208,7 +192,7 @@ public class ChatViewPresenter extends AbstractPresenter {
             }
         } else {
             //Wenn die empfangene Nachricht eine ServerMessage ist
-            message.setStyle("-fx-text-fill: grey; -fx-background-color: transparent; -fx-font-style: bold");
+            message.setStyle("-fx-text-fill: grey; -fx-background-color: transparent; -fx-font-style: bold; -fx-font-size: 14");
             hbox.setAlignment(Pos.CENTER);
             hbox.getChildren().add(message);
         }
@@ -218,9 +202,34 @@ public class ChatViewPresenter extends AbstractPresenter {
         return box;
     }
 
+    //--------------------------------------
+    // STATIC METHODS
+    //--------------------------------------
+
+    //Tauscht eine Nachricht im Chat durch eine andere aus
     private static void replaceChatMessage(int index, VBox box) {
         chatMessages.remove(index);
         chatMessages.add(index, box);
+    }
+
+    /**
+     * On send chat button pressed.
+     */
+    @FXML
+    public void onSendChatButtonPressed() {
+        String message;
+
+        message = chatTextField.getText();
+        //Pruefe auf leere Nachricht
+        if (!message.equals("")) {
+            LOG.debug("Sending message as User: " + loggedInUser.getUsername());
+            ChatMessage newChatMessage = new ChatMessage(loggedInUser, message);
+
+            LOG.debug("new Message to send: " + message);
+
+            chatTextField.clear();
+            chatService.sendMessage(newChatMessage);
+        }
     }
 
     /**
@@ -240,15 +249,15 @@ public class ChatViewPresenter extends AbstractPresenter {
      */
     @FXML
     public void initialize() {
+        //Erstellt eine neue Chat-Historie und uebergibt die Liste an die ListView
         updateChatMessages(new ArrayList<>());
         messageView.setItems(chatMessages);
+        //Berechnet die maximale Nachrichtenbreite
         maxChatMessageWidth = (int) chatViewAnchorPane.getPrefWidth() - 70;
+        //Nachrichten mit der ENTER-Taste abschicken
         chatTextField.setOnKeyPressed(onKeyPressedinchatTextFieldEvent);
-        chatMessages.addListener((ListChangeListener<VBox>) change -> {
-            Platform.runLater(() -> {
-                messageView.scrollTo(messageView.getItems().size() - 1);
-            });
-        });
+        //Automatisches Scrollen zur neuesten Nachricht
+        chatMessages.addListener((ListChangeListener<VBox>) change -> Platform.runLater(() -> messageView.scrollTo(messageView.getItems().size() - 1)));
 
     }
 
@@ -265,15 +274,6 @@ public class ChatViewPresenter extends AbstractPresenter {
         loggedInUser = user;
     }
 
-    /**
-     * Sets new userService.
-     *
-     * @param newUserService New value of userService.
-     */
-    public static void setUserService(UserService newUserService) {
-        userService = newUserService;
-    }
-
 
     //--------------------------------------
     // GETTER UND SETTER
@@ -288,15 +288,7 @@ public class ChatViewPresenter extends AbstractPresenter {
         chatService = newChatService;
     }
 
-    /**
-     * Sets logged in user.
-     *
-     * @param user the user
-     */
-    public static void setLoggedInUser(User user) {
-        loggedInUser = user;
-    }
-
+    //Aktualisiert die ListView indem alle übergebenen Nahrichten dieser hinzugefuegt werden
     private void updateChatMessages(List<ChatMessage> chatMessageList) {
         // Attention: This must be done on the FX Thread!
         Platform.runLater(() -> {
@@ -310,6 +302,4 @@ public class ChatViewPresenter extends AbstractPresenter {
             chatMessageList.forEach(msg -> chatMessages.add(chatMessagetoBox(msg)));
         });
     }
-
-
 }

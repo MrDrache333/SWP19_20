@@ -10,37 +10,31 @@
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="chatViewAnchorPane" prefHeight="702.0" prefWidth="457.0"
             style="-fx-background-color: black;" stylesheets="@../css/ChatViewPresenter.css"
             xmlns="http://javafx.com/javafx/8" fx:controller="de.uol.swp.client.chat.ChatViewPresenter">
-    <children>
-        <VBox alignment="CENTER" prefHeight="702.0" prefWidth="457.0" AnchorPane.bottomAnchor="0.0"
-              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-            <children>
-                <Label fx:id="titleLabel" alignment="CENTER" text="GLOBAL CHAT" textFill="WHITE">
-                    <padding>
-                        <Insets bottom="5.0" top="5.0"/>
-                    </padding>
-                    <font>
-                        <Font name="Arial Bold" size="15.0"/>
-                    </font>
-                </Label>
-                <ListView fx:id="messageView" prefHeight="667.0" prefWidth="457.0"
-                          style="-fx-background-color: black; -fx-border-color: white;">
+    <VBox alignment="CENTER" prefHeight="702.0" prefWidth="457.0" AnchorPane.bottomAnchor="0.0"
+          AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <Label alignment="CENTER" text="GLOBAL CHAT" textFill="WHITE">
+            <padding>
+                <Insets bottom="5.0" top="5.0"/>
+            </padding>
+            <font>
+                <Font name="Arial Bold" size="15.0"/>
+            </font>
+        </Label>
+        <ListView fx:id="messageView" prefHeight="667.0" prefWidth="457.0"
+                  style="-fx-background-color: black; -fx-border-color: white;">
         </ListView>
-                <HBox maxHeight="50.0" prefHeight="50.0" prefWidth="200.0" VBox.vgrow="NEVER">
-                    <children>
-                        <TextField fx:id="chatTextField" prefHeight="27.0" prefWidth="351.0"
-                                   promptText="Was möchtest du sagen?" HBox.hgrow="ALWAYS">
-                            <HBox.margin>
-                                <Insets right="5.0"/>
-                            </HBox.margin>
-                        </TextField>
-                        <Button defaultButton="true" mnemonicParsing="false" onAction="#onSendChatButtonPressed"
-                                prefHeight="27.0" prefWidth="90.0" text="Senden"/>
-                    </children>
-                    <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-                    </padding>
-                </HBox>
-            </children>
-        </VBox>
-    </children>
+        <HBox maxHeight="50.0" prefHeight="50.0" prefWidth="200.0" VBox.vgrow="NEVER">
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+            </padding>
+            <TextField fx:id="chatTextField" prefHeight="27.0" prefWidth="351.0"
+                       promptText="Was möchtest du sagen?" HBox.hgrow="ALWAYS">
+                <HBox.margin>
+                    <Insets right="5.0"/>
+                </HBox.margin>
+            </TextField>
+            <Button defaultButton="true" mnemonicParsing="false" onAction="#onSendChatButtonPressed"
+                    prefHeight="27.0" prefWidth="90.0" text="Senden"/>
+        </HBox>
+    </VBox>
 </AnchorPane>

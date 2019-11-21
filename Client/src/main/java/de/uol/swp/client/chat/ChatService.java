@@ -10,6 +10,7 @@ import de.uol.swp.common.user.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+@SuppressWarnings("UnstableApiUsage")
 public class ChatService implements de.uol.swp.common.chat.ChatService {
 
     private static final Logger LOG = LogManager.getLogger(ChatService.class);
