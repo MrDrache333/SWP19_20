@@ -12,9 +12,7 @@ public class Chat implements de.uol.swp.common.chat.Chat {
     private String ChatId;
     private ArrayList<ChatMessage> Messages = new ArrayList<>();
 
-    public Chat(String chatId) {
-        this.ChatId = chatId;
-    }
+    public Chat(String chatId) { this.ChatId = chatId; }
 
     /**
      * Gets ChatId.

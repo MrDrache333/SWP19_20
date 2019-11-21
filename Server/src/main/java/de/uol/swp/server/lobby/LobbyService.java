@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.UUID;
 
 public class LobbyService extends AbstractService {
     private static final Logger LOG = LogManager.getLogger(LobbyService.class);
@@ -33,11 +34,13 @@ public class LobbyService extends AbstractService {
 
     @Subscribe
     public void onCreateLobbyRequest(CreateLobbyRequest msg) {
-        lobbyManagement.createLobby(msg.getName(), msg.getOwner());
-        String chatID = chatManagement.createChat();
-        chatManagement.getChat(chatID);
 
-        ServerMessage returnMessage = new CreateLobbyMessage(msg.getName(), msg.getUser());
+        UUID chatID = lobbyManagement.createLobby(msg.getName(), msg.getOwner());
+
+        chatManagement.createChat(chatID.toString());
+        LOG.info("Der Chat mir der UUID " + chatID + " wurde erfolgreich erstellt");
+
+        ServerMessage returnMessage = new CreateLobbyMessage(msg.getName(), msg.getUser(), chatID);
         post(returnMessage);
         LOG.info("onCreateLobbyRequest wird auf dem Server aufgerufen.");
     }

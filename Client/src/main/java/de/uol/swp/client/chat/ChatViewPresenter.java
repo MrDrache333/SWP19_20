@@ -29,6 +29,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * The type Chat view presenter.
@@ -61,6 +62,7 @@ public class ChatViewPresenter extends AbstractPresenter {
     //Services
     private static ChatService chatService;
     private static UserService userService;
+    private UUID ChatID;
 
     /**
      * Instantiates a new Chat view presenter.

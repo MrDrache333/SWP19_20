@@ -119,7 +119,9 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
     @Subscribe
     public void onNewChatMessage(NewChatMessage msg) {
-        ChatViewPresenter.onNewChatMessage(msg);
+        if(msg.getChatId().equals("global")) {
+            ChatViewPresenter.onNewChatMessage(msg);
+        }
     }
 
     @Subscribe
