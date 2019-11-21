@@ -51,6 +51,9 @@ public class ChatViewPresenter extends AbstractPresenter {
     private ListView messageView;
     private static int maxChatMessageWidth;
 
+    @FXML
+    private Label titleLabel;
+
 
     //Liste mit formatierten Chatnachrichten
     private static ObservableList<VBox> chatMessages = FXCollections.observableArrayList();
