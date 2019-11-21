@@ -42,7 +42,15 @@ public class MainMenuPresenter extends AbstractPresenter {
     @FXML
     public void initialize() throws IOException {
        Pane newChatView = FXMLLoader.load(getClass().getResource(ChatViewPresenter.fxml));
+
         chatView.getStylesheets().add(ChatViewPresenter.styleSheet);
+        if (ChatViewPresenter.CHATTHEME.equals(ChatViewPresenter.THEME.Light)) {
+            LOG.debug("Loading Light Theme");
+            chatView.getStylesheets().add(ChatViewPresenter.styleSheet_light);
+        } else {
+            LOG.debug("Loading Dark Theme");
+            chatView.getStylesheets().add(ChatViewPresenter.styleSheet_dark);
+        }
         chatView.getChildren().add(newChatView);
     }
 
