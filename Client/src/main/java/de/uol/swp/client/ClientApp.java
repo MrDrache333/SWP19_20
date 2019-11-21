@@ -149,8 +149,10 @@ public class ClientApp extends Application implements ConnectionListener {
      */
     @Subscribe
     public void CreatLobbyMessage(CreateLobbyMessage message) {
-        sceneManager.showLobbyScreen(message.getName());
-        LOG.debug("CreateLobbyMessage vom Server erfolgreich angekommen");
+        if (message.getUser().getUsername().equals(user.getUsername())) {
+            sceneManager.showLobbyScreen(message.getName());
+            LOG.debug("CreateLobbyMessage vom Server erfolgreich angekommen");
+        }
     }
 
 
