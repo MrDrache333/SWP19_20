@@ -116,19 +116,6 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     /**
-     * Update of lobby list when a new lobby is created
-     *
-     * @param message
-     */
-    @Subscribe
-    public void onLobbyCreatedMessage(LobbyCreatedMessage message) {
-        Platform.runLater(() -> {
-            lobbies.add(message.getLobby());
-            lobbiesView.refresh();
-        });
-    }
-
-    /**
      * Fetching of lobby list, done upon login
      *
      * @param allLobbiesResponse
