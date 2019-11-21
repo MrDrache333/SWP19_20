@@ -9,6 +9,7 @@ import de.uol.swp.client.di.ClientModule;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.exception.RegistrationExceptionMessage;
+import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import de.uol.swp.common.user.response.LoginSuccessfulMessage;
 import de.uol.swp.common.user.response.RegistrationSuccessfulEvent;
 import io.netty.channel.Channel;
@@ -148,7 +149,13 @@ public class ClientApp extends Application implements ConnectionListener {
 		sceneManager.showServerError(e);
 	}
 
-
+	@Subscribe
+	public void onUserLoggedOutMessage(UserLoggedOutMessage message){
+		LOG.info("Logout successful.");
+		if (message.getUsername().equals(user.getUsername())){
+			sceneManager.showLoginScreen();
+		}
+	}
 
 	// -----------------------------------------------------
 	// JavFX Help methods

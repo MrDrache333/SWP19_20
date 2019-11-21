@@ -11,6 +11,7 @@ import de.uol.swp.common.user.response.LoginSuccessfulMessage;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import org.apache.logging.log4j.LogManager;
@@ -71,5 +72,9 @@ public class MainMenuPresenter extends AbstractPresenter {
         });
     }
 
+    @FXML
+    public void onLogoutButtonPressed(ActionEvent actionEvent) {
+        userService.logout(loggedInUser);
+    }
 
 }
