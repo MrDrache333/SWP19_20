@@ -12,6 +12,7 @@ import de.uol.swp.common.lobby.message.CreateLobbyMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
+import de.uol.swp.common.lobby.LobbyService;
 import de.uol.swp.common.user.exception.RegistrationExceptionMessage;
 import de.uol.swp.common.user.response.LoginSuccessfulMessage;
 import de.uol.swp.common.user.response.RegistrationSuccessfulEvent;
@@ -31,6 +32,7 @@ public class ClientApp extends Application implements ConnectionListener {
     private int port;
 
     private UserService userService;
+    private LobbyService lobbyService;
 
     private User user;
 
@@ -75,6 +77,7 @@ public class ClientApp extends Application implements ConnectionListener {
 
         // get user service from guice, is needed for logout
         this.userService = injector.getInstance(UserService.class);
+        this.lobbyService = injector.getInstance(LobbyService.class);
 
         // get event bus from guice
         eventBus = injector.getInstance(EventBus.class);
@@ -99,9 +102,7 @@ public class ClientApp extends Application implements ConnectionListener {
         });
         t.setDaemon(true);
         t.start();
-
     }
-
 
     @Override
     public void connectionEstablished(Channel ch) {
@@ -146,14 +147,17 @@ public class ClientApp extends Application implements ConnectionListener {
     }
 
     /**
+     * Empfängt vom Server die Message, dass die Lobby erstellt worden ist und öffnet im SceneManager
+     * somit die Lobby. Überprüft außerdem ob der Ersteller mit dem eingeloggten User übereinstimmt, damit
+     * nur dem ersteller ein neu erstelltes Lobbyfenster angezeigt wird.
+     *
      * @author Paula, Haschem, Ferit
      * @version 0.1
-     * Empfängt vom Server die Message, dass die Lobby erstellt worden ist und öffnet im SceneManager
-     * somit die Lobby.
+     * @since Sprint2
      */
     @Subscribe
     public void onCreateLobbyMessage(CreateLobbyMessage message) {
-        if (message.getUser().getUsername().equals(loggedInUser.getUsername())) {
+        if (message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showLobbyScreen(message.getName());
             LOG.debug("CreateLobbyMessage vom Server erfolgreich angekommen");
         }

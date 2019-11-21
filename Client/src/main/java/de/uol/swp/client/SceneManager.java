@@ -90,7 +90,7 @@ public class SceneManager {
     private void initMainView() {
         if (mainScene == null) {
             Parent rootPane = initPresenter(MainMenuPresenter.fxml);
-            mainScene = new Scene(rootPane, 600, 400);
+            mainScene = new Scene(rootPane, 600, 405);
             mainScene.getStylesheets().add(styleSheet);
         }
     }
@@ -111,6 +111,7 @@ public class SceneManager {
         }
     }
 
+    // LobbyView wird initalisiert und deklariert.
     private void initLobbyView() {
 
         if (lobbyScene == null) {
@@ -189,6 +190,13 @@ public class SceneManager {
         showScene(registrationScene, "Registration");
     }
 
+    /**
+     * Es wird eine neue Stage mit der lobbyScene angezeigt und mit dem Attribut geöffnet.
+     * @author Paula, Haschem, Ferit
+     * @param title der Übergebene Titel aus dem MainMenuPresenter
+     * @version 0.1
+     * @since Sprint2
+     */
     public void showLobbyScreen(String title) {
         Platform.runLater(() -> {
             lobbyStage.setTitle(title);

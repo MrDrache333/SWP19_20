@@ -6,6 +6,8 @@ import com.google.inject.Inject;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.exception.LobbyNotFoundExceptionMessage;
 import de.uol.swp.common.lobby.message.*;
+import de.uol.swp.common.lobby.request.RetrieveAllOnlineLobbiesRequest;
+import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.usermanagement.AuthenticationService;
@@ -25,6 +27,17 @@ public class LobbyService extends AbstractService {
         this.lobbyManagement = lobbyManagement;
         this.authenticationService = authenticationService;
     }
+
+    /**
+     * lobbyManagment auf dem Server wird aufgerufen und übergibt LobbyNamen und den Besitzer.
+     * Wenn dies erfolgt ist, folgt eine returnMessage an den Client die LobbyView anzuzeigen.
+     *
+     * @param msg enthält die Message vom Client mit den benötigten Daten um die Lobby zu erstellen.
+     * @author Paula, Haschem, Ferit
+     * @version 0.1
+     * @since Sprint2
+     */
+
 
     @Subscribe
     public void onCreateLobbyRequest(CreateLobbyRequest msg) {
@@ -74,5 +87,13 @@ public class LobbyService extends AbstractService {
 
         // TODO: error handling not existing lobby
     }
+
+    @Subscribe
+    public void onRetrieveAllOnlineLobbiesRequest(RetrieveAllOnlineLobbiesRequest msg) {
+        AllOnlineLobbiesResponse response = new AllOnlineLobbiesResponse(lobbyManagement.getLobbies());
+        response.initWithMessage(msg);
+        post(response);
+    }
+
 
 }

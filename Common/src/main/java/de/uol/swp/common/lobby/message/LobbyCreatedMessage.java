@@ -10,18 +10,16 @@ public class LobbyCreatedMessage extends AbstractServerMessage {
      * A message to indicate a new lobby
      */
 
-        private static final long serialVersionUID = -2071886836547126480L;
-        private Lobby lobby;
+    private static final long serialVersionUID = -2071886836547126480L;
+    private Lobby lobby;
 
-        public LobbyCreatedMessage(){
-        }
-
-
-
-        public Lobby getLobby() {
-            return lobby;
-        }
-
+    public LobbyCreatedMessage() {
     }
+
+    public Lobby getLobby() {
+        return lobby;
+    }
+
+}
 
 

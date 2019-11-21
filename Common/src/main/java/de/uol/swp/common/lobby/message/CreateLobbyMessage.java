@@ -3,10 +3,17 @@ package de.uol.swp.common.lobby.message;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.user.User;
 
+/**
+ * Message das eine neue Lobby erstellt worden ist und die gegebenen Daten genutz werden können.
+ *
+ * @author Paula, Haschem, Ferit
+ * @version 0.1
+ * @since Sprint2
+ */
 public class CreateLobbyMessage extends AbstractLobbyMessage {
-    private  String name;
+    private String name;
     private User user;
-private Lobby lobby;
+    private Lobby lobby;
 
     public CreateLobbyMessage() {
     }
@@ -14,11 +21,9 @@ private Lobby lobby;
     public CreateLobbyMessage(String name, User user) {
         this.name = name;
         this.user = user;
-
-
-
     }
-    public CreateLobbyMessage(Lobby lobby){
+
+    public CreateLobbyMessage(Lobby lobby) {
         this.lobby = lobby;
     }
 
@@ -33,7 +38,6 @@ private Lobby lobby;
     public User getUser() {
         return user;
     }
-
 
     public void setUser(User user) {
         this.user = user;
