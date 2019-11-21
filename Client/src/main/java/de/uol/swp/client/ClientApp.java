@@ -7,7 +7,9 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import de.uol.swp.client.di.ClientModule;
 import de.uol.swp.client.main.MainMenuPresenter;
+import de.uol.swp.common.lobby.exception.LobbyNotFoundExceptionMessage;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
+import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.exception.RegistrationExceptionMessage;
@@ -150,13 +152,38 @@ public class ClientApp extends Application implements ConnectionListener {
      * somit die Lobby.
      */
     @Subscribe
-    public void CreatLobbyMessage(CreateLobbyMessage message) {
+    public void onCreateLobbyMessage(CreateLobbyMessage message) {
         if (message.getUser().getUsername().equals(loggedInUser.getUsername())) {
             sceneManager.showLobbyScreen(message.getName());
             LOG.debug("CreateLobbyMessage vom Server erfolgreich angekommen");
         }
     }
 
+    /**
+     * @author Marvin
+     * @version 0.1
+     * Fehlermeldung wenn keine Lobby gefunden wird
+     */
+
+    @Subscribe
+    public void onLobbyNotFoundExceptionMessage(LobbyNotFoundExceptionMessage message) {
+        sceneManager.showServerError("Lobby error " + message);
+        LOG.error("Lobby error " + message);
+    }
+
+    /**
+     * @author Marvin
+     * @version 0.1
+     * Szenenwechsel wenn erfolgreich beigetreten wurde
+     */
+
+    @Subscribe
+    public void onUserJoinedLobbyMessage(UserJoinedLobbyMessage message){
+        if(message.getUser().getUsername().equals(loggedInUser.getUsername())){
+            sceneManager.showLobbyScreen(message.getName());
+            LOG.debug("UserJoinedLobbyMessage vom Server erfolgreich angekommen");
+        }
+    }
 
     @Subscribe
     private void handleEventBusError(DeadEvent deadEvent) {

@@ -33,7 +33,16 @@
                     <Insets/>
                 </opaqueInsets>
                 <padding>
-                    <Insets top="350.0"/>
+                    <Insets top="300.0"/>
+                </padding>
+            </ButtonBar>
+            <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <buttons>
+                    <Button fx:id="JoinLobby" mnemonicParsing="false" onAction="#OnJoinLobbyButtonPressed"
+                            prefHeight="27.0" prefWidth="347.0" text="Lobby beitreten"/>
+                </buttons>
+                <padding>
+                    <Insets left="10.0"/>
                 </padding>
             </ButtonBar>
         </GridPane>

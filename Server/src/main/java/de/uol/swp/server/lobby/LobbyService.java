@@ -4,13 +4,13 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import de.uol.swp.common.lobby.Lobby;
+import de.uol.swp.common.lobby.exception.LobbyNotFoundExceptionMessage;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import java.util.Optional;
 
 public class LobbyService extends AbstractService {
@@ -37,12 +37,18 @@ public class LobbyService extends AbstractService {
     @Subscribe
     public void onLobbyJoinUserRequest(LobbyJoinUserRequest lobbyJoinUserRequest) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyJoinUserRequest.getName());
-
+        LOG.info("LobbyJoinUserRequest empfangen");
+        ServerMessage returnMessage;
+        ;
         if (lobby.isPresent()) {
             lobby.get().joinUser(lobbyJoinUserRequest.getUser());
-            sendToAll(lobbyJoinUserRequest.getName(), new UserJoinedLobbyMessage(lobbyJoinUserRequest.getName(), lobbyJoinUserRequest.getUser()));
+            returnMessage = new UserJoinedLobbyMessage(lobbyJoinUserRequest.getName(), lobbyJoinUserRequest.getUser());
+            LOG.info("Lobby vorhanden, User gejoined, UserJoinedLobbyMessage gesendet");
+        } else {
+            returnMessage = new LobbyNotFoundExceptionMessage("Lobby " + lobbyJoinUserRequest.getName() + " not Found!");
+            LOG.info("Lobby nicht vorhanden; LobbyNotFoundExceptionMessage gesendet");
         }
-        // TODO: error handling not existing lobby
+        post(returnMessage);
     }
 
 

@@ -5,6 +5,7 @@ import com.sun.nio.sctp.HandlerResult;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
 import de.uol.swp.common.lobby.message.CreateLobbyRequest;
+import de.uol.swp.common.lobby.message.LobbyJoinUserRequest;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.dto.UserDTO;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
@@ -108,6 +109,25 @@ public class MainMenuPresenter extends AbstractPresenter {
             CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), loggedInUser);
             eventBus.post(msg);
             LOG.info("Request wurde gesendet.");
+        }
+
+    }
+
+    /**
+     * @author Marvin
+     * @version 0.1
+     * Fängt Button ab und sendet Request zum Beitritt der Lobby an den Server.
+     */
+
+    @FXML
+    public void OnJoinLobbyButtonPressed(ActionEvent event) {
+        if (lobbyName.getText().equals("")) {
+
+            showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen Lobby Namen ein! ", "Fehler");
+        } else {
+            LobbyJoinUserRequest msg = new LobbyJoinUserRequest(lobbyName.getText(), loggedInUser);
+            eventBus.post(msg);
+            LOG.info("JoinRequest wurde gesendet.");
         }
 
     }
