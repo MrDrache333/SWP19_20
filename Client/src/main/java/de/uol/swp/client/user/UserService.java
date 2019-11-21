@@ -54,7 +54,7 @@ public class UserService implements de.uol.swp.common.user.UserService {
     }
 
     public void dropUser(User user) {
-        //TODO: Implement me
+        // TODO: Implement me
     }
 
     @Override
