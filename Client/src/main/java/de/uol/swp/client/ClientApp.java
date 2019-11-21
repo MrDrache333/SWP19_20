@@ -155,7 +155,6 @@ public class ClientApp extends Application implements ConnectionListener {
         }
     }
 
-
     @Subscribe
     private void handleEventBusError(DeadEvent deadEvent) {
         LOG.error("DeadEvent detected " + deadEvent);

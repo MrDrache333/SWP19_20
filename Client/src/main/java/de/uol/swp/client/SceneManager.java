@@ -90,7 +90,7 @@ public class SceneManager {
     private void initMainView() {
         if (mainScene == null) {
             Parent rootPane = initPresenter(MainMenuPresenter.fxml);
-            mainScene = new Scene(rootPane, 600, 400);
+            mainScene = new Scene(rootPane, 600, 405);
             mainScene.getStylesheets().add(styleSheet);
         }
     }
