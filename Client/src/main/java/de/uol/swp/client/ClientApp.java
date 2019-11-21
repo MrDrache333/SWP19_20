@@ -171,8 +171,10 @@ public class ClientApp extends Application implements ConnectionListener {
 
     @Subscribe
     public void onLobbyNotFoundExceptionMessage(LobbyNotFoundExceptionMessage message) {
-        sceneManager.showServerError("Lobby error " + message);
-        LOG.error("Lobby error " + message);
+        if (message.getUser().getUsername().equals(user.getUsername())) {
+            sceneManager.showServerError(message.toString());
+            LOG.error("Lobby error " + message);
+        }
     }
 
     /**
@@ -182,8 +184,8 @@ public class ClientApp extends Application implements ConnectionListener {
      */
 
     @Subscribe
-    public void onUserJoinedLobbyMessage(UserJoinedLobbyMessage message){
-        if(message.getUser().getUsername().equals(loggedInUser.getUsername())){
+    public void onUserJoinedLobbyMessage(UserJoinedLobbyMessage message) {
+        if (message.getUser().getUsername().equals(loggedInUser.getUsername())) {
             sceneManager.showLobbyScreen(message.getName());
             LOG.debug("UserJoinedLobbyMessage vom Server erfolgreich angekommen");
         }

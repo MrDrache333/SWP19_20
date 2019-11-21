@@ -13,6 +13,7 @@ import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import java.util.Optional;
 
 public class LobbyService extends AbstractService {
@@ -47,18 +48,27 @@ public class LobbyService extends AbstractService {
         LOG.info("onCreateLobbyRequest wird auf dem Server aufgerufen.");
     }
 
+    /**
+     * Lobby wird rausgesucht und falls vorhanden wird der user gejoined, andernfalls wird
+     * eine ExceptionMessage zurückgegeben.
+     *
+     * @param msg enthält die Message vom Client mit Lobbynamen und User.
+     * @author Marvin
+     * @version 0.1
+     * @since Sprint2
+     */
+
     @Subscribe
-    public void onLobbyJoinUserRequest(LobbyJoinUserRequest lobbyJoinUserRequest) {
-        Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyJoinUserRequest.getName());
+    public void onLobbyJoinUserRequest(LobbyJoinUserRequest msg) {
+        Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getName());
         LOG.info("LobbyJoinUserRequest empfangen");
         ServerMessage returnMessage;
-        ;
         if (lobby.isPresent()) {
-            lobby.get().joinUser(lobbyJoinUserRequest.getUser());
-            returnMessage = new UserJoinedLobbyMessage(lobbyJoinUserRequest.getName(), lobbyJoinUserRequest.getUser());
+            lobby.get().joinUser(msg.getUser());
+            returnMessage = new UserJoinedLobbyMessage(msg.getName(), msg.getUser());
             LOG.info("Lobby vorhanden, User gejoined, UserJoinedLobbyMessage gesendet");
         } else {
-            returnMessage = new LobbyNotFoundExceptionMessage("Lobby " + lobbyJoinUserRequest.getName() + " not Found!");
+            returnMessage = new LobbyNotFoundExceptionMessage("Lobby " + msg.getName() + " not Found!", msg.getUser());
             LOG.info("Lobby nicht vorhanden; LobbyNotFoundExceptionMessage gesendet");
         }
         post(returnMessage);
