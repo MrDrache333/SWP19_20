@@ -135,14 +135,14 @@ public class ChatViewPresenter extends AbstractPresenter {
         pb.setImage(new Image("/images/pb_template.png"));
         pb.setFitHeight(25);
         pb.setFitWidth(25);
-
-        if (msg.getSender().getUsername().equals(loggedInUser.getUsername())) {
-            //Wenn die Nachricht mehrere Zeilen umfasst, dann aendere den Radius der Ecken
-            message.setStyle("-fx-background-radius: " + (plainMessage.length() > message.getMaxWidth() / 10 ? "15" : "90") + ";-fx-background-color: #1C6FEE;-fx-text-fill: white; -fx-font-size: 16");
-            sender.setText("Du");
-            sender.setAlignment(Pos.BOTTOM_RIGHT);
-            message.setAlignment(Pos.BOTTOM_RIGHT);
-            message.setPadding(new Insets(5, 5, 5, 5));
+        if (!msg.getSender().getUsername().equals("server")) {
+            if (msg.getSender().getUsername().equals(loggedInUser.getUsername())) {
+                //Wenn die Nachricht mehrere Zeilen umfasst, dann aendere den Radius der Ecken
+                message.setStyle("-fx-background-radius: " + (plainMessage.length() > message.getMaxWidth() / 10 ? "15" : "90") + ";-fx-background-color: #1C6FEE;-fx-text-fill: white; -fx-font-size: 16");
+                sender.setText("Du");
+                sender.setAlignment(Pos.BOTTOM_RIGHT);
+                message.setAlignment(Pos.BOTTOM_RIGHT);
+                message.setPadding(new Insets(5, 5, 5, 5));
             /*
             SVGPath indicator = new SVGPath();
             indicator.setContent("M 0 0 c 5 15 20 20 20 20 c -12.8 0 -20 -10 -20.0 -10");
@@ -150,58 +150,64 @@ public class ChatViewPresenter extends AbstractPresenter {
 
              */
 
-            hbox.getChildren().add(message);
-            //hbox.getChildren().add(indicator);
-            box.alignmentProperty().setValue(Pos.BOTTOM_RIGHT);
-            hbox.alignmentProperty().setValue(Pos.BOTTOM_RIGHT);
+                hbox.getChildren().add(message);
+                //hbox.getChildren().add(indicator);
+                box.alignmentProperty().setValue(Pos.BOTTOM_RIGHT);
+                hbox.alignmentProperty().setValue(Pos.BOTTOM_RIGHT);
 
 
-        } else {
-            //Wenn die Nachricht mehrere Zeilen umfasst, dann aendere den Radius der Ecken
-            message.setStyle("-fx-background-radius: " + (plainMessage.length() > message.getMaxWidth() / 10 ? "15" : "90") + ";-fx-background-color: #4D4C4F;-fx-text-fill: white; -fx-font-size: 16");
-            sender.setAlignment(Pos.BOTTOM_LEFT);
-            sender.setPadding(new Insets(0, 0, 0, 40));
-            message.setAlignment(Pos.BOTTOM_LEFT);
-            message.setPadding(new Insets(8, 8, 8, 8));
+            } else {
+                //Wenn die Nachricht mehrere Zeilen umfasst, dann aendere den Radius der Ecken
+                message.setStyle("-fx-background-radius: " + (plainMessage.length() > message.getMaxWidth() / 10 ? "15" : "90") + ";-fx-background-color: #4D4C4F;-fx-text-fill: white; -fx-font-size: 16");
+                sender.setAlignment(Pos.BOTTOM_LEFT);
+                sender.setPadding(new Insets(0, 0, 0, 40));
+                message.setAlignment(Pos.BOTTOM_LEFT);
+                message.setPadding(new Insets(8, 8, 8, 8));
             /*
             SVGPath indicator = new SVGPath();
             indicator.setContent("m 10.0 0 c -2.5 7.5 -10.0 10.0 -10.0 10.0 c 6.4 0 10.0 -5.0 10.0 -5.0");
             indicator.setStyle("-fx-padding: 0,-20,0,0; -fx-fill: #4D4C4F;");
 
              */
-            hbox.setSpacing(5);
+                hbox.setSpacing(5);
 
-            //Vorrangegangene Eintraege ggf. bearbeiten
-            if (chatMessageHistory.size() > 1) {
-                String lastsender = chatMessageHistory.get(chatMessageHistory.size() - 1).getSender().getUsername();
-                if (msg.getSender().getUsername().equals(lastsender) && !loggedInUser.getUsername().equals(msg.getSender().getUsername())) {
-                    //Letzte Box abändern oder löschen?
-                    if (chatMessages.size() >= 1) {
-                        VBox tempVBox = chatMessages.get(chatMessages.size() - 1);
-                        HBox tempHBox = (HBox) tempVBox.getChildren().get(tempVBox.getChildren().size() - 1);
-                        if (tempHBox.getChildren().size() >= 2) {
-                            tempHBox.getChildren().remove(0);
-                            ImageView tempImageView = new ImageView();
-                            tempImageView.setFitWidth(25);
-                            tempHBox.getChildren().add(0, tempImageView);
-                            tempVBox.getChildren().remove(tempVBox.getChildren().size() - 1);
-                            tempVBox.getChildren().add(tempHBox);
-                            replaceChatMessage(chatMessages.size() - 1, tempVBox);
+                //Vorrangegangene Eintraege ggf. bearbeiten
+                if (chatMessageHistory.size() > 1) {
+                    String lastsender = chatMessageHistory.get(chatMessageHistory.size() - 1).getSender().getUsername();
+                    if (msg.getSender().getUsername().equals(lastsender) && !loggedInUser.getUsername().equals(msg.getSender().getUsername())) {
+                        //Letzte Box abändern oder löschen?
+                        if (chatMessages.size() >= 1) {
+                            VBox tempVBox = chatMessages.get(chatMessages.size() - 1);
+                            HBox tempHBox = (HBox) tempVBox.getChildren().get(tempVBox.getChildren().size() - 1);
+                            if (tempHBox.getChildren().size() >= 2) {
+                                tempHBox.getChildren().remove(0);
+                                ImageView tempImageView = new ImageView();
+                                tempImageView.setFitWidth(25);
+                                tempHBox.getChildren().add(0, tempImageView);
+                                tempVBox.getChildren().remove(tempVBox.getChildren().size() - 1);
+                                tempVBox.getChildren().add(tempHBox);
+                                replaceChatMessage(chatMessages.size() - 1, tempVBox);
+                            } else
+                                box.getChildren().add(sender);
                         } else
                             box.getChildren().add(sender);
-                    } else
+                    } else {
                         box.getChildren().add(sender);
-                } else {
+                    }
+                } else
                     box.getChildren().add(sender);
-                }
-            } else
-                box.getChildren().add(sender);
 
-            hbox.getChildren().add(pb);
-            //hbox.getChildren().add(indicator);
+                hbox.getChildren().add(pb);
+                //hbox.getChildren().add(indicator);
+                hbox.getChildren().add(message);
+                box.alignmentProperty().setValue(Pos.BOTTOM_LEFT);
+                hbox.alignmentProperty().setValue(Pos.BOTTOM_LEFT);
+            }
+        } else {
+            //Wenn die empfangene Nachricht eine ServerMessage ist
+            message.setStyle("-fx-text-fill: grey; -fx-background-color: transparent; -fx-font-style: bold");
+            hbox.setAlignment(Pos.CENTER);
             hbox.getChildren().add(message);
-            box.alignmentProperty().setValue(Pos.BOTTOM_LEFT);
-            hbox.alignmentProperty().setValue(Pos.BOTTOM_LEFT);
         }
         box.getChildren().add(hbox);
         box.setPadding(new Insets(0, 0, 0, 0));
@@ -233,7 +239,7 @@ public class ChatViewPresenter extends AbstractPresenter {
     public void initialize() {
         updateChatMessages(new ArrayList<>());
         messageView.setItems(chatMessages);
-        maxChatMessageWidth = (int) chatViewAnchorPane.getPrefWidth() - 50;
+        maxChatMessageWidth = (int) chatViewAnchorPane.getPrefWidth() - 70;
         chatTextField.setOnKeyPressed(onKeyPressedinchatTextFieldEvent);
         chatMessages.addListener((ListChangeListener<VBox>) change -> {
             Platform.runLater(() -> {

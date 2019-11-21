@@ -25,10 +25,10 @@
                 <ListView fx:id="messageView" prefHeight="667.0" prefWidth="457.0"
                           style="-fx-background-color: black; -fx-border-color: white;">
         </ListView>
-                <HBox maxHeight="50.0" prefHeight="50.0" prefWidth="200.0">
+                <HBox maxHeight="50.0" prefHeight="50.0" prefWidth="200.0" VBox.vgrow="NEVER">
                     <children>
                         <TextField fx:id="chatTextField" prefHeight="27.0" prefWidth="351.0"
-                                   promptText="Was möchtest du sagen?">
+                                   promptText="Was möchtest du sagen?" HBox.hgrow="ALWAYS">
                             <HBox.margin>
                                 <Insets right="5.0"/>
                             </HBox.margin>

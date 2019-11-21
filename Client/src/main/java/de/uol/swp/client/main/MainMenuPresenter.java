@@ -3,6 +3,7 @@ package de.uol.swp.client.main;
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.chat.ChatViewPresenter;
+import de.uol.swp.common.chat.ChatMessage;
 import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.chat.response.ChatResponseMessage;
 import de.uol.swp.common.user.dto.UserDTO;
@@ -79,13 +80,19 @@ public class MainMenuPresenter extends AbstractPresenter {
         Platform.runLater(() -> {
             if (users != null && loggedInUser != null && !loggedInUser.equals(message.getUsername()))
                 users.add(message.getUsername());
+            ChatViewPresenter.onNewChatMessage(new NewChatMessage("global", new ChatMessage(new UserDTO("server", "", ""), message.getUsername() + " ist dem Server beigereten")));
         });
     }
 
     @Subscribe
     public void userLeft(UserLoggedOutMessage message) {
         LOG.debug("User " + message.getUsername() + " logged out");
-        Platform.runLater(() -> users.remove(message.getUsername()));
+        Platform.runLater(() -> {
+            if (users.contains(message.getUsername())) {
+                users.remove(message.getUsername());
+                ChatViewPresenter.onNewChatMessage(new NewChatMessage("global", new ChatMessage(new UserDTO("server", "", ""), message.getUsername() + " hat den Server verlassen")));
+            }
+        });
     }
 
     @Subscribe
