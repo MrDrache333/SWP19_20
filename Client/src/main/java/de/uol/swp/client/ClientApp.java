@@ -142,10 +142,13 @@ public class ClientApp extends Application implements ConnectionListener {
     }
 
     /**
+     * Empfängt vom Server die Message, dass die Lobby erstellt worden ist und öffnet im SceneManager
+     * somit die Lobby. Überprüft außerdem ob der Ersteller mit dem eingeloggten User übereinstimmt, damit
+     * nur dem ersteller ein neu erstelltes Lobbyfenster angezeigt wird.
+     *
      * @author Paula, Haschem, Ferit
      * @version 0.1
-     * Empfängt vom Server die Message, dass die Lobby erstellt worden ist und öffnet im SceneManager
-     * somit die Lobby.
+     * @since Sprint2
      */
     @Subscribe
     public void CreatLobbyMessage(CreateLobbyMessage message) {

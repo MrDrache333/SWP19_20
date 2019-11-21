@@ -14,6 +14,9 @@ public class LobbyDTO implements Lobby, Serializable {
     private final String name;
     private User owner;
     private Set<User> users = new TreeSet<>();
+    /**
+     * Eindeutige UUID für die Lobby um Lobbys mit gleichen Namen unterscheiden zu können Serverseitig.
+     */
     private UUID lobbyID;
 
 

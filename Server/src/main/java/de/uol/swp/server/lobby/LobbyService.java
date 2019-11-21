@@ -28,6 +28,17 @@ public class LobbyService extends AbstractService {
         this.authenticationService = authenticationService;
     }
 
+    /**
+     * lobbyManagment auf dem Server wird aufgerufen und übergibt LobbyNamen und den Besitzer.
+     * Wenn dies erfolgt ist, folgt eine returnMessage an den Client die LobbyView anzuzeigen.
+     *
+     * @param msg enthält die Message vom Client mit den benötigten Daten um die Lobby zu erstellen.
+     * @author Paula, Haschem, Ferit
+     * @version 0.1
+     * @since Sprint2
+     */
+
+
     @Subscribe
     public void onCreateLobbyRequest(CreateLobbyRequest msg) {
         lobbyManagement.createLobby(msg.getName(), msg.getOwner());

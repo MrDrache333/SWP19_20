@@ -63,7 +63,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      * Creates lobby table and assigns columns to attributes of Lobby class
      */
     @FXML
-    private void initialize(){
+    private void initialize() {
         name.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getName()));
         host.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getOwner().getUsername()));
         players.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getUsers().size() + "/4"));
@@ -117,6 +117,7 @@ public class MainMenuPresenter extends AbstractPresenter {
 
     /**
      * Update of lobby list when a new lobby is created
+     *
      * @param message
      */
     @Subscribe
@@ -128,6 +129,7 @@ public class MainMenuPresenter extends AbstractPresenter {
 
     /**
      * Fetching of lobby list, done upon login
+     *
      * @param allLobbiesResponse
      */
     @Subscribe
@@ -138,7 +140,7 @@ public class MainMenuPresenter extends AbstractPresenter {
 
     private void updateLobbiesList(List<LobbyDTO> lobbyList) {
         Platform.runLater(() -> {
-            if(lobbies == null) {
+            if (lobbies == null) {
                 lobbies = FXCollections.observableArrayList();
                 lobbiesView.setItems(lobbies);
             }
@@ -163,6 +165,16 @@ public class MainMenuPresenter extends AbstractPresenter {
         alert.show();
     }
 
+    /**
+     * Die Methode fängt den Button-Klick ab und prüft, ob der LobbyName leer ist.
+     * Falls ja: Wird eine Fehlermeldung rausgegeben.
+     * Falls nein: Wir eine CreateLobbyRequest mit dem eingegeben LobbyNamen und dem eingeloggten User auf den
+     * Eventbus gepackt.
+     *
+     * @author Paula, Haschem, Ferit
+     * @version 0.1
+     * @since Sprint2
+     */
     @FXML
     public void OnCreateLobbyButtonPressed(ActionEvent event) {
         if (lobbyName.getText().equals("")) {
