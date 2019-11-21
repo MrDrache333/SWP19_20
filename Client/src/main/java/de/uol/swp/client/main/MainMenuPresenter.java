@@ -4,7 +4,11 @@ import com.google.common.eventbus.Subscribe;
 import com.sun.nio.sctp.HandlerResult;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
+import de.uol.swp.common.lobby.Lobby;
+import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.lobby.message.CreateLobbyRequest;
+import de.uol.swp.common.lobby.message.LobbyCreatedMessage;
+import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.dto.UserDTO;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
@@ -12,12 +16,15 @@ import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import de.uol.swp.common.user.response.AllOnlineUsersResponse;
 import de.uol.swp.common.user.response.LoginSuccessfulMessage;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import org.apache.logging.log4j.LogManager;
@@ -32,7 +39,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
 
     private ObservableList<String> users;
-
+    private ObservableList<Lobby> lobbies;
 
     private User loggedInUser;
 
@@ -43,16 +50,40 @@ public class MainMenuPresenter extends AbstractPresenter {
     @FXML
     private TextField lobbyName;
 
+    @FXML
+    private TableView<Lobby> lobbiesView;
+    @FXML
+    private TableColumn<Lobby, String> name = new TableColumn<>("Name");
+    @FXML
+    private TableColumn<Lobby, String> host = new TableColumn<>("Host");
+    @FXML
+    private TableColumn<Lobby, String> players = new TableColumn<>("Spieler");
+
+    /**
+     * Creates lobby table and assigns columns to attributes of Lobby class
+     */
+    @FXML
+    private void initialize(){
+        name.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getName()));
+        host.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getOwner().getUsername()));
+        players.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getUsers().size() + "/4"));
+        lobbiesView.getColumns().addAll(name, host, players);
+        name.setResizable(false);
+        host.setResizable(false);
+        players.setResizable(false);
+        name.setPrefWidth(110);
+        host.setPrefWidth(90);
+    }
 
     @Subscribe
     public void loginSuccessful(LoginSuccessfulMessage message) {
         this.loggedInUser = message.getUser();
         userService.retrieveAllUsers();
+        lobbyService.retrieveAllLobbies();
     }
 
     @Subscribe
     public void newUser(UserLoggedInMessage message) {
-
         LOG.debug("New user " + message.getUsername() + " logged in");
         Platform.runLater(() -> {
             if (users != null && loggedInUser != null && !loggedInUser.equals(message.getUsername()))
@@ -83,6 +114,39 @@ public class MainMenuPresenter extends AbstractPresenter {
             userList.forEach(u -> users.add(u.getUsername()));
         });
     }
+
+    /**
+     * Update of lobby list when a new lobby is created
+     * @param message
+     */
+    @Subscribe
+    public void onLobbyCreatedMessage(LobbyCreatedMessage message) {
+        Platform.runLater(() -> {
+            lobbies.add(message.getLobby());
+        });
+    }
+
+    /**
+     * Fetching of lobby list, done upon login
+     * @param allLobbiesResponse
+     */
+    @Subscribe
+    public void lobbyList(AllOnlineLobbiesResponse allLobbiesResponse) {
+        LOG.debug("Update of lobbies list" + allLobbiesResponse.getLobbies());
+        updateLobbiesList(allLobbiesResponse.getLobbies());
+    }
+
+    private void updateLobbiesList(List<LobbyDTO> lobbyList) {
+        Platform.runLater(() -> {
+            if(lobbies == null) {
+                lobbies = FXCollections.observableArrayList();
+                lobbiesView.setItems(lobbies);
+            }
+            lobbies.clear();
+            lobbyList.forEach(l -> lobbies.add(l));
+        });
+    }
+
 
     /**
      * @author Paula, Haschem, Ferit

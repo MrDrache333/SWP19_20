@@ -14,7 +14,7 @@ import de.uol.swp.client.register.RegistrationPresenter;
 import de.uol.swp.client.register.event.RegistrationCanceledEvent;
 import de.uol.swp.client.register.event.RegistrationErrorEvent;
 import de.uol.swp.client.register.event.ShowRegistrationViewEvent;
-import de.uol.swp.common.lobby.message.LobbyCreatedMessage;
+import de.uol.swp.common.lobby.LobbyService;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import javafx.application.Platform;
@@ -22,7 +22,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,9 +34,9 @@ public class SceneManager {
     static final String styleSheet = "css/swp.css";
 
     final private Stage primaryStage;
-    final private Stage lobbyStage;
     final private EventBus eventBus;
     final private UserService userService;
+    final private LobbyService lobbyService;
     private Scene loginScene;
     private String lastTitle;
     private Scene registrationScene;
@@ -52,14 +51,13 @@ public class SceneManager {
 
 
     @Inject
-    public SceneManager(EventBus eventBus, UserService userService, Injector injected, @Assisted Stage primaryStage, Stage lobbyStage) {
+    public SceneManager(EventBus eventBus, UserService userService, LobbyService lobbyService, Injector injected, @Assisted Stage primaryStage) {
         this.eventBus = eventBus;
-        this.lobbyStage = lobbyStage;
         this.eventBus.register(this);
         this.userService = userService;
+        this.lobbyService = lobbyService;
         this.primaryStage = primaryStage;
         this.injector = injected;
-
         initViews();
     }
 
@@ -90,7 +88,7 @@ public class SceneManager {
     private void initMainView() {
         if (mainScene == null) {
             Parent rootPane = initPresenter(MainMenuPresenter.fxml);
-            mainScene = new Scene(rootPane, 600, 400);
+            mainScene = new Scene(rootPane, 800, 600);
             mainScene.getStylesheets().add(styleSheet);
         }
     }
@@ -115,8 +113,10 @@ public class SceneManager {
 
         if (lobbyScene == null) {
             Parent rootPane = initPresenter(LobbyPresenter.fxml);
-            lobbyScene = new Scene(rootPane, 600, 400);
+            lobbyScene = new Scene(rootPane, 800, 600);
             lobbyScene.getStylesheets().add(styleSheet);
+
+
         }
     }
 
@@ -190,14 +190,7 @@ public class SceneManager {
     }
 
     public void showLobbyScreen(String title) {
-        Platform.runLater(() -> {
-            lobbyStage.setTitle(title);
-            lobbyStage.setScene(lobbyScene);
-            lobbyStage.setX(primaryStage.getX() + 200);
-            lobbyStage.setY(primaryStage.getY() + 100);
-            lobbyStage.show();
-        });
-
+        showScene(lobbyScene, title);
     }
 
 }

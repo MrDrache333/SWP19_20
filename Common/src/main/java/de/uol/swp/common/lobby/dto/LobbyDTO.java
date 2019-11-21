@@ -3,12 +3,13 @@ package de.uol.swp.common.lobby.dto;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.user.User;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 
-public class LobbyDTO implements Lobby {
+public class LobbyDTO implements Lobby, Serializable {
 
     private final String name;
     private User owner;
@@ -68,10 +69,12 @@ public class LobbyDTO implements Lobby {
         return Collections.unmodifiableSet(users);
     }
 
+    @Override
     public UUID getLobbyID() {
         return lobbyID;
     }
 
+    @Override
     public void setLobbyID(UUID lobbyID) {
         this.lobbyID = lobbyID;
     }
