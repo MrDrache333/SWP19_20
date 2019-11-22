@@ -7,15 +7,15 @@ public interface LobbyService {
 
     /**
      * zum Erstellen der Lobby-Tabelle beim Login
-     * @return eine Liste aus Lobbies
+     * @return eine Liste mit Lobbies
      */
     List<Lobby> retrieveAllLobbies();
 
     /**
      * zum Aktualisieren der Lobbytabelle, wenn ein User die Lobby betritt oder velässt
-     * @param name
+     * @param name der Name der Lobby
      * @param value true: User tritt Lobby bei, false: User verlässt Lobby
-     * @return
+     * @return eine Liste mit Lobbies
      */
     List<Lobby> updateAllLobbies(String name, boolean value);
 

@@ -46,6 +46,7 @@ public class LobbyDTO implements Lobby, Serializable {
     public void joinUser(User user) {
         if (users.size() < 4) {
             this.users.add(user);
+            players++;
         }
         // TODO: Hier Fehlermeldung implementieren?
     }
@@ -57,6 +58,7 @@ public class LobbyDTO implements Lobby, Serializable {
         }
         if (users.contains(user)) {
             this.users.remove(user);
+            players--;
             if (this.owner.equals(user)) {
                 updateOwner(users.iterator().next());
             }
