@@ -1,6 +1,7 @@
 package de.uol.swp.common.lobby;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface LobbyService {
 
@@ -9,5 +10,7 @@ public interface LobbyService {
      * @return a list of lobbies
      */
     List<Lobby> retrieveAllLobbies();
+
+    List<Lobby> updateAllLobbies(String name);
 
 }

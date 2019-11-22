@@ -6,34 +6,46 @@
 <AnchorPane prefHeight="405.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.uol.swp.client.main.MainMenuPresenter">
     <children>
-        <GridPane layoutX="-5.0" layoutY="-4.0" prefHeight="410.0" prefWidth="600.0">
+        <GridPane layoutX="-20.0" layoutY="-14.0" prefHeight="410.0" prefWidth="615.0">
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="346.0" minWidth="10.0" prefWidth="346.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0" prefWidth="254.0" />
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="360.0" minHeight="10.0" prefHeight="342.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="68.0" minHeight="50.0" prefHeight="68.0" />
             </rowConstraints>
 
-            <TableView fx:id="lobbiesView" GridPane.rowIndex="0" GridPane.columnIndex="0">
+            <TableView fx:id="lobbiesView" GridPane.columnIndex="0" GridPane.rowIndex="0">
                 <GridPane.margin>
-                    <Insets top="25" left="20"></Insets>
+                    <Insets left="25.0" top="25.0" />
                 </GridPane.margin>
             </TableView>
 
             <ListView fx:id="usersView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
                 <GridPane.margin>
-                    <Insets top="25"></Insets>
+                    <Insets top="25" />
                 </GridPane.margin>
             </ListView>
             <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
                 <buttons>
-                    <TextField fx:id="lobbyName"/>
-                    <Button fx:id="CreateLobby" mnemonicParsing="false" onAction="#OnCreateLobbyButtonPressed"
-                            prefHeight="27.0" prefWidth="347.0" text="Lobby erstellen"/>
+                    <TextField fx:id="lobbyName" />
+                    <Button fx:id="CreateLobby" mnemonicParsing="false" onAction="#OnCreateLobbyButtonPressed" prefHeight="55.0" prefWidth="100.0" text="Lobby&#10;erstellen" textAlignment="CENTER" />
+                    <Button fx:id="JoinLobby" mnemonicParsing="false" onAction="#OnJoinLobbyButtonPressed" prefHeight="55.0" prefWidth="100.0" text="Lobby&#10;beitreten" textAlignment="CENTER" />
                 </buttons>
+                <opaqueInsets>
+                    <Insets />
+                </opaqueInsets>
+            <GridPane.margin>
+               <Insets left="5.0" />
+            </GridPane.margin>
+            </ButtonBar>
+            <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <padding>
+                    <Insets left="10.0" />
+                </padding>
                 <GridPane.margin>
-                    <Insets top="5" left="5"></Insets>
+                    <Insets left="5" top="5" />
                 </GridPane.margin>
             </ButtonBar>
         </GridPane>

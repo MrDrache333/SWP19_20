@@ -4,9 +4,12 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import de.uol.swp.common.lobby.Lobby;
+import de.uol.swp.common.lobby.exception.LobbyNotFoundExceptionMessage;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.request.RetrieveAllOnlineLobbiesRequest;
+import de.uol.swp.common.lobby.request.UpdateAllOnlineLobbiesRequest;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
+import de.uol.swp.common.lobby.response.UpdateAllOnlineLobbiesResponse;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.usermanagement.AuthenticationService;
@@ -47,15 +50,30 @@ public class LobbyService extends AbstractService {
         LOG.info("onCreateLobbyRequest wird auf dem Server aufgerufen.");
     }
 
-    @Subscribe
-    public void onLobbyJoinUserRequest(LobbyJoinUserRequest lobbyJoinUserRequest) {
-        Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyJoinUserRequest.getName());
+    /**
+     * Lobby wird rausgesucht und falls vorhanden wird der user gejoined, andernfalls wird
+     * eine ExceptionMessage zurückgegeben.
+     *
+     * @param msg enthält die Message vom Client mit Lobbynamen und User.
+     * @author Marvin
+     * @version 0.1
+     * @since Sprint2
+     */
 
+    @Subscribe
+    public void onLobbyJoinUserRequest(LobbyJoinUserRequest msg) {
+        Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getName());
+        LOG.info("LobbyJoinUserRequest empfangen");
+        ServerMessage returnMessage;
         if (lobby.isPresent()) {
-            lobby.get().joinUser(lobbyJoinUserRequest.getUser());
-            sendToAll(lobbyJoinUserRequest.getName(), new UserJoinedLobbyMessage(lobbyJoinUserRequest.getName(), lobbyJoinUserRequest.getUser()));
+            lobby.get().joinUser(msg.getUser());
+            returnMessage = new UserJoinedLobbyMessage(msg.getName(), msg.getUser());
+            LOG.info("Lobby vorhanden, User gejoined, UserJoinedLobbyMessage gesendet");
+        } else {
+            returnMessage = new LobbyNotFoundExceptionMessage("Lobby " + msg.getName() + " not Found!", msg.getUser());
+            LOG.info("Lobby nicht vorhanden; LobbyNotFoundExceptionMessage gesendet");
         }
-        // TODO: error handling not existing lobby
+        post(returnMessage);
     }
 
 
@@ -89,5 +107,11 @@ public class LobbyService extends AbstractService {
         post(response);
     }
 
+    @Subscribe
+    public void onUpdateAllOnlineLobbiesRequest(UpdateAllOnlineLobbiesRequest msg) {
+        UpdateAllOnlineLobbiesResponse response = new UpdateAllOnlineLobbiesResponse(lobbyManagement.getLobbies(), msg.getName());
+        response.initWithMessage(msg);
+        post(response);
+    }
 
 }
