@@ -2,11 +2,9 @@ package de.uol.swp.client.main;
 
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
-import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.lobby.message.CreateLobbyRequest;
-import de.uol.swp.common.lobby.message.LobbyJoinUserRequest;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.lobby.response.UpdateAllOnlineLobbiesResponse;
 import de.uol.swp.common.user.User;
@@ -110,7 +108,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     /**
-     * Erstes erstellen der Lobbytabelle beim Login
+     * Erstes erstellen der Lobbytabelle beim Login oder Update wenn eine Lobby erstellt/gelöscht wird
      *
      * @param allLobbiesResponse
      */
@@ -170,15 +168,23 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @FXML
     public void OnCreateLobbyButtonPressed(ActionEvent event) {
+        boolean validLobbyName = true;
+        for (Lobby lobby : lobbies) {
+            if (lobby.getName().equals(lobbyName.getText())) {
+                validLobbyName = false;
+            }
+        }
         if (lobbyName.getText().equals("")) {
-
             showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen Lobby Namen ein! ", "Fehler");
-        } else {
+        }
+        else if(!validLobbyName) {
+            showAlert(Alert.AlertType.WARNING, "Diese Lobby existiert bereits!", "Fehler");
+        }
+        else {
             CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), loggedInUser);
             eventBus.post(msg);
             LOG.info("Request wurde gesendet.");
         }
-
     }
 
 }

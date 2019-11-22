@@ -7,7 +7,6 @@ import de.uol.swp.common.message.AbstractResponseMessage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 
 public class UpdateAllOnlineLobbiesResponse extends AbstractResponseMessage {
 
@@ -18,9 +17,6 @@ public class UpdateAllOnlineLobbiesResponse extends AbstractResponseMessage {
         // needed for serialization
     }
 
-    //TODO name nach Möglichkeit durch UUID der Lobby ersetzen
-    // (muss beim Beitreten oder Verlassen einer Lobby mitgesendet werden),
-    // da Name nicht eindeutig
     public UpdateAllOnlineLobbiesResponse(Collection<Lobby> lobbies, String name, boolean joinLobby) {
         for (Lobby lobby : lobbies) {
             this.members = lobby.getPlayers();
