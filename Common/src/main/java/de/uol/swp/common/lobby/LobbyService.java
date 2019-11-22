@@ -1,7 +1,5 @@
 package de.uol.swp.common.lobby;
 
-import de.uol.swp.common.lobby.Lobby;
-
 import java.util.List;
 
 public interface LobbyService {

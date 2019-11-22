@@ -1,7 +1,6 @@
 package de.uol.swp.client.main;
 
 import com.google.common.eventbus.Subscribe;
-import com.sun.nio.sctp.HandlerResult;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
 import de.uol.swp.common.lobby.Lobby;
@@ -22,11 +21,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Modality;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -85,7 +80,6 @@ public class MainMenuPresenter extends AbstractPresenter {
 
     @Subscribe
     public void newUser(UserLoggedInMessage message) {
-
         LOG.debug("New user " + message.getUsername() + " logged in");
         Platform.runLater(() -> {
             if (users != null && loggedInUser != null && !loggedInUser.equals(message.getUsername()))
@@ -114,18 +108,6 @@ public class MainMenuPresenter extends AbstractPresenter {
             }
             users.clear();
             userList.forEach(u -> users.add(u.getUsername()));
-        });
-    }
-
-    /**
-     * Update of lobby list when a new lobby is created
-     *
-     * @param message
-     */
-    @Subscribe
-    public void onLobbyCreatedMessage(LobbyCreatedMessage message) {
-        Platform.runLater(() -> {
-            lobbies.add(message.getLobby());
         });
     }
 

@@ -6,13 +6,13 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import de.uol.swp.client.di.ClientModule;
+import de.uol.swp.common.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.common.lobby.exception.LobbyNotFoundExceptionMessage;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
-import de.uol.swp.common.lobby.LobbyService;
 import de.uol.swp.common.user.exception.RegistrationExceptionMessage;
 import de.uol.swp.common.user.response.LoginSuccessfulMessage;
 import de.uol.swp.common.user.response.RegistrationSuccessfulEvent;
@@ -41,7 +41,6 @@ public class ClientApp extends Application implements ConnectionListener {
     private EventBus eventBus;
 
     private SceneManager sceneManager;
-    private User loggedInUser;
 
     // -----------------------------------------------------
     // Java FX Methods
@@ -131,7 +130,6 @@ public class ClientApp extends Application implements ConnectionListener {
         LOG.debug("user logged in sucessfully " + message.getUser().getUsername());
         this.user = message.getUser();
         sceneManager.showMainScreen(user);
-        this.loggedInUser = message.getUser();
     }
 
     @Subscribe
@@ -161,6 +159,7 @@ public class ClientApp extends Application implements ConnectionListener {
             sceneManager.showLobbyScreen(message.getName());
             LOG.debug("CreateLobbyMessage vom Server erfolgreich angekommen");
         }
+        lobbyService.retrieveAllLobbies();
     }
 
     /**
@@ -185,7 +184,7 @@ public class ClientApp extends Application implements ConnectionListener {
 
     @Subscribe
     public void onUserJoinedLobbyMessage(UserJoinedLobbyMessage message) {
-        if (message.getUser().getUsername().equals(loggedInUser.getUsername())) {
+        if (message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showLobbyScreen(message.getName());
             LOG.debug("UserJoinedLobbyMessage vom Server erfolgreich angekommen");
         }

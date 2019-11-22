@@ -3,7 +3,6 @@ package de.uol.swp.common.lobby.response;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.message.AbstractResponseMessage;
-import de.uol.swp.common.user.User;
 
 import java.util.ArrayList;
 import java.util.Collection;
