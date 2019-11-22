@@ -109,7 +109,7 @@ public class LobbyService extends AbstractService {
 
     @Subscribe
     public void onUpdateAllOnlineLobbiesRequest(UpdateAllOnlineLobbiesRequest msg) {
-        UpdateAllOnlineLobbiesResponse response = new UpdateAllOnlineLobbiesResponse(lobbyManagement.getLobbies(), msg.getName());
+        UpdateAllOnlineLobbiesResponse response = new UpdateAllOnlineLobbiesResponse(lobbyManagement.getLobbies(), msg.getName(), msg.getValue());
         response.initWithMessage(msg);
         post(response);
     }

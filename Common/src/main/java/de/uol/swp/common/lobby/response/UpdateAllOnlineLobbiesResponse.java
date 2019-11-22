@@ -18,14 +18,17 @@ public class UpdateAllOnlineLobbiesResponse extends AbstractResponseMessage {
         // needed for serialization
     }
 
-    public UpdateAllOnlineLobbiesResponse(Collection<Lobby> lobbies, String name) {
+    public UpdateAllOnlineLobbiesResponse(Collection<Lobby> lobbies, String name, boolean value) {
         for (Lobby lobby : lobbies) {
-            if(lobby.getName().equals(name)) {
-                this.members = lobby.getPlayers();
+            this.members = lobby.getPlayers();
+            if(lobby.getName().equals(name) && value) {
                 this.lobbies.add(new LobbyDTO(lobby.getName(), lobby.getOwner(), lobby.getLobbyID(), ++members));
             }
+            else if(lobby.getName().equals(name) && !value) {
+                this.lobbies.add(new LobbyDTO(lobby.getName(), lobby.getOwner(), lobby.getLobbyID(), --members));
+            }
             else {
-                this.lobbies.add(new LobbyDTO(lobby.getName(), lobby.getOwner(), lobby.getLobbyID(), lobby.getPlayers()));
+                this.lobbies.add(new LobbyDTO(lobby.getName(), lobby.getOwner(), lobby.getLobbyID(), members));
             }
         }
     }

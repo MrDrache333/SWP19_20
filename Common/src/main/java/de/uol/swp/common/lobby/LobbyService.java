@@ -6,11 +6,17 @@ import java.util.UUID;
 public interface LobbyService {
 
     /**
-     * Retrieve a list of all currently existing lobbies
-     * @return a list of lobbies
+     * zum Erstellen der Lobby-Tabelle beim Login
+     * @return eine Liste aus Lobbies
      */
     List<Lobby> retrieveAllLobbies();
 
-    List<Lobby> updateAllLobbies(String name);
+    /**
+     * zum Aktualisieren der Lobbytabelle, wenn ein User die Lobby betritt oder velässt
+     * @param name
+     * @param value true: User tritt Lobby bei, false: User verlässt Lobby
+     * @return
+     */
+    List<Lobby> updateAllLobbies(String name, boolean value);
 
 }

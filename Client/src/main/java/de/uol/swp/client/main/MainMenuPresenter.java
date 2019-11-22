@@ -33,7 +33,6 @@ public class MainMenuPresenter extends AbstractPresenter {
 
     public static final String fxml = "/fxml/MainMenuView.fxml";
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
-    private static final ShowLobbyViewEvent showLobbyViewMessage = new ShowLobbyViewEvent();
 
     private ObservableList<String> users;
     private ObservableList<Lobby> lobbies;
@@ -55,7 +54,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     private TableColumn<Lobby, Integer> players = new TableColumn<>("Spieler");
 
     /**
-     * Initialisiert Lobby-Tabelle
+     * Initialisiert die Lobbytabelle
      */
     @FXML
     private void initialize() {
@@ -111,7 +110,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     /**
-     * Aktualisiert Lobby-Tabelle, kann über lobbyService.retrieveAllLobbies() aufgerufen werden
+     * Erstes erstellen der Lobbytabelle beim Login
      *
      * @param allLobbiesResponse
      */
@@ -121,6 +120,11 @@ public class MainMenuPresenter extends AbstractPresenter {
         updateLobbiesList(allLobbiesResponse.getLobbies());
     }
 
+    /**
+     * Aktualisiert die Lobbytabelle, wenn bspw. ein User die Lobby betritt
+     *
+     * @param updateLobbiesResponse
+     */
     @Subscribe
     public void updateLobbyList(UpdateAllOnlineLobbiesResponse updateLobbiesResponse) {
         LOG.debug("Update of lobbies list" + updateLobbiesResponse.getLobbies());

@@ -188,7 +188,7 @@ public class ClientApp extends Application implements ConnectionListener {
             sceneManager.showLobbyScreen(message.getName());
             LOG.debug("UserJoinedLobbyMessage vom Server erfolgreich angekommen");
         }
-        lobbyService.updateAllLobbies(message.getName());
+        lobbyService.updateAllLobbies(message.getName(), true);
     }
 
     @Subscribe

@@ -29,8 +29,8 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
     }
 
     @Override
-    public List<Lobby> updateAllLobbies(String name) {
-        UpdateAllOnlineLobbiesRequest cmd = new UpdateAllOnlineLobbiesRequest(name);
+    public List<Lobby> updateAllLobbies(String name, boolean value) {
+        UpdateAllOnlineLobbiesRequest cmd = new UpdateAllOnlineLobbiesRequest(name, value);
         bus.post(cmd);
         return null;
     }
