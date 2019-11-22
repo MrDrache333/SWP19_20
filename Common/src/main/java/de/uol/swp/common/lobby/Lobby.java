@@ -23,4 +23,5 @@ public interface Lobby {
 
     void setLobbyID(UUID lobbyID);
 
+    int getPlayers();
 }

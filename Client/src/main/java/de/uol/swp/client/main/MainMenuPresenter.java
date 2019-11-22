@@ -8,6 +8,7 @@ import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.lobby.message.CreateLobbyRequest;
 import de.uol.swp.common.lobby.message.LobbyJoinUserRequest;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
+import de.uol.swp.common.lobby.response.UpdateAllOnlineLobbiesResponse;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.dto.UserDTO;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
@@ -15,6 +16,7 @@ import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import de.uol.swp.common.user.response.AllOnlineUsersResponse;
 import de.uol.swp.common.user.response.LoginSuccessfulMessage;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -52,7 +54,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     @FXML
     private TableColumn<Lobby, String> host = new TableColumn<>("Host");
     @FXML
-    private TableColumn<Lobby, String> players = new TableColumn<>("Spieler");
+    private TableColumn<Lobby, Integer> players = new TableColumn<>("Spieler");
 
     /**
      * Creates lobby table and assigns columns to attributes of Lobby class
@@ -61,7 +63,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     private void initialize() {
         name.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getName()));
         host.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getOwner().getUsername()));
-        players.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getUsers().size() + "/4"));
+        players.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getPlayers()).asObject());
         lobbiesView.getColumns().addAll(name, host, players);
         name.setResizable(false);
         host.setResizable(false);
@@ -117,8 +119,14 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void lobbyList(AllOnlineLobbiesResponse allLobbiesResponse) {
-        LOG.debug("Update of lobbies list" + allLobbiesResponse.getLobbies());
+        LOG.debug("Fetching of lobbies list" + allLobbiesResponse.getLobbies());
         updateLobbiesList(allLobbiesResponse.getLobbies());
+    }
+
+    @Subscribe
+    public void updateLobbyList(UpdateAllOnlineLobbiesResponse updateLobbiesResponse) {
+        LOG.debug("Update of lobbies list" + updateLobbiesResponse.getLobbies());
+        updateLobbiesList(updateLobbiesResponse.getLobbies());
     }
 
     private void updateLobbiesList(List<LobbyDTO> lobbyList) {
@@ -129,6 +137,7 @@ public class MainMenuPresenter extends AbstractPresenter {
             }
             lobbies.clear();
             lobbyList.forEach(l -> lobbies.add(l));
+            lobbyList.forEach(l -> System.out.println(l.getPlayers()));
         });
     }
 

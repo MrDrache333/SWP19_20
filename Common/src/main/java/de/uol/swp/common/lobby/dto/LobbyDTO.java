@@ -14,6 +14,7 @@ public class LobbyDTO implements Lobby, Serializable {
     private final String name;
     private User owner;
     private Set<User> users = new TreeSet<>();
+    private int players;
     /**
      * Eindeutige UUID für die Lobby um Lobbys mit gleichen Namen unterscheiden zu können Serverseitig.
      */
@@ -25,7 +26,15 @@ public class LobbyDTO implements Lobby, Serializable {
         this.owner = creator;
         this.users.add(creator);
         this.lobbyID = lobbyID;
+        this.players = 1;
+    }
 
+    public LobbyDTO(String name, User creator, UUID lobbyID, int players) {
+        this.name = name;
+        this.owner = creator;
+        this.users.add(creator);
+        this.lobbyID = lobbyID;
+        this.players = players;
     }
 
     @Override
@@ -82,5 +91,8 @@ public class LobbyDTO implements Lobby, Serializable {
         this.lobbyID = lobbyID;
     }
 
-
+    @Override
+    public int getPlayers() {
+        return players;
+    }
 }
