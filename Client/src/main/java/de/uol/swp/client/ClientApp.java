@@ -154,9 +154,9 @@ public class ClientApp extends Application implements ConnectionListener {
     public void CreateLobbyMessage(CreateLobbyMessage message) {
         if (message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showLobbyScreen(message.getName());
-            lobbyService.retrieveAllLobbies();
             LOG.debug("CreateLobbyMessage vom Server erfolgreich angekommen");
         }
+        lobbyService.retrieveAllLobbies();
     }
 
     @Subscribe
