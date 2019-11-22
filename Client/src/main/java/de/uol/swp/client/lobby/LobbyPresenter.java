@@ -22,7 +22,6 @@ public class LobbyPresenter extends AbstractPresenter {
     @Inject
     public LobbyPresenter(EventBus eventBus, LobbyManagement lobbyManagement) {
         setEventBus(eventBus);
-
     }
 }
 

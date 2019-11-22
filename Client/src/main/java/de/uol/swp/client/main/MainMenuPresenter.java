@@ -29,18 +29,16 @@ import java.util.List;
 public class MainMenuPresenter extends AbstractPresenter {
 
     public static final String fxml = "/fxml/MainMenuView.fxml";
-
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
+    private static final ShowLobbyViewEvent showLobbyViewMessage = new ShowLobbyViewEvent();
 
     private ObservableList<String> users;
     private ObservableList<Lobby> lobbies;
 
     private User loggedInUser;
 
-    private static final ShowLobbyViewEvent showLobbyViewMessage = new ShowLobbyViewEvent();
     @FXML
     private ListView<String> usersView;
-    // Textfeld, welches den eingegebenen Lobbynamen enthält.
     @FXML
     private TextField lobbyName;
 
@@ -54,7 +52,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     private TableColumn<Lobby, String> players = new TableColumn<>("Spieler");
 
     /**
-     * Creates lobby table and assigns columns to attributes of Lobby class
+     * Initialisiert Lobby-Tabelle
      */
     @FXML
     private void initialize() {
@@ -110,7 +108,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     /**
-     * Fetching of lobby list, done upon login
+     * Aktualisiert Lobby-Tabelle, kann über lobbyService.retrieveAllLobbies() aufgerufen werden
      *
      * @param allLobbiesResponse
      */

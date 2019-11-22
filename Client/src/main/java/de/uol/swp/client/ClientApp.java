@@ -151,7 +151,7 @@ public class ClientApp extends Application implements ConnectionListener {
      * @since Sprint2
      */
     @Subscribe
-    public void CreatLobbyMessage(CreateLobbyMessage message) {
+    public void CreateLobbyMessage(CreateLobbyMessage message) {
         if (message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showLobbyScreen(message.getName());
             lobbyService.retrieveAllLobbies();
