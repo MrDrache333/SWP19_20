@@ -21,13 +21,13 @@ public class UpdateAllOnlineLobbiesResponse extends AbstractResponseMessage {
     //TODO name nach Möglichkeit durch UUID der Lobby ersetzen
     // (muss beim Beitreten oder Verlassen einer Lobby mitgesendet werden),
     // da Name nicht eindeutig
-    public UpdateAllOnlineLobbiesResponse(Collection<Lobby> lobbies, String name, boolean value) {
+    public UpdateAllOnlineLobbiesResponse(Collection<Lobby> lobbies, String name, boolean joinLobby) {
         for (Lobby lobby : lobbies) {
             this.members = lobby.getPlayers();
-            if(lobby.getName().equals(name) && value) {
+            if(lobby.getName().equals(name) && joinLobby) {
                 this.lobbies.add(new LobbyDTO(lobby.getName(), lobby.getOwner(), lobby.getLobbyID(), ++members));
             }
-            else if(lobby.getName().equals(name) && !value) {
+            else if(lobby.getName().equals(name) && !joinLobby) {
                 this.lobbies.add(new LobbyDTO(lobby.getName(), lobby.getOwner(), lobby.getLobbyID(), --members));
             }
             else {

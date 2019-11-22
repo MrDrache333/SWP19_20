@@ -32,8 +32,8 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
     // (muss beim Beitreten oder Verlassen einer Lobby mitgesendet werden),
     // da Name nicht eindeutig
     @Override
-    public List<Lobby> updateAllLobbies(String name, boolean value) {
-        UpdateAllOnlineLobbiesRequest cmd = new UpdateAllOnlineLobbiesRequest(name, value);
+    public List<Lobby> updateAllLobbies(String name, boolean joinLobby) {
+        UpdateAllOnlineLobbiesRequest cmd = new UpdateAllOnlineLobbiesRequest(name, joinLobby);
         bus.post(cmd);
         return null;
     }

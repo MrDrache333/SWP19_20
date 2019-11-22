@@ -17,9 +17,9 @@ public interface LobbyService {
      *             //TODO nach Möglichkeit durch UUID der Lobby ersetzen
      *                (muss beim Beitreten oder Verlassen einer Lobby mitgesendet werden),
      *                 da Name nicht eindeutig
-     * @param value true: User tritt Lobby bei, false: User verlässt Lobby
+     * @param joinLobby true: User tritt Lobby bei, false: User verlässt Lobby
      * @return eine Liste mit Lobbies
      */
-    List<Lobby> updateAllLobbies(String name, boolean value);
+    List<Lobby> updateAllLobbies(String name, boolean joinLobby);
 
 }

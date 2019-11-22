@@ -2,8 +2,6 @@ package de.uol.swp.common.lobby.request;
 
 import de.uol.swp.common.message.AbstractRequestMessage;
 
-import java.util.UUID;
-
 public class UpdateAllOnlineLobbiesRequest extends AbstractRequestMessage {
 
     //TODO name nach Möglichkeit durch UUID der Lobby ersetzen
@@ -11,16 +9,16 @@ public class UpdateAllOnlineLobbiesRequest extends AbstractRequestMessage {
     // da Name nicht eindeutig
 
     private String name;
-    private boolean value;
+    private boolean joinLobby;
 
-    public UpdateAllOnlineLobbiesRequest(String name, boolean value) {
+    public UpdateAllOnlineLobbiesRequest(String name, boolean joinLobby) {
         this.name = name;
-        this.value = value;
+        this.joinLobby = joinLobby;
     }
 
     public String getName() {
         return name;
     }
 
-    public boolean getValue() { return value; }
+    public boolean getJoinLobby() { return joinLobby; }
 }
