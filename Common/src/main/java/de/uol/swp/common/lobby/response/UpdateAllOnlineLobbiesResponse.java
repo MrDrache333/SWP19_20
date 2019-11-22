@@ -18,6 +18,9 @@ public class UpdateAllOnlineLobbiesResponse extends AbstractResponseMessage {
         // needed for serialization
     }
 
+    //TODO name nach Möglichkeit durch UUID der Lobby ersetzen
+    // (muss beim Beitreten oder Verlassen einer Lobby mitgesendet werden),
+    // da Name nicht eindeutig
     public UpdateAllOnlineLobbiesResponse(Collection<Lobby> lobbies, String name, boolean value) {
         for (Lobby lobby : lobbies) {
             this.members = lobby.getPlayers();

@@ -14,6 +14,9 @@ public interface LobbyService {
     /**
      * zum Aktualisieren der Lobbytabelle, wenn ein User die Lobby betritt oder velässt
      * @param name der Name der Lobby
+     *             //TODO nach Möglichkeit durch UUID der Lobby ersetzen
+     *                (muss beim Beitreten oder Verlassen einer Lobby mitgesendet werden),
+     *                 da Name nicht eindeutig
      * @param value true: User tritt Lobby bei, false: User verlässt Lobby
      * @return eine Liste mit Lobbies
      */

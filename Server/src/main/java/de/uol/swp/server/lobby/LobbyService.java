@@ -91,6 +91,9 @@ public class LobbyService extends AbstractService {
         post(response);
     }
 
+    //TODO name nach Möglichkeit durch UUID der Lobby ersetzen
+    // (muss beim Beitreten oder Verlassen einer Lobby mitgesendet werden),
+    // da Name nicht eindeutig
     @Subscribe
     public void onUpdateAllOnlineLobbiesRequest(UpdateAllOnlineLobbiesRequest msg) {
         UpdateAllOnlineLobbiesResponse response = new UpdateAllOnlineLobbiesResponse(lobbyManagement.getLobbies(), msg.getName(), msg.getValue());

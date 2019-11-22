@@ -28,6 +28,9 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
         return null;
     }
 
+    //TODO name nach Möglichkeit durch UUID der Lobby ersetzen
+    // (muss beim Beitreten oder Verlassen einer Lobby mitgesendet werden),
+    // da Name nicht eindeutig
     @Override
     public List<Lobby> updateAllLobbies(String name, boolean value) {
         UpdateAllOnlineLobbiesRequest cmd = new UpdateAllOnlineLobbiesRequest(name, value);
