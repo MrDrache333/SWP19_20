@@ -10,12 +10,7 @@ import java.util.*;
 
 public class LobbyManagement {
     static final Logger LOG = LogManager.getLogger(LobbyManagement.class);
-    /** Keys von Integer auf Strings gesetzt, da die meisten Funktionen mit dem Namen arbeiten
-     *  und nicht mit getLobby sinnvoll interagieren konnten, allerdings:
-     *  TODO Was passiert wenn zwei Lobbies mit gleichem Namen erstellt werden?
-     *  -Marvin
-     */
-    private Map<String, Lobby> lobbies = new HashMap<>();
+    private Map<Integer, Lobby> lobbies = new HashMap<>();
 
     /**
      * Lobby wird erstellt. lobbyID hat folgende Form: 067e6162-3b6f-4ae2-a171-2470b63dff00  (Beispiel) / UUID Object
@@ -32,7 +27,7 @@ public class LobbyManagement {
         }
         UUID lobbyID = UUID.randomUUID();
         LOG.info("Die Lobby " + name + " hat folgende UUID erstellt bekommen: " + lobbyID);
-        lobbies.put(name, new LobbyDTO(name, owner, lobbyID));
+        lobbies.put(lobbies.size(), new LobbyDTO(name, owner, lobbyID));
     }
 
     public void dropLobby(String name) {

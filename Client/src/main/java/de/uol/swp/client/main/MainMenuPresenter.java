@@ -139,7 +139,6 @@ public class MainMenuPresenter extends AbstractPresenter {
             }
             lobbies.clear();
             lobbyList.forEach(l -> lobbies.add(l));
-            lobbyList.forEach(l -> System.out.println(l.getPlayers()));
         });
     }
 
@@ -181,25 +180,5 @@ public class MainMenuPresenter extends AbstractPresenter {
         }
 
     }
-
-    /**
-     * @author Marvin
-     * @version 0.1
-     * Fängt Button ab und sendet Request zum Beitritt der Lobby an den Server.
-     */
-
-    @FXML
-    public void OnJoinLobbyButtonPressed(ActionEvent event) {
-        if (lobbyName.getText().equals("")) {
-
-            showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen Lobby Namen ein! ", "Fehler");
-        } else {
-            LobbyJoinUserRequest msg = new LobbyJoinUserRequest(lobbyName.getText(), loggedInUser);
-            eventBus.post(msg);
-            LOG.info("JoinRequest wurde gesendet.");
-        }
-
-    }
-
 
 }

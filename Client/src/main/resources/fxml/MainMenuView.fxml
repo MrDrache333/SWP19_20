@@ -31,7 +31,6 @@
                 <buttons>
                     <TextField fx:id="lobbyName" />
                     <Button fx:id="CreateLobby" mnemonicParsing="false" onAction="#OnCreateLobbyButtonPressed" prefHeight="55.0" prefWidth="100.0" text="Lobby&#10;erstellen" textAlignment="CENTER" />
-                    <Button fx:id="JoinLobby" mnemonicParsing="false" onAction="#OnJoinLobbyButtonPressed" prefHeight="55.0" prefWidth="100.0" text="Lobby&#10;beitreten" textAlignment="CENTER" />
                 </buttons>
                 <opaqueInsets>
                     <Insets />
