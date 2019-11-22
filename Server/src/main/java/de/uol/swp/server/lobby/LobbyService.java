@@ -61,6 +61,17 @@ public class LobbyService extends AbstractService {
         // TODO: error handling not existing lobby
     }
 
+    @Subscribe
+    public void onLobbyLeaveUserRequest(LobbyLeaveUserRequest lobbyLeaveUserRequest) {
+        Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyLeaveUserRequest.getName());
+
+        if (lobby.isPresent()) {
+            lobby.get().leaveUser(lobbyLeaveUserRequest.getUser());
+            sendToAll(lobbyLeaveUserRequest.getName(), new UserLeftLobbyMessage(lobbyLeaveUserRequest.getName(), lobbyLeaveUserRequest.getUser()));
+        }
+        // TODO: error handling not existing lobby
+    }
+
 
     public void sendToAll(String lobbyName, ServerMessage message) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyName);
