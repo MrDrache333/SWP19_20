@@ -6,7 +6,7 @@ import java.util.UUID;
 public interface LobbyService {
 
     /**
-     * zum Erstellen der Lobby-Tabelle beim Login
+     * zum Erstellen der Lobbytabelle beim Login und zum Updaten, wenn eine Lobby erstellt/gelöscht wird
      * @return eine Liste mit Lobbies
      */
     List<Lobby> retrieveAllLobbies();
