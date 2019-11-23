@@ -74,21 +74,7 @@ public class LobbyPresenter extends AbstractPresenter {
         LOG.debug("Got ChatID from Server: "+chatID);
         chatViewPresenter.setChatId(chatID);
     }
-    /*
-    @Subscribe
-    public void onNewChatMessage(NewChatMessage msg) {
-        if(msg.getChatId().equals(chatID)) {
-            chatViewPresenter.onNewChatMessage(msg);
-        }
-    }
 
-    @Subscribe
-    public void onChatResponseMessage(ChatResponseMessage msg) {
-        if (msg.getChat().getChatId().equals(chatID) && msg.getSender().equals(loggedInUser.getUsername())) {
-            //chatViewPresenter.updateChat(msg.getChat().getMessages());
-        }
-    }
-*/
 
     @Subscribe
     public void onChatResponseMessage(ChatResponseMessage msg) {
@@ -100,7 +86,19 @@ public class LobbyPresenter extends AbstractPresenter {
         chatViewPresenter.onNewChatMessage(msg);
     }
 
+    @Subscribe
+    public void newUser(UserLoggedInMessage message) {
+        Platform.runLater(() -> {
+            chatViewPresenter.userJoined(message.getUsername());
+        });
+    }
 
+    @Subscribe
+    public void userLeft(UserLoggedOutMessage message) {
+        Platform.runLater(() -> {
+            chatViewPresenter.userLeft(message.getUsername());
+        });
+    }
 
 
 
