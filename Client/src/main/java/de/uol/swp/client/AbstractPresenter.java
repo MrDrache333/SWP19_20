@@ -18,6 +18,7 @@ public class AbstractPresenter {
     protected ChatService chatService;
 
     protected EventBus eventBus;
+
     @Inject
     public void setEventBus(EventBus eventBus) {
         this.eventBus = eventBus;

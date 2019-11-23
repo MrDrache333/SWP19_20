@@ -10,7 +10,12 @@ import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.chat.response.ChatResponseMessage;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
 import de.uol.swp.common.lobby.message.LobbyCreatedMessage;
+import de.uol.swp.common.user.message.UserLoggedInMessage;
+import de.uol.swp.common.user.message.UserLoggedOutMessage;
+import de.uol.swp.common.user.response.LoginSuccessfulMessage;
 import de.uol.swp.server.lobby.LobbyManagement;
+import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
@@ -42,10 +47,20 @@ public class LobbyPresenter extends AbstractPresenter {
     public LobbyPresenter() {
     }
 
+    private ChatViewPresenter chatViewPresenter;
+
     @FXML
     public void initialize() throws IOException {
-        Pane newChatView = FXMLLoader.load(getClass().getResource(ChatViewPresenter.fxml));
-        chatView.getChildren().add(newChatView);
+        //Neue Instanz einer ChatViewPresenter-Controller-Klasse erstellen und nötige Parameter uebergeben
+        chatViewPresenter = new ChatViewPresenter("allgemeiner", ChatViewPresenter.THEME.Dark, chatService, "");
+
+        //FXML laden
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(ChatViewPresenter.fxml));
+        //Controller der FXML setzen (Nicht in der FXML festlegen, da es immer eine eigene Instanz davon sein muss)
+        loader.setController(chatViewPresenter);
+        //Den ChatView in die chatView-Pane dieses Controllers laden
+        chatView.getChildren().add(loader.load());
+
     }
 
     @Inject
@@ -56,21 +71,51 @@ public class LobbyPresenter extends AbstractPresenter {
     @Subscribe
     public void onNewLobbyCreated(CreateLobbyMessage msg) {
         chatID = msg.getChatID().toString();
-        LOG.info("Got ChatID from Server: "+chatID);
+        LOG.debug("Got ChatID from Server: "+chatID);
+        chatViewPresenter.setChatId(chatID);
     }
+    /*
     @Subscribe
     public void onNewChatMessage(NewChatMessage msg) {
         if(msg.getChatId().equals(chatID)) {
-            //ChatViewPresenter.onNewChatMessage(msg);
+            chatViewPresenter.onNewChatMessage(msg);
         }
     }
 
     @Subscribe
     public void onChatResponseMessage(ChatResponseMessage msg) {
         if (msg.getChat().getChatId().equals(chatID) && msg.getSender().equals(loggedInUser.getUsername())) {
-            //ChatViewPresenter.updateChat(msg.getChat().getMessages());
+            //chatViewPresenter.updateChat(msg.getChat().getMessages());
         }
     }
+*/
+
+    @Subscribe
+    public void onChatResponseMessage(ChatResponseMessage msg) {
+        chatViewPresenter.onChatResponseMessage(msg);
+    }
+
+    @Subscribe
+    public void onNewChatMessage(NewChatMessage msg) {
+        chatViewPresenter.onNewChatMessage(msg);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 

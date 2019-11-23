@@ -77,9 +77,9 @@ public class ChatViewPresenter extends AbstractPresenter {
     //The THeme to use
     private THEME CHATTHEME;
     //ID of the Chat (FOr filtering Messages)
-    private String ChatId;
+    private String chatId;
     //Name of the Chat (FOr the Title Label)
-    private String Name;
+    private String name;
     //Colors in the actual Theme
     private String CHATMESSAGEBUBBLEBACKGROUNDCOLOR_ME;
     private String CHATMESSAGEBUBBLETEXTCOLOR_ME;
@@ -119,10 +119,10 @@ public class ChatViewPresenter extends AbstractPresenter {
      * @param chatId      the chat id
      */
     public ChatViewPresenter(String name, THEME theme, ChatService chatService, String chatId) {
-        this.Name = name;
+        this.name = name;
         this.CHATTHEME = theme;
         this.chatService = chatService;
-        this.ChatId = chatId;
+        this.chatId = chatId;
 
         //Set the right Colors for the choosen Theme
         if (CHATTHEME.equals(THEME.Light)) {
@@ -158,7 +158,7 @@ public class ChatViewPresenter extends AbstractPresenter {
         chatMessages.addListener((ListChangeListener<VBox>) change -> Platform.runLater(() -> messageView.scrollTo(messageView.getItems().size() - 1)));
 
         //Set the choosen Chat Name in the Title
-        titleLabel.setText(Name.toUpperCase() + " CHAT");
+        titleLabel.setText(name.toUpperCase() + " CHAT");
 
         //Nötige Styles laden und uebernehmen
         chatViewAnchorPane.getStylesheets().add(styleSheet);
@@ -288,7 +288,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      * @param msg the msg
      */
     public void onNewChatMessage(NewChatMessage msg) {
-        if (msg.getChatId().equals(ChatId)) {
+        if (msg.getChatId().equals(chatId)) {
             Platform.runLater(() -> {
                 //Loesche alte Nachrichten bei bedarf
                 if (chatMessages.size() >= MAXCHATMESSAGEHISTORY) {
@@ -308,14 +308,10 @@ public class ChatViewPresenter extends AbstractPresenter {
      * @param msg the msg
      */
     public void onChatResponseMessage(ChatResponseMessage msg) {
-        if (msg.getChat().getChatId().equals(ChatId) && msg.getSender().equals(loggedInUser.getUsername())) {
+        if (msg.getChat().getChatId().equals(chatId) && msg.getSender().equals(loggedInUser.getUsername())) {
             updateChat(msg.getChat().getMessages());
         }
     }
-
-    //--------------------------------------
-    // STATIC METHODS
-    //--------------------------------------
 
     //Tauscht eine Nachricht im Chat durch eine andere aus
     private void replaceChatMessage(int index, VBox box) {
@@ -339,7 +335,7 @@ public class ChatViewPresenter extends AbstractPresenter {
             LOG.debug("new Message to send: " + message);
 
             chatTextField.clear();
-            chatService.sendMessage(newChatMessage);
+            chatService.sendMessage(chatId, newChatMessage);
         }
     }
 
@@ -379,10 +375,6 @@ public class ChatViewPresenter extends AbstractPresenter {
         });
     }
 
-    //--------------------------------------
-    // GETTER UND SETTER
-    //--------------------------------------
-
     /**
      * User joined.
      *
@@ -390,7 +382,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      */
 //Display a Message when a User joined the Chat
     public void userJoined(String username) {
-        onNewChatMessage(new NewChatMessage(ChatId, new ChatMessage(new UserDTO("server", "", ""), username + " ist dem Chat beigereten")));
+        onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(new UserDTO("server", "", ""), username + " ist dem Chat beigereten")));
     }
 
     /**
@@ -400,7 +392,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      */
 //Display a Message when a User left the Chat
     public void userLeft(String username) {
-        onNewChatMessage(new NewChatMessage(ChatId, new ChatMessage(new UserDTO("server", "", ""), username + " hat den Chat verlassen")));
+        onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(new UserDTO("server", "", ""), username + " hat den Chat verlassen")));
     }
 
     /**
@@ -415,5 +407,13 @@ public class ChatViewPresenter extends AbstractPresenter {
          * Dark theme.
          */
         Dark
+    }
+
+    //--------------------------------------
+    // GETTER UND SETTER
+    //--------------------------------------
+
+    public void setChatId(String chatId){
+        this.chatId = chatId;
     }
 }

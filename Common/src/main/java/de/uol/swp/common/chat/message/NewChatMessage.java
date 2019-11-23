@@ -18,12 +18,12 @@ public class NewChatMessage extends AbstractServerMessage {
     /**
      * Instantiates a new New chat message.
      *
-     * @param chatid  the chatid
+     * @param chatId  the chatid
      * @param message the message
      */
-    public NewChatMessage(String chatid, ChatMessage message) {
+    public NewChatMessage(String chatId, ChatMessage message) {
         this.Message = message;
-        this.ChatId = chatid;
+        this.ChatId = chatId;
     }
 
     /**

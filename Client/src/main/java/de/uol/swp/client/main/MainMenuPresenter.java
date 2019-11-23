@@ -5,6 +5,7 @@ import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.chat.response.ChatResponseMessage;
+import de.uol.swp.common.lobby.message.CreateLobbyRequest;
 import de.uol.swp.common.user.dto.UserDTO;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
@@ -13,9 +14,11 @@ import de.uol.swp.common.user.response.LoginSuccessfulMessage;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,6 +30,8 @@ public class MainMenuPresenter extends AbstractPresenter {
 
     public static final String fxml = "/fxml/MainMenuView.fxml";
 
+    @FXML
+    private TextField lobbyName;
 
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
 
@@ -117,4 +122,13 @@ public class MainMenuPresenter extends AbstractPresenter {
         LOG.debug("Update of user list " + allUsersResponse.getUsers());
         updateUsersList(allUsersResponse.getUsers());
     }
+
+
+    @FXML
+    public void OnCreateLobbyButtonPressed(ActionEvent event) {
+        CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), loggedInUser);
+        eventBus.post(msg);
+        LOG.debug("Request to create Lobby");
+    }
+
 }

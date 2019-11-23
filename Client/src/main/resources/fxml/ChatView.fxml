@@ -6,7 +6,7 @@
 <?import javafx.scene.text.Font?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="chatViewAnchorPane" prefHeight="702.0" prefWidth="457.0"
             style="-fx-background-color: black;" stylesheets="@../css/ChatViewPresenter.css"
-            xmlns="http://javafx.com/javafx/11.0.1">
+            xmlns="http://javafx.com/javafx/11.0.1" >
     <VBox alignment="CENTER" prefHeight="702.0" prefWidth="457.0" AnchorPane.bottomAnchor="0.0"
           AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <Label fx:id="titleLabel" alignment="CENTER" mouseTransparent="true" text="GLOBAL CHAT" textFill="WHITE">
