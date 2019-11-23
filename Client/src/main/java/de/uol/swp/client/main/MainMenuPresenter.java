@@ -28,28 +28,23 @@ import java.util.List;
 
 public class MainMenuPresenter extends AbstractPresenter {
 
-    public static final String fxml = "/fxml/MainMenuView.fxml";
-
     @FXML
     private TextField lobbyName;
-
-    private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
-
-    private ObservableList<String> users;
-
     @FXML
     private ListView<String> usersView;
-
     @FXML
     private Pane chatView;
+    public static final String fxml = "/fxml/MainMenuView.fxml";
 
+    private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
+    private ObservableList<String> users;
     private ChatViewPresenter chatViewPresenter;
 
     @FXML
     public void initialize() throws IOException {
         //Neue Instanz einer ChatViewPresenter-Controller-Klasse erstellen und nötige Parameter uebergeben
-        chatViewPresenter = new ChatViewPresenter("allgemeiner", ChatViewPresenter.THEME.Dark, chatService, "global");
-
+        chatViewPresenter = new ChatViewPresenter("allgemeiner", ChatViewPresenter.THEME.Dark, chatService);
+        chatViewPresenter.setChatId("global");
         //FXML laden
         FXMLLoader loader = new FXMLLoader(getClass().getResource(ChatViewPresenter.fxml));
         //Controller der FXML setzen (Nicht in der FXML festlegen, da es immer eine eigene Instanz davon sein muss)
@@ -57,6 +52,13 @@ public class MainMenuPresenter extends AbstractPresenter {
         //Den ChatView in die chatView-Pane dieses Controllers laden
         chatView.getChildren().add(loader.load());
 
+    }
+
+    @FXML
+    public void OnCreateLobbyButtonPressed(ActionEvent event) {
+        CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), loggedInUser);
+        eventBus.post(msg);
+        LOG.debug("Request to create Lobby");
     }
 
     private void updateUsersList(List<UserDTO> userList) {
@@ -122,13 +124,4 @@ public class MainMenuPresenter extends AbstractPresenter {
         LOG.debug("Update of user list " + allUsersResponse.getUsers());
         updateUsersList(allUsersResponse.getUsers());
     }
-
-
-    @FXML
-    public void OnCreateLobbyButtonPressed(ActionEvent event) {
-        CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), loggedInUser);
-        eventBus.post(msg);
-        LOG.debug("Request to create Lobby");
-    }
-
 }

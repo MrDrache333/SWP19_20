@@ -116,13 +116,11 @@ public class ChatViewPresenter extends AbstractPresenter {
      * @param name        the name
      * @param theme       the theme
      * @param chatService the chat service
-     * @param chatId      the chat id
      */
-    public ChatViewPresenter(String name, THEME theme, ChatService chatService, String chatId) {
+    public ChatViewPresenter(String name, THEME theme, ChatService chatService) {
         this.name = name;
         this.CHATTHEME = theme;
         this.chatService = chatService;
-        this.chatId = chatId;
 
         //Set the right Colors for the choosen Theme
         if (CHATTHEME.equals(THEME.Light)) {
@@ -177,6 +175,77 @@ public class ChatViewPresenter extends AbstractPresenter {
     //--------------------------------------
     // METHODS
     //--------------------------------------
+
+    /**
+     * On new chat message.
+     *
+     * @param msg the msg
+     */
+    public void onNewChatMessage(NewChatMessage msg) {
+        if (msg.getChatId().equals(chatId)) {
+            Platform.runLater(() -> {
+                //Loesche alte Nachrichten bei bedarf
+                if (chatMessages.size() >= MAXCHATMESSAGEHISTORY) {
+                    chatMessages.remove(0);
+                    chatMessageHistory.remove(0);
+                }
+                //Fuege neue ChatNachricht hinzu
+                chatMessageHistory.add(msg.getMessage());
+                chatMessages.add(chatMessagetoBox(msg.getMessage()));
+            });
+        }
+    }
+
+    /**
+     * On chat response message.
+     *
+     * @param msg the msg
+     */
+    public void onChatResponseMessage(ChatResponseMessage msg) {
+        if (msg.getChat().getChatId().equals(chatId) && msg.getSender().equals(loggedInUser.getUsername())) {
+            updateChat(msg.getChat().getMessages());
+        }
+    }
+
+    /**
+     * User joined.
+     *
+     * @param username the username
+     */
+    //Display a Message when a User joined the Chat
+    public void userJoined(String username) {
+        onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(new UserDTO("server", "", ""), username + " ist dem Chat beigereten")));
+    }
+
+    /**
+     * User left.
+     *
+     * @param username the username
+     */
+    //Display a Message when a User left the Chat
+    public void userLeft(String username) {
+        onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(new UserDTO("server", "", ""), username + " hat den Chat verlassen")));
+    }
+
+    /**
+     * On send chat button pressed.
+     */
+    @FXML
+    private void onSendChatButtonPressed() {
+        String message;
+
+        message = chatTextField.getText();
+        //Pruefe auf leere Nachricht
+        if (!message.equals("")) {
+            LOG.debug("Sending message as User: " + loggedInUser.getUsername());
+            ChatMessage newChatMessage = new ChatMessage(loggedInUser, message);
+
+            LOG.debug("new Message to send: " + message);
+
+            chatTextField.clear();
+            chatService.sendMessage(chatId, newChatMessage);
+        }
+    }
 
     /**
      * Creates a HBox with Labels from a given ChatMessage
@@ -282,61 +351,10 @@ public class ChatViewPresenter extends AbstractPresenter {
         return box;
     }
 
-    /**
-     * On new chat message.
-     *
-     * @param msg the msg
-     */
-    public void onNewChatMessage(NewChatMessage msg) {
-        if (msg.getChatId().equals(chatId)) {
-            Platform.runLater(() -> {
-                //Loesche alte Nachrichten bei bedarf
-                if (chatMessages.size() >= MAXCHATMESSAGEHISTORY) {
-                    chatMessages.remove(0);
-                    chatMessageHistory.remove(0);
-                }
-                //Fuege neue ChatNachricht hinzu
-                chatMessageHistory.add(msg.getMessage());
-                chatMessages.add(chatMessagetoBox(msg.getMessage()));
-            });
-        }
-    }
-
-    /**
-     * On chat response message.
-     *
-     * @param msg the msg
-     */
-    public void onChatResponseMessage(ChatResponseMessage msg) {
-        if (msg.getChat().getChatId().equals(chatId) && msg.getSender().equals(loggedInUser.getUsername())) {
-            updateChat(msg.getChat().getMessages());
-        }
-    }
-
     //Tauscht eine Nachricht im Chat durch eine andere aus
     private void replaceChatMessage(int index, VBox box) {
         chatMessages.remove(index);
         chatMessages.add(index, box);
-    }
-
-    /**
-     * On send chat button pressed.
-     */
-    @FXML
-    private void onSendChatButtonPressed() {
-        String message;
-
-        message = chatTextField.getText();
-        //Pruefe auf leere Nachricht
-        if (!message.equals("")) {
-            LOG.debug("Sending message as User: " + loggedInUser.getUsername());
-            ChatMessage newChatMessage = new ChatMessage(loggedInUser, message);
-
-            LOG.debug("new Message to send: " + message);
-
-            chatTextField.clear();
-            chatService.sendMessage(chatId, newChatMessage);
-        }
     }
 
     /**
@@ -349,15 +367,6 @@ public class ChatViewPresenter extends AbstractPresenter {
             chatMessageList.forEach(msg -> chatMessages.add(chatMessagetoBox(msg)));
             chatMessageHistory.addAll(chatMessageList);
         });
-    }
-
-    /**
-     * Setlogged in user.
-     *
-     * @param user the user
-     */
-    public void setloggedInUser(User user) {
-        loggedInUser = user;
     }
 
     //Aktualisiert die ListView indem alle übergebenen Nahrichten dieser hinzugefuegt werden
@@ -373,26 +382,6 @@ public class ChatViewPresenter extends AbstractPresenter {
             chatMessageHistory.addAll(chatMessageList);
             chatMessageList.forEach(msg -> chatMessages.add(chatMessagetoBox(msg)));
         });
-    }
-
-    /**
-     * User joined.
-     *
-     * @param username the username
-     */
-//Display a Message when a User joined the Chat
-    public void userJoined(String username) {
-        onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(new UserDTO("server", "", ""), username + " ist dem Chat beigereten")));
-    }
-
-    /**
-     * User left.
-     *
-     * @param username the username
-     */
-//Display a Message when a User left the Chat
-    public void userLeft(String username) {
-        onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(new UserDTO("server", "", ""), username + " hat den Chat verlassen")));
     }
 
     /**
@@ -412,6 +401,15 @@ public class ChatViewPresenter extends AbstractPresenter {
     //--------------------------------------
     // GETTER UND SETTER
     //--------------------------------------
+
+    /**
+     * Setlogged in user.
+     *
+     * @param user the user
+     */
+    public void setloggedInUser(User user) {
+        loggedInUser = user;
+    }
 
     public void setChatId(String chatId){
         this.chatId = chatId;

@@ -32,41 +32,33 @@ import java.io.IOException;
 
 public class LobbyPresenter extends AbstractPresenter {
 
-    public static final String fxml = "/fxml/LobbyView.fxml";
-
-    private static final ShowLobbyViewEvent showLobbyViewMessage = new ShowLobbyViewEvent();
-
-    private static final Logger LOG = LogManager.getLogger(ChatViewPresenter.class);
-
-
-    private String chatID;
-
     @FXML
     private Pane chatView;
 
-    public LobbyPresenter() {
-    }
+    public static final String fxml = "/fxml/LobbyView.fxml";
+    private static final ShowLobbyViewEvent showLobbyViewMessage = new ShowLobbyViewEvent();
+    private static final Logger LOG = LogManager.getLogger(ChatViewPresenter.class);
 
+    private String chatID;
     private ChatViewPresenter chatViewPresenter;
+
+    public LobbyPresenter() {}
 
     @FXML
     public void initialize() throws IOException {
         //Neue Instanz einer ChatViewPresenter-Controller-Klasse erstellen und nötige Parameter uebergeben
-        chatViewPresenter = new ChatViewPresenter("allgemeiner", ChatViewPresenter.THEME.Dark, chatService, "");
-
+        chatViewPresenter = new ChatViewPresenter("allgemeiner", ChatViewPresenter.THEME.Dark, chatService);
         //FXML laden
         FXMLLoader loader = new FXMLLoader(getClass().getResource(ChatViewPresenter.fxml));
         //Controller der FXML setzen (Nicht in der FXML festlegen, da es immer eine eigene Instanz davon sein muss)
         loader.setController(chatViewPresenter);
         //Den ChatView in die chatView-Pane dieses Controllers laden
         chatView.getChildren().add(loader.load());
-
     }
 
-    @Inject
-    public LobbyPresenter(EventBus eventBus, LobbyManagement lobbyManagement) {
-        setEventBus(eventBus);
-    }
+    //--------------------------------------
+    // EVENTBUS
+    //--------------------------------------
 
     @Subscribe
     public void onNewLobbyCreated(CreateLobbyMessage msg) {
@@ -74,7 +66,6 @@ public class LobbyPresenter extends AbstractPresenter {
         LOG.debug("Got ChatID from Server: "+chatID);
         chatViewPresenter.setChatId(chatID);
     }
-
 
     @Subscribe
     public void onChatResponseMessage(ChatResponseMessage msg) {
@@ -99,21 +90,6 @@ public class LobbyPresenter extends AbstractPresenter {
             chatViewPresenter.userLeft(message.getUsername());
         });
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
 
 
