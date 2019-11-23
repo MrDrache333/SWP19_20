@@ -156,6 +156,8 @@ public class MainMenuPresenter extends AbstractPresenter {
      * @since Sprint2
      */
     @FXML
+
+    // TO-DO : was machen, wenn nur Leerzeichen angegeben für Lobbynamen (möglich oder abfangen? )
     public void OnCreateLobbyButtonPressed(ActionEvent event) {
         boolean validLobbyName = true;
         for (Lobby lobby : lobbies) {
