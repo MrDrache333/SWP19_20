@@ -213,7 +213,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      *
      * @param username the username
      */
-    //Display a Message when a User joined the Chat
+//Display a Message when a User joined the Chat
     public void userJoined(String username) {
         if (!chatId.equals(""))
             onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(new UserDTO("server", "", ""), username + " ist dem Chat beigereten")));
@@ -224,7 +224,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      *
      * @param username the username
      */
-    //Display a Message when a User left the Chat
+//Display a Message when a User left the Chat
     public void userLeft(String username) {
         if (!chatId.equals(""))
             onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(new UserDTO("server", "", ""), username + " hat den Chat verlassen")));
@@ -389,6 +389,28 @@ public class ChatViewPresenter extends AbstractPresenter {
     }
 
     /**
+     * Setlogged in user.
+     *
+     * @param user the user
+     */
+    public void setloggedInUser(User user) {
+        loggedInUser = user;
+    }
+
+    //--------------------------------------
+    // GETTER UND SETTER
+    //--------------------------------------
+
+    /**
+     * Set chat id.
+     *
+     * @param chatId the chat id
+     */
+    public void setChatId(String chatId) {
+        this.chatId = chatId;
+    }
+
+    /**
      * The enum Theme.
      */
     public enum THEME {
@@ -400,22 +422,5 @@ public class ChatViewPresenter extends AbstractPresenter {
          * Dark theme.
          */
         Dark
-    }
-
-    //--------------------------------------
-    // GETTER UND SETTER
-    //--------------------------------------
-
-    /**
-     * Setlogged in user.
-     *
-     * @param user the user
-     */
-    public void setloggedInUser(User user) {
-        loggedInUser = user;
-    }
-
-    public void setChatId(String chatId){
-        this.chatId = chatId;
     }
 }

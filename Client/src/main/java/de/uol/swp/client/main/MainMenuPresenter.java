@@ -26,20 +26,30 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * The type Main menu presenter.
+ */
 public class MainMenuPresenter extends AbstractPresenter {
 
+    /**
+     * The constant fxml.
+     */
+    public static final String fxml = "/fxml/MainMenuView.fxml";
+    private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
     @FXML
     private TextField lobbyName;
     @FXML
     private ListView<String> usersView;
     @FXML
     private Pane chatView;
-    public static final String fxml = "/fxml/MainMenuView.fxml";
-
-    private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
     private ObservableList<String> users;
     private ChatViewPresenter chatViewPresenter;
 
+    /**
+     * Initialize.
+     *
+     * @throws IOException the io exception
+     */
     @FXML
     public void initialize() throws IOException {
         //Neue Instanz einer ChatViewPresenter-Controller-Klasse erstellen und nötige Parameter uebergeben
@@ -53,6 +63,11 @@ public class MainMenuPresenter extends AbstractPresenter {
         chatView.getChildren().add(loader.load());
     }
 
+    /**
+     * On create lobby button pressed.
+     *
+     * @param event the event
+     */
     @FXML
     public void OnCreateLobbyButtonPressed(ActionEvent event) {
         CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), loggedInUser);
@@ -76,16 +91,31 @@ public class MainMenuPresenter extends AbstractPresenter {
     // EVENTBUS
     //--------------------------------------
 
+    /**
+     * On chat response message.
+     *
+     * @param msg the msg
+     */
     @Subscribe
     public void onChatResponseMessage(ChatResponseMessage msg) {
         chatViewPresenter.onChatResponseMessage(msg);
     }
 
+    /**
+     * On new chat message.
+     *
+     * @param msg the msg
+     */
     @Subscribe
     public void onNewChatMessage(NewChatMessage msg) {
         chatViewPresenter.onNewChatMessage(msg);
     }
 
+    /**
+     * Login successful.
+     *
+     * @param message the message
+     */
     @Subscribe
     public void loginSuccessful(LoginSuccessfulMessage message) {
         loggedInUser = message.getUser();
@@ -94,6 +124,11 @@ public class MainMenuPresenter extends AbstractPresenter {
         userService.retrieveAllUsers();
     }
 
+    /**
+     * New user.
+     *
+     * @param message the message
+     */
     @Subscribe
     public void newUser(UserLoggedInMessage message) {
 
@@ -105,6 +140,11 @@ public class MainMenuPresenter extends AbstractPresenter {
         });
     }
 
+    /**
+     * User left.
+     *
+     * @param message the message
+     */
     @Subscribe
     public void userLeft(UserLoggedOutMessage message) {
         LOG.debug("User " + message.getUsername() + " logged out");
@@ -116,6 +156,11 @@ public class MainMenuPresenter extends AbstractPresenter {
         });
     }
 
+    /**
+     * User list.
+     *
+     * @param allUsersResponse the all users response
+     */
     @Subscribe
     public void userList(AllOnlineUsersResponse allUsersResponse) {
         LOG.debug("Update of user list " + allUsersResponse.getUsers());
