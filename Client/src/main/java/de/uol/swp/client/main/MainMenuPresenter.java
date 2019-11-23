@@ -6,7 +6,6 @@ import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.lobby.message.CreateLobbyRequest;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
-import de.uol.swp.common.lobby.response.UpdateAllOnlineLobbiesResponse;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.dto.UserDTO;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
@@ -108,7 +107,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     /**
-     * Erstes erstellen der Lobbytabelle beim Login oder Update wenn eine Lobby erstellt/gelöscht wird
+     * Erstes erstellen der Lobbytabelle beim Login und Aktualisierung
      *
      * @param allLobbiesResponse
      */
@@ -118,16 +117,6 @@ public class MainMenuPresenter extends AbstractPresenter {
         updateLobbiesList(allLobbiesResponse.getLobbies());
     }
 
-    /**
-     * Aktualisiert die Lobbytabelle, wenn bspw. ein User die Lobby betritt
-     *
-     * @param updateLobbiesResponse
-     */
-    @Subscribe
-    public void updateLobbyList(UpdateAllOnlineLobbiesResponse updateLobbiesResponse) {
-        LOG.debug("Update of lobbies list" + updateLobbiesResponse.getLobbies());
-        updateLobbiesList(updateLobbiesResponse.getLobbies());
-    }
 
     private void updateLobbiesList(List<LobbyDTO> lobbyList) {
         Platform.runLater(() -> {
