@@ -51,7 +51,6 @@ public class MainMenuPresenter extends AbstractPresenter {
         loader.setController(chatViewPresenter);
         //Den ChatView in die chatView-Pane dieses Controllers laden
         chatView.getChildren().add(loader.load());
-
     }
 
     @FXML
