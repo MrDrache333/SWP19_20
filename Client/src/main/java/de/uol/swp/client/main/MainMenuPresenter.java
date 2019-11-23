@@ -167,15 +167,19 @@ public class MainMenuPresenter extends AbstractPresenter {
         }
         if (lobbyName.getText().equals("")) {
             showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen Lobby Namen ein! ", "Fehler");
+            lobbyName.requestFocus();
         }
         else if(!validLobbyName) {
             showAlert(Alert.AlertType.WARNING, "Diese Lobby existiert bereits!", "Fehler");
+            lobbyName.requestFocus();
         }
         else {
             CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), loggedInUser);
             eventBus.post(msg);
             LOG.info("Request wurde gesendet.");
         }
+
+        lobbyName.clear();
     }
 
 }
