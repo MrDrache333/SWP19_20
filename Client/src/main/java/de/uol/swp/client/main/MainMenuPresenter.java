@@ -5,8 +5,6 @@ import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.chat.response.ChatResponseMessage;
-import de.uol.swp.common.lobby.message.CreateLobbyRequest;
-import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.dto.UserDTO;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
@@ -15,11 +13,9 @@ import de.uol.swp.common.user.response.LoginSuccessfulMessage;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,61 +27,31 @@ public class MainMenuPresenter extends AbstractPresenter {
 
     public static final String fxml = "/fxml/MainMenuView.fxml";
 
+
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
 
     private ObservableList<String> users;
 
-    private User loggedInUser;
-
     @FXML
     private ListView<String> usersView;
-    // Textfeld, welches den eingegebenen Lobbynamen enthält.
-    @FXML
-    private TextField lobbyName;
-
 
     @FXML
     private Pane chatView;
 
+    private ChatViewPresenter chatViewPresenter;
+
     @FXML
     public void initialize() throws IOException {
-        Pane newChatView = FXMLLoader.load(getClass().getResource(ChatViewPresenter.fxml));
-        chatView.getChildren().add(newChatView);
-    }
+        //Neue Instanz einer ChatViewPresenter-Controller-Klasse erstellen und nötige Parameter uebergeben
+        chatViewPresenter = new ChatViewPresenter("allgemeiner", ChatViewPresenter.THEME.Dark, chatService, "global");
 
-    //--------------------------------------
-    // EVENTBUS
-    //--------------------------------------
+        //FXML laden
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(ChatViewPresenter.fxml));
+        //Controller der FXML setzen (Nicht in der FXML festlegen, da es immer eine eigene Instanz davon sein muss)
+        loader.setController(chatViewPresenter);
+        //Den ChatView in die chatView-Pane dieses Controllers laden
+        chatView.getChildren().add(loader.load());
 
-    @Subscribe
-    public void loginSuccessful(LoginSuccessfulMessage message) {
-        loggedInUser = message.getUser();
-        //ChatViewPresenter.setloggedInUser(loggedInUser);
-        //ChatViewPresenter.setChatService(chatService);
-        LOG.debug("Logged in user: "+loggedInUser.getUsername());
-        userService.retrieveAllUsers();
-    }
-
-    @Subscribe
-    public void newUser(UserLoggedInMessage message) {
-
-        LOG.debug("New user " + message.getUsername() + " logged in");
-        Platform.runLater(() -> {
-            if (users != null && loggedInUser != null && !loggedInUser.equals(message.getUsername()))
-                users.add(message.getUsername());
-        });
-    }
-
-    @Subscribe
-    public void userLeft(UserLoggedOutMessage message) {
-        LOG.debug("User " + message.getUsername() + " logged out");
-        Platform.runLater(() -> users.remove(message.getUsername()));
-    }
-
-    @Subscribe
-    public void userList(AllOnlineUsersResponse allUsersResponse) {
-        LOG.debug("Update of user list " + allUsersResponse.getUsers());
-        updateUsersList(allUsersResponse.getUsers());
     }
 
     private void updateUsersList(List<UserDTO> userList) {
@@ -100,34 +66,55 @@ public class MainMenuPresenter extends AbstractPresenter {
         });
     }
 
-    /**
-     * @author Paula, Haschem, Ferit
-     * @version 0.1
-     * Fängt den Button ab und sendet den Request zur Erstellung der Lobby an den Server.
-     */
-    @FXML
-    public void OnCreateLobbyButtonPressed(ActionEvent event) {
-        if (!lobbyName.getText().equals("")) {
-            CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), loggedInUser);
-            eventBus.post(msg);
-            LOG.info("Request wurde gesendet.");
-        } else {
-            LOG.info("Leerer Lobbyname wurde abgeschickt! :(");
-            // TODO: Implementierung eines Popups, dass Lobbyname nicht leer sein darf oder rotes Feld markieren?
-            //  Je nachdem was einfacher ist.
-        }
-    }
-    @Subscribe
-    public void onNewChatMessage(NewChatMessage msg) {
-        if(msg.getChatId().equals("global")) {
-            //ChatViewPresenter.onNewChatMessage(msg);
-        }
-    }
+    //--------------------------------------
+    // EVENTBUS
+    //--------------------------------------
 
     @Subscribe
     public void onChatResponseMessage(ChatResponseMessage msg) {
-        if (msg.getChat().getChatId().equals("global") && msg.getSender().equals(loggedInUser.getUsername())) {
-            //ChatViewPresenter.updateChat(msg.getChat().getMessages());
-        }
+        chatViewPresenter.onChatResponseMessage(msg);
+    }
+
+    @Subscribe
+    public void onNewChatMessage(NewChatMessage msg) {
+        chatViewPresenter.onNewChatMessage(msg);
+    }
+
+    @Subscribe
+    public void loginSuccessful(LoginSuccessfulMessage message) {
+        loggedInUser = message.getUser();
+        chatViewPresenter.setloggedInUser(loggedInUser);
+        //TODO Implementiere ChatHistory-Update
+        //chatService.getChatHistory(loggedInUser);
+        LOG.debug("Logged in user: " + loggedInUser.getUsername());
+        userService.retrieveAllUsers();
+    }
+
+    @Subscribe
+    public void newUser(UserLoggedInMessage message) {
+
+        LOG.debug("New user " + message.getUsername() + " logged in");
+        Platform.runLater(() -> {
+            if (users != null && loggedInUser != null && !loggedInUser.equals(message.getUsername()))
+                users.add(message.getUsername());
+            chatViewPresenter.userJoined(message.getUsername());
+        });
+    }
+
+    @Subscribe
+    public void userLeft(UserLoggedOutMessage message) {
+        LOG.debug("User " + message.getUsername() + " logged out");
+        Platform.runLater(() -> {
+            if (users.contains(message.getUsername())) {
+                users.remove(message.getUsername());
+                chatViewPresenter.userLeft(message.getUsername());
+            }
+        });
+    }
+
+    @Subscribe
+    public void userList(AllOnlineUsersResponse allUsersResponse) {
+        LOG.debug("Update of user list " + allUsersResponse.getUsers());
+        updateUsersList(allUsersResponse.getUsers());
     }
 }

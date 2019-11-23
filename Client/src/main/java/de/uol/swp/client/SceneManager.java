@@ -7,8 +7,6 @@ import com.google.inject.Injector;
 import com.google.inject.assistedinject.Assisted;
 import de.uol.swp.client.auth.LoginPresenter;
 import de.uol.swp.client.auth.events.ShowLoginViewEvent;
-import de.uol.swp.client.chat.ChatService;
-import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.main.MainMenuPresenter;
 
 import de.uol.swp.client.lobby.LobbyPresenter;
@@ -167,6 +165,7 @@ public class SceneManager {
         Platform.runLater(() -> {
             primaryStage.setTitle(title);
             primaryStage.setScene(scene);
+            primaryStage.setResizable(false);
             primaryStage.show();
         });
     }
