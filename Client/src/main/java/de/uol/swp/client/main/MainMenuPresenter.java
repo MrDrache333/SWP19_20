@@ -3,7 +3,6 @@ package de.uol.swp.client.main;
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.chat.ChatViewPresenter;
-import de.uol.swp.common.chat.ChatMessage;
 import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.chat.response.ChatResponseMessage;
 import de.uol.swp.common.user.dto.UserDTO;
@@ -44,7 +43,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     @FXML
     public void initialize() throws IOException {
         //Neue Instanz einer ChatViewPresenter-Controller-Klasse erstellen und nötige Parameter uebergeben
-        chatViewPresenter = new ChatViewPresenter(ChatViewPresenter.THEME.Light, chatService, "global");
+        chatViewPresenter = new ChatViewPresenter("allgemeiner", ChatViewPresenter.THEME.Dark, chatService, "global");
 
         //FXML laden
         FXMLLoader loader = new FXMLLoader(getClass().getResource(ChatViewPresenter.fxml));
@@ -98,7 +97,7 @@ public class MainMenuPresenter extends AbstractPresenter {
         Platform.runLater(() -> {
             if (users != null && loggedInUser != null && !loggedInUser.equals(message.getUsername()))
                 users.add(message.getUsername());
-            chatViewPresenter.showChatMessage(new NewChatMessage("global", new ChatMessage(new UserDTO("server", "", ""), message.getUsername() + " ist dem Server beigereten")));
+            chatViewPresenter.userJoined(message.getUsername());
         });
     }
 
@@ -108,7 +107,7 @@ public class MainMenuPresenter extends AbstractPresenter {
         Platform.runLater(() -> {
             if (users.contains(message.getUsername())) {
                 users.remove(message.getUsername());
-                chatViewPresenter.showChatMessage(new NewChatMessage("global", new ChatMessage(new UserDTO("server", "", ""), message.getUsername() + " hat den Server verlassen")));
+                chatViewPresenter.userLeft(message.getUsername());
             }
         });
     }

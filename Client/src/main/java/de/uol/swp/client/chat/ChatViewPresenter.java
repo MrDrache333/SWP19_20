@@ -6,6 +6,7 @@ import de.uol.swp.common.chat.ChatService;
 import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.chat.response.ChatResponseMessage;
 import de.uol.swp.common.user.User;
+import de.uol.swp.common.user.dto.UserDTO;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -17,6 +18,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -27,6 +29,7 @@ import javafx.scene.layout.VBox;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,22 +41,56 @@ public class ChatViewPresenter extends AbstractPresenter {
      * Pfad zur zu verwendenen FXML.
      */
     public static final String fxml = "/fxml/ChatView.fxml";
-    private final Logger LOG = LogManager.getLogger(ChatViewPresenter.class);
     /**
      * Pfad zum zu verwendenen Stylesheet.
      */
-    public static final String styleSheet = "css/ChatViewPresenter.css";
-    public static final String styleSheet_dark = "css/ChatViewPresenter-Dark.css";
-    public static final String styleSheet_light = "css/ChatViewPresenter-Light.css";
-    //Festlegen der Maximalen Chat-Historie
-    private final int MAXCHATMESSAGEHISTORY = 100;
-    private int maxChatMessageWidth;
-    private THEME CHATTHEME;
-    private String ChatId;
+    private static final String styleSheet = "css/ChatViewPresenter.css";
+    /**
+     * The constant styleSheet_dark.
+     */
+    private static final String styleSheet_dark = "css/ChatViewPresenter-Dark.css";
+    /**
+     * The constant styleSheet_light.
+     */
+    private static final String styleSheet_light = "css/ChatViewPresenter-Light.css";
+    private final Logger LOG = LogManager.getLogger(ChatViewPresenter.class);
 
+    //Maximum ChatMessages to store localy and in ListView
+    private final int MAXCHATMESSAGEHISTORY = 100;
+    //Color of the Message Label (OWN MESSAGES) (Background and Text) in both Themes
+    private final String CHATMESSAGEBUBBLEBACKGROUNDCOLOR_ME_LIGHT = "#1C6FEE";
+    private final String CHATMESSAGEBUBBLEBACKGROUNDCOLOR_ME_DARK = "#1C6FEE";
+    private final String CHATMESSAGEBUBBLETEXTCOLOR_ME_LIGHT = "white";
+    private final String CHATMESSAGEBUBBLETEXTCOLOR_ME_DARK = "white";
+    //Color of the Message Label (OTHER MESSAGES) (Background and Text) in both Themes
+    private final String CHATMESSAGEBUBBLEBACKGROUNDCOLOR_OTHER_LIGHT = "#DFDEE5";
+    private final String CHATMESSAGEBUBBLEBACKGROUNDCOLOR_OTHER_DARK = "#4D4C4F";
+    private final String CHATMESSAGEBUBBLETEXTCOLOR_OTHER_LIGHT = "black";
+    private final String CHATMESSAGEBUBBLETEXTCOLOR_OTHER_DARK = "white";
+    //Color of the Send-Button (Background and Text) in both Themes
+    private final String CHATMESSAGESENDBUTTONBACKGROUNDCOLOR_LIGHT = "#1C6FEE";
+    private final String CHATMESSAGESENDBUTTONBACKGROUNDCOLOR_DARK = "#1C6FEE";
+    private final String CHATMESSAGESENDBUTTONTEXTCOLOR_LIGHT = "white";
+    private final String CHATMESSAGESENDBUTTONTEXTCOLOR_DARK = "white";
+    //Max Width for one Message (Will be calculated automaticly)
+    private int maxChatMessageWidth;
+    //The THeme to use
+    private THEME CHATTHEME;
+    //ID of the Chat (FOr filtering Messages)
+    private String ChatId;
+    //Name of the Chat (FOr the Title Label)
+    private String Name;
+    //Colors in the actual Theme
+    private String CHATMESSAGEBUBBLEBACKGROUNDCOLOR_ME;
+    private String CHATMESSAGEBUBBLETEXTCOLOR_ME;
+    private String CHATMESSAGEBUBBLEBACKGROUNDCOLOR_OTHER;
+    private String CHATMESSAGEBUBBLETEXTCOLOR_OTHER;
+    private String CHATMESSAGESENDBUTTONBACKGROUNDCOLOR;
+    private String CHATMESSAGESENDBUTTONTEXTCOLOR;
+
+    //FXML GUI Elements
     @FXML
     private Label titleLabel;
-    //FXML elemente
     @FXML
     private AnchorPane chatViewAnchorPane;
     @FXML
@@ -76,16 +113,38 @@ public class ChatViewPresenter extends AbstractPresenter {
     /**
      * Instantiates a new Chat view presenter.
      *
+     * @param name        the name
      * @param theme       the theme
      * @param chatService the chat service
      * @param chatId      the chat id
      */
-    public ChatViewPresenter(THEME theme, ChatService chatService, String chatId) {
+    public ChatViewPresenter(String name, THEME theme, ChatService chatService, String chatId) {
+        this.Name = name;
         this.CHATTHEME = theme;
         this.chatService = chatService;
         this.ChatId = chatId;
+
+        //Set the right Colors for the choosen Theme
+        if (CHATTHEME.equals(THEME.Light)) {
+            CHATMESSAGEBUBBLEBACKGROUNDCOLOR_ME = CHATMESSAGEBUBBLEBACKGROUNDCOLOR_ME_LIGHT;
+            CHATMESSAGEBUBBLETEXTCOLOR_ME = CHATMESSAGEBUBBLETEXTCOLOR_ME_LIGHT;
+            CHATMESSAGEBUBBLEBACKGROUNDCOLOR_OTHER = CHATMESSAGEBUBBLEBACKGROUNDCOLOR_OTHER_LIGHT;
+            CHATMESSAGEBUBBLETEXTCOLOR_OTHER = CHATMESSAGEBUBBLETEXTCOLOR_OTHER_LIGHT;
+            CHATMESSAGESENDBUTTONBACKGROUNDCOLOR = CHATMESSAGESENDBUTTONBACKGROUNDCOLOR_LIGHT;
+            CHATMESSAGESENDBUTTONTEXTCOLOR = CHATMESSAGESENDBUTTONTEXTCOLOR_LIGHT;
+        } else {
+            CHATMESSAGEBUBBLEBACKGROUNDCOLOR_ME = CHATMESSAGEBUBBLEBACKGROUNDCOLOR_ME_DARK;
+            CHATMESSAGEBUBBLETEXTCOLOR_ME = CHATMESSAGEBUBBLETEXTCOLOR_ME_DARK;
+            CHATMESSAGEBUBBLEBACKGROUNDCOLOR_OTHER = CHATMESSAGEBUBBLEBACKGROUNDCOLOR_OTHER_DARK;
+            CHATMESSAGEBUBBLETEXTCOLOR_OTHER = CHATMESSAGEBUBBLETEXTCOLOR_OTHER_DARK;
+            CHATMESSAGESENDBUTTONBACKGROUNDCOLOR = CHATMESSAGESENDBUTTONBACKGROUNDCOLOR_DARK;
+            CHATMESSAGESENDBUTTONTEXTCOLOR = CHATMESSAGESENDBUTTONTEXTCOLOR_DARK;
+        }
     }
 
+    /**
+     * Initialize.
+     */
     @FXML
     public void initialize() {
         //Erstellt eine neue Chat-Historie und uebergibt die Liste an die ListView
@@ -98,6 +157,9 @@ public class ChatViewPresenter extends AbstractPresenter {
         //Automatisches Scrollen zur neuesten Nachricht
         chatMessages.addListener((ListChangeListener<VBox>) change -> Platform.runLater(() -> messageView.scrollTo(messageView.getItems().size() - 1)));
 
+        //Set the choosen Chat Name in the Title
+        titleLabel.setText(Name.toUpperCase() + " CHAT");
+
         //Nötige Styles laden und uebernehmen
         chatViewAnchorPane.getStylesheets().add(styleSheet);
         if (CHATTHEME.equals(ChatViewPresenter.THEME.Light)) {
@@ -106,14 +168,14 @@ public class ChatViewPresenter extends AbstractPresenter {
             chatViewAnchorPane.setStyle("-fx-background-color: white");
             titleLabel.setStyle("-fx-background-color: white; -fx-text-fill: black");
             messageView.setStyle("-fx-background-color: white;");
-        } else {
+        } else if (CHATTHEME.equals(THEME.Dark)) {
             LOG.debug("Loading Dark Theme");
             chatViewAnchorPane.getStylesheets().add(styleSheet_dark);
         }
     }
 
     //--------------------------------------
-    // FXML
+    // METHODS
     //--------------------------------------
 
     /**
@@ -129,7 +191,9 @@ public class ChatViewPresenter extends AbstractPresenter {
         Label message = new Label(msg.getMessage());
         message.setWrapText(true);
         message.setMaxWidth(maxChatMessageWidth);
-        sender.setStyle("-fx-text-fill: lightgrey; -fx-font-size: 12");
+        //Als Tooltip der Nachricht die Eingangs-Zeit anzeigen
+        message.setTooltip(new Tooltip(new SimpleDateFormat("HH:mm:ss").format(msg.getTimeStamp())));
+        sender.setStyle("-fx-text-fill: grey; -fx-font-size: 12");
 
         //Je nachdem wer die Nachriht gesendet hat, diese auf der richtigen Seite darstellen
         VBox box = new VBox();
@@ -141,7 +205,7 @@ public class ChatViewPresenter extends AbstractPresenter {
         if (!msg.getSender().getUsername().equals("server")) {
             if (msg.getSender().getUsername().equals(loggedInUser.getUsername())) {
                 //Wenn die Nachricht mehrere Zeilen umfasst, dann aendere den Radius der Ecken
-                message.setStyle("-fx-background-radius: " + (plainMessage.length() > message.getMaxWidth() / 10 ? "15" : "90") + ";-fx-background-color: #1C6FEE;-fx-text-fill: white; -fx-font-size: 16");
+                message.setStyle("-fx-background-radius: " + (plainMessage.length() > message.getMaxWidth() / 10 ? "15" : "90") + ";-fx-background-color: " + CHATMESSAGEBUBBLEBACKGROUNDCOLOR_ME + ";-fx-text-fill: " + CHATMESSAGEBUBBLETEXTCOLOR_ME + "; -fx-font-size: 16");
                 sender.setText("Du");
                 sender.setAlignment(Pos.BOTTOM_RIGHT);
                 message.setAlignment(Pos.BOTTOM_RIGHT);
@@ -161,7 +225,7 @@ public class ChatViewPresenter extends AbstractPresenter {
 
             } else {
                 //Wenn die Nachricht mehrere Zeilen umfasst, dann aendere den Radius der Ecken
-                message.setStyle("-fx-background-radius: " + (plainMessage.length() > message.getMaxWidth() / 10 ? "15" : "90") + ";-fx-background-color: #4D4C4F;-fx-text-fill: white; -fx-font-size: 16");
+                message.setStyle("-fx-background-radius: " + (plainMessage.length() > message.getMaxWidth() / 10 ? "15" : "90") + ";-fx-background-color: " + CHATMESSAGEBUBBLEBACKGROUNDCOLOR_OTHER + ";-fx-text-fill: " + CHATMESSAGEBUBBLETEXTCOLOR_OTHER + "; -fx-font-size: 16");
                 sender.setAlignment(Pos.BOTTOM_LEFT);
                 sender.setPadding(new Insets(0, 0, 0, 40));
                 message.setAlignment(Pos.BOTTOM_LEFT);
@@ -239,15 +303,6 @@ public class ChatViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Show chat message.
-     *
-     * @param msg the msg
-     */
-    public void showChatMessage(NewChatMessage msg) {
-        onNewChatMessage(msg);
-    }
-
-    /**
      * On chat response message.
      *
      * @param msg the msg
@@ -309,10 +364,6 @@ public class ChatViewPresenter extends AbstractPresenter {
         loggedInUser = user;
     }
 
-    //--------------------------------------
-    // METHODS
-    //--------------------------------------
-
     //Aktualisiert die ListView indem alle übergebenen Nahrichten dieser hinzugefuegt werden
     private void updateChatMessages(List<ChatMessage> chatMessageList) {
         // Attention: This must be done on the FX Thread!
@@ -328,19 +379,33 @@ public class ChatViewPresenter extends AbstractPresenter {
         });
     }
 
-
     //--------------------------------------
     // GETTER UND SETTER
     //--------------------------------------
 
-    public THEME getCHATTHEME() {
-        return CHATTHEME;
+    /**
+     * User joined.
+     *
+     * @param username the username
+     */
+//Display a Message when a User joined the Chat
+    public void userJoined(String username) {
+        onNewChatMessage(new NewChatMessage(ChatId, new ChatMessage(new UserDTO("server", "", ""), username + " ist dem Chat beigereten")));
+    }
+
+    /**
+     * User left.
+     *
+     * @param username the username
+     */
+//Display a Message when a User left the Chat
+    public void userLeft(String username) {
+        onNewChatMessage(new NewChatMessage(ChatId, new ChatMessage(new UserDTO("server", "", ""), username + " hat den Chat verlassen")));
     }
 
     /**
      * The enum Theme.
      */
-//
     public enum THEME {
         /**
          * Light theme.
