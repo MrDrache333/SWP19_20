@@ -63,4 +63,8 @@ public class ChatService implements de.uol.swp.common.chat.ChatService {
         bus.post(req);
         return null;
     }
+
+    public EventBus getBus() {
+        return bus;
+    }
 }

@@ -39,19 +39,20 @@ public class MainMenuPresenter extends AbstractPresenter {
     @FXML
     private Pane chatView;
 
+    private ChatViewPresenter chatViewPresenter;
+
     @FXML
     public void initialize() throws IOException {
-       Pane newChatView = FXMLLoader.load(getClass().getResource(ChatViewPresenter.fxml));
+        //Neue Instanz einer ChatViewPresenter-Controller-Klasse erstellen und nötige Parameter uebergeben
+        chatViewPresenter = new ChatViewPresenter(ChatViewPresenter.THEME.Light, chatService, "global");
 
-        chatView.getStylesheets().add(ChatViewPresenter.styleSheet);
-        if (ChatViewPresenter.CHATTHEME.equals(ChatViewPresenter.THEME.Light)) {
-            LOG.debug("Loading Light Theme");
-            chatView.getStylesheets().add(ChatViewPresenter.styleSheet_light);
-        } else {
-            LOG.debug("Loading Dark Theme");
-            chatView.getStylesheets().add(ChatViewPresenter.styleSheet_dark);
-        }
-        chatView.getChildren().add(newChatView);
+        //FXML laden
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(ChatViewPresenter.fxml));
+        //Controller der FXML setzen (Nicht in der FXML festlegen, da es immer eine eigene Instanz davon sein muss)
+        loader.setController(chatViewPresenter);
+        //Den ChatView in die chatView-Pane dieses Controllers laden
+        chatView.getChildren().add(loader.load());
+
     }
 
     private void updateUsersList(List<UserDTO> userList) {
@@ -71,10 +72,19 @@ public class MainMenuPresenter extends AbstractPresenter {
     //--------------------------------------
 
     @Subscribe
+    public void onChatResponseMessage(ChatResponseMessage msg) {
+        chatViewPresenter.onChatResponseMessage(msg);
+    }
+
+    @Subscribe
+    public void onNewChatMessage(NewChatMessage msg) {
+        chatViewPresenter.onNewChatMessage(msg);
+    }
+
+    @Subscribe
     public void loginSuccessful(LoginSuccessfulMessage message) {
         loggedInUser = message.getUser();
-        ChatViewPresenter.setloggedInUser(loggedInUser);
-        ChatViewPresenter.setChatService(chatService);
+        chatViewPresenter.setloggedInUser(loggedInUser);
         //TODO Implementiere ChatHistory-Update
         //chatService.getChatHistory(loggedInUser);
         LOG.debug("Logged in user: " + loggedInUser.getUsername());
@@ -88,7 +98,7 @@ public class MainMenuPresenter extends AbstractPresenter {
         Platform.runLater(() -> {
             if (users != null && loggedInUser != null && !loggedInUser.equals(message.getUsername()))
                 users.add(message.getUsername());
-            ChatViewPresenter.onNewChatMessage(new NewChatMessage("global", new ChatMessage(new UserDTO("server", "", ""), message.getUsername() + " ist dem Server beigereten")));
+            chatViewPresenter.showChatMessage(new NewChatMessage("global", new ChatMessage(new UserDTO("server", "", ""), message.getUsername() + " ist dem Server beigereten")));
         });
     }
 
@@ -98,7 +108,7 @@ public class MainMenuPresenter extends AbstractPresenter {
         Platform.runLater(() -> {
             if (users.contains(message.getUsername())) {
                 users.remove(message.getUsername());
-                ChatViewPresenter.onNewChatMessage(new NewChatMessage("global", new ChatMessage(new UserDTO("server", "", ""), message.getUsername() + " hat den Server verlassen")));
+                chatViewPresenter.showChatMessage(new NewChatMessage("global", new ChatMessage(new UserDTO("server", "", ""), message.getUsername() + " hat den Server verlassen")));
             }
         });
     }
@@ -108,18 +118,4 @@ public class MainMenuPresenter extends AbstractPresenter {
         LOG.debug("Update of user list " + allUsersResponse.getUsers());
         updateUsersList(allUsersResponse.getUsers());
     }
-
-    @Subscribe
-    public void onNewChatMessage(NewChatMessage msg) {
-        ChatViewPresenter.onNewChatMessage(msg);
-    }
-
-    @Subscribe
-    public void onChatResponseMessage(ChatResponseMessage msg) {
-        if (msg.getChat().getChatId().equals("global") && msg.getSender().equals(loggedInUser.getUsername())) {
-            ChatViewPresenter.updateChat(msg.getChat().getMessages());
-        }
-    }
-
-
 }

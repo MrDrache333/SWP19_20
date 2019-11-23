@@ -4,6 +4,7 @@ import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.common.chat.ChatMessage;
 import de.uol.swp.common.chat.ChatService;
 import de.uol.swp.common.chat.message.NewChatMessage;
+import de.uol.swp.common.chat.response.ChatResponseMessage;
 import de.uol.swp.common.user.User;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -37,23 +38,21 @@ public class ChatViewPresenter extends AbstractPresenter {
      * Pfad zur zu verwendenen FXML.
      */
     public static final String fxml = "/fxml/ChatView.fxml";
+    private final Logger LOG = LogManager.getLogger(ChatViewPresenter.class);
     /**
      * Pfad zum zu verwendenen Stylesheet.
      */
     public static final String styleSheet = "css/ChatViewPresenter.css";
     public static final String styleSheet_dark = "css/ChatViewPresenter-Dark.css";
     public static final String styleSheet_light = "css/ChatViewPresenter-Light.css";
-
     //Festlegen der Maximalen Chat-Historie
-    private static final int MAXCHATMESSAGEHISTORY = 100;
-    private static int maxChatMessageWidth;
+    private final int MAXCHATMESSAGEHISTORY = 100;
+    private int maxChatMessageWidth;
+    private THEME CHATTHEME;
+    private String ChatId;
 
-    public static THEME CHATTHEME = THEME.Light;
     @FXML
     private Label titleLabel;
-
-    private static final Logger LOG = LogManager.getLogger(ChatViewPresenter.class);
-
     //FXML elemente
     @FXML
     private AnchorPane chatViewAnchorPane;
@@ -62,13 +61,68 @@ public class ChatViewPresenter extends AbstractPresenter {
     @FXML
     private ListView<VBox> messageView;
 
+    private ChatService chatService;
+    //Liste mit formatierten Chatnachrichten
+    private ObservableList<VBox> chatMessages = FXCollections.observableArrayList();
+    private List<ChatMessage> chatMessageHistory = new ArrayList<>();
+    //Wenn abei der Benutzung des TextFeldes eine Taste gedrueckt wird
+    private EventHandler<KeyEvent> onKeyPressedinchatTextFieldEvent = event -> {
+        //Abschicken der Nachricht, wenn die ENTER-Taste gedrueckt wurde
+        if (event.getCode() == KeyCode.ENTER) {
+            onSendChatButtonPressed();
+        }
+    };
+
+    /**
+     * Instantiates a new Chat view presenter.
+     *
+     * @param theme       the theme
+     * @param chatService the chat service
+     * @param chatId      the chat id
+     */
+    public ChatViewPresenter(THEME theme, ChatService chatService, String chatId) {
+        this.CHATTHEME = theme;
+        this.chatService = chatService;
+        this.ChatId = chatId;
+    }
+
+    @FXML
+    public void initialize() {
+        //Erstellt eine neue Chat-Historie und uebergibt die Liste an die ListView
+        updateChatMessages(new ArrayList<>());
+        messageView.setItems(chatMessages);
+        //Berechnet die maximale Nachrichtenbreite
+        maxChatMessageWidth = (int) chatViewAnchorPane.getPrefWidth() - 70;
+        //Nachrichten mit der ENTER-Taste abschicken
+        chatTextField.setOnKeyPressed(onKeyPressedinchatTextFieldEvent);
+        //Automatisches Scrollen zur neuesten Nachricht
+        chatMessages.addListener((ListChangeListener<VBox>) change -> Platform.runLater(() -> messageView.scrollTo(messageView.getItems().size() - 1)));
+
+        //Nötige Styles laden und uebernehmen
+        chatViewAnchorPane.getStylesheets().add(styleSheet);
+        if (CHATTHEME.equals(ChatViewPresenter.THEME.Light)) {
+            LOG.debug("Loading Light Theme");
+            chatViewAnchorPane.getStylesheets().add(styleSheet_light);
+            chatViewAnchorPane.setStyle("-fx-background-color: white");
+            titleLabel.setStyle("-fx-background-color: white; -fx-text-fill: black");
+            messageView.setStyle("-fx-background-color: white;");
+        } else {
+            LOG.debug("Loading Dark Theme");
+            chatViewAnchorPane.getStylesheets().add(styleSheet_dark);
+        }
+    }
+
+    //--------------------------------------
+    // FXML
+    //--------------------------------------
+
     /**
      * Creates a HBox with Labels from a given ChatMessage
      *
      * @param msg the ChatMessage
      * @return a HBox with Labels
      */
-    private static VBox chatMessagetoBox(ChatMessage msg) {
+    private VBox chatMessagetoBox(ChatMessage msg) {
         String plainMessage = msg.getMessage();
         //Inhalt der HBox festlegen und mit passenden Styles versehen
         Label sender = new Label(msg.getSender().getUsername());
@@ -164,70 +218,43 @@ public class ChatViewPresenter extends AbstractPresenter {
         return box;
     }
 
-
-    //Liste mit formatierten Chatnachrichten
-    private static ObservableList<VBox> chatMessages = FXCollections.observableArrayList();
-    private static List<ChatMessage> chatMessageHistory = new ArrayList<>();
-
-
-    //Services
-    private static ChatService chatService;
-
-    /**
-     * Instantiates a new Chat view presenter.
-     */
-    public ChatViewPresenter() {
-    }
-
-    //--------------------------------------
-    // FXML
-    //--------------------------------------
-
-    //Wenn abei der Benutzung des TextFeldes eine Taste gedrueckt wird
-    private EventHandler<KeyEvent> onKeyPressedinchatTextFieldEvent = event -> {
-        //Abschicken der Nachricht, wenn die ENTER-Taste gedrueckt wurde
-        if (event.getCode() == KeyCode.ENTER) {
-            onSendChatButtonPressed();
-        }
-    };
-
     /**
      * On new chat message.
      *
      * @param msg the msg
      */
-    public static void onNewChatMessage(NewChatMessage msg) {
-        Platform.runLater(() -> {
-            //Loesche alte Nachrichten bei bedarf
-            if (chatMessages.size() >= MAXCHATMESSAGEHISTORY) {
-                chatMessages.remove(0);
-                chatMessageHistory.remove(0);
-            }
-            //Fuege neue ChatNachricht hinzu
-            chatMessageHistory.add(msg.getMessage());
-            chatMessages.add(chatMessagetoBox(msg.getMessage()));
-        });
+    public void onNewChatMessage(NewChatMessage msg) {
+        if (msg.getChatId().equals(ChatId)) {
+            Platform.runLater(() -> {
+                //Loesche alte Nachrichten bei bedarf
+                if (chatMessages.size() >= MAXCHATMESSAGEHISTORY) {
+                    chatMessages.remove(0);
+                    chatMessageHistory.remove(0);
+                }
+                //Fuege neue ChatNachricht hinzu
+                chatMessageHistory.add(msg.getMessage());
+                chatMessages.add(chatMessagetoBox(msg.getMessage()));
+            });
+        }
     }
 
     /**
-     * Initialize.
+     * Show chat message.
+     *
+     * @param msg the msg
      */
-    @FXML
-    public void initialize() {
-        //Erstellt eine neue Chat-Historie und uebergibt die Liste an die ListView
-        updateChatMessages(new ArrayList<>());
-        messageView.setItems(chatMessages);
-        //Berechnet die maximale Nachrichtenbreite
-        maxChatMessageWidth = (int) chatViewAnchorPane.getPrefWidth() - 70;
-        //Nachrichten mit der ENTER-Taste abschicken
-        chatTextField.setOnKeyPressed(onKeyPressedinchatTextFieldEvent);
-        //Automatisches Scrollen zur neuesten Nachricht
-        chatMessages.addListener((ListChangeListener<VBox>) change -> Platform.runLater(() -> messageView.scrollTo(messageView.getItems().size() - 1)));
+    public void showChatMessage(NewChatMessage msg) {
+        onNewChatMessage(msg);
+    }
 
-        if (CHATTHEME.equals(THEME.Light)) {
-            chatViewAnchorPane.setStyle("-fx-background-color: white");
-            titleLabel.setStyle("-fx-background-color: white; -fx-text-fill: black");
-            messageView.setStyle("-fx-background-color: white;");
+    /**
+     * On chat response message.
+     *
+     * @param msg the msg
+     */
+    public void onChatResponseMessage(ChatResponseMessage msg) {
+        if (msg.getChat().getChatId().equals(ChatId) && msg.getSender().equals(loggedInUser.getUsername())) {
+            updateChat(msg.getChat().getMessages());
         }
     }
 
@@ -236,7 +263,7 @@ public class ChatViewPresenter extends AbstractPresenter {
     //--------------------------------------
 
     //Tauscht eine Nachricht im Chat durch eine andere aus
-    private static void replaceChatMessage(int index, VBox box) {
+    private void replaceChatMessage(int index, VBox box) {
         chatMessages.remove(index);
         chatMessages.add(index, box);
     }
@@ -245,7 +272,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      * On send chat button pressed.
      */
     @FXML
-    public void onSendChatButtonPressed() {
+    private void onSendChatButtonPressed() {
         String message;
 
         message = chatTextField.getText();
@@ -266,45 +293,25 @@ public class ChatViewPresenter extends AbstractPresenter {
      *
      * @param chatMessageList the chat message list
      */
-    public static void updateChat(List<ChatMessage> chatMessageList) {
+    private void updateChat(List<ChatMessage> chatMessageList) {
         Platform.runLater(() -> {
             chatMessageList.forEach(msg -> chatMessages.add(chatMessagetoBox(msg)));
             chatMessageHistory.addAll(chatMessageList);
         });
     }
 
-    //
-    public enum THEME {
-        Light,
-        Dark
-    }
-
-    //--------------------------------------
-    // METHODS
-    //--------------------------------------
-
     /**
      * Setlogged in user.
      *
      * @param user the user
      */
-    public static void setloggedInUser(User user) {
+    public void setloggedInUser(User user) {
         loggedInUser = user;
     }
 
-
     //--------------------------------------
-    // GETTER UND SETTER
+    // METHODS
     //--------------------------------------
-
-    /**
-     * Sets new chatService.
-     *
-     * @param newChatService New value of chatService.
-     */
-    public static void setChatService(ChatService newChatService) {
-        chatService = newChatService;
-    }
 
     //Aktualisiert die ListView indem alle übergebenen Nahrichten dieser hinzugefuegt werden
     private void updateChatMessages(List<ChatMessage> chatMessageList) {
@@ -319,5 +326,29 @@ public class ChatViewPresenter extends AbstractPresenter {
             chatMessageHistory.addAll(chatMessageList);
             chatMessageList.forEach(msg -> chatMessages.add(chatMessagetoBox(msg)));
         });
+    }
+
+
+    //--------------------------------------
+    // GETTER UND SETTER
+    //--------------------------------------
+
+    public THEME getCHATTHEME() {
+        return CHATTHEME;
+    }
+
+    /**
+     * The enum Theme.
+     */
+//
+    public enum THEME {
+        /**
+         * Light theme.
+         */
+        Light,
+        /**
+         * Dark theme.
+         */
+        Dark
     }
 }
