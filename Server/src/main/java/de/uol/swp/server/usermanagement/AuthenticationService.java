@@ -91,7 +91,7 @@ public class AuthenticationService extends AbstractService {
             }
 
             userManagement.logout(userToLogOut);
-            userSessions.remove(msg.getSession());
+            userSessions.remove(msg.getSession().get());
 
             ServerMessage returnMessage = new UserLoggedOutMessage(userToLogOut.getUsername());
             post(returnMessage);
@@ -106,6 +106,4 @@ public class AuthenticationService extends AbstractService {
         response.initWithMessage(msg);
         post(response);
     }
-
-
 }
