@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="chatViewAnchorPane" minHeight="300.0" minWidth="300.0"
-            prefHeight="400.0" prefWidth="300.0" style="-fx-background-color: black;"
+            prefHeight="500.0" prefWidth="400.0" style="-fx-background-color: black;"
             stylesheets="@../css/ChatViewPresenter.css" xmlns="http://javafx.com/javafx/11.0.1">
     <VBox alignment="CENTER" minHeight="400.0" minWidth="300.0" prefHeight="400.0" prefWidth="300.0"
           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
@@ -19,24 +19,23 @@
                 <Font name="Arial Bold" size="15.0"/>
             </font>
         </Label>
-        <Separator disable="true" mouseTransparent="true" prefWidth="200.0"/>
-        <ListView fx:id="messageView" minHeight="50.0" minWidth="130.0" prefHeight="100.0" prefWidth="130.0"
+        <Separator disable="true" mouseTransparent="true"/>
+        <ListView fx:id="messageView" minHeight="100.0" minWidth="260.0" prefHeight="400.0" prefWidth="300.0"
                   VBox.vgrow="ALWAYS">
         </ListView>
-        <Separator disable="true" mouseTransparent="true" prefWidth="200.0"/>
-        <HBox maxHeight="40.0" minHeight="30.0" minWidth="130.0" prefHeight="40.0" prefWidth="400.0" VBox.vgrow="NEVER">
+        <Separator disable="true" mouseTransparent="true"/>
+        <HBox maxHeight="40.0" minHeight="40.0" minWidth="260.0" VBox.vgrow="NEVER">
             <padding>
                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
             </padding>
-            <TextField fx:id="chatTextField" maxHeight="30.0" minHeight="30.0" minWidth="100.0" prefHeight="30.0"
-                       prefWidth="351.0" promptText="Was möchtest du sagen?" HBox.hgrow="ALWAYS">
+            <TextField fx:id="chatTextField" maxHeight="30.0" minHeight="30.0" minWidth="170.0" prefHeight="30.0"
+                       promptText="Was möchtest du sagen?" HBox.hgrow="ALWAYS">
                 <HBox.margin>
                     <Insets right="5.0"/>
                 </HBox.margin>
             </TextField>
             <Button defaultButton="true" maxHeight="30.0" maxWidth="90.0" minHeight="30.0" minWidth="90.0"
-                    mnemonicParsing="false" onAction="#onSendChatButtonPressed" prefHeight="30.0" prefWidth="90.0"
-                    text="Senden"/>
+                    mnemonicParsing="false" onAction="#onSendChatButtonPressed" text="Senden" HBox.hgrow="NEVER"/>
         </HBox>
     </VBox>
 </AnchorPane>

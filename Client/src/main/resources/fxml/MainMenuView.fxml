@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.*?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="750.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8"
-            fx:controller="de.uol.swp.client.main.MainMenuPresenter">
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="750.0" prefWidth="1280.0"
+            xmlns="http://javafx.com/javafx/11.0.1" fx:controller="de.uol.swp.client.main.MainMenuPresenter">
    <children>
-       <GridPane layoutX="-5.0" layoutY="-4.0" prefHeight="750.0" prefWidth="1280.0" AnchorPane.bottomAnchor="0.0"
-                 AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+       <GridPane hgap="5.0" layoutX="-5.0" layoutY="-4.0" prefHeight="750.0" prefWidth="1280.0" vgap="5.0"
+                 AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                 AnchorPane.topAnchor="0.0">
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0" prefWidth="156.0" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="464.0" minWidth="10.0" prefWidth="330.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="464.0" minWidth="10.0" prefWidth="161.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="634.0" minWidth="10.0" prefWidth="294.0"/>
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="987.0" minWidth="10.0" prefWidth="986.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="358.0" minWidth="10.0" prefWidth="356.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="464.0" minWidth="10.0" prefWidth="320.0"/>
         </columnConstraints>
         <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <ListView fx:id="usersView" prefHeight="200.0" prefWidth="200.0" />
-            <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="1">
+             <ButtonBar prefHeight="40.0" prefWidth="200.0">
                 <buttons>
                     <Button fx:id="CreateLobby" mnemonicParsing="false" onAction="#OnCreateLobbyButtonPressed" prefHeight="27.0" prefWidth="347.0" text="Lobby erstellen" />
                     <TextField fx:id="lobbyName" promptText="Lobbynamen eingeben" />
@@ -33,7 +33,9 @@
                     <Insets top="350.0" />
                 </padding>
             </ButtonBar>
-            <Pane fx:id="chatView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" />
+             <Pane fx:id="chatView" prefHeight="750.0" prefWidth="400.0" GridPane.columnIndex="1"/>
+             <ListView fx:id="usersView" minWidth="100.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2"
+                       GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"/>
          </children>
       </GridPane>
    </children>
