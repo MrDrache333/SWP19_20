@@ -84,8 +84,6 @@ public class MainMenuPresenter extends AbstractPresenter {
     public void loginSuccessful(LoginSuccessfulMessage message) {
         loggedInUser = message.getUser();
         chatViewPresenter.setloggedInUser(loggedInUser);
-        //TODO Implementiere ChatHistory-Update
-        //chatService.getChatHistory(loggedInUser);
         LOG.debug("Logged in user: " + loggedInUser.getUsername());
         userService.retrieveAllUsers();
     }
