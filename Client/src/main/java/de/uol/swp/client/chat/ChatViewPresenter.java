@@ -29,7 +29,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * The type Chat view presenter.
@@ -50,19 +49,19 @@ public class ChatViewPresenter extends AbstractPresenter {
     private TextField chatTextField;
     @FXML
     private ListView messageView;
-    private static int maxChatMessageWidth;
+    private int maxChatMessageWidth;
 
 
     //Liste mit formatierten Chatnachrichten
-    private static ObservableList<VBox> chatMessages = FXCollections.observableArrayList();
-    private static List<ChatMessage> chatMessageHistory = new ArrayList<>();
+    private ObservableList<VBox> chatMessages = FXCollections.observableArrayList();
+    private List<ChatMessage> chatMessageHistory = new ArrayList<>();
     @FXML
     private AnchorPane chatViewAnchorPane;
 
-    //Services
-    private static ChatService chatService;
-    private static UserService userService;
-    private UUID ChatID;
+    private ChatService chatService;
+    private UserService userService;
+    private User loggedInUser;
+    private String chatID;
 
     /**
      * Instantiates a new Chat view presenter.
@@ -83,7 +82,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      *
      * @param msg the msg
      */
-    public static void onNewChatMessage(NewChatMessage msg) {
+    public void onNewChatMessage(NewChatMessage msg) {
         Platform.runLater(() -> {
             chatMessageHistory.add(msg.getMessage());
             chatMessages.add(chatMessagetoBox(msg.getMessage()));
@@ -96,17 +95,12 @@ public class ChatViewPresenter extends AbstractPresenter {
     @FXML
     public void onSendChatButtonPressed() {
         String message;
-
         message = chatTextField.getText();
-
         if (message != "") {
             LOG.debug("Sending message as User: "+loggedInUser.getUsername());
             ChatMessage newChatMessage = new ChatMessage(loggedInUser, message);
-
             LOG.debug("new Message to send: "+ message);
-
             chatTextField.clear();
-
             chatService.sendMessage(newChatMessage);
         }
     }
@@ -121,7 +115,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      * @param msg the ChatMessage
      * @return a HBox with Labels
      */
-    private static VBox chatMessagetoBox(ChatMessage msg) {
+    private VBox chatMessagetoBox(ChatMessage msg) {
         String plainMessage = msg.getMessage();
         //Inhalt der HBox festlegen und mit passenden Styles versehen
         Label sender = new Label(msg.getSender().getUsername());
@@ -211,7 +205,7 @@ public class ChatViewPresenter extends AbstractPresenter {
         return box;
     }
 
-    private static void replaceChatMessage(int index, VBox box) {
+    private void replaceChatMessage(int index, VBox box) {
         chatMessages.remove(index);
         chatMessages.add(index, box);
     }
@@ -221,7 +215,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      *
      * @param chatMessageList the chat message list
      */
-    public static void updateChat(List<ChatMessage> chatMessageList) {
+    public void updateChat(List<ChatMessage> chatMessageList) {
         Platform.runLater(() -> {
             chatMessageList.forEach(msg -> chatMessages.add(chatMessagetoBox(msg)));
             chatMessageHistory.addAll(chatMessageList);
@@ -254,7 +248,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      *
      * @param user the user
      */
-    public static void setloggedInUser(User user) {
+    public void setloggedInUser(User user) {
         loggedInUser = user;
     }
 
@@ -263,7 +257,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      *
      * @param newUserService New value of userService.
      */
-    public static void setUserService(UserService newUserService) {
+    public void setUserService(UserService newUserService) {
         userService = newUserService;
     }
 
@@ -277,7 +271,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      *
      * @param newChatService New value of chatService.
      */
-    public static void setChatService(ChatService newChatService) {
+    public void setChatService(ChatService newChatService) {
         chatService = newChatService;
     }
 
@@ -286,7 +280,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      *
      * @param user the user
      */
-    public static void setLoggedInUser(User user) {
+    public void setLoggedInUser(User user) {
         loggedInUser = user;
     }
 
@@ -303,6 +297,4 @@ public class ChatViewPresenter extends AbstractPresenter {
             chatMessageList.forEach(msg -> chatMessages.add(chatMessagetoBox(msg)));
         });
     }
-
-
 }

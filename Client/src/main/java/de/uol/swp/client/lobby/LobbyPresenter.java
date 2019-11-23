@@ -56,19 +56,19 @@ public class LobbyPresenter extends AbstractPresenter {
     @Subscribe
     public void onNewLobbyCreated(CreateLobbyMessage msg) {
         chatID = msg.getChatID().toString();
-        LOG.info("Got em ChatID vong Server");
+        LOG.info("Got ChatID from Server: "+chatID);
     }
     @Subscribe
     public void onNewChatMessage(NewChatMessage msg) {
         if(msg.getChatId().equals(chatID)) {
-            ChatViewPresenter.onNewChatMessage(msg);
+            //ChatViewPresenter.onNewChatMessage(msg);
         }
     }
 
     @Subscribe
     public void onChatResponseMessage(ChatResponseMessage msg) {
         if (msg.getChat().getChatId().equals(chatID) && msg.getSender().equals(loggedInUser.getUsername())) {
-            ChatViewPresenter.updateChat(msg.getChat().getMessages());
+            //ChatViewPresenter.updateChat(msg.getChat().getMessages());
         }
     }
 }

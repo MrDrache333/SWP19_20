@@ -117,7 +117,6 @@ public class SceneManager {
     }
 
     private void initLobbyView() {
-
         if (lobbyScene == null) {
             Parent rootPane = initPresenter(LobbyPresenter.fxml);
             lobbyScene = new Scene(rootPane, 600, 400);

@@ -60,9 +60,9 @@ public class MainMenuPresenter extends AbstractPresenter {
     @Subscribe
     public void loginSuccessful(LoginSuccessfulMessage message) {
         loggedInUser = message.getUser();
-        ChatViewPresenter.setloggedInUser(loggedInUser);
-        ChatViewPresenter.setChatService(chatService);
-        LOG.debug("Logged in user: " + loggedInUser.getUsername());
+        //ChatViewPresenter.setloggedInUser(loggedInUser);
+        //ChatViewPresenter.setChatService(chatService);
+        LOG.debug("Logged in user: "+loggedInUser.getUsername());
         userService.retrieveAllUsers();
     }
 
@@ -120,16 +120,14 @@ public class MainMenuPresenter extends AbstractPresenter {
     @Subscribe
     public void onNewChatMessage(NewChatMessage msg) {
         if(msg.getChatId().equals("global")) {
-            ChatViewPresenter.onNewChatMessage(msg);
+            //ChatViewPresenter.onNewChatMessage(msg);
         }
     }
 
     @Subscribe
     public void onChatResponseMessage(ChatResponseMessage msg) {
         if (msg.getChat().getChatId().equals("global") && msg.getSender().equals(loggedInUser.getUsername())) {
-            ChatViewPresenter.updateChat(msg.getChat().getMessages());
+            //ChatViewPresenter.updateChat(msg.getChat().getMessages());
         }
     }
-
-
 }
