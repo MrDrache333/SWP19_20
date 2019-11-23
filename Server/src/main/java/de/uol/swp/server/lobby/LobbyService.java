@@ -82,6 +82,10 @@ public class LobbyService extends AbstractService {
         // TODO: error handling not existing lobby
     }
 
+    /**
+     * erstellt eine Response-Message und schickt diese ab
+     * @author Julia
+     */
     @Subscribe
     public void onRetrieveAllOnlineLobbiesRequest(RetrieveAllOnlineLobbiesRequest msg) {
         AllOnlineLobbiesResponse response = new AllOnlineLobbiesResponse(lobbyManagement.getLobbies());

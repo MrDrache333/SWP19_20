@@ -195,7 +195,7 @@ public class SceneManager {
      * @since Sprint2
      */
 
-    //TO-DO: LobbyScreen bzw Stage schließen, wenn Hauptmenü geschlossen wird
+    //TODO: LobbyScreen bzw Stage schließen, wenn Hauptmenü geschlossen wird
     public void showLobbyScreen(String title) {
         Platform.runLater(() -> {
             lobbyStage.setTitle(title);

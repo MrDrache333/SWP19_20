@@ -52,6 +52,7 @@ public class MainMenuPresenter extends AbstractPresenter {
 
     /**
      * Initialisiert die Lobbytabelle
+     * @author Julia
      */
     @FXML
     private void initialize() {
@@ -108,16 +109,19 @@ public class MainMenuPresenter extends AbstractPresenter {
 
     /**
      * Erstes erstellen der Lobbytabelle beim Login und Aktualisierung
-     *
+     * @author Julia
      * @param allLobbiesResponse
      */
     @Subscribe
     public void lobbyList(AllOnlineLobbiesResponse allLobbiesResponse) {
-        LOG.debug("Fetching of lobbies list" + allLobbiesResponse.getLobbies());
+        LOG.debug("Updating of lobbies list" + allLobbiesResponse.getLobbies());
         updateLobbiesList(allLobbiesResponse.getLobbies());
     }
 
-
+    /**
+     * updatet die lobbyList, wenn ein User eine Lobby betritt
+     * @author Julia
+     */
     private void updateLobbiesList(List<LobbyDTO> lobbyList) {
         Platform.runLater(() -> {
             if (lobbies == null) {
@@ -157,7 +161,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @FXML
 
-    // TO-DO : was machen, wenn nur Leerzeichen angegeben für Lobbynamen (möglich oder abfangen? )
+    //TODO : was machen, wenn nur Leerzeichen angegeben für Lobbynamen (möglich oder abfangen? )
     public void OnCreateLobbyButtonPressed(ActionEvent event) {
         boolean validLobbyName = true;
         for (Lobby lobby : lobbies) {
