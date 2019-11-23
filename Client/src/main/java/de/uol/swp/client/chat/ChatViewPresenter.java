@@ -121,6 +121,7 @@ public class ChatViewPresenter extends AbstractPresenter {
         this.name = name;
         this.CHATTHEME = theme;
         this.chatService = chatService;
+        this.chatId = "";
 
         //Set the right Colors for the choosen Theme
         if (CHATTHEME.equals(THEME.Light)) {
@@ -182,7 +183,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      * @param msg the msg
      */
     public void onNewChatMessage(NewChatMessage msg) {
-        if (msg.getChatId().equals(chatId)) {
+        if (!chatId.equals("") && msg.getChatId().equals(chatId)) {
             Platform.runLater(() -> {
                 //Loesche alte Nachrichten bei bedarf
                 if (chatMessages.size() >= MAXCHATMESSAGEHISTORY) {
@@ -214,7 +215,8 @@ public class ChatViewPresenter extends AbstractPresenter {
      */
     //Display a Message when a User joined the Chat
     public void userJoined(String username) {
-        onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(new UserDTO("server", "", ""), username + " ist dem Chat beigereten")));
+        if (!chatId.equals(""))
+            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(new UserDTO("server", "", ""), username + " ist dem Chat beigereten")));
     }
 
     /**
@@ -224,7 +226,8 @@ public class ChatViewPresenter extends AbstractPresenter {
      */
     //Display a Message when a User left the Chat
     public void userLeft(String username) {
-        onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(new UserDTO("server", "", ""), username + " hat den Chat verlassen")));
+        if (!chatId.equals(""))
+            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(new UserDTO("server", "", ""), username + " hat den Chat verlassen")));
     }
 
     /**
@@ -232,6 +235,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      */
     @FXML
     private void onSendChatButtonPressed() {
+        if (chatId.equals("")) return;
         String message;
 
         message = chatTextField.getText();
