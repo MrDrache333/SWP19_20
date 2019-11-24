@@ -18,17 +18,16 @@ public class LoginPresenter extends AbstractPresenter {
     private static final ShowRegistrationViewEvent showRegViewMessage = new ShowRegistrationViewEvent();
 
     @FXML
-    private PasswordField passwordField;
-
+    private TextField userField;
     @FXML
-    private TextField loginField;
+    private PasswordField passwordField;
 
     public LoginPresenter() {
     }
 
     @FXML
     private void onLoginButtonPressed(ActionEvent event) {
-        userService.login(loginField.getText(), passwordField.getText());
+        userService.login(userField.getText(), passwordField.getText());
     }
 
     @FXML

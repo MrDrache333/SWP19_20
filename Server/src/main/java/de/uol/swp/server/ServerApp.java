@@ -3,6 +3,8 @@ package de.uol.swp.server;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import de.uol.swp.common.user.dto.UserDTO;
+import de.uol.swp.server.chat.ChatManagement;
+import de.uol.swp.server.chat.ChatService;
 import de.uol.swp.server.communication.Server;
 import de.uol.swp.server.di.ServerModule;
 import de.uol.swp.server.lobby.LobbyService;
@@ -38,15 +40,20 @@ class ServerApp {
 
 	private static void createServices(Injector injector) {
 		UserManagement userManagement = injector.getInstance(UserManagement.class);
+        ChatManagement chatManagement = injector.getInstance(ChatManagement.class);
 
 		// TODO: Remove after registration is implemented
 		for (int i = 0; i < 5; i++) {
 			userManagement.createUser(new UserDTO("test" + i, "test" + i, "test" + i + "@test.de"));
 		}
 
+        //Create Global Chat
+        chatManagement.createChat("global");
+
 		// Remark: As these services are not referenced by any other class
 		// we will need to create instances here (and inject dependencies)
 		injector.getInstance(UserService.class);
+		injector.getInstance(ChatService.class);
 		injector.getInstance(AuthenticationService.class);
 		injector.getInstance(LobbyService.class);
 	}

@@ -4,28 +4,34 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import de.uol.swp.common.lobby.Lobby;
+import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.request.RetrieveAllOnlineLobbiesRequest;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.server.AbstractService;
+import de.uol.swp.server.chat.ChatManagement;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.HashMap;
 import java.util.Optional;
+import java.util.UUID;
 
 public class LobbyService extends AbstractService {
     private static final Logger LOG = LogManager.getLogger(LobbyService.class);
 
     private final LobbyManagement lobbyManagement;
+    private final ChatManagement chatManagement;
     private final AuthenticationService authenticationService;
 
     @Inject
-    public LobbyService(LobbyManagement lobbyManagement, AuthenticationService authenticationService, EventBus eventBus) {
+    public LobbyService(LobbyManagement lobbyManagement, AuthenticationService authenticationService, ChatManagement chatManagement, EventBus eventBus) {
         super(eventBus);
         this.lobbyManagement = lobbyManagement;
         this.authenticationService = authenticationService;
+        this.chatManagement = chatManagement;
     }
 
     /**
@@ -41,8 +47,13 @@ public class LobbyService extends AbstractService {
 
     @Subscribe
     public void onCreateLobbyRequest(CreateLobbyRequest msg) {
-        lobbyManagement.createLobby(msg.getName(), msg.getOwner());
-        ServerMessage returnMessage = new CreateLobbyMessage(msg.getName(), msg.getUser());
+
+        UUID chatID = lobbyManagement.createLobby(msg.getName(), msg.getOwner());
+
+        chatManagement.createChat(chatID.toString());
+        LOG.info("Der Chat mir der UUID " + chatID + " wurde erfolgreich erstellt");
+
+        ServerMessage returnMessage = new CreateLobbyMessage(msg.getName(), msg.getUser(), chatID);
         post(returnMessage);
         LOG.info("onCreateLobbyRequest wird auf dem Server aufgerufen.");
     }

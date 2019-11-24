@@ -87,7 +87,7 @@ public class SceneManager {
     private void initMainView() {
         if (mainScene == null) {
             Parent rootPane = initPresenter(MainMenuPresenter.fxml);
-            mainScene = new Scene(rootPane, 600, 405);
+            mainScene = new Scene(rootPane, 1280, 750);
             mainScene.getStylesheets().add(styleSheet);
         }
     }
@@ -95,7 +95,7 @@ public class SceneManager {
     private void initLoginView() {
         if (loginScene == null) {
             Parent rootPane = initPresenter(LoginPresenter.fxml);
-            loginScene = new Scene(rootPane, 400, 200);
+            loginScene = new Scene(rootPane, 1280, 750);
             loginScene.getStylesheets().add(styleSheet);
         }
     }
@@ -103,7 +103,7 @@ public class SceneManager {
     private void initRegistrationView() {
         if (registrationScene == null) {
             Parent rootPane = initPresenter(RegistrationPresenter.fxml);
-            registrationScene = new Scene(rootPane, 400, 200);
+            registrationScene = new Scene(rootPane, 1280, 750);
             registrationScene.getStylesheets().add(styleSheet);
         }
     }
@@ -161,6 +161,7 @@ public class SceneManager {
         Platform.runLater(() -> {
             primaryStage.setTitle(title);
             primaryStage.setScene(scene);
+            primaryStage.setResizable(false);
             primaryStage.show();
         });
     }

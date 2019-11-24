@@ -3,24 +3,22 @@ package de.uol.swp.common.lobby.message;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.user.User;
 
-/**
- * Message das eine neue Lobby erstellt worden ist und die gegebenen Daten genutz werden können.
- *
- * @author Paula, Haschem, Ferit
- * @version 0.1
- * @since Sprint2
- */
+import java.util.UUID;
+
 public class CreateLobbyMessage extends AbstractLobbyMessage {
     private String name;
     private User user;
+    private UUID ChatID;
+
     private Lobby lobby;
 
     public CreateLobbyMessage() {
     }
 
-    public CreateLobbyMessage(String name, User user) {
+    public CreateLobbyMessage(String name, User user, UUID ChatID) {
         this.name = name;
         this.user = user;
+        this.ChatID = ChatID;
     }
 
     public CreateLobbyMessage(Lobby lobby) {
@@ -39,11 +37,17 @@ public class CreateLobbyMessage extends AbstractLobbyMessage {
         return user;
     }
 
+
     public void setUser(User user) {
         this.user = user;
     }
 
 
+    public UUID getChatID() {
+        return ChatID;
+    }
+
+    public void setChatID(UUID chatID) {
+        ChatID = chatID;
+    }
 }
-
-
