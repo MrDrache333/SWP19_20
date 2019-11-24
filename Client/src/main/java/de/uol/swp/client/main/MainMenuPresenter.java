@@ -260,4 +260,9 @@ public class MainMenuPresenter extends AbstractPresenter {
         lobbyName.clear();
     }
 
+    @FXML
+    public void onLogoutButtonPressed(ActionEvent actionEvent) {
+        userService.logout(loggedInUser);
+    }
+
 }
