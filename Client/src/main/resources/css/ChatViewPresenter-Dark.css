@@ -1,0 +1,44 @@
+
+.list-view .list-cell {
+    -fx-background-color: black;
+}
+
+.text-field {
+    -fx-background-color: black;
+    -fx-text-fill: white;
+}
+
+.hbox {
+    -fx-background-color: black;
+}
+
+.scroll-bar {
+    -fx-background-color: black;
+    -fx-background-radius: 1em;
+}
+
+.scroll-bar:vertical .track {
+    -fx-background-color: black;
+    -fx-border-color: black;
+}
+
+.scroll-bar:vertical .track-background {
+    -fx-background-color: black;
+    -fx-background-insets: 0;
+}
+
+.scroll-bar:vertical .increment-button, .scroll-bar:vertical .decrement-button {
+    -fx-background-color: black;
+}
+
+.scroll-bar:vertical .increment-arrow {
+    -fx-background-color: black;
+}
+
+.scroll-bar:vertical .decrement-arrow {
+    -fx-background-color: black;
+}
+
+.scroll-bar:vertical:focused {
+    -fx-background-color: black, grey, grey;
+}

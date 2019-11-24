@@ -7,7 +7,7 @@ public class UserJoinedLobbyMessage extends AbstractLobbyMessage {
     public UserJoinedLobbyMessage() {
     }
 
-    public UserJoinedLobbyMessage(String lobbyname, User user) {
-        super(lobbyname, user);
+    public UserJoinedLobbyMessage(String lobbyName, User user) {
+        super(lobbyName, user);
     }
 }
