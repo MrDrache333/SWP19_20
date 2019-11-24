@@ -3,6 +3,7 @@ package de.uol.swp.common.lobby;
 import de.uol.swp.common.user.User;
 
 import java.util.Set;
+import java.util.UUID;
 
 public interface Lobby {
 
@@ -18,4 +19,9 @@ public interface Lobby {
 
     Set<User> getUsers();
 
+    UUID getLobbyID();
+
+    void setLobbyID(UUID lobbyID);
+
+    int getPlayers();
 }

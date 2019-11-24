@@ -7,14 +7,12 @@ import com.google.inject.Injector;
 import com.google.inject.assistedinject.Assisted;
 import de.uol.swp.client.auth.LoginPresenter;
 import de.uol.swp.client.auth.events.ShowLoginViewEvent;
-import de.uol.swp.client.main.MainMenuPresenter;
-
 import de.uol.swp.client.lobby.LobbyPresenter;
+import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.client.register.RegistrationPresenter;
 import de.uol.swp.client.register.event.RegistrationCanceledEvent;
 import de.uol.swp.client.register.event.RegistrationErrorEvent;
 import de.uol.swp.client.register.event.ShowRegistrationViewEvent;
-import de.uol.swp.common.lobby.message.LobbyCreatedMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import javafx.application.Platform;
@@ -22,14 +20,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
-
-import static java.awt.Color.black;
 
 public class SceneManager {
 
@@ -52,6 +47,7 @@ public class SceneManager {
 
     private Injector injector;
 
+
     @Inject
     public SceneManager(EventBus eventBus, UserService userService, Injector injected, @Assisted Stage primaryStage, Stage lobbyStage) {
         this.eventBus = eventBus;
@@ -70,8 +66,6 @@ public class SceneManager {
         initRegistrationView();
         initLobbyView();
     }
-
-
 
     private Parent initPresenter(String fxmlFile) {
         Parent rootPane;
@@ -114,7 +108,9 @@ public class SceneManager {
         }
     }
 
+    // LobbyView wird initalisiert und deklariert.
     private void initLobbyView() {
+
         if (lobbyScene == null) {
             Parent rootPane = initPresenter(LobbyPresenter.fxml);
             lobbyScene = new Scene(rootPane, 600, 400);
@@ -192,6 +188,15 @@ public class SceneManager {
         showScene(registrationScene, "Registration");
     }
 
+    /**
+     * Es wird eine neue Stage mit der lobbyScene angezeigt und mit dem Attribut geöffnet.
+     * @author Paula, Haschem, Ferit
+     * @param title der Übergebene Titel aus dem MainMenuPresenter
+     * @version 0.1
+     * @since Sprint2
+     */
+
+    //TODO: LobbyScreen bzw Stage schließen, wenn Hauptmenü geschlossen wird
     public void showLobbyScreen(String title) {
         Platform.runLater(() -> {
             lobbyStage.setTitle(title);

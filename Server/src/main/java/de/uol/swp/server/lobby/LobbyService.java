@@ -6,6 +6,8 @@ import com.google.inject.Inject;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.lobby.message.*;
+import de.uol.swp.common.lobby.request.RetrieveAllOnlineLobbiesRequest;
+import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.chat.ChatManagement;
@@ -32,6 +34,17 @@ public class LobbyService extends AbstractService {
         this.chatManagement = chatManagement;
     }
 
+    /**
+     * lobbyManagment auf dem Server wird aufgerufen und übergibt LobbyNamen und den Besitzer.
+     * Wenn dies erfolgt ist, folgt eine returnMessage an den Client die LobbyView anzuzeigen.
+     *
+     * @param msg enthält die Message vom Client mit den benötigten Daten um die Lobby zu erstellen.
+     * @author Paula, Haschem, Ferit
+     * @version 0.1
+     * @since Sprint2
+     */
+
+
     @Subscribe
     public void onCreateLobbyRequest(CreateLobbyRequest msg) {
 
@@ -45,6 +58,7 @@ public class LobbyService extends AbstractService {
         LOG.info("onCreateLobbyRequest wird auf dem Server aufgerufen.");
     }
 
+
     @Subscribe
     public void onLobbyJoinUserRequest(LobbyJoinUserRequest lobbyJoinUserRequest) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyJoinUserRequest.getName());
@@ -55,7 +69,6 @@ public class LobbyService extends AbstractService {
         }
         // TODO: error handling not existing lobby
     }
-
 
     @Subscribe
     public void onLobbyLeaveUserRequest(LobbyLeaveUserRequest lobbyLeaveUserRequest) {
@@ -78,6 +91,17 @@ public class LobbyService extends AbstractService {
         }
 
         // TODO: error handling not existing lobby
+    }
+
+    /**
+     * erstellt eine Response-Message und schickt diese ab
+     * @author Julia
+     */
+    @Subscribe
+    public void onRetrieveAllOnlineLobbiesRequest(RetrieveAllOnlineLobbiesRequest msg) {
+        AllOnlineLobbiesResponse response = new AllOnlineLobbiesResponse(lobbyManagement.getLobbies());
+        response.initWithMessage(msg);
+        post(response);
     }
 
 }
