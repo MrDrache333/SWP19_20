@@ -6,7 +6,7 @@
 <?import javafx.scene.text.Font?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="chatViewAnchorPane" minHeight="300.0" minWidth="300.0"
             prefHeight="500.0" prefWidth="400.0" style="-fx-background-color: black;"
-            stylesheets="@../css/ChatViewPresenter.css" xmlns="http://javafx.com/javafx/11.0.1">
+            stylesheets="@../css/ChatViewPresenter.css" xmlns="http://javafx.com/javafx/10.0.2-internal">
     <VBox alignment="CENTER" minHeight="400.0" minWidth="300.0" prefHeight="400.0" prefWidth="300.0"
           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
           AnchorPane.topAnchor="0.0">
