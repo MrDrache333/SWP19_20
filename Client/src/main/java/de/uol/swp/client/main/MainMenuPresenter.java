@@ -2,14 +2,13 @@ package de.uol.swp.client.main;
 
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
-import de.uol.swp.common.lobby.Lobby;
-import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.chat.response.ChatResponseMessage;
+import de.uol.swp.common.lobby.Lobby;
+import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.lobby.message.CreateLobbyRequest;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
-import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.dto.UserDTO;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
@@ -23,10 +22,8 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.Pane;
 import javafx.scene.control.*;
+import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -49,7 +46,16 @@ public class MainMenuPresenter extends AbstractPresenter {
     @FXML
     private ListView<String> usersView;
     @FXML
+    private TableView<Lobby> lobbiesView;
+    @FXML
+    private TableColumn<Lobby, String> name = new TableColumn<>("Name");
+    @FXML
+    private TableColumn<Lobby, String> host = new TableColumn<>("Host");
+    @FXML
+    private TableColumn<Lobby, Integer> players = new TableColumn<>("Spieler");
+    @FXML
     private Pane chatView;
+
     private ObservableList<String> users;
     private ChatViewPresenter chatViewPresenter;
     private ObservableList<Lobby> lobbies;
@@ -70,48 +76,8 @@ public class MainMenuPresenter extends AbstractPresenter {
         loader.setController(chatViewPresenter);
         //Den ChatView in die chatView-Pane dieses Controllers laden
         chatView.getChildren().add(loader.load());
-    }
 
-    /**
-     * On create lobby button pressed.
-     *
-     * @param event the event
-     */
-    private ListView<String> usersView;
-    @FXML
-    public void OnCreateLobbyButtonPressed(ActionEvent event) {
-        CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), loggedInUser);
-        eventBus.post(msg);
-        LOG.debug("Request to create Lobby");
-    }
-
-    private void updateUsersList(List<UserDTO> userList) {
-        // Attention: This must be done on the FX Thread!
-        Platform.runLater(() -> {
-            if (users == null) {
-                users = FXCollections.observableArrayList();
-                usersView.setItems(users);
-            }
-            users.clear();
-            userList.forEach(u -> users.add(u.getUsername()));
-        });
-    }
-
-    @FXML
-    private TableView<Lobby> lobbiesView;
-    @FXML
-    private TableColumn<Lobby, String> name = new TableColumn<>("Name");
-    @FXML
-    private TableColumn<Lobby, String> host = new TableColumn<>("Host");
-    @FXML
-    private TableColumn<Lobby, Integer> players = new TableColumn<>("Spieler");
-
-    /**
-     * Initialisiert die Lobbytabelle
-     * @author Julia
-     */
-    @FXML
-    private void initialize() {
+        //Initialisieren der Lobby
         name.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getName()));
         host.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getOwner().getUsername()));
         players.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getPlayers()).asObject());
@@ -122,6 +88,7 @@ public class MainMenuPresenter extends AbstractPresenter {
         name.setPrefWidth(110);
         host.setPrefWidth(90);
     }
+
     //--------------------------------------
     // EVENTBUS
     //--------------------------------------
