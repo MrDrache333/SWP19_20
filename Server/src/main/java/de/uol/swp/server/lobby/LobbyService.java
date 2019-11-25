@@ -4,9 +4,10 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import de.uol.swp.common.lobby.Lobby;
-import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.lobby.message.*;
+import de.uol.swp.common.lobby.request.RetrieveAllLobbyUsersRequest;
 import de.uol.swp.common.lobby.request.RetrieveAllOnlineLobbiesRequest;
+import de.uol.swp.common.lobby.response.AllLobbyUsersResponse;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.server.AbstractService;
@@ -15,7 +16,6 @@ import de.uol.swp.server.usermanagement.AuthenticationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -102,6 +102,22 @@ public class LobbyService extends AbstractService {
         AllOnlineLobbiesResponse response = new AllOnlineLobbiesResponse(lobbyManagement.getLobbies());
         response.initWithMessage(msg);
         post(response);
+    }
+
+    /**
+     * Erstellt eine Response und postet sie.
+     *
+     * @author Marvin
+     */
+
+    @Subscribe
+    public void onRetrieveAllLobbyUsersRequest(RetrieveAllLobbyUsersRequest msg) {
+        Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getName());
+        if (lobby.isPresent()) {
+            AllLobbyUsersResponse response = new AllLobbyUsersResponse(lobby.get().getUsers(), lobby.get().getName());
+            response.initWithMessage(msg);
+            post(response);
+        }
     }
 
 }
