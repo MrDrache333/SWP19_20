@@ -28,7 +28,10 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
         return null;
     }
 
-    /*public void leaveLobby (User user) {
-        LobbyLeaveUserRequest req = new LobbyLeaveUserRequest(user);
-    }*/
+    @Override
+    public List<User> retrieveAllUsersInLobby() {
+        RetrieveAllOnlineLobbiesRequest req = new RetrieveAllOnlineLobbiesRequest();
+        bus.post(req);
+        return null;
+    }
 }
