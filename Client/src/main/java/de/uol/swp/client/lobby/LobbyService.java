@@ -3,7 +3,9 @@ package de.uol.swp.client.lobby;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import de.uol.swp.common.lobby.Lobby;
+import de.uol.swp.common.lobby.message.LobbyLeaveUserRequest;
 import de.uol.swp.common.lobby.request.RetrieveAllOnlineLobbiesRequest;
+import de.uol.swp.common.user.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,4 +27,8 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
         bus.post(cmd);
         return null;
     }
+
+    /*public void leaveLobby (User user) {
+        LobbyLeaveUserRequest req = new LobbyLeaveUserRequest(user);
+    }*/
 }

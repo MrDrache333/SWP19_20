@@ -113,7 +113,7 @@ public class SceneManager {
 
         if (lobbyScene == null) {
             Parent rootPane = initPresenter(LobbyPresenter.fxml);
-            lobbyScene = new Scene(rootPane, 600, 400);
+            lobbyScene = new Scene(rootPane, 900, 750);
             lobbyScene.getStylesheets().add(styleSheet);
         }
     }

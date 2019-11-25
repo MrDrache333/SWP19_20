@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
 import de.uol.swp.server.lobby.LobbyManagement;
+import javafx.event.ActionEvent;
 
 /**
  * @author Paula, Haschem, Ferit
@@ -23,7 +24,14 @@ public class LobbyPresenter extends AbstractPresenter {
     public LobbyPresenter(EventBus eventBus, LobbyManagement lobbyManagement) {
         setEventBus(eventBus);
     }
+
+    public void onLogoutButtonPressed(ActionEvent actionEvent) {
+
+        userService.logout(loggedInUser);
+    }
 }
+
+
 
 
 
