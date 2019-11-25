@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="900.0" fx:controller="de.uol.swp.client.lobby.LobbyPresenter" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.uol.swp.client.lobby.LobbyPresenter">
    <children>
       <GridPane prefHeight="750.0" prefWidth="900.0">
         <columnConstraints>
@@ -62,7 +62,7 @@
             </GridPane>
             <AnchorPane prefHeight="196.0" prefWidth="900.0" GridPane.rowIndex="2">
                <children>
-                  <Button layoutX="26.0" layoutY="13.0" mnemonicParsing="false" text="Spielanleitung" AnchorPane.leftAnchor="25.0" />
+                  <Button layoutX="26.0" layoutY="13.0" mnemonicParsing="false" onAction="#onInstructionsButtonPressed" text="Spielanleitung" AnchorPane.leftAnchor="25.0" />
                </children></AnchorPane>
             <AnchorPane prefHeight="34.0" prefWidth="600.0" GridPane.rowIndex="3">
                <children>
