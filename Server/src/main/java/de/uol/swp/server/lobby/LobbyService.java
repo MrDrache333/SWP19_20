@@ -4,7 +4,6 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import de.uol.swp.common.lobby.Lobby;
-import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.request.RetrieveAllOnlineLobbiesRequest;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
@@ -15,7 +14,6 @@ import de.uol.swp.server.usermanagement.AuthenticationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -82,7 +80,7 @@ public class LobbyService extends AbstractService {
     }
 
 
-    public void sendToAll(String lobbyName, ServerMessage message) {
+    private void sendToAll(String lobbyName, ServerMessage message) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyName);
 
         if (lobby.isPresent()) {
@@ -91,6 +89,17 @@ public class LobbyService extends AbstractService {
         }
 
         // TODO: error handling not existing lobby
+    }
+
+    @Subscribe
+    public void onUpdateLobbyReadyStatusReqest(UpdateLobbyReadyStatusRequest request) {
+        Optional<Lobby> lobby = lobbyManagement.getLobby(request.getName());
+
+        if (lobby.isPresent()) {
+            lobby.get().setReadyStatus(request.getUser(), request.isReady());
+            ServerMessage msg = new UpdatedLobbyReadyStatusMessage(lobby.get().getName(), request.getUser(), request.isReady());
+            sendToAll(lobby.get().getName(), msg);
+        }
     }
 
     /**

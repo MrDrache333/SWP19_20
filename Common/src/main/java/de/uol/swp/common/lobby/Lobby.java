@@ -5,23 +5,88 @@ import de.uol.swp.common.user.User;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * The interface Lobby.
+ */
 public interface Lobby {
 
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
     String getName();
 
+    /**
+     * Update owner.
+     *
+     * @param user the user
+     */
     void updateOwner(User user);
 
+    /**
+     * Gets owner.
+     *
+     * @return the owner
+     */
     User getOwner();
 
+    /**
+     * Join user.
+     *
+     * @param user the user
+     */
     void joinUser(User user);
 
+    /**
+     * Leave user.
+     *
+     * @param user the user
+     */
     void leaveUser(User user);
 
+    /**
+     * Gets users.
+     *
+     * @return the users
+     */
     Set<User> getUsers();
 
+    /**
+     * Gets lobby id.
+     *
+     * @return the lobby id
+     */
     UUID getLobbyID();
 
+    /**
+     * Sets lobby id.
+     *
+     * @param lobbyID the lobby id
+     */
     void setLobbyID(UUID lobbyID);
 
+    /**
+     * Gets players.
+     *
+     * @return the players
+     */
     int getPlayers();
+
+    /**
+     * Sets ready status.
+     *
+     * @param user the user
+     */
+    void setReadyStatus(User user, boolean status);
+
+    /**
+     * Gets ready status.
+     *
+     * @param user the user
+     * @return the ready status
+     */
+    boolean getReadyStatus(User user);
+
+
 }
