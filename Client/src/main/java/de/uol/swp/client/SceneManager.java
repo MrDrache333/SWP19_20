@@ -113,7 +113,7 @@ public class SceneManager {
 
         if (lobbyScene == null) {
             Parent rootPane = initPresenter(LobbyPresenter.fxml);
-            lobbyScene = new Scene(rootPane, 600, 400);
+            lobbyScene = new Scene(rootPane, 800, 600);
             lobbyScene.getStylesheets().add(styleSheet);
         }
     }
@@ -190,8 +190,9 @@ public class SceneManager {
 
     /**
      * Es wird eine neue Stage mit der lobbyScene angezeigt und mit dem Attribut geöffnet.
-     * @author Paula, Haschem, Ferit
+     *
      * @param title der Übergebene Titel aus dem MainMenuPresenter
+     * @author Paula, Haschem, Ferit
      * @version 0.1
      * @since Sprint2
      */

@@ -170,17 +170,17 @@ public class ClientApp extends Application implements ConnectionListener {
         sceneManager.showServerError(e);
     }
 
-	@Subscribe
-	public void onUserLoggedOutMessage(UserLoggedOutMessage message){
-		LOG.info("Logout successful.");
-		if (message.getUsername().equals(user.getUsername())){
-			sceneManager.showLoginScreen();
-		}
-	}
+    @Subscribe
+    public void onUserLoggedOutMessage(UserLoggedOutMessage message) {
+        LOG.info("Logout successful.");
+        if (message.getUsername().equals(user.getUsername())) {
+            sceneManager.showLoginScreen();
+        }
+    }
 
-	// -----------------------------------------------------
-	// JavFX Help methods
-	// -----------------------------------------------------
+    // -----------------------------------------------------
+    // JavFX Help methods
+    // -----------------------------------------------------
 
 
     public static void main(String[] args) {
