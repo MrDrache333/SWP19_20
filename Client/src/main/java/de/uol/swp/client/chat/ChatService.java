@@ -30,7 +30,6 @@ public class ChatService implements de.uol.swp.common.chat.ChatService {
     }
 
     /**
-     *
      * Posts a New Message Request to the bus
      *
      * @param message the message
@@ -43,7 +42,6 @@ public class ChatService implements de.uol.swp.common.chat.ChatService {
     }
 
     /**
-     *
      * Posts a New Message Request to the bus for specified ChatID
      *
      * @param ChatId  the chat id of any Specific ChatID
