@@ -1,26 +1,45 @@
 package de.uol.swp.common.lobby.response;
 
-import de.uol.swp.common.lobby.dto.LobbyDTO;
+import de.uol.swp.common.lobby.LobbyUser;
 import de.uol.swp.common.message.AbstractResponseMessage;
-import de.uol.swp.common.user.User;
-import de.uol.swp.common.user.dto.UserDTO;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
+/**
+ * The type All online users in lobby response.
+ */
 public class AllOnlineUsersInLobbyResponse extends AbstractResponseMessage {
 
-    final private ArrayList<User> users = new ArrayList<>();
+    private ArrayList<LobbyUser> users = new ArrayList<>();
+    private String LobbyName;
 
-    AllOnlineUsersInLobbyResponse (Collection<User> users) {
-        for (User user : users) {
-            this.users.add(user);
-        }
+    /**
+     * Instantiates a new All online users in lobby response.
+     *
+     * @param lobbyname the lobbyname
+     * @param users     the users
+     */
+    public AllOnlineUsersInLobbyResponse(String lobbyname, Collection<LobbyUser> users) {
+        this.LobbyName = lobbyname;
+        this.users.addAll(users);
     }
-    public List<User> getUsers() {
+
+    /**
+     * Gets users.
+     *
+     * @return the users
+     */
+    public ArrayList<LobbyUser> getUsers() {
         return users;
     }
 
-
+    /**
+     * Gets lobby name.
+     *
+     * @return the lobby name
+     */
+    public String getLobbyName() {
+        return LobbyName;
+    }
 }

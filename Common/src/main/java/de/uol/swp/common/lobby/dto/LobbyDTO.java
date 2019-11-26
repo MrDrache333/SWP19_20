@@ -10,6 +10,9 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 
+/**
+ * The type Lobby dto.
+ */
 public class LobbyDTO implements Lobby, Serializable {
 
     private final String name;
@@ -22,6 +25,13 @@ public class LobbyDTO implements Lobby, Serializable {
     private UUID lobbyID;
 
 
+    /**
+     * Instantiates a new Lobby dto.
+     *
+     * @param name    the name
+     * @param creator the creator
+     * @param lobbyID the lobby id
+     */
     public LobbyDTO(String name, User creator, UUID lobbyID) {
         this.name = name;
         this.owner = creator;
@@ -30,6 +40,14 @@ public class LobbyDTO implements Lobby, Serializable {
         this.players = 1;
     }
 
+    /**
+     * Instantiates a new Lobby dto.
+     *
+     * @param name    the name
+     * @param creator the creator
+     * @param lobbyID the lobby id
+     * @param players the players
+     */
     public LobbyDTO(String name, User creator, UUID lobbyID, int players) {
         this.name = name;
         this.owner = creator;

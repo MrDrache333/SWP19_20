@@ -6,9 +6,9 @@ import com.google.inject.Inject;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.request.RetrieveAllOnlineLobbiesRequest;
-import de.uol.swp.common.lobby.request.RetrieveEveryLobbyUserStatusInLobbyRequest;
+import de.uol.swp.common.lobby.request.RetrieveAllOnlineUsersInLobbyRequest;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
-import de.uol.swp.common.lobby.response.EveryLobbyUserStatusInLobbyResponse;
+import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.message.ResponseMessage;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.server.AbstractService;
@@ -20,6 +20,9 @@ import org.apache.logging.log4j.Logger;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * The type Lobby service.
+ */
 public class LobbyService extends AbstractService {
     private static final Logger LOG = LogManager.getLogger(LobbyService.class);
 
@@ -27,6 +30,14 @@ public class LobbyService extends AbstractService {
     private final ChatManagement chatManagement;
     private final AuthenticationService authenticationService;
 
+    /**
+     * Instantiates a new Lobby service.
+     *
+     * @param lobbyManagement       the lobby management
+     * @param authenticationService the authentication service
+     * @param chatManagement        the chat management
+     * @param eventBus              the event bus
+     */
     @Inject
     public LobbyService(LobbyManagement lobbyManagement, AuthenticationService authenticationService, ChatManagement chatManagement, EventBus eventBus) {
         super(eventBus);
@@ -34,6 +45,7 @@ public class LobbyService extends AbstractService {
         this.authenticationService = authenticationService;
         this.chatManagement = chatManagement;
     }
+
 
     /**
      * lobbyManagment auf dem Server wird aufgerufen und übergibt LobbyNamen und den Besitzer.
@@ -44,8 +56,6 @@ public class LobbyService extends AbstractService {
      * @version 0.1
      * @since Sprint2
      */
-
-
     @Subscribe
     public void onCreateLobbyRequest(CreateLobbyRequest msg) {
 
@@ -60,6 +70,13 @@ public class LobbyService extends AbstractService {
     }
 
 
+    /**
+     * On lobby join user request.
+     *
+     * @param lobbyJoinUserRequest the lobby join user request
+     * @Version 1.0
+     * @since Sprint2
+     */
     @Subscribe
     public void onLobbyJoinUserRequest(LobbyJoinUserRequest lobbyJoinUserRequest) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyJoinUserRequest.getName());
@@ -71,6 +88,13 @@ public class LobbyService extends AbstractService {
         // TODO: error handling not existing lobby
     }
 
+    /**
+     * On lobby leave user request.
+     *
+     * @param lobbyLeaveUserRequest the lobby leave user request
+     * @Version 1.0
+     * @since Sprint2
+     */
     @Subscribe
     public void onLobbyLeaveUserRequest(LobbyLeaveUserRequest lobbyLeaveUserRequest) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyLeaveUserRequest.getName());
@@ -94,6 +118,14 @@ public class LobbyService extends AbstractService {
         // TODO: error handling not existing lobby
     }
 
+    /**
+     * On update lobby ready status reqest.
+     *
+     * @param request the request
+     * @author Keno Oelrichs Garcia * @Version 1.0 * @since
+     * @Version 1.0
+     * @since Sprint3
+     */
     @Subscribe
     public void onUpdateLobbyReadyStatusReqest(UpdateLobbyReadyStatusRequest request) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(request.getName());
@@ -106,11 +138,11 @@ public class LobbyService extends AbstractService {
     }
 
     @Subscribe
-    public void onRetrieveEveryLobbyUserStatusInLobbyRequest(RetrieveEveryLobbyUserStatusInLobbyRequest request) {
-        Optional<Lobby> lobby = lobbyManagement.getLobby(request.getLobbyName());
+    public void onRetrieveAllOnlineUsersInLobbyRequest(RetrieveAllOnlineUsersInLobbyRequest request) {
+        Optional<Lobby> lobby = lobbyManagement.getLobby(request.getLobbyId());
 
         if (lobby.isPresent()) {
-            ResponseMessage msg = new EveryLobbyUserStatusInLobbyResponse(lobby.get().getLobbyUsers());
+            ResponseMessage msg = new AllOnlineUsersInLobbyResponse(lobby.get().getName(), lobby.get().getLobbyUsers());
             msg.initWithMessage(request);
             post(msg);
         }
@@ -119,7 +151,10 @@ public class LobbyService extends AbstractService {
     /**
      * erstellt eine Response-Message und schickt diese ab
      *
-     * @author Julia
+     * @param msg the msg
+     * @author Julia Oelrichs Garcia
+     * @Version 1.0
+     * @since Sprint2
      */
     @Subscribe
     public void onRetrieveAllOnlineLobbiesRequest(RetrieveAllOnlineLobbiesRequest msg) {
