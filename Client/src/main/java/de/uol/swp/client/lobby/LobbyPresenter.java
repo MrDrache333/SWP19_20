@@ -151,10 +151,6 @@ public class LobbyPresenter extends AbstractPresenter {
         });
     }
 
-}
-
-
-
     //--------------------------------------
     // EVENTBUS
     //--------------------------------------
