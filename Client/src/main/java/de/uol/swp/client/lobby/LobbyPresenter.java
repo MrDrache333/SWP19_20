@@ -184,7 +184,14 @@ public class LobbyPresenter extends AbstractPresenter {
 
     @Subscribe
     public void onAllOnlineUsersInLobby(AllOnlineUsersInLobbyResponse msg) {
-        //TODO Update der User-Liste bzw. der Stati für alle User
+        Platform.runLater(() -> {
+            if (users == null) {
+                users = FXCollections.observableArrayList();
+                usersView.setItems(users);
+            }
+            users.clear();
+            msg.getUsers().forEach(u -> users.add(u.getUsername()));
+        });
     }
 
     @FXML
