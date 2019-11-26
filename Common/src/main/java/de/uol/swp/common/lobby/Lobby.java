@@ -2,6 +2,7 @@ package de.uol.swp.common.lobby;
 
 import de.uol.swp.common.user.User;
 
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
 
@@ -53,6 +54,13 @@ public interface Lobby {
     Set<User> getUsers();
 
     /**
+     * Gets lobby users.
+     *
+     * @return the lobby users
+     */
+    ArrayList<LobbyUser> getLobbyUsers();
+
+    /**
      * Gets lobby id.
      *
      * @return the lobby id
@@ -76,7 +84,8 @@ public interface Lobby {
     /**
      * Sets ready status.
      *
-     * @param user the user
+     * @param user   the user
+     * @param status the status
      */
     void setReadyStatus(User user, boolean status);
 

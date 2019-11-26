@@ -6,7 +6,10 @@ import com.google.inject.Inject;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.request.RetrieveAllOnlineLobbiesRequest;
+import de.uol.swp.common.lobby.request.RetrieveEveryLobbyUserStatusInLobbyRequest;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
+import de.uol.swp.common.lobby.response.EveryLobbyUserStatusInLobbyResponse;
+import de.uol.swp.common.message.ResponseMessage;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.chat.ChatManagement;
@@ -97,8 +100,19 @@ public class LobbyService extends AbstractService {
 
         if (lobby.isPresent()) {
             lobby.get().setReadyStatus(request.getUser(), request.isReady());
-            ServerMessage msg = new UpdatedLobbyReadyStatusMessage(lobby.get().getName(), request.getUser(), request.isReady());
+            ServerMessage msg = new UpdatedLobbyReadyStatusMessage(lobby.get().getName(), request.getUser(), lobby.get().getReadyStatus(request.getUser()));
             sendToAll(lobby.get().getName(), msg);
+        }
+    }
+
+    @Subscribe
+    public void onRetrieveEveryLobbyUserStatusInLobbyRequest(RetrieveEveryLobbyUserStatusInLobbyRequest request) {
+        Optional<Lobby> lobby = lobbyManagement.getLobby(request.getLobbyName());
+
+        if (lobby.isPresent()) {
+            ResponseMessage msg = new EveryLobbyUserStatusInLobbyResponse(lobby.get().getLobbyUsers());
+            msg.initWithMessage(request);
+            post(msg);
         }
     }
 

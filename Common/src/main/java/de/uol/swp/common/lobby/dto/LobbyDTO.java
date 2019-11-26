@@ -87,6 +87,11 @@ public class LobbyDTO implements Lobby, Serializable {
     }
 
     @Override
+    public ArrayList<LobbyUser> getLobbyUsers() {
+        return users;
+    }
+
+    @Override
     public UUID getLobbyID() {
         return lobbyID;
     }
