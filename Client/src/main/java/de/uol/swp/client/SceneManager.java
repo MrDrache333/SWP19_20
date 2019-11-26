@@ -190,8 +190,9 @@ public class SceneManager {
 
     /**
      * Es wird eine neue Stage mit der lobbyScene angezeigt und mit dem Attribut geöffnet.
-     * @author Paula, Haschem, Ferit
+     *
      * @param title der Übergebene Titel aus dem MainMenuPresenter
+     * @author Paula, Haschem, Ferit
      * @version 0.1
      * @since Sprint2
      */

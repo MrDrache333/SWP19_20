@@ -29,7 +29,7 @@ public class AbstractPresenter {
         eventBus.register(this);
     }
 
-    public void clearEventBus(){
+    public void clearEventBus() {
         this.eventBus.unregister(this);
         this.eventBus = null;
     }
