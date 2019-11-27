@@ -15,4 +15,10 @@ public class GameViewPresenter extends AbstractPresenter {
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
         userService.logout(loggedInUser);
     }
+
+    @FXML
+    public void onGiveUpButtonPressed(ActionEvent actionEvent) {
+
+    }
 }
+
