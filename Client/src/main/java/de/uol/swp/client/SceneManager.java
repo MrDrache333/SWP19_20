@@ -7,6 +7,7 @@ import com.google.inject.Injector;
 import com.google.inject.assistedinject.Assisted;
 import de.uol.swp.client.auth.LoginPresenter;
 import de.uol.swp.client.auth.events.ShowLoginViewEvent;
+import de.uol.swp.client.game.GameViewPresenter;
 import de.uol.swp.client.lobby.*;
 import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.client.register.RegistrationPresenter;
@@ -39,6 +40,7 @@ public class SceneManager {
     private String lastTitle;
     private Scene registrationScene;
     private Scene mainScene;
+    private Scene gameScene;
     private Scene lastScene = null;
     private Scene currentScene = null;
     private Scene lobbyScene;
@@ -65,6 +67,7 @@ public class SceneManager {
         initMainView();
         initRegistrationView();
         initLobbyView();
+        initGameView();
     }
 
     private Parent initPresenter(String fxmlFile) {
@@ -89,6 +92,14 @@ public class SceneManager {
             Parent rootPane = initPresenter(MainMenuPresenter.fxml);
             mainScene = new Scene(rootPane, 1280, 750);
             mainScene.getStylesheets().add(styleSheet);
+        }
+    }
+
+    private void initGameView() {
+        if (gameScene == null) {
+            Parent rootPane = initPresenter(GameViewPresenter.fxml);
+            gameScene = new Scene(rootPane, 1280, 750);
+            gameScene.getStylesheets().add(styleSheet);
         }
     }
 
@@ -182,6 +193,10 @@ public class SceneManager {
 
     public void showLoginScreen() {
         showScene(loginScene, "Login");
+    }
+
+    public void showGameScreen() {
+        showScene(gameScene, "Login");
     }
 
     public void showRegistrationScreen() {

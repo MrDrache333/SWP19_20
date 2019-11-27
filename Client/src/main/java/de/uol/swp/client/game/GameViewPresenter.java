@@ -1,6 +1,7 @@
 package de.uol.swp.client.game;
 
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.main.MainMenuPresenter;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,6 +17,8 @@ import java.util.Optional;
 public class GameViewPresenter extends AbstractPresenter {
     public static final String fxml = "/fxml/GameView.fxml";
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
+    private static SceneManager sceneManager;
+
 
     Boolean aufgeben = false;
 
@@ -27,9 +30,9 @@ public class GameViewPresenter extends AbstractPresenter {
         alert.getDialogPane().setHeaderText(title);
         alert.show();
         Optional<ButtonType> result = alert.showAndWait();
-        if(result.get() == ButtonType.OK){
-            System.out.println("Test1");
-        }else{
+        if (result.get() == ButtonType.OK) {
+            sceneManager.showMainScreen(loggedInUser);
+        } else {
 
         }
 
@@ -45,8 +48,7 @@ public class GameViewPresenter extends AbstractPresenter {
     public void onGiveUpButtonPressed(ActionEvent actionEvent) {
         aufgeben = true;
 
-
-        showAlert(Alert.AlertType.CONFIRMATION, "Wollen Sie wirklich Aufgeben? ", "Fehler");
+        showAlert(Alert.AlertType.CONFIRMATION, " ", "Wollen Sie wirklich Aufgeben?");
 
     }
 }
