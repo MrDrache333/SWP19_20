@@ -95,6 +95,7 @@ public class LobbyService extends AbstractService {
 
     /**
      * erstellt eine Response-Message und schickt diese ab
+     *
      * @author Julia
      */
     @Subscribe

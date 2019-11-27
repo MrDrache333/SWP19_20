@@ -226,7 +226,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     /**
      * Die Methode fängt den Button-Klick ab und prüft, ob der LobbyName leer ist.
      * Falls ja: Wird eine Fehlermeldung rausgegeben.
-     * Falls nein: Wir eine CreateLobbyRequest mit dem eingegeben LobbyNamen und dem eingeloggten User auf den
+     * Falls nein: Wird eine CreateLobbyRequest mit dem eingegeben LobbyNamen und dem eingeloggten User auf den
      * Eventbus gepackt.
      *
      * @author Paula, Haschem, Ferit

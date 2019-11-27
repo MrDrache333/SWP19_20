@@ -155,6 +155,10 @@ public class ClientApp extends Application implements ConnectionListener {
     public void onCreateLobbyMessage(CreateLobbyMessage message) {
         if (message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showLobbyScreen(message.getName());
+
+            //für uns zum Testen, da noch keine Verbindung zwischen Lobby und GameView existiert
+            //sceneManager.showGameScreen();
+
             LOG.debug("CreateLobbyMessage vom Server erfolgreich angekommen");
         }
         lobbyService.retrieveAllLobbies();
@@ -170,17 +174,17 @@ public class ClientApp extends Application implements ConnectionListener {
         sceneManager.showServerError(e);
     }
 
-	@Subscribe
-	public void onUserLoggedOutMessage(UserLoggedOutMessage message){
-		LOG.info("Logout successful.");
-		if (message.getUsername().equals(user.getUsername())){
-			sceneManager.showLoginScreen();
-		}
-	}
+    @Subscribe
+    public void onUserLoggedOutMessage(UserLoggedOutMessage message) {
+        LOG.info("Logout successful.");
+        if (message.getUsername().equals(user.getUsername())) {
+            sceneManager.showLoginScreen();
+        }
+    }
 
-	// -----------------------------------------------------
-	// JavFX Help methods
-	// -----------------------------------------------------
+    // -----------------------------------------------------
+    // JavFX Help methods
+    // -----------------------------------------------------
 
 
     public static void main(String[] args) {

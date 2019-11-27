@@ -7,7 +7,8 @@ import com.google.inject.Injector;
 import com.google.inject.assistedinject.Assisted;
 import de.uol.swp.client.auth.LoginPresenter;
 import de.uol.swp.client.auth.events.ShowLoginViewEvent;
-import de.uol.swp.client.lobby.LobbyPresenter;
+import de.uol.swp.client.game.GameViewPresenter;
+import de.uol.swp.client.lobby.*;
 import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.client.register.RegistrationPresenter;
 import de.uol.swp.client.register.event.RegistrationCanceledEvent;
@@ -39,6 +40,7 @@ public class SceneManager {
     private String lastTitle;
     private Scene registrationScene;
     private Scene mainScene;
+    private Scene gameScene;
     private Scene lastScene = null;
     private Scene currentScene = null;
     private Scene lobbyScene;
@@ -65,6 +67,7 @@ public class SceneManager {
         initMainView();
         initRegistrationView();
         initLobbyView();
+        initGameView();
     }
 
     private Parent initPresenter(String fxmlFile) {
@@ -92,6 +95,14 @@ public class SceneManager {
         }
     }
 
+    private void initGameView() {
+        if (gameScene == null) {
+            Parent rootPane = initPresenter(GameViewPresenter.fxml);
+            gameScene = new Scene(rootPane, 1280, 750);
+            gameScene.getStylesheets().add(styleSheet);
+        }
+    }
+
     private void initLoginView() {
         if (loginScene == null) {
             Parent rootPane = initPresenter(LoginPresenter.fxml);
@@ -113,7 +124,7 @@ public class SceneManager {
 
         if (lobbyScene == null) {
             Parent rootPane = initPresenter(LobbyPresenter.fxml);
-            lobbyScene = new Scene(rootPane, 600, 400);
+            lobbyScene = new Scene(rootPane, 800, 600);
             lobbyScene.getStylesheets().add(styleSheet);
         }
     }
@@ -184,14 +195,19 @@ public class SceneManager {
         showScene(loginScene, "Login");
     }
 
+    public void showGameScreen() {
+        showScene(gameScene, "Login");
+    }
+
     public void showRegistrationScreen() {
         showScene(registrationScene, "Registration");
     }
 
     /**
      * Es wird eine neue Stage mit der lobbyScene angezeigt und mit dem Attribut geöffnet.
-     * @author Paula, Haschem, Ferit
+     *
      * @param title der Übergebene Titel aus dem MainMenuPresenter
+     * @author Paula, Haschem, Ferit
      * @version 0.1
      * @since Sprint2
      */
