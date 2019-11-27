@@ -75,16 +75,17 @@ public class LobbyPresenter extends AbstractPresenter {
         chatView.getChildren().add(loader.load());
     }
 
+    @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
 
         userService.logout(loggedInUser);
     }
 
+    @FXML
     public void onInstructionsButtonPressed(ActionEvent actionEvent) {
         try {
             Desktop.getDesktop().browse(new URI(url));
-        }
-        catch (IOException | URISyntaxException e1) {
+        } catch (IOException | URISyntaxException e1) {
             e1.printStackTrace();
         }
     }
@@ -99,8 +100,9 @@ public class LobbyPresenter extends AbstractPresenter {
         Platform.runLater(() -> {
             if (users != null && loggedInUser != null && !loggedInUser.toString().equals(message.getName()))
                 users.add(message.getName());
-            //chatViewPresenter.userJoined(message.getUsername());
+            chatViewPresenter.userJoined(message.getUser().getUsername());
         });
+
     }
 
     /**
@@ -112,8 +114,9 @@ public class LobbyPresenter extends AbstractPresenter {
     public void userLeft(UserLeftLobbyMessage message) {
         LOG.debug("User " + message.getName() + " logged out");
         Platform.runLater(() -> {
-            //chatViewPresenter.userLeft(message.getUsername());
+            chatViewPresenter.userLeft(message.getUser().getUsername());
             users.remove(message.getName());
+
         });
     }
 

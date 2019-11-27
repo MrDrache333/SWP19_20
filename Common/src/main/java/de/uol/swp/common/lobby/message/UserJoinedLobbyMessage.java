@@ -4,6 +4,7 @@ import de.uol.swp.common.user.User;
 
 public class UserJoinedLobbyMessage extends AbstractLobbyMessage {
 
+
     public UserJoinedLobbyMessage() {
     }
 
