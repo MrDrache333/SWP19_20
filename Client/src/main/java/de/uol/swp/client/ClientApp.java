@@ -155,8 +155,10 @@ public class ClientApp extends Application implements ConnectionListener {
     public void onCreateLobbyMessage(CreateLobbyMessage message) {
         if (message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showLobbyScreen(message.getName());
-            //sceneManager.showLobbyScreen(message.getName());
+
+            //für uns zum Testen, da noch keine Verbindung zwischen Lobby und GameView existiert
             //sceneManager.showGameScreen();
+
             LOG.debug("CreateLobbyMessage vom Server erfolgreich angekommen");
         }
         lobbyService.retrieveAllLobbies();

@@ -22,6 +22,9 @@ public class GameViewPresenter extends AbstractPresenter {
 
     Boolean aufgeben = false;
 
+    /*
+    showAlert Methode, um Alert Box zu erstellen
+     */
     public static void showAlert(Alert.AlertType type, String message, String title) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "");
         alert.setResizable(false);
@@ -48,7 +51,7 @@ public class GameViewPresenter extends AbstractPresenter {
     public void onGiveUpButtonPressed(ActionEvent actionEvent) {
         aufgeben = true;
 
-        showAlert(Alert.AlertType.CONFIRMATION, " ", "Wollen Sie wirklich Aufgeben?");
+        showAlert(Alert.AlertType.CONFIRMATION, " ", "Möchtest du wirklich aufgeben?");
 
     }
 }
