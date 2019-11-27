@@ -17,6 +17,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author Paula, Haschem, Ferit
@@ -34,6 +37,11 @@ public class LobbyPresenter extends AbstractPresenter {
 
     private String chatID;
     private ChatViewPresenter chatViewPresenter;
+
+    private UUID lobbyID;
+    private String name;
+    private Map<UUID, String> lobbies = new HashMap<>();
+
 
     public LobbyPresenter() {
     }
@@ -59,6 +67,9 @@ public class LobbyPresenter extends AbstractPresenter {
         chatID = msg.getChatID().toString();
         LOG.debug("Got ChatID from Server: " + chatID);
         chatViewPresenter.setChatId(chatID);
+        lobbyID = msg.getChatID();
+        name = msg.getName();
+        lobbies.put(lobbyID, name);
     }
 
     @Subscribe
