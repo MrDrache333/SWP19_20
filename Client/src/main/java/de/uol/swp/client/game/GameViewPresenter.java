@@ -1,5 +1,6 @@
 package de.uol.swp.client.game;
 
+import com.google.inject.Inject;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.main.MainMenuPresenter;
@@ -22,6 +23,7 @@ public class GameViewPresenter extends AbstractPresenter {
 
     Boolean aufgeben = false;
 
+    @Inject
     public static void showAlert(Alert.AlertType type, String message, String title) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "");
         alert.setResizable(false);
