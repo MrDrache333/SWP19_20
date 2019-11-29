@@ -8,6 +8,8 @@ import com.google.inject.Injector;
 import de.uol.swp.client.di.ClientModule;
 import de.uol.swp.common.lobby.LobbyService;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
+import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
+import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.exception.RegistrationExceptionMessage;
@@ -156,6 +158,25 @@ public class ClientApp extends Application implements ConnectionListener {
         if (message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showLobbyScreen(message.getName(), message.getChatID());
             LOG.debug("CreateLobbyMessage vom Server erfolgreich angekommen");
+        }
+        lobbyService.retrieveAllLobbies();
+    }
+
+    @Subscribe
+    public void onUserJoinedLobbyMessage(UserJoinedLobbyMessage message) {
+        if (message.getUser().getUsername().equals(user.getUsername())) {
+            sceneManager.showLobbyScreen(message.getName(), message.getLobbyID());
+            LOG.info("User " + message.getUser().getUsername() + " joined lobby successfully");
+        }
+        lobbyService.retrieveAllLobbies();
+    }
+
+    @Subscribe
+    public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
+        if (message.getUser().getUsername().equals(user.getUsername())) {
+            sceneManager.showMainScreen(user);
+            LOG.info("User " + message.getUser().getUsername() + " left lobby successfully");
+            sceneManager.closeLobbyStage(message.getLobbyID());
         }
         lobbyService.retrieveAllLobbies();
     }

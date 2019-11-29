@@ -1,9 +1,10 @@
 package de.uol.swp.server.communication;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
-public class UUIDSession implements de.uol.swp.common.user.Session {
+public class UUIDSession implements de.uol.swp.common.user.Session, Serializable {
 
 	private static final long serialVersionUID = -3012502325550415132L;
 	private final String sessionId;

@@ -4,8 +4,12 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import de.uol.swp.common.lobby.Lobby;
-import de.uol.swp.common.lobby.dto.LobbyDTO;
-import de.uol.swp.common.lobby.message.*;
+import de.uol.swp.common.lobby.message.CreateLobbyMessage;
+import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
+import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
+import de.uol.swp.common.lobby.request.CreateLobbyRequest;
+import de.uol.swp.common.lobby.request.LobbyJoinUserRequest;
+import de.uol.swp.common.lobby.request.LobbyLeaveUserRequest;
 import de.uol.swp.common.lobby.request.RetrieveAllOnlineLobbiesRequest;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.message.ServerMessage;
@@ -15,7 +19,8 @@ import de.uol.swp.server.usermanagement.AuthenticationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.*;
+import java.util.Optional;
+import java.util.UUID;
 
 public class LobbyService extends AbstractService {
     private static final Logger LOG = LogManager.getLogger(LobbyService.class);
@@ -58,23 +63,30 @@ public class LobbyService extends AbstractService {
 
 
     @Subscribe
-    public void onLobbyJoinUserRequest(LobbyJoinUserRequest lobbyJoinUserRequest) {
-        Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyJoinUserRequest.getName());
-
+    public void onLobbyJoinUserRequest(LobbyJoinUserRequest msg) {
+        Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getName());
         if (lobby.isPresent()) {
-            lobby.get().joinUser(lobbyJoinUserRequest.getUser());
-            sendToAll(lobbyJoinUserRequest.getName(), new UserJoinedLobbyMessage(lobbyJoinUserRequest.getName(), lobbyJoinUserRequest.getUser(), lobbyJoinUserRequest.getLobbyID()));
+            if(LOG.isDebugEnabled()) {
+                LOG.debug("User " + msg.getUser().getUsername() + " is joining lobby " + msg.getName());
+            }
+            lobby.get().joinUser(msg.getUser());
+            ServerMessage returnMessage = new UserJoinedLobbyMessage(msg.getName(), msg.getUser(), msg.getLobbyID());
+            sendToAll(msg.getName(), returnMessage);
         }
         // TODO: error handling not existing lobby
     }
 
     @Subscribe
-    public void onLobbyLeaveUserRequest(LobbyLeaveUserRequest lobbyLeaveUserRequest) {
-        Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyLeaveUserRequest.getName());
-
+    public void onLobbyLeaveUserRequest(LobbyLeaveUserRequest msg) {
+        Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getName());
         if (lobby.isPresent()) {
-            lobby.get().leaveUser(lobbyLeaveUserRequest.getUser());
-            sendToAll(lobbyLeaveUserRequest.getName(), new UserLeftLobbyMessage(lobbyLeaveUserRequest.getName(), lobbyLeaveUserRequest.getUser(), lobbyLeaveUserRequest.getLobbyID()));
+            if(LOG.isDebugEnabled()) {
+                LOG.debug("User " + msg.getUser().getUsername() + " is leaving lobby " + msg.getName());
+            }
+            lobby.get().leaveUser(msg.getUser());
+            ServerMessage returnMessage = new UserLeftLobbyMessage(msg.getName(), msg.getUser(), msg.getLobbyID());
+            post(returnMessage);
+            //sendToAll(msg.getName(), returnMessage); //TODO fix?
         }
         // TODO: error handling not existing lobby
     }

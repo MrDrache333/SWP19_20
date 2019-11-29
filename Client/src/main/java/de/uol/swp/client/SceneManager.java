@@ -13,7 +13,6 @@ import de.uol.swp.client.register.RegistrationPresenter;
 import de.uol.swp.client.register.event.RegistrationCanceledEvent;
 import de.uol.swp.client.register.event.RegistrationErrorEvent;
 import de.uol.swp.client.register.event.ShowRegistrationViewEvent;
-import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import javafx.application.Platform;
@@ -26,7 +25,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class SceneManager {
 
@@ -240,6 +241,12 @@ public class SceneManager {
             //LobbyPresenter und lobbyStage in die jeweilige Map packen, mit lobbyID als Schlüssel
             lobbies.put(lobbyID, lobbyPresenter);
             lobbyStages.put(lobbyID, newLobbyStage);
+        });
+    }
+
+    public void closeLobbyStage(UUID id) {
+        Platform.runLater(() -> {
+            lobbyStages.get(id).close();
         });
     }
 

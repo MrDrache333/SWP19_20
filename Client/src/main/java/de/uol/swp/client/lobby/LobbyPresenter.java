@@ -1,16 +1,11 @@
 package de.uol.swp.client.lobby;
 
-import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
-import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
-import de.uol.swp.common.chat.Chat;
 import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.chat.response.ChatResponseMessage;
-import de.uol.swp.common.lobby.message.CreateLobbyMessage;
-import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import javafx.application.Platform;
@@ -22,8 +17,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -45,7 +38,6 @@ public class LobbyPresenter extends AbstractPresenter {
 
     private UUID lobbyID;
     private String name;
-
 
     public LobbyPresenter() {
     }
@@ -114,5 +106,13 @@ public class LobbyPresenter extends AbstractPresenter {
         Platform.runLater(() -> {
             chatViewPresenter.userLeft(message.getUsername());
         });
+    }
+
+    @FXML
+    public void onLeaveLobbyButtonPressed(ActionEvent event) {
+        //TODO über die Liste der User in der Lobby überprüfen ob in der Lobby mehr als 1 User ist
+        // dann:
+            lobbyService.leaveLobby(name, loggedInUser, lobbyID);
+        //TODO: sonst: Lobby löschen
     }
 }
