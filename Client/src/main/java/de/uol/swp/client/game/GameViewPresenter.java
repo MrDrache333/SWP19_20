@@ -30,7 +30,6 @@ public class GameViewPresenter extends AbstractPresenter {
         alert.initModality(Modality.APPLICATION_MODAL);
         alert.getDialogPane().setContentText(message);
         alert.getDialogPane().setHeaderText(title);
-        alert.show();
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
             sceneManager.showMainScreen(loggedInUser);
