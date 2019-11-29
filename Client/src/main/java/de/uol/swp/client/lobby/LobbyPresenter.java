@@ -1,15 +1,20 @@
 package de.uol.swp.client.lobby;
 
+import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
+import de.uol.swp.common.chat.Chat;
 import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.chat.response.ChatResponseMessage;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
+import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
@@ -40,16 +45,32 @@ public class LobbyPresenter extends AbstractPresenter {
 
     private UUID lobbyID;
     private String name;
-    private Map<UUID, String> lobbies = new HashMap<>();
 
 
     public LobbyPresenter() {
+    }
+
+    public LobbyPresenter(String name, UUID lobbyID){
+        this.name = name;
+        this.lobbyID = lobbyID;
+    }
+
+    public UUID getLobbyID(){
+        return lobbyID;
+    }
+
+    public String getName(){
+        return name;
     }
 
     @FXML
     public void initialize() throws IOException {
         //Neue Instanz einer ChatViewPresenter-Controller-Klasse erstellen und nötige Parameter uebergeben
         chatViewPresenter = new ChatViewPresenter("Lobby", ChatViewPresenter.THEME.Light, chatService);
+        //chatID setzen
+        chatID = lobbyID.toString();
+        LOG.debug("Got ChatID from Server: " + chatID);
+        chatViewPresenter.setChatId(chatID);
         //FXML laden
         FXMLLoader loader = new FXMLLoader(getClass().getResource(ChatViewPresenter.fxml));
         //Controller der FXML setzen (Nicht in der FXML festlegen, da es immer eine eigene Instanz davon sein muss)
@@ -62,15 +83,12 @@ public class LobbyPresenter extends AbstractPresenter {
     // EVENTBUS
     //--------------------------------------
 
-    @Subscribe
+    /*@Subscribe
     public void onNewLobbyCreated(CreateLobbyMessage msg) {
         chatID = msg.getChatID().toString();
         LOG.debug("Got ChatID from Server: " + chatID);
         chatViewPresenter.setChatId(chatID);
-        lobbyID = msg.getChatID();
-        name = msg.getName();
-        lobbies.put(lobbyID, name);
-    }
+    }*/
 
     @Subscribe
     public void onChatResponseMessage(ChatResponseMessage msg) {

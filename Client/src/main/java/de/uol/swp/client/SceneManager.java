@@ -13,6 +13,7 @@ import de.uol.swp.client.register.RegistrationPresenter;
 import de.uol.swp.client.register.event.RegistrationCanceledEvent;
 import de.uol.swp.client.register.event.RegistrationErrorEvent;
 import de.uol.swp.client.register.event.ShowRegistrationViewEvent;
+import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import javafx.application.Platform;
@@ -25,6 +26,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
+import java.util.*;
 
 public class SceneManager {
 
@@ -32,7 +34,6 @@ public class SceneManager {
     static final String styleSheet = "css/swp.css";
 
     final private Stage primaryStage;
-    final private Stage lobbyStage;
     final private EventBus eventBus;
     final private UserService userService;
     private Scene loginScene;
@@ -41,17 +42,19 @@ public class SceneManager {
     private Scene mainScene;
     private Scene lastScene = null;
     private Scene currentScene = null;
-    private Scene lobbyScene;
 
     private User currentUser;
 
     private Injector injector;
 
+    private Map<UUID, Scene> lobbyScenes = new HashMap<>();
+    private Map<UUID, LobbyPresenter> lobbies = new HashMap<>();
+    private Map<UUID, Stage> lobbyStages = new HashMap<>();
+
 
     @Inject
-    public SceneManager(EventBus eventBus, UserService userService, Injector injected, @Assisted Stage primaryStage, Stage lobbyStage) {
+    public SceneManager(EventBus eventBus, UserService userService, Injector injected, @Assisted Stage primaryStage) {
         this.eventBus = eventBus;
-        this.lobbyStage = lobbyStage;
         this.eventBus.register(this);
         this.userService = userService;
         this.primaryStage = primaryStage;
@@ -64,7 +67,7 @@ public class SceneManager {
         initLoginView();
         initMainView();
         initRegistrationView();
-        initLobbyView();
+        //initLobbyView();
     }
 
     private Parent initPresenter(String fxmlFile) {
@@ -74,6 +77,26 @@ public class SceneManager {
             URL url = getClass().getResource(fxmlFile);
             LOG.debug("Loading " + url);
             loader.setLocation(url);
+            rootPane = loader.load();
+        } catch (Exception e) {
+            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
+        }
+//        AbstractPresenter presenter = loader.getController();
+//        presenter.setEventBus(eventBus);
+//        presenter.setUserService(userService);
+        return rootPane;
+    }
+
+    //initPresenter für Lobbies, hier wird dann der jeweilige lobbyPresenter als Controller gesetzt
+    private Parent initPresenter(LobbyPresenter lobbyPresenter) {
+        Parent rootPane;
+        FXMLLoader loader = injector.getInstance(FXMLLoader.class);
+        try {
+            URL url = getClass().getResource(LobbyPresenter.fxml);
+            LOG.debug("Loading " + url);
+            loader.setLocation(url);
+            //Controller wird gesetzt (Instanz der LobbyPresenter Klasse)
+            loader.setController(lobbyPresenter);
             rootPane = loader.load();
         } catch (Exception e) {
             throw new RuntimeException("Could not load View!" + e.getMessage(), e);
@@ -109,13 +132,14 @@ public class SceneManager {
     }
 
     // LobbyView wird initalisiert und deklariert.
-    private void initLobbyView() {
-
-        if (lobbyScene == null) {
-            Parent rootPane = initPresenter(LobbyPresenter.fxml);
-            lobbyScene = new Scene(rootPane, 800, 600);
-            lobbyScene.getStylesheets().add(styleSheet);
-        }
+    //neue Szene für die neue Lobby wird erstellt und gespeichert
+    private void initLobbyView(LobbyPresenter lobbyPresenter) {
+        //presenter als controller setzen
+        Parent rootPane = initPresenter(lobbyPresenter);
+        Scene newLobbyScene = new Scene(rootPane, 800, 600);
+        newLobbyScene.getStylesheets().add(styleSheet);
+        //scene in Map packen
+        lobbyScenes.put(lobbyPresenter.getLobbyID(), newLobbyScene);
     }
 
     @Subscribe
@@ -192,21 +216,31 @@ public class SceneManager {
      * Es wird eine neue Stage mit der lobbyScene angezeigt und mit dem Attribut geöffnet.
      *
      * @param title der Übergebene Titel aus dem MainMenuPresenter
-     * @author Paula, Haschem, Ferit
-     * @version 0.1
-     * @since Sprint2
+     * @param lobbyID die übergebene LobbyID aus der empfangenen Message in der ClientApp
+     * @author Paula, Haschem, Ferit, Anna
+     * @version 0.2
+     * @since Sprint3
      */
 
     //TODO: LobbyScreen bzw Stage schließen, wenn Hauptmenü geschlossen wird
-    public void showLobbyScreen(String title) {
+    public void showLobbyScreen(String title, UUID lobbyID) {
         Platform.runLater(() -> {
-            lobbyStage.setTitle(title);
-            lobbyStage.setScene(lobbyScene);
-            lobbyStage.setX(primaryStage.getX() + 200);
-            lobbyStage.setY(primaryStage.getY() + 100);
-            lobbyStage.show();
+            //LobbyPresenter neue Instanz mit (name, id) wird erstellt
+            LobbyPresenter lobbyPresenter = new LobbyPresenter(title, lobbyID);
+            //initLobbyView mit gerade erstelltem Presenter als Controller aufrufen -> Scene wird erstellt
+            initLobbyView(lobbyPresenter);
+            //neue Stage wird erstellt
+            Stage newLobbyStage = new Stage();
+            newLobbyStage.setTitle(title);
+            //passende lobbyScene setzen
+            newLobbyStage.setScene(lobbyScenes.get(lobbyID));
+            newLobbyStage.setX(primaryStage.getX() + 200);
+            newLobbyStage.setY(primaryStage.getY() + 100);
+            newLobbyStage.show();
+            //LobbyPresenter und lobbyStage in die jeweilige Map packen, mit lobbyID als Schlüssel
+            lobbies.put(lobbyID, lobbyPresenter);
+            lobbyStages.put(lobbyID, newLobbyStage);
         });
-
     }
 
 }

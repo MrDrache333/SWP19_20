@@ -147,14 +147,14 @@ public class ClientApp extends Application implements ConnectionListener {
      * somit die Lobby. Überprüft außerdem ob der Ersteller mit dem eingeloggten User übereinstimmt, damit
      * nur dem ersteller ein neu erstelltes Lobbyfenster angezeigt wird.
      *
-     * @author Paula, Haschem, Ferit
-     * @version 0.1
-     * @since Sprint2
+     * @author Paula, Haschem, Ferit, Anna
+     * @version 0.2
+     * @since Sprint3
      */
     @Subscribe
     public void onCreateLobbyMessage(CreateLobbyMessage message) {
         if (message.getUser().getUsername().equals(user.getUsername())) {
-            sceneManager.showLobbyScreen(message.getName());
+            sceneManager.showLobbyScreen(message.getName(), message.getChatID());
             LOG.debug("CreateLobbyMessage vom Server erfolgreich angekommen");
         }
         lobbyService.retrieveAllLobbies();
