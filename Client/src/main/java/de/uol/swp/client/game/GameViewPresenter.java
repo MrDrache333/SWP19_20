@@ -1,9 +1,11 @@
 package de.uol.swp.client.game;
 
+import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.main.MainMenuPresenter;
+import de.uol.swp.client.game.event.GameQuitEvent;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -19,9 +21,14 @@ public class GameViewPresenter extends AbstractPresenter {
     public static final String fxml = "/fxml/GameView.fxml";
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
     private static SceneManager sceneManager;
+    private final EventBus bus;
 
 
-    Boolean aufgeben = false;
+    @Inject
+    public GameViewPresenter(EventBus bus) {
+        this.bus = bus;
+    }
+
 
     @Inject
     public static void showAlert(Alert.AlertType type, String message, String title) {
@@ -32,6 +39,7 @@ public class GameViewPresenter extends AbstractPresenter {
         alert.getDialogPane().setHeaderText(title);
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
+
             sceneManager.showMainScreen(loggedInUser);
         } else {
 
@@ -47,7 +55,6 @@ public class GameViewPresenter extends AbstractPresenter {
 
     @FXML
     public void onGiveUpButtonPressed(ActionEvent actionEvent) {
-        aufgeben = true;
 
         showAlert(Alert.AlertType.CONFIRMATION, " ", "Wollen Sie wirklich Aufgeben?");
 
