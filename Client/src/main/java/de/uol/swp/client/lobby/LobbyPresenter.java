@@ -4,6 +4,7 @@ import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
+import de.uol.swp.common.chat.Chat;
 import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.chat.response.ChatResponseMessage;
 import de.uol.swp.common.lobby.LobbyUser;
@@ -12,11 +13,13 @@ import de.uol.swp.common.lobby.message.UpdatedLobbyReadyStatusMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
+import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -28,6 +31,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -52,6 +58,10 @@ public class LobbyPresenter extends AbstractPresenter {
     private String chatID;
     private ChatViewPresenter chatViewPresenter;
 
+    private UUID lobbyID;
+    private String name;
+
+
     //Eigener Status in der Lobby
     private boolean ownReadyStatus = false;
 
@@ -64,10 +74,27 @@ public class LobbyPresenter extends AbstractPresenter {
     public LobbyPresenter() {
     }
 
+    public LobbyPresenter(String name, UUID lobbyID){
+        this.name = name;
+        this.lobbyID = lobbyID;
+    }
+
+    public UUID getLobbyID(){
+        return lobbyID;
+    }
+
+    public String getName(){
+        return name;
+    }
+
     @FXML
     public void initialize() throws IOException {
         //Neue Instanz einer ChatViewPresenter-Controller-Klasse erstellen und nötige Parameter uebergeben
         chatViewPresenter = new ChatViewPresenter("Lobby", ChatViewPresenter.THEME.Light, chatService);
+        //chatID setzen
+        chatID = lobbyID.toString();
+        LOG.debug("Got ChatID from Server: " + chatID);
+        chatViewPresenter.setChatId(chatID);
         //FXML laden
         FXMLLoader loader = new FXMLLoader(getClass().getResource(ChatViewPresenter.fxml));
         //Controller der FXML setzen (Nicht in der FXML festlegen, da es immer eine eigene Instanz davon sein muss)
@@ -179,31 +206,5 @@ public class LobbyPresenter extends AbstractPresenter {
         Platform.runLater(() -> {
             chatViewPresenter.userLeft(message.getUsername());
         });
-    }
-
-    @Subscribe
-    public void onUpdatedLobbyReadyStatusMessage(UpdatedLobbyReadyStatusMessage msg) {
-        //TODO Update der User-Liste bzw. des Status für den User
-    }
-
-    @Subscribe
-    public void onAllOnlineUsersInLobby(AllOnlineUsersInLobbyResponse msg) {
-        Platform.runLater(() -> {
-            if (users == null) {
-                users = FXCollections.observableArrayList();
-                usersView.setItems(users);
-            }
-            users.clear();
-            msg.getUsers().forEach(u -> users.add(u.getUsername()));
-        });
-    }
-
-    @FXML
-    private void onReadyButtonPressed(ActionEvent event) {
-        ownReadyStatus = !ownReadyStatus;
-        //TODO Send some fancy shit to the Server
-        //TODO Wo bekommen wir den Lobbynamen her? o.O
-        lobbyService.setLobbyUserStatus("", loggedInUser, ownReadyStatus);
-
     }
 }

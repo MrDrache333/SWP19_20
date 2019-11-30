@@ -19,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.*;
 
 /**
  * The type Lobby service.
@@ -56,6 +57,8 @@ public class LobbyService extends AbstractService {
      * @version 0.1
      * @since Sprint2
      */
+
+
     @Subscribe
     public void onCreateLobbyRequest(CreateLobbyRequest msg) {
 
@@ -83,7 +86,7 @@ public class LobbyService extends AbstractService {
 
         if (lobby.isPresent()) {
             lobby.get().joinUser(lobbyJoinUserRequest.getUser());
-            sendToAll(lobbyJoinUserRequest.getName(), new UserJoinedLobbyMessage(lobbyJoinUserRequest.getName(), lobbyJoinUserRequest.getUser()));
+            sendToAll(lobbyJoinUserRequest.getName(), new UserJoinedLobbyMessage(lobbyJoinUserRequest.getName(), lobbyJoinUserRequest.getUser(), lobbyJoinUserRequest.getLobbyID()));
         }
         // TODO: error handling not existing lobby
     }
@@ -101,7 +104,7 @@ public class LobbyService extends AbstractService {
 
         if (lobby.isPresent()) {
             lobby.get().leaveUser(lobbyLeaveUserRequest.getUser());
-            sendToAll(lobbyLeaveUserRequest.getName(), new UserLeftLobbyMessage(lobbyLeaveUserRequest.getName(), lobbyLeaveUserRequest.getUser()));
+            sendToAll(lobbyLeaveUserRequest.getName(), new UserLeftLobbyMessage(lobbyLeaveUserRequest.getName(), lobbyLeaveUserRequest.getUser(), lobbyLeaveUserRequest.getLobbyID()));
         }
         // TODO: error handling not existing lobby
     }
@@ -151,10 +154,7 @@ public class LobbyService extends AbstractService {
     /**
      * erstellt eine Response-Message und schickt diese ab
      *
-     * @param msg the msg
-     * @author Julia Oelrichs Garcia
-     * @Version 1.0
-     * @since Sprint2
+     * @author Julia
      */
     @Subscribe
     public void onRetrieveAllOnlineLobbiesRequest(RetrieveAllOnlineLobbiesRequest msg) {
