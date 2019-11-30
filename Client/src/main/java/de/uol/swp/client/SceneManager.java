@@ -13,6 +13,7 @@ import de.uol.swp.client.register.RegistrationPresenter;
 import de.uol.swp.client.register.event.RegistrationCanceledEvent;
 import de.uol.swp.client.register.event.RegistrationErrorEvent;
 import de.uol.swp.client.register.event.ShowRegistrationViewEvent;
+import de.uol.swp.common.lobby.LobbyService;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import javafx.application.Platform;
@@ -29,6 +30,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import static de.uol.swp.client.AbstractPresenter.loggedInUser;
+
 public class SceneManager {
 
     static final Logger LOG = LogManager.getLogger(SceneManager.class);
@@ -37,6 +40,7 @@ public class SceneManager {
     final private Stage primaryStage;
     final private EventBus eventBus;
     final private UserService userService;
+    final private LobbyService lobbyService;
     private Scene loginScene;
     private String lastTitle;
     private Scene registrationScene;
@@ -54,10 +58,11 @@ public class SceneManager {
 
 
     @Inject
-    public SceneManager(EventBus eventBus, UserService userService, Injector injected, @Assisted Stage primaryStage) {
+    public SceneManager(EventBus eventBus, UserService userService, LobbyService lobbyService, Injector injected, @Assisted Stage primaryStage) {
         this.eventBus = eventBus;
         this.eventBus.register(this);
         this.userService = userService;
+        this.lobbyService = lobbyService;
         this.primaryStage = primaryStage;
         this.injector = injected;
 
@@ -237,6 +242,7 @@ public class SceneManager {
             newLobbyStage.setScene(lobbyScenes.get(lobbyID));
             newLobbyStage.setX(primaryStage.getX() + 200);
             newLobbyStage.setY(primaryStage.getY() + 100);
+            newLobbyStage.setOnHidden(windowEvent -> lobbyService.leaveLobby(title, loggedInUser, lobbyID));
             newLobbyStage.show();
             //LobbyPresenter und lobbyStage in die jeweilige Map packen, mit lobbyID als Schlüssel
             lobbies.put(lobbyID, lobbyPresenter);
@@ -244,9 +250,9 @@ public class SceneManager {
         });
     }
 
-    public void closeLobbyStage(UUID id) {
+    public void closeLobbyStage(UUID lobbyID) {
         Platform.runLater(() -> {
-            lobbyStages.get(id).close();
+            lobbyStages.get(lobbyID).close();
         });
     }
 

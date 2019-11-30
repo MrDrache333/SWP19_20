@@ -20,7 +20,7 @@ public interface LobbyService {
      * @param name der Name der Lobby
      * @param user
      */
-    void joinLobby(String name, User user, UUID id);
+    void joinLobby(String name, User user, UUID lobbyID);
 
     /**
      * Lobby verlassen
@@ -28,5 +28,5 @@ public interface LobbyService {
      * @param name der Name der Lobby
      * @param user
      */
-    void leaveLobby(String name, User user, UUID id);
+    void leaveLobby(String name, User user, UUID lobbyID);
 }

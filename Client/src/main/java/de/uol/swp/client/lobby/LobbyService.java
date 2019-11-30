@@ -37,14 +37,14 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
     }
 
     @Override
-    public void joinLobby(String name, User user, UUID id) {
-        LobbyJoinUserRequest request = new LobbyJoinUserRequest(name, user, id);
+    public void joinLobby(String name, User user, UUID lobbyID) {
+        LobbyJoinUserRequest request = new LobbyJoinUserRequest(name, user, lobbyID);
         bus.post(request);
     }
 
     @Override
-    public void leaveLobby(String name, User user, UUID id) {
-        LobbyLeaveUserRequest request = new LobbyLeaveUserRequest(name, user, id);
+    public void leaveLobby(String name, User user, UUID lobbyID) {
+        LobbyLeaveUserRequest request = new LobbyLeaveUserRequest(name, user, lobbyID);
         bus.post(request);
     }
 }

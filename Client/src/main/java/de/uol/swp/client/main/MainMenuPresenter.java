@@ -325,10 +325,10 @@ public class MainMenuPresenter extends AbstractPresenter {
 
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
-        for(Lobby lobby : lobbies) {
-            if(lobby.getUsers().contains(loggedInUser)) {
-                if(lobby.getUsers().size() > 1) {
-                    lobbyService.leaveLobby(lobby.getName(), loggedInUser, lobby.getLobbyID());
+        for(int i = 0; i < lobbies.size(); i++) {
+            if(lobbies.get(i).getUsers().contains(loggedInUser)) {
+                if(lobbies.get(i).getUsers().size() > 1) {
+                    lobbyService.leaveLobby(lobbies.get(i).getName(), loggedInUser, lobbies.get(i).getLobbyID());
                 }
                 else {
                     //TODO Lobby löschen
