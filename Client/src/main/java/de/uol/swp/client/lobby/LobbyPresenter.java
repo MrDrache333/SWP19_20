@@ -1,11 +1,13 @@
 package de.uol.swp.client.lobby;
 
 import com.google.common.eventbus.Subscribe;
+import com.google.inject.Inject;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
 import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.chat.response.ChatResponseMessage;
+import de.uol.swp.common.lobby.LobbyService;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import javafx.application.Platform;
@@ -35,16 +37,16 @@ public class LobbyPresenter extends AbstractPresenter {
 
     private String chatID;
     private ChatViewPresenter chatViewPresenter;
+    private final LobbyService lobbyService;
 
     private UUID lobbyID;
     private String name;
 
-    public LobbyPresenter() {
-    }
-
-    public LobbyPresenter(String name, UUID lobbyID){
+    @Inject
+    public LobbyPresenter(String name, UUID lobbyID, LobbyService lobbyService){
         this.name = name;
         this.lobbyID = lobbyID;
+        this.lobbyService = lobbyService;
     }
 
     public UUID getLobbyID(){

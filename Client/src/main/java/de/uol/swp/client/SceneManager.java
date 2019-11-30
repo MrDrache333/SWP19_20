@@ -232,7 +232,7 @@ public class SceneManager {
     public void showLobbyScreen(String title, UUID lobbyID) {
         Platform.runLater(() -> {
             //LobbyPresenter neue Instanz mit (name, id) wird erstellt
-            LobbyPresenter lobbyPresenter = new LobbyPresenter(title, lobbyID);
+            LobbyPresenter lobbyPresenter = new LobbyPresenter(title, lobbyID, lobbyService);
             //initLobbyView mit gerade erstelltem Presenter als Controller aufrufen -> Scene wird erstellt
             initLobbyView(lobbyPresenter);
             //neue Stage wird erstellt
