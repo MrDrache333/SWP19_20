@@ -19,7 +19,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
 import java.util.UUID;
-import java.util.*;
 
 /**
  * The type Lobby service.
@@ -135,7 +134,7 @@ public class LobbyService extends AbstractService {
 
         if (lobby.isPresent()) {
             lobby.get().setReadyStatus(request.getUser(), request.isReady());
-            ServerMessage msg = new UpdatedLobbyReadyStatusMessage(lobby.get().getName(), request.getUser(), lobby.get().getReadyStatus(request.getUser()));
+            ServerMessage msg = new UpdatedLobbyReadyStatusMessage(lobby.get().getLobbyID(), lobby.get().getName(), request.getUser(), lobby.get().getReadyStatus(request.getUser()));
             sendToAll(lobby.get().getName(), msg);
         }
     }

@@ -68,7 +68,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     @FXML
     public void initialize() throws IOException {
         //Neue Instanz einer ChatViewPresenter-Controller-Klasse erstellen und nötige Parameter uebergeben
-        chatViewPresenter = new ChatViewPresenter("allgemeiner", ChatViewPresenter.THEME.Dark, chatService);
+        chatViewPresenter = new ChatViewPresenter("allgemeiner", ChatViewPresenter.THEME.Light, chatService);
         chatViewPresenter.setChatId("global");
         //FXML laden
         FXMLLoader loader = new FXMLLoader(getClass().getResource(ChatViewPresenter.fxml));
@@ -76,6 +76,9 @@ public class MainMenuPresenter extends AbstractPresenter {
         loader.setController(chatViewPresenter);
         //Den ChatView in die chatView-Pane dieses Controllers laden
         chatView.getChildren().add(loader.load());
+        //Fenstergroesse uebernehmen
+        ((Pane) chatView.getChildren().get(0)).setPrefHeight(chatView.getPrefHeight());
+        ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getPrefWidth());
 
         //Initialisieren der Lobby
         name.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getName()));

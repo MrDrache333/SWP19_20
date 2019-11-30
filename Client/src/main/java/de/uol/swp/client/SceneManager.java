@@ -13,7 +13,6 @@ import de.uol.swp.client.register.RegistrationPresenter;
 import de.uol.swp.client.register.event.RegistrationCanceledEvent;
 import de.uol.swp.client.register.event.RegistrationErrorEvent;
 import de.uol.swp.client.register.event.ShowRegistrationViewEvent;
-import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import javafx.application.Platform;
@@ -26,7 +25,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class SceneManager {
 
@@ -34,7 +35,6 @@ public class SceneManager {
     static final String styleSheet = "css/swp.css";
 
     final private Stage primaryStage;
-    final private Stage lobbyStage;
     final private EventBus eventBus;
     final private UserService userService;
     private Scene loginScene;
@@ -43,7 +43,6 @@ public class SceneManager {
     private Scene mainScene;
     private Scene lastScene = null;
     private Scene currentScene = null;
-    private Scene lobbyScene;
 
     private User currentUser;
 
@@ -57,7 +56,6 @@ public class SceneManager {
     @Inject
     public SceneManager(EventBus eventBus, UserService userService, Injector injected, @Assisted Stage primaryStage) {
         this.eventBus = eventBus;
-        this.lobbyStage = lobbyStage;
         this.eventBus.register(this);
         this.userService = userService;
         this.primaryStage = primaryStage;
@@ -139,7 +137,7 @@ public class SceneManager {
     private void initLobbyView(LobbyPresenter lobbyPresenter) {
         //presenter als controller setzen
         Parent rootPane = initPresenter(lobbyPresenter);
-        Scene newLobbyScene = new Scene(rootPane, 800, 600);
+        Scene newLobbyScene = new Scene(rootPane, 900, 750);
         newLobbyScene.getStylesheets().add(styleSheet);
         //scene in Map packen
         lobbyScenes.put(lobbyPresenter.getLobbyID(), newLobbyScene);
