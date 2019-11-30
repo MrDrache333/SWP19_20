@@ -29,10 +29,10 @@ public class LobbyDTO implements Lobby, Serializable {
         this.players = 1;
     }
 
-    public LobbyDTO(String name, User creator, UUID lobbyID, int players) {
+    public LobbyDTO(String name, User creator, UUID lobbyID, Set<User> users, int players) {
         this.name = name;
         this.owner = creator;
-        this.users.add(creator);
+        this.users = users;
         this.lobbyID = lobbyID;
         this.players = players;
     }
