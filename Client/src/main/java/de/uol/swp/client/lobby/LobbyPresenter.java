@@ -74,7 +74,6 @@ public class LobbyPresenter extends AbstractPresenter {
     }
 
     public LobbyPresenter(String lobbyName, UUID lobbyID){
-        this.chatService = chatService;
         this.lobbyName = lobbyName;
         this.lobbyID = lobbyID;
     }
@@ -124,7 +123,7 @@ public class LobbyPresenter extends AbstractPresenter {
     }
     @FXML
     public void onReadyButtonPressed(ActionEvent actionEvent){
-        if (ownReadyStatus == true){
+        if (ownReadyStatus){
             readyButton.setText("Bereit");
             ownReadyStatus = false;
         }

@@ -28,6 +28,7 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
      *
      * @param bus the bus
      */
+
     @Inject
     public LobbyService(EventBus bus) {
         this.bus = bus;
@@ -46,7 +47,6 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
         bus.post(msg);
         return null;
     }
-
 
     @Override
     public void setLobbyUserStatus(String LobbyName, User user, boolean Status) {
