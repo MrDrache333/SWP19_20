@@ -1,7 +1,6 @@
 package de.uol.swp.client.lobby;
 
 import com.google.common.eventbus.Subscribe;
-import com.google.inject.Inject;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
@@ -37,12 +36,10 @@ public class LobbyPresenter extends AbstractPresenter {
 
     private String chatID;
     private ChatViewPresenter chatViewPresenter;
-    private final LobbyService lobbyService;
 
     private UUID lobbyID;
     private String name;
 
-    @Inject
     public LobbyPresenter(String name, UUID lobbyID, LobbyService lobbyService){
         this.name = name;
         this.lobbyID = lobbyID;
@@ -112,9 +109,13 @@ public class LobbyPresenter extends AbstractPresenter {
 
     @FXML
     public void onLeaveLobbyButtonPressed(ActionEvent event) {
-        //TODO über die Liste der User in der Lobby überprüfen ob in der Lobby mehr als 1 User ist
-        // dann:
-            lobbyService.leaveLobby(name, loggedInUser, lobbyID);
-        //TODO: sonst: Lobby löschen
+        //TODO: // bei Merge mit Userliste entfernen
+        //if(users.size() > 1) {
+          //  lobbyService.leaveLobby(name, loggedInUser, lobbyID);
+        //}
+        //else {
+            //TODO: Lobby löschen
+        //}
+            lobbyService.leaveLobby(name, loggedInUser, lobbyID); //TODO: diese Zeile bei Merge löschen
     }
 }
