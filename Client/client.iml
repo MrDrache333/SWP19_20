@@ -11,9 +11,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:win:11" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:win:11" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:win:11" level="project" />
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
@@ -29,16 +26,22 @@
     </orderEntry>
     <orderEntry type="library" name="Maven: com.thizzer.jtouchbar:jtouchbar-javafx:1.0.0" level="project" />
     <orderEntry type="library" name="Maven: com.thizzer.jtouchbar:jtouchbar:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:mac:11" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:mac:11" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:mac:11" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains:annotations:18.0.0" level="project" />
+    <orderEntry type="library" name="Maven: com.thizzer.jtouchbar:jtouchbar-javafx:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: com.thizzer.jtouchbar:jtouchbar:1.0.0" level="project" />
     <orderEntry type="module" module-name="common" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:11" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:mac:11" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:win:11" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:11" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:11" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:mac:11" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:win:11" level="project" />
     <orderEntry type="library" name="Maven: com.jfoenix:jfoenix:9.0.8" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:win:11" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-base:11" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:mac:11" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:win:11" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:linux:11" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:mac:11" level="project" />
     <orderEntry type="library" name="Maven: com.gluonhq:ignite-guice:1.0.2" level="project" />

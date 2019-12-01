@@ -2,6 +2,7 @@ package de.uol.swp.client.lobby;
 
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
 import de.uol.swp.common.chat.message.NewChatMessage;
@@ -11,6 +12,7 @@ import de.uol.swp.common.lobby.message.CreateLobbyMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
+import de.uol.swp.common.user.dto.UserDTO;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import javafx.application.Platform;
@@ -68,6 +70,7 @@ public class LobbyPresenter extends AbstractPresenter {
     }
 
     public LobbyPresenter(String name, UUID lobbyID){
+        this.chatService = chatService;
         this.name = name;
         this.lobbyID = lobbyID;
     }
@@ -96,11 +99,14 @@ public class LobbyPresenter extends AbstractPresenter {
         chatView.getChildren().add(loader.load());
         ((Pane) chatView.getChildren().get(0)).setPrefHeight(chatView.getPrefHeight());
         ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getPrefWidth());
+
+        users = FXCollections.observableArrayList();
+        users.add(loggedInUser.getUsername());
+        updateUsersList();
     }
 
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
-
         userService.logout(loggedInUser);
     }
 
@@ -112,58 +118,10 @@ public class LobbyPresenter extends AbstractPresenter {
             e1.printStackTrace();
         }
     }
-    /**
-     * New user.
-     *
-     * @param message the message
-     */
-    @Subscribe
-    public void newUser(UserJoinedLobbyMessage message) {
-        LOG.debug("New user " + message.getUser() + " logged in");
-        Platform.runLater(() -> {
-            if (users != null && loggedInUser != null && !loggedInUser.toString().equals(message.getName()))
-                users.add(message.getName());
-            chatViewPresenter.userJoined(message.getUser().getUsername());
-        });
-
-    }
-
-    /**
-     * User left.
-     *
-     * @param message the message
-     */
-    @Subscribe
-    public void userLeft(UserLeftLobbyMessage message) {
-        LOG.debug("User " + message.getName() + " logged out");
-        Platform.runLater(() -> {
-            chatViewPresenter.userLeft(message.getUser().getUsername());
-            users.remove(message.getName());
-
-        });
-    }
-
-    /**
-     * User list.
-     *
-     * @param allUsersResponse the all users response
-     */
-    @Subscribe
-    public void userList(AllOnlineUsersInLobbyResponse allUsersResponse) {
-        LOG.debug("Update of user list " + allUsersResponse.getUsers());
-        updateUsersList(allUsersResponse.getUsers());
-    }
-
-    private void updateUsersList(List<LobbyUser> userList) {
-        // Attention: This must be done on the FX Thread!
-        Platform.runLater(() -> {
-            if (users == null) {
-                users = FXCollections.observableArrayList();
-                usersView.setItems(users);
-            }
-            users.clear();
-            userList.forEach(u -> users.add(u.getUsername()));
-        });
+    @FXML
+    public void onReadyButtonPressed(ActionEvent actionEvent){
+        ownReadyStatus = true;
+        updateUsersList();
     }
 
     //--------------------------------------
@@ -200,6 +158,50 @@ public class LobbyPresenter extends AbstractPresenter {
     public void userLeft(UserLoggedOutMessage message) {
         Platform.runLater(() -> {
             chatViewPresenter.userLeft(message.getUsername());
+        });
+    }
+
+    /**
+     * New user.
+     *
+     * @param message the message
+     */
+
+    @Subscribe
+    public void newUser(UserJoinedLobbyMessage message) {
+        LOG.debug("New user " + message.getUser() + " logged in");
+        Platform.runLater(() -> {
+            if (users != null && loggedInUser != null && !loggedInUser.toString().equals(message.getName())){
+                users.add(message.getName());
+                updateUsersList();
+                chatViewPresenter.userJoined(message.getUser().getUsername());
+            }
+        });
+    }
+
+    /**
+     * User left.
+     *
+     * @param message the message
+     */
+    @Subscribe
+    public void userLeft(UserLeftLobbyMessage message) {
+        LOG.debug("User " + message.getName() + " left the Lobby");
+        Platform.runLater(() -> {
+            users.remove(message.getName());
+            updateUsersList();
+            chatViewPresenter.userLeft(message.getUser().getUsername());
+        });
+    }
+
+    //--------------------------------------
+    // PRIVATE METHODS
+    //--------------------------------------
+
+    private void updateUsersList(){//List<LobbyUser> userList) {
+        // Attention: This must be done on the FX Thread!
+        Platform.runLater(() -> {
+            usersView.setItems(users);
         });
     }
 }

@@ -9,14 +9,12 @@ import de.uol.swp.common.user.UserService;
 
 public class AbstractPresenter {
 
-
     protected static User loggedInUser;
 
     @Inject
     protected UserService userService;
     @Inject
     protected LobbyService lobbyService;
-
 
     @Inject
     protected ChatService chatService;

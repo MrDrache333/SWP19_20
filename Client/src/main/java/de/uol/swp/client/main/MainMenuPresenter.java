@@ -210,7 +210,6 @@ public class MainMenuPresenter extends AbstractPresenter {
         });
     }
 
-
     /**
      * @author Paula, Haschem, Ferit
      * @version 0.1
@@ -237,7 +236,6 @@ public class MainMenuPresenter extends AbstractPresenter {
      * @since Sprint2
      */
     @FXML
-
     //TODO : was machen, wenn nur Leerzeichen angegeben für Lobbynamen (möglich oder abfangen? )
     public void OnCreateLobbyButtonPressed(ActionEvent event) {
         boolean validLobbyName = true;
@@ -259,7 +257,6 @@ public class MainMenuPresenter extends AbstractPresenter {
             eventBus.post(msg);
             LOG.info("Request wurde gesendet.");
         }
-
         lobbyName.clear();
     }
 
