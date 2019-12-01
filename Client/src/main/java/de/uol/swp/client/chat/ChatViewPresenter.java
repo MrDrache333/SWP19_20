@@ -102,7 +102,7 @@ public class ChatViewPresenter extends AbstractPresenter {
     //Liste mit formatierten Chatnachrichten
     private ObservableList<VBox> chatMessages = FXCollections.observableArrayList();
     private List<ChatMessage> chatMessageHistory = new ArrayList<>();
-    //Wenn abei der Benutzung des TextFeldes eine Taste gedrueckt wird
+    //Wenn bei der Benutzung des TextFeldes eine Taste gedrueckt wird
     private EventHandler<KeyEvent> onKeyPressedinchatTextFieldEvent = event -> {
         //Abschicken der Nachricht, wenn die ENTER-Taste gedrueckt wurde
         if (event.getCode() == KeyCode.ENTER) {
