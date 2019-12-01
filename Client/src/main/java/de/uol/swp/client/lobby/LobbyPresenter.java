@@ -24,9 +24,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Circle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import javafx.scene.control.Label;
 
 import java.awt.*;
 import java.io.IOException;
@@ -41,8 +45,6 @@ import java.util.UUID;
  */
 
 public class LobbyPresenter extends AbstractPresenter {
-
-
 
     public static final String fxml = "/fxml/LobbyView.fxml";
     private static final String url = "https://confluence.swl.informatik.uni-oldenburg.de/display/SWP2019B/Spielanleitung?preview=/126746667/126746668/Dominion%20-%20Anleitung%20-%20V1.pdf";
@@ -61,14 +63,18 @@ public class LobbyPresenter extends AbstractPresenter {
     private boolean ownReadyStatus = false;
 
     @FXML
-    private ListView<String> usersView;
+    private ListView<HBox> usersView;
     @FXML
     private Pane chatView;
     @FXML
     private Button readyButton;
+    @FXML
+    private Circle circle;
+    @FXML
+    private Label usernameLabel;
 
     //TODO Liste in eine HBox verwandeln. Ähnlich wie beim Chat. Warum? Damit Der Name und ein Icon mit Farbe platz drin findet :)
-    private ObservableList<String> users;
+    private ObservableList<HBox> users;
 
     public LobbyPresenter() {
     }
@@ -87,6 +93,10 @@ public class LobbyPresenter extends AbstractPresenter {
         return lobbyName;
     }
 
+    //--------------------------------------
+    // FXML METHODS
+    //--------------------------------------
+
     @FXML
     public void initialize() throws IOException {
         //Neue Instanz einer ChatViewPresenter-Controller-Klasse erstellen und nötige Parameter uebergeben
@@ -104,8 +114,11 @@ public class LobbyPresenter extends AbstractPresenter {
         ((Pane) chatView.getChildren().get(0)).setPrefHeight(chatView.getPrefHeight());
         ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getPrefWidth());
 
+        usernameLabel = new Label("BEISPIELTEXT");//loggedInUser.getUsername());
+        circle = new Circle(12.0f, Paint.valueOf("red"));
+        HBox box = new HBox(circle, usernameLabel);
         users = FXCollections.observableArrayList();
-        users.add(loggedInUser.getUsername());
+        users.add(box);    //loggedInUser.getUsername());
         updateUsersList();
     }
 
@@ -189,7 +202,7 @@ public class LobbyPresenter extends AbstractPresenter {
         LOG.debug("New user " + message.getUser() + " logged in");
         Platform.runLater(() -> {
             if (users != null && loggedInUser != null && !loggedInUser.toString().equals(message.getName())){
-                users.add(message.getName());
+                //users.add(message.getName());
                 updateUsersList();
                 chatViewPresenter.userJoined(message.getUser().getUsername());
             }

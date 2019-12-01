@@ -35,8 +35,8 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
 
     @Override
     public List<Lobby> retrieveAllLobbies() {
-        RetrieveAllOnlineLobbiesRequest cmd = new RetrieveAllOnlineLobbiesRequest();
-        bus.post(cmd);
+        RetrieveAllOnlineLobbiesRequest msg = new RetrieveAllOnlineLobbiesRequest();
+        bus.post(msg);
         return null;
     }
 
