@@ -42,8 +42,8 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
 
     @Override
     public ArrayList<LobbyUser> retrieveAllUsersInLobby(String lobbyName) {
-        RequestMessage req = new RetrieveAllOnlineUsersInLobbyRequest(lobbyName);
-        bus.post(req);
+        RequestMessage msg = new RetrieveAllOnlineUsersInLobbyRequest(lobbyName);
+        bus.post(msg);
         return null;
     }
 

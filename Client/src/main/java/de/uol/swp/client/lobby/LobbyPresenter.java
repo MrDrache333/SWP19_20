@@ -9,6 +9,7 @@ import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.chat.response.ChatResponseMessage;
 import de.uol.swp.common.lobby.LobbyUser;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
+import de.uol.swp.common.lobby.message.UpdatedLobbyReadyStatusMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
@@ -21,6 +22,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.Pane;
 import org.apache.logging.log4j.LogManager;
@@ -40,8 +42,7 @@ import java.util.UUID;
 
 public class LobbyPresenter extends AbstractPresenter {
 
-    @FXML
-    private Pane chatView;
+
 
     public static final String fxml = "/fxml/LobbyView.fxml";
     private static final String url = "https://confluence.swl.informatik.uni-oldenburg.de/display/SWP2019B/Spielanleitung?preview=/126746667/126746668/Dominion%20-%20Anleitung%20-%20V1.pdf";
@@ -54,14 +55,17 @@ public class LobbyPresenter extends AbstractPresenter {
     private ChatViewPresenter chatViewPresenter;
 
     private UUID lobbyID;
-    private String name;
-
+    private String lobbyName;
 
     //Eigener Status in der Lobby
     private boolean ownReadyStatus = false;
 
     @FXML
     private ListView<String> usersView;
+    @FXML
+    private Pane chatView;
+    @FXML
+    private Button readyButton;
 
     //TODO Liste in eine HBox verwandeln. Ähnlich wie beim Chat. Warum? Damit Der Name und ein Icon mit Farbe platz drin findet :)
     private ObservableList<String> users;
@@ -69,9 +73,9 @@ public class LobbyPresenter extends AbstractPresenter {
     public LobbyPresenter() {
     }
 
-    public LobbyPresenter(String name, UUID lobbyID){
+    public LobbyPresenter(String lobbyName, UUID lobbyID){
         this.chatService = chatService;
-        this.name = name;
+        this.lobbyName = lobbyName;
         this.lobbyID = lobbyID;
     }
 
@@ -79,8 +83,8 @@ public class LobbyPresenter extends AbstractPresenter {
         return lobbyID;
     }
 
-    public String getName(){
-        return name;
+    public String getLobbyName(){
+        return lobbyName;
     }
 
     @FXML
@@ -120,8 +124,15 @@ public class LobbyPresenter extends AbstractPresenter {
     }
     @FXML
     public void onReadyButtonPressed(ActionEvent actionEvent){
-        ownReadyStatus = true;
-        updateUsersList();
+        if (ownReadyStatus == true){
+            readyButton.setText("Bereit");
+            ownReadyStatus = false;
+        }
+        else{
+            readyButton.setText("Nicht mehr Bereit");
+            ownReadyStatus = true;
+        }
+        lobbyService.setLobbyUserStatus(lobbyName, loggedInUser, ownReadyStatus);
     }
 
     //--------------------------------------
@@ -161,12 +172,18 @@ public class LobbyPresenter extends AbstractPresenter {
         });
     }
 
+    @Subscribe
+    public void onUpdatedLobbyReadyStatusMessage(UpdatedLobbyReadyStatusMessage message) {
+        if(message.getLobbyID()==lobbyID && users.contains(message.getName())){
+
+        }
+    }
+
     /**
      * New user.
      *
      * @param message the message
      */
-
     @Subscribe
     public void newUser(UserJoinedLobbyMessage message) {
         LOG.debug("New user " + message.getUser() + " logged in");
