@@ -66,27 +66,23 @@ public class LobbyService extends AbstractService {
     public void onLobbyJoinUserRequest(LobbyJoinUserRequest msg) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getName());
         if (lobby.isPresent()) {
-            if(LOG.isDebugEnabled()) {
+            if (LOG.isDebugEnabled()) {
                 LOG.debug("User " + msg.getUser().getUsername() + " is joining lobby " + msg.getName());
             }
             lobby.get().joinUser(msg.getUser());
             ServerMessage returnMessage = new UserJoinedLobbyMessage(msg.getName(), msg.getUser(), msg.getLobbyID());
             sendToAll(msg.getName(), returnMessage);
         }
-        // TODO: error handling not existing lobby
+
     }
 
     @Subscribe
     public void onLobbyLeaveUserRequest(LobbyLeaveUserRequest msg) {
-        Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getName());
-        if (lobby.isPresent()) {
-            if(LOG.isDebugEnabled()) {
-                LOG.debug("User " + msg.getUser().getUsername() + " is leaving lobby " + msg.getName());
-            }
-            lobby.get().leaveUser(msg.getUser());
+        if (lobbyManagement.leaveLobby(msg.getName(), msg.getUser())) {
             ServerMessage returnMessage = new UserLeftLobbyMessage(msg.getName(), msg.getUser(), msg.getLobbyID());
             post(returnMessage);
-            //sendToAll(msg.getName(), returnMessage); //TODO fix?
+        } else {
+            //TODO Fehlerfall ??
         }
         // TODO: error handling not existing lobby
     }
@@ -114,4 +110,6 @@ public class LobbyService extends AbstractService {
         response.initWithMessage(msg);
         post(response);
     }
+
+
 }

@@ -36,6 +36,7 @@ public class LobbyManagement {
             throw new IllegalArgumentException("Lobby name " + name + " not found!");
         }
         lobbies.remove(name);
+        LOG.info("Die Lobby " + name + "wurde gelöscht");
     }
 
     public Optional<Lobby> getLobby(String name) {
@@ -44,6 +45,22 @@ public class LobbyManagement {
             return Optional.of(lobby);
         }
         return Optional.empty();
+    }
+
+    public boolean leaveLobby(String name, User user) {
+        Optional<Lobby> lobby = this.getLobby(name);
+        if (lobby.isPresent()) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("User " + user.getUsername() + " is leaving lobby " + name);
+            }
+            lobby.get().leaveUser(user);
+            if (lobby.get().getPlayers() == 0) {
+                this.dropLobby(name);
+            }
+            return true;
+        }
+        return false;
+        // TODO: error handling not existing lobby
     }
 
     public Collection<Lobby> getLobbies() {

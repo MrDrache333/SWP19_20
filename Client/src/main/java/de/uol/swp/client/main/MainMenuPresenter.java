@@ -108,16 +108,15 @@ public class MainMenuPresenter extends AbstractPresenter {
             public TableCell<Lobby, Void> call(final TableColumn<Lobby, Void> param) {
                 final TableCell<Lobby, Void> cell = new TableCell<>() {
                     final Button joinLobbyButton = new Button("Lobby beitreten");
+
                     {
                         joinLobbyButton.setOnAction((ActionEvent event) -> {
                             Lobby lobby = getTableView().getItems().get(getIndex());
-                            if(lobby.getPlayers() == 4) {
+                            if (lobby.getPlayers() == 4) {
                                 showAlert(Alert.AlertType.WARNING, "Diese Lobby ist voll!", "Fehler");
-                            }
-                            else if(lobby.getUsers().contains(loggedInUser)) {
+                            } else if (lobby.getUsers().contains(loggedInUser)) {
                                 showAlert(Alert.AlertType.WARNING, "Du bist dieser Lobby schon beigetreten!", "Fehler");
-                            }
-                            else {
+                            } else {
                                 lobbyService.joinLobby(lobby.getName(), loggedInUser, lobby.getLobbyID());
                             }
                         });
@@ -126,8 +125,11 @@ public class MainMenuPresenter extends AbstractPresenter {
                     @Override
                     public void updateItem(Void item, boolean empty) {
                         super.updateItem(item, empty);
-                        if(empty) { setGraphic(null); }
-                        else { setGraphic(joinLobbyButton); }
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            setGraphic(joinLobbyButton);
+                        }
                     }
                 };
 
@@ -296,8 +298,8 @@ public class MainMenuPresenter extends AbstractPresenter {
                 break;
             }
         }
-        for(char c : lobbyName.getText().toCharArray()) {
-            if(!Character.isWhitespace(c)) {
+        for (char c : lobbyName.getText().toCharArray()) {
+            if (!Character.isWhitespace(c)) {
                 onlyWhitespaces = false;
                 break;
             }
@@ -305,16 +307,13 @@ public class MainMenuPresenter extends AbstractPresenter {
         if (lobbyName.getText().equals("")) {
             showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen Lobbynamen ein! ", "Fehler");
             lobbyName.requestFocus();
-        }
-        else if(invalidLobbyName) {
+        } else if (invalidLobbyName) {
             showAlert(Alert.AlertType.WARNING, "Diese Lobby existiert bereits!", "Fehler");
             lobbyName.requestFocus();
-        }
-        else if(onlyWhitespaces) {
+        } else if (onlyWhitespaces) {
             showAlert(Alert.AlertType.WARNING, "Der Lobbyname darf nicht nur Leerzeichen enthalten!", "Fehler");
             lobbyName.requestFocus();
-        }
-        else {
+        } else {
             CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), loggedInUser);
             eventBus.post(msg);
             LOG.info("Request wurde gesendet.");
@@ -325,17 +324,13 @@ public class MainMenuPresenter extends AbstractPresenter {
 
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
-        for(int i = 0; i < lobbies.size(); i++) {
-            if(lobbies.get(i).getUsers().contains(loggedInUser)) {
-                if(lobbies.get(i).getUsers().size() > 1) {
-                    lobbyService.leaveLobby(lobbies.get(i).getName(), loggedInUser, lobbies.get(i).getLobbyID());
-                }
-                else {
-                    //TODO Lobby löschen
-                }
+        for (int i = 0; i < lobbies.size(); i++) {
+            if (lobbies.get(i).getUsers().contains(loggedInUser)) {
+                lobbyService.leaveLobby(lobbies.get(i).getName(), loggedInUser, lobbies.get(i).getLobbyID());
             }
         }
         userService.logout(loggedInUser);
+        //Pronlem: Logout Request: SessisonId ist nicht gleich???
     }
 
 }

@@ -53,13 +53,11 @@ public class LobbyDTO implements Lobby, Serializable {
 
     @Override
     public void leaveUser(User user) {
-        if (users.size() == 1) {
-            throw new IllegalArgumentException("Lobby must contain at least one user!");
-        }
+
         if (users.contains(user)) {
             this.users.remove(user);
             players--;
-            if (this.owner.equals(user)) {
+            if (this.owner.equals(user) && users.size() > 0) {
                 updateOwner(users.iterator().next());
             }
         }

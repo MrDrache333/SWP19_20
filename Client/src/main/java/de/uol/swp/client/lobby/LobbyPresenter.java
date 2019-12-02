@@ -109,13 +109,6 @@ public class LobbyPresenter extends AbstractPresenter {
 
     @FXML
     public void onLeaveLobbyButtonPressed(ActionEvent event) {
-        //TODO: // bei Merge mit Userliste entfernen
-        //if(users.size() > 1) {
-          //  lobbyService.leaveLobby(name, loggedInUser, lobbyID);
-        //}
-        //else {
-            //TODO: Lobby löschen
-        //}
-            lobbyService.leaveLobby(name, loggedInUser, lobbyID); //TODO: diese Zeile bei Merge löschen
+        lobbyService.leaveLobby(name, loggedInUser, lobbyID);
     }
 }
