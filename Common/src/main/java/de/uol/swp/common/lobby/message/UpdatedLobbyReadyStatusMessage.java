@@ -15,8 +15,8 @@ public class UpdatedLobbyReadyStatusMessage extends AbstractLobbyMessage {
      * Instantiates a new Updated lobby ready status message.
      *
      * @param lobbyname the lobby
-     * @param user  the user
-     * @param ready the Status
+     * @param user      the user
+     * @param ready     the Status
      */
     public UpdatedLobbyReadyStatusMessage(UUID LobbyID, String lobbyname, User user, boolean ready) {
         super(lobbyname, user, LobbyID);

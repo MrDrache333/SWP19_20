@@ -18,6 +18,7 @@ public interface UserStore {
 
     /**
      * Find a user only by name
+     *
      * @param username
      * @return The User without password information, if found
      */
@@ -25,6 +26,7 @@ public interface UserStore {
 
     /**
      * Create a new user
+     *
      * @param username
      * @param password
      * @param eMail
@@ -34,6 +36,7 @@ public interface UserStore {
 
     /**
      * Update user. Update only given fields. Username cannot be changed
+     *
      * @param username
      * @param password
      * @param eMail
@@ -51,6 +54,7 @@ public interface UserStore {
 
     /**
      * Retrieves the list of all users.
+     *
      * @return A list of all users without password information
      */
     List<User> getAllUsers();

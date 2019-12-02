@@ -44,6 +44,10 @@ public class ClientApp extends Application implements ConnectionListener {
     // Java FX Methods
     // ----------------------------------------------------
 
+    public static void main(String[] args) {
+        launch(args);
+    }
+
     @Override
     public void init() {
         Parameters p = getParameters();
@@ -63,7 +67,6 @@ public class ClientApp extends Application implements ConnectionListener {
         // if connection is established in this stage, no GUI is shown and
         // exceptions are only visible in console!
     }
-
 
     @Override
     public void start(Stage primaryStage) {
@@ -105,7 +108,6 @@ public class ClientApp extends Application implements ConnectionListener {
     public void connectionEstablished(Channel ch) {
         sceneManager.showLoginScreen();
     }
-
 
     @Override
     public void stop() {
@@ -170,21 +172,16 @@ public class ClientApp extends Application implements ConnectionListener {
         sceneManager.showServerError(e);
     }
 
+    // -----------------------------------------------------
+    // JavFX Help methods
+    // -----------------------------------------------------
+
     @Subscribe
     public void onUserLoggedOutMessage(UserLoggedOutMessage message) {
         LOG.info("Logout successful.");
         if (message.getUsername().equals(user.getUsername())) {
             sceneManager.showLoginScreen();
         }
-    }
-
-    // -----------------------------------------------------
-    // JavFX Help methods
-    // -----------------------------------------------------
-
-
-    public static void main(String[] args) {
-        launch(args);
     }
 
 }

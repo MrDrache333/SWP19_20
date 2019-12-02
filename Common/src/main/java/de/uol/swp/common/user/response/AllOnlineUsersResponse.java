@@ -12,7 +12,7 @@ public class AllOnlineUsersResponse extends AbstractResponseMessage {
 
     final private ArrayList<UserDTO> users = new ArrayList<>();
 
-    public AllOnlineUsersResponse(){
+    public AllOnlineUsersResponse() {
         // needed for serialization
     }
 

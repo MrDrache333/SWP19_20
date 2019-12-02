@@ -8,7 +8,7 @@ import java.util.*;
 
 /**
  * This is a user store.
- *
+ * <p>
  * Important: This store will never return the password of a user
  */
 
@@ -19,7 +19,7 @@ public class MainMemoryBasedUserStore extends AbstractUserStore implements UserS
     @Override
     public Optional<User> findUser(String username, String password) {
         User usr = users.get(username);
-        if (usr != null && Objects.equals(usr.getPassword(),hash(password))) {
+        if (usr != null && Objects.equals(usr.getPassword(), hash(password))) {
             return Optional.of(usr.getWithoutPassword());
         }
         return Optional.empty();
@@ -36,7 +36,7 @@ public class MainMemoryBasedUserStore extends AbstractUserStore implements UserS
 
     @Override
     public User createUser(String username, String password, String eMail) {
-        if (Strings.isNullOrEmpty(username)){
+        if (Strings.isNullOrEmpty(username)) {
             throw new IllegalArgumentException("Username must not be null");
         }
         User usr = new UserDTO(username, hash(password), eMail);

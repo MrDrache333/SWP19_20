@@ -36,11 +36,11 @@ public class AbstractLobbyMessage extends AbstractServerMessage {
         this.user = user;
     }
 
-    public UUID getLobbyID(){
+    public UUID getLobbyID() {
         return lobbyID;
     }
 
-    public void setLobbyID(UUID lobbyID){
+    public void setLobbyID(UUID lobbyID) {
         this.lobbyID = lobbyID;
     }
 }

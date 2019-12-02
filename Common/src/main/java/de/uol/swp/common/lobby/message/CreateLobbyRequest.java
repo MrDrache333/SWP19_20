@@ -18,12 +18,12 @@ public class CreateLobbyRequest extends AbstractLobbyRequest {
         super(name, owner);
     }
 
-    public void setOwner(User owner) {
-        setUser(owner);
-    }
-
     public User getOwner() {
         return getUser();
+    }
+
+    public void setOwner(User owner) {
+        setUser(owner);
     }
 
 }

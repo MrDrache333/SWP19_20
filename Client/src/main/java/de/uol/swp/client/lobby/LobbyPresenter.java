@@ -2,18 +2,14 @@ package de.uol.swp.client.lobby;
 
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
-import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
 import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.chat.response.ChatResponseMessage;
-import de.uol.swp.common.lobby.LobbyUser;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
 import de.uol.swp.common.lobby.message.UpdatedLobbyReadyStatusMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
-import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
-import de.uol.swp.common.user.dto.UserDTO;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import javafx.application.Platform;
@@ -23,6 +19,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -30,13 +27,11 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import javafx.scene.control.Label;
 
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -79,16 +74,16 @@ public class LobbyPresenter extends AbstractPresenter {
     public LobbyPresenter() {
     }
 
-    public LobbyPresenter(String lobbyName, UUID lobbyID){
+    public LobbyPresenter(String lobbyName, UUID lobbyID) {
         this.lobbyName = lobbyName;
         this.lobbyID = lobbyID;
     }
 
-    public UUID getLobbyID(){
+    public UUID getLobbyID() {
         return lobbyID;
     }
 
-    public String getLobbyName(){
+    public String getLobbyName() {
         return lobbyName;
     }
 
@@ -134,13 +129,13 @@ public class LobbyPresenter extends AbstractPresenter {
             e1.printStackTrace();
         }
     }
+
     @FXML
-    public void onReadyButtonPressed(ActionEvent actionEvent){
-        if (ownReadyStatus){
+    public void onReadyButtonPressed(ActionEvent actionEvent) {
+        if (ownReadyStatus) {
             readyButton.setText("Bereit");
             ownReadyStatus = false;
-        }
-        else{
+        } else {
             readyButton.setText("Nicht mehr Bereit");
             ownReadyStatus = true;
         }
@@ -186,7 +181,7 @@ public class LobbyPresenter extends AbstractPresenter {
 
     @Subscribe
     public void onUpdatedLobbyReadyStatusMessage(UpdatedLobbyReadyStatusMessage message) {
-        if(message.getLobbyID()==lobbyID && users.contains(message.getName())){
+        if (message.getLobbyID() == lobbyID && users.contains(message.getName())) {
 
         }
     }
@@ -200,7 +195,7 @@ public class LobbyPresenter extends AbstractPresenter {
     public void newUser(UserJoinedLobbyMessage message) {
         LOG.debug("New user " + message.getUser() + " logged in");
         Platform.runLater(() -> {
-            if (users != null && loggedInUser != null && !loggedInUser.toString().equals(message.getName())){
+            if (users != null && loggedInUser != null && !loggedInUser.toString().equals(message.getName())) {
                 //users.add(message.getName());
                 updateUsersList();
                 chatViewPresenter.userJoined(message.getUser().getUsername());
@@ -227,7 +222,7 @@ public class LobbyPresenter extends AbstractPresenter {
     // PRIVATE METHODS
     //--------------------------------------
 
-    private void updateUsersList(){//List<LobbyUser> userList) {
+    private void updateUsersList() {//List<LobbyUser> userList) {
         // Attention: This must be done on the FX Thread!
         Platform.runLater(() -> {
             usersView.setItems(users);
