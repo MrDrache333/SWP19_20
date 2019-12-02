@@ -22,13 +22,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 /**
- * @author Paula, Haschem, Ferit
- * @version 0.1
+ * @author Paula, Haschem, Ferit, Anna
+ * @version 0.2
  */
 
 public class LobbyPresenter extends AbstractPresenter {
@@ -47,12 +45,10 @@ public class LobbyPresenter extends AbstractPresenter {
     private String name;
 
 
-    public LobbyPresenter() {
-    }
-
-    public LobbyPresenter(String name, UUID lobbyID){
+    public LobbyPresenter(String name, UUID lobbyID, ChatService chatService){
         this.name = name;
         this.lobbyID = lobbyID;
+        this.chatService = chatService;
     }
 
     public UUID getLobbyID(){

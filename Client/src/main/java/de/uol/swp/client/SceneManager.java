@@ -7,7 +7,9 @@ import com.google.inject.Injector;
 import com.google.inject.assistedinject.Assisted;
 import de.uol.swp.client.auth.LoginPresenter;
 import de.uol.swp.client.auth.events.ShowLoginViewEvent;
+import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.lobby.LobbyPresenter;
+import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.client.register.RegistrationPresenter;
 import de.uol.swp.client.register.event.RegistrationCanceledEvent;
@@ -36,6 +38,7 @@ public class SceneManager {
     final private Stage primaryStage;
     final private EventBus eventBus;
     final private UserService userService;
+    final private ChatService chatService;
     private Scene loginScene;
     private String lastTitle;
     private Scene registrationScene;
@@ -53,12 +56,13 @@ public class SceneManager {
 
 
     @Inject
-    public SceneManager(EventBus eventBus, UserService userService, Injector injected, @Assisted Stage primaryStage) {
+    public SceneManager(EventBus eventBus, UserService userService, Injector injected, @Assisted Stage primaryStage, ChatService chatService) {
         this.eventBus = eventBus;
         this.eventBus.register(this);
         this.userService = userService;
         this.primaryStage = primaryStage;
         this.injector = injected;
+        this.chatService = chatService;
 
         initViews();
     }
@@ -226,7 +230,7 @@ public class SceneManager {
     public void showLobbyScreen(String title, UUID lobbyID) {
         Platform.runLater(() -> {
             //LobbyPresenter neue Instanz mit (name, id) wird erstellt
-            LobbyPresenter lobbyPresenter = new LobbyPresenter(title, lobbyID);
+            LobbyPresenter lobbyPresenter = new LobbyPresenter(title, lobbyID, chatService);
             //initLobbyView mit gerade erstelltem Presenter als Controller aufrufen -> Scene wird erstellt
             initLobbyView(lobbyPresenter);
             //neue Stage wird erstellt
