@@ -13,7 +13,6 @@ import de.uol.swp.common.user.request.RetrieveAllOnlineUsersRequest;
 import de.uol.swp.common.user.response.AllOnlineUsersResponse;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.communication.UUIDSession;
-import de.uol.swp.server.lobby.LobbyManagement;
 import de.uol.swp.server.message.ClientAuthorizedMessage;
 import de.uol.swp.server.message.ServerExceptionMessage;
 import de.uol.swp.server.message.ServerInternalMessage;
@@ -38,14 +37,12 @@ public class AuthenticationService extends AbstractService {
 
     private final UserManagement userManagement;
 
-    private final LobbyManagement lobbyManagement;
-
 
     @Inject
-    public AuthenticationService(EventBus bus, UserManagement userManagement, LobbyManagement lobbyManagement) {
+    public AuthenticationService(EventBus bus, UserManagement userManagement) {
         super(bus);
         this.userManagement = userManagement;
-        this.lobbyManagement = lobbyManagement;
+
     }
 
     public Optional<Session> getSession(User user) {
@@ -107,6 +104,7 @@ public class AuthenticationService extends AbstractService {
             post(returnMessage);
 
         }
+
 
     }
 

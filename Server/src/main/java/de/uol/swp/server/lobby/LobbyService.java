@@ -7,10 +7,7 @@ import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
-import de.uol.swp.common.lobby.request.CreateLobbyRequest;
-import de.uol.swp.common.lobby.request.LobbyJoinUserRequest;
-import de.uol.swp.common.lobby.request.LobbyLeaveUserRequest;
-import de.uol.swp.common.lobby.request.RetrieveAllOnlineLobbiesRequest;
+import de.uol.swp.common.lobby.request.*;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.server.AbstractService;
@@ -19,6 +16,7 @@ import de.uol.swp.server.usermanagement.AuthenticationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -87,6 +85,21 @@ public class LobbyService extends AbstractService {
         // TODO: error handling not existing lobby
     }
 
+    /**
+     * @param msg
+     */
+    @Subscribe
+    public void onLeaveAllLobbiesOnLogoutRequest(LeaveAllLobbiesOnLogoutRequest msg) {
+        List<Lobby> lobbies = (List) lobbyManagement.getLobbies();
+        for (Lobby lobby : lobbies) {
+            if (lobby.getUsers().contains(msg.getUser())) {
+                lobbyManagement.leaveLobby(lobby.getName(), msg.getUser());
+
+
+            }
+        }
+
+    }
 
     public void sendToAll(String lobbyName, ServerMessage message) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyName);

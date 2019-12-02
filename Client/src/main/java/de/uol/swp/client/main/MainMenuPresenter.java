@@ -324,13 +324,13 @@ public class MainMenuPresenter extends AbstractPresenter {
 
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
-        for (int i = 0; i < lobbies.size(); i++) {
-            if (lobbies.get(i).getUsers().contains(loggedInUser)) {
-                lobbyService.leaveLobby(lobbies.get(i).getName(), loggedInUser, lobbies.get(i).getLobbyID());
-            }
-        }
+
+        lobbyService.leaveAllLobbiesOnLogout(loggedInUser);
+
         userService.logout(loggedInUser);
-        //Pronlem: Logout Request: SessisonId ist nicht gleich???
     }
+
+    //Pronlem: Logout Request: SessisonId ist nicht gleich???
+
 
 }

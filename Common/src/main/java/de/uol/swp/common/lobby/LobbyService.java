@@ -29,4 +29,9 @@ public interface LobbyService {
      * @param user
      */
     void leaveLobby(String name, User user, UUID lobbyID);
+
+    /**
+     *
+     */
+    void leaveAllLobbiesOnLogout(User user);
 }

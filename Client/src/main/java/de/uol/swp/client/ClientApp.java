@@ -197,6 +197,7 @@ public class ClientApp extends Application implements ConnectionListener {
         if (message.getUsername().equals(user.getUsername())) {
             sceneManager.showLoginScreen();
         }
+        lobbyService.retrieveAllLobbies();
     }
 
     // -----------------------------------------------------
