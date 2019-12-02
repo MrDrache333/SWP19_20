@@ -11,8 +11,7 @@ public class AbstractLobbyMessage extends AbstractServerMessage {
     private User user;
     private UUID lobbyID;
 
-    public AbstractLobbyMessage() {
-    }
+    public AbstractLobbyMessage() {}
 
     public AbstractLobbyMessage(String name, User user, UUID lobbyID) {
         this.name = name;

@@ -17,21 +17,25 @@ public interface LobbyService {
     /**
      * Lobby beitreten
      *
-     * @param name der Name der Lobby
+     * @param name
      * @param user
+     * @param lobbyID
      */
     void joinLobby(String name, User user, UUID lobbyID);
 
     /**
      * Lobby verlassen
      *
-     * @param name der Name der Lobby
+     * @param name
      * @param user
+     * @param lobbyID
      */
     void leaveLobby(String name, User user, UUID lobbyID);
 
     /**
+     * Verlassen aller beigetretenen Lobbies beim Logout
      *
+     * @param user
      */
     void leaveAllLobbiesOnLogout(User user);
 }

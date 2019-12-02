@@ -54,7 +54,5 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
     public void leaveAllLobbiesOnLogout(User user) {
         LeaveAllLobbiesOnLogoutRequest request = new LeaveAllLobbiesOnLogoutRequest(user);
         bus.post(request);
-
-
     }
 }

@@ -8,6 +8,7 @@ import com.google.inject.Injector;
 import de.uol.swp.client.di.ClientModule;
 import de.uol.swp.common.lobby.LobbyService;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
+import de.uol.swp.common.lobby.message.LeaveAllLobbiesOnLogoutMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.user.User;
@@ -182,6 +183,14 @@ public class ClientApp extends Application implements ConnectionListener {
     }
 
     @Subscribe
+    public void onLeaveAllLobbiesOnLogoutMessage(LeaveAllLobbiesOnLogoutMessage message) {
+        if(message.getUser().getUsername().equals(user.getUsername())) {
+            sceneManager.closeAllLobbyStages();
+        }
+        lobbyService.retrieveAllLobbies();
+    }
+
+    @Subscribe
     private void handleEventBusError(DeadEvent deadEvent) {
         LOG.error("DeadEvent detected " + deadEvent);
     }
@@ -197,7 +206,6 @@ public class ClientApp extends Application implements ConnectionListener {
         if (message.getUsername().equals(user.getUsername())) {
             sceneManager.showLoginScreen();
         }
-        lobbyService.retrieveAllLobbies();
     }
 
     // -----------------------------------------------------

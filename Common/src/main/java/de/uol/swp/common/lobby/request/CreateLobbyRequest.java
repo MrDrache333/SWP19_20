@@ -11,8 +11,7 @@ import de.uol.swp.common.user.User;
  */
 public class CreateLobbyRequest extends AbstractLobbyRequest {
 
-    public CreateLobbyRequest() {
-    }
+    public CreateLobbyRequest() {}
 
     public CreateLobbyRequest(String name, User owner) {
         super(name, owner);

@@ -4,7 +4,6 @@ import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.user.User;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
@@ -53,7 +52,6 @@ public class LobbyDTO implements Lobby, Serializable {
 
     @Override
     public void leaveUser(User user) {
-
         if (users.contains(user)) {
             this.users.remove(user);
             players--;
@@ -78,7 +76,7 @@ public class LobbyDTO implements Lobby, Serializable {
 
     @Override
     public Set<User> getUsers() {
-        return Collections.unmodifiableSet(users);
+        return users;
     }
 
     @Override

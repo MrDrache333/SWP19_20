@@ -256,4 +256,10 @@ public class SceneManager {
         });
     }
 
+    public void closeAllLobbyStages() {
+        Platform.runLater(() -> {
+            lobbyStages.values().forEach(Stage::close);
+        });
+    }
+
 }

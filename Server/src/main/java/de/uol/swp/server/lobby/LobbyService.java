@@ -5,17 +5,20 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
+import de.uol.swp.common.lobby.message.LeaveAllLobbiesOnLogoutMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.lobby.request.*;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.message.ServerMessage;
+import de.uol.swp.common.user.User;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.chat.ChatManagement;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -48,7 +51,6 @@ public class LobbyService extends AbstractService {
 
     @Subscribe
     public void onCreateLobbyRequest(CreateLobbyRequest msg) {
-
         UUID chatID = lobbyManagement.createLobby(msg.getName(), msg.getOwner());
 
         chatManagement.createChat(chatID.toString());
@@ -71,7 +73,6 @@ public class LobbyService extends AbstractService {
             ServerMessage returnMessage = new UserJoinedLobbyMessage(msg.getName(), msg.getUser(), msg.getLobbyID());
             sendToAll(msg.getName(), returnMessage);
         }
-
     }
 
     @Subscribe
@@ -85,30 +86,26 @@ public class LobbyService extends AbstractService {
         // TODO: error handling not existing lobby
     }
 
-    /**
-     * @param msg
-     */
     @Subscribe
     public void onLeaveAllLobbiesOnLogoutRequest(LeaveAllLobbiesOnLogoutRequest msg) {
-        List<Lobby> lobbies = (List) lobbyManagement.getLobbies();
-        for (Lobby lobby : lobbies) {
-            if (lobby.getUsers().contains(msg.getUser())) {
-                lobbyManagement.leaveLobby(lobby.getName(), msg.getUser());
-
-
+        List<Lobby> toLeave = new ArrayList<>();
+        lobbyManagement.getLobbies().forEach(lobby -> {
+            List<User> users = new ArrayList<>(lobby.getUsers());
+            if(users.contains(msg.getUser())) {
+                toLeave.add(lobby);
             }
-        }
-
+        });
+        toLeave.forEach(lobby -> lobbyManagement.leaveLobby(lobby.getName(), msg.getUser()));
+        ServerMessage returnMessage = new LeaveAllLobbiesOnLogoutMessage(msg.getUser());
+        post(returnMessage);
     }
 
     public void sendToAll(String lobbyName, ServerMessage message) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyName);
-
         if (lobby.isPresent()) {
             message.setReceiver(authenticationService.getSessions(lobby.get().getUsers()));
             post(message);
         }
-
         // TODO: error handling not existing lobby
     }
 
@@ -123,6 +120,5 @@ public class LobbyService extends AbstractService {
         response.initWithMessage(msg);
         post(response);
     }
-
 
 }

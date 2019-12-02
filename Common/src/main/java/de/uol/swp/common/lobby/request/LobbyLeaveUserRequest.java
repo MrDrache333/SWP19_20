@@ -9,14 +9,12 @@ public class LobbyLeaveUserRequest extends AbstractLobbyRequest {
 
     private UUID lobbyID;
 
-    public LobbyLeaveUserRequest() {
-    }
+    public LobbyLeaveUserRequest() {}
 
     public LobbyLeaveUserRequest(String lobbyName, User user, UUID lobbyID) {
         super(lobbyName, user);
         this.lobbyID = lobbyID;
     }
-
 
     public void setLobbyID(UUID lobbyID){
         this.lobbyID = lobbyID;

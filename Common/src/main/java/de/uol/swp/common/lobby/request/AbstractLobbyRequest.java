@@ -8,8 +8,7 @@ public class AbstractLobbyRequest extends AbstractRequestMessage {
     String name;
     User user;
 
-    public AbstractLobbyRequest() {
-    }
+    public AbstractLobbyRequest() {}
 
     public AbstractLobbyRequest(String name, User user) {
         this.name = name;
