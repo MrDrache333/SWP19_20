@@ -1,9 +1,12 @@
 package de.uol.swp.client.lobby;
 
+import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
+import de.uol.swp.common.chat.Chat;
 import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.chat.response.ChatResponseMessage;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
@@ -35,8 +38,8 @@ import java.net.URISyntaxException;
 import java.util.UUID;
 
 /**
- * @author Paula, Haschem, Ferit
- * @version 0.1
+ * @author Paula, Haschem, Ferit, Anna
+ * @version 0.2
  */
 
 public class LobbyPresenter extends AbstractPresenter {
@@ -71,12 +74,10 @@ public class LobbyPresenter extends AbstractPresenter {
     //TODO Liste in eine HBox verwandeln. Ähnlich wie beim Chat. Warum? Damit Der Name und ein Icon mit Farbe platz drin findet :)
     private ObservableList<HBox> users;
 
-    public LobbyPresenter() {
-    }
-
-    public LobbyPresenter(String lobbyName, UUID lobbyID) {
-        this.lobbyName = lobbyName;
+    public LobbyPresenter(String name, UUID lobbyID, ChatService chatService){
+        this.name = name;
         this.lobbyID = lobbyID;
+        this.chatService = chatService;
     }
 
     public UUID getLobbyID() {
