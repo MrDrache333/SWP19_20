@@ -242,7 +242,7 @@ public class SceneManager {
             newLobbyStage.setScene(lobbyScenes.get(lobbyID));
             newLobbyStage.setX(primaryStage.getX() + 200);
             newLobbyStage.setY(primaryStage.getY() + 100);
-            newLobbyStage.setOnHidden(windowEvent -> lobbyService.leaveLobby(title, loggedInUser, lobbyID));
+            newLobbyStage.setOnCloseRequest(windowEvent -> lobbyService.leaveLobby(title, loggedInUser, lobbyID));
             newLobbyStage.show();
             //LobbyPresenter und lobbyStage in die jeweilige Map packen, mit lobbyID als Schlüssel
             lobbies.put(lobbyID, lobbyPresenter);

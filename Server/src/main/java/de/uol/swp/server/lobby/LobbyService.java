@@ -5,7 +5,6 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
-import de.uol.swp.common.lobby.message.LeaveAllLobbiesOnLogoutMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.lobby.request.*;
@@ -66,9 +65,7 @@ public class LobbyService extends AbstractService {
     public void onLobbyJoinUserRequest(LobbyJoinUserRequest msg) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getName());
         if (lobby.isPresent()) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("User " + msg.getUser().getUsername() + " is joining lobby " + msg.getName());
-            }
+            LOG.info("User " + msg.getUser().getUsername() + " is joining lobby " + msg.getName());
             lobby.get().joinUser(msg.getUser());
             ServerMessage returnMessage = new UserJoinedLobbyMessage(msg.getName(), msg.getUser(), msg.getLobbyID());
             sendToAll(msg.getName(), returnMessage);
@@ -78,12 +75,12 @@ public class LobbyService extends AbstractService {
     @Subscribe
     public void onLobbyLeaveUserRequest(LobbyLeaveUserRequest msg) {
         if (lobbyManagement.leaveLobby(msg.getName(), msg.getUser())) {
+            LOG.info("User " + msg.getUser().getUsername() + " is leaving lobby " + msg.getName());
             ServerMessage returnMessage = new UserLeftLobbyMessage(msg.getName(), msg.getUser(), msg.getLobbyID());
             post(returnMessage);
         } else {
-            //TODO Fehlerfall ??
+            LOG.error("Leaving lobby " + msg.getName() + " failed");
         }
-        // TODO: error handling not existing lobby
     }
 
     @Subscribe
@@ -95,9 +92,8 @@ public class LobbyService extends AbstractService {
                 toLeave.add(lobby);
             }
         });
+        LOG.info("User " + msg.getUser().getUsername() + " is leaving all lobbies");
         toLeave.forEach(lobby -> lobbyManagement.leaveLobby(lobby.getName(), msg.getUser()));
-        ServerMessage returnMessage = new LeaveAllLobbiesOnLogoutMessage(msg.getUser());
-        post(returnMessage);
     }
 
     public void sendToAll(String lobbyName, ServerMessage message) {
