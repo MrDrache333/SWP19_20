@@ -9,7 +9,6 @@ import de.uol.swp.client.auth.LoginPresenter;
 import de.uol.swp.client.auth.events.ShowLoginViewEvent;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.lobby.LobbyPresenter;
-import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.client.register.RegistrationPresenter;
 import de.uol.swp.client.register.event.RegistrationCanceledEvent;
@@ -228,10 +227,11 @@ public class SceneManager {
      */
 
     //TODO: LobbyScreen bzw Stage schließen, wenn Hauptmenü geschlossen wird
-    public void showLobbyScreen(String title, UUID lobbyID) {
+    public void showLobbyScreen(User currentUser, String title, UUID lobbyID) {
         Platform.runLater(() -> {
             //LobbyPresenter neue Instanz mit (name, id) wird erstellt
-            LobbyPresenter lobbyPresenter = new LobbyPresenter(title, lobbyID, chatService);
+            LobbyPresenter lobbyPresenter = new LobbyPresenter(currentUser, title, lobbyID, chatService);
+            eventBus.register(lobbyPresenter);
             //initLobbyView mit gerade erstelltem Presenter als Controller aufrufen -> Scene wird erstellt
             initLobbyView(lobbyPresenter);
             //neue Stage wird erstellt

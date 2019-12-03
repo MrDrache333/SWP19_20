@@ -1,18 +1,17 @@
 package de.uol.swp.client.lobby;
 
-import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
-import de.uol.swp.common.chat.Chat;
 import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.chat.response.ChatResponseMessage;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
 import de.uol.swp.common.lobby.message.UpdatedLobbyReadyStatusMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
+import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import javafx.application.Platform;
@@ -56,6 +55,7 @@ public class LobbyPresenter extends AbstractPresenter {
 
     private UUID lobbyID;
     private String lobbyName;
+    private User loggedInUser;
 
     //Eigener Status in der Lobby
     private boolean ownReadyStatus = false;
@@ -74,8 +74,9 @@ public class LobbyPresenter extends AbstractPresenter {
     //TODO Liste in eine HBox verwandeln. Ähnlich wie beim Chat. Warum? Damit Der Name und ein Icon mit Farbe platz drin findet :)
     private ObservableList<HBox> users;
 
-    public LobbyPresenter(String name, UUID lobbyID, ChatService chatService){
-        this.name = name;
+    public LobbyPresenter(User loggedInUser, String name, UUID lobbyID, ChatService chatService) {
+        this.loggedInUser = loggedInUser;
+        this.lobbyName = name;
         this.lobbyID = lobbyID;
         this.chatService = chatService;
     }
@@ -100,6 +101,7 @@ public class LobbyPresenter extends AbstractPresenter {
         chatID = lobbyID.toString();
         LOG.debug("Got ChatID from Server: " + chatID);
         chatViewPresenter.setChatId(chatID);
+        chatViewPresenter.setloggedInUser(loggedInUser);
         //FXML laden
         FXMLLoader loader = new FXMLLoader(getClass().getResource(ChatViewPresenter.fxml));
         //Controller der FXML setzen (Nicht in der FXML festlegen, da es immer eine eigene Instanz davon sein muss)
