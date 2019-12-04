@@ -9,6 +9,7 @@ import de.uol.swp.client.auth.LoginPresenter;
 import de.uol.swp.client.auth.events.ShowLoginViewEvent;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.lobby.LobbyPresenter;
+import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.client.register.RegistrationPresenter;
 import de.uol.swp.client.register.event.RegistrationCanceledEvent;
@@ -39,6 +40,7 @@ public class SceneManager {
     final private EventBus eventBus;
     final private UserService userService;
     final private ChatService chatService;
+    final private LobbyService lobbyService;
     private Scene loginScene;
     private String lastTitle;
     private Scene registrationScene;
@@ -56,13 +58,14 @@ public class SceneManager {
 
 
     @Inject
-    public SceneManager(EventBus eventBus, UserService userService, Injector injected, @Assisted Stage primaryStage, ChatService chatService) {
+    public SceneManager(EventBus eventBus, UserService userService, LobbyService lobbyService, Injector injected, @Assisted Stage primaryStage, ChatService chatService) {
         this.eventBus = eventBus;
         this.eventBus.register(this);
         this.userService = userService;
         this.primaryStage = primaryStage;
         this.injector = injected;
         this.chatService = chatService;
+        this.lobbyService = lobbyService;
 
         initViews();
     }
@@ -230,7 +233,7 @@ public class SceneManager {
     public void showLobbyScreen(User currentUser, String title, UUID lobbyID) {
         Platform.runLater(() -> {
             //LobbyPresenter neue Instanz mit (name, id) wird erstellt
-            LobbyPresenter lobbyPresenter = new LobbyPresenter(currentUser, title, lobbyID, chatService);
+            LobbyPresenter lobbyPresenter = new LobbyPresenter(currentUser, title, lobbyID, chatService, lobbyService);
             eventBus.register(lobbyPresenter);
             //initLobbyView mit gerade erstelltem Presenter als Controller aufrufen -> Scene wird erstellt
             initLobbyView(lobbyPresenter);

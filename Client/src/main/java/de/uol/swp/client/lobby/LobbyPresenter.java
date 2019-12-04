@@ -20,6 +20,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -34,15 +35,22 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.UUID;
 
 /**
+ * The type Lobby presenter.
+ *
  * @author Paula, Haschem, Ferit, Anna
  * @version 0.2
  */
-
 public class LobbyPresenter extends AbstractPresenter {
 
+    /**
+     * The constant fxml.
+     */
     public static final String fxml = "/fxml/LobbyView.fxml";
     private static final String url = "https://confluence.swl.informatik.uni-oldenburg.de/display/SWP2019B/Spielanleitung?preview=/126746667/126746668/Dominion%20-%20Anleitung%20-%20V1.pdf";
     //private static final Logger LOG = LogManager.getLogger(LobbyPresenter.class);
@@ -52,6 +60,8 @@ public class LobbyPresenter extends AbstractPresenter {
 
     private String chatID;
     private ChatViewPresenter chatViewPresenter;
+
+    private Map<String, HBox> readyUserList = new TreeMap<>();
 
     private UUID lobbyID;
     private String lobbyName;
@@ -66,25 +76,40 @@ public class LobbyPresenter extends AbstractPresenter {
     private Pane chatView;
     @FXML
     private Button readyButton;
-    @FXML
-    private Circle circle;
-    @FXML
-    private Label usernameLabel;
 
     //TODO Liste in eine HBox verwandeln. Ähnlich wie beim Chat. Warum? Damit Der Name und ein Icon mit Farbe platz drin findet :)
     private ObservableList<HBox> users;
 
-    public LobbyPresenter(User loggedInUser, String name, UUID lobbyID, ChatService chatService) {
+    /**
+     * Instantiates a new Lobby presenter.
+     *
+     * @param loggedInUser the logged in user
+     * @param name         the name
+     * @param lobbyID      the lobby id
+     * @param chatService  the chat service
+     */
+    public LobbyPresenter(User loggedInUser, String name, UUID lobbyID, ChatService chatService, LobbyService lobbyService) {
         this.loggedInUser = loggedInUser;
         this.lobbyName = name;
         this.lobbyID = lobbyID;
         this.chatService = chatService;
+        this.lobbyService = lobbyService;
     }
 
+    /**
+     * Gets lobby id.
+     *
+     * @return the lobby id
+     */
     public UUID getLobbyID() {
         return lobbyID;
     }
 
+    /**
+     * Gets lobby name.
+     *
+     * @return the lobby name
+     */
     public String getLobbyName() {
         return lobbyName;
     }
@@ -93,6 +118,11 @@ public class LobbyPresenter extends AbstractPresenter {
     // FXML METHODS
     //--------------------------------------
 
+    /**
+     * Initialize.
+     *
+     * @throws IOException the io exception
+     */
     @FXML
     public void initialize() throws IOException {
         //Neue Instanz einer ChatViewPresenter-Controller-Klasse erstellen und nötige Parameter uebergeben
@@ -111,19 +141,61 @@ public class LobbyPresenter extends AbstractPresenter {
         ((Pane) chatView.getChildren().get(0)).setPrefHeight(chatView.getPrefHeight());
         ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getPrefWidth());
 
-        usernameLabel = new Label("BEISPIELTEXT");//loggedInUser.getUsername());
-        circle = new Circle(12.0f, Paint.valueOf("red"));
-        HBox box = new HBox(circle, usernameLabel);
-        users = FXCollections.observableArrayList();
-        users.add(box);    //loggedInUser.getUsername());
+        readyUserList.put(loggedInUser.getUsername(), getHboxFromReadyUser(loggedInUser.getUsername(), false));
         updateUsersList();
     }
 
+    /**
+     * Creates a new HBox for a User
+     *
+     * @param username The User
+     * @param status   The actual Status
+     * @return The generated HBox
+     */
+    private HBox getHboxFromReadyUser(String username, boolean status) {
+        HBox box = new HBox();
+        box.setAlignment(Pos.CENTER_LEFT);
+        box.setSpacing(5);
+        Circle circle = new Circle(12.0f, status ? Paint.valueOf("green") : Paint.valueOf("red"));
+        Label usernameLabel = new Label(username);
+        box.getChildren().add(circle);
+        box.getChildren().add(usernameLabel);
+        return box;
+    }
+
+    private void updateReadyUser(String userName, boolean status) {
+        if (readyUserList.containsKey(userName)) {
+            readyUserList.remove(userName);
+            readyUserList.put(userName, getHboxFromReadyUser(userName, status));
+            updateUsersList();
+        }
+    }
+
+    /**
+     * Converts the HBox Map to a ArrayList
+     *
+     * @return All HBoxes as ArrayList
+     */
+    private ArrayList<HBox> getAllHBoxes() {
+        ArrayList<HBox> list = new ArrayList<>(readyUserList.values());
+        return list;
+    }
+
+    /**
+     * On logout button pressed.
+     *
+     * @param actionEvent the action event
+     */
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
         userService.logout(loggedInUser);
     }
 
+    /**
+     * On instructions button pressed.
+     *
+     * @param actionEvent the action event
+     */
     @FXML
     public void onInstructionsButtonPressed(ActionEvent actionEvent) {
         try {
@@ -133,6 +205,11 @@ public class LobbyPresenter extends AbstractPresenter {
         }
     }
 
+    /**
+     * On ready button pressed.
+     *
+     * @param actionEvent the action event
+     */
     @FXML
     public void onReadyButtonPressed(ActionEvent actionEvent) {
         if (ownReadyStatus) {
@@ -149,6 +226,11 @@ public class LobbyPresenter extends AbstractPresenter {
     // EVENTBUS
     //--------------------------------------
 
+    /**
+     * On new lobby created.
+     *
+     * @param msg the msg
+     */
     @Subscribe
     public void onNewLobbyCreated(CreateLobbyMessage msg) {
         chatID = msg.getChatID().toString();
@@ -156,18 +238,32 @@ public class LobbyPresenter extends AbstractPresenter {
         chatViewPresenter.setChatId(chatID);
     }
 
+    /**
+     * On chat response message.
+     *
+     * @param msg the msg
+     */
     @Subscribe
     public void onChatResponseMessage(ChatResponseMessage msg) {
         chatViewPresenter.onChatResponseMessage(msg);
     }
 
+    /**
+     * On new chat message.
+     *
+     * @param msg the msg
+     */
     @Subscribe
     public void onNewChatMessage(NewChatMessage msg) {
-        LOG.debug("Sending message as User: " + loggedInUser.getUsername() + " from LobbyChat.");
+        LOG.debug("Receiving message as User: " + loggedInUser.getUsername() + " for Chat " + msg.getChatId());
         chatViewPresenter.onNewChatMessage(msg);
-
     }
 
+    /**
+     * New user.
+     *
+     * @param message the message
+     */
     @Subscribe
     public void newUser(UserLoggedInMessage message) {
         Platform.runLater(() -> {
@@ -175,6 +271,11 @@ public class LobbyPresenter extends AbstractPresenter {
         });
     }
 
+    /**
+     * User left.
+     *
+     * @param message the message
+     */
     @Subscribe
     public void userLeft(UserLoggedOutMessage message) {
         Platform.runLater(() -> {
@@ -182,10 +283,16 @@ public class LobbyPresenter extends AbstractPresenter {
         });
     }
 
+    /**
+     * On updated lobby ready status message.
+     *
+     * @param message the message
+     */
     @Subscribe
     public void onUpdatedLobbyReadyStatusMessage(UpdatedLobbyReadyStatusMessage message) {
-        if (message.getLobbyID() == lobbyID && users.contains(message.getName())) {
-
+        if (!message.getLobbyID().equals(lobbyID)) return;
+        if (readyUserList.containsKey(message.getUser().getUsername())) {
+            updateReadyUser(message.getUser().getUsername(), message.isReady());
         }
     }
 
@@ -196,10 +303,12 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void newUser(UserJoinedLobbyMessage message) {
+        if (!message.getLobbyID().equals(lobbyID))return;
         LOG.debug("New user " + message.getUser() + " logged in");
         Platform.runLater(() -> {
             if (users != null && loggedInUser != null && !loggedInUser.toString().equals(message.getName())) {
-                //users.add(message.getName());
+                readyUserList.put(message.getUser().getUsername(), getHboxFromReadyUser(message.getUser().getUsername(), false));
+                users.add(readyUserList.get(message.getUser().getUsername()));
                 updateUsersList();
                 chatViewPresenter.userJoined(message.getUser().getUsername());
             }
@@ -213,11 +322,16 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void userLeft(UserLeftLobbyMessage message) {
+        if (!message.getLobbyID().equals(lobbyID))return;
         LOG.debug("User " + message.getName() + " left the Lobby");
         Platform.runLater(() -> {
             users.remove(message.getName());
             updateUsersList();
             chatViewPresenter.userLeft(message.getUser().getUsername());
+            if (readyUserList.containsKey(message.getUser().getUsername())) {
+                readyUserList.remove(message.getUser().getUsername());
+                updateUsersList();
+            }
         });
     }
 
@@ -228,7 +342,12 @@ public class LobbyPresenter extends AbstractPresenter {
     private void updateUsersList() {//List<LobbyUser> userList) {
         // Attention: This must be done on the FX Thread!
         Platform.runLater(() -> {
-            usersView.setItems(users);
+            if (users == null) {
+                users = FXCollections.observableArrayList();
+                usersView.setItems(users);
+            }
+            users.clear();
+            users.addAll(getAllHBoxes());
         });
     }
 }

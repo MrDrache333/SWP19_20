@@ -11,7 +11,7 @@ import java.util.*;
 public class LobbyManagement {
     static final Logger LOG = LogManager.getLogger(LobbyManagement.class);
 
-    private Map<Integer, Lobby> lobbies = new HashMap<>();
+    private Map<String, Lobby> lobbies = new HashMap<>();
 
     /**
      * @author Paula, Haschem, Ferit
@@ -20,13 +20,13 @@ public class LobbyManagement {
      */
 
     public UUID createLobby(String name, User owner) {
-        if (lobbies.containsKey(lobbies.size())) {
+        if (lobbies.containsKey(name)) {
             throw new IllegalArgumentException("Lobby name " + name + " already exists!");
         }
         // Erstellen der UUID für die Lobbys.
         UUID lobbyID = UUID.randomUUID();
         LOG.info("Die Lobby " + name + " hat folgende UUID erstellt bekommen: " + lobbyID);
-        lobbies.put(lobbies.size(), new LobbyDTO(name, owner, lobbyID));
+        lobbies.put(name, new LobbyDTO(name, owner, lobbyID));
 
         return lobbyID;
     }

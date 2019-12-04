@@ -241,7 +241,7 @@ public class ChatViewPresenter extends AbstractPresenter {
         message = chatTextField.getText();
         //Pruefe auf leere Nachricht
         if (!message.equals("")) {
-            LOG.debug("Sending message as User: " + loggedInUser.getUsername());
+            LOG.debug("Sending new Chat message: User= " + loggedInUser.getUsername() + " Msg= " + message + " ChatID= " + chatId);
             ChatMessage newChatMessage = new ChatMessage(loggedInUser, message);
 
             LOG.debug("new Message to send: " + message);

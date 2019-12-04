@@ -113,7 +113,7 @@ public class LobbyService extends AbstractService {
         Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyName);
 
         if (lobby.isPresent()) {
-            message.setReceiver(authenticationService.getSessions(lobby.get().getUsers()));
+            //message.setReceiver(authenticationService.getSessions(lobby.get().getUsers()));
             post(message);
         }
 
@@ -124,7 +124,7 @@ public class LobbyService extends AbstractService {
      * On update lobby ready status reqest.
      *
      * @param request the request
-     * @author Keno Oelrichs Garcia * @Version 1.0 * @since
+     * @author Keno Oelrichs Garcia
      * @Version 1.0
      * @since Sprint3
      */
@@ -136,7 +136,9 @@ public class LobbyService extends AbstractService {
             lobby.get().setReadyStatus(request.getUser(), request.isReady());
             ServerMessage msg = new UpdatedLobbyReadyStatusMessage(lobby.get().getLobbyID(), lobby.get().getName(), request.getUser(), lobby.get().getReadyStatus(request.getUser()));
             sendToAll(lobby.get().getName(), msg);
-        }
+            LOG.debug("Sending Updated Status of User " + request.getUser().getUsername() + " to " + request.isReady() + " in Lobby: " + lobby.get().getLobbyID());
+        } else
+            LOG.debug("Lobby " + request.getName() + " NOT FOUND!");
     }
 
     @Subscribe
