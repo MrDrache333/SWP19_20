@@ -8,6 +8,7 @@ import com.google.inject.assistedinject.Assisted;
 import de.uol.swp.client.auth.LoginPresenter;
 import de.uol.swp.client.auth.events.ShowLoginViewEvent;
 import de.uol.swp.client.game.GameViewPresenter;
+import de.uol.swp.client.game.event.GameQuitEvent;
 import de.uol.swp.client.lobby.*;
 import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.client.register.RegistrationPresenter;
@@ -143,6 +144,11 @@ public class SceneManager {
     @Subscribe
     public void onRegistrationCanceledEvent(RegistrationCanceledEvent event) {
         showScene(lastScene, lastTitle);
+    }
+
+    @Subscribe
+    public void onGameQuitEvent(GameQuitEvent event){
+        showScene(mainScene, "test");
     }
 
     @Subscribe

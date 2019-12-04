@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.SceneManager;
+import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
 import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.client.game.event.GameQuitEvent;
 import javafx.event.ActionEvent;
@@ -20,18 +21,14 @@ import java.util.Optional;
 public class GameViewPresenter extends AbstractPresenter {
     public static final String fxml = "/fxml/GameView.fxml";
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
+    private static final GameQuitEvent gameQuitMessage = new GameQuitEvent();
     private static SceneManager sceneManager;
-    private final EventBus bus;
 
 
+
+// Schritt 3 muss noch
     @Inject
-    public GameViewPresenter(EventBus bus) {
-        this.bus = bus;
-    }
-
-
-    @Inject
-    public static void showAlert(Alert.AlertType type, String message, String title) {
+    public void showAlert(Alert.AlertType type, String message, String title) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "");
         alert.setResizable(false);
         alert.initModality(Modality.APPLICATION_MODAL);
@@ -40,7 +37,7 @@ public class GameViewPresenter extends AbstractPresenter {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
 
-            sceneManager.showMainScreen(loggedInUser);
+            eventBus.post(gameQuitMessage);
         } else {
 
         }
