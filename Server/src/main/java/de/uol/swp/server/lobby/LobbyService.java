@@ -11,6 +11,7 @@ import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.message.ResponseMessage;
 import de.uol.swp.common.message.ServerMessage;
+import de.uol.swp.common.user.User;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.chat.ChatManagement;
 import de.uol.swp.server.usermanagement.AuthenticationService;
@@ -46,7 +47,6 @@ public class LobbyService extends AbstractService {
         this.chatManagement = chatManagement;
     }
 
-
     /**
      * lobbyManagment auf dem Server wird aufgerufen und übergibt LobbyNamen und den Besitzer.
      * Wenn dies erfolgt ist, folgt eine returnMessage an den Client die LobbyView anzuzeigen.
@@ -56,8 +56,6 @@ public class LobbyService extends AbstractService {
      * @version 0.1
      * @since Sprint2
      */
-
-
     @Subscribe
     public void onCreateLobbyRequest(CreateLobbyRequest msg) {
 
@@ -71,7 +69,6 @@ public class LobbyService extends AbstractService {
         LOG.info("onCreateLobbyRequest wird auf dem Server aufgerufen.");
     }
 
-
     /**
      * On lobby join user request.
      *
@@ -81,6 +78,7 @@ public class LobbyService extends AbstractService {
      */
     @Subscribe
     public void onLobbyJoinUserRequest(LobbyJoinUserRequest lobbyJoinUserRequest) {
+        LOG.debug("User " + lobbyJoinUserRequest.getUser().getUsername() + "joined the Lobby " + lobbyJoinUserRequest.getName());
         Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyJoinUserRequest.getName());
 
         if (lobby.isPresent()) {
@@ -99,6 +97,7 @@ public class LobbyService extends AbstractService {
      */
     @Subscribe
     public void onLobbyLeaveUserRequest(LobbyLeaveUserRequest lobbyLeaveUserRequest) {
+        LOG.debug("User " + lobbyLeaveUserRequest.getUser().getUsername() + " left the Lobby " + lobbyLeaveUserRequest.getName());
         Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyLeaveUserRequest.getName());
 
         if (lobby.isPresent()) {
@@ -107,7 +106,6 @@ public class LobbyService extends AbstractService {
         }
         // TODO: error handling not existing lobby
     }
-
 
     private void sendToAll(String lobbyName, ServerMessage message) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyName);
@@ -129,7 +127,7 @@ public class LobbyService extends AbstractService {
      * @since Sprint3
      */
     @Subscribe
-    public void onUpdateLobbyReadyStatusReqest(UpdateLobbyReadyStatusRequest request) {
+    public void onUpdateLobbyReadyStatusRequest(UpdateLobbyReadyStatusRequest request) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(request.getName());
 
         if (lobby.isPresent()) {
@@ -137,6 +135,7 @@ public class LobbyService extends AbstractService {
             ServerMessage msg = new UpdatedLobbyReadyStatusMessage(lobby.get().getLobbyID(), lobby.get().getName(), request.getUser(), lobby.get().getReadyStatus(request.getUser()));
             sendToAll(lobby.get().getName(), msg);
             LOG.debug("Sending Updated Status of User " + request.getUser().getUsername() + " to " + request.isReady() + " in Lobby: " + lobby.get().getLobbyID());
+            allPlayersReady(lobby);
         } else
             LOG.debug("Lobby " + request.getName() + " NOT FOUND!");
     }
@@ -164,4 +163,23 @@ public class LobbyService extends AbstractService {
         post(response);
     }
 
+    /**
+     * überprüft ob alle Spieler bereit sind
+     * Spiel startet wenn 4 Spieler Bereit sind
+     *
+     * @param lobby the lobby
+     */
+    private void allPlayersReady(Optional<Lobby> lobby){
+        int counter = 0;
+        for (User user: lobby.get().getLobbyUsers()) {
+            counter++;
+            if (lobby.get().getReadyStatus(user) == false) {
+                break;
+            }
+            if(counter == 4){
+                LOG.debug("Game starts in Lobby: "+lobby.get().getName());
+                //TODO wenn alle Spieler ready sind Spiel starten und msg senden
+            }
+        }
+    }
 }

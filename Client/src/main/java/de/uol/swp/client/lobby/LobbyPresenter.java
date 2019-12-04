@@ -12,6 +12,7 @@ import de.uol.swp.common.lobby.message.UpdatedLobbyReadyStatusMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.user.User;
+import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import javafx.application.Platform;
@@ -77,7 +78,6 @@ public class LobbyPresenter extends AbstractPresenter {
     @FXML
     private Button readyButton;
 
-    //TODO Liste in eine HBox verwandeln. Ähnlich wie beim Chat. Warum? Damit Der Name und ein Icon mit Farbe platz drin findet :)
     private ObservableList<HBox> users;
 
     /**
@@ -88,30 +88,13 @@ public class LobbyPresenter extends AbstractPresenter {
      * @param lobbyID      the lobby id
      * @param chatService  the chat service
      */
-    public LobbyPresenter(User loggedInUser, String name, UUID lobbyID, ChatService chatService, LobbyService lobbyService) {
+    public LobbyPresenter(User loggedInUser, String name, UUID lobbyID, ChatService chatService, LobbyService lobbyService, UserService userService) {
         this.loggedInUser = loggedInUser;
         this.lobbyName = name;
         this.lobbyID = lobbyID;
         this.chatService = chatService;
         this.lobbyService = lobbyService;
-    }
-
-    /**
-     * Gets lobby id.
-     *
-     * @return the lobby id
-     */
-    public UUID getLobbyID() {
-        return lobbyID;
-    }
-
-    /**
-     * Gets lobby name.
-     *
-     * @return the lobby name
-     */
-    public String getLobbyName() {
-        return lobbyName;
+        this.userService = userService;
     }
 
     //--------------------------------------
@@ -143,42 +126,6 @@ public class LobbyPresenter extends AbstractPresenter {
 
         readyUserList.put(loggedInUser.getUsername(), getHboxFromReadyUser(loggedInUser.getUsername(), false));
         updateUsersList();
-    }
-
-    /**
-     * Creates a new HBox for a User
-     *
-     * @param username The User
-     * @param status   The actual Status
-     * @return The generated HBox
-     */
-    private HBox getHboxFromReadyUser(String username, boolean status) {
-        HBox box = new HBox();
-        box.setAlignment(Pos.CENTER_LEFT);
-        box.setSpacing(5);
-        Circle circle = new Circle(12.0f, status ? Paint.valueOf("green") : Paint.valueOf("red"));
-        Label usernameLabel = new Label(username);
-        box.getChildren().add(circle);
-        box.getChildren().add(usernameLabel);
-        return box;
-    }
-
-    private void updateReadyUser(String userName, boolean status) {
-        if (readyUserList.containsKey(userName)) {
-            readyUserList.remove(userName);
-            readyUserList.put(userName, getHboxFromReadyUser(userName, status));
-            updateUsersList();
-        }
-    }
-
-    /**
-     * Converts the HBox Map to a ArrayList
-     *
-     * @return All HBoxes as ArrayList
-     */
-    private ArrayList<HBox> getAllHBoxes() {
-        ArrayList<HBox> list = new ArrayList<>(readyUserList.values());
-        return list;
     }
 
     /**
@@ -303,7 +250,7 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void newUser(UserJoinedLobbyMessage message) {
-        if (!message.getLobbyID().equals(lobbyID))return;
+        if (!message.getLobbyID().equals(lobbyID)) return;
         LOG.debug("New user " + message.getUser() + " logged in");
         Platform.runLater(() -> {
             if (users != null && loggedInUser != null && !loggedInUser.toString().equals(message.getName())) {
@@ -322,7 +269,7 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void userLeft(UserLeftLobbyMessage message) {
-        if (!message.getLobbyID().equals(lobbyID))return;
+        if (!message.getLobbyID().equals(lobbyID)) return;
         LOG.debug("User " + message.getName() + " left the Lobby");
         Platform.runLater(() -> {
             users.remove(message.getName());
@@ -349,5 +296,63 @@ public class LobbyPresenter extends AbstractPresenter {
             users.clear();
             users.addAll(getAllHBoxes());
         });
+    }
+
+    /**
+     * Creates a new HBox for a User
+     *
+     * @param username The User
+     * @param status   The actual Status
+     * @return The generated HBox
+     */
+    private HBox getHboxFromReadyUser(String username, boolean status) {
+        HBox box = new HBox();
+        box.setAlignment(Pos.CENTER_LEFT);
+        box.setSpacing(5);
+        Circle circle = new Circle(12.0f, status ? Paint.valueOf("green") : Paint.valueOf("red"));
+        Label usernameLabel = new Label(username);
+        box.getChildren().add(circle);
+        box.getChildren().add(usernameLabel);
+        return box;
+    }
+
+    private void updateReadyUser(String userName, boolean status) {
+        if (readyUserList.containsKey(userName)) {
+            readyUserList.remove(userName);
+            readyUserList.put(userName, getHboxFromReadyUser(userName, status));
+            updateUsersList();
+        }
+    }
+
+    /**
+     * Converts the HBox Map to a ArrayList
+     *
+     * @return All HBoxes as ArrayList
+     */
+    private ArrayList<HBox> getAllHBoxes() {
+        ArrayList<HBox> list = new ArrayList<>(readyUserList.values());
+        return list;
+    }
+
+    //--------------------------------------
+    // GETTER AND SETTER
+    //--------------------------------------
+
+    /**
+     * Gets lobby id.
+     *
+     * @return the lobby id
+     */
+    public UUID getLobbyID() {
+        return lobbyID;
+    }
+
+    /**
+     * Gets lobby name.
+     *
+     * @return the lobby name
+     */
+    public String getLobbyName() {
+        return lobbyName;
     }
 }

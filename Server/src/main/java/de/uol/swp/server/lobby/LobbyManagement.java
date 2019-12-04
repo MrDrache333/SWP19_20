@@ -49,5 +49,4 @@ public class LobbyManagement {
     public Collection<Lobby> getLobbies() {
         return lobbies.values();
     }
-
 }

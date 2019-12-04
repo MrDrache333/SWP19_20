@@ -156,7 +156,6 @@ public class SceneManager {
 
     @Subscribe
     public void onShowLoginViewEvent(ShowLoginViewEvent event) {
-
         showLoginScreen();
     }
 
@@ -233,7 +232,7 @@ public class SceneManager {
     public void showLobbyScreen(User currentUser, String title, UUID lobbyID) {
         Platform.runLater(() -> {
             //LobbyPresenter neue Instanz mit (name, id) wird erstellt
-            LobbyPresenter lobbyPresenter = new LobbyPresenter(currentUser, title, lobbyID, chatService, lobbyService);
+            LobbyPresenter lobbyPresenter = new LobbyPresenter(currentUser, title, lobbyID, chatService, lobbyService, userService);
             eventBus.register(lobbyPresenter);
             //initLobbyView mit gerade erstelltem Presenter als Controller aufrufen -> Scene wird erstellt
             initLobbyView(lobbyPresenter);
@@ -249,7 +248,5 @@ public class SceneManager {
             lobbies.put(lobbyID, lobbyPresenter);
             lobbyStages.put(lobbyID, newLobbyStage);
         });
-
     }
-
 }

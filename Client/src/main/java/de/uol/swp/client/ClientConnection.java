@@ -144,6 +144,4 @@ public class ClientConnection {
             l.exceptionOccured(message.getMessage());
         }
     }
-
-
 }
