@@ -13,6 +13,7 @@ public class LobbyManagement {
 
     private Map<String, Lobby> lobbies = new HashMap<>();
 
+
     /**
      * @author Paula, Haschem, Ferit
      * @version 0.1
@@ -25,18 +26,21 @@ public class LobbyManagement {
         }
         // Erstellen der UUID für die Lobbys.
         UUID lobbyID = UUID.randomUUID();
-        LOG.info("Die Lobby " + name + " hat folgende UUID erstellt bekommen: " + lobbyID);
+        LOG.info("Lobby " + name + " got UUID: " + lobbyID);
         lobbies.put(name, new LobbyDTO(name, owner, lobbyID));
 
         return lobbyID;
     }
 
+    /**
+     * @param name
+     */
     public void dropLobby(String name) {
         if (!lobbies.containsKey(name)) {
             throw new IllegalArgumentException("Lobby name " + name + " not found!");
         }
         lobbies.remove(name);
-        LOG.info("Die Lobby " + name + "wurde gelöscht");
+        LOG.info("Lobby " + name + "removed");
     }
 
     public Optional<Lobby> getLobby(String name) {
@@ -47,6 +51,11 @@ public class LobbyManagement {
         return Optional.empty();
     }
 
+    /**
+     * @param name
+     * @param user
+     * @return
+     */
     public boolean leaveLobby(String name, User user) {
         Optional<Lobby> lobby = this.getLobby(name);
         if (lobby.isPresent()) {

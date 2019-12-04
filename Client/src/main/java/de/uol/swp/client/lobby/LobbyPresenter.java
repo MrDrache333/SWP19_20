@@ -7,6 +7,7 @@ import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
 import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.chat.response.ChatResponseMessage;
 import de.uol.swp.common.lobby.LobbyService;
+import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import javafx.application.Platform;
@@ -27,8 +28,6 @@ import java.util.UUID;
 
 public class LobbyPresenter extends AbstractPresenter {
 
-    @FXML
-    private Pane chatView;
 
     public static final String fxml = "/fxml/LobbyView.fxml";
     private static final ShowLobbyViewEvent showLobbyViewMessage = new ShowLobbyViewEvent();
@@ -39,19 +38,22 @@ public class LobbyPresenter extends AbstractPresenter {
 
     private UUID lobbyID;
     private String name;
+    private User user;
 
-    public LobbyPresenter(String name, UUID lobbyID, LobbyService lobbyService){
+
+    public LobbyPresenter(String name, UUID lobbyID, LobbyService lobbyService) {
         this.name = name;
         this.lobbyID = lobbyID;
         this.lobbyService = lobbyService;
     }
 
-    public UUID getLobbyID(){
-        return lobbyID;
-    }
 
-    public String getName(){
-        return name;
+    @FXML
+    private Pane chatView;
+
+    @FXML
+    public void onLeaveLobbyButtonPressed(ActionEvent event) {
+        lobbyService.leaveLobby(name, loggedInUser, lobbyID);
     }
 
     @FXML
@@ -104,11 +106,18 @@ public class LobbyPresenter extends AbstractPresenter {
     public void userLeft(UserLoggedOutMessage message) {
         Platform.runLater(() -> {
             chatViewPresenter.userLeft(message.getUsername());
+
+
         });
+        lobbyService.leaveAllLobbiesOnLogout(user);
     }
 
-    @FXML
-    public void onLeaveLobbyButtonPressed(ActionEvent event) {
-        lobbyService.leaveLobby(name, loggedInUser, lobbyID);
+
+    public UUID getLobbyID() {
+        return lobbyID;
+    }
+
+    public String getName() {
+        return name;
     }
 }

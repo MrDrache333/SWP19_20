@@ -81,13 +81,6 @@ public class AuthenticationService extends AbstractService {
         post(returnMessage);
     }
 
-    /**
-     * Request wird empfangen
-     *
-     * @param msg
-     * @author Julia, Paula
-     * @since sprint3
-     */
 
     @Subscribe
     public void onLogoutRequest(LogoutRequest msg) {

@@ -37,6 +37,11 @@ public class LobbyService extends AbstractService {
         this.chatManagement = chatManagement;
     }
 
+
+    //--------------------------------------
+    // EVENTBUS
+    //--------------------------------------
+
     /**
      * lobbyManagment auf dem Server wird aufgerufen und übergibt LobbyNamen und den Besitzer.
      * Wenn dies erfolgt ist, folgt eine returnMessage an den Client die LobbyView anzuzeigen.
@@ -60,6 +65,14 @@ public class LobbyService extends AbstractService {
         LOG.info("onCreateLobbyRequest wird auf dem Server aufgerufen.");
     }
 
+    /**
+     * LobbyManagment auf dem Server wird aufgerufen und übergibt den Namen des Nutzers.
+     * Wenn dies erfolgt ist, folgt eine returnMessage an den Client den User zur Lobby hinzuzufügen
+     *
+     * @param msg
+     * @author Julia, Paula
+     * @since Sprint3
+     */
 
     @Subscribe
     public void onLobbyJoinUserRequest(LobbyJoinUserRequest msg) {
@@ -72,6 +85,14 @@ public class LobbyService extends AbstractService {
         }
     }
 
+    /**
+     * lobbyManagment wird aufgerufen auf Server aufgerufen und übergibt Namen der Lobby und User.
+     * reuturnMessage wird an Client gesendet
+     *
+     * @param msg
+     * @author Julia, Paula
+     * @since Sprint3
+     */
     @Subscribe
     public void onLobbyLeaveUserRequest(LobbyLeaveUserRequest msg) {
         if (lobbyManagement.leaveLobby(msg.getName(), msg.getUser())) {
@@ -83,26 +104,25 @@ public class LobbyService extends AbstractService {
         }
     }
 
+    /**
+     * Lobbys, in denen User drinnen ist, werden verlassen
+     *
+     * @param msg
+     * @author Julia, Paula
+     * @since Sprint3
+     */
+
     @Subscribe
     public void onLeaveAllLobbiesOnLogoutRequest(LeaveAllLobbiesOnLogoutRequest msg) {
         List<Lobby> toLeave = new ArrayList<>();
         lobbyManagement.getLobbies().forEach(lobby -> {
             List<User> users = new ArrayList<>(lobby.getUsers());
-            if(users.contains(msg.getUser())) {
+            if (users.contains(msg.getUser())) {
                 toLeave.add(lobby);
             }
         });
         LOG.info("User " + msg.getUser().getUsername() + " is leaving all lobbies");
         toLeave.forEach(lobby -> lobbyManagement.leaveLobby(lobby.getName(), msg.getUser()));
-    }
-
-    public void sendToAll(String lobbyName, ServerMessage message) {
-        Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyName);
-        if (lobby.isPresent()) {
-            message.setReceiver(authenticationService.getSessions(lobby.get().getUsers()));
-            post(message);
-        }
-        // TODO: error handling not existing lobby
     }
 
     /**
@@ -116,5 +136,20 @@ public class LobbyService extends AbstractService {
         response.initWithMessage(msg);
         post(response);
     }
+
+    //--------------------------------------
+    // Help Methods
+    //--------------------------------------
+
+
+    public void sendToAll(String lobbyName, ServerMessage message) {
+        Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyName);
+        if (lobby.isPresent()) {
+            message.setReceiver(authenticationService.getSessions(lobby.get().getUsers()));
+            post(message);
+        }
+        // TODO: error handling not existing lobby
+    }
+
 
 }

@@ -69,6 +69,28 @@ public class SceneManager {
         initViews();
     }
 
+
+    @Subscribe
+    public void onShowRegistrationViewEvent(ShowRegistrationViewEvent event) {
+        showRegistrationScreen();
+    }
+
+    @Subscribe
+    public void onShowLoginViewEvent(ShowLoginViewEvent event) {
+
+        showLoginScreen();
+    }
+
+    @Subscribe
+    public void onRegistrationCanceledEvent(RegistrationCanceledEvent event) {
+        showScene(lastScene, lastTitle);
+    }
+
+    @Subscribe
+    public void onRegistrationErrorEvent(RegistrationErrorEvent event) {
+        showError(event.getMessage());
+    }
+
     private void initViews() {
         initLoginView();
         initMainView();
@@ -118,6 +140,7 @@ public class SceneManager {
             Parent rootPane = initPresenter(MainMenuPresenter.fxml);
             mainScene = new Scene(rootPane, 1280, 750);
             mainScene.getStylesheets().add(styleSheet);
+
         }
     }
 
@@ -127,6 +150,7 @@ public class SceneManager {
             loginScene = new Scene(rootPane, 1280, 750);
             loginScene.getStylesheets().add(styleSheet);
         }
+
     }
 
     private void initRegistrationView() {
@@ -146,28 +170,9 @@ public class SceneManager {
         newLobbyScene.getStylesheets().add(styleSheet);
         //scene in Map packen
         lobbyScenes.put(lobbyPresenter.getLobbyID(), newLobbyScene);
+
     }
 
-    @Subscribe
-    public void onShowRegistrationViewEvent(ShowRegistrationViewEvent event) {
-        showRegistrationScreen();
-    }
-
-    @Subscribe
-    public void onShowLoginViewEvent(ShowLoginViewEvent event) {
-
-        showLoginScreen();
-    }
-
-    @Subscribe
-    public void onRegistrationCanceledEvent(RegistrationCanceledEvent event) {
-        showScene(lastScene, lastTitle);
-    }
-
-    @Subscribe
-    public void onRegistrationErrorEvent(RegistrationErrorEvent event) {
-        showError(event.getMessage());
-    }
 
     public void showError(String message, String e) {
         Platform.runLater(() -> {
@@ -207,6 +212,7 @@ public class SceneManager {
     public void showMainScreen(User currentUser) {
         this.currentUser = currentUser;
         showScene(mainScene, "Welcome " + currentUser.getUsername());
+
     }
 
 
@@ -221,14 +227,14 @@ public class SceneManager {
     /**
      * Es wird eine neue Stage mit der lobbyScene angezeigt und mit dem Attribut geöffnet.
      *
-     * @param title der Übergebene Titel aus dem MainMenuPresenter
+     * @param title   der Übergebene Titel aus dem MainMenuPresenter
      * @param lobbyID die übergebene LobbyID aus der empfangenen Message in der ClientApp
      * @author Paula, Haschem, Ferit, Anna
      * @version 0.2
      * @since Sprint3
      */
 
-    //TODO: LobbyScreen bzw Stage schließen, wenn Hauptmenü geschlossen wird
+
     public void showLobbyScreen(String title, UUID lobbyID) {
         Platform.runLater(() -> {
             //LobbyPresenter neue Instanz mit (name, id) wird erstellt
@@ -247,19 +253,24 @@ public class SceneManager {
             //LobbyPresenter und lobbyStage in die jeweilige Map packen, mit lobbyID als Schlüssel
             lobbies.put(lobbyID, lobbyPresenter);
             lobbyStages.put(lobbyID, newLobbyStage);
+
+
         });
     }
 
+
+    /**
+     * LobbyStage wird geschlossen
+     *
+     * @param lobbyID
+     * @author Julia, Paula
+     * @since Sprint3
+     */
     public void closeLobbyStage(UUID lobbyID) {
         Platform.runLater(() -> {
             lobbyStages.get(lobbyID).close();
         });
     }
 
-    public void closeAllLobbyStages() {
-        Platform.runLater(() -> {
-            lobbyStages.values().forEach(Stage::close);
-        });
-    }
 
 }

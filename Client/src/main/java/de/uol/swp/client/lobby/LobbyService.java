@@ -24,6 +24,51 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
         this.bus = bus;
     }
 
+
+    /**
+     * erstellt ein LobbyJoinUserRequest und postet es auf den Eventbus
+     *
+     * @param name
+     * @param user
+     * @param lobbyID
+     * @author Julia, Paula
+     * @since Sprint3
+     */
+    @Override
+    public void joinLobby(String name, User user, UUID lobbyID) {
+        LobbyJoinUserRequest request = new LobbyJoinUserRequest(name, user, lobbyID);
+        bus.post(request);
+    }
+
+    /**
+     * erstellt eine LobbyLeaveUserRequest, postet es auf den EventBus
+     *
+     * @param name
+     * @param user
+     * @param lobbyID
+     * @author Julia, Paula
+     * @since Sprint3
+     */
+    @Override
+    public void leaveLobby(String name, User user, UUID lobbyID) {
+        LobbyLeaveUserRequest request = new LobbyLeaveUserRequest(name, user, lobbyID);
+        bus.post(request);
+    }
+
+    /**
+     * erstellt eine LeaveAllLobbiesOnLogoutRequest und postet es auf den EventBus
+     *
+     * @param user
+     * @author Julia, Paula
+     * @since Sprint3
+     */
+    @Override
+    public void leaveAllLobbiesOnLogout(User user) {
+        LeaveAllLobbiesOnLogoutRequest request = new LeaveAllLobbiesOnLogoutRequest(user);
+        bus.post(request);
+    }
+
+
     /**
      * erstellt ein RetrieveAllOnlineLobbiesRequest und postet es auf den Eventbus
      *
@@ -35,24 +80,5 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
         RetrieveAllOnlineLobbiesRequest request = new RetrieveAllOnlineLobbiesRequest();
         bus.post(request);
         return null;
-    }
-
-
-    @Override
-    public void joinLobby(String name, User user, UUID lobbyID) {
-        LobbyJoinUserRequest request = new LobbyJoinUserRequest(name, user, lobbyID);
-        bus.post(request);
-    }
-
-    @Override
-    public void leaveLobby(String name, User user, UUID lobbyID) {
-        LobbyLeaveUserRequest request = new LobbyLeaveUserRequest(name, user, lobbyID);
-        bus.post(request);
-    }
-
-    @Override
-    public void leaveAllLobbiesOnLogout(User user) {
-        LeaveAllLobbiesOnLogoutRequest request = new LeaveAllLobbiesOnLogoutRequest(user);
-        bus.post(request);
     }
 }
