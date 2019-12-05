@@ -32,9 +32,6 @@ public class LobbyManagement {
         return lobbyID;
     }
 
-    /**
-     * @param name
-     */
     public void dropLobby(String name) {
         if (!lobbies.containsKey(name)) {
             throw new IllegalArgumentException("Lobby name " + name + " not found!");
@@ -51,11 +48,6 @@ public class LobbyManagement {
         return Optional.empty();
     }
 
-    /**
-     * @param name
-     * @param user
-     * @return
-     */
     public boolean leaveLobby(String name, User user) {
         Optional<Lobby> lobby = this.getLobby(name);
         if (lobby.isPresent()) {

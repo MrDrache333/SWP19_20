@@ -52,7 +52,6 @@ public class LobbyService extends AbstractService {
      * @since Sprint2
      */
 
-
     @Subscribe
     public void onCreateLobbyRequest(CreateLobbyRequest msg) {
         UUID chatID = lobbyManagement.createLobby(msg.getName(), msg.getOwner());
@@ -67,7 +66,7 @@ public class LobbyService extends AbstractService {
 
     /**
      * LobbyManagment auf dem Server wird aufgerufen und übergibt den Namen des Nutzers.
-     * Wenn dies erfolgt ist, folgt eine returnMessage an den Client den User zur Lobby hinzuzufügen
+     * Wenn dies erfolgt ist, folgt eine UserJoinedLobbyMessage an den Client, um den User zur Lobby hinzuzufügen
      *
      * @param msg
      * @author Julia, Paula
@@ -86,13 +85,14 @@ public class LobbyService extends AbstractService {
     }
 
     /**
-     * lobbyManagment wird aufgerufen auf Server aufgerufen und übergibt Namen der Lobby und User.
-     * reuturnMessage wird an Client gesendet
+     * lobbyManagment wird aufgerufen und übergibt Namen der Lobby und User.
+     * UserLeftLobbyMessage wird an Client gesendet
      *
      * @param msg
      * @author Julia, Paula
      * @since Sprint3
      */
+
     @Subscribe
     public void onLobbyLeaveUserRequest(LobbyLeaveUserRequest msg) {
         if (lobbyManagement.leaveLobby(msg.getName(), msg.getUser())) {
@@ -126,9 +126,10 @@ public class LobbyService extends AbstractService {
     }
 
     /**
-     * erstellt eine Response-Message und schickt diese ab
+     * erstellt eine AllOnlineLobbiesResponse mit allen Lobbies im LobbyManagement und schickt diese ab
      *
      * @author Julia
+     * @since Sprint2
      */
     @Subscribe
     public void onRetrieveAllOnlineLobbiesRequest(RetrieveAllOnlineLobbiesRequest msg) {
