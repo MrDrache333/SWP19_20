@@ -7,7 +7,10 @@ import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
 import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.chat.response.ChatResponseMessage;
-import de.uol.swp.common.lobby.message.*;
+import de.uol.swp.common.lobby.message.StartGameMessage;
+import de.uol.swp.common.lobby.message.UpdatedLobbyReadyStatusMessage;
+import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
+import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
@@ -107,9 +110,8 @@ public class LobbyPresenter extends AbstractPresenter {
         //Neue Instanz einer ChatViewPresenter-Controller-Klasse erstellen und nötige Parameter uebergeben
         chatViewPresenter = new ChatViewPresenter("Lobby", ChatViewPresenter.THEME.Light, chatService);
         //chatID setzen
-        chatID = lobbyID.toString();
-        LOG.debug("Got ChatID from Server: " + chatID);
-        chatViewPresenter.setChatId(chatID);
+        LOG.debug("Got ChatID from Server: " + lobbyID.toString());
+        chatViewPresenter.setChatId(lobbyID.toString());
         chatViewPresenter.setloggedInUser(loggedInUser);
         //FXML laden
         FXMLLoader loader = new FXMLLoader(getClass().getResource(ChatViewPresenter.fxml));
@@ -168,18 +170,6 @@ public class LobbyPresenter extends AbstractPresenter {
     //--------------------------------------
     // EVENTBUS
     //--------------------------------------
-
-    /**
-     * On new lobby created.
-     *
-     * @param msg the msg
-     */
-    @Subscribe
-    public void onNewLobbyCreated(CreateLobbyMessage msg) {
-        chatID = msg.getChatID().toString();
-        LOG.debug("Got ChatID from Server: " + chatID);
-        chatViewPresenter.setChatId(chatID);
-    }
 
     /**
      * On chat response message.
