@@ -25,9 +25,6 @@ public class GameViewPresenter extends AbstractPresenter {
     private static SceneManager sceneManager;
 
 
-
-// Schritt 3 muss noch
-    @Inject
     public void showAlert(Alert.AlertType type, String message, String title) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "");
         alert.setResizable(false);
