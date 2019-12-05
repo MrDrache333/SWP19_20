@@ -9,7 +9,7 @@ public class ServerExceptionMessage extends AbstractServerInternalMessage {
         this.e = e;
     }
 
-    public Exception getException(){
+    public Exception getException() {
         return e;
     }
 }

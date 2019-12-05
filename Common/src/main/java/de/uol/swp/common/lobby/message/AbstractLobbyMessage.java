@@ -3,25 +3,29 @@ package de.uol.swp.common.lobby.message;
 import de.uol.swp.common.message.AbstractServerMessage;
 import de.uol.swp.common.user.User;
 
+import java.util.UUID;
+
 public class AbstractLobbyMessage extends AbstractServerMessage {
 
-    String name;
-    User user;
+    private String lobbyName;
+    private User user;
+    private UUID lobbyID;
 
     public AbstractLobbyMessage() {
     }
 
-    public AbstractLobbyMessage(String name, User user) {
-        this.name = name;
+    public AbstractLobbyMessage(String lobbyName, User user, UUID lobbyID) {
+        this.lobbyName = lobbyName;
         this.user = user;
+        this.lobbyID = lobbyID;
     }
 
-    public String getName() {
-        return name;
+    public String getLobbyName() {
+        return lobbyName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setLobbyName(String lobbyName) {
+        this.lobbyName = lobbyName;
     }
 
     public User getUser() {
@@ -30,5 +34,13 @@ public class AbstractLobbyMessage extends AbstractServerMessage {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public UUID getLobbyID() {
+        return lobbyID;
+    }
+
+    public void setLobbyID(UUID lobbyID) {
+        this.lobbyID = lobbyID;
     }
 }

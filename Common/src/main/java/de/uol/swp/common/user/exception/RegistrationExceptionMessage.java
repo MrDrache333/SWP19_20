@@ -6,12 +6,12 @@ public class RegistrationExceptionMessage extends AbstractResponseMessage {
 
     private final String message;
 
-    public RegistrationExceptionMessage(String message){
+    public RegistrationExceptionMessage(String message) {
         this.message = message;
     }
 
     @Override
     public String toString() {
-        return "RegistrationExceptionMessage "+message;
+        return "RegistrationExceptionMessage " + message;
     }
 }

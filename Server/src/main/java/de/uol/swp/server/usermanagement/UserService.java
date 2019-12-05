@@ -31,16 +31,16 @@ public class UserService extends AbstractService {
 
     @Subscribe
     private void onRegisterUserRequest(RegisterUserRequest msg) {
-        if (LOG.isDebugEnabled()){
+        if (LOG.isDebugEnabled()) {
             LOG.debug("Got new registration message with " + msg.getUser());
         }
         ResponseMessage returnMessage;
         try {
             User newUser = userManagement.createUser(msg.getUser());
             returnMessage = new RegistrationSuccessfulEvent();
-        }catch (Exception e){
+        } catch (Exception e) {
             LOG.error(e);
-            returnMessage = new RegistrationExceptionMessage("Cannot create user "+msg.getUser()+" "+e.getMessage());
+            returnMessage = new RegistrationExceptionMessage("Cannot create user " + msg.getUser() + " " + e.getMessage());
         }
         if (msg.getMessageContext().isPresent()) {
             returnMessage.setMessageContext(msg.getMessageContext().get());
