@@ -132,8 +132,8 @@ public class ClientApp extends Application implements ConnectionListener {
 
     @Subscribe
     public void onRegistrationExceptionMessage(RegistrationExceptionMessage message) {
-        sceneManager.showServerError("Registation error " + message);
-        LOG.error("Registation error " + message);
+        sceneManager.showServerError("Registration error " + message);
+        LOG.error("Registration error " + message);
     }
 
     @Subscribe
