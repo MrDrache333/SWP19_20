@@ -11,6 +11,7 @@ import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.lobby.LobbyPresenter;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.game.GameViewPresenter;
+import de.uol.swp.client.game.event.GameQuitEvent;
 import de.uol.swp.client.lobby.*;
 import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.client.register.RegistrationPresenter;
@@ -176,6 +177,11 @@ public class SceneManager {
     @Subscribe
     public void onRegistrationCanceledEvent(RegistrationCanceledEvent event) {
         showScene(lastScene, lastTitle);
+    }
+
+    @Subscribe
+    public void onGameQuitEvent(GameQuitEvent event){
+        showScene(mainScene, "test");
     }
 
     @Subscribe
