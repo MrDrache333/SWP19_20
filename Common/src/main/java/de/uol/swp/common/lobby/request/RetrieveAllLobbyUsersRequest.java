@@ -6,6 +6,7 @@ import de.uol.swp.common.message.AbstractRequestMessage;
  * Subscriber: server.lobby.LobbyService.onRetrieveAllLobbyUsersRequest
  *
  * @author Marvin
+ * @since Sprint3
  */
 
 public class RetrieveAllLobbyUsersRequest extends AbstractRequestMessage {

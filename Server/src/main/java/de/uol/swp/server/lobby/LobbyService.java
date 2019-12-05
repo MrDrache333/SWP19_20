@@ -106,7 +106,7 @@ public class LobbyService extends AbstractService {
     }
 
     /**
-     * Erstellt eine Response und postet sie.
+     * Gibt, falls die Lobby existiert, Mitglieder, Name und Lobby in einer AllLobbyUsersResponse zurück.
      *
      * @author Marvin
      */
@@ -115,7 +115,7 @@ public class LobbyService extends AbstractService {
     public void onRetrieveAllLobbyUsersRequest(RetrieveAllLobbyUsersRequest msg) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getName());
         if (lobby.isPresent()) {
-            AllLobbyUsersResponse response = new AllLobbyUsersResponse(lobby.get().getUsers(), lobby.get().getName());
+            AllLobbyUsersResponse response = new AllLobbyUsersResponse(lobby.get().getUsers(), lobby.get().getName(), lobby.get());
             response.initWithMessage(msg);
             post(response);
         }
