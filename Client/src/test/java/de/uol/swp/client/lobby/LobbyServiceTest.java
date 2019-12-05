@@ -73,9 +73,9 @@ class LobbyServiceTest {
         assertTrue(event instanceof LobbyJoinUserRequest);
 
         LobbyJoinUserRequest lobbyJoinUserRequest = (LobbyJoinUserRequest) event;
-        assertEquals(lobbyJoinUserRequest.getLobbyID(), defaultLobby.getLobbyID());
-        assertEquals(lobbyJoinUserRequest.getName(), defaultLobby.getName());
-        assertEquals(lobbyJoinUserRequest.getUser(), defaultUser);
+        assertEquals(defaultLobby.getLobbyID(), lobbyJoinUserRequest.getLobbyID());
+        assertEquals(defaultLobby.getName(), lobbyJoinUserRequest.getName());
+        assertEquals(defaultUser, lobbyJoinUserRequest.getUser());
     }
 
     @Test
@@ -93,9 +93,9 @@ class LobbyServiceTest {
 
         LobbyLeaveUserRequest lobbyLeaveUserRequest = (LobbyLeaveUserRequest) event;
 
-        assertEquals(lobbyLeaveUserRequest.getLobbyID(), defaultLobby.getLobbyID());
-        assertEquals(lobbyLeaveUserRequest.getName(), defaultLobby.getName());
-        assertEquals(lobbyLeaveUserRequest.getUser(), defaultUser);
+        assertEquals(defaultLobby.getLobbyID(), lobbyLeaveUserRequest.getLobbyID());
+        assertEquals(defaultLobby.getName(), lobbyLeaveUserRequest.getName());
+        assertEquals(defaultUser, lobbyLeaveUserRequest.getUser());
     }
 
     @Test
@@ -113,6 +113,6 @@ class LobbyServiceTest {
 
         LeaveAllLobbiesOnLogoutRequest leaveAllLobbiesOnLogoutRequest = (LeaveAllLobbiesOnLogoutRequest) event;
 
-        assertEquals(leaveAllLobbiesOnLogoutRequest.getUser(), defaultUser);
+        assertEquals(defaultUser, leaveAllLobbiesOnLogoutRequest.getUser());
     }
 }
