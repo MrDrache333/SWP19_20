@@ -1,18 +1,17 @@
-package de.uol.swp.common.lobby.message;
+package de.uol.swp.common.lobby.request;
 
 import de.uol.swp.common.user.User;
 
 import java.util.UUID;
 
-public class LobbyLeaveUserRequest extends AbstractLobbyRequest {
-
+public class LobbyJoinUserRequest extends AbstractLobbyRequest {
 
     private UUID lobbyID;
 
-    public LobbyLeaveUserRequest() {
+    public LobbyJoinUserRequest() {
     }
 
-    public LobbyLeaveUserRequest(String lobbyName, User user, UUID lobbyID) {
+    public LobbyJoinUserRequest(String lobbyName, User user, UUID lobbyID) {
         super(lobbyName, user);
         this.lobbyID = lobbyID;
     }
@@ -24,5 +23,4 @@ public class LobbyLeaveUserRequest extends AbstractLobbyRequest {
     public void setLobbyID(UUID lobbyID) {
         this.lobbyID = lobbyID;
     }
-
 }

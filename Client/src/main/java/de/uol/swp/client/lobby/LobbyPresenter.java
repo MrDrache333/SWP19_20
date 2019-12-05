@@ -10,7 +10,6 @@ import de.uol.swp.common.chat.response.ChatResponseMessage;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
-import de.uol.swp.common.user.message.UserLoggedInMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -204,30 +203,6 @@ public class LobbyPresenter extends AbstractPresenter {
     }
 
     /**
-     * New user.
-     *
-     * @param message the message
-     */
-    @Subscribe
-    public void newUser(UserLoggedInMessage message) {
-        Platform.runLater(() -> {
-            chatViewPresenter.userJoined(message.getUsername());
-        });
-    }
-
-    /**
-     * User left.
-     *
-     * @param message the message
-     */
-    @Subscribe
-    public void userLeft(UserLoggedOutMessage message) {
-        Platform.runLater(() -> {
-            chatViewPresenter.userLeft(message.getUsername());
-        });
-    }
-
-    /**
      * On updated lobby ready status message.
      *
      * @param message the message
@@ -240,13 +215,29 @@ public class LobbyPresenter extends AbstractPresenter {
         }
     }
 
+    @Subscribe
+    public void onGameStartMessage(StartGameMessage message) {
+        if (!message.getLobbyID().equals(lobbyID)) return;
+        LOG.debug("Game in lobby " + message.getLobbyName() + " starts.");
+    }
+
+    /**
+     * User left.
+     *
+     * @param message the message
+     */
+    @Subscribe
+    public void onUserLoggedOutMessage(UserLoggedOutMessage message) {
+        userLeftLobby(message.getUsername());
+    }
+
     /**
      * New user.
      *
      * @param message the message
      */
     @Subscribe
-    public void newUser(UserJoinedLobbyMessage message) {
+    public void onUserJoinedLobbyMessage(UserJoinedLobbyMessage message) {
         if (!message.getLobbyID().equals(lobbyID)) return;
         LOG.debug("New user " + message.getUser() + " logged in");
         Platform.runLater(() -> {
@@ -265,31 +256,31 @@ public class LobbyPresenter extends AbstractPresenter {
      * @param message the message
      */
     @Subscribe
-    public void userLeft(UserLeftLobbyMessage message) {
+    public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
         if (!message.getLobbyID().equals(lobbyID)) return;
         LOG.debug("User " + message.getLobbyName() + " left the Lobby");
-        Platform.runLater(() -> {
-            users.remove(message.getLobbyName());
-            updateUsersList();
-            chatViewPresenter.userLeft(message.getUser().getUsername());
-            if (readyUserList.containsKey(message.getUser().getUsername())) {
-                readyUserList.remove(message.getUser().getUsername());
-                updateUsersList();
-            }
-        });
-    }
-
-    @Subscribe
-    public void onGameStartMessage(StartGameMessage message) {
-        if (!message.getLobbyID().equals(lobbyID)) return;
-        LOG.debug("Game in lobby " + message.getLobbyName() + " starts.");
+        userLeftLobby(message.getUser().getUsername());
     }
 
     //--------------------------------------
     // PRIVATE METHODS
     //--------------------------------------
 
-    private void updateUsersList() {//List<LobbyUser> userList) {
+    private void userLeftLobby(String username) {
+        if (users.contains(username)) {
+            Platform.runLater(() -> {
+                users.remove(username);
+                updateUsersList();
+                chatViewPresenter.userLeft(username);
+                if (readyUserList.containsKey(username)) {
+                    readyUserList.remove(username);
+                    updateUsersList();
+                }
+            });
+        }
+    }
+
+    private void updateUsersList() {
         // Attention: This must be done on the FX Thread!
         Platform.runLater(() -> {
             if (users == null) {
