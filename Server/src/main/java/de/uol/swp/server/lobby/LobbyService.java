@@ -59,12 +59,12 @@ public class LobbyService extends AbstractService {
     @Subscribe
     public void onCreateLobbyRequest(CreateLobbyRequest msg) {
 
-        UUID chatID = lobbyManagement.createLobby(msg.getName(), msg.getOwner());
+        UUID chatID = lobbyManagement.createLobby(msg.getLobbyName(), msg.getOwner());
 
         chatManagement.createChat(chatID.toString());
         LOG.info("Der Chat mir der UUID " + chatID + " wurde erfolgreich erstellt");
 
-        ServerMessage returnMessage = new CreateLobbyMessage(msg.getName(), msg.getUser(), chatID);
+        ServerMessage returnMessage = new CreateLobbyMessage(msg.getLobbyName(), msg.getUser(), chatID);
         post(returnMessage);
         LOG.info("onCreateLobbyRequest wird auf dem Server aufgerufen.");
     }
@@ -78,12 +78,11 @@ public class LobbyService extends AbstractService {
      */
     @Subscribe
     public void onLobbyJoinUserRequest(LobbyJoinUserRequest lobbyJoinUserRequest) {
-        LOG.debug("User " + lobbyJoinUserRequest.getUser().getUsername() + "joined the Lobby " + lobbyJoinUserRequest.getName());
-        Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyJoinUserRequest.getName());
+        Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyJoinUserRequest.getLobbyName());
 
         if (lobby.isPresent()) {
             lobby.get().joinUser(lobbyJoinUserRequest.getUser());
-            sendToAll(lobbyJoinUserRequest.getName(), new UserJoinedLobbyMessage(lobbyJoinUserRequest.getName(), lobbyJoinUserRequest.getUser(), lobbyJoinUserRequest.getLobbyID()));
+            sendToAll(lobbyJoinUserRequest.getLobbyName(), new UserJoinedLobbyMessage(lobbyJoinUserRequest.getLobbyName(), lobbyJoinUserRequest.getUser(), lobbyJoinUserRequest.getLobbyID()));
         }
         // TODO: error handling not existing lobby
     }
@@ -97,16 +96,21 @@ public class LobbyService extends AbstractService {
      */
     @Subscribe
     public void onLobbyLeaveUserRequest(LobbyLeaveUserRequest lobbyLeaveUserRequest) {
-        LOG.debug("User " + lobbyLeaveUserRequest.getUser().getUsername() + " left the Lobby " + lobbyLeaveUserRequest.getName());
-        Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyLeaveUserRequest.getName());
+        Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyLeaveUserRequest.getLobbyName());
 
         if (lobby.isPresent()) {
             lobby.get().leaveUser(lobbyLeaveUserRequest.getUser());
-            sendToAll(lobbyLeaveUserRequest.getName(), new UserLeftLobbyMessage(lobbyLeaveUserRequest.getName(), lobbyLeaveUserRequest.getUser(), lobbyLeaveUserRequest.getLobbyID()));
+            sendToAll(lobbyLeaveUserRequest.getLobbyName(), new UserLeftLobbyMessage(lobbyLeaveUserRequest.getLobbyName(), lobbyLeaveUserRequest.getUser(), lobbyLeaveUserRequest.getLobbyID()));
         }
         // TODO: error handling not existing lobby
     }
 
+    /**
+     * Nachricht wird auf den Bus gelegt
+     *
+     * @param lobbyName der Lobby-Name
+     * @param message   die Nachricht, die übergeben werden soll
+     */
     private void sendToAll(String lobbyName, ServerMessage message) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyName);
 
@@ -128,7 +132,7 @@ public class LobbyService extends AbstractService {
      */
     @Subscribe
     public void onUpdateLobbyReadyStatusRequest(UpdateLobbyReadyStatusRequest request) {
-        Optional<Lobby> lobby = lobbyManagement.getLobby(request.getName());
+        Optional<Lobby> lobby = lobbyManagement.getLobby(request.getLobbyName());
 
         if (lobby.isPresent()) {
             lobby.get().setReadyStatus(request.getUser(), request.isReady());
@@ -137,7 +141,7 @@ public class LobbyService extends AbstractService {
             LOG.debug("Sending Updated Status of User " + request.getUser().getUsername() + " to " + request.isReady() + " in Lobby: " + lobby.get().getLobbyID());
             allPlayersReady(lobby);
         } else
-            LOG.debug("Lobby " + request.getName() + " NOT FOUND!");
+            LOG.debug("Lobby " + request.getLobbyName() + " NOT FOUND!");
     }
 
     @Subscribe
@@ -173,12 +177,11 @@ public class LobbyService extends AbstractService {
         int counter = 0;
         for (User user: lobby.get().getLobbyUsers()) {
             counter++;
-            if (lobby.get().getReadyStatus(user) == false) {
-                break;
-            }
-            if(counter == 4){
-                LOG.debug("Game starts in Lobby: "+lobby.get().getName());
-                //TODO wenn alle Spieler ready sind Spiel starten und msg senden
+            if (lobby.get().getReadyStatus(user) == false) return;
+            if (counter == 4) {
+                LOG.debug("Game starts in Lobby: " + lobby.get().getName());
+                StartGameMessage msg = new StartGameMessage(lobby.get().getName(), lobby.get().getLobbyID());
+                sendToAll(lobby.get().getName(), msg);
             }
         }
     }

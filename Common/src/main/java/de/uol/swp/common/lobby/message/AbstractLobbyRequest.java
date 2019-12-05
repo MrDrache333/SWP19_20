@@ -5,23 +5,23 @@ import de.uol.swp.common.user.User;
 
 public class AbstractLobbyRequest extends AbstractRequestMessage {
 
-    String name;
-    User user;
+    private String lobbyName;
+    private User user;
 
     public AbstractLobbyRequest() {
     }
 
-    public AbstractLobbyRequest(String name, User user) {
-        this.name = name;
+    public AbstractLobbyRequest(String lobbyName, User user) {
+        this.lobbyName = lobbyName;
         this.user = user;
     }
 
-    public String getName() {
-        return name;
+    public String getLobbyName() {
+        return lobbyName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setLobbyName(String lobbyName) {
+        this.lobbyName = lobbyName;
     }
 
     public User getUser() {

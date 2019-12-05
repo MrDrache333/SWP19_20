@@ -7,10 +7,7 @@ import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
 import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.chat.response.ChatResponseMessage;
-import de.uol.swp.common.lobby.message.CreateLobbyMessage;
-import de.uol.swp.common.lobby.message.UpdatedLobbyReadyStatusMessage;
-import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
-import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
+import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
@@ -253,7 +250,7 @@ public class LobbyPresenter extends AbstractPresenter {
         if (!message.getLobbyID().equals(lobbyID)) return;
         LOG.debug("New user " + message.getUser() + " logged in");
         Platform.runLater(() -> {
-            if (users != null && loggedInUser != null && !loggedInUser.toString().equals(message.getName())) {
+            if (users != null && loggedInUser != null && !loggedInUser.toString().equals(message.getLobbyName())) {
                 readyUserList.put(message.getUser().getUsername(), getHboxFromReadyUser(message.getUser().getUsername(), false));
                 users.add(readyUserList.get(message.getUser().getUsername()));
                 updateUsersList();
@@ -270,9 +267,9 @@ public class LobbyPresenter extends AbstractPresenter {
     @Subscribe
     public void userLeft(UserLeftLobbyMessage message) {
         if (!message.getLobbyID().equals(lobbyID)) return;
-        LOG.debug("User " + message.getName() + " left the Lobby");
+        LOG.debug("User " + message.getLobbyName() + " left the Lobby");
         Platform.runLater(() -> {
-            users.remove(message.getName());
+            users.remove(message.getLobbyName());
             updateUsersList();
             chatViewPresenter.userLeft(message.getUser().getUsername());
             if (readyUserList.containsKey(message.getUser().getUsername())) {
@@ -280,6 +277,12 @@ public class LobbyPresenter extends AbstractPresenter {
                 updateUsersList();
             }
         });
+    }
+
+    @Subscribe
+    public void onGameStartMessage(StartGameMessage message) {
+        if (!message.getLobbyID().equals(lobbyID)) return;
+        LOG.debug("Game in lobby " + message.getLobbyName() + " starts.");
     }
 
     //--------------------------------------

@@ -14,8 +14,8 @@ public class CreateLobbyRequest extends AbstractLobbyRequest {
     public CreateLobbyRequest() {
     }
 
-    public CreateLobbyRequest(String name, User owner) {
-        super(name, owner);
+    public CreateLobbyRequest(String lobbyName, User owner) {
+        super(lobbyName, owner);
     }
 
     public User getOwner() {
@@ -25,5 +25,4 @@ public class CreateLobbyRequest extends AbstractLobbyRequest {
     public void setOwner(User owner) {
         setUser(owner);
     }
-
 }

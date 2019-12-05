@@ -7,25 +7,25 @@ import java.util.UUID;
 
 public class AbstractLobbyMessage extends AbstractServerMessage {
 
-    private String name;
+    private String lobbyName;
     private User user;
     private UUID lobbyID;
 
     public AbstractLobbyMessage() {
     }
 
-    public AbstractLobbyMessage(String name, User user, UUID lobbyID) {
-        this.name = name;
+    public AbstractLobbyMessage(String lobbyName, User user, UUID lobbyID) {
+        this.lobbyName = lobbyName;
         this.user = user;
         this.lobbyID = lobbyID;
     }
 
-    public String getName() {
-        return name;
+    public String getLobbyName() {
+        return lobbyName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setLobbyName(String lobbyName) {
+        this.lobbyName = lobbyName;
     }
 
     public User getUser() {

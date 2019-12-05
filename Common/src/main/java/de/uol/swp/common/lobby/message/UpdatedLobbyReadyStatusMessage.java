@@ -18,8 +18,8 @@ public class UpdatedLobbyReadyStatusMessage extends AbstractLobbyMessage {
      * @param user      the user
      * @param ready     the Status
      */
-    public UpdatedLobbyReadyStatusMessage(UUID LobbyID, String lobbyname, User user, boolean ready) {
-        super(lobbyname, user, LobbyID);
+    public UpdatedLobbyReadyStatusMessage(UUID LobbyID, String lobbyName, User user, boolean ready) {
+        super(lobbyName, user, LobbyID);
         this.Ready = ready;
     }
 
