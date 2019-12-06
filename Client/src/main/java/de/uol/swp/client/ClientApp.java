@@ -44,9 +44,6 @@ public class ClientApp extends Application implements ConnectionListener {
     // Java FX Methods
     // ----------------------------------------------------
 
-    public static void main(String[] args) {
-        launch(args);
-    }
 
     @Override
     public void init() {
@@ -158,10 +155,8 @@ public class ClientApp extends Application implements ConnectionListener {
     @Subscribe
     public void onCreateLobbyMessage(CreateLobbyMessage message) {
         if (message.getUser().getUsername().equals(user.getUsername())) {
-            //sceneManager.showLobbyScreen(message.getName());
-            //sceneManager.showLobbyScreen(message.getName());
-            sceneManager.showGameScreen();
             sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getChatID());
+            //sceneManager.showGameScreen();
             LOG.debug("CreateLobbyMessage vom Server erfolgreich angekommen");
         }
         lobbyService.retrieveAllLobbies();

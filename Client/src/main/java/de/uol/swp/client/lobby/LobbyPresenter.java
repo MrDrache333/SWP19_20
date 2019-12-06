@@ -2,6 +2,7 @@ package de.uol.swp.client.lobby;
 
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
@@ -79,6 +80,7 @@ public class LobbyPresenter extends AbstractPresenter {
 
     private ObservableList<HBox> users;
 
+    //private SceneManager sceneManager;
     /**
      * Instantiates a new Lobby presenter.
      *
@@ -209,6 +211,7 @@ public class LobbyPresenter extends AbstractPresenter {
     public void onGameStartMessage(StartGameMessage message) {
         if (!message.getLobbyID().equals(lobbyID)) return;
         LOG.debug("Game in lobby " + message.getLobbyName() + " starts.");
+        //sceneManager.showGameScreen();
     }
 
     /**

@@ -40,7 +40,7 @@ public class SceneManager {
     static final String styleSheet = "css/swp.css";
 
     final private Stage primaryStage;
-    final private Stage lobbyStage;
+   // final private Stage lobbyStage;
     final private EventBus eventBus;
     final private UserService userService;
     final private ChatService chatService;
@@ -79,7 +79,7 @@ public class SceneManager {
         initLoginView();
         initMainView();
         initRegistrationView();
-        initLobbyView();
+        //initLobbyView();
         initGameView();
     }
 
