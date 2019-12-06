@@ -156,6 +156,7 @@ public class SceneManager {
 
     @Subscribe
     public void onShowLoginViewEvent(ShowLoginViewEvent event) {
+
         showLoginScreen();
     }
 
@@ -248,5 +249,7 @@ public class SceneManager {
             lobbies.put(lobbyID, lobbyPresenter);
             lobbyStages.put(lobbyID, newLobbyStage);
         });
+
     }
+
 }
