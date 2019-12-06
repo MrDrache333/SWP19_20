@@ -7,9 +7,11 @@ import java.util.UUID;
 
 public class AbstractLobbyMessage extends AbstractServerMessage {
 
-    private String lobbyName;
+    private String name;
     private User user;
     private UUID lobbyID;
+    private String lobbyName;
+
 
     public AbstractLobbyMessage() {
     }

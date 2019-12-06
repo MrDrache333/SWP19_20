@@ -6,6 +6,9 @@ import com.google.inject.Inject;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.request.*;
+import de.uol.swp.common.lobby.request.RetrieveAllLobbyUsersRequest;
+import de.uol.swp.common.lobby.request.RetrieveAllOnlineLobbiesRequest;
+import de.uol.swp.common.lobby.response.AllLobbyUsersResponse;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.message.ResponseMessage;
@@ -164,6 +167,22 @@ public class LobbyService extends AbstractService {
         AllOnlineLobbiesResponse response = new AllOnlineLobbiesResponse(lobbyManagement.getLobbies());
         response.initWithMessage(msg);
         post(response);
+    }
+
+    /**
+     * Gibt, falls die Lobby existiert, Mitglieder, Name und Lobby in einer AllLobbyUsersResponse zurück.
+     *
+     * @author Marvin
+     */
+
+    @Subscribe
+    public void onRetrieveAllLobbyUsersRequest(RetrieveAllLobbyUsersRequest msg) {
+        Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getName());
+        if (lobby.isPresent()) {
+            AllLobbyUsersResponse response = new AllLobbyUsersResponse(lobby.get().getUsers(), lobby.get().getName(), lobby.get());
+            response.initWithMessage(msg);
+            post(response);
+        }
     }
 
     /**
