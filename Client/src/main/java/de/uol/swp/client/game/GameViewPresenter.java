@@ -109,7 +109,7 @@ public class GameViewPresenter extends AbstractPresenter {
 
     @Subscribe
     public void newUser(UserJoinedLobbyMessage userJoinedLobbyMessage) {
-        RetrieveAllLobbyUsersRequest msg = new RetrieveAllLobbyUsersRequest(userJoinedLobbyMessage.getName());
+        RetrieveAllLobbyUsersRequest msg = new RetrieveAllLobbyUsersRequest(userJoinedLobbyMessage.getLobbyName());
         eventBus.post(msg);
         LOG.debug("newUser: RetrieveAllLobbyRequest gesendet");
     }
@@ -123,7 +123,7 @@ public class GameViewPresenter extends AbstractPresenter {
 
     @Subscribe
     public void newLobby(CreateLobbyMessage createLobbyMessage) throws InterruptedException {
-        RetrieveAllLobbyUsersRequest msg = new RetrieveAllLobbyUsersRequest(createLobbyMessage.getName());
+        RetrieveAllLobbyUsersRequest msg = new RetrieveAllLobbyUsersRequest(createLobbyMessage.getLobbyName());
         eventBus.post(msg);
         LOG.debug("newLobby: RetrieveAllLobbyRequest gesendet");
     }
