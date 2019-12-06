@@ -5,16 +5,21 @@ import com.google.inject.Inject;
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.SceneManager;
+import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
+import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
 import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.client.game.event.GameQuitEvent;
+import de.uol.swp.common.chat.message.NewChatMessage;
+import de.uol.swp.common.chat.response.ChatResponseMessage;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.request.RetrieveAllLobbyUsersRequest;
 import de.uol.swp.common.lobby.response.AllLobbyUsersResponse;
 import de.uol.swp.common.user.User;
+import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.dto.UserDTO;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -39,7 +44,6 @@ import java.util.UUID;
 
 /**
  * @author fenja, hashem, marvin
- *
  */
 
 public class GameViewPresenter extends AbstractPresenter {
@@ -59,14 +63,17 @@ public class GameViewPresenter extends AbstractPresenter {
     private ObservableList<String> users;
     private ChatViewPresenter chatViewPresenter;
 
-    public GameViewPresenter() {
-
+    public GameViewPresenter(User loggedInUser, UUID lobbyID, ChatService chatService, LobbyService lobbyService, UserService userService) {
+        this.loggedInUser = loggedInUser;
+        this.lobbyID = lobbyID;
+        this.chatService = chatService;
+        this.lobbyService = lobbyService;
+        this.userService = userService;
     }
 
     /*
         showAlert Methode, um Alert Box zu erstellen
          */
-
 
 
     public void showAlert(Alert.AlertType type, String message, String title) {
@@ -84,7 +91,6 @@ public class GameViewPresenter extends AbstractPresenter {
         }
 
     }
-
 
 
     @FXML
@@ -107,20 +113,30 @@ public class GameViewPresenter extends AbstractPresenter {
 
     }
 
+    /**
+     * On logout button pressed.
+     *
+     * @param actionEvent the action event
+     */
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
         userService.logout(loggedInUser);
     }
 
+
+    /**
+     * On GiveUp button pressed.
+     *
+     * @param actionEvent the action event
+     */
     @FXML
     public void onGiveUpButtonPressed(ActionEvent actionEvent) {
-
         showAlert(Alert.AlertType.CONFIRMATION, " ", "Möchtest du wirklich aufgeben?");
 
     }
 
     /**
-     * Sobald ein neuer User der Lobby beitritt wird eine RetrieveAllLobbyUsersRequest gesendet.
+     * Sobald ein neuer User der Lobby beitritt, wird eine RetrieveAllLobbyUsersRequest gesendet.
      *
      * @author Marvin
      * @since Sprint3
@@ -134,7 +150,7 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Sobald eine neue Lobby erstellt wird eine RetrieveAllLobbyUsersRequest gesendet.
+     * Sobald eine neue Lobby erstellt wird, wird eine RetrieveAllLobbyUsersRequest gesendet.
      *
      * @author Marvin
      * @since Sprint3
@@ -182,5 +198,25 @@ public class GameViewPresenter extends AbstractPresenter {
             users.clear();
             userList.forEach(u -> users.add(u.getUsername()));
         });
+    }
+    /**
+     * On chat response message.
+     *
+     * @param msg the msg
+     */
+    @Subscribe
+    public void onChatResponseMessage(ChatResponseMessage msg) {
+        chatViewPresenter.onChatResponseMessage(msg);
+    }
+
+    /**
+     * On new chat message.
+     *
+     * @param msg the msg
+     */
+    @Subscribe
+    public void onNewChatMessage(NewChatMessage msg) {
+        LOG.debug("Receiving message as User: " + loggedInUser.getUsername() + " for Chat " + msg.getChatId());
+        chatViewPresenter.onNewChatMessage(msg);
     }
 }
