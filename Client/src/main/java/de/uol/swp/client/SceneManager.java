@@ -95,7 +95,6 @@ public class SceneManager {
         initLoginView();
         initMainView();
         initRegistrationView();
-        //initLobbyView();
     }
 
     private Parent initPresenter(String fxmlFile) {
@@ -254,7 +253,6 @@ public class SceneManager {
             lobbies.put(lobbyID, lobbyPresenter);
             lobbyStages.put(lobbyID, newLobbyStage);
 
-
         });
     }
 
@@ -272,5 +270,14 @@ public class SceneManager {
         });
     }
 
+    /**
+     * Schließen aller Lobbystages
+     *
+     * @author Julia, Paula
+     * @since Sprint3
+     */
+    public void closeAllLobbyStages() {
+        Platform.runLater(() -> lobbyStages.values().forEach(Stage::close));
+    }
 
 }

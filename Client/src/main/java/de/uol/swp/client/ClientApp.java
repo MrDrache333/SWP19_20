@@ -229,7 +229,7 @@ public class ClientApp extends Application implements ConnectionListener {
     public void onUserLoggedOutMessage(UserLoggedOutMessage message) {
         LOG.info("Logout and leaving of all lobbies successful.");
         if (message.getUsername().equals(user.getUsername())) {
-
+            sceneManager.closeAllLobbyStages();
             sceneManager.showLoginScreen();
         }
         lobbyService.retrieveAllLobbies();
