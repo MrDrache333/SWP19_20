@@ -1,13 +1,12 @@
 package de.uol.swp.client.lobby;
 
 import com.google.common.eventbus.Subscribe;
+import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
-import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
+import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
-import de.uol.swp.common.chat.message.NewChatMessage;
-import de.uol.swp.common.chat.response.ChatResponseMessage;
 import de.uol.swp.common.lobby.message.StartGameMessage;
 import de.uol.swp.common.lobby.message.UpdatedLobbyReadyStatusMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
@@ -67,6 +66,7 @@ public class LobbyPresenter extends AbstractPresenter {
     private UUID lobbyID;
     private String lobbyName;
     private User loggedInUser;
+    private Injector injector;
 
     //Eigener Status in der Lobby
     private boolean ownReadyStatus = false;
@@ -80,22 +80,33 @@ public class LobbyPresenter extends AbstractPresenter {
 
     private ObservableList<HBox> users;
 
+    private GameManagement gameManagement;
+
     //private SceneManager sceneManager;
+
     /**
      * Instantiates a new Lobby presenter.
      *
-     * @param loggedInUser the logged in user
-     * @param name         the name
-     * @param lobbyID      the lobby id
-     * @param chatService  the chat service
+     * @param loggedInUser      the logged in user
+     * @param name              the name
+     * @param lobbyID           the lobby id
+     * @param chatService       the chat service
+     * @param chatViewPresenter the chat view presenter
+     * @param lobbyService      the lobby service
+     * @param userService       the user service
+     * @param injector          the injector
+     * @param gameManagement    the game management
      */
-    public LobbyPresenter(User loggedInUser, String name, UUID lobbyID, ChatService chatService, LobbyService lobbyService, UserService userService) {
+    public LobbyPresenter(User loggedInUser, String name, UUID lobbyID, ChatService chatService, ChatViewPresenter chatViewPresenter, LobbyService lobbyService, UserService userService, Injector injector, GameManagement gameManagement) {
         this.loggedInUser = loggedInUser;
         this.lobbyName = name;
         this.lobbyID = lobbyID;
         this.chatService = chatService;
         this.lobbyService = lobbyService;
         this.userService = userService;
+        this.chatViewPresenter = chatViewPresenter;
+        this.injector = injector;
+        this.gameManagement = gameManagement;
     }
 
     //--------------------------------------
@@ -109,20 +120,16 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     @FXML
     public void initialize() throws IOException {
-        //Neue Instanz einer ChatViewPresenter-Controller-Klasse erstellen und nötige Parameter uebergeben
-        chatViewPresenter = new ChatViewPresenter("Lobby", ChatViewPresenter.THEME.Light, chatService);
-        //chatID setzen
-        LOG.debug("Got ChatID from Server: " + lobbyID.toString());
-        chatViewPresenter.setChatId(lobbyID.toString());
-        chatViewPresenter.setloggedInUser(loggedInUser);
         //FXML laden
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(ChatViewPresenter.fxml));
+        FXMLLoader loader = injector.getInstance(FXMLLoader.class);
+        loader.setLocation(getClass().getResource(ChatViewPresenter.fxml));
         //Controller der FXML setzen (Nicht in der FXML festlegen, da es immer eine eigene Instanz davon sein muss)
         loader.setController(chatViewPresenter);
         //Den ChatView in die chatView-Pane dieses Controllers laden
         chatView.getChildren().add(loader.load());
         ((Pane) chatView.getChildren().get(0)).setPrefHeight(chatView.getPrefHeight());
         ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getPrefWidth());
+        chatViewPresenter.userJoined(loggedInUser.getUsername());
 
         readyUserList.put(loggedInUser.getUsername(), getHboxFromReadyUser(loggedInUser.getUsername(), false));
         updateUsersList();
@@ -166,33 +173,13 @@ public class LobbyPresenter extends AbstractPresenter {
             readyButton.setText("Nicht mehr Bereit");
             ownReadyStatus = true;
         }
+        LOG.debug("Set own ReadyStauts in Lobby " + lobbyID + " to " + (ownReadyStatus ? "Ready" : "Not Ready"));
         lobbyService.setLobbyUserStatus(lobbyName, loggedInUser, ownReadyStatus);
     }
 
     //--------------------------------------
     // EVENTBUS
     //--------------------------------------
-
-    /**
-     * On chat response message.
-     *
-     * @param msg the msg
-     */
-    @Subscribe
-    public void onChatResponseMessage(ChatResponseMessage msg) {
-        chatViewPresenter.onChatResponseMessage(msg);
-    }
-
-    /**
-     * On new chat message.
-     *
-     * @param msg the msg
-     */
-    @Subscribe
-    public void onNewChatMessage(NewChatMessage msg) {
-        LOG.debug("Receiving message as User: " + loggedInUser.getUsername() + " for Chat " + msg.getChatId());
-        chatViewPresenter.onNewChatMessage(msg);
-    }
 
     /**
      * On updated lobby ready status message.
@@ -203,15 +190,21 @@ public class LobbyPresenter extends AbstractPresenter {
     public void onUpdatedLobbyReadyStatusMessage(UpdatedLobbyReadyStatusMessage message) {
         if (!message.getLobbyID().equals(lobbyID)) return;
         if (readyUserList.containsKey(message.getUser().getUsername())) {
+            LOG.debug("User " + message.getUser().getUsername() + " changed his status to " + (message.isReady() ? "Ready" : "Not Ready") + " in Lobby " + lobbyID);
             updateReadyUser(message.getUser().getUsername(), message.isReady());
         }
     }
 
+    /**
+     * On game start message.
+     *
+     * @param message the message
+     */
     @Subscribe
     public void onGameStartMessage(StartGameMessage message) {
         if (!message.getLobbyID().equals(lobbyID)) return;
         LOG.debug("Game in lobby " + message.getLobbyName() + " starts.");
-        //sceneManager.showGameScreen();
+        gameManagement.showGameView();
     }
 
     /**
@@ -253,6 +246,7 @@ public class LobbyPresenter extends AbstractPresenter {
         if (!message.getLobbyID().equals(lobbyID)) return;
         LOG.debug("User " + message.getLobbyName() + " left the Lobby");
         userLeftLobby(message.getUser().getUsername());
+        chatViewPresenter.userLeft(message.getUser().getUsername());
     }
 
     //--------------------------------------

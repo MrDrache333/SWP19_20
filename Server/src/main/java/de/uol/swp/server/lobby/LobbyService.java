@@ -6,8 +6,6 @@ import com.google.inject.Inject;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.request.*;
-import de.uol.swp.common.lobby.request.RetrieveAllLobbyUsersRequest;
-import de.uol.swp.common.lobby.request.RetrieveAllOnlineLobbiesRequest;
 import de.uol.swp.common.lobby.response.AllLobbyUsersResponse;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
@@ -195,8 +193,9 @@ public class LobbyService extends AbstractService {
         int counter = 0;
         for (User user: lobby.get().getLobbyUsers()) {
             counter++;
-            if (lobby.get().getReadyStatus(user) == false) return;
-            if (counter == 4) {
+            if (!lobby.get().getReadyStatus(user)) return;
+            //TODO Change Counter to 4; FOr Testing leave 1
+            if (counter == 1) {
                 LOG.debug("Game starts in Lobby: " + lobby.get().getName());
                 StartGameMessage msg = new StartGameMessage(lobby.get().getName(), lobby.get().getLobbyID());
                 sendToAll(lobby.get().getName(), msg);

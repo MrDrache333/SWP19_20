@@ -1,18 +1,13 @@
 package de.uol.swp.client.game;
 
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
 import com.google.common.eventbus.Subscribe;
+import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
-import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
-import de.uol.swp.client.lobby.LobbyService;
-import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
-import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.client.game.event.GameQuitEvent;
-import de.uol.swp.common.chat.message.NewChatMessage;
-import de.uol.swp.common.chat.response.ChatResponseMessage;
+import de.uol.swp.client.lobby.LobbyService;
+import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
@@ -35,40 +30,59 @@ import javafx.stage.Modality;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.time.ZonedDateTime;
-import java.util.List;
-import javax.swing.*;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 /**
+ * The type Game view presenter.
+ *
  * @author fenja, hashem, marvin
  */
-
 public class GameViewPresenter extends AbstractPresenter {
 
     private UUID lobbyID;
 
     private User loggedInUser;
+    /**
+     * The constant fxml.
+     */
     public static final String fxml = "/fxml/GameView.fxml";
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
     private static final GameQuitEvent gameQuitMessage = new GameQuitEvent();
-    private static SceneManager sceneManager;
 
     @FXML
     private Pane chatView;
     @FXML
     private ListView<String> usersView;
+
     private ObservableList<String> users;
     private ChatViewPresenter chatViewPresenter;
+    private Injector injector;
+    private GameManagement gameManagement;
 
-    public GameViewPresenter(User loggedInUser, UUID lobbyID, ChatService chatService, LobbyService lobbyService, UserService userService) {
+    /**
+     * Instantiates a new Game view presenter.
+     *
+     * @param loggedInUser      the logged in user
+     * @param lobbyID           the lobby id
+     * @param chatService       the chat service
+     * @param chatViewPresenter the chat view presenter
+     * @param lobbyService      the lobby service
+     * @param userService       the user service
+     * @param injector          the injector
+     * @param gameManagement    the game management
+     */
+    public GameViewPresenter(User loggedInUser, UUID lobbyID, ChatService chatService, ChatViewPresenter chatViewPresenter, LobbyService lobbyService, UserService userService, Injector injector, GameManagement gameManagement) {
         this.loggedInUser = loggedInUser;
         this.lobbyID = lobbyID;
         this.chatService = chatService;
         this.lobbyService = lobbyService;
         this.userService = userService;
+        this.chatViewPresenter = chatViewPresenter;
+        this.injector = injector;
+        this.gameManagement = gameManagement;
     }
 
     /*
@@ -76,6 +90,13 @@ public class GameViewPresenter extends AbstractPresenter {
          */
 
 
+    /**
+     * Show alert.
+     *
+     * @param type    the type
+     * @param message the message
+     * @param title   the title
+     */
     public void showAlert(Alert.AlertType type, String message, String title) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "");
         alert.setResizable(false);
@@ -86,24 +107,19 @@ public class GameViewPresenter extends AbstractPresenter {
         if (result.get() == ButtonType.OK) {
 
             eventBus.post(gameQuitMessage);
-        } else {
-
         }
-
     }
 
-
+    /**
+     * Initialize.
+     *
+     * @throws IOException the io exception
+     */
     @FXML
     public void initialize() throws IOException {
-        //Neue Instanz einer ChatViewPresenter-Controller-Klasse erstellen und nötige Parameter uebergeben
-        ChatViewPresenter chatViewPresenter = new ChatViewPresenter("Game", ChatViewPresenter.THEME.Light, chatService);
-        //chatID setzen
-
-        LOG.debug("Got ChatID from Server: " + lobbyID.toString());
-        chatViewPresenter.setChatId(lobbyID.toString());
-        chatViewPresenter.setloggedInUser(loggedInUser);
         //FXML laden
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(ChatViewPresenter.fxml));
+        FXMLLoader loader = injector.getInstance(FXMLLoader.class);
+        loader.setLocation(getClass().getResource(ChatViewPresenter.fxml));
         //Controller der FXML setzen (Nicht in der FXML festlegen, da es immer eine eigene Instanz davon sein muss)
         loader.setController(chatViewPresenter);
         //Den ChatView in die chatView-Pane dieses Controllers laden
@@ -138,10 +154,10 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Sobald ein neuer User der Lobby beitritt, wird eine RetrieveAllLobbyUsersRequest gesendet.
      *
+     * @param userJoinedLobbyMessage the user joined lobby message
      * @author Marvin
      * @since Sprint3
      */
-
     @Subscribe
     public void newUser(UserJoinedLobbyMessage userJoinedLobbyMessage) {
         RetrieveAllLobbyUsersRequest msg = new RetrieveAllLobbyUsersRequest(userJoinedLobbyMessage.getLobbyName());
@@ -152,10 +168,11 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Sobald eine neue Lobby erstellt wird, wird eine RetrieveAllLobbyUsersRequest gesendet.
      *
+     * @param createLobbyMessage the create lobby message
+     * @throws InterruptedException the interrupted exception
      * @author Marvin
      * @since Sprint3
      */
-
     @Subscribe
     public void newLobby(CreateLobbyMessage createLobbyMessage) throws InterruptedException {
         RetrieveAllLobbyUsersRequest msg = new RetrieveAllLobbyUsersRequest(createLobbyMessage.getLobbyName());
@@ -167,6 +184,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * Bei einer AllLobbyUsersResponse wird updateUsersList ausgeführt, wenn es diese Lobby betrifft.
      * Bis auf die Lobby-Überprüfung & Response-Typ quasi äquivalent zu MainMenuPresenter.userList.
      *
+     * @param allLobbyUsersResponse the all lobby users response
      * @author Marvin
      * @since Sprint3
      */
@@ -198,25 +216,5 @@ public class GameViewPresenter extends AbstractPresenter {
             users.clear();
             userList.forEach(u -> users.add(u.getUsername()));
         });
-    }
-    /**
-     * On chat response message.
-     *
-     * @param msg the msg
-     */
-    @Subscribe
-    public void onChatResponseMessage(ChatResponseMessage msg) {
-        chatViewPresenter.onChatResponseMessage(msg);
-    }
-
-    /**
-     * On new chat message.
-     *
-     * @param msg the msg
-     */
-    @Subscribe
-    public void onNewChatMessage(NewChatMessage msg) {
-        LOG.debug("Receiving message as User: " + loggedInUser.getUsername() + " for Chat " + msg.getChatId());
-        chatViewPresenter.onNewChatMessage(msg);
     }
 }

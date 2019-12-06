@@ -1,5 +1,7 @@
 package de.uol.swp.client.chat;
 
+import com.google.common.eventbus.Subscribe;
+import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.common.chat.ChatMessage;
 import de.uol.swp.common.chat.ChatService;
@@ -32,6 +34,7 @@ import org.apache.logging.log4j.Logger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * The type Chat view presenter.
@@ -79,7 +82,9 @@ public class ChatViewPresenter extends AbstractPresenter {
     //ID of the Chat (FOr filtering Messages)
     private String chatId;
     //Name of the Chat (FOr the Title Label)
-    private String name;
+    private String chatTitle;
+
+    private Injector injector;
     //Colors in the actual Theme
     private String CHATMESSAGEBUBBLEBACKGROUNDCOLOR_ME;
     private String CHATMESSAGEBUBBLETEXTCOLOR_ME;
@@ -113,18 +118,41 @@ public class ChatViewPresenter extends AbstractPresenter {
     /**
      * Instantiates a new Chat view presenter.
      *
-     * @param name        the name
+     * @param chatTitle        the name
      * @param theme       the theme
      * @param chatService the chat service
      */
-    public ChatViewPresenter(String name, THEME theme, ChatService chatService) {
-        this.name = name;
+    public ChatViewPresenter(String chatTitle, UUID chatId, User currentUser, THEME theme, ChatService chatService, Injector injector) {
+        this.chatTitle = chatTitle;
         this.CHATTHEME = theme;
         this.chatService = chatService;
-        this.chatId = "";
+        this.chatId = chatId.toString();
+        this.loggedInUser = currentUser;
+        this.injector = injector;
 
+        setTheme(CHATTHEME);
+    }
+
+    /**
+     * Instantiates a new Chat view presenter.
+     *
+     * @param chatTitle   the name
+     * @param theme       the theme
+     * @param chatService the chat service
+     */
+    public ChatViewPresenter(String chatTitle, String chatId, User currentUser, THEME theme, ChatService chatService) {
+        this.chatTitle = chatTitle;
+        this.CHATTHEME = theme;
+        this.chatService = chatService;
+        this.chatId = chatId;
+        this.loggedInUser = currentUser;
+
+        setTheme(CHATTHEME);
+    }
+
+    private void setTheme(THEME theme) {
         //Set the right Colors for the choosen Theme
-        if (CHATTHEME.equals(THEME.Light)) {
+        if (theme.equals(THEME.Light)) {
             CHATMESSAGEBUBBLEBACKGROUNDCOLOR_ME = CHATMESSAGEBUBBLEBACKGROUNDCOLOR_ME_LIGHT;
             CHATMESSAGEBUBBLETEXTCOLOR_ME = CHATMESSAGEBUBBLETEXTCOLOR_ME_LIGHT;
             CHATMESSAGEBUBBLEBACKGROUNDCOLOR_OTHER = CHATMESSAGEBUBBLEBACKGROUNDCOLOR_OTHER_LIGHT;
@@ -157,7 +185,7 @@ public class ChatViewPresenter extends AbstractPresenter {
         chatMessages.addListener((ListChangeListener<VBox>) change -> Platform.runLater(() -> messageView.scrollTo(messageView.getItems().size() - 1)));
 
         //Set the choosen Chat Name in the Title
-        titleLabel.setText(name.toUpperCase() + " CHAT");
+        titleLabel.setText(chatTitle.toUpperCase() + " CHAT");
 
         //Nötige Styles laden und uebernehmen
         chatViewAnchorPane.getStylesheets().add(styleSheet);
@@ -174,7 +202,7 @@ public class ChatViewPresenter extends AbstractPresenter {
     }
 
     //--------------------------------------
-    // METHODS
+    // EVENTBUS
     //--------------------------------------
 
     /**
@@ -182,7 +210,8 @@ public class ChatViewPresenter extends AbstractPresenter {
      *
      * @param msg the msg
      */
-    public void onNewChatMessage(NewChatMessage msg) {
+    @Subscribe
+    private void onNewChatMessage(NewChatMessage msg) {
         if (!chatId.equals("") && msg.getChatId().equals(chatId)) {
             Platform.runLater(() -> {
                 //Loesche alte Nachrichten bei bedarf
@@ -202,11 +231,18 @@ public class ChatViewPresenter extends AbstractPresenter {
      *
      * @param msg the msg
      */
-    public void onChatResponseMessage(ChatResponseMessage msg) {
+    @Subscribe
+    private void onChatResponseMessage(ChatResponseMessage msg) {
         if (msg.getChat().getChatId().equals(chatId) && msg.getSender().equals(loggedInUser.getUsername())) {
             updateChat(msg.getChat().getMessages());
         }
     }
+
+    //--------------------------------------
+    // METHODS
+    //--------------------------------------
+
+
 
     /**
      * User joined.
@@ -247,7 +283,7 @@ public class ChatViewPresenter extends AbstractPresenter {
             LOG.debug("new Message to send: " + message);
 
             chatTextField.clear();
-            chatService.sendMessage(chatId, newChatMessage);
+            this.chatService.sendMessage(chatId, newChatMessage);
         }
     }
 

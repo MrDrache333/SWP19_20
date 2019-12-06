@@ -3,8 +3,6 @@ package de.uol.swp.client.main;
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.chat.ChatViewPresenter;
-import de.uol.swp.common.chat.message.NewChatMessage;
-import de.uol.swp.common.chat.response.ChatResponseMessage;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.lobby.request.CreateLobbyRequest;
@@ -87,8 +85,9 @@ public class MainMenuPresenter extends AbstractPresenter {
     @FXML
     public void initialize() throws IOException {
         //Neue Instanz einer ChatViewPresenter-Controller-Klasse erstellen und nötige Parameter uebergeben
-        chatViewPresenter = new ChatViewPresenter("allgemeiner", ChatViewPresenter.THEME.Light, chatService);
+        chatViewPresenter = new ChatViewPresenter("allgemeiner", "global", loggedInUser, ChatViewPresenter.THEME.Light, chatService);
         chatViewPresenter.setChatId("global");
+        eventBus.register(chatViewPresenter);
         //FXML laden
         FXMLLoader loader = new FXMLLoader(getClass().getResource(ChatViewPresenter.fxml));
         //Controller der FXML setzen (Nicht in der FXML festlegen, da es immer eine eigene Instanz davon sein muss)
@@ -109,26 +108,6 @@ public class MainMenuPresenter extends AbstractPresenter {
         players.setResizable(false);
         name.setPrefWidth(110);
         host.setPrefWidth(90);
-    }
-
-    /**
-     * On chat response message.
-     *
-     * @param msg the msg
-     */
-    @Subscribe
-    public void onChatResponseMessage(ChatResponseMessage msg) {
-        chatViewPresenter.onChatResponseMessage(msg);
-    }
-
-    /**
-     * On new chat message.
-     *
-     * @param msg the msg
-     */
-    @Subscribe
-    public void onNewChatMessage(NewChatMessage msg) {
-        chatViewPresenter.onNewChatMessage(msg);
     }
 
     /**
@@ -154,9 +133,11 @@ public class MainMenuPresenter extends AbstractPresenter {
     public void newUser(UserLoggedInMessage message) {
         LOG.debug("New user " + message.getUsername() + " logged in");
         Platform.runLater(() -> {
-            if (users != null && loggedInUser != null && !loggedInUser.equals(message.getUsername()))
+            if (users != null && loggedInUser != null && !loggedInUser.equals(message.getUsername())) {
+                if (!users.contains(message.getUsername()))
+                    chatViewPresenter.userJoined(message.getUsername());
                 users.add(message.getUsername());
-            chatViewPresenter.userJoined(message.getUsername());
+            }
         });
     }
 

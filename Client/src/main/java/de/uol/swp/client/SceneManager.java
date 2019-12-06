@@ -8,11 +8,9 @@ import com.google.inject.assistedinject.Assisted;
 import de.uol.swp.client.auth.LoginPresenter;
 import de.uol.swp.client.auth.events.ShowLoginViewEvent;
 import de.uol.swp.client.chat.ChatService;
-import de.uol.swp.client.lobby.LobbyPresenter;
-import de.uol.swp.client.lobby.LobbyService;
-import de.uol.swp.client.game.GameViewPresenter;
+import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.client.game.event.GameQuitEvent;
-import de.uol.swp.client.lobby.*;
+import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.client.register.RegistrationPresenter;
 import de.uol.swp.client.register.event.RegistrationCanceledEvent;
@@ -58,7 +56,7 @@ public class SceneManager {
     private Injector injector;
 
     private Map<UUID, Scene> lobbyScenes = new HashMap<>();
-    private Map<UUID, LobbyPresenter> lobbies = new HashMap<>();
+    private Map<UUID, GameManagement> games = new HashMap<>();
     private Map<UUID, Stage> lobbyStages = new HashMap<>();
 
 
@@ -79,7 +77,6 @@ public class SceneManager {
         initLoginView();
         initMainView();
         initRegistrationView();
-        initGameView();
     }
 
     private Parent initPresenter(String fxmlFile) {
@@ -96,37 +93,11 @@ public class SceneManager {
         return rootPane;
     }
 
-    //initPresenter für Lobbies, hier wird dann der jeweilige lobbyPresenter als Controller gesetzt
-    private Parent initPresenter(LobbyPresenter lobbyPresenter) {
-        Parent rootPane;
-        FXMLLoader loader = injector.getInstance(FXMLLoader.class);
-        try {
-            URL url = getClass().getResource(LobbyPresenter.fxml);
-            LOG.debug("Loading " + url);
-            loader.setLocation(url);
-            //Controller wird gesetzt (Instanz der LobbyPresenter Klasse)
-            loader.setController(lobbyPresenter);
-            rootPane = loader.load();
-        } catch (Exception e) {
-            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
-        }
-
-        return rootPane;
-    }
-
     private void initMainView() {
         if (mainScene == null) {
             Parent rootPane = initPresenter(MainMenuPresenter.fxml);
             mainScene = new Scene(rootPane, 1280, 750);
             mainScene.getStylesheets().add(styleSheet);
-        }
-    }
-
-    private void initGameView() {
-        if (gameScene == null) {
-            Parent rootPane = initPresenter(GameViewPresenter.fxml);
-            gameScene = new Scene(rootPane, 1280, 750);
-            gameScene.getStylesheets().add(styleSheet);
         }
     }
 
@@ -144,17 +115,6 @@ public class SceneManager {
             registrationScene = new Scene(rootPane, 1280, 750);
             registrationScene.getStylesheets().add(styleSheet);
         }
-    }
-
-    // LobbyView wird initalisiert und deklariert.
-    //neue Szene für die neue Lobby wird erstellt und gespeichert
-    private void initLobbyView(LobbyPresenter lobbyPresenter) {
-        //presenter als controller setzen
-        Parent rootPane = initPresenter(lobbyPresenter);
-        Scene newLobbyScene = new Scene(rootPane, 900, 750);
-        newLobbyScene.getStylesheets().add(styleSheet);
-        //scene in Map packen
-        lobbyScenes.put(lobbyPresenter.getLobbyID(), newLobbyScene);
     }
 
     @Subscribe
@@ -228,10 +188,6 @@ public class SceneManager {
         showScene(loginScene, "Login");
     }
 
-    public void showGameScreen() {
-        showScene(gameScene, "Login");
-    }
-
     public void showRegistrationScreen() {
         showScene(registrationScene, "Registration");
     }
@@ -250,21 +206,13 @@ public class SceneManager {
     public void showLobbyScreen(User currentUser, String title, UUID lobbyID) {
         Platform.runLater(() -> {
             //LobbyPresenter neue Instanz mit (name, id) wird erstellt
-            LobbyPresenter lobbyPresenter = new LobbyPresenter(currentUser, title, lobbyID, chatService, lobbyService, userService);
-            eventBus.register(lobbyPresenter);
-            //initLobbyView mit gerade erstelltem Presenter als Controller aufrufen -> Scene wird erstellt
-            initLobbyView(lobbyPresenter);
-            //neue Stage wird erstellt
-            Stage newLobbyStage = new Stage();
-            newLobbyStage.setTitle(title);
-            //passende lobbyScene setzen
-            newLobbyStage.setScene(lobbyScenes.get(lobbyID));
-            newLobbyStage.setX(primaryStage.getX() + 200);
-            newLobbyStage.setY(primaryStage.getY() + 100);
-            newLobbyStage.show();
+            GameManagement gameManagement = new GameManagement(eventBus, lobbyID, title, currentUser, chatService, lobbyService, userService, injector);
+
+            eventBus.register(gameManagement);
+
             //LobbyPresenter und lobbyStage in die jeweilige Map packen, mit lobbyID als Schlüssel
-            lobbies.put(lobbyID, lobbyPresenter);
-            lobbyStages.put(lobbyID, newLobbyStage);
+            games.put(lobbyID, gameManagement);
+            gameManagement.showLobbyView();
         });
 
     }
