@@ -134,8 +134,7 @@ public class MainMenuPresenter extends AbstractPresenter {
         LOG.debug("New user " + message.getUsername() + " logged in");
         Platform.runLater(() -> {
             if (users != null && loggedInUser != null && !loggedInUser.equals(message.getUsername())) {
-                if (!users.contains(message.getUsername()))
-                    chatViewPresenter.userJoined(message.getUsername());
+                chatViewPresenter.userJoined(message.getUsername());
                 users.add(message.getUsername());
             }
         });
