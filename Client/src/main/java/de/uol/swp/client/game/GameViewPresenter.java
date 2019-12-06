@@ -14,6 +14,7 @@ import de.uol.swp.common.lobby.message.CreateLobbyMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.request.RetrieveAllLobbyUsersRequest;
 import de.uol.swp.common.lobby.response.AllLobbyUsersResponse;
+import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.dto.UserDTO;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -29,10 +30,12 @@ import javafx.stage.Modality;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import javax.swing.*;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @author fenja, hashem, marvin
@@ -41,20 +44,29 @@ import java.util.Optional;
 
 public class GameViewPresenter extends AbstractPresenter {
 
+    private UUID lobbyID;
+
+    private User loggedInUser;
     public static final String fxml = "/fxml/GameView.fxml";
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
     private static final GameQuitEvent gameQuitMessage = new GameQuitEvent();
     private static SceneManager sceneManager;
+
+    @FXML
+    private Pane chatView;
     @FXML
     private ListView<String> usersView;
     private ObservableList<String> users;
     private ChatViewPresenter chatViewPresenter;
 
+    public GameViewPresenter() {
+
+    }
 
     /*
         showAlert Methode, um Alert Box zu erstellen
          */
-    //public static void showAlert(Alert.AlertType type, String message, String title) {
+
 
 
     public void showAlert(Alert.AlertType type, String message, String title) {
@@ -73,19 +85,26 @@ public class GameViewPresenter extends AbstractPresenter {
 
     }
 
-    @FXML
-    private Pane chatView;
+
 
     @FXML
     public void initialize() throws IOException {
         //Neue Instanz einer ChatViewPresenter-Controller-Klasse erstellen und nötige Parameter uebergeben
         ChatViewPresenter chatViewPresenter = new ChatViewPresenter("Game", ChatViewPresenter.THEME.Light, chatService);
+        //chatID setzen
+
+        LOG.debug("Got ChatID from Server: " + lobbyID.toString());
+        chatViewPresenter.setChatId(lobbyID.toString());
+        chatViewPresenter.setloggedInUser(loggedInUser);
         //FXML laden
         FXMLLoader loader = new FXMLLoader(getClass().getResource(ChatViewPresenter.fxml));
         //Controller der FXML setzen (Nicht in der FXML festlegen, da es immer eine eigene Instanz davon sein muss)
         loader.setController(chatViewPresenter);
         //Den ChatView in die chatView-Pane dieses Controllers laden
         chatView.getChildren().add(loader.load());
+        ((Pane) chatView.getChildren().get(0)).setPrefHeight(chatView.getPrefHeight());
+        ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getPrefWidth());
+
     }
 
     @FXML

@@ -40,7 +40,7 @@ public class SceneManager {
     static final String styleSheet = "css/swp.css";
 
     final private Stage primaryStage;
-   // final private Stage lobbyStage;
+    // final private Stage lobbyStage;
     final private EventBus eventBus;
     final private UserService userService;
     final private ChatService chatService;
@@ -79,7 +79,6 @@ public class SceneManager {
         initLoginView();
         initMainView();
         initRegistrationView();
-        //initLobbyView();
         initGameView();
     }
 
@@ -94,9 +93,6 @@ public class SceneManager {
         } catch (Exception e) {
             throw new RuntimeException("Could not load View!" + e.getMessage(), e);
         }
-//        AbstractPresenter presenter = loader.getController();
-//        presenter.setEventBus(eventBus);
-//        presenter.setUserService(userService);
         return rootPane;
     }
 
@@ -114,9 +110,7 @@ public class SceneManager {
         } catch (Exception e) {
             throw new RuntimeException("Could not load View!" + e.getMessage(), e);
         }
-//        AbstractPresenter presenter = loader.getController();
-//        presenter.setEventBus(eventBus);
-//        presenter.setUserService(userService);
+
         return rootPane;
     }
 
@@ -180,7 +174,7 @@ public class SceneManager {
     }
 
     @Subscribe
-    public void onGameQuitEvent(GameQuitEvent event){
+    public void onGameQuitEvent(GameQuitEvent event) {
         showScene(mainScene, "test");
     }
 

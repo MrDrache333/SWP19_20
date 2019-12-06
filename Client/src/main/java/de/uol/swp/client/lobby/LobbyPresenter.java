@@ -59,7 +59,7 @@ public class LobbyPresenter extends AbstractPresenter {
     private static final ShowLobbyViewEvent showLobbyViewMessage = new ShowLobbyViewEvent();
     private static final Logger LOG = LogManager.getLogger(ChatViewPresenter.class);
 
-    private String chatID;
+
     private ChatViewPresenter chatViewPresenter;
 
     private Map<String, HBox> readyUserList = new TreeMap<>();
