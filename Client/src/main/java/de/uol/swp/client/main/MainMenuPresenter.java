@@ -31,6 +31,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * The type Main menu presenter.
@@ -120,41 +121,21 @@ public class MainMenuPresenter extends AbstractPresenter {
      * Falls ja: Wir eine CreateLobbyRequest mit dem eingegeben LobbyNamen und dem eingeloggten User auf den
      * Eventbus gepackt.
      *
-     * @author Paula, Haschem, Ferit, Julia
-     * @version 0.1
+     * @author Paula, Haschem, Ferit, Julia, Keno O.
+     * @version 0.2
      * @since Sprint2
      */
     @FXML
     public void OnCreateLobbyButtonPressed(ActionEvent event) {
-        boolean invalidLobbyName = false;
-        boolean onlyWhitespaces = true;
-        for (Lobby lobby : lobbies) {
-            if (lobby.getName().equalsIgnoreCase(lobbyName.getText())) {
-                invalidLobbyName = true;
-                break;
-            }
-        }
-        for (char c : lobbyName.getText().toCharArray()) {
-            if (!Character.isWhitespace(c)) {
-                onlyWhitespaces = false;
-                break;
-            }
-        }
-        if (lobbyName.getText().equals("")) {
-            showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen Lobbynamen ein! ", "Fehler");
-            lobbyName.requestFocus();
-        } else if (invalidLobbyName) {
-            showAlert(Alert.AlertType.WARNING, "Diese Lobby existiert bereits!", "Fehler");
-            lobbyName.requestFocus();
-        } else if (onlyWhitespaces) {
-            showAlert(Alert.AlertType.WARNING, "Der Lobbyname darf nicht nur Leerzeichen enthalten!", "Fehler");
-            lobbyName.requestFocus();
-        } else {
+        if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName.getText())){
             CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), loggedInUser);
             eventBus.post(msg);
             LOG.info("Request wurde gesendet.");
         }
-
+        else{
+            showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden", "Fehler");
+            lobbyName.requestFocus();
+        }
         lobbyName.clear();
     }
 
@@ -302,7 +283,6 @@ public class MainMenuPresenter extends AbstractPresenter {
             public TableCell<Lobby, Void> call(final TableColumn<Lobby, Void> param) {
                 final TableCell<Lobby, Void> cell = new TableCell<>() {
                     final Button joinLobbyButton = new Button("Lobby beitreten");
-
                     {
                         joinLobbyButton.setOnAction((ActionEvent event) -> {
                             Lobby lobby = getTableView().getItems().get(getIndex());
