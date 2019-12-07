@@ -11,10 +11,8 @@ import org.apache.logging.log4j.Logger;
 
 public class LoginPresenter extends AbstractPresenter {
 
-    private static final Logger LOG = LogManager.getLogger(LoginPresenter.class);
-
     public static final String fxml = "/fxml/LoginView.fxml";
-
+    private static final Logger LOG = LogManager.getLogger(LoginPresenter.class);
     private static final ShowRegistrationViewEvent showRegViewMessage = new ShowRegistrationViewEvent();
 
     @FXML

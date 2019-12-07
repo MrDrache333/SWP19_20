@@ -1,4 +1,4 @@
-package de.uol.swp.common.lobby.message;
+package de.uol.swp.common.lobby.request;
 
 import de.uol.swp.common.user.User;
 
@@ -14,16 +14,15 @@ public class CreateLobbyRequest extends AbstractLobbyRequest {
     public CreateLobbyRequest() {
     }
 
-    public CreateLobbyRequest(String name, User owner) {
-        super(name, owner);
-    }
-
-    public void setOwner(User owner) {
-        setUser(owner);
+    public CreateLobbyRequest(String lobbyName, User owner) {
+        super(lobbyName, owner);
     }
 
     public User getOwner() {
         return getUser();
     }
 
+    public void setOwner(User owner) {
+        setUser(owner);
+    }
 }

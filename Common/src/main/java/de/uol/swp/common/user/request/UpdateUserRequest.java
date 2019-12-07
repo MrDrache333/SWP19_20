@@ -7,7 +7,7 @@ public class UpdateUserRequest extends AbstractRequestMessage {
 
     final private User toUpdate;
 
-    public UpdateUserRequest(User user){
+    public UpdateUserRequest(User user) {
         this.toUpdate = user;
     }
 

@@ -4,9 +4,9 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.LobbyUser;
-import de.uol.swp.common.lobby.message.UpdateLobbyReadyStatusRequest;
 import de.uol.swp.common.lobby.request.RetrieveAllOnlineLobbiesRequest;
 import de.uol.swp.common.lobby.request.RetrieveAllOnlineUsersInLobbyRequest;
+import de.uol.swp.common.lobby.request.UpdateLobbyReadyStatusRequest;
 import de.uol.swp.common.message.RequestMessage;
 import de.uol.swp.common.user.User;
 import org.apache.logging.log4j.LogManager;
@@ -28,6 +28,7 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
      *
      * @param bus the bus
      */
+
     @Inject
     public LobbyService(EventBus bus) {
         this.bus = bus;
@@ -35,18 +36,17 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
 
     @Override
     public List<Lobby> retrieveAllLobbies() {
-        RetrieveAllOnlineLobbiesRequest cmd = new RetrieveAllOnlineLobbiesRequest();
-        bus.post(cmd);
+        RetrieveAllOnlineLobbiesRequest msg = new RetrieveAllOnlineLobbiesRequest();
+        bus.post(msg);
         return null;
     }
 
     @Override
     public ArrayList<LobbyUser> retrieveAllUsersInLobby(String lobbyName) {
-        RequestMessage req = new RetrieveAllOnlineUsersInLobbyRequest(lobbyName);
-        bus.post(req);
+        RequestMessage msg = new RetrieveAllOnlineUsersInLobbyRequest(lobbyName);
+        bus.post(msg);
         return null;
     }
-
 
     @Override
     public void setLobbyUserStatus(String LobbyName, User user, boolean Status) {

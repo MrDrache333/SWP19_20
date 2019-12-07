@@ -14,17 +14,17 @@ public class UserManagement extends AbstractUserManagement {
     private final UserStore userStore;
     private final SortedMap<String, User> loggedInUsers = new TreeMap<>();
 
-    public UserManagement(UserStore userStore){
+    public UserManagement(UserStore userStore) {
         this.userStore = userStore;
     }
 
     @Override
     public User login(String username, String password) {
         Optional<User> user = userStore.findUser(username, password);
-        if (user.isPresent()){
+        if (user.isPresent()) {
             this.loggedInUsers.put(username, user.get());
             return user.get();
-        }else{
+        } else {
             throw new SecurityException("Cannot auth user " + username);
         }
     }
@@ -35,18 +35,18 @@ public class UserManagement extends AbstractUserManagement {
     }
 
     @Override
-    public User createUser(User userToCreate){
+    public User createUser(User userToCreate) {
         Optional<User> user = userStore.findUser(userToCreate.getUsername());
-        if (user.isPresent()){
+        if (user.isPresent()) {
             throw new UserManagementException("Username already used!");
         }
         return userStore.createUser(userToCreate.getUsername(), userToCreate.getPassword(), userToCreate.getEMail());
     }
 
     @Override
-    public User updateUser(User userToUpdate){
+    public User updateUser(User userToUpdate) {
         Optional<User> user = userStore.findUser(userToUpdate.getUsername());
-        if (user.isEmpty()){
+        if (user.isEmpty()) {
             throw new UserManagementException("Username unknown!");
         }
         // Only update if there are new values
@@ -67,7 +67,7 @@ public class UserManagement extends AbstractUserManagement {
     }
 
     private String firstNotNull(String firstValue, String secondValue) {
-        return Strings.isNullOrEmpty(firstValue)?secondValue:firstValue;
+        return Strings.isNullOrEmpty(firstValue) ? secondValue : firstValue;
     }
 
     @Override
