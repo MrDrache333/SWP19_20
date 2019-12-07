@@ -119,6 +119,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     public void loginSuccessful(LoginSuccessfulMessage message) {
         loggedInUser = message.getUser();
         chatViewPresenter.setloggedInUser(loggedInUser);
+        chatViewPresenter.userJoined(loggedInUser.getUsername());
         LOG.debug("Logged in user: " + loggedInUser.getUsername());
         userService.retrieveAllUsers();
         lobbyService.retrieveAllLobbies();
@@ -203,7 +204,7 @@ public class MainMenuPresenter extends AbstractPresenter {
                 lobbiesView.setItems(lobbies);
             }
             lobbies.clear();
-            lobbyList.forEach(l -> lobbies.add(l));
+            lobbies.addAll(lobbyList);
         });
     }
 

@@ -175,9 +175,10 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void newLobby(CreateLobbyMessage createLobbyMessage) throws InterruptedException {
-        RetrieveAllLobbyUsersRequest msg = new RetrieveAllLobbyUsersRequest(createLobbyMessage.getLobbyName());
-        eventBus.post(msg);
-        LOG.debug("newLobby: RetrieveAllLobbyRequest gesendet");
+        if (createLobbyMessage.getChatID().equals(lobbyID)) {
+            lobbyService.retrieveAllUsersInLobby(lobbyID.toString());
+            LOG.debug("newLobby: RetrieveAllLobbyRequest gesendet");
+        }
     }
 
     /**

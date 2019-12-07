@@ -84,6 +84,8 @@ public class ChatViewPresenter extends AbstractPresenter {
     //Name of the Chat (FOr the Title Label)
     private String chatTitle;
 
+    private ChatMessage lastMessage;
+
     private Injector injector;
     //Colors in the actual Theme
     private String CHATMESSAGEBUBBLEBACKGROUNDCOLOR_ME;
@@ -212,10 +214,10 @@ public class ChatViewPresenter extends AbstractPresenter {
      */
     @Subscribe
     private void onNewChatMessage(NewChatMessage msg) {
-        if (!chatId.equals("") && msg.getChatId().equals(chatId)) {
+        if (!chatId.equals("") && msg.getChatId().equals(chatId) && (lastMessage == null || !(msg.getMessage().getSender().getUsername().equals("server") && lastMessage.getSender().getUsername().equals("server") && msg.getMessage().getMessage().equals(lastMessage.getMessage())))) {
             Platform.runLater(() -> {
                 //Loesche alte Nachrichten bei bedarf
-                if (chatMessages.size() >= MAXCHATMESSAGEHISTORY) {
+                if (chatMessages.size() > MAXCHATMESSAGEHISTORY) {
                     chatMessages.remove(0);
                     chatMessageHistory.remove(0);
                 }
@@ -223,6 +225,7 @@ public class ChatViewPresenter extends AbstractPresenter {
                 chatMessageHistory.add(msg.getMessage());
                 chatMessages.add(chatMessagetoBox(msg.getMessage()));
             });
+            lastMessage = msg.getMessage();
         }
     }
 

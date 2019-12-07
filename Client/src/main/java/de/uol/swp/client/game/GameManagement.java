@@ -2,6 +2,7 @@ package de.uol.swp.client.game;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Injector;
+import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.LobbyPresenter;
@@ -69,28 +70,20 @@ public class GameManagement {
 
         //Nötige Controller initialisieren
         this.chatViewPresenter = new ChatViewPresenter(lobbyName, id, loggedInUser, ChatViewPresenter.THEME.Light, chatService, injector);
-        this.lobbyPresenter = new LobbyPresenter(loggedInUser, lobbyName, id, chatService, chatViewPresenter, lobbyService, userService, injector, this);
         this.gameViewPresenter = new GameViewPresenter(loggedInUser, id, chatService, chatViewPresenter, lobbyService, userService, injector, this);
+        this.lobbyPresenter = new LobbyPresenter(loggedInUser, lobbyName, id, chatService, chatViewPresenter, lobbyService, userService, injector, this);
 
 
         //Controller auf dem EventBus registrieren
         eventBus.register(chatViewPresenter);
         eventBus.register(lobbyPresenter);
         eventBus.register(gameViewPresenter);
-
-
-        //LobbyView und GameView initialisieren
-        initViews();
     }
 
-    private void initViews() {
-        initLobbyView();
-        initGameView();
-    }
 
     private void initGameView() {
         if (gameScene == null) {
-            Parent rootPane = initPresenter(gameViewPresenter);
+            Parent rootPane = initPresenter(gameViewPresenter, GameViewPresenter.fxml);
             gameScene = new Scene(rootPane, 1280, 750);
             gameScene.getStylesheets().add(styleSheet);
         }
@@ -100,36 +93,18 @@ public class GameManagement {
     //neue Szene für die neue Lobby wird erstellt und gespeichert
     private void initLobbyView() {
         if (lobbyScene == null) {
-            Parent rootPane = initPresenter(lobbyPresenter);
+            Parent rootPane = initPresenter(lobbyPresenter, LobbyPresenter.fxml);
             lobbyScene = new Scene(rootPane, 900, 750);
             lobbyScene.getStylesheets().add(styleSheet);
         }
     }
 
     //initPresenter für Lobbies, hier wird dann der jeweilige lobbyPresenter als Controller gesetzt
-    private Parent initPresenter(LobbyPresenter presenter) {
+    private Parent initPresenter(AbstractPresenter presenter, String fxml) {
         Parent rootPane;
         FXMLLoader loader = injector.getInstance(FXMLLoader.class);
         try {
-            URL url = getClass().getResource(LobbyPresenter.fxml);
-            LOG.debug("Loading " + url);
-            loader.setLocation(url);
-            //Controller wird gesetzt (Instanz der LobbyPresenter Klasse)
-            loader.setController(presenter);
-            rootPane = loader.load();
-        } catch (Exception e) {
-            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
-        }
-
-        return rootPane;
-    }
-
-    //initPresenter für Lobbies, hier wird dann der jeweilige GameViePresenter als Controller gesetzt
-    private Parent initPresenter(GameViewPresenter presenter) {
-        Parent rootPane;
-        FXMLLoader loader = injector.getInstance(FXMLLoader.class);
-        try {
-            URL url = getClass().getResource(GameViewPresenter.fxml);
+            URL url = getClass().getResource(fxml);
             LOG.debug("Loading " + url);
             loader.setLocation(url);
             //Controller wird gesetzt (Instanz der LobbyPresenter Klasse)
@@ -155,6 +130,7 @@ public class GameManagement {
      * Methode zum Anzeigen der Lobby
      */
     public void showLobbyView() {
+        initLobbyView();
         showScene(lobbyScene, LobbyName);
     }
 
@@ -162,6 +138,7 @@ public class GameManagement {
      * Methode zum Anzeigen des Spiels
      */
     public void showGameView() {
+        initGameView();
         showScene(gameScene, LobbyName);
     }
 }
