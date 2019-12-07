@@ -8,11 +8,8 @@ import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.event.GameQuitEvent;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
-import de.uol.swp.common.lobby.Lobby;
-import de.uol.swp.common.lobby.message.CreateLobbyMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
-import de.uol.swp.common.lobby.request.RetrieveAllLobbyUsersRequest;
-import de.uol.swp.common.lobby.response.AllLobbyUsersResponse;
+import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.dto.UserDTO;
@@ -43,7 +40,7 @@ import java.util.UUID;
 public class GameViewPresenter extends AbstractPresenter {
 
     private UUID lobbyID;
-
+    private LobbyService lobbyService;
     private User loggedInUser;
     /**
      * The constant fxml.
@@ -83,6 +80,7 @@ public class GameViewPresenter extends AbstractPresenter {
         this.chatViewPresenter = chatViewPresenter;
         this.injector = injector;
         this.gameManagement = gameManagement;
+        initializeUserList();
     }
 
     /*
@@ -139,7 +137,6 @@ public class GameViewPresenter extends AbstractPresenter {
         userService.logout(loggedInUser);
     }
 
-
     /**
      * On GiveUp button pressed.
      *
@@ -152,6 +149,16 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
+     * Wird bei Erstellung aufgerufen und initialisiert UserList.
+     *
+     * @author Marvin
+     * @since Sprint3
+     */
+    public void initializeUserList() {
+        lobbyService.retrieveAllUsersInLobby(lobbyID);
+    }
+
+    /**
      * Sobald ein neuer User der Lobby beitritt, wird eine RetrieveAllLobbyUsersRequest gesendet.
      *
      * @param userJoinedLobbyMessage the user joined lobby message
@@ -160,42 +167,25 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void newUser(UserJoinedLobbyMessage userJoinedLobbyMessage) {
-        RetrieveAllLobbyUsersRequest msg = new RetrieveAllLobbyUsersRequest(userJoinedLobbyMessage.getLobbyName());
-        eventBus.post(msg);
-        LOG.debug("newUser: RetrieveAllLobbyRequest gesendet");
-    }
-
-    /**
-     * Sobald eine neue Lobby erstellt wird, wird eine RetrieveAllLobbyUsersRequest gesendet.
-     *
-     * @param createLobbyMessage the create lobby message
-     * @throws InterruptedException the interrupted exception
-     * @author Marvin
-     * @since Sprint3
-     */
-    @Subscribe
-    public void newLobby(CreateLobbyMessage createLobbyMessage) throws InterruptedException {
-        RetrieveAllLobbyUsersRequest msg = new RetrieveAllLobbyUsersRequest(createLobbyMessage.getLobbyName());
-        eventBus.post(msg);
-        LOG.debug("newLobby: RetrieveAllLobbyRequest gesendet");
+        if (userJoinedLobbyMessage.getLobbyID().equals(this.lobbyID)) {
+            lobbyService.retrieveAllUsersInLobby(lobbyID);
+            LOG.debug("New user in Lobby, LobbyService is retrieving users");
+        }
     }
 
     /**
      * Bei einer AllLobbyUsersResponse wird updateUsersList ausgeführt, wenn es diese Lobby betrifft.
      * Bis auf die Lobby-Überprüfung & Response-Typ quasi äquivalent zu MainMenuPresenter.userList.
      *
-     * @param allLobbyUsersResponse the all lobby users response
+     * @param allOnlineUsersInLobbyResponse the all lobby users response
      * @author Marvin
      * @since Sprint3
      */
     @Subscribe
-    public void userList(AllLobbyUsersResponse allLobbyUsersResponse) {
-        Optional<Lobby> lobby = allLobbyUsersResponse.getLobby();
-        if (lobby.isPresent()) {
-            if (lobby.get().getUsers().contains(loggedInUser)) {
-                LOG.debug("Update of user list " + allLobbyUsersResponse.getUsers());
-                updateUsersList(allLobbyUsersResponse.getUsers());
-            }
+    public void userList(AllOnlineUsersInLobbyResponse allOnlineUsersInLobbyResponse) {
+        if (allOnlineUsersInLobbyResponse.getLobbyID().equals(this.lobbyID)) {
+            LOG.debug("Update of user list with" + allOnlineUsersInLobbyResponse.getUsers());
+            updateUsersList(List.copyOf(allOnlineUsersInLobbyResponse.getUsers()));
         }
     }
 
@@ -217,4 +207,5 @@ public class GameViewPresenter extends AbstractPresenter {
             userList.forEach(u -> users.add(u.getUsername()));
         });
     }
+
 }

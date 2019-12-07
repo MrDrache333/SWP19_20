@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * The type Lobby service.
@@ -44,6 +45,19 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
     @Override
     public ArrayList<LobbyUser> retrieveAllUsersInLobby(String lobbyName) {
         RequestMessage msg = new RetrieveAllOnlineUsersInLobbyRequest(lobbyName);
+        bus.post(msg);
+        return null;
+    }
+
+    /**
+     * Alternative Requesterstellung über lobbyID statt Name.
+     *
+     * @param lobbyID Lobby ID
+     * @author Marvin
+     * @since Sprint3
+     */
+    public ArrayList<LobbyUser> retrieveAllUsersInLobby(UUID lobbyID) {
+        RequestMessage msg = new RetrieveAllOnlineUsersInLobbyRequest(lobbyID);
         bus.post(msg);
         return null;
     }

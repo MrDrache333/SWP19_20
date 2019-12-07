@@ -5,6 +5,7 @@ import de.uol.swp.common.message.AbstractResponseMessage;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.UUID;
 
 /**
  * The type All online users in lobby response.
@@ -12,16 +13,16 @@ import java.util.Collection;
 public class AllOnlineUsersInLobbyResponse extends AbstractResponseMessage {
 
     private ArrayList<LobbyUser> users = new ArrayList<>();
-    private String LobbyName;
+    private UUID lobbyID;
 
     /**
      * Instantiates a new All online users in lobby response.
      *
-     * @param lobbyname the lobbyname
+     * @param lobbyID the lobbyID
      * @param users     the users
      */
-    public AllOnlineUsersInLobbyResponse(String lobbyname, Collection<LobbyUser> users) {
-        this.LobbyName = lobbyname;
+    public AllOnlineUsersInLobbyResponse(UUID lobbyID, Collection<LobbyUser> users) {
+        this.lobbyID = lobbyID;
         this.users.addAll(users);
     }
 
@@ -39,7 +40,7 @@ public class AllOnlineUsersInLobbyResponse extends AbstractResponseMessage {
      *
      * @return the lobby name
      */
-    public String getLobbyName() {
-        return LobbyName;
+    public UUID getLobbyID() {
+        return lobbyID;
     }
 }

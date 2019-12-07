@@ -6,7 +6,6 @@ import com.google.inject.Inject;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.request.*;
-import de.uol.swp.common.lobby.response.AllLobbyUsersResponse;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.message.ResponseMessage;
@@ -144,14 +143,28 @@ public class LobbyService extends AbstractService {
             LOG.debug("Lobby " + request.getLobbyName() + " NOT FOUND!");
     }
 
+    /**
+     * Auf ID umgestellt
+     *
+     * @param request the request
+     * @author Marvin
+     * @since Sprint3
+     */
     @Subscribe
     public void onRetrieveAllOnlineUsersInLobbyRequest(RetrieveAllOnlineUsersInLobbyRequest request) {
-        Optional<Lobby> lobby = lobbyManagement.getLobby(request.getLobbyId());
+        Optional<String> lobbyName = lobbyManagement.getName(request.getLobbyId());
+        if (lobbyName.isPresent()) {
+            Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyName.get());
 
-        if (lobby.isPresent()) {
-            ResponseMessage msg = new AllOnlineUsersInLobbyResponse(lobby.get().getName(), lobby.get().getLobbyUsers());
-            msg.initWithMessage(request);
-            post(msg);
+            if (lobby.isPresent()) {
+                ResponseMessage msg = new AllOnlineUsersInLobbyResponse(lobby.get().getLobbyID(), lobby.get().getLobbyUsers());
+                msg.initWithMessage(request);
+                post(msg);
+            } else {
+                LOG.debug("LobbyID in Map but Name " + lobbyName + "NOT FOUND!");
+            }
+        } else {
+            LOG.debug("LobbyID " + request.getLobbyId() + " NOT FOUND!");
         }
     }
 
@@ -168,30 +181,14 @@ public class LobbyService extends AbstractService {
     }
 
     /**
-     * Gibt, falls die Lobby existiert, Mitglieder, Name und Lobby in einer AllLobbyUsersResponse zurück.
-     *
-     * @author Marvin
-     */
-
-    @Subscribe
-    public void onRetrieveAllLobbyUsersRequest(RetrieveAllLobbyUsersRequest msg) {
-        Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getName());
-        if (lobby.isPresent()) {
-            AllLobbyUsersResponse response = new AllLobbyUsersResponse(lobby.get().getUsers(), lobby.get().getName(), lobby.get());
-            response.initWithMessage(msg);
-            post(response);
-        }
-    }
-
-    /**
      * überprüft ob alle Spieler bereit sind
      * Spiel startet wenn 4 Spieler Bereit sind
      *
      * @param lobby the lobby
      */
-    private void allPlayersReady(Optional<Lobby> lobby){
+    private void allPlayersReady(Optional<Lobby> lobby) {
         int counter = 0;
-        for (User user: lobby.get().getLobbyUsers()) {
+        for (User user : lobby.get().getLobbyUsers()) {
             counter++;
             if (!lobby.get().getReadyStatus(user)) return;
             //TODO Change Counter to 4; FOr Testing leave 1
