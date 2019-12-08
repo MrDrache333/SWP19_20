@@ -134,6 +134,7 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
+
         userService.logout(loggedInUser);
     }
 

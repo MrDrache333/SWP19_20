@@ -1,14 +1,17 @@
 package de.uol.swp.client.game;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.LobbyPresenter;
 import de.uol.swp.client.lobby.LobbyService;
+import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
+import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -63,6 +66,7 @@ public class GameManagement {
      */
     public GameManagement(EventBus eventBus, UUID id, String lobbyName, User loggedInUser, ChatService chatService, LobbyService lobbyService, UserService userService, Injector injector) {
         this.ID = id;
+        this.loggedInUser = loggedInUser;
         this.injector = injector;
         this.primaryStage = new Stage();
         this.LobbyName = lobbyName;
@@ -78,6 +82,22 @@ public class GameManagement {
         eventBus.register(chatViewPresenter);
         eventBus.register(lobbyPresenter);
         eventBus.register(gameViewPresenter);
+    }
+
+    @Subscribe
+    private void userLeft(UserLeftLobbyMessage msg) {
+        //Wenn es der aktuelle Benutzer in dieser Lobby ist, dann schließe das Fenster
+        if (msg.getLobbyID().equals(ID) && msg.getUser().getUsername().equals(loggedInUser.getUsername())) {
+            close();
+        }
+    }
+
+    @Subscribe
+    private void userLoggedOut(UserLoggedOutMessage msg) {
+        //Wenn es der aktuelle Benutzer in dieser Lobby ist, dann schließe das Fenster
+        if (msg.getUsername().equals(loggedInUser.getUsername())) {
+            close();
+        }
     }
 
 
@@ -140,5 +160,12 @@ public class GameManagement {
     public void showGameView() {
         initGameView();
         showScene(gameScene, LobbyName);
+    }
+
+    /**
+     * Closes the Current Stage.
+     */
+    public void close() {
+        Platform.runLater(() -> primaryStage.close());
     }
 }
