@@ -6,6 +6,7 @@ import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.LobbyUser;
 import de.uol.swp.common.lobby.request.RetrieveAllOnlineLobbiesRequest;
 import de.uol.swp.common.lobby.request.RetrieveAllOnlineUsersInLobbyRequest;
+import de.uol.swp.common.lobby.request.SetMaxPlayerRequest;
 import de.uol.swp.common.lobby.request.UpdateLobbyReadyStatusRequest;
 import de.uol.swp.common.message.RequestMessage;
 import de.uol.swp.common.user.User;
@@ -66,5 +67,17 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
     public void setLobbyUserStatus(String LobbyName, User user, boolean Status) {
         RequestMessage msg = new UpdateLobbyReadyStatusRequest(LobbyName, user, Status);
         bus.post(msg);
+    }
+
+    @Override
+    /**
+     * @author Timo, Rike
+     * @since Sprint 3
+     * @implNote Erstellt einen SetMaxPlayerRequest
+     */
+    public void setMaxPlayer(Integer maxPlayer, UUID lobbyID)
+    {
+        SetMaxPlayerRequest cmd = new SetMaxPlayerRequest(maxPlayer, lobbyID);
+        bus.post(cmd);
     }
 }

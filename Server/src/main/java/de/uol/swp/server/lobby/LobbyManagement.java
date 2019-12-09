@@ -85,4 +85,15 @@ public class LobbyManagement {
     public Optional<String> getName(UUID lobbyID) {
         return lobbyNames.get(lobbyID) != null ? Optional.of(lobbyNames.get(lobbyID)) : Optional.empty();
     }
+
+    /**
+     * @author Timo, Rike
+     * @since Sprint 3
+     * @implNote Setzt den Wert der maximalen Spieleranzahl einer Lobby
+     */
+    public void setMaxPlayer(Integer maxPlayerValue, UUID lobbyID)
+    {
+        String tmp = lobbyNames.get(lobbyID);
+        lobbies.get(tmp).setMaxPlayer(maxPlayerValue);
+    }
 }

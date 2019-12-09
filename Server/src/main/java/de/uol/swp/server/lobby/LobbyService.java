@@ -199,4 +199,18 @@ public class LobbyService extends AbstractService {
             }
         }
     }
+
+    /**
+     * @author Timo Rike
+     * @since Sprint 3
+     * @implNote Definiert, was bei einem onSetMaxPlayerRequest passieren soll.
+     */
+    @Subscribe
+    public void onSetMaxPlayerRequest(SetMaxPlayerRequest msg)
+    {
+        lobbyManagement.setMaxPlayer(msg.getMaxPlayerValue(), msg.getLobbyID());
+        SetMaxPlayerMessage returnMessage = new SetMaxPlayerMessage(msg.getMaxPlayerValue(), msg.getLobbyID());
+        post(returnMessage);
+
+    }
 }

@@ -50,7 +50,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     @FXML
     private TableColumn<Lobby, String> host = new TableColumn<>("Host");
     @FXML
-    private TableColumn<Lobby, Integer> players = new TableColumn<>("Spieler");
+    private TableColumn<Lobby, String> players = new TableColumn<>("Spieler");
     @FXML
     private Pane chatView;
 
@@ -101,7 +101,7 @@ public class MainMenuPresenter extends AbstractPresenter {
         //Initialisieren der Lobby
         name.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getName()));
         host.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getOwner().getUsername()));
-        players.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getPlayers()).asObject());
+        players.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getPlayers() + " / " + c.getValue().getMaxPlayer()));
         lobbiesView.getColumns().addAll(name, host, players);
         name.setResizable(false);
         host.setResizable(false);

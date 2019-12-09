@@ -22,6 +22,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
@@ -31,6 +32,7 @@ import javafx.scene.shape.Circle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
@@ -68,6 +70,7 @@ public class LobbyPresenter extends AbstractPresenter {
     private User loggedInUser;
     private Injector injector;
 
+
     //Eigener Status in der Lobby
     private boolean ownReadyStatus = false;
 
@@ -77,6 +80,14 @@ public class LobbyPresenter extends AbstractPresenter {
     private Pane chatView;
     @FXML
     private Button readyButton;
+
+    /**
+     * @author Timo, Rike
+     * @since Sprint 3
+     * @implNote Anlegen des Chosebox-Objektes
+     */
+    @FXML
+    ChoiceBox<Integer> choseMaxPlayer;
 
     private ObservableList<HBox> users;
 
@@ -133,6 +144,8 @@ public class LobbyPresenter extends AbstractPresenter {
 
         readyUserList.put(loggedInUser.getUsername(), getHboxFromReadyUser(loggedInUser.getUsername(), false));
         updateUsersList();
+        //Setzt choseMaxPlayer auf den Default-Wert
+        choseMaxPlayer.setValue(4);
     }
 
     /**
@@ -175,6 +188,17 @@ public class LobbyPresenter extends AbstractPresenter {
         }
         LOG.debug("Set own ReadyStauts in Lobby " + lobbyID + " to " + (ownReadyStatus ? "Ready" : "Not Ready"));
         lobbyService.setLobbyUserStatus(lobbyName, loggedInUser, ownReadyStatus);
+    }
+
+    /**
+     * @author Timo, Rike
+     * @Since Sprint 3
+     * @param actionEvent the action event
+     */
+    @FXML
+    public void onMaxPlayerSelected(ActionEvent actionEvent)
+    {
+        lobbyService.setMaxPlayer(choseMaxPlayer.getValue(), this.getLobbyID());
     }
 
     //--------------------------------------

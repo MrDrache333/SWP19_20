@@ -23,6 +23,12 @@ public class LobbyDTO implements Lobby, Serializable {
      * Eindeutige UUID für die Lobby um Lobbys mit gleichen Namen unterscheiden zu können Serverseitig.
      */
     private UUID lobbyID;
+    /**
+     * @author Timo, Rike
+     * @since Sprint 3
+     * @implNote Notewendige Variable zum Setzen des Max. Spielers
+     */
+    private Integer maxPlayer;
 
 
     /**
@@ -38,6 +44,7 @@ public class LobbyDTO implements Lobby, Serializable {
         this.users.add(new LobbyUser(creator));
         this.lobbyID = lobbyID;
         this.players = 1;
+        this.maxPlayer = 4;
     }
 
     /**
@@ -54,6 +61,25 @@ public class LobbyDTO implements Lobby, Serializable {
         this.users.add(new LobbyUser(creator));
         this.lobbyID = lobbyID;
         this.players = players;
+        this.maxPlayer = 4;
+    }
+
+    /**
+     * @author Timo, Rike
+     * @since  Sprint 3
+     * @param name    the name
+     * @param creator the creator
+     * @param lobbyID the lobby id
+     * @param players the players
+     * @param maxPlayer the maxPlayers
+     */
+    public LobbyDTO(String name, User creator, UUID lobbyID, int players, Integer maxPlayer) {
+        this.name = name;
+        this.owner = creator;
+        this.users.add(new LobbyUser(creator));
+        this.lobbyID = lobbyID;
+        this.players = players;
+        this.maxPlayer = maxPlayer;
     }
 
     @Override
@@ -63,7 +89,7 @@ public class LobbyDTO implements Lobby, Serializable {
 
     @Override
     public void joinUser(User user) {
-        if (users.size() < 4) {
+        if (users.size() < maxPlayer) {
             this.users.add(new LobbyUser(user));
             players++;
         }
@@ -138,4 +164,26 @@ public class LobbyDTO implements Lobby, Serializable {
         }
         return false;
     }
+
+
+
+    /**
+     * @author Timo, Rike
+     * @since Sprint 3
+     * @implNote Setzt den Max Player Wert bzw. gibt ihn zurück.
+     */
+    @Override
+    public void setMaxPlayer(Integer maxPlayer)
+    {
+        this.maxPlayer = maxPlayer;
+    }
+
+    @Override
+    public Integer getMaxPlayer()
+    {
+        return this.maxPlayer;
+    }
+
+
+
 }

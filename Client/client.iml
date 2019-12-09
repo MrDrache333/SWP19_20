@@ -32,7 +32,9 @@
     <orderEntry type="library" name="Maven: org.jetbrains:annotations:18.0.0" level="project" />
     <orderEntry type="library" name="Maven: com.thizzer.jtouchbar:jtouchbar-javafx:1.0.0" level="project" />
     <orderEntry type="library" name="Maven: com.thizzer.jtouchbar:jtouchbar:1.0.0" level="project" />
-    <orderEntry type="module" module-name="server" />
+    <orderEntry type="library" name="Maven: org.jetbrains:annotations:18.0.0" level="project" />
+    <orderEntry type="library" name="Maven: com.thizzer.jtouchbar:jtouchbar-javafx:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: com.thizzer.jtouchbar:jtouchbar:1.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains:annotations:18.0.0" level="project" />
     <orderEntry type="library" name="Maven: com.thizzer.jtouchbar:jtouchbar-javafx:1.0.0" level="project" />
     <orderEntry type="library" name="Maven: com.thizzer.jtouchbar:jtouchbar:1.0.0" level="project" />

@@ -8,6 +8,9 @@ import com.google.inject.Injector;
 import de.uol.swp.client.di.ClientModule;
 import de.uol.swp.common.lobby.LobbyService;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
+import de.uol.swp.common.lobby.message.SetMaxPlayerMessage;
+import de.uol.swp.common.lobby.request.RetrieveAllOnlineUsersInLobbyRequest;
+import de.uol.swp.common.message.RequestMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.exception.RegistrationExceptionMessage;
@@ -187,6 +190,18 @@ public class ClientApp extends Application implements ConnectionListener {
     // -----------------------------------------------------
     // JavFX Help methods
     // -----------------------------------------------------
+
+    /**
+     * @auhor Timo, Rike
+     * @since Sprint 3
+     * @implNote Reaktion auf die onSetMaxPlayerMessage
+     */
+     @Subscribe
+     public void onSetMaxPlayerMessage(SetMaxPlayerMessage msg)
+     {
+         LOG.info("Max. Spieler der Lobby: " + msg.getLobbyID() + " erfolgreich auf " + msg.getMaxPlayer() + " gesetzt.");
+
+     }
 
 
     public static void main(String[] args) {
