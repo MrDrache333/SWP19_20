@@ -74,7 +74,7 @@ class LobbyServiceTest {
 
         LobbyJoinUserRequest lobbyJoinUserRequest = (LobbyJoinUserRequest) event;
         assertEquals(defaultLobby.getLobbyID(), lobbyJoinUserRequest.getLobbyID());
-        assertEquals(defaultLobby.getName(), lobbyJoinUserRequest.getName());
+        assertEquals(defaultLobby.getName(), lobbyJoinUserRequest.getLobbyName());
         assertEquals(defaultUser, lobbyJoinUserRequest.getUser());
     }
 
@@ -94,7 +94,7 @@ class LobbyServiceTest {
         LobbyLeaveUserRequest lobbyLeaveUserRequest = (LobbyLeaveUserRequest) event;
 
         assertEquals(defaultLobby.getLobbyID(), lobbyLeaveUserRequest.getLobbyID());
-        assertEquals(defaultLobby.getName(), lobbyLeaveUserRequest.getName());
+        assertEquals(defaultLobby.getName(), lobbyLeaveUserRequest.getLobbyName());
         assertEquals(defaultUser, lobbyLeaveUserRequest.getUser());
     }
 

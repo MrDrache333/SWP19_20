@@ -17,7 +17,8 @@ public class LobbyDTO implements Lobby, Serializable {
 
     private final String name;
     private User owner;
-    private ArrayList<LobbyUser> users = new ArrayList<>();
+    private ArrayList<LobbyUser> lobbyUsers = new ArrayList<>();
+    private Set<User> users = new TreeSet<>();
     private int players;
     /**
      * Eindeutige UUID für die Lobby um Lobbys mit gleichen Namen unterscheiden zu können Serverseitig.
@@ -35,7 +36,8 @@ public class LobbyDTO implements Lobby, Serializable {
     public LobbyDTO(String name, User creator, UUID lobbyID) {
         this.name = name;
         this.owner = creator;
-        this.users.add(new LobbyUser(creator));
+        this.users.add(creator);
+        this.lobbyUsers.add(new LobbyUser(creator));
         this.lobbyID = lobbyID;
         this.players = 1;
     }
@@ -103,7 +105,7 @@ public class LobbyDTO implements Lobby, Serializable {
 
     @Override
     public ArrayList<LobbyUser> getLobbyUsers() {
-        return users;
+        return lobbyUsers;
     }
 
     @Override
@@ -123,14 +125,14 @@ public class LobbyDTO implements Lobby, Serializable {
 
     @Override
     public void setReadyStatus(User user, boolean status) {
-        for (LobbyUser usr : users) {
+        for (LobbyUser usr : lobbyUsers) {
             if (usr.getUsername().equals(user.getUsername())) usr.setReady(status);
         }
     }
 
     @Override
     public boolean getReadyStatus(User user) {
-        for (LobbyUser usr : users) {
+        for (LobbyUser usr : lobbyUsers) {
             if (usr.getUsername().equals(user.getUsername())) return usr.isReady();
         }
         return false;

@@ -257,21 +257,6 @@ public class MainMenuPresenter extends AbstractPresenter {
         });
     }
 
-    /**
-     * @author Paula, Haschem, Ferit
-     * @version 0.1
-     * Fängt den Button ab und sendet den Request zur Erstellung der Lobby an den Server.
-     */
-
-    public static void showAlert(Alert.AlertType type, String message, String title) {
-        Alert alert = new Alert(type, "");
-        alert.setResizable(false);
-        alert.initModality(Modality.APPLICATION_MODAL);
-        alert.getDialogPane().setContentText(message);
-        alert.getDialogPane().setHeaderText(title);
-        alert.show();
-    }
-
 
     /**
      * Hilfsmethode zum Erstellen des Buttons zum Betreten einer Lobby

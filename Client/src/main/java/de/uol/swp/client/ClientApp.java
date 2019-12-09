@@ -194,7 +194,7 @@ public class ClientApp extends Application implements ConnectionListener {
     @Subscribe
     public void onUserJoinedLobbyMessage(UserJoinedLobbyMessage message) {
         if (message.getUser().getUsername().equals(user.getUsername())) {
-            sceneManager.showLobbyScreen(message.getName(), message.getLobbyID());
+            sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getLobbyID());
             LOG.info("User " + message.getUser().getUsername() + " joined lobby successfully");
         }
         lobbyService.retrieveAllLobbies();
@@ -213,11 +213,10 @@ public class ClientApp extends Application implements ConnectionListener {
         if (message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showMainScreen(user);
             LOG.info("User " + message.getUser().getUsername() + " left lobby successfully");
-            sceneManager.closeLobbyStage(message.getLobbyID());
+            sceneManager.getGameManagement(message.getLobbyID()).close();
         }
         lobbyService.retrieveAllLobbies();
     }
-
 
     /**
      * Empfängt vom Server die Message, dass sich der Nutzer ausgeloggt hat. Der Nutzer wird aus allen Lobbys gelöscht.
@@ -231,7 +230,7 @@ public class ClientApp extends Application implements ConnectionListener {
     public void onUserLoggedOutMessage(UserLoggedOutMessage message) {
         LOG.info("Logout and leaving of all lobbies successful.");
         if (message.getUsername().equals(user.getUsername())) {
-            sceneManager.closeAllLobbyStages();
+            sceneManager.closeAllStages();
             sceneManager.showLoginScreen();
         }
         lobbyService.retrieveAllLobbies();
@@ -247,7 +246,6 @@ public class ClientApp extends Application implements ConnectionListener {
     public static void main(String[] args) {
         launch(args);
     }
-
 
     /**
      * Schließen aller Fenster

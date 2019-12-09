@@ -4,14 +4,8 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.LobbyUser;
-import de.uol.swp.common.lobby.request.LeaveAllLobbiesOnLogoutRequest;
-import de.uol.swp.common.lobby.request.LobbyJoinUserRequest;
-import de.uol.swp.common.lobby.request.LobbyLeaveUserRequest;
-import de.uol.swp.common.lobby.request.RetrieveAllOnlineLobbiesRequest;
-import de.uol.swp.common.lobby.request.RetrieveAllOnlineUsersInLobbyRequest;
-import de.uol.swp.common.lobby.request.UpdateLobbyReadyStatusRequest;
+import de.uol.swp.common.lobby.request.*;
 import de.uol.swp.common.message.RequestMessage;
-import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,40 +27,38 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
      *
      * @param bus the bus
      */
-
     @Inject
     public LobbyService(EventBus bus) {
         this.bus = bus;
     }
 
-
     /**
      * erstellt ein LobbyJoinUserRequest und postet es auf den Eventbus
      *
-     * @param name
+     * @param lobbyName
      * @param user
      * @param lobbyID
      * @author Julia, Paula
      * @since Sprint3
      */
     @Override
-    public void joinLobby(String name, User user, UUID lobbyID) {
-        LobbyJoinUserRequest request = new LobbyJoinUserRequest(name, user, lobbyID);
+    public void joinLobby(String lobbyName, User user, UUID lobbyID) {
+        LobbyJoinUserRequest request = new LobbyJoinUserRequest(lobbyName, user, lobbyID);
         bus.post(request);
     }
 
     /**
      * erstellt eine LobbyLeaveUserRequest, postet es auf den EventBus
      *
-     * @param name
+     * @param lobbyName
      * @param user
      * @param lobbyID
      * @author Julia, Paula
      * @since Sprint3
      */
     @Override
-    public void leaveLobby(String name, User user, UUID lobbyID) {
-        LobbyLeaveUserRequest request = new LobbyLeaveUserRequest(name, user, lobbyID);
+    public void leaveLobby(String lobbyName, User user, UUID lobbyID) {
+        LobbyLeaveUserRequest request = new LobbyLeaveUserRequest(lobbyName, user, lobbyID);
         bus.post(request);
     }
 
@@ -83,7 +75,6 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
         bus.post(request);
     }
 
-
     /**
      * erstellt ein RetrieveAllOnlineLobbiesRequest und postet es auf den Eventbus
      *
@@ -92,15 +83,15 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
      */
     @Override
     public List<Lobby> retrieveAllLobbies() {
-        RetrieveAllOnlineLobbiesRequest msg = new RetrieveAllOnlineLobbiesRequest();
-        bus.post(msg);
+        RetrieveAllOnlineLobbiesRequest request = new RetrieveAllOnlineLobbiesRequest();
+        bus.post(request);
         return null;
     }
 
     @Override
     public ArrayList<LobbyUser> retrieveAllUsersInLobby(String lobbyName) {
-        RequestMessage msg = new RetrieveAllOnlineUsersInLobbyRequest(lobbyName);
-        bus.post(msg);
+        RequestMessage request = new RetrieveAllOnlineUsersInLobbyRequest(lobbyName);
+        bus.post(request);
         return null;
     }
 
@@ -112,14 +103,14 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
      * @since Sprint3
      */
     public ArrayList<LobbyUser> retrieveAllUsersInLobby(UUID lobbyID) {
-        RequestMessage msg = new RetrieveAllOnlineUsersInLobbyRequest(lobbyID);
-        bus.post(msg);
+        RequestMessage request = new RetrieveAllOnlineUsersInLobbyRequest(lobbyID);
+        bus.post(request);
         return null;
     }
 
     @Override
     public void setLobbyUserStatus(String LobbyName, User user, boolean Status) {
-        RequestMessage msg = new UpdateLobbyReadyStatusRequest(LobbyName, user, Status);
-        bus.post(msg);
+        RequestMessage request = new UpdateLobbyReadyStatusRequest(LobbyName, user, Status);
+        bus.post(request);
     }
 }

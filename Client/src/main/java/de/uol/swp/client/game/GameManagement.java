@@ -41,7 +41,7 @@ public class GameManagement {
     private ChatViewPresenter chatViewPresenter;
     private UUID ID;    //Die Lobby, Chat and GameID
     private User loggedInUser;  //Der aktuell angemeldete Benutzer
-    private String LobbyName;
+    private String lobbyName;
 
     private Scene gameScene;
     private Scene lobbyScene;
@@ -71,7 +71,7 @@ public class GameManagement {
         this.loggedInUser = loggedInUser;
         this.injector = injector;
         this.primaryStage = new Stage();
-        this.LobbyName = lobbyName;
+        this.lobbyName = lobbyName;
         this.eventBus = eventBus;
 
         this.chatViewPresenter = new ChatViewPresenter(lobbyName, id, loggedInUser, ChatViewPresenter.THEME.Light, chatService, injector);
@@ -85,6 +85,7 @@ public class GameManagement {
 
     /**
      * Schließe das Fenster, wenn es der aktuelle Benutzer in dieser Lobby ist, der die Lobby verlässt.
+     *
      * @param msg
      * @author Keno
      */
@@ -97,6 +98,7 @@ public class GameManagement {
 
     /**
      * Wenn es der aktuelle Benutzer in dieser Lobby ist, dann schließe das Fenster
+     *
      * @param msg
      * @author Keno
      */
@@ -109,6 +111,7 @@ public class GameManagement {
 
     /**
      * Initialisieren der GameView
+     *
      * @param
      * @author Keno
      */
@@ -123,6 +126,7 @@ public class GameManagement {
     /**
      * LobbyView wird initalisiert und deklariert.
      * Neue Szene für die neue Lobby wird erstellt und gespeichert
+     *
      * @param
      * @Keno
      */
@@ -157,6 +161,12 @@ public class GameManagement {
             primaryStage.setTitle(title);
             primaryStage.setScene(scene);
             primaryStage.setResizable(false);
+            //User wird aus der Lobby ausgeloggt, wenn er das Lobbyfenster schließt
+            primaryStage.setOnCloseRequest(windowEvent -> {
+                if(primaryStage.getScene().equals(lobbyScene)) {
+                    lobbyPresenter.getLobbyService().leaveLobby(lobbyName, loggedInUser, ID);
+                }
+            });
             primaryStage.show();
         });
     }
@@ -166,7 +176,7 @@ public class GameManagement {
      */
     public void showLobbyView() {
         initLobbyView();
-        showScene(lobbyScene, LobbyName);
+        showScene(lobbyScene, lobbyName);
     }
 
     /**
@@ -174,11 +184,11 @@ public class GameManagement {
      */
     public void showGameView() {
         initGameView();
-        showScene(gameScene, LobbyName);
+        showScene(gameScene, lobbyName);
     }
 
     /**
-     * Closes the Current Stage.
+     * Methode zum Schließen der aktuellen Stage
      */
     public void close() {
         Platform.runLater(() -> primaryStage.close());

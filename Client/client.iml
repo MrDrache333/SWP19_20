@@ -24,16 +24,9 @@
         <jarDirectory url="file://C:/Java/javafx-sdk-11.0.2/lib" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="Maven: com.thizzer.jtouchbar:jtouchbar-javafx:1.0.0" level="project" />
-    <orderEntry type="library" name="Maven: com.thizzer.jtouchbar:jtouchbar:1.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:mac:11" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:mac:11" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-base:mac:11" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains:annotations:18.0.0" level="project" />
-    <orderEntry type="library" name="Maven: com.thizzer.jtouchbar:jtouchbar-javafx:1.0.0" level="project" />
-    <orderEntry type="library" name="Maven: com.thizzer.jtouchbar:jtouchbar:1.0.0" level="project" />
-    <orderEntry type="module" module-name="server" />
-    <orderEntry type="library" name="Maven: org.jetbrains:annotations:18.0.0" level="project" />
     <orderEntry type="library" name="Maven: com.thizzer.jtouchbar:jtouchbar-javafx:1.0.0" level="project" />
     <orderEntry type="library" name="Maven: com.thizzer.jtouchbar:jtouchbar:1.0.0" level="project" />
     <orderEntry type="module" module-name="common" />

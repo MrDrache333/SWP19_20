@@ -6,17 +6,14 @@ import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
+import de.uol.swp.common.chat.ChatService;
+import de.uol.swp.common.lobby.LobbyService;
 import de.uol.swp.common.lobby.message.StartGameMessage;
 import de.uol.swp.common.lobby.message.UpdatedLobbyReadyStatusMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
-import de.uol.swp.common.chat.message.NewChatMessage;
-import de.uol.swp.common.chat.response.ChatResponseMessage;
-import de.uol.swp.common.lobby.LobbyService;
-import de.uol.swp.common.user.User;
-import de.uol.swp.common.user.message.UserLoggedInMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -52,17 +49,14 @@ import java.util.UUID;
  */
 public class LobbyPresenter extends AbstractPresenter {
 
-
     /**
      * The constant fxml.
      */
     public static final String fxml = "/fxml/LobbyView.fxml";
     private static final String url = "https://confluence.swl.informatik.uni-oldenburg.de/display/SWP2019B/Spielanleitung?preview=/126746667/126746668/Dominion%20-%20Anleitung%20-%20V1.pdf";
-    //private static final Logger LOG = LogManager.getLogger(LobbyPresenter.class);
 
     private static final ShowLobbyViewEvent showLobbyViewMessage = new ShowLobbyViewEvent();
     private static final Logger LOG = LogManager.getLogger(ChatViewPresenter.class);
-
 
     private ChatViewPresenter chatViewPresenter;
 
@@ -75,8 +69,6 @@ public class LobbyPresenter extends AbstractPresenter {
 
     //Eigener Status in der Lobby
     private boolean ownReadyStatus = false;
-    private String name;
-    private User user;
 
     @FXML
     private ListView<HBox> usersView;
@@ -88,8 +80,6 @@ public class LobbyPresenter extends AbstractPresenter {
     private ObservableList<HBox> users;
 
     private GameManagement gameManagement;
-
-    //private SceneManager sceneManager;
 
     /**
      * Instantiates a new Lobby presenter.
@@ -120,19 +110,16 @@ public class LobbyPresenter extends AbstractPresenter {
     // FXML METHODS
     //--------------------------------------
 
+    @FXML
+    public void onLeaveLobbyButtonPressed(ActionEvent event) {
+        lobbyService.leaveLobby(lobbyName, loggedInUser, lobbyID);
+    }
+
     /**
      * Initialize.
      *
      * @throws IOException the io exception
      */
-    @FXML
-    private Pane chatView;
-
-    @FXML
-    public void onLeaveLobbyButtonPressed(ActionEvent event) {
-        lobbyService.leaveLobby(name, loggedInUser, lobbyID);
-    }
-
     @FXML
     public void initialize() throws IOException {
         //FXML laden
@@ -291,21 +278,9 @@ public class LobbyPresenter extends AbstractPresenter {
             }
             users.clear();
             users.addAll(getAllHBoxes());
-            chatViewPresenter.userLeft(message.getUsername());
-
-
         });
-        lobbyService.leaveAllLobbiesOnLogout(user);
     }
 
-
-    public UUID getLobbyID() {
-        return lobbyID;
-    }
-
-    public String getName() {
-        return name;
-    }
 
     /**
      * Creates a new HBox for a User
@@ -364,4 +339,11 @@ public class LobbyPresenter extends AbstractPresenter {
     public String getLobbyName() {
         return lobbyName;
     }
+
+    /**
+     * Gets lobby service
+     *
+     * @return the lobby service
+     */
+    public LobbyService getLobbyService() { return lobbyService; }
 }

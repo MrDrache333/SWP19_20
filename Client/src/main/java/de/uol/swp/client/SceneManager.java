@@ -16,7 +16,6 @@ import de.uol.swp.client.register.RegistrationPresenter;
 import de.uol.swp.client.register.event.RegistrationCanceledEvent;
 import de.uol.swp.client.register.event.RegistrationErrorEvent;
 import de.uol.swp.client.register.event.ShowRegistrationViewEvent;
-import de.uol.swp.common.lobby.LobbyService;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import javafx.application.Platform;
@@ -43,7 +42,6 @@ public class SceneManager {
     final private UserService userService;
     final private LobbyService lobbyService;
     final private ChatService chatService;
-    final private LobbyService lobbyService;
     private Scene loginScene;
     private String lastTitle;
     private Scene registrationScene;
@@ -140,27 +138,12 @@ public class SceneManager {
         }
     }
 
-    @Subscribe
-    public void onShowRegistrationViewEvent(ShowRegistrationViewEvent event) {
-        showRegistrationScreen();
-    }
-
-    }
-
-    @Subscribe
-    public void onRegistrationCanceledEvent(RegistrationCanceledEvent event) {
-        showScene(lastScene, lastTitle);
-    }
 
     @Subscribe
     public void onGameQuitEvent(GameQuitEvent event) {
         showScene(mainScene, "test");
     }
 
-    @Subscribe
-    public void onRegistrationErrorEvent(RegistrationErrorEvent event) {
-        showError(event.getMessage());
-    }
 
     public void showError(String message, String e) {
         Platform.runLater(() -> {
@@ -220,8 +203,6 @@ public class SceneManager {
      * @version 0.2
      * @since Sprint3
      */
-
-    //TODO: LobbyScreen bzw Stage schließen, wenn Hauptmenü geschlossen wird
     public void showLobbyScreen(User currentUser, String title, UUID lobbyID) {
         Platform.runLater(() -> {
             //LobbyPresenter neue Instanz mit (name, id) wird erstellt
@@ -236,28 +217,26 @@ public class SceneManager {
 
     }
 
-
     /**
-     * LobbyStage wird geschlossen
+     * Gibt das zur übergebenen lobbyID gehörige GameManagement zurück
      *
      * @param lobbyID
+     * @return GameManagement
      * @author Julia, Paula
      * @since Sprint3
      */
-    public void closeLobbyStage(UUID lobbyID) {
-        Platform.runLater(() -> {
-            lobbyStages.get(lobbyID).close();
-        });
+    public GameManagement getGameManagement(UUID lobbyID) {
+        return games.get(lobbyID);
     }
 
     /**
-     * Schließen aller Lobbystages
+     * Schließt alle GameManagement Stages
      *
      * @author Julia, Paula
      * @since Sprint3
      */
-    public void closeAllLobbyStages() {
-        Platform.runLater(() -> lobbyStages.values().forEach(Stage::close));
+    public void closeAllStages() {
+        Platform.runLater(() -> games.values().forEach(GameManagement::close));
     }
 
 }

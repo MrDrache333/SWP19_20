@@ -69,7 +69,7 @@ class LobbyServiceTest {
 
         assertTrue(event instanceof CreateLobbyMessage);
         CreateLobbyMessage message = (CreateLobbyMessage) event;
-        assertEquals(defaultLobbyName, message.getName());
+        assertEquals(defaultLobbyName, message.getLobbyName());
         assertEquals(lobbyOwner, message.getUser());
 
         //Test if lobby was created
@@ -88,7 +88,7 @@ class LobbyServiceTest {
         UserJoinedLobbyMessage message = (UserJoinedLobbyMessage) event;
 
         assertEquals(lobbyID, message.getLobbyID());
-        assertEquals(defaultLobbyName, message.getName());
+        assertEquals(defaultLobbyName, message.getLobbyName());
         assertEquals(lobbyUser, message.getUser());
 
         //Test if user joined lobby
@@ -107,7 +107,7 @@ class LobbyServiceTest {
         UserLeftLobbyMessage message = (UserLeftLobbyMessage) event;
 
         assertEquals(lobbyOwner, message.getUser());
-        assertEquals(defaultLobbyName, message.getName());
+        assertEquals(defaultLobbyName, message.getLobbyName());
         assertEquals(lobbyID, message.getLobbyID());
 
         //Test if user left lobby
