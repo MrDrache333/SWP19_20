@@ -200,7 +200,7 @@ public class ClientApp extends Application implements ConnectionListener {
      public void onSetMaxPlayerMessage(SetMaxPlayerMessage msg)
      {
          LOG.info("Max. Spieler der Lobby: " + msg.getLobbyID() + " erfolgreich auf " + msg.getMaxPlayer() + " gesetzt.");
-
+         lobbyService.retrieveAllLobbies();
      }
 
 
