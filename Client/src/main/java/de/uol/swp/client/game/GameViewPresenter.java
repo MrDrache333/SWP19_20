@@ -36,6 +36,8 @@ import java.util.UUID;
  * The type Game view presenter.
  *
  * @author fenja, hashem, marvin
+ *
+ *
  */
 public class GameViewPresenter extends AbstractPresenter {
 
@@ -83,9 +85,7 @@ public class GameViewPresenter extends AbstractPresenter {
         initializeUserList();
     }
 
-    /*
-        showAlert Methode, um Alert Box zu erstellen
-         */
+
 
 
     /**
@@ -94,7 +94,8 @@ public class GameViewPresenter extends AbstractPresenter {
      * @param type    the type
      * @param message the message
      * @param title   the title
-     */
+     * @author Mahmoud
+     **/
     public void showAlert(Alert.AlertType type, String message, String title) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "");
         alert.setResizable(false);
@@ -109,10 +110,12 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Initialize.
+     * Initialisieren des Chats.
      *
      * @throws IOException the io exception
+     * @author Fenja, Keno O.
      */
+
     @FXML
     public void initialize() throws IOException {
         //FXML laden
@@ -128,21 +131,24 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * On logout button pressed.
+     * Wird beim Clicken des Logout Buttons aufgerufen, ruft den userService auf, der den User dann ausloggt
      *
      * @param actionEvent the action event
+     * @author Fenja
+     * @since Sprint 3
      */
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
-
         userService.logout(loggedInUser);
     }
 
 
     /**
-     * On GiveUp button pressed.
+     * Wird beim Clicken des Aufgeben Buttons aufgerufen und fragt, ob man wirklich aufgeben möchte.
      *
      * @param actionEvent the action event
+     * @author Mahmoud
+     * @since Sprint 3
      */
     @FXML
     public void onGiveUpButtonPressed(ActionEvent actionEvent) {
