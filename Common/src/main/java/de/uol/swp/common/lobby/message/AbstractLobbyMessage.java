@@ -10,21 +10,23 @@ public class AbstractLobbyMessage extends AbstractServerMessage {
     private String name;
     private User user;
     private UUID lobbyID;
+    private String lobbyName;
+
 
     public AbstractLobbyMessage() {}
 
-    public AbstractLobbyMessage(String name, User user, UUID lobbyID) {
-        this.name = name;
+    public AbstractLobbyMessage(String lobbyName, User user, UUID lobbyID) {
+        this.lobbyName = lobbyName;
         this.user = user;
         this.lobbyID = lobbyID;
     }
 
-    public String getName() {
-        return name;
+    public String getLobbyName() {
+        return lobbyName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setLobbyName(String lobbyName) {
+        this.lobbyName = lobbyName;
     }
 
     public User getUser() {
@@ -35,11 +37,11 @@ public class AbstractLobbyMessage extends AbstractServerMessage {
         this.user = user;
     }
 
-    public UUID getLobbyID(){
+    public UUID getLobbyID() {
         return lobbyID;
     }
 
-    public void setLobbyID(UUID lobbyID){
+    public void setLobbyID(UUID lobbyID) {
         this.lobbyID = lobbyID;
     }
 }

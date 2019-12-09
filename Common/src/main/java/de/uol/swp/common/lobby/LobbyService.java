@@ -2,6 +2,9 @@ package de.uol.swp.common.lobby;
 
 import de.uol.swp.common.user.User;
 
+import de.uol.swp.common.user.User;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,4 +41,7 @@ public interface LobbyService {
      * @param user
      */
     void leaveAllLobbiesOnLogout(User user);
+    ArrayList<LobbyUser> retrieveAllUsersInLobby(String LobbyName);
+
+    void setLobbyUserStatus(String LobbyName, User user, boolean Status);
 }

@@ -47,6 +47,7 @@ public class ClientApp extends Application implements ConnectionListener {
     // Java FX Methods
     // ----------------------------------------------------
 
+
     @Override
     public void init() {
         Parameters p = getParameters();
@@ -148,8 +149,8 @@ public class ClientApp extends Application implements ConnectionListener {
 
     @Subscribe
     public void onRegistrationExceptionMessage(RegistrationExceptionMessage message) {
-        sceneManager.showServerError("Registation error " + message);
-        LOG.error("Registation error " + message);
+        sceneManager.showServerError("Registration error " + message);
+        LOG.error("Registration error " + message);
     }
 
     @Subscribe
@@ -176,7 +177,8 @@ public class ClientApp extends Application implements ConnectionListener {
     @Subscribe
     public void onCreateLobbyMessage(CreateLobbyMessage message) {
         if (message.getUser().getUsername().equals(user.getUsername())) {
-            sceneManager.showLobbyScreen(message.getName(), message.getChatID());
+            sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getChatID());
+            //sceneManager.showGameScreen();
             LOG.debug("CreateLobbyMessage vom Server erfolgreich angekommen");
         }
         lobbyService.retrieveAllLobbies();

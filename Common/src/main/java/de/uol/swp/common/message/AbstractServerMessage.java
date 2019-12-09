@@ -9,11 +9,11 @@ public class AbstractServerMessage extends AbstractMessage implements ServerMess
 
     private List<Session> receiver = new ArrayList<>();
 
-    public void setReceiver(List<Session> receiver) {
-        this.receiver = receiver;
-    }
-
     public List<Session> getReceiver() {
         return receiver;
+    }
+
+    public void setReceiver(List<Session> receiver) {
+        this.receiver = receiver;
     }
 }

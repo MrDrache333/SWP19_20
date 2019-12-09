@@ -8,7 +8,11 @@ import de.uol.swp.common.lobby.message.CreateLobbyMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.lobby.request.*;
+import de.uol.swp.common.lobby.message.*;
+import de.uol.swp.common.lobby.request.*;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
+import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
+import de.uol.swp.common.message.ResponseMessage;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.server.AbstractService;
@@ -21,7 +25,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.Optional;
+import java.util.UUID;
 
+/**
+ * The type Lobby service.
+ */
 public class LobbyService extends AbstractService {
     private static final Logger LOG = LogManager.getLogger(LobbyService.class);
 
@@ -29,6 +38,14 @@ public class LobbyService extends AbstractService {
     private final ChatManagement chatManagement;
     private final AuthenticationService authenticationService;
 
+    /**
+     * Instantiates a new Lobby service.
+     *
+     * @param lobbyManagement       the lobby management
+     * @param authenticationService the authentication service
+     * @param chatManagement        the chat management
+     * @param eventBus              the event bus
+     */
     @Inject
     public LobbyService(LobbyManagement lobbyManagement, AuthenticationService authenticationService, ChatManagement chatManagement, EventBus eventBus) {
         super(eventBus);
@@ -59,7 +76,7 @@ public class LobbyService extends AbstractService {
         chatManagement.createChat(chatID.toString());
         LOG.info("Der Chat mir der UUID " + chatID + " wurde erfolgreich erstellt");
 
-        ServerMessage returnMessage = new CreateLobbyMessage(msg.getName(), msg.getUser(), chatID);
+        ServerMessage returnMessage = new CreateLobbyMessage(msg.getLobbyName(), msg.getUser(), chatID);
         post(returnMessage);
         LOG.info("onCreateLobbyRequest wird auf dem Server aufgerufen.");
     }
@@ -126,6 +143,53 @@ public class LobbyService extends AbstractService {
     }
 
     /**
+     * On update lobby ready status reqest.
+     *
+     * @param request the request
+     * @author Keno Oelrichs Garcia
+     * @Version 1.0
+     * @since Sprint3
+     */
+    @Subscribe
+    public void onUpdateLobbyReadyStatusRequest(UpdateLobbyReadyStatusRequest request) {
+        Optional<Lobby> lobby = lobbyManagement.getLobby(request.getLobbyName());
+
+        if (lobby.isPresent()) {
+            lobby.get().setReadyStatus(request.getUser(), request.isReady());
+            ServerMessage msg = new UpdatedLobbyReadyStatusMessage(lobby.get().getLobbyID(), lobby.get().getName(), request.getUser(), lobby.get().getReadyStatus(request.getUser()));
+            sendToAll(lobby.get().getName(), msg);
+            LOG.debug("Sending Updated Status of User " + request.getUser().getUsername() + " to " + request.isReady() + " in Lobby: " + lobby.get().getLobbyID());
+            allPlayersReady(lobby);
+        } else
+            LOG.debug("Lobby " + request.getLobbyName() + " NOT FOUND!");
+    }
+
+    /**
+     * Auf ID umgestellt
+     *
+     * @param request the request
+     * @author Marvin
+     * @since Sprint3
+     */
+    @Subscribe
+    public void onRetrieveAllOnlineUsersInLobbyRequest(RetrieveAllOnlineUsersInLobbyRequest request) {
+        Optional<String> lobbyName = lobbyManagement.getName(request.getLobbyId());
+        if (lobbyName.isPresent()) {
+            Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyName.get());
+
+            if (lobby.isPresent()) {
+                ResponseMessage msg = new AllOnlineUsersInLobbyResponse(lobby.get().getLobbyID(), lobby.get().getLobbyUsers());
+                msg.initWithMessage(request);
+                post(msg);
+            } else {
+                LOG.debug("LobbyID in Map but Name " + lobbyName + "NOT FOUND!");
+            }
+        } else {
+            LOG.debug("LobbyID " + request.getLobbyId() + " NOT FOUND!");
+        }
+    }
+
+    /**
      * erstellt eine AllOnlineLobbiesResponse mit allen Lobbies im LobbyManagement und schickt diese ab
      *
      * @author Julia
@@ -153,4 +217,24 @@ public class LobbyService extends AbstractService {
     }
 
 
+
+    /**
+     * überprüft ob alle Spieler bereit sind
+     * Spiel startet wenn 4 Spieler Bereit sind
+     *
+     * @param lobby the lobby
+     */
+    private void allPlayersReady(Optional<Lobby> lobby) {
+        int counter = 0;
+        for (User user : lobby.get().getLobbyUsers()) {
+            counter++;
+            if (!lobby.get().getReadyStatus(user)) return;
+            //TODO Change Counter to 4; FOr Testing leave 1
+            if (counter == 1) {
+                LOG.debug("Game starts in Lobby: " + lobby.get().getName());
+                StartGameMessage msg = new StartGameMessage(lobby.get().getName(), lobby.get().getLobbyID());
+                sendToAll(lobby.get().getName(), msg);
+            }
+        }
+    }
 }

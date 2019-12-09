@@ -12,7 +12,7 @@ public class AllOnlineLobbiesResponse extends AbstractResponseMessage {
 
     final private ArrayList<LobbyDTO> lobbies = new ArrayList<>();
 
-    public AllOnlineLobbiesResponse(){
+    public AllOnlineLobbiesResponse() {
         // needed for serialization
     }
 

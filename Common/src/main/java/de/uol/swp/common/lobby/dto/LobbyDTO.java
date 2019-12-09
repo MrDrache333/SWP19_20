@@ -1,18 +1,23 @@
 package de.uol.swp.common.lobby.dto;
 
 import de.uol.swp.common.lobby.Lobby;
+import de.uol.swp.common.lobby.LobbyUser;
 import de.uol.swp.common.user.User;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 
+/**
+ * The type Lobby dto.
+ */
 public class LobbyDTO implements Lobby, Serializable {
 
     private final String name;
     private User owner;
-    private Set<User> users = new TreeSet<>();
+    private ArrayList<LobbyUser> users = new ArrayList<>();
     private int players;
     /**
      * Eindeutige UUID für die Lobby um Lobbys mit gleichen Namen unterscheiden zu können Serverseitig.
@@ -20,14 +25,29 @@ public class LobbyDTO implements Lobby, Serializable {
     private UUID lobbyID;
 
 
+    /**
+     * Instantiates a new Lobby dto.
+     *
+     * @param name    the name
+     * @param creator the creator
+     * @param lobbyID the lobby id
+     */
     public LobbyDTO(String name, User creator, UUID lobbyID) {
         this.name = name;
         this.owner = creator;
-        this.users.add(creator);
+        this.users.add(new LobbyUser(creator));
         this.lobbyID = lobbyID;
         this.players = 1;
     }
 
+    /**
+     * Instantiates a new Lobby dto.
+     *
+     * @param name    the name
+     * @param creator the creator
+     * @param lobbyID the lobby id
+     * @param players the players
+     */
     public LobbyDTO(String name, User creator, UUID lobbyID, Set<User> users, int players) {
         this.name = name;
         this.owner = creator;
@@ -44,7 +64,7 @@ public class LobbyDTO implements Lobby, Serializable {
     @Override
     public void joinUser(User user) {
         if (users.size() < 4) {
-            this.users.add(user);
+            this.users.add(new LobbyUser(user));
             players++;
         }
         // TODO: Hier Fehlermeldung implementieren?
@@ -76,6 +96,13 @@ public class LobbyDTO implements Lobby, Serializable {
 
     @Override
     public Set<User> getUsers() {
+        Set<User> Users = new TreeSet<>();
+        Users.addAll(users);
+        return Users;
+    }
+
+    @Override
+    public ArrayList<LobbyUser> getLobbyUsers() {
         return users;
     }
 
@@ -92,5 +119,20 @@ public class LobbyDTO implements Lobby, Serializable {
     @Override
     public int getPlayers() {
         return players;
+    }
+
+    @Override
+    public void setReadyStatus(User user, boolean status) {
+        for (LobbyUser usr : users) {
+            if (usr.getUsername().equals(user.getUsername())) usr.setReady(status);
+        }
+    }
+
+    @Override
+    public boolean getReadyStatus(User user) {
+        for (LobbyUser usr : users) {
+            if (usr.getUsername().equals(user.getUsername())) return usr.isReady();
+        }
+        return false;
     }
 }

@@ -13,6 +13,13 @@ public class LobbyManagement {
 
     private Map<String, Lobby> lobbies = new HashMap<>();
 
+    /**
+     * Um UUID Map erweitert
+     *
+     * @author Marvin
+     * @since Sprint3
+     */
+    private Map<UUID, String> lobbyNames = new HashMap<>();
 
     /**
      * @author Paula, Haschem, Ferit
@@ -26,9 +33,9 @@ public class LobbyManagement {
         }
         // Erstellen der UUID für die Lobbys.
         UUID lobbyID = UUID.randomUUID();
-        LOG.info("Lobby " + name + " got UUID: " + lobbyID);
+        LOG.info("Die Lobby " + name + " hat folgende UUID erstellt bekommen: " + lobbyID);
         lobbies.put(name, new LobbyDTO(name, owner, lobbyID));
-
+        lobbyNames.put(lobbyID, name);
         return lobbyID;
     }
 
@@ -68,4 +75,14 @@ public class LobbyManagement {
         return lobbies.values();
     }
 
+    /**
+     * Getter für Name
+     *
+     * @param lobbyID Die Lobby ID
+     * @author Marvin
+     * @since Sprint3
+     */
+    public Optional<String> getName(UUID lobbyID) {
+        return lobbyNames.get(lobbyID) != null ? Optional.of(lobbyNames.get(lobbyID)) : Optional.empty();
+    }
 }

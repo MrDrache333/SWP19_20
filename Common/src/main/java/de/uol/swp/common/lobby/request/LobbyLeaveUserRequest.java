@@ -16,12 +16,12 @@ public class LobbyLeaveUserRequest extends AbstractLobbyRequest {
         this.lobbyID = lobbyID;
     }
 
-    public void setLobbyID(UUID lobbyID){
-        this.lobbyID = lobbyID;
+    public UUID getLobbyID() {
+        return lobbyID;
     }
 
-    public UUID getLobbyID(){
-        return  lobbyID;
+    public void setLobbyID(UUID lobbyID) {
+        this.lobbyID = lobbyID;
     }
 
 }

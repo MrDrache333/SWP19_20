@@ -8,7 +8,7 @@ public class UserLeftLobbyMessage extends AbstractLobbyMessage {
 
     public UserLeftLobbyMessage() {}
 
-    public UserLeftLobbyMessage(String lobbyname, User user, UUID lobbyID) {
-        super(lobbyname, user, lobbyID);
+    public UserLeftLobbyMessage(String lobbyName, User user, UUID lobbyID) {
+        super(lobbyName, user, lobbyID);
     }
 }
