@@ -30,7 +30,7 @@ public class ChatService extends AbstractService {
 
 
     @Subscribe
-    public void onNewChatMessageRequest(NewChatMessageRequest request){
+    public void onNewChatMessageRequest(NewChatMessageRequest request) {
         LOG.debug("New Message from " + request.getMessage().getSender().getUsername() + " in Chat " + request.getChatid());
         AbstractResponseMessage returnMessage;
         if (request.getMessage().getMessage().equals("")) return;
@@ -69,7 +69,6 @@ public class ChatService extends AbstractService {
             returnMessage.setMessageContext(request.getMessageContext().get());
         post(returnMessage);
     }
-
 
 
 }

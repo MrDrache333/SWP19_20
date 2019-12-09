@@ -12,13 +12,13 @@ public class AllOnlineLobbiesResponse extends AbstractResponseMessage {
 
     final private ArrayList<LobbyDTO> lobbies = new ArrayList<>();
 
-    public AllOnlineLobbiesResponse(){
+    public AllOnlineLobbiesResponse() {
         // needed for serialization
     }
 
     public AllOnlineLobbiesResponse(Collection<Lobby> lobbies) {
         for (Lobby lobby : lobbies) {
-            this.lobbies.add(new LobbyDTO(lobby.getName(), lobby.getOwner(), lobby.getLobbyID(), lobby.getPlayers()));
+            this.lobbies.add(new LobbyDTO(lobby.getName(), lobby.getOwner(), lobby.getLobbyID(), lobby.getUsers(), lobby.getPlayers()));
         }
     }
 

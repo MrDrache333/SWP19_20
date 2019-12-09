@@ -19,7 +19,7 @@ public class MyObjectEncoder extends ObjectEncoder {
         }
         try {
             super.encode(ctx, msg, out);
-        }catch (Exception e){
+        } catch (Exception e) {
             LOG.error(e);
             e.printStackTrace();
             throw e;

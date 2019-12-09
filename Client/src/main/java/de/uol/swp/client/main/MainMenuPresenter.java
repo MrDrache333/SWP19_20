@@ -3,11 +3,9 @@ package de.uol.swp.client.main;
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.chat.ChatViewPresenter;
-import de.uol.swp.common.chat.message.NewChatMessage;
-import de.uol.swp.common.chat.response.ChatResponseMessage;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
-import de.uol.swp.common.lobby.message.CreateLobbyRequest;
+import de.uol.swp.common.lobby.request.CreateLobbyRequest;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.user.dto.UserDTO;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
@@ -25,11 +23,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
+import javafx.util.Callback;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * The type Main menu presenter.
@@ -41,6 +41,10 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     public static final String fxml = "/fxml/MainMenuView.fxml";
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
+    private ObservableList<String> users;
+    private ChatViewPresenter chatViewPresenter;
+    private ObservableList<Lobby> lobbies;
+
     @FXML
     private TextField lobbyName;
     @FXML
@@ -54,157 +58,22 @@ public class MainMenuPresenter extends AbstractPresenter {
     @FXML
     private TableColumn<Lobby, Integer> players = new TableColumn<>("Spieler");
     @FXML
+    private TableColumn<Lobby, Void> joinLobby = new TableColumn<>();
+    @FXML
     private Pane chatView;
 
-    private ObservableList<String> users;
-    private ChatViewPresenter chatViewPresenter;
-    private ObservableList<Lobby> lobbies;
-
     /**
-     * Initialize.
+     * Methode fängt ButtonKlick ab, User verlässt alle Lobbies, in denen er angemeldet ist und wird ausgeloggt
      *
-     * @throws IOException the io exception
+     * @param actionEvent
+     * @author Julia, Paula
+     * @since sprint3
      */
+
     @FXML
-    public void initialize() throws IOException {
-        //Neue Instanz einer ChatViewPresenter-Controller-Klasse erstellen und nötige Parameter uebergeben
-        chatViewPresenter = new ChatViewPresenter("allgemeiner", ChatViewPresenter.THEME.Light, chatService);
-        chatViewPresenter.setChatId("global");
-        //FXML laden
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(ChatViewPresenter.fxml));
-        //Controller der FXML setzen (Nicht in der FXML festlegen, da es immer eine eigene Instanz davon sein muss)
-        loader.setController(chatViewPresenter);
-        //Den ChatView in die chatView-Pane dieses Controllers laden
-        chatView.getChildren().add(loader.load());
-
-        //Initialisieren der Lobby
-        name.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getName()));
-        host.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getOwner().getUsername()));
-        players.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getPlayers()).asObject());
-        lobbiesView.getColumns().addAll(name, host, players);
-        name.setResizable(false);
-        host.setResizable(false);
-        players.setResizable(false);
-        name.setPrefWidth(110);
-        host.setPrefWidth(90);
-    }
-
-    //--------------------------------------
-    // EVENTBUS
-    //--------------------------------------
-
-    /**
-     * On chat response message.
-     *
-     * @param msg the msg
-     */
-    @Subscribe
-    public void onChatResponseMessage(ChatResponseMessage msg) {
-        chatViewPresenter.onChatResponseMessage(msg);
-    }
-
-    /**
-     * On new chat message.
-     *
-     * @param msg the msg
-     */
-    @Subscribe
-    public void onNewChatMessage(NewChatMessage msg) {
-        chatViewPresenter.onNewChatMessage(msg);
-    }
-
-    /**
-     * Login successful.
-     *
-     * @param message the message
-     */
-    @Subscribe
-    public void loginSuccessful(LoginSuccessfulMessage message) {
-        loggedInUser = message.getUser();
-        chatViewPresenter.setloggedInUser(loggedInUser);
-        LOG.debug("Logged in user: " + loggedInUser.getUsername());
-        userService.retrieveAllUsers();
-        lobbyService.retrieveAllLobbies();
-    }
-
-    /**
-     * New user.
-     *
-     * @param message the message
-     */
-    @Subscribe
-    public void newUser(UserLoggedInMessage message) {
-        LOG.debug("New user " + message.getUsername() + " logged in");
-        Platform.runLater(() -> {
-            if (users != null && loggedInUser != null && !loggedInUser.equals(message.getUsername()))
-                users.add(message.getUsername());
-            chatViewPresenter.userJoined(message.getUsername());
-        });
-    }
-
-    /**
-     * User left.
-     *
-     * @param message the message
-     */
-    @Subscribe
-    public void userLeft(UserLoggedOutMessage message) {
-        LOG.debug("User " + message.getUsername() + " logged out");
-        Platform.runLater(() -> {
-            if (users.contains(message.getUsername())) {
-                users.remove(message.getUsername());
-                chatViewPresenter.userLeft(message.getUsername());
-            }
-        });
-    }
-
-    /**
-     * User list.
-     *
-     * @param allUsersResponse the all users response
-     */
-    @Subscribe
-    public void userList(AllOnlineUsersResponse allUsersResponse) {
-        LOG.debug("Update of user list " + allUsersResponse.getUsers());
-        updateUsersList(allUsersResponse.getUsers());
-    }
-
-    private void updateUsersList(List<UserDTO> userList) {
-        // Attention: This must be done on the FX Thread!
-        Platform.runLater(() -> {
-            if (users == null) {
-                users = FXCollections.observableArrayList();
-                usersView.setItems(users);
-            }
-            users.clear();
-            userList.forEach(u -> users.add(u.getUsername()));
-        });
-    }
-
-    /**
-     * Erstes erstellen der Lobbytabelle beim Login und Aktualisierung
-     * @author Julia
-     * @param allLobbiesResponse
-     */
-    @Subscribe
-    public void lobbyList(AllOnlineLobbiesResponse allLobbiesResponse) {
-        LOG.debug("Updating of lobbies list" + allLobbiesResponse.getLobbies());
-        updateLobbiesList(allLobbiesResponse.getLobbies());
-    }
-
-    /**
-     * updatet die lobbyList, wenn ein User eine Lobby betritt
-     * @author Julia
-     */
-    private void updateLobbiesList(List<LobbyDTO> lobbyList) {
-        Platform.runLater(() -> {
-            if (lobbies == null) {
-                lobbies = FXCollections.observableArrayList();
-                lobbiesView.setItems(lobbies);
-            }
-            lobbies.clear();
-            lobbyList.forEach(l -> lobbies.add(l));
-        });
+    public void onLogoutButtonPressed(ActionEvent actionEvent) {
+        lobbyService.leaveAllLobbiesOnLogout(loggedInUser);
+        userService.logout(loggedInUser);
     }
 
 
@@ -223,46 +92,223 @@ public class MainMenuPresenter extends AbstractPresenter {
         alert.show();
     }
 
+    //--------------------------------------
+    // EVENTBUS
+    //--------------------------------------
+
     /**
-     * Die Methode fängt den Button-Klick ab und prüft, ob der LobbyName leer ist.
-     * Falls ja: Wird eine Fehlermeldung rausgegeben.
-     * Falls nein: Wir eine CreateLobbyRequest mit dem eingegeben LobbyNamen und dem eingeloggten User auf den
+     * Initialize.
+     *
+     * @throws IOException the io exception
+     */
+    @FXML
+    public void initialize() throws IOException {
+        //Neue Instanz einer ChatViewPresenter-Controller-Klasse erstellen und nötige Parameter uebergeben
+        chatViewPresenter = new ChatViewPresenter("allgemeiner", "global", loggedInUser, ChatViewPresenter.THEME.Light, chatService);
+        chatViewPresenter.setChatId("global");
+        eventBus.register(chatViewPresenter);
+        //FXML laden
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(ChatViewPresenter.fxml));
+        //Controller der FXML setzen (Nicht in der FXML festlegen, da es immer eine eigene Instanz davon sein muss)
+        loader.setController(chatViewPresenter);
+        //Den ChatView in die chatView-Pane dieses Controllers laden
+        chatView.getChildren().add(loader.load());
+        //Fenstergroesse uebernehmen
+        ((Pane) chatView.getChildren().get(0)).setPrefHeight(chatView.getPrefHeight());
+        ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getPrefWidth());
+
+        //Initialisieren der Lobbytabelle
+        name.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getName()));
+        host.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getOwner().getUsername()));
+        players.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getPlayers()).asObject());
+        addJoinLobbyButton();
+        lobbiesView.getColumns().addAll(name, host, players, joinLobby);
+        lobbiesView.setPlaceholder(new Label("Keine Lobbies vorhanden"));
+        name.setResizable(false);
+        host.setResizable(false);
+        players.setResizable(false);
+        joinLobby.setResizable(false);
+        name.setStyle("-fx-alignment: CENTER-LEFT;");
+        host.setStyle("-fx-alignment: CENTER-LEFT;");
+        players.setStyle("-fx-alignment: CENTER-LEFT;");
+        name.setPrefWidth(235);
+        host.setPrefWidth(135);
+        joinLobby.setPrefWidth(110);
+    }
+
+    /**
+     * Die Methode fängt den Button-Klick ab und prüft, ob der LobbyName gültig ist.
+     * Falls nein: Wird eine Fehlermeldung rausgegeben.
+     * Falls ja: Wir eine CreateLobbyRequest mit dem eingegeben LobbyNamen und dem eingeloggten User auf den
      * Eventbus gepackt.
      *
-     * @author Paula, Haschem, Ferit
-     * @version 0.1
+     * @author Paula, Haschem, Ferit, Julia, Keno O.
+     * @version 0.2
      * @since Sprint2
      */
     @FXML
-
-    //TODO : was machen, wenn nur Leerzeichen angegeben für Lobbynamen (möglich oder abfangen? )
     public void OnCreateLobbyButtonPressed(ActionEvent event) {
-        boolean validLobbyName = true;
-        for (Lobby lobby : lobbies) {
-            if (lobby.getName().equals(lobbyName.getText())) {
-                validLobbyName = false;
-            }
-        }
-        if (lobbyName.getText().equals("")) {
-            showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen Lobby Namen ein! ", "Fehler");
-            lobbyName.requestFocus();
-        }
-        else if(!validLobbyName) {
-            showAlert(Alert.AlertType.WARNING, "Diese Lobby existiert bereits!", "Fehler");
-            lobbyName.requestFocus();
-        }
-        else {
+        if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName.getText())){
             CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), loggedInUser);
             eventBus.post(msg);
             LOG.info("Request wurde gesendet.");
         }
-
+        else{
+            showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden", "Fehler");
+            lobbyName.requestFocus();
+        }
         lobbyName.clear();
     }
 
-    @FXML
-    public void onLogoutButtonPressed(ActionEvent actionEvent) {
-        userService.logout(loggedInUser);
+
+    /**
+     * Login successful.
+     *
+     * @param message the message
+     */
+    @Subscribe
+    public void loginSuccessful(LoginSuccessfulMessage message) {
+        loggedInUser = message.getUser();
+        chatViewPresenter.setloggedInUser(loggedInUser);
+        chatViewPresenter.userJoined(loggedInUser.getUsername());
+        LOG.debug("Logged in user: " + loggedInUser.getUsername());
+        userService.retrieveAllUsers();
+        lobbyService.retrieveAllLobbies();
     }
+
+    /**
+     * New user.
+     *
+     * @param message the message
+     */
+    @Subscribe
+    public void newUser(UserLoggedInMessage message) {
+        LOG.debug("New user " + message.getUsername() + " logged in");
+        Platform.runLater(() -> {
+            if (users != null && loggedInUser != null && !loggedInUser.equals(message.getUsername())) {
+                chatViewPresenter.userJoined(message.getUsername());
+                users.add(message.getUsername());
+            }
+        });
+    }
+
+    /**
+     * User left.
+     *
+     * @param message the message
+     */
+    @Subscribe
+    public void userLeft(UserLoggedOutMessage message) {
+        LOG.debug("User " + message.getUsername() + " logged out");
+        Platform.runLater(() -> {
+            if (users.contains(message.getUsername())) {
+                users.remove(message.getUsername());
+                chatViewPresenter.userLeft(message.getUsername());
+
+
+            }
+        });
+
+    }
+
+    /**
+     * User list.
+     *
+     * @param allUsersResponse the all users response
+     */
+    @Subscribe
+    public void userList(AllOnlineUsersResponse allUsersResponse) {
+        LOG.debug("Update of user list " + allUsersResponse.getUsers());
+        updateUsersList(allUsersResponse.getUsers());
+    }
+
+
+    /**
+     * Erstes Erstellen der Lobbytabelle beim Login und Aktualisierung
+     *
+     * @param allLobbiesResponse
+     * @author Julia
+     * @since Sprint2
+     */
+    @Subscribe
+    public void lobbyTable(AllOnlineLobbiesResponse allLobbiesResponse) {
+        LOG.debug("Updating of lobbies list" + allLobbiesResponse.getLobbies());
+        updateLobbiesTable(allLobbiesResponse.getLobbies());
+    }
+
+    //-----------------
+    // Help methods
+    //-----------------
+
+    /**
+     * updatet die lobbytabelle
+     *
+     * @author Julia
+     * @since Sprint2
+     */
+    private void updateLobbiesTable(List<LobbyDTO> lobbyList) {
+        Platform.runLater(() -> {
+            if (lobbies == null) {
+                lobbies = FXCollections.observableArrayList();
+                lobbiesView.setItems(lobbies);
+            }
+            lobbies.clear();
+            lobbies.addAll(lobbyList);
+        });
+    }
+
+
+    /**
+     * Hilfsmethode zum Erstellen des Buttons zum Betreten einer Lobby
+     */
+    private void addJoinLobbyButton() {
+        Callback<TableColumn<Lobby, Void>, TableCell<Lobby, Void>> cellFactory = new Callback<>() {
+            @Override
+            public TableCell<Lobby, Void> call(final TableColumn<Lobby, Void> param) {
+                final TableCell<Lobby, Void> cell = new TableCell<>() {
+                    final Button joinLobbyButton = new Button("Lobby beitreten");
+                    {
+                        joinLobbyButton.setOnAction((ActionEvent event) -> {
+                            Lobby lobby = getTableView().getItems().get(getIndex());
+                            if (lobby.getPlayers() == 4) {
+                                showAlert(Alert.AlertType.WARNING, "Diese Lobby ist voll!", "Fehler");
+                            } else if (lobby.getUsers().contains(loggedInUser)) {
+                                showAlert(Alert.AlertType.WARNING, "Du bist dieser Lobby schon beigetreten!", "Fehler");
+                            } else {
+                                lobbyService.joinLobby(lobby.getName(), loggedInUser, lobby.getLobbyID());
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void updateItem(Void item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            setGraphic(joinLobbyButton);
+                        }
+                    }
+                };
+
+                return cell;
+            }
+        };
+
+        joinLobby.setCellFactory(cellFactory);
+    }
+
+    private void updateUsersList(List<UserDTO> userList) {
+        // Attention: This must be done on the FX Thread!
+        Platform.runLater(() -> {
+            if (users == null) {
+                users = FXCollections.observableArrayList();
+                usersView.setItems(users);
+            }
+            users.clear();
+            userList.forEach(u -> users.add(u.getUsername()));
+        });
+    }
+
 
 }

@@ -37,10 +37,12 @@ public class AuthenticationService extends AbstractService {
 
     private final UserManagement userManagement;
 
+
     @Inject
     public AuthenticationService(EventBus bus, UserManagement userManagement) {
         super(bus);
         this.userManagement = userManagement;
+
     }
 
     public Optional<Session> getSession(User user) {
@@ -79,17 +81,15 @@ public class AuthenticationService extends AbstractService {
         post(returnMessage);
     }
 
+
     @Subscribe
     public void onLogoutRequest(LogoutRequest msg) {
         User userToLogOut = userSessions.get(msg.getSession().get());
-
         // Could be already logged out
         if (userToLogOut != null) {
-
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Logging out user " + userToLogOut.getUsername());
             }
-
             userManagement.logout(userToLogOut);
             userSessions.remove(msg.getSession().get());
 
@@ -97,6 +97,7 @@ public class AuthenticationService extends AbstractService {
             post(returnMessage);
 
         }
+
 
     }
 

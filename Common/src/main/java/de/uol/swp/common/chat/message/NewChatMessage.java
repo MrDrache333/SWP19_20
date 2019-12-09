@@ -8,9 +8,9 @@ import de.uol.swp.common.message.AbstractServerMessage;
  */
 public class NewChatMessage extends AbstractServerMessage {
 
+    private static final long serialVersionUID = -2561886836547126480L;
     private String ChatId;
     private ChatMessage Message;
-    private static final long serialVersionUID = -2561886836547126480L;
 
     public NewChatMessage() {
     }

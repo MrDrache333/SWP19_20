@@ -7,7 +7,10 @@ import com.google.inject.Injector;
 import com.google.inject.assistedinject.Assisted;
 import de.uol.swp.client.auth.LoginPresenter;
 import de.uol.swp.client.auth.events.ShowLoginViewEvent;
-import de.uol.swp.client.lobby.LobbyPresenter;
+import de.uol.swp.client.chat.ChatService;
+import de.uol.swp.client.game.GameManagement;
+import de.uol.swp.client.game.event.GameQuitEvent;
+import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.client.register.RegistrationPresenter;
 import de.uol.swp.client.register.event.RegistrationCanceledEvent;
@@ -25,6 +28,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class SceneManager {
 
@@ -32,39 +38,66 @@ public class SceneManager {
     static final String styleSheet = "css/swp.css";
 
     final private Stage primaryStage;
-    final private Stage lobbyStage;
     final private EventBus eventBus;
     final private UserService userService;
+    final private LobbyService lobbyService;
+    final private ChatService chatService;
     private Scene loginScene;
     private String lastTitle;
     private Scene registrationScene;
     private Scene mainScene;
+    private Scene gameScene;
     private Scene lastScene = null;
     private Scene currentScene = null;
-    private Scene lobbyScene;
 
     private User currentUser;
 
     private Injector injector;
 
+    private Map<UUID, Scene> lobbyScenes = new HashMap<>();
+    private Map<UUID, GameManagement> games = new HashMap<>();
+    private Map<UUID, Stage> lobbyStages = new HashMap<>();
+
 
     @Inject
-    public SceneManager(EventBus eventBus, UserService userService, Injector injected, @Assisted Stage primaryStage, Stage lobbyStage) {
+    public SceneManager(EventBus eventBus, UserService userService, LobbyService lobbyService, Injector injected, @Assisted Stage primaryStage, ChatService chatService) {
         this.eventBus = eventBus;
-        this.lobbyStage = lobbyStage;
         this.eventBus.register(this);
         this.userService = userService;
         this.primaryStage = primaryStage;
         this.injector = injected;
+        this.chatService = chatService;
+        this.lobbyService = lobbyService;
 
         initViews();
+    }
+
+
+    @Subscribe
+    public void onShowRegistrationViewEvent(ShowRegistrationViewEvent event) {
+        showRegistrationScreen();
+    }
+
+    @Subscribe
+    public void onShowLoginViewEvent(ShowLoginViewEvent event) {
+
+        showLoginScreen();
+    }
+
+    @Subscribe
+    public void onRegistrationCanceledEvent(RegistrationCanceledEvent event) {
+        showScene(lastScene, lastTitle);
+    }
+
+    @Subscribe
+    public void onRegistrationErrorEvent(RegistrationErrorEvent event) {
+        showError(event.getMessage());
     }
 
     private void initViews() {
         initLoginView();
         initMainView();
         initRegistrationView();
-        initLobbyView();
     }
 
     private Parent initPresenter(String fxmlFile) {
@@ -78,9 +111,6 @@ public class SceneManager {
         } catch (Exception e) {
             throw new RuntimeException("Could not load View!" + e.getMessage(), e);
         }
-//        AbstractPresenter presenter = loader.getController();
-//        presenter.setEventBus(eventBus);
-//        presenter.setUserService(userService);
         return rootPane;
     }
 
@@ -108,36 +138,12 @@ public class SceneManager {
         }
     }
 
-    // LobbyView wird initalisiert und deklariert.
-    private void initLobbyView() {
-
-        if (lobbyScene == null) {
-            Parent rootPane = initPresenter(LobbyPresenter.fxml);
-            lobbyScene = new Scene(rootPane, 800, 600);
-            lobbyScene.getStylesheets().add(styleSheet);
-        }
-    }
 
     @Subscribe
-    public void onShowRegistrationViewEvent(ShowRegistrationViewEvent event) {
-        showRegistrationScreen();
+    public void onGameQuitEvent(GameQuitEvent event) {
+        showScene(mainScene, "test");
     }
 
-    @Subscribe
-    public void onShowLoginViewEvent(ShowLoginViewEvent event) {
-
-        showLoginScreen();
-    }
-
-    @Subscribe
-    public void onRegistrationCanceledEvent(RegistrationCanceledEvent event) {
-        showScene(lastScene, lastTitle);
-    }
-
-    @Subscribe
-    public void onRegistrationErrorEvent(RegistrationErrorEvent event) {
-        showError(event.getMessage());
-    }
 
     public void showError(String message, String e) {
         Platform.runLater(() -> {
@@ -191,22 +197,46 @@ public class SceneManager {
     /**
      * Es wird eine neue Stage mit der lobbyScene angezeigt und mit dem Attribut geöffnet.
      *
-     * @param title der Übergebene Titel aus dem MainMenuPresenter
-     * @author Paula, Haschem, Ferit
-     * @version 0.1
-     * @since Sprint2
+     * @param title   der Übergebene Titel aus dem MainMenuPresenter
+     * @param lobbyID die übergebene LobbyID aus der empfangenen Message in der ClientApp
+     * @author Paula, Haschem, Ferit, Anna
+     * @version 0.2
+     * @since Sprint3
      */
-
-    //TODO: LobbyScreen bzw Stage schließen, wenn Hauptmenü geschlossen wird
-    public void showLobbyScreen(String title) {
+    public void showLobbyScreen(User currentUser, String title, UUID lobbyID) {
         Platform.runLater(() -> {
-            lobbyStage.setTitle(title);
-            lobbyStage.setScene(lobbyScene);
-            lobbyStage.setX(primaryStage.getX() + 200);
-            lobbyStage.setY(primaryStage.getY() + 100);
-            lobbyStage.show();
+            //LobbyPresenter neue Instanz mit (name, id) wird erstellt
+            GameManagement gameManagement = new GameManagement(eventBus, lobbyID, title, currentUser, chatService, lobbyService, userService, injector);
+
+            eventBus.register(gameManagement);
+
+            //LobbyPresenter und lobbyStage in die jeweilige Map packen, mit lobbyID als Schlüssel
+            games.put(lobbyID, gameManagement);
+            gameManagement.showLobbyView();
         });
 
+    }
+
+    /**
+     * Gibt das zur übergebenen lobbyID gehörige GameManagement zurück
+     *
+     * @param lobbyID
+     * @return GameManagement
+     * @author Julia, Paula
+     * @since Sprint3
+     */
+    public GameManagement getGameManagement(UUID lobbyID) {
+        return games.get(lobbyID);
+    }
+
+    /**
+     * Schließt alle GameManagement Stages
+     *
+     * @author Julia, Paula
+     * @since Sprint3
+     */
+    public void closeAllStages() {
+        Platform.runLater(() -> games.values().forEach(GameManagement::close));
     }
 
 }

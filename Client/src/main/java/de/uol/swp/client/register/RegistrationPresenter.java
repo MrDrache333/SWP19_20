@@ -43,9 +43,9 @@ public class RegistrationPresenter extends AbstractPresenter {
 
     @FXML
     void onRegisterButtonPressed(ActionEvent event) {
-        if (Strings.isNullOrEmpty(loginField.getText())){
+        if (Strings.isNullOrEmpty(loginField.getText())) {
             eventBus.post(new RegistrationErrorEvent("Username cannot be empty"));
-        }else if(!passwordField1.getText().equals(passwordField2.getText())) {
+        } else if (!passwordField1.getText().equals(passwordField2.getText())) {
             eventBus.post(new RegistrationErrorEvent("Passwords are not equal"));
         } else if (Strings.isNullOrEmpty(passwordField1.getText())) {
             eventBus.post(new RegistrationErrorEvent("Password cannot be empty"));

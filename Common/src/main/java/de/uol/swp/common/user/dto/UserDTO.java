@@ -54,10 +54,10 @@ public class UserDTO implements User {
 
     @Override
     public boolean equals(Object obj) {
-        if (! (obj instanceof UserDTO)){
+        if (!(obj instanceof UserDTO)) {
             return false;
         }
-        return Objects.equals(this.username, ((UserDTO)obj).username);
+        return Objects.equals(this.username, ((UserDTO) obj).username);
     }
 
     @Override

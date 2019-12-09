@@ -6,17 +6,16 @@ import de.uol.swp.common.user.User;
 import java.util.UUID;
 
 public class CreateLobbyMessage extends AbstractLobbyMessage {
-    private String name;
+    private String lobbyName;
     private User user;
     private UUID ChatID;
 
     private Lobby lobby;
 
-    public CreateLobbyMessage() {
-    }
+    public CreateLobbyMessage() {}
 
-    public CreateLobbyMessage(String name, User user, UUID ChatID) {
-        this.name = name;
+    public CreateLobbyMessage(String lobbyName, User user, UUID ChatID) {
+        this.lobbyName = lobbyName;
         this.user = user;
         this.ChatID = ChatID;
     }
@@ -25,23 +24,21 @@ public class CreateLobbyMessage extends AbstractLobbyMessage {
         this.lobby = lobby;
     }
 
-    public String getName() {
-        return name;
+    public String getLobbyName() {
+        return lobbyName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String lobbyName) {
+        this.lobbyName = lobbyName;
     }
 
     public User getUser() {
         return user;
     }
 
-
     public void setUser(User user) {
         this.user = user;
     }
-
 
     public UUID getChatID() {
         return ChatID;

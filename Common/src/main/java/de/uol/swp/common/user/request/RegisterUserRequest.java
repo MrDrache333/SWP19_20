@@ -7,7 +7,7 @@ public class RegisterUserRequest extends AbstractRequestMessage {
 
     final private User toCreate;
 
-    public RegisterUserRequest(User user){
+    public RegisterUserRequest(User user) {
         this.toCreate = user;
     }
 

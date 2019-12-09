@@ -12,7 +12,9 @@ public class Chat implements de.uol.swp.common.chat.Chat {
     private String ChatId;
     private ArrayList<ChatMessage> Messages = new ArrayList<>();
 
-    public Chat(String chatId) { this.ChatId = chatId; }
+    public Chat(String chatId) {
+        this.ChatId = chatId;
+    }
 
     /**
      * Gets ChatId.
@@ -21,6 +23,15 @@ public class Chat implements de.uol.swp.common.chat.Chat {
      */
     public String getChatId() {
         return ChatId;
+    }
+
+    /**
+     * Sets new ChatId.
+     *
+     * @param ChatId New value of ChatId.
+     */
+    public void setChatId(String ChatId) {
+        this.ChatId = ChatId;
     }
 
     /**
@@ -39,14 +50,5 @@ public class Chat implements de.uol.swp.common.chat.Chat {
      */
     public void setMessages(ArrayList<ChatMessage> Messages) {
         this.Messages = Messages;
-    }
-
-    /**
-     * Sets new ChatId.
-     *
-     * @param ChatId New value of ChatId.
-     */
-    public void setChatId(String ChatId) {
-        this.ChatId = ChatId;
     }
 }
