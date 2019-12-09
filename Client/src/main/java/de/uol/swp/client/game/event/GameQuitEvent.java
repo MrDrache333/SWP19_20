@@ -1,4 +1,6 @@
 package de.uol.swp.client.game.event;
 
-public class GameQuitEvent {
+import de.uol.swp.common.message.AbstractMessage;
+
+public class GameQuitEvent extends AbstractMessage {
 }

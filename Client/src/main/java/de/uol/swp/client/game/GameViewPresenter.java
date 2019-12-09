@@ -36,8 +36,6 @@ import java.util.UUID;
  * The type Game view presenter.
  *
  * @author fenja, hashem, marvin
- *
- *
  */
 public class GameViewPresenter extends AbstractPresenter {
 
@@ -49,7 +47,6 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     public static final String fxml = "/fxml/GameView.fxml";
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
-    private static final GameQuitEvent gameQuitMessage = new GameQuitEvent();
 
     @FXML
     private Pane chatView;
@@ -85,7 +82,9 @@ public class GameViewPresenter extends AbstractPresenter {
         initializeUserList();
     }
 
-
+    /*
+        showAlert Methode, um Alert Box zu erstellen
+         */
 
 
     /**
@@ -94,8 +93,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * @param type    the type
      * @param message the message
      * @param title   the title
-     * @author Mahmoud
-     **/
+     */
     public void showAlert(Alert.AlertType type, String message, String title) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "");
         alert.setResizable(false);
@@ -105,17 +103,15 @@ public class GameViewPresenter extends AbstractPresenter {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
 
-            eventBus.post(gameQuitMessage);
-        }
+            eventBus.post(new GameQuitEvent());
+        }//so funktioniert das nicht
     }
 
     /**
-     * Initialisieren des Chats.
+     * Initialize.
      *
      * @throws IOException the io exception
-     * @author Fenja, Keno O.
      */
-
     @FXML
     public void initialize() throws IOException {
         //FXML laden
@@ -131,24 +127,21 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Wird beim Clicken des Logout Buttons aufgerufen, ruft den userService auf, der den User dann ausloggt
+     * On logout button pressed.
      *
      * @param actionEvent the action event
-     * @author Fenja
-     * @since Sprint 3
      */
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
+
         userService.logout(loggedInUser);
     }
 
 
     /**
-     * Wird beim Clicken des Aufgeben Buttons aufgerufen und fragt, ob man wirklich aufgeben möchte.
+     * On GiveUp button pressed.
      *
      * @param actionEvent the action event
-     * @author Mahmoud
-     * @since Sprint 3
      */
     @FXML
     public void onGiveUpButtonPressed(ActionEvent actionEvent) {
