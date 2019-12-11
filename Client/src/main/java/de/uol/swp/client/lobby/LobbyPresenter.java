@@ -3,10 +3,11 @@ package de.uol.swp.client.lobby;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
-import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
+import de.uol.swp.common.chat.ChatService;
+import de.uol.swp.common.lobby.LobbyService;
 import de.uol.swp.common.lobby.message.StartGameMessage;
 import de.uol.swp.common.lobby.message.UpdatedLobbyReadyStatusMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
@@ -55,11 +56,9 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     public static final String fxml = "/fxml/LobbyView.fxml";
     private static final String url = "https://confluence.swl.informatik.uni-oldenburg.de/display/SWP2019B/Spielanleitung?preview=/126746667/126746668/Dominion%20-%20Anleitung%20-%20V1.pdf";
-    //private static final Logger LOG = LogManager.getLogger(LobbyPresenter.class);
 
     private static final ShowLobbyViewEvent showLobbyViewMessage = new ShowLobbyViewEvent();
     private static final Logger LOG = LogManager.getLogger(ChatViewPresenter.class);
-
 
     private ChatViewPresenter chatViewPresenter;
 
@@ -93,8 +92,6 @@ public class LobbyPresenter extends AbstractPresenter {
 
     private GameManagement gameManagement;
 
-    //private SceneManager sceneManager;
-
     /**
      * Instantiates a new Lobby presenter.
      *
@@ -123,6 +120,11 @@ public class LobbyPresenter extends AbstractPresenter {
     //--------------------------------------
     // FXML METHODS
     //--------------------------------------
+
+    @FXML
+    public void onLeaveLobbyButtonPressed(ActionEvent event) {
+        lobbyService.leaveLobby(lobbyName, loggedInUser, lobbyID);
+    }
 
     /**
      * Initialize.
@@ -303,6 +305,7 @@ public class LobbyPresenter extends AbstractPresenter {
         });
     }
 
+
     /**
      * Creates a new HBox for a User
      *
@@ -360,4 +363,11 @@ public class LobbyPresenter extends AbstractPresenter {
     public String getLobbyName() {
         return lobbyName;
     }
+
+    /**
+     * Gets lobby service
+     *
+     * @return the lobby service
+     */
+    public LobbyService getLobbyService() { return lobbyService; }
 }

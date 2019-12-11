@@ -17,7 +17,8 @@ public class LobbyDTO implements Lobby, Serializable {
 
     private final String name;
     private User owner;
-    private ArrayList<LobbyUser> users = new ArrayList<>();
+    private ArrayList<LobbyUser> lobbyUsers = new ArrayList<>();
+    private Set<User> users = new TreeSet<>();
     private int players;
     /**
      * Eindeutige UUID für die Lobby um Lobbys mit gleichen Namen unterscheiden zu können Serverseitig.
@@ -41,7 +42,8 @@ public class LobbyDTO implements Lobby, Serializable {
     public LobbyDTO(String name, User creator, UUID lobbyID) {
         this.name = name;
         this.owner = creator;
-        this.users.add(new LobbyUser(creator));
+        this.users.add(creator);
+        this.lobbyUsers.add(new LobbyUser(creator));
         this.lobbyID = lobbyID;
         this.players = 1;
         this.maxPlayer = 4;
@@ -55,10 +57,10 @@ public class LobbyDTO implements Lobby, Serializable {
      * @param lobbyID the lobby id
      * @param players the players
      */
-    public LobbyDTO(String name, User creator, UUID lobbyID, int players) {
+    public LobbyDTO(String name, User creator, UUID lobbyID, Set<User> users, int players) {
         this.name = name;
         this.owner = creator;
-        this.users.add(new LobbyUser(creator));
+        this.users = users;
         this.lobbyID = lobbyID;
         this.players = players;
         this.maxPlayer = 4;
@@ -98,13 +100,10 @@ public class LobbyDTO implements Lobby, Serializable {
 
     @Override
     public void leaveUser(User user) {
-        if (users.size() == 1) {
-            throw new IllegalArgumentException("Lobby must contain at least one user!");
-        }
         if (users.contains(user)) {
             this.users.remove(user);
             players--;
-            if (this.owner.equals(user)) {
+            if (this.owner.equals(user) && users.size() > 0) {
                 updateOwner(users.iterator().next());
             }
         }
@@ -132,7 +131,7 @@ public class LobbyDTO implements Lobby, Serializable {
 
     @Override
     public ArrayList<LobbyUser> getLobbyUsers() {
-        return users;
+        return lobbyUsers;
     }
 
     @Override
@@ -152,14 +151,14 @@ public class LobbyDTO implements Lobby, Serializable {
 
     @Override
     public void setReadyStatus(User user, boolean status) {
-        for (LobbyUser usr : users) {
+        for (LobbyUser usr : lobbyUsers) {
             if (usr.getUsername().equals(user.getUsername())) usr.setReady(status);
         }
     }
 
     @Override
     public boolean getReadyStatus(User user) {
-        for (LobbyUser usr : users) {
+        for (LobbyUser usr : lobbyUsers) {
             if (usr.getUsername().equals(user.getUsername())) return usr.isReady();
         }
         return false;

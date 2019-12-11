@@ -8,6 +8,7 @@ import de.uol.swp.common.lobby.request.RetrieveAllOnlineLobbiesRequest;
 import de.uol.swp.common.lobby.request.RetrieveAllOnlineUsersInLobbyRequest;
 import de.uol.swp.common.lobby.request.SetMaxPlayerRequest;
 import de.uol.swp.common.lobby.request.UpdateLobbyReadyStatusRequest;
+import de.uol.swp.common.lobby.request.*;
 import de.uol.swp.common.message.RequestMessage;
 import de.uol.swp.common.user.User;
 import org.apache.logging.log4j.LogManager;
@@ -36,17 +37,66 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
         this.bus = bus;
     }
 
+    /**
+     * erstellt ein LobbyJoinUserRequest und postet es auf den Eventbus
+     *
+     * @param lobbyName
+     * @param user
+     * @param lobbyID
+     * @author Julia, Paula
+     * @since Sprint3
+     */
+    @Override
+    public void joinLobby(String lobbyName, User user, UUID lobbyID) {
+        LobbyJoinUserRequest request = new LobbyJoinUserRequest(lobbyName, user, lobbyID);
+        bus.post(request);
+    }
+
+    /**
+     * erstellt eine LobbyLeaveUserRequest, postet es auf den EventBus
+     *
+     * @param lobbyName
+     * @param user
+     * @param lobbyID
+     * @author Julia, Paula
+     * @since Sprint3
+     */
+    @Override
+    public void leaveLobby(String lobbyName, User user, UUID lobbyID) {
+        LobbyLeaveUserRequest request = new LobbyLeaveUserRequest(lobbyName, user, lobbyID);
+        bus.post(request);
+    }
+
+    /**
+     * erstellt eine LeaveAllLobbiesOnLogoutRequest und postet es auf den EventBus
+     *
+     * @param user
+     * @author Julia, Paula
+     * @since Sprint3
+     */
+    @Override
+    public void leaveAllLobbiesOnLogout(User user) {
+        LeaveAllLobbiesOnLogoutRequest request = new LeaveAllLobbiesOnLogoutRequest(user);
+        bus.post(request);
+    }
+
+    /**
+     * erstellt ein RetrieveAllOnlineLobbiesRequest und postet es auf den Eventbus
+     *
+     * @author Julia
+     * @since Sprint2
+     */
     @Override
     public List<Lobby> retrieveAllLobbies() {
-        RetrieveAllOnlineLobbiesRequest msg = new RetrieveAllOnlineLobbiesRequest();
-        bus.post(msg);
+        RetrieveAllOnlineLobbiesRequest request = new RetrieveAllOnlineLobbiesRequest();
+        bus.post(request);
         return null;
     }
 
     @Override
     public ArrayList<LobbyUser> retrieveAllUsersInLobby(String lobbyName) {
-        RequestMessage msg = new RetrieveAllOnlineUsersInLobbyRequest(lobbyName);
-        bus.post(msg);
+        RequestMessage request = new RetrieveAllOnlineUsersInLobbyRequest(lobbyName);
+        bus.post(request);
         return null;
     }
 
@@ -58,15 +108,15 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
      * @since Sprint3
      */
     public ArrayList<LobbyUser> retrieveAllUsersInLobby(UUID lobbyID) {
-        RequestMessage msg = new RetrieveAllOnlineUsersInLobbyRequest(lobbyID);
-        bus.post(msg);
+        RequestMessage request = new RetrieveAllOnlineUsersInLobbyRequest(lobbyID);
+        bus.post(request);
         return null;
     }
 
     @Override
     public void setLobbyUserStatus(String LobbyName, User user, boolean Status) {
-        RequestMessage msg = new UpdateLobbyReadyStatusRequest(LobbyName, user, Status);
-        bus.post(msg);
+        RequestMessage request = new UpdateLobbyReadyStatusRequest(LobbyName, user, Status);
+        bus.post(request);
     }
 
     @Override

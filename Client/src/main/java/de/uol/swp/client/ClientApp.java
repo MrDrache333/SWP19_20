@@ -8,6 +8,8 @@ import com.google.inject.Injector;
 import de.uol.swp.client.di.ClientModule;
 import de.uol.swp.common.lobby.LobbyService;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
+import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
+import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.lobby.message.SetMaxPlayerMessage;
 import de.uol.swp.common.lobby.request.RetrieveAllOnlineUsersInLobbyRequest;
 import de.uol.swp.common.message.RequestMessage;
@@ -19,6 +21,7 @@ import de.uol.swp.common.user.response.LoginSuccessfulMessage;
 import de.uol.swp.common.user.response.RegistrationSuccessfulEvent;
 import io.netty.channel.Channel;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -90,6 +93,9 @@ public class ClientApp extends Application implements ConnectionListener {
         SceneManagerFactory sceneManagerFactory = injector.getInstance(SceneManagerFactory.class);
         this.sceneManager = sceneManagerFactory.create(primaryStage);
 
+        //  close request calls method to close all windows
+        primaryStage.setOnCloseRequest(event -> closeAllWindows());
+
         ClientConnectionFactory connectionFactory = injector.getInstance(ClientConnectionFactory.class);
         clientConnection = connectionFactory.create(host, port);
         clientConnection.addConnectionListener(this);
@@ -126,7 +132,15 @@ public class ClientApp extends Application implements ConnectionListener {
         LOG.info("ClientConnection shutdown");
     }
 
-    //
+    @Override
+    public void exceptionOccured(String e) {
+        sceneManager.showServerError(e);
+    }
+
+    //----------------
+    // EVENTBUS
+    //----------------
+
     @Subscribe
     public void userLoggedIn(LoginSuccessfulMessage message) {
         LOG.debug("user logged in sucessfully " + message.getUser().getUsername());
@@ -145,6 +159,12 @@ public class ClientApp extends Application implements ConnectionListener {
         LOG.info("Registration successful.");
         sceneManager.showLoginScreen();
     }
+
+    @Subscribe
+    private void handleEventBusError(DeadEvent deadEvent) {
+        LOG.error("DeadEvent detected " + deadEvent);
+    }
+
 
     /**
      * Empfängt vom Server die Message, dass die Lobby erstellt worden ist und öffnet im SceneManager
@@ -165,27 +185,59 @@ public class ClientApp extends Application implements ConnectionListener {
         lobbyService.retrieveAllLobbies();
     }
 
+    /**
+     * Empfängt vom Server die Message, dass der User der Lobby beigetreten ist. Lobbys in Hauptmenü werden aktualisiert.
+     *
+     * @param message
+     * @author Julia, Paula
+     * @since Sprint3
+     */
     @Subscribe
-    private void handleEventBusError(DeadEvent deadEvent) {
-        LOG.error("DeadEvent detected " + deadEvent);
+    public void onUserJoinedLobbyMessage(UserJoinedLobbyMessage message) {
+        if (message.getUser().getUsername().equals(user.getUsername())) {
+            sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getLobbyID());
+            LOG.info("User " + message.getUser().getUsername() + " joined lobby successfully");
+        }
+        lobbyService.retrieveAllLobbies();
     }
 
-    @Override
-    public void exceptionOccured(String e) {
-        sceneManager.showServerError(e);
+    /**
+     * Empfängt vom Server die Message, dass User Lobby verlassen hat. Lobby wird geschlossen. User wird aus Lobby gelöscht
+     *
+     * @param message
+     * @author Julia, Paula
+     * @since Sprint3
+     *
+     */
+    @Subscribe
+    public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
+        if (message.getUser().getUsername().equals(user.getUsername())) {
+            sceneManager.showMainScreen(user);
+            LOG.info("User " + message.getUser().getUsername() + " left lobby successfully");
+            sceneManager.getGameManagement(message.getLobbyID()).close();
+        }
+        lobbyService.retrieveAllLobbies();
     }
 
-    // -----------------------------------------------------
-    // JavFX Help methods
-    // -----------------------------------------------------
-
+    /**
+     * Empfängt vom Server die Message, dass sich der Nutzer ausgeloggt hat. Der Nutzer wird aus allen Lobbys gelöscht.
+     * Lobbys im Hauptmenü werden aktualisiert. LobbyStage schließt sich, man gelangt ins Hauptmenüfenster zurück
+     *
+     * @param message
+     * @author Julia, Paula
+     * @since Sprint3
+     */
     @Subscribe
     public void onUserLoggedOutMessage(UserLoggedOutMessage message) {
-        LOG.info("Logout successful.");
+        LOG.info("Logout and leaving of all lobbies successful.");
         if (message.getUsername().equals(user.getUsername())) {
+            sceneManager.closeAllStages();
             sceneManager.showLoginScreen();
         }
+        lobbyService.retrieveAllLobbies();
+
     }
+
 
     // -----------------------------------------------------
     // JavFX Help methods
@@ -206,6 +258,17 @@ public class ClientApp extends Application implements ConnectionListener {
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    /**
+     * Schließen aller Fenster
+     *
+     * @author Julia, Paula
+     * @since Sprint3
+     */
+    public void closeAllWindows() {
+        Platform.exit();
+
     }
 
 }

@@ -38,11 +38,10 @@ public class SceneManager {
     static final String styleSheet = "css/swp.css";
 
     final private Stage primaryStage;
-    // final private Stage lobbyStage;
     final private EventBus eventBus;
     final private UserService userService;
-    final private ChatService chatService;
     final private LobbyService lobbyService;
+    final private ChatService chatService;
     private Scene loginScene;
     private String lastTitle;
     private Scene registrationScene;
@@ -71,6 +70,28 @@ public class SceneManager {
         this.lobbyService = lobbyService;
 
         initViews();
+    }
+
+
+    @Subscribe
+    public void onShowRegistrationViewEvent(ShowRegistrationViewEvent event) {
+        showRegistrationScreen();
+    }
+
+    @Subscribe
+    public void onShowLoginViewEvent(ShowLoginViewEvent event) {
+
+        showLoginScreen();
+    }
+
+    @Subscribe
+    public void onRegistrationCanceledEvent(RegistrationCanceledEvent event) {
+        showScene(lastScene, lastTitle);
+    }
+
+    @Subscribe
+    public void onRegistrationErrorEvent(RegistrationErrorEvent event) {
+        showError(event.getMessage());
     }
 
     private void initViews() {
@@ -117,31 +138,12 @@ public class SceneManager {
         }
     }
 
-    @Subscribe
-    public void onShowRegistrationViewEvent(ShowRegistrationViewEvent event) {
-        showRegistrationScreen();
-    }
-
-    @Subscribe
-    public void onShowLoginViewEvent(ShowLoginViewEvent event) {
-
-        showLoginScreen();
-    }
-
-    @Subscribe
-    public void onRegistrationCanceledEvent(RegistrationCanceledEvent event) {
-        showScene(lastScene, lastTitle);
-    }
 
     @Subscribe
     public void onGameQuitEvent(GameQuitEvent event) {
         showScene(mainScene, "test");
     }
 
-    @Subscribe
-    public void onRegistrationErrorEvent(RegistrationErrorEvent event) {
-        showError(event.getMessage());
-    }
 
     public void showError(String message, String e) {
         Platform.runLater(() -> {
@@ -201,8 +203,6 @@ public class SceneManager {
      * @version 0.2
      * @since Sprint3
      */
-
-    //TODO: LobbyScreen bzw Stage schließen, wenn Hauptmenü geschlossen wird
     public void showLobbyScreen(User currentUser, String title, UUID lobbyID) {
         Platform.runLater(() -> {
             //LobbyPresenter neue Instanz mit (name, id) wird erstellt
@@ -215,6 +215,28 @@ public class SceneManager {
             gameManagement.showLobbyView();
         });
 
+    }
+
+    /**
+     * Gibt das zur übergebenen lobbyID gehörige GameManagement zurück
+     *
+     * @param lobbyID
+     * @return GameManagement
+     * @author Julia, Paula
+     * @since Sprint3
+     */
+    public GameManagement getGameManagement(UUID lobbyID) {
+        return games.get(lobbyID);
+    }
+
+    /**
+     * Schließt alle GameManagement Stages
+     *
+     * @author Julia, Paula
+     * @since Sprint3
+     */
+    public void closeAllStages() {
+        Platform.runLater(() -> games.values().forEach(GameManagement::close));
     }
 
 }

@@ -13,8 +13,7 @@ public class AbstractLobbyMessage extends AbstractServerMessage {
     private String lobbyName;
 
 
-    public AbstractLobbyMessage() {
-    }
+    public AbstractLobbyMessage() {}
 
     public AbstractLobbyMessage(String lobbyName, User user, UUID lobbyID) {
         this.lobbyName = lobbyName;

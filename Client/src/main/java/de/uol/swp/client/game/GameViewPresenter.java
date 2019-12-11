@@ -47,7 +47,6 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     public static final String fxml = "/fxml/GameView.fxml";
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
-    private static final GameQuitEvent gameQuitMessage = new GameQuitEvent();
 
     @FXML
     private Pane chatView;
@@ -104,8 +103,8 @@ public class GameViewPresenter extends AbstractPresenter {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
 
-            eventBus.post(gameQuitMessage);
-        }
+            eventBus.post(new GameQuitEvent());
+        }//so funktioniert das nicht
     }
 
     /**

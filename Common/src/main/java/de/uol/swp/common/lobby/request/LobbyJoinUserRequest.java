@@ -8,8 +8,7 @@ public class LobbyJoinUserRequest extends AbstractLobbyRequest {
 
     private UUID lobbyID;
 
-    public LobbyJoinUserRequest() {
-    }
+    public LobbyJoinUserRequest() {}
 
     public LobbyJoinUserRequest(String lobbyName, User user, UUID lobbyID) {
         super(lobbyName, user);

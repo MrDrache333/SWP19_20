@@ -23,11 +23,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
+import javafx.util.Callback;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * The type Main menu presenter.
@@ -39,6 +41,10 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     public static final String fxml = "/fxml/MainMenuView.fxml";
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
+    private ObservableList<String> users;
+    private ChatViewPresenter chatViewPresenter;
+    private ObservableList<Lobby> lobbies;
+
     @FXML
     private TextField lobbyName;
     @FXML
@@ -52,11 +58,24 @@ public class MainMenuPresenter extends AbstractPresenter {
     @FXML
     private TableColumn<Lobby, String> players = new TableColumn<>("Spieler");
     @FXML
+    private TableColumn<Lobby, Void> joinLobby = new TableColumn<>();
+    @FXML
     private Pane chatView;
 
-    private ObservableList<String> users;
-    private ChatViewPresenter chatViewPresenter;
-    private ObservableList<Lobby> lobbies;
+    /**
+     * Methode fängt ButtonKlick ab, User verlässt alle Lobbies, in denen er angemeldet ist und wird ausgeloggt
+     *
+     * @param actionEvent
+     * @author Julia, Paula
+     * @since sprint3
+     */
+
+    @FXML
+    public void onLogoutButtonPressed(ActionEvent actionEvent) {
+        lobbyService.leaveAllLobbiesOnLogout(loggedInUser);
+        userService.logout(loggedInUser);
+    }
+
 
     /**
      * @author Paula, Haschem, Ferit
@@ -98,17 +117,51 @@ public class MainMenuPresenter extends AbstractPresenter {
         ((Pane) chatView.getChildren().get(0)).setPrefHeight(chatView.getPrefHeight());
         ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getPrefWidth());
 
-        //Initialisieren der Lobby
+        //Initialisieren der Lobbytabelle
         name.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getName()));
         host.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getOwner().getUsername()));
+        players.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getPlayers()).asObject());
+        addJoinLobbyButton();
+        lobbiesView.getColumns().addAll(name, host, players, joinLobby);
+        lobbiesView.setPlaceholder(new Label("Keine Lobbies vorhanden"));
         players.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getPlayers() + " / " + c.getValue().getMaxPlayer()));
         lobbiesView.getColumns().addAll(name, host, players);
         name.setResizable(false);
         host.setResizable(false);
         players.setResizable(false);
-        name.setPrefWidth(110);
-        host.setPrefWidth(90);
+        joinLobby.setResizable(false);
+        name.setStyle("-fx-alignment: CENTER-LEFT;");
+        host.setStyle("-fx-alignment: CENTER-LEFT;");
+        players.setStyle("-fx-alignment: CENTER-LEFT;");
+        name.setPrefWidth(235);
+        host.setPrefWidth(135);
+        joinLobby.setPrefWidth(110);
     }
+
+    /**
+     * Die Methode fängt den Button-Klick ab und prüft, ob der LobbyName gültig ist.
+     * Falls nein: Wird eine Fehlermeldung rausgegeben.
+     * Falls ja: Wir eine CreateLobbyRequest mit dem eingegeben LobbyNamen und dem eingeloggten User auf den
+     * Eventbus gepackt.
+     *
+     * @author Paula, Haschem, Ferit, Julia, Keno O.
+     * @version 0.2
+     * @since Sprint2
+     */
+    @FXML
+    public void OnCreateLobbyButtonPressed(ActionEvent event) {
+        if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName.getText())){
+            CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), loggedInUser);
+            eventBus.post(msg);
+            LOG.info("Request wurde gesendet.");
+        }
+        else{
+            showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden", "Fehler");
+            lobbyName.requestFocus();
+        }
+        lobbyName.clear();
+    }
+
 
     /**
      * Login successful.
@@ -168,36 +221,31 @@ public class MainMenuPresenter extends AbstractPresenter {
         updateUsersList(allUsersResponse.getUsers());
     }
 
-    private void updateUsersList(List<UserDTO> userList) {
-        // Attention: This must be done on the FX Thread!
-        Platform.runLater(() -> {
-            if (users == null) {
-                users = FXCollections.observableArrayList();
-                usersView.setItems(users);
-            }
-            users.clear();
-            userList.forEach(u -> users.add(u.getUsername()));
-        });
-    }
 
     /**
-     * Erstes erstellen der Lobbytabelle beim Login und Aktualisierung
+     * Erstes Erstellen der Lobbytabelle beim Login und Aktualisierung
      *
      * @param allLobbiesResponse
      * @author Julia
+     * @since Sprint2
      */
     @Subscribe
-    public void lobbyList(AllOnlineLobbiesResponse allLobbiesResponse) {
+    public void lobbyTable(AllOnlineLobbiesResponse allLobbiesResponse) {
         LOG.debug("Updating of lobbies list" + allLobbiesResponse.getLobbies());
-        updateLobbiesList(allLobbiesResponse.getLobbies());
+        updateLobbiesTable(allLobbiesResponse.getLobbies());
     }
 
+    //-----------------
+    // Help methods
+    //-----------------
+
     /**
-     * updatet die lobbyList, wenn ein User eine Lobby betritt
+     * updatet die lobbytabelle
      *
      * @author Julia
+     * @since Sprint2
      */
-    private void updateLobbiesList(List<LobbyDTO> lobbyList) {
+    private void updateLobbiesTable(List<LobbyDTO> lobbyList) {
         Platform.runLater(() -> {
             if (lobbies == null) {
                 lobbies = FXCollections.observableArrayList();
@@ -209,41 +257,53 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     /**
-     * Die Methode fängt den Button-Klick ab und prüft, ob der LobbyName leer ist.
-     * Falls ja: Wird eine Fehlermeldung rausgegeben.
-     * Falls nein: Wird eine CreateLobbyRequest mit dem eingegeben LobbyNamen und dem eingeloggten User auf den
-     * Eventbus gepackt.
-     *
-     * @author Paula, Haschem, Ferit
-     * @version 0.1
-     * @since Sprint2
+     * Hilfsmethode zum Erstellen des Buttons zum Betreten einer Lobby
      */
-    @FXML
-    //TODO : was machen, wenn nur Leerzeichen angegeben für Lobbynamen (möglich oder abfangen? )
-    public void OnCreateLobbyButtonPressed(ActionEvent event) {
-        boolean validLobbyName = true;
-        for (Lobby lobby : lobbies) {
-            if (lobby.getName().equals(lobbyName.getText())) {
-                validLobbyName = false;
+    private void addJoinLobbyButton() {
+        Callback<TableColumn<Lobby, Void>, TableCell<Lobby, Void>> cellFactory = new Callback<>() {
+            @Override
+            public TableCell<Lobby, Void> call(final TableColumn<Lobby, Void> param) {
+                final TableCell<Lobby, Void> cell = new TableCell<>() {
+                    final Button joinLobbyButton = new Button("Lobby beitreten");
+                    {
+                        joinLobbyButton.setOnAction((ActionEvent event) -> {
+                            Lobby lobby = getTableView().getItems().get(getIndex());
+                            if (lobby.getPlayers() == 4) {
+                                showAlert(Alert.AlertType.WARNING, "Diese Lobby ist voll!", "Fehler");
+                            } else if (lobby.getUsers().contains(loggedInUser)) {
+                                showAlert(Alert.AlertType.WARNING, "Du bist dieser Lobby schon beigetreten!", "Fehler");
+                            } else {
+                                lobbyService.joinLobby(lobby.getName(), loggedInUser, lobby.getLobbyID());
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void updateItem(Void item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            setGraphic(joinLobbyButton);
+                        }
+                    }
+                };
+
+                return cell;
             }
-        }
-        if (lobbyName.getText().equals("")) {
-            showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen Lobby Namen ein! ", "Fehler");
-            lobbyName.requestFocus();
-        } else if (!validLobbyName) {
-            showAlert(Alert.AlertType.WARNING, "Diese Lobby existiert bereits!", "Fehler");
-            lobbyName.requestFocus();
-        } else {
-            CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), loggedInUser);
-            eventBus.post(msg);
-            LOG.info("Request wurde gesendet.");
-        }
-        lobbyName.clear();
+        };
+
+        joinLobby.setCellFactory(cellFactory);
     }
 
-    @FXML
-    public void onLogoutButtonPressed(ActionEvent actionEvent) {
-        userService.logout(loggedInUser);
+    private void updateUsersList(List<UserDTO> userList) {
+        // Attention: This must be done on the FX Thread!
+        Platform.runLater(() -> {
+            if (users == null) {
+                users = FXCollections.observableArrayList();
+                usersView.setItems(users);
+            }
+            users.clear();
+            userList.forEach(u -> users.add(u.getUsername()));
+        });
     }
-
-}
