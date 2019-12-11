@@ -266,7 +266,7 @@ public class MainMenuPresenter extends AbstractPresenter {
                     {
                         joinLobbyButton.setOnAction((ActionEvent event) -> {
                             Lobby lobby = getTableView().getItems().get(getIndex());
-                            if (lobby.getPlayers() == 4) {
+                            if (lobby.getPlayers() == lobby.getMaxPlayer()) {
                                 showAlert(Alert.AlertType.WARNING, "Diese Lobby ist voll!", "Fehler");
                             } else if (lobby.getUsers().contains(loggedInUser)) {
                                 showAlert(Alert.AlertType.WARNING, "Du bist dieser Lobby schon beigetreten!", "Fehler");
