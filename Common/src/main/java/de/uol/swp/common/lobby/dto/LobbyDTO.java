@@ -84,6 +84,15 @@ public class LobbyDTO implements Lobby, Serializable {
         this.maxPlayer = maxPlayer;
     }
 
+    public LobbyDTO(String name, User creator, UUID lobbyID, Set<User> users, int players, Integer maxPlayer) {
+        this.name = name;
+        this.owner = creator;
+        this.users.add(new LobbyUser(creator));
+        this.lobbyID = lobbyID;
+        this.players = players;
+        this.maxPlayer = maxPlayer;
+    }
+
     @Override
     public String getName() {
         return name;

@@ -120,12 +120,10 @@ public class MainMenuPresenter extends AbstractPresenter {
         //Initialisieren der Lobbytabelle
         name.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getName()));
         host.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getOwner().getUsername()));
-        players.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getPlayers()).asObject());
         addJoinLobbyButton();
         lobbiesView.getColumns().addAll(name, host, players, joinLobby);
         lobbiesView.setPlaceholder(new Label("Keine Lobbies vorhanden"));
         players.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getPlayers() + " / " + c.getValue().getMaxPlayer()));
-        lobbiesView.getColumns().addAll(name, host, players);
         name.setResizable(false);
         host.setResizable(false);
         players.setResizable(false);
@@ -150,12 +148,11 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @FXML
     public void OnCreateLobbyButtonPressed(ActionEvent event) {
-        if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName.getText())){
+        if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName.getText())) {
             CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), loggedInUser);
             eventBus.post(msg);
             LOG.info("Request wurde gesendet.");
-        }
-        else{
+        } else {
             showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden", "Fehler");
             lobbyName.requestFocus();
         }
@@ -265,6 +262,7 @@ public class MainMenuPresenter extends AbstractPresenter {
             public TableCell<Lobby, Void> call(final TableColumn<Lobby, Void> param) {
                 final TableCell<Lobby, Void> cell = new TableCell<>() {
                     final Button joinLobbyButton = new Button("Lobby beitreten");
+
                     {
                         joinLobbyButton.setOnAction((ActionEvent event) -> {
                             Lobby lobby = getTableView().getItems().get(getIndex());
@@ -307,3 +305,4 @@ public class MainMenuPresenter extends AbstractPresenter {
             userList.forEach(u -> users.add(u.getUsername()));
         });
     }
+}
