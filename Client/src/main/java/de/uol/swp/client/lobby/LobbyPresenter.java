@@ -224,14 +224,16 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void onSetMaxPlayerMessage(SetMaxPlayerMessage msg) {
-        if(!msg.getOwner().equals(loggedInUser))
-        {
-            chooseMaxPlayer.setDisable(true);
-        }
-        else
-        {
-            chooseMaxPlayer.setDisable(false);
-        }
+        Platform.runLater(() -> {
+            if (!chooseMaxPlayer.getValue().equals(msg.getMaxPlayer())){
+                chooseMaxPlayer.setValue(msg.getMaxPlayer());
+            }
+            if (!msg.getOwner().equals(loggedInUser)) {
+                chooseMaxPlayer.setDisable(true);
+            } else {
+                chooseMaxPlayer.setDisable(false);
+            }
+        });
     }
 
     /**
