@@ -34,7 +34,7 @@
                                 <Font name="Arial" size="15.0"/>
                             </font>
                         </Button>
-                  <ChoiceBox fx:id="choseMaxPlayer" layoutX="95.0" layoutY="17.0" prefHeight="25.0" prefWidth="92.0" onAction="#onMaxPlayerSelected">
+                  <ChoiceBox fx:id="chooseMaxPlayer" layoutX="95.0" layoutY="17.0" prefHeight="25.0" prefWidth="92.0" onAction="#onMaxPlayerSelected">
                           <items>
                               <FXCollections fx:factory="observableArrayList">
                               <Integer fx:value ="2" />
