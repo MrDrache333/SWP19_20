@@ -239,7 +239,7 @@ public class LobbyService extends AbstractService {
     public void onSetMaxPlayerRequest(SetMaxPlayerRequest msg)
     {
         boolean setMaxPlayerSet = lobbyManagement.setMaxPlayer(msg.getMaxPlayerValue(), msg.getLobbyID(), msg.getLoggedInUser());
-        SetMaxPlayerMessage returnMessage = new SetMaxPlayerMessage(msg.getMaxPlayerValue(), msg.getLobbyID(), setMaxPlayerSet);
+        SetMaxPlayerMessage returnMessage = new SetMaxPlayerMessage(msg.getMaxPlayerValue(), msg.getLobbyID(), setMaxPlayerSet, lobbyManagement.getLobbyOwner(msg.getLobbyID()));
         post(returnMessage);
 
     }

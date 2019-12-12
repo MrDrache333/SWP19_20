@@ -89,6 +89,16 @@ public class LobbyManagement {
     /**
      * @author Timo, Rike
      * @since Sprint 3
+     * @implNote Gibt den Lobbyowner zurück
+     */
+    public User getLobbyOwner(UUID lobbyID)
+    {
+        return lobbies.get(lobbyNames.get(lobbyID)).getOwner();
+    }
+
+    /**
+     * @author Timo, Rike
+     * @since Sprint 3
      * @implNote Setzt den Wert der maximalen Spieleranzahl einer Lobby
      */
     public boolean setMaxPlayer(Integer maxPlayerValue, UUID lobbyID, User loggedInUser)

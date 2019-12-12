@@ -11,8 +11,6 @@ import de.uol.swp.common.lobby.message.CreateLobbyMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.lobby.message.SetMaxPlayerMessage;
-import de.uol.swp.common.lobby.request.RetrieveAllOnlineUsersInLobbyRequest;
-import de.uol.swp.common.message.RequestMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.exception.RegistrationExceptionMessage;
@@ -251,7 +249,7 @@ public class ClientApp extends Application implements ConnectionListener {
      @Subscribe
      public void onSetMaxPlayerMessage(SetMaxPlayerMessage msg)
      {
-         if(msg.getsetMaxPlayerSet() == true)
+         if(msg.getSetMaxPlayerSet() == true)
          {
              LOG.info("Max. Spieler der Lobby: " + msg.getLobbyID() + " erfolgreich auf " + msg.getMaxPlayer() + " gesetzt.");
              lobbyService.retrieveAllLobbies();

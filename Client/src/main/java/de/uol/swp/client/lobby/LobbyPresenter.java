@@ -8,10 +8,7 @@ import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
 import de.uol.swp.common.chat.ChatService;
 import de.uol.swp.common.lobby.LobbyService;
-import de.uol.swp.common.lobby.message.StartGameMessage;
-import de.uol.swp.common.lobby.message.UpdatedLobbyReadyStatusMessage;
-import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
-import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
+import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
@@ -33,7 +30,6 @@ import javafx.scene.shape.Circle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
@@ -86,7 +82,7 @@ public class LobbyPresenter extends AbstractPresenter {
      * @implNote Anlegen des Chosebox-Objektes
      */
     @FXML
-    ChoiceBox<Integer> choseMaxPlayer;
+    ChoiceBox<Integer> chooseMaxPlayer;
 
     private ObservableList<HBox> users;
 
@@ -147,7 +143,7 @@ public class LobbyPresenter extends AbstractPresenter {
         readyUserList.put(loggedInUser.getUsername(), getHboxFromReadyUser(loggedInUser.getUsername(), false));
         updateUsersList();
         //Setzt choseMaxPlayer auf den Default-Wert
-        choseMaxPlayer.setValue(4);
+        chooseMaxPlayer.setValue(4);
     }
 
     /**
@@ -200,7 +196,7 @@ public class LobbyPresenter extends AbstractPresenter {
     @FXML
     public void onMaxPlayerSelected(ActionEvent actionEvent)
     {
-        lobbyService.setMaxPlayer(choseMaxPlayer.getValue(), this.getLobbyID(), this.loggedInUser);
+        lobbyService.setMaxPlayer(chooseMaxPlayer.getValue(), this.getLobbyID(), this.loggedInUser);
     }
 
     //--------------------------------------
@@ -218,6 +214,23 @@ public class LobbyPresenter extends AbstractPresenter {
         if (readyUserList.containsKey(message.getUser().getUsername())) {
             LOG.debug("User " + message.getUser().getUsername() + " changed his status to " + (message.isReady() ? "Ready" : "Not Ready") + " in Lobby " + lobbyID);
             updateReadyUser(message.getUser().getUsername(), message.isReady());
+        }
+    }
+
+    /**
+     * @author Timo, Rike
+     * @since Sprint 3
+     * @implNote Deaktivieren der Max. Spieler ChoiceBox, sofern der eingeloggte User nicht der Lobbyowner ist.
+     */
+    @Subscribe
+    public void onSetMaxPlayerMessage(SetMaxPlayerMessage msg) {
+        if(!msg.getOwner().equals(loggedInUser))
+        {
+            chooseMaxPlayer.setDisable(true);
+        }
+        else
+        {
+            chooseMaxPlayer.setDisable(false);
         }
     }
 
