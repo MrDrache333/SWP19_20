@@ -91,9 +91,18 @@ public class LobbyManagement {
      * @since Sprint 3
      * @implNote Setzt den Wert der maximalen Spieleranzahl einer Lobby
      */
-    public void setMaxPlayer(Integer maxPlayerValue, UUID lobbyID)
+    public boolean setMaxPlayer(Integer maxPlayerValue, UUID lobbyID, User loggedInUser)
     {
         String tmp = lobbyNames.get(lobbyID);
-        lobbies.get(tmp).setMaxPlayer(maxPlayerValue);
+
+        if(lobbies.get(tmp).getOwner().equals(loggedInUser))
+        {
+            lobbies.get(tmp).setMaxPlayer(maxPlayerValue);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

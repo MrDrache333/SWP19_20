@@ -12,15 +12,17 @@ public class SetMaxPlayerMessage extends AbstractLobbyMessage
 {
     private Integer maxPlayer;
     private UUID lobbyID;
+    private boolean setMaxPlayerSet;
 
     public SetMaxPlayerMessage(){
         //Nothing
     }
 
-    public SetMaxPlayerMessage(Integer maxPlayer, UUID lobbyID)
+    public SetMaxPlayerMessage(Integer maxPlayer, UUID lobbyID, boolean setMaxPlayerSet)
     {
         this.maxPlayer = maxPlayer;
         this.lobbyID = lobbyID;
+        this.setMaxPlayerSet = setMaxPlayerSet;
     }
 
     public Integer getMaxPlayer() {
@@ -29,6 +31,14 @@ public class SetMaxPlayerMessage extends AbstractLobbyMessage
 
     public void setMaxPlayer(Integer maxPlayer) {
         this.maxPlayer = maxPlayer;
+    }
+
+    public boolean getsetMaxPlayerSet() {
+        return setMaxPlayerSet;
+    }
+
+    public void setSetMaxPlayerSet(boolean setMaxPlayerSet) {
+        this.setMaxPlayerSet = setMaxPlayerSet;
     }
 
     @Override
@@ -40,5 +50,7 @@ public class SetMaxPlayerMessage extends AbstractLobbyMessage
     public void setLobbyID(UUID lobbyID) {
         this.lobbyID = lobbyID;
     }
+
+
 }
 

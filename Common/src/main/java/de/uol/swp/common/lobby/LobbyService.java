@@ -49,5 +49,5 @@ public interface LobbyService {
      * @since Sprint 3
      * @implNote Notwendige Ergänzung im LobbyService Interface
      */
-    void setMaxPlayer(Integer maxPlayer, UUID lobbyID);
+    void setMaxPlayer(Integer maxPlayer, UUID lobbyID, User loggedInUser);
 }

@@ -125,9 +125,9 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
      * @since Sprint 3
      * @implNote Erstellt einen SetMaxPlayerRequest
      */
-    public void setMaxPlayer(Integer maxPlayer, UUID lobbyID)
+    public void setMaxPlayer(Integer maxPlayer, UUID lobbyID, User loggedInUser)
     {
-        SetMaxPlayerRequest cmd = new SetMaxPlayerRequest(maxPlayer, lobbyID);
+        SetMaxPlayerRequest cmd = new SetMaxPlayerRequest(maxPlayer, lobbyID, loggedInUser);
         bus.post(cmd);
     }
 }

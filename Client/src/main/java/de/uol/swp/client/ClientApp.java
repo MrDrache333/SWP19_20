@@ -251,8 +251,16 @@ public class ClientApp extends Application implements ConnectionListener {
      @Subscribe
      public void onSetMaxPlayerMessage(SetMaxPlayerMessage msg)
      {
-         LOG.info("Max. Spieler der Lobby: " + msg.getLobbyID() + " erfolgreich auf " + msg.getMaxPlayer() + " gesetzt.");
-         lobbyService.retrieveAllLobbies();
+         if(msg.getsetMaxPlayerSet() == true)
+         {
+             LOG.info("Max. Spieler der Lobby: " + msg.getLobbyID() + " erfolgreich auf " + msg.getMaxPlayer() + " gesetzt.");
+             lobbyService.retrieveAllLobbies();
+         }
+
+         else
+         {
+             LOG.info("Max. Spieler der Lobby: " + msg.getLobbyID() + " nicht gesetzt. User ist nicht der Lobbyowner!");
+         }
      }
 
 

@@ -1,6 +1,7 @@
 package de.uol.swp.common.lobby.request;
 
 import de.uol.swp.common.message.AbstractRequestMessage;
+import de.uol.swp.common.user.User;
 
 import java.util.UUID;
 
@@ -13,11 +14,13 @@ public class SetMaxPlayerRequest extends AbstractRequestMessage
 {
     private Integer maxPlayerValue;
     private UUID lobbyID;
+    private User loggedInUser;
 
-    public SetMaxPlayerRequest(Integer maxPlayerValue, UUID lobbyID)
+    public SetMaxPlayerRequest(Integer maxPlayerValue, UUID lobbyID, User loggedInUser)
     {
         this.maxPlayerValue = maxPlayerValue;
         this.lobbyID = lobbyID;
+        this.loggedInUser = loggedInUser;
     }
 
     public Integer getMaxPlayerValue() {
@@ -34,6 +37,14 @@ public class SetMaxPlayerRequest extends AbstractRequestMessage
 
     public void setLobbyID(UUID lobbyID) {
         this.lobbyID = lobbyID;
+    }
+
+    public User getLoggedInUser() {
+        return loggedInUser;
+    }
+
+    public void setLoggedInUser(User loggedInUser) {
+        this.loggedInUser = loggedInUser;
     }
 }
 

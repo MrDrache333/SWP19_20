@@ -200,7 +200,7 @@ public class LobbyPresenter extends AbstractPresenter {
     @FXML
     public void onMaxPlayerSelected(ActionEvent actionEvent)
     {
-        lobbyService.setMaxPlayer(choseMaxPlayer.getValue(), this.getLobbyID());
+        lobbyService.setMaxPlayer(choseMaxPlayer.getValue(), this.getLobbyID(), this.loggedInUser);
     }
 
     //--------------------------------------
