@@ -62,7 +62,6 @@ public class LobbyService extends AbstractService {
      * @version 0.1
      * @since Sprint2
      */
-
     @Subscribe
     public void onCreateLobbyRequest(CreateLobbyRequest msg) {
         UUID chatID = lobbyManagement.createLobby(msg.getLobbyName(), msg.getOwner());
@@ -79,11 +78,10 @@ public class LobbyService extends AbstractService {
      * LobbyManagment auf dem Server wird aufgerufen und übergibt den Namen des Nutzers.
      * Wenn dies erfolgt ist, folgt eine UserJoinedLobbyMessage an den Client, um den User zur Lobby hinzuzufügen
      *
-     * @param msg
+     * @param msg the msg
      * @author Julia, Paula
      * @since Sprint3
      */
-
     @Subscribe
     public void onLobbyJoinUserRequest(LobbyJoinUserRequest msg) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getLobbyName());
@@ -99,7 +97,7 @@ public class LobbyService extends AbstractService {
      * lobbyManagment wird aufgerufen und übergibt Namen der Lobby und User.
      * UserLeftLobbyMessage wird an Client gesendet
      *
-     * @param msg
+     * @param msg the msg
      * @author Julia, Paula
      * @since Sprint3
      */
@@ -117,7 +115,7 @@ public class LobbyService extends AbstractService {
     /**
      * Lobbys, in denen User drinnen ist, werden verlassen
      *
-     * @param msg
+     * @param msg the msg
      * @author Julia, Paula
      * @since Sprint3
      */
@@ -184,6 +182,7 @@ public class LobbyService extends AbstractService {
     /**
      * erstellt eine AllOnlineLobbiesResponse mit allen Lobbies im LobbyManagement und schickt diese ab
      *
+     * @param msg the msg
      * @author Julia
      * @since Sprint2
      */
@@ -199,6 +198,12 @@ public class LobbyService extends AbstractService {
     //--------------------------------------
 
 
+    /**
+     * Send to all.
+     *
+     * @param lobbyName the lobby name
+     * @param message   the message
+     */
     public void sendToAll(String lobbyName, ServerMessage message) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyName);
         if (lobby.isPresent()) {
@@ -215,18 +220,17 @@ public class LobbyService extends AbstractService {
      * Spiel startet wenn 4 Spieler Bereit sind
      *
      * @param lobby the lobby
+     * @author Darian, Keno
+     * @since Sprint 4
      */
     private void allPlayersReady(Optional<Lobby> lobby) {
-        int counter = 0;
+        //Prüfen, ob jeder Spieler in der Lobby fertig ist
         for (User user : lobby.get().getLobbyUsers()) {
-            counter++;
             if (!lobby.get().getReadyStatus(user)) return;
-            //TODO Change Counter to 4; FOr Testing leave 1
-            if (counter == 1) {
-                LOG.debug("Game starts in Lobby: " + lobby.get().getName());
-                StartGameMessage msg = new StartGameMessage(lobby.get().getName(), lobby.get().getLobbyID());
-                sendToAll(lobby.get().getName(), msg);
-            }
         }
+        //Lobby starten
+        LOG.debug("Game starts in Lobby: " + lobby.get().getName());
+        StartGameMessage msg = new StartGameMessage(lobby.get().getName(), lobby.get().getLobbyID());
+        sendToAll(lobby.get().getName(), msg);
     }
 }
