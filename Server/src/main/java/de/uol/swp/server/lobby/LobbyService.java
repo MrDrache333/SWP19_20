@@ -224,7 +224,7 @@ public class LobbyService extends AbstractService {
      * @since Sprint 4
      */
     private void allPlayersReady(Lobby lobby) {
-        if (lobby.getPlayers() < 2) return;
+        if (lobby.getPlayers() == 1) return;
         //Prüfen, ob jeder Spieler in der Lobby fertig ist
         for (User user : lobby.getLobbyUsers()) {
             if (!lobby.getReadyStatus(user)) return;
