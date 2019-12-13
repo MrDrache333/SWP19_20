@@ -149,7 +149,7 @@ public class LobbyService extends AbstractService {
             ServerMessage msg = new UpdatedLobbyReadyStatusMessage(lobby.get().getLobbyID(), lobby.get().getName(), request.getUser(), lobby.get().getReadyStatus(request.getUser()));
             sendToAll(lobby.get().getName(), msg);
             LOG.debug("Sending Updated Status of User " + request.getUser().getUsername() + " to " + request.isReady() + " in Lobby: " + lobby.get().getLobbyID());
-            allPlayersReady(lobby);
+            allPlayersReady(lobby.get());
         } else
             LOG.debug("Lobby " + request.getLobbyName() + " NOT FOUND!");
     }
@@ -223,14 +223,15 @@ public class LobbyService extends AbstractService {
      * @author Darian, Keno
      * @since Sprint 4
      */
-    private void allPlayersReady(Optional<Lobby> lobby) {
+    private void allPlayersReady(Lobby lobby) {
+        if (lobby.getPlayers() < 2) return;
         //Prüfen, ob jeder Spieler in der Lobby fertig ist
-        for (User user : lobby.get().getLobbyUsers()) {
-            if (!lobby.get().getReadyStatus(user)) return;
+        for (User user : lobby.getLobbyUsers()) {
+            if (!lobby.getReadyStatus(user)) return;
         }
         //Lobby starten
-        LOG.debug("Game starts in Lobby: " + lobby.get().getName());
-        StartGameMessage msg = new StartGameMessage(lobby.get().getName(), lobby.get().getLobbyID());
-        sendToAll(lobby.get().getName(), msg);
+        LOG.debug("Game starts in Lobby: " + lobby.getName());
+        StartGameMessage msg = new StartGameMessage(lobby.getName(), lobby.getLobbyID());
+        sendToAll(lobby.getName(), msg);
     }
 }
