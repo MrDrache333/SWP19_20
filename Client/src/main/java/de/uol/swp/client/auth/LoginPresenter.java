@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 public class LoginPresenter extends AbstractPresenter {
 
     public static final String fxml = "/fxml/LoginView.fxml";
+    public static final String css = "css/LoginView.css";
     private static final Logger LOG = LogManager.getLogger(LoginPresenter.class);
     private static final ShowRegistrationViewEvent showRegViewMessage = new ShowRegistrationViewEvent();
 

@@ -35,7 +35,7 @@ import java.util.UUID;
 public class SceneManager {
 
     static final Logger LOG = LogManager.getLogger(SceneManager.class);
-    static final String styleSheet = "css/swp.css";
+    static final String styleSheet = "css/global.css";
 
     final private Stage primaryStage;
     final private EventBus eventBus;
@@ -119,6 +119,7 @@ public class SceneManager {
             Parent rootPane = initPresenter(MainMenuPresenter.fxml);
             mainScene = new Scene(rootPane, 1280, 750);
             mainScene.getStylesheets().add(styleSheet);
+            mainScene.getStylesheets().add(MainMenuPresenter.css);
         }
     }
 
@@ -127,6 +128,7 @@ public class SceneManager {
             Parent rootPane = initPresenter(LoginPresenter.fxml);
             loginScene = new Scene(rootPane, 1280, 750);
             loginScene.getStylesheets().add(styleSheet);
+            loginScene.getStylesheets().add(LoginPresenter.css);
         }
     }
 
@@ -135,6 +137,7 @@ public class SceneManager {
             Parent rootPane = initPresenter(RegistrationPresenter.fxml);
             registrationScene = new Scene(rootPane, 1280, 750);
             registrationScene.getStylesheets().add(styleSheet);
+            registrationScene.getStylesheets().add(RegistrationPresenter.css);
         }
     }
 

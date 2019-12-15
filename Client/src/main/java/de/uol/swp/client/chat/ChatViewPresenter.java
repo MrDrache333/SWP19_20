@@ -194,9 +194,8 @@ public class ChatViewPresenter extends AbstractPresenter {
         if (CHATTHEME.equals(ChatViewPresenter.THEME.Light)) {
             LOG.debug("Loading Light Theme");
             chatViewAnchorPane.getStylesheets().add(styleSheet_light);
-            chatViewAnchorPane.setStyle("-fx-background-color: white");
-            titleLabel.setStyle("-fx-background-color: white; -fx-text-fill: black");
-            messageView.setStyle("-fx-background-color: white;");
+            //chatViewAnchorPane.setStyle("-fx-background-color: white");
+            //titleLabel.setStyle("-fx-background-color: white; -fx-text-fill: black");
         } else if (CHATTHEME.equals(THEME.Dark)) {
             LOG.debug("Loading Dark Theme");
             chatViewAnchorPane.getStylesheets().add(styleSheet_dark);
@@ -384,7 +383,7 @@ public class ChatViewPresenter extends AbstractPresenter {
             }
         } else {
             //Wenn die empfangene Nachricht eine ServerMessage ist
-            message.setStyle("-fx-text-fill: grey; -fx-background-color: transparent; -fx-font-size: 14");
+            message.setStyle("-fx-text-fill: black; -fx-background-color: transparent; -fx-font-size: 14");
             hbox.setAlignment(Pos.CENTER);
             hbox.getChildren().add(message);
         }
