@@ -254,7 +254,7 @@ public class ChatViewPresenter extends AbstractPresenter {
 //Display a Message when a User joined the Chat
     public void userJoined(String username) {
         if (!chatId.equals(""))
-            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(new UserDTO("server", "", ""), username + " ist dem Chat beigereten")));
+            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(new UserDTO("server", "", ""), username + " ist " + (chatId.equals("global") ? "dem Chat" : "der Lobby") + " beigereten")));
     }
 
     /**
@@ -265,7 +265,7 @@ public class ChatViewPresenter extends AbstractPresenter {
 //Display a Message when a User left the Chat
     public void userLeft(String username) {
         if (!chatId.equals(""))
-            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(new UserDTO("server", "", ""), username + " hat den Chat verlassen")));
+            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(new UserDTO("server", "", ""), username + " hat " + (chatId.equals("global") ? "den Chat" : "die Lobby") + " verlassen")));
     }
 
     /**
