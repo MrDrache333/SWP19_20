@@ -63,7 +63,7 @@ class LobbyServiceTest {
 
     @Test
     void onCreateLobbyRequestTest() throws InterruptedException {
-        lobbyService.onCreateLobbyRequest(new CreateLobbyRequest(defaultLobbyName, lobbyOwner));
+        lobbyService.onCreateLobbyRequest(new CreateLobbyRequest(defaultLobbyName, new UserDTO(lobbyOwner.getUsername(), lobbyOwner.getPassword(), lobbyOwner.getEMail())));
 
         lock.await(1000, TimeUnit.MILLISECONDS);
 
@@ -80,7 +80,7 @@ class LobbyServiceTest {
     @Test
     void onLobbyJoinUserRequestTest() throws InterruptedException {
         final UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, lobbyOwner);
-        lobbyService.onLobbyJoinUserRequest(new LobbyJoinUserRequest(defaultLobbyName, lobbyUser, lobbyID));
+        lobbyService.onLobbyJoinUserRequest(new LobbyJoinUserRequest(defaultLobbyName, new UserDTO(lobbyUser.getUsername(), lobbyUser.getPassword(), lobbyUser.getEMail()), lobbyID));
 
         lock.await(1000, TimeUnit.MILLISECONDS);
 
@@ -99,7 +99,7 @@ class LobbyServiceTest {
     void onLobbyLeaveUserRequestTest() throws InterruptedException {
         final UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, lobbyOwner);
         lobbyManagement.getLobby(defaultLobbyName).get().joinUser(lobbyUser);
-        lobbyService.onLobbyLeaveUserRequest(new LobbyLeaveUserRequest(defaultLobbyName, lobbyOwner, lobbyID));
+        lobbyService.onLobbyLeaveUserRequest(new LobbyLeaveUserRequest(defaultLobbyName, new UserDTO(lobbyOwner.getUsername(), lobbyOwner.getPassword(), lobbyOwner.getEMail()), lobbyID));
 
         lock.await(1000, TimeUnit.MILLISECONDS);
 
@@ -116,7 +116,7 @@ class LobbyServiceTest {
         assertEquals(lobbyUser, lobby.get().getOwner());
 
         //Test if user left lobby and lobby was deleted
-        lobbyService.onLobbyLeaveUserRequest(new LobbyLeaveUserRequest(defaultLobbyName, lobbyUser, lobbyID));
+        lobbyService.onLobbyLeaveUserRequest(new LobbyLeaveUserRequest(defaultLobbyName, new UserDTO(lobbyUser.getUsername(), lobbyUser.getPassword(), lobbyUser.getEMail()), lobbyID));
         lobby = lobbyManagement.getLobby(defaultLobbyName);
         assertTrue(lobby.isEmpty());
     }
@@ -126,7 +126,7 @@ class LobbyServiceTest {
         lobbyManagement.createLobby(defaultLobbyName, lobbyOwner);
         lobbyManagement.createLobby("Lobby2", lobbyOwner);
         lobbyManagement.getLobby(defaultLobbyName).get().joinUser(lobbyUser);
-        lobbyService.onLeaveAllLobbiesOnLogoutRequest(new LeaveAllLobbiesOnLogoutRequest(lobbyOwner));
+        lobbyService.onLeaveAllLobbiesOnLogoutRequest(new LeaveAllLobbiesOnLogoutRequest(new UserDTO(lobbyOwner.getUsername(), lobbyOwner.getPassword(), lobbyOwner.getEMail())));
 
         //Test if user was removed from all lobbies
         Optional<Lobby> lobby = lobbyManagement.getLobby(defaultLobbyName);

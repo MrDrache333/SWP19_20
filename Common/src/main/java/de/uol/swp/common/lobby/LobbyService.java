@@ -1,7 +1,6 @@
 package de.uol.swp.common.lobby;
 
-import de.uol.swp.common.user.User;
-
+import de.uol.swp.common.user.dto.UserDTO;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -25,7 +24,7 @@ public interface LobbyService {
      * @param user      the user
      * @param lobbyID   the lobby id
      */
-    void joinLobby(String lobbyName, User user, UUID lobbyID);
+    void joinLobby(String lobbyName, UserDTO user, UUID lobbyID);
 
     /**
      * Lobby verlassen
@@ -34,14 +33,14 @@ public interface LobbyService {
      * @param user      the user
      * @param lobbyID   the lobby id
      */
-    void leaveLobby(String lobbyName, User user, UUID lobbyID);
+    void leaveLobby(String lobbyName, UserDTO user, UUID lobbyID);
 
     /**
      * Verlassen aller beigetretenen Lobbies beim Logout
      *
      * @param user the user
      */
-    void leaveAllLobbiesOnLogout(User user);
+    void leaveAllLobbiesOnLogout(UserDTO user);
 
     /**
      * Retrieve all users in lobby array list.
@@ -58,5 +57,5 @@ public interface LobbyService {
      * @param user      the user
      * @param Status    the status
      */
-    void setLobbyUserStatus(String LobbyName, User user, boolean Status);
+    void setLobbyUserStatus(String LobbyName, UserDTO user, boolean Status);
 }

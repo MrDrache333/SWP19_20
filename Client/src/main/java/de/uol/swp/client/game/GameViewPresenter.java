@@ -133,7 +133,7 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
-        lobbyService.leaveAllLobbiesOnLogout(loggedInUser);
+        lobbyService.leaveAllLobbiesOnLogout(new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
         userService.logout(loggedInUser);
     }
 

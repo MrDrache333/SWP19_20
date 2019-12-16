@@ -17,10 +17,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UserServiceTest {
 
-    User defaultUser = new UserDTO("Marco", "test", "marco@test.de");
+    final User defaultUser = new UserDTO("Marco", "test", "marco@test.de");
 
-    EventBus bus = new EventBus();
-    CountDownLatch lock = new CountDownLatch(1);
+    final EventBus bus = new EventBus();
+    final CountDownLatch lock = new CountDownLatch(1);
     Object event;
 
     @Subscribe

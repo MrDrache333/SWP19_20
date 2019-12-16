@@ -62,7 +62,7 @@ class LobbyServiceTest {
 
     private void joinLobby() throws InterruptedException {
         LobbyService userService = new LobbyService(bus);
-        userService.joinLobby(defaultLobby.getName(), defaultUser, defaultLobby.getLobbyID());
+        userService.joinLobby(defaultLobby.getName(), new UserDTO(defaultUser.getUsername(), defaultUser.getPassword(), defaultUser.getEMail()), defaultLobby.getLobbyID());
         lock.await(1000, TimeUnit.MILLISECONDS);
     }
 
@@ -85,7 +85,7 @@ class LobbyServiceTest {
         event = null;
 
         LobbyService lobbyService = new LobbyService(bus);
-        lobbyService.leaveLobby(defaultLobby.getName(), defaultUser, defaultLobby.getLobbyID());
+        lobbyService.leaveLobby(defaultLobby.getName(), new UserDTO(defaultUser.getUsername(), defaultUser.getPassword(), defaultUser.getEMail()), defaultLobby.getLobbyID());
 
         lock.await(1000, TimeUnit.MILLISECONDS);
 
@@ -105,7 +105,7 @@ class LobbyServiceTest {
         event = null;
 
         LobbyService lobbyService = new LobbyService(bus);
-        lobbyService.leaveAllLobbiesOnLogout(defaultUser);
+        lobbyService.leaveAllLobbiesOnLogout(new UserDTO(defaultUser.getUsername(), defaultUser.getPassword(), defaultUser.getEMail()));
 
         lock.await(1000, TimeUnit.MILLISECONDS);
 

@@ -52,7 +52,7 @@ public class AuthenticationService extends AbstractService {
         List<Session> sessions = new ArrayList<>();
         users.forEach(u -> {
             Optional<Session> session = getSession(u);
-            if (session.isPresent()) sessions.add(session.get());
+            session.ifPresent(sessions::add);
         });
         return sessions;
     }

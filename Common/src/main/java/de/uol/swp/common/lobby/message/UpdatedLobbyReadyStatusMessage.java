@@ -1,7 +1,6 @@
 package de.uol.swp.common.lobby.message;
 
-import de.uol.swp.common.user.User;
-
+import de.uol.swp.common.user.dto.UserDTO;
 import java.util.UUID;
 
 /**
@@ -14,11 +13,11 @@ public class UpdatedLobbyReadyStatusMessage extends AbstractLobbyMessage {
     /**
      * Instantiates a new Updated lobby ready status message.
      *
-     * @param lobbyname the lobby
+     * @param lobbyName the lobby
      * @param user      the user
      * @param ready     the Status
      */
-    public UpdatedLobbyReadyStatusMessage(UUID LobbyID, String lobbyName, User user, boolean ready) {
+    public UpdatedLobbyReadyStatusMessage(UUID LobbyID, String lobbyName, UserDTO user, boolean ready) {
         super(lobbyName, user, LobbyID);
         this.Ready = ready;
     }

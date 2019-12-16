@@ -19,8 +19,7 @@ public class UUIDSession implements Session {
     }
 
     public static Session create(User user) {
-        UUIDSession session = new UUIDSession(user);
-        return session;
+        return new UUIDSession(user);
     }
 
     @Override

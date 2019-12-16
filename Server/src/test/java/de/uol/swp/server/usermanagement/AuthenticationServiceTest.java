@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AuthenticationServiceTest {
 
-    private CountDownLatch lock = new CountDownLatch(1);
+    private final CountDownLatch lock = new CountDownLatch(1);
 
     final User user = new UserDTO("name", "password", "email@test.de");
     final User user2 = new UserDTO("name2", "password2", "email@test.de2");
@@ -132,7 +132,7 @@ class AuthenticationServiceTest {
         users.add(user2);
         Collections.sort(users);
 
-        users.forEach(u -> loginUser(u));
+        users.forEach(this::loginUser);
 
         RetrieveAllOnlineUsersRequest request = new RetrieveAllOnlineUsersRequest();
         bus.post(request);
@@ -140,8 +140,7 @@ class AuthenticationServiceTest {
         lock.await(1000, TimeUnit.MILLISECONDS);
         assertTrue(event instanceof AllOnlineUsersResponse);
 
-        List<User> returnedUsers = new ArrayList<>();
-        returnedUsers.addAll(((AllOnlineUsersResponse) event).getUsers());
+        List<User> returnedUsers = new ArrayList<>(((AllOnlineUsersResponse) event).getUsers());
 
         assertEquals(returnedUsers.size(), 2);
 

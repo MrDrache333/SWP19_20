@@ -1,7 +1,6 @@
 package de.uol.swp.common.lobby.request;
 
 import de.uol.swp.common.message.AbstractRequestMessage;
-
 import java.util.UUID;
 
 /**
@@ -10,17 +9,6 @@ import java.util.UUID;
 public class RetrieveAllOnlineUsersInLobbyRequest extends AbstractRequestMessage {
 
     private UUID lobbyId;
-    private String lobbyName;
-
-    /**
-     * Instantiates a new Retrieve all online users in lobby request.
-     *
-     * @param lobbyName the lobby name
-     */
-    public RetrieveAllOnlineUsersInLobbyRequest(String lobbyName) {
-        this.lobbyName = lobbyName;
-    }
-
     /**
      * Instantiates a new Retrieve all online users in lobby request.
      * Alternative mit ID statt Name.

@@ -1,20 +1,20 @@
 package de.uol.swp.common.lobby.request;
 
-import de.uol.swp.common.user.User;
+import de.uol.swp.common.user.dto.UserDTO;
 
 
 public class LeaveAllLobbiesOnLogoutRequest extends AbstractLobbyRequest {
 
-    private User user;
+    private UserDTO user;
 
     public LeaveAllLobbiesOnLogoutRequest() {
     }
 
-    public LeaveAllLobbiesOnLogoutRequest(User user) {
+    public LeaveAllLobbiesOnLogoutRequest(UserDTO user) {
         this.user = user;
     }
 
-    public User getUser() {
+    public UserDTO getUser() {
         return user;
     }
 }

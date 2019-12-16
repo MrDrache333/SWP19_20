@@ -1,20 +1,19 @@
 package de.uol.swp.common.lobby.message;
 
 import de.uol.swp.common.lobby.Lobby;
-import de.uol.swp.common.user.User;
-
+import de.uol.swp.common.user.dto.UserDTO;
 import java.util.UUID;
 
 public class CreateLobbyMessage extends AbstractLobbyMessage {
     private String lobbyName;
-    private User user;
+    private UserDTO user;
     private UUID ChatID;
 
     private Lobby lobby;
 
     public CreateLobbyMessage() {}
 
-    public CreateLobbyMessage(String lobbyName, User user, UUID ChatID) {
+    public CreateLobbyMessage(String lobbyName, UserDTO user, UUID ChatID) {
         this.lobbyName = lobbyName;
         this.user = user;
         this.ChatID = ChatID;
@@ -32,11 +31,11 @@ public class CreateLobbyMessage extends AbstractLobbyMessage {
         this.lobbyName = lobbyName;
     }
 
-    public User getUser() {
+    public UserDTO getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserDTO user) {
         this.user = user;
     }
 

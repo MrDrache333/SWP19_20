@@ -9,8 +9,8 @@ import de.uol.swp.server.usermanagement.store.UserStore;
 
 public class ServerModule extends AbstractModule {
 
-    private EventBus bus = new EventBus();
-    private UserStore store = new MainMemoryBasedUserStore();
+    private final EventBus bus = new EventBus();
+    private final UserStore store = new MainMemoryBasedUserStore();
 
     @Override
     protected void configure() {

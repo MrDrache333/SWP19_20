@@ -11,6 +11,7 @@ import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
+import de.uol.swp.common.user.dto.UserDTO;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -164,7 +165,7 @@ public class GameManagement {
             //User wird aus der Lobby ausgeloggt, wenn er das Lobbyfenster schließt
             primaryStage.setOnCloseRequest(windowEvent -> {
                 if(primaryStage.getScene().equals(lobbyScene)) {
-                    lobbyPresenter.getLobbyService().leaveLobby(lobbyName, loggedInUser, ID);
+                    lobbyPresenter.getLobbyService().leaveLobby(lobbyName, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), ID);
                 }
             });
             primaryStage.show();

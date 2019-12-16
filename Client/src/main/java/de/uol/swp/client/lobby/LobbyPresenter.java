@@ -15,6 +15,7 @@ import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
+import de.uol.swp.common.user.dto.UserDTO;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -113,7 +114,7 @@ public class LobbyPresenter extends AbstractPresenter {
 
     @FXML
     public void onLeaveLobbyButtonPressed(ActionEvent event) {
-        lobbyService.leaveLobby(lobbyName, loggedInUser, lobbyID);
+        lobbyService.leaveLobby(lobbyName, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), lobbyID);
     }
 
     /**
@@ -146,7 +147,7 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
-        lobbyService.leaveAllLobbiesOnLogout(loggedInUser);
+        lobbyService.leaveAllLobbiesOnLogout(new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
         userService.logout(loggedInUser);
     }
 
@@ -179,7 +180,7 @@ public class LobbyPresenter extends AbstractPresenter {
             ownReadyStatus = true;
         }
         LOG.debug("Set own ReadyStauts in Lobby " + lobbyID + " to " + (ownReadyStatus ? "Ready" : "Not Ready"));
-        lobbyService.setLobbyUserStatus(lobbyName, loggedInUser, ownReadyStatus);
+        lobbyService.setLobbyUserStatus(lobbyName, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), ownReadyStatus);
     }
 
     //--------------------------------------

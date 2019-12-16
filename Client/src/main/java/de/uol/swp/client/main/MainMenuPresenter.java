@@ -74,7 +74,7 @@ public class MainMenuPresenter extends AbstractPresenter {
 
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
-        lobbyService.leaveAllLobbiesOnLogout(loggedInUser);
+        lobbyService.leaveAllLobbiesOnLogout(new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
         userService.logout(loggedInUser);
     }
 
@@ -157,7 +157,7 @@ public class MainMenuPresenter extends AbstractPresenter {
             lobbyName.requestFocus();
         }
         else if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName.getText())){
-            CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), loggedInUser);
+            CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
             eventBus.post(msg);
             LOG.info("Request wurde gesendet.");
         }
@@ -193,7 +193,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     public void newUser(UserLoggedInMessage message) {
         LOG.debug("New user " + message.getUsername() + " logged in");
         Platform.runLater(() -> {
-            if (users != null && loggedInUser != null && !loggedInUser.equals(message.getUsername())) {
+            if (users != null && loggedInUser != null && !loggedInUser.getUsername().equals(message.getUsername())) {
                 chatViewPresenter.userJoined(message.getUsername());
                 users.add(message.getUsername());
             }
@@ -283,7 +283,7 @@ public class MainMenuPresenter extends AbstractPresenter {
                             } else if (lobby.getUsers().contains(loggedInUser)) {
                                 showAlert(Alert.AlertType.WARNING, "Du bist dieser Lobby schon beigetreten!", "Fehler");
                             } else {
-                                lobbyService.joinLobby(lobby.getName(), loggedInUser, lobby.getLobbyID());
+                                lobbyService.joinLobby(lobby.getName(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), lobby.getLobbyID());
                             }
                         });
                     }

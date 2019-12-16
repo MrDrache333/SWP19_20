@@ -52,7 +52,7 @@ public class SceneManager {
 
     private User currentUser;
 
-    private Injector injector;
+    private final Injector injector;
 
     private Map<UUID, Scene> lobbyScenes = new HashMap<>();
     private Map<UUID, GameManagement> games = new HashMap<>();
@@ -184,7 +184,6 @@ public class SceneManager {
     }
 
     public void showMainScreen(User currentUser) {
-        this.currentUser = currentUser;
         showScene(mainScene, "Welcome " + currentUser.getUsername());
     }
 

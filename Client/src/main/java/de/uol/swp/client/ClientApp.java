@@ -101,7 +101,7 @@ public class ClientApp extends Application implements ConnectionListener {
             try {
                 clientConnection.start();
             } catch (Exception e) {
-                exceptionOccured(e.getMessage());
+                exceptionOccurred(e.getMessage());
             }
         });
         t.setDaemon(true);
@@ -121,6 +121,7 @@ public class ClientApp extends Application implements ConnectionListener {
             userService.logout(user);
             user = null;
         }
+        eventBus.unregister(this);
         // Important: Close connection so connection thread can terminate
         // else client application will not stop
         LOG.trace("Trying to shutting down client ...");
@@ -132,7 +133,7 @@ public class ClientApp extends Application implements ConnectionListener {
     }
 
     @Override
-    public void exceptionOccured(String e) {
+    public void exceptionOccurred(String e) {
         sceneManager.showServerError(e);
     }
 
@@ -142,7 +143,7 @@ public class ClientApp extends Application implements ConnectionListener {
 
     @Subscribe
     public void userLoggedIn(LoginSuccessfulResponse message) {
-        LOG.debug("user logged in sucessfully " + message.getUser().getUsername());
+        LOG.debug("user logged in successfully " + message.getUser().getUsername());
         this.user = message.getUser();
         sceneManager.showMainScreen(user);
     }
