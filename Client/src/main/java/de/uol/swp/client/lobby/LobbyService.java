@@ -88,13 +88,6 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
         return null;
     }
 
-    @Override
-    public ArrayList<LobbyUser> retrieveAllUsersInLobby(String lobbyName) {
-        RequestMessage request = new RetrieveAllOnlineUsersInLobbyRequest(lobbyName);
-        bus.post(request);
-        return null;
-    }
-
     /**
      * Alternative Requesterstellung über lobbyID statt Name.
      *
@@ -102,6 +95,7 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
      * @author Marvin
      * @since Sprint3
      */
+    @Override
     public ArrayList<LobbyUser> retrieveAllUsersInLobby(UUID lobbyID) {
         RequestMessage request = new RetrieveAllOnlineUsersInLobbyRequest(lobbyID);
         bus.post(request);

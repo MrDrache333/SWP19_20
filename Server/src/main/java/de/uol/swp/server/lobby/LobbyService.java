@@ -137,7 +137,6 @@ public class LobbyService extends AbstractService {
      *
      * @param request the request
      * @author Keno Oelrichs Garcia
-     * @Version 1.0
      * @since Sprint3
      */
     @Subscribe

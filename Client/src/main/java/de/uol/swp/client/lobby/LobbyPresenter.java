@@ -12,6 +12,7 @@ import de.uol.swp.common.lobby.message.StartGameMessage;
 import de.uol.swp.common.lobby.message.UpdatedLobbyReadyStatusMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
+import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
@@ -77,7 +78,7 @@ public class LobbyPresenter extends AbstractPresenter {
     @FXML
     private Button readyButton;
 
-    private ObservableList<HBox> users;
+    private ObservableList<HBox> userHBoxes;
 
     private GameManagement gameManagement;
 
@@ -133,6 +134,7 @@ public class LobbyPresenter extends AbstractPresenter {
         ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getPrefWidth());
         chatViewPresenter.userJoined(loggedInUser.getUsername());
 
+        lobbyService.retrieveAllUsersInLobby(lobbyID);
         readyUserList.put(loggedInUser.getUsername(), getHboxFromReadyUser(loggedInUser.getUsername(), false));
         updateUsersList();
     }
@@ -198,6 +200,17 @@ public class LobbyPresenter extends AbstractPresenter {
         }
     }
 
+    @Subscribe
+    private void onReceiveAllUsersInLobby(AllOnlineUsersInLobbyResponse response) {
+        if (response.getLobbyID().equals(lobbyID)) {
+            readyUserList = new TreeMap<>();
+            response.getUsers().forEach(e -> {
+                readyUserList.put(e.getUsername(), getHboxFromReadyUser(e.getUsername(), e.isReady()));
+            });
+            updateUsersList();
+        }
+    }
+
     /**
      * On game start message.
      *
@@ -230,9 +243,8 @@ public class LobbyPresenter extends AbstractPresenter {
         if (!message.getLobbyID().equals(lobbyID)) return;
         LOG.debug("New user " + message.getUser() + " logged in");
         Platform.runLater(() -> {
-            if (users != null && loggedInUser != null && !loggedInUser.toString().equals(message.getLobbyName())) {
+            if (readyUserList != null && loggedInUser != null && !loggedInUser.toString().equals(message.getLobbyName())) {
                 readyUserList.put(message.getUser().getUsername(), getHboxFromReadyUser(message.getUser().getUsername(), false));
-                users.add(readyUserList.get(message.getUser().getUsername()));
                 updateUsersList();
                 chatViewPresenter.userJoined(message.getUser().getUsername());
             }
@@ -257,9 +269,9 @@ public class LobbyPresenter extends AbstractPresenter {
     //--------------------------------------
 
     private void userLeftLobby(String username) {
-        if (users.contains(username)) {
+        if (readyUserList.get(username) != null) {
             Platform.runLater(() -> {
-                users.remove(username);
+                readyUserList.remove(username);
                 updateUsersList();
                 chatViewPresenter.userLeft(username);
                 if (readyUserList.containsKey(username)) {
@@ -273,12 +285,12 @@ public class LobbyPresenter extends AbstractPresenter {
     private void updateUsersList() {
         // Attention: This must be done on the FX Thread!
         Platform.runLater(() -> {
-            if (users == null) {
-                users = FXCollections.observableArrayList();
-                usersView.setItems(users);
+            if (userHBoxes == null) {
+                userHBoxes = FXCollections.observableArrayList();
+                usersView.setItems(userHBoxes);
             }
-            users.clear();
-            users.addAll(getAllHBoxes());
+            userHBoxes.clear();
+            userHBoxes.addAll(getAllHBoxes());
         });
     }
 
