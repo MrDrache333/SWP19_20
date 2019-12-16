@@ -304,7 +304,7 @@ public class ChatViewPresenter extends AbstractPresenter {
         message.setMaxWidth(maxChatMessageWidth);
         //Als Tooltip der Nachricht die Eingangs-Zeit anzeigen
         message.setTooltip(new Tooltip(new SimpleDateFormat("HH:mm:ss").format(msg.getTimeStamp())));
-        sender.setStyle("-fx-text-fill: grey; -fx-font-size: 12");
+        sender.setStyle("-fx-text-fill: black; -fx-font-size: 12");
 
         //Je nachdem wer die Nachriht gesendet hat, diese auf der richtigen Seite darstellen
         VBox box = new VBox();
