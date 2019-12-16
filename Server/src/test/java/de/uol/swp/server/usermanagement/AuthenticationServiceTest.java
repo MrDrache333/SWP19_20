@@ -27,14 +27,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AuthenticationServiceTest {
 
+    private CountDownLatch lock = new CountDownLatch(1);
+
     final User user = new UserDTO("name", "password", "email@test.de");
     final User user2 = new UserDTO("name2", "password2", "email@test.de2");
     final User user3 = new UserDTO("name3", "password3", "email@test.de3");
+
+
     final UserStore userStore = new MainMemoryBasedUserStore();
     final EventBus bus = new EventBus();
     final UserManagement userManagement = new UserManagement(userStore);
     final AuthenticationService authService = new AuthenticationService(bus, userManagement);
-    private CountDownLatch lock = new CountDownLatch(1);
     private Object event;
 
     @Subscribe
@@ -93,6 +96,7 @@ class AuthenticationServiceTest {
         lock.await(1000, TimeUnit.MILLISECONDS);
 
         assertFalse(userManagement.isLoggedIn(user));
+        assertTrue(authService.getSession(user).isEmpty());
         assertTrue(event instanceof UserLoggedOutMessage);
     }
 

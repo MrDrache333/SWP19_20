@@ -37,12 +37,10 @@ public class AuthenticationService extends AbstractService {
 
     private final UserManagement userManagement;
 
-
     @Inject
     public AuthenticationService(EventBus bus, UserManagement userManagement) {
         super(bus);
         this.userManagement = userManagement;
-
     }
 
     public Optional<Session> getSession(User user) {
@@ -68,7 +66,7 @@ public class AuthenticationService extends AbstractService {
         try {
             User newUser = userManagement.login(msg.getUsername(), msg.getPassword());
             returnMessage = new ClientAuthorizedMessage(newUser);
-            Session newSession = UUIDSession.create();
+            Session newSession = UUIDSession.create(newUser);
             userSessions.put(newSession, newUser);
             returnMessage.setSession(newSession);
         } catch (Exception e) {
@@ -81,24 +79,27 @@ public class AuthenticationService extends AbstractService {
         post(returnMessage);
     }
 
-
     @Subscribe
     public void onLogoutRequest(LogoutRequest msg) {
-        User userToLogOut = userSessions.get(msg.getSession().get());
-        // Could be already logged out
-        if (userToLogOut != null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Logging out user " + userToLogOut.getUsername());
+        if (msg.getSession().isPresent()) {
+            Session session = msg.getSession().get();
+            User userToLogOut = userSessions.get(session);
+
+            // Could be already logged out
+            if (userToLogOut != null) {
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Logging out user " + userToLogOut.getUsername());
+                }
+
+                userManagement.logout(userToLogOut);
+                userSessions.remove(session);
+
+                ServerMessage returnMessage = new UserLoggedOutMessage(userToLogOut.getUsername());
+                post(returnMessage);
+
             }
-            userManagement.logout(userToLogOut);
-            userSessions.remove(msg.getSession().get());
-
-            ServerMessage returnMessage = new UserLoggedOutMessage(userToLogOut.getUsername());
-            post(returnMessage);
-
         }
-
-
     }
 
     @Subscribe
@@ -107,4 +108,6 @@ public class AuthenticationService extends AbstractService {
         response.initWithMessage(msg);
         post(response);
     }
+
+
 }

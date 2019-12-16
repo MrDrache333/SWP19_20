@@ -1,27 +1,36 @@
 package de.uol.swp.server.communication;
 
-import java.io.Serializable;
+import de.uol.swp.common.user.Session;
+import de.uol.swp.common.user.User;
+
 import java.util.Objects;
 import java.util.UUID;
 
-public class UUIDSession implements de.uol.swp.common.user.Session, Serializable {
+public class UUIDSession implements Session {
 
-    private static final long serialVersionUID = -3012502325550415132L;
     private final String sessionId;
+    private final User user;
 
-    private UUIDSession() {
+    private UUIDSession(User user) {
         synchronized (UUIDSession.class) {
             this.sessionId = String.valueOf(UUID.randomUUID());
+            this.user = user;
         }
     }
 
-    public static de.uol.swp.common.user.Session create() {
-        return new UUIDSession();
+    public static Session create(User user) {
+        UUIDSession session = new UUIDSession(user);
+        return session;
     }
 
     @Override
     public String getSessionId() {
         return sessionId;
+    }
+
+    @Override
+    public User getUser() {
+        return user;
     }
 
     @Override
@@ -39,7 +48,7 @@ public class UUIDSession implements de.uol.swp.common.user.Session, Serializable
 
     @Override
     public String toString() {
-        return "SessionId: " + sessionId;
+        return "SessionId: "+sessionId;
     }
 
 }

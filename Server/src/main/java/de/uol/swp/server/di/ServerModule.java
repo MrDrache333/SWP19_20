@@ -5,15 +5,22 @@ import com.google.inject.AbstractModule;
 import de.uol.swp.server.chat.ChatManagement;
 import de.uol.swp.server.usermanagement.UserManagement;
 import de.uol.swp.server.usermanagement.store.MainMemoryBasedUserStore;
+import de.uol.swp.server.usermanagement.store.UserStore;
 
 public class ServerModule extends AbstractModule {
+
+    private EventBus bus = new EventBus();
+    private UserStore store = new MainMemoryBasedUserStore();
 
     @Override
     protected void configure() {
         // All usermanagements and eventbusses must be the same instance (!)
-        bind(UserManagement.class).toInstance(new UserManagement(new MainMemoryBasedUserStore()));
         bind(ChatManagement.class).toInstance(new ChatManagement());
-        bind(EventBus.class).toInstance(new EventBus());
+        bind(UserStore.class).toInstance(store);
+        bind(EventBus.class).toInstance(bus);
 
     }
 }
+
+
+
