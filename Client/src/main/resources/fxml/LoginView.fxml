@@ -64,7 +64,7 @@
             <ImageView fitHeight="30.0" fitWidth="36.0" opacity="0.7" pickOnBounds="true" preserveRatio="true"
                        HBox.hgrow="NEVER">
                 <image>
-                    <Image url="@../images/login_locl_icon.png"/>
+                    <Image url="@../images/login_lock_icon.png"/>
                 </image>
             </ImageView>
             <PasswordField fx:id="passwordField" blendMode="MULTIPLY" promptText="Passwort">
