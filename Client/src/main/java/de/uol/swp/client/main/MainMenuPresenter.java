@@ -41,6 +41,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      * The constant fxml.
      */
     public static final String fxml = "/fxml/MainMenuView.fxml";
+    public static final String css = "css/MainMenuPresenter.css";
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
     private ObservableList<String> users;
     private ChatViewPresenter chatViewPresenter;
@@ -105,7 +106,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     @FXML
     public void initialize() throws IOException {
         //Neue Instanz einer ChatViewPresenter-Controller-Klasse erstellen und nötige Parameter uebergeben
-        chatViewPresenter = new ChatViewPresenter("allgemeiner", "global", loggedInUser, ChatViewPresenter.THEME.Light, chatService);
+        chatViewPresenter = new ChatViewPresenter("globaler", "global", loggedInUser, ChatViewPresenter.THEME.Light, chatService);
         chatViewPresenter.setChatId("global");
         eventBus.register(chatViewPresenter);
         //FXML laden
@@ -115,8 +116,8 @@ public class MainMenuPresenter extends AbstractPresenter {
         //Den ChatView in die chatView-Pane dieses Controllers laden
         chatView.getChildren().add(loader.load());
         //Fenstergroesse uebernehmen
-        ((Pane) chatView.getChildren().get(0)).setPrefHeight(chatView.getPrefHeight());
-        ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getPrefWidth());
+        ((Pane) chatView.getChildren().get(0)).setMinHeight(chatView.getMinHeight());
+        ((Pane) chatView.getChildren().get(0)).setMinWidth(chatView.getMinWidth());
 
         //Initialisieren der Lobbytabelle
         name.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getName()));
@@ -134,7 +135,7 @@ public class MainMenuPresenter extends AbstractPresenter {
         players.setStyle("-fx-alignment: CENTER-LEFT;");
         name.setPrefWidth(235);
         host.setPrefWidth(135);
-        joinLobby.setPrefWidth(110);
+        joinLobby.setPrefWidth(90);
     }
 
     /**
@@ -273,7 +274,7 @@ public class MainMenuPresenter extends AbstractPresenter {
             @Override
             public TableCell<Lobby, Void> call(final TableColumn<Lobby, Void> param) {
                 final TableCell<Lobby, Void> cell = new TableCell<>() {
-                    final Button joinLobbyButton = new Button("Lobby beitreten");
+                    final Button joinLobbyButton = new Button("Beitreten");
                     {
                         joinLobbyButton.setOnAction((ActionEvent event) -> {
                             Lobby lobby = getTableView().getItems().get(getIndex());

@@ -156,7 +156,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * @since Sprint3
      */
     public void initializeUserList() {
-        lobbyService.retrieveAllUsersInLobby(lobbyID.toString());
+        lobbyService.retrieveAllUsersInLobby(lobbyID);
     }
 
     /**
@@ -169,7 +169,7 @@ public class GameViewPresenter extends AbstractPresenter {
     @Subscribe
     public void newUser(UserJoinedLobbyMessage userJoinedLobbyMessage) {
         if (userJoinedLobbyMessage.getLobbyID().equals(this.lobbyID)) {
-            lobbyService.retrieveAllUsersInLobby(lobbyID.toString());
+            lobbyService.retrieveAllUsersInLobby(lobbyID);
             LOG.debug("New user in Lobby, LobbyService is retrieving users");
         }
     }
@@ -200,12 +200,14 @@ public class GameViewPresenter extends AbstractPresenter {
     private void updateUsersList(List<UserDTO> userList) {
         // Attention: This must be done on the FX Thread!
         Platform.runLater(() -> {
-            if (users == null) {
-                users = FXCollections.observableArrayList();
-                usersView.setItems(users);
+            if (usersView != null) {
+                if (users == null) {
+                    users = FXCollections.observableArrayList();
+                    usersView.setItems(users);
+                }
+                users.clear();
+                userList.forEach(u -> users.add(u.getUsername()));
             }
-            users.clear();
-            userList.forEach(u -> users.add(u.getUsername()));
         });
     }
 }

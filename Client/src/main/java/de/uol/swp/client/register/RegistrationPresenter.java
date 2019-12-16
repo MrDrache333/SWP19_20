@@ -16,6 +16,7 @@ import javafx.scene.control.TextField;
 public class RegistrationPresenter extends AbstractPresenter {
 
     public static final String fxml = "/fxml/RegistrationView.fxml";
+    public static final String css = "css/RegistrationViewPresenter.css";
 
     private static final RegistrationCanceledEvent registrationCanceledEvent = new RegistrationCanceledEvent();
 
