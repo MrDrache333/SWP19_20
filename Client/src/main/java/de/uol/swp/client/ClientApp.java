@@ -188,13 +188,18 @@ public class ClientApp extends Application implements ConnectionListener {
      * Empfängt vom Server die Message, dass der User der Lobby beigetreten ist. Lobbys in Hauptmenü werden aktualisiert.
      *
      * @param message
-     * @author Julia, Paula
+     * @author Paula; Julia
      * @since Sprint3
      */
     @Subscribe
     public void onUserJoinedLobbyMessage(UserJoinedLobbyMessage message) {
         if (message.getUser().getUsername().equals(user.getUsername())) {
-            sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getLobbyID());
+            if(sceneManager.getGameManagement(message.getLobbyID()) != null) {
+                sceneManager.getGameManagement(message.getLobbyID()).showLobbyView();
+            }
+            else {
+                sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getLobbyID());
+            }
             LOG.info("User " + message.getUser().getUsername() + " joined lobby successfully");
         }
         lobbyService.retrieveAllLobbies();
