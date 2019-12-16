@@ -12,7 +12,6 @@ import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
-import de.uol.swp.common.user.dto.UserDTO;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -28,8 +27,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -186,7 +185,7 @@ public class GameViewPresenter extends AbstractPresenter {
     public void userList(AllOnlineUsersInLobbyResponse allOnlineUsersInLobbyResponse) {
         if (allOnlineUsersInLobbyResponse.getLobbyID().equals(this.lobbyID)) {
             LOG.debug("Update of user list with" + allOnlineUsersInLobbyResponse.getUsers());
-            updateUsersList(List.copyOf(allOnlineUsersInLobbyResponse.getUsers()));
+            updateUsersList(allOnlineUsersInLobbyResponse.getUsers());
         }
     }
 
@@ -196,8 +195,9 @@ public class GameViewPresenter extends AbstractPresenter {
      *
      * @author Marvin
      * @since Sprint3
+     * @param userList
      */
-    private void updateUsersList(List<UserDTO> userList) {
+    private void updateUsersList(Set<User> userList) {
         // Attention: This must be done on the FX Thread!
         Platform.runLater(() -> {
             if (usersView != null) {

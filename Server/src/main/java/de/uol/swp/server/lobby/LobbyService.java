@@ -168,7 +168,7 @@ public class LobbyService extends AbstractService {
             Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyName.get());
 
             if (lobby.isPresent()) {
-                ResponseMessage msg = new AllOnlineUsersInLobbyResponse(lobby.get().getLobbyID(), lobby.get().getLobbyUsers());
+                ResponseMessage msg = new AllOnlineUsersInLobbyResponse(lobby.get().getLobbyID(), lobby.get().getUsers(), lobby.get().getEveryReadyStatus());
                 msg.initWithMessage(request);
                 post(msg);
             } else {
@@ -226,7 +226,7 @@ public class LobbyService extends AbstractService {
     private void allPlayersReady(Lobby lobby) {
         if (lobby.getPlayers() == 1) return;
         //Prüfen, ob jeder Spieler in der Lobby fertig ist
-        for (User user : lobby.getLobbyUsers()) {
+        for (User user : lobby.getUsers()) {
             if (!lobby.getReadyStatus(user)) return;
         }
         //Lobby starten
