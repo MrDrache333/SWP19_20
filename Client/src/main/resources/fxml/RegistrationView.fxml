@@ -51,7 +51,8 @@
             <Font size="48.0"/>
         </font>
     </Label>
-    <Button layoutX="948.0" layoutY="563.0" mnemonicParsing="false" onAction="#onRegisterButtonPressed" text="Absenden"
+    <Button fx:id="registerButton" layoutX="948.0" layoutY="563.0" mnemonicParsing="false"
+            onAction="#onRegisterButtonPressed" text="Absenden"
             textAlignment="CENTER">
         <font>
             <Font size="24.0"/>
@@ -63,7 +64,8 @@
             <Font size="24.0"/>
         </font>
     </TextField>
-    <Hyperlink layoutX="914.0" layoutY="608.0" onAction="#onCancelButtonPressed" text="Ich habe bereits einen Account"
+    <Hyperlink fx:id="cancelButton" layoutX="914.0" layoutY="608.0" onAction="#onCancelButtonPressed"
+               text="Ich habe bereits einen Account"
                textFill="#6f6400">
         <font>
             <Font size="15.0"/>

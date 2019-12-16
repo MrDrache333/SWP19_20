@@ -2,6 +2,7 @@ package de.uol.swp.client.main;
 
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.MediaPlayer;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
@@ -27,6 +28,7 @@ import javafx.util.Callback;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +65,8 @@ public class MainMenuPresenter extends AbstractPresenter {
     private TableColumn<Lobby, Void> joinLobby = new TableColumn<>();
     @FXML
     private Pane chatView;
+    @FXML
+    private Button createLobbyButton, logoutButton;
 
     /**
      * Methode fängt ButtonKlick ab, User verlässt alle Lobbies, in denen er angemeldet ist und wird ausgeloggt
@@ -74,6 +78,7 @@ public class MainMenuPresenter extends AbstractPresenter {
 
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
+        new MediaPlayer(new File("/sounds/button_pressed.wav"), MediaPlayer.Type.Sound).play();
         lobbyService.leaveAllLobbiesOnLogout(loggedInUser);
         userService.logout(loggedInUser);
     }
@@ -136,6 +141,10 @@ public class MainMenuPresenter extends AbstractPresenter {
         name.setPrefWidth(235);
         host.setPrefWidth(135);
         joinLobby.setPrefWidth(90);
+
+        createLobbyButton.setOnMouseEntered(event -> new MediaPlayer(new File("/sounds/button_mouseover.wav"), MediaPlayer.Type.Sound).play());
+        logoutButton.setOnMouseEntered(event -> new MediaPlayer(new File("/sounds/button_mouseover.wav"), MediaPlayer.Type.Sound).play());
+
     }
 
     /**
@@ -150,6 +159,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @FXML
     public void OnCreateLobbyButtonPressed(ActionEvent event) {
+        new MediaPlayer(new File("/sounds/button_pressed.wav"), MediaPlayer.Type.Sound).play();
         List<String> lobbyNames = new ArrayList<>();
         lobbies.forEach(lobby -> lobbyNames.add(lobby.getName()));
         if(lobbyNames.contains(lobbyName.getText())) {

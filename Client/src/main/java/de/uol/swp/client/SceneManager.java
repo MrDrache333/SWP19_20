@@ -27,6 +27,7 @@ import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,6 +50,7 @@ public class SceneManager {
     private Scene gameScene;
     private Scene lastScene = null;
     private Scene currentScene = null;
+
 
     private User currentUser;
 
@@ -172,6 +174,7 @@ public class SceneManager {
             primaryStage.setScene(scene);
             primaryStage.setResizable(false);
             primaryStage.show();
+            new MediaPlayer(new File("/sounds/window_opened.wav"), MediaPlayer.Type.Sound).play();
         });
     }
 

@@ -3,6 +3,7 @@ package de.uol.swp.client.chat;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.MediaPlayer;
 import de.uol.swp.common.chat.ChatMessage;
 import de.uol.swp.common.chat.ChatService;
 import de.uol.swp.common.chat.message.NewChatMessage;
@@ -17,10 +18,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -31,6 +29,7 @@ import javafx.scene.layout.VBox;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -104,6 +103,8 @@ public class ChatViewPresenter extends AbstractPresenter {
     private TextField chatTextField;
     @FXML
     private ListView<VBox> messageView;
+    @FXML
+    private Button sendButton;
 
     private ChatService chatService;
     //Liste mit formatierten Chatnachrichten
@@ -200,6 +201,8 @@ public class ChatViewPresenter extends AbstractPresenter {
             LOG.debug("Loading Dark Theme");
             chatViewAnchorPane.getStylesheets().add(styleSheet_dark);
         }
+
+        sendButton.setOnMouseEntered(event -> new MediaPlayer(new File("/sounds/button_mouseover.wav"), MediaPlayer.Type.Sound).play());
     }
 
     //--------------------------------------
@@ -273,6 +276,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      */
     @FXML
     private void onSendChatButtonPressed() {
+        new MediaPlayer(new File("/sounds/button_pressed.wav"), MediaPlayer.Type.Sound).play();
         if (chatId.equals("")) return;
         String message;
 

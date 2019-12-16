@@ -74,18 +74,19 @@
             </PasswordField>
         </children>
     </HBox>
-    <Button defaultButton="true" layoutX="948.0" layoutY="505.0" mnemonicParsing="false"
+    <Button fx:id="LoginButton" defaultButton="true" layoutX="948.0" layoutY="505.0" mnemonicParsing="false"
             onAction="#onLoginButtonPressed" text="Absenden" textAlignment="CENTER">
         <font>
             <Font size="24.0"/>
         </font>
     </Button>
-    <Hyperlink layoutX="947.0" layoutY="465.0" text="Passwort vergessen">
+    <Hyperlink fx:id="forgotPasswordButton" layoutX="947.0" layoutY="465.0" text="Passwort vergessen">
         <font>
             <Font size="15.0"/>
         </font>
     </Hyperlink>
-    <Hyperlink layoutX="916.0" layoutY="561.0" onAction="#onRegisterButtonPressed" text="Ich habe noch keinen Account">
+    <Hyperlink fx:id="registerButton" layoutX="916.0" layoutY="561.0" onAction="#onRegisterButtonPressed"
+               text="Ich habe noch keinen Account">
         <font>
             <Font size="15.0"/>
         </font>

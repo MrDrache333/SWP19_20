@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.MediaPlayer;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.LobbyPresenter;
@@ -20,6 +21,7 @@ import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.net.URL;
 import java.util.UUID;
 
@@ -168,6 +170,7 @@ public class GameManagement {
                 }
             });
             primaryStage.show();
+            new MediaPlayer(new File("/sounds/window_opened.wav"), MediaPlayer.Type.Sound).play();
         });
     }
 

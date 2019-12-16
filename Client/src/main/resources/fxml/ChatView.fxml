@@ -35,7 +35,8 @@
                     <Insets right="5.0"/>
                 </HBox.margin>
             </TextField>
-            <Button defaultButton="true" maxHeight="30.0" maxWidth="90.0" minHeight="30.0" minWidth="90.0"
+            <Button fx:id="sendButton" defaultButton="true" maxHeight="30.0" maxWidth="90.0" minHeight="30.0"
+                    minWidth="90.0"
                     mnemonicParsing="false" onAction="#onSendChatButtonPressed" text="Senden" HBox.hgrow="NEVER"/>
         </HBox>
     </VBox>
