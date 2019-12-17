@@ -67,6 +67,7 @@ public class LobbyPresenter extends AbstractPresenter {
     private UUID lobbyID;
     private String lobbyName;
     private User loggedInUser;
+    private UserDTO loggedInUserDTO;
     private Injector injector;
 
     //Eigener Status in der Lobby
@@ -106,6 +107,7 @@ public class LobbyPresenter extends AbstractPresenter {
         this.chatViewPresenter = chatViewPresenter;
         this.injector = injector;
         this.gameManagement = gameManagement;
+        this.loggedInUserDTO = new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail());
     }
 
     //--------------------------------------
@@ -114,7 +116,7 @@ public class LobbyPresenter extends AbstractPresenter {
 
     @FXML
     public void onLeaveLobbyButtonPressed(ActionEvent event) {
-        lobbyService.leaveLobby(lobbyName, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), lobbyID);
+        lobbyService.leaveLobby(lobbyName, loggedInUserDTO, lobbyID);
     }
 
     /**
@@ -147,7 +149,7 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
-        lobbyService.leaveAllLobbiesOnLogout(new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
+        lobbyService.leaveAllLobbiesOnLogout(loggedInUserDTO);
         userService.logout(loggedInUser);
     }
 
@@ -180,7 +182,7 @@ public class LobbyPresenter extends AbstractPresenter {
             ownReadyStatus = true;
         }
         LOG.debug("Set own ReadyStauts in Lobby " + lobbyID + " to " + (ownReadyStatus ? "Ready" : "Not Ready"));
-        lobbyService.setLobbyUserStatus(lobbyName, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), ownReadyStatus);
+        lobbyService.setLobbyUserStatus(lobbyName, loggedInUserDTO, ownReadyStatus);
     }
 
     //--------------------------------------
@@ -205,9 +207,7 @@ public class LobbyPresenter extends AbstractPresenter {
     private void onReceiveAllUsersInLobby(AllOnlineUsersInLobbyResponse response) {
         if (response.getLobbyID().equals(lobbyID)) {
             readyUserList = new TreeMap<>();
-            response.getUsers().forEach(e -> {
-                readyUserList.put(e.getUsername(), getHboxFromReadyUser(e.getUsername(), e.isReady()));
-            });
+            response.getUsers().forEach(e -> readyUserList.put(e.getUsername(), getHboxFromReadyUser(e.getUsername(), e.isReady())));
             updateUsersList();
         }
     }
@@ -328,8 +328,7 @@ public class LobbyPresenter extends AbstractPresenter {
      * @return All HBoxes as ArrayList
      */
     private ArrayList<HBox> getAllHBoxes() {
-        ArrayList<HBox> list = new ArrayList<>(readyUserList.values());
-        return list;
+        return new ArrayList<>(readyUserList.values());
     }
 
     //--------------------------------------

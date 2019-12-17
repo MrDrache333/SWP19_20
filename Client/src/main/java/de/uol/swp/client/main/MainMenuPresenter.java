@@ -273,7 +273,8 @@ public class MainMenuPresenter extends AbstractPresenter {
         Callback<TableColumn<Lobby, Void>, TableCell<Lobby, Void>> cellFactory = new Callback<>() {
             @Override
             public TableCell<Lobby, Void> call(final TableColumn<Lobby, Void> param) {
-                final TableCell<Lobby, Void> cell = new TableCell<>() {
+
+                return new TableCell<>() {
                     final Button joinLobbyButton = new Button("Beitreten");
                     {
                         joinLobbyButton.setOnAction((ActionEvent event) -> {
@@ -298,8 +299,6 @@ public class MainMenuPresenter extends AbstractPresenter {
                         }
                     }
                 };
-
-                return cell;
             }
         };
 

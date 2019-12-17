@@ -18,13 +18,13 @@ public class LobbyMessageSerializableTest {
     void testLobbyMessagesSerializable() {
         SerializationTestHelper.checkSerializableAndDeserializable(new CreateLobbyRequest("test", defaultUser),
                 CreateLobbyRequest.class);
-        SerializationTestHelper.checkSerializableAndDeserializable(new LobbyJoinUserRequest("test", new UserDTO(defaultUser.getUsername(), defaultUser.getPassword(), defaultUser.getEMail()), testUUID),
+        SerializationTestHelper.checkSerializableAndDeserializable(new LobbyJoinUserRequest("test", defaultUser, testUUID),
                 LobbyJoinUserRequest.class);
-        SerializationTestHelper.checkSerializableAndDeserializable(new LobbyLeaveUserRequest("test", new UserDTO(defaultUser.getUsername(), defaultUser.getPassword(), defaultUser.getEMail()), testUUID),
+        SerializationTestHelper.checkSerializableAndDeserializable(new LobbyLeaveUserRequest("test", defaultUser, testUUID),
                 LobbyLeaveUserRequest.class);
-        SerializationTestHelper.checkSerializableAndDeserializable(new UserJoinedLobbyMessage("test", new UserDTO(defaultUser.getUsername(), defaultUser.getPassword(), defaultUser.getEMail()), testUUID),
+        SerializationTestHelper.checkSerializableAndDeserializable(new UserJoinedLobbyMessage("test", defaultUser, testUUID),
                 UserJoinedLobbyMessage.class);
-        SerializationTestHelper.checkSerializableAndDeserializable(new UserLeftLobbyMessage("test", new UserDTO(defaultUser.getUsername(), defaultUser.getPassword(), defaultUser.getEMail()), testUUID),
+        SerializationTestHelper.checkSerializableAndDeserializable(new UserLeftLobbyMessage("test", defaultUser, testUUID),
                 UserLeftLobbyMessage.class);
     }
 
