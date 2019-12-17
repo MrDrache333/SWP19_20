@@ -1,12 +1,11 @@
 package de.uol.swp.common.lobby.dto;
 
 import de.uol.swp.common.lobby.Lobby;
-import de.uol.swp.common.lobby.LobbyUser;
 import de.uol.swp.common.user.User;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.UUID;
 
@@ -17,7 +16,7 @@ public class LobbyDTO implements Lobby, Serializable {
 
     private final String name;
     private User owner;
-    private ArrayList<LobbyUser> lobbyUsers = new ArrayList<>();
+    private TreeMap<String, Boolean> readyStatus = new TreeMap<>();
     private Set<User> users = new TreeSet<>();
     private int players;
     /**
@@ -37,7 +36,7 @@ public class LobbyDTO implements Lobby, Serializable {
         this.name = name;
         this.owner = creator;
         this.users.add(creator);
-        this.lobbyUsers.add(new LobbyUser(creator));
+        this.readyStatus.put(creator.getUsername(), false);
         this.lobbyID = lobbyID;
         this.players = 1;
     }
@@ -53,6 +52,7 @@ public class LobbyDTO implements Lobby, Serializable {
     public LobbyDTO(String name, User creator, UUID lobbyID, Set<User> users, int players) {
         this.name = name;
         this.owner = creator;
+        this.readyStatus.put(creator.getUsername(), false);
         this.users = users;
         this.lobbyID = lobbyID;
         this.players = players;
@@ -66,7 +66,8 @@ public class LobbyDTO implements Lobby, Serializable {
     @Override
     public void joinUser(User user) {
         if (users.size() < 4) {
-            this.users.add(new LobbyUser(user));
+            this.users.add(user);
+            this.readyStatus.put(user.getUsername(), false);
             players++;
         }
         // TODO: Hier Fehlermeldung implementieren?
@@ -76,6 +77,7 @@ public class LobbyDTO implements Lobby, Serializable {
     public void leaveUser(User user) {
         if (users.contains(user)) {
             this.users.remove(user);
+            this.readyStatus.remove(user.getUsername());
             players--;
             if (this.owner.equals(user) && users.size() > 0) {
                 updateOwner(users.iterator().next());
@@ -104,11 +106,6 @@ public class LobbyDTO implements Lobby, Serializable {
     }
 
     @Override
-    public ArrayList<LobbyUser> getLobbyUsers() {
-        return lobbyUsers;
-    }
-
-    @Override
     public UUID getLobbyID() {
         return lobbyID;
     }
@@ -125,16 +122,23 @@ public class LobbyDTO implements Lobby, Serializable {
 
     @Override
     public void setReadyStatus(User user, boolean status) {
-        for (LobbyUser usr : lobbyUsers) {
-            if (usr.getUsername().equals(user.getUsername())) usr.setReady(status);
+        if (readyStatus.containsKey(user.getUsername())) {
+            readyStatus.replace(user.getUsername(), status);
         }
     }
 
     @Override
     public boolean getReadyStatus(User user) {
-        for (LobbyUser usr : lobbyUsers) {
-            if (usr.getUsername().equals(user.getUsername())) return usr.isReady();
-        }
-        return false;
+        if (!readyStatus.containsKey(user.getUsername())) return false;
+        return readyStatus.get(user.getUsername());
+    }
+
+    /**
+     * Gets readyStatus.
+     *
+     * @return Value of readyStatus.
+     */
+    public TreeMap<String, Boolean> getEveryReadyStatus() {
+        return readyStatus;
     }
 }

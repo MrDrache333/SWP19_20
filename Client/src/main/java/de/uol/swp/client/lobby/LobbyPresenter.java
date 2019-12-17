@@ -205,7 +205,7 @@ public class LobbyPresenter extends AbstractPresenter {
         if (response.getLobbyID().equals(lobbyID)) {
             readyUserList = new TreeMap<>();
             response.getUsers().forEach(e -> {
-                readyUserList.put(e.getUsername(), getHboxFromReadyUser(e.getUsername(), e.isReady()));
+                readyUserList.put(e.getUsername(), getHboxFromReadyUser(e.getUsername(), response.getStatus(e)));
             });
             updateUsersList();
         }
