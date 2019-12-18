@@ -47,6 +47,9 @@ public class ClientApp extends Application implements ConnectionListener {
     // Java FX Methods
     // ----------------------------------------------------
 
+    public static void main(String[] args) {
+        launch(args);
+    }
 
     @Override
     public void init() {
@@ -67,7 +70,6 @@ public class ClientApp extends Application implements ConnectionListener {
         // if connection is established in this stage, no GUI is shown and
         // exceptions are only visible in console!
     }
-
 
     @Override
     public void start(Stage primaryStage) {
@@ -108,12 +110,10 @@ public class ClientApp extends Application implements ConnectionListener {
         t.start();
     }
 
-
     @Override
     public void connectionEstablished(Channel ch) {
         sceneManager.showLoginScreen();
     }
-
 
     @Override
     public void stop() {
@@ -132,14 +132,14 @@ public class ClientApp extends Application implements ConnectionListener {
         LOG.info("ClientConnection shutdown");
     }
 
+    //----------------
+    // EVENTBUS
+    //----------------
+
     @Override
     public void exceptionOccurred(String e) {
         sceneManager.showServerError(e);
     }
-
-    //----------------
-    // EVENTBUS
-    //----------------
 
     @Subscribe
     public void userLoggedIn(LoginSuccessfulResponse message) {
@@ -164,7 +164,6 @@ public class ClientApp extends Application implements ConnectionListener {
     private void handleEventBusError(DeadEvent deadEvent) {
         LOG.error("DeadEvent detected " + deadEvent);
     }
-
 
     /**
      * Empfängt vom Server die Message, dass die Lobby erstellt worden ist und öffnet im SceneManager
@@ -207,7 +206,6 @@ public class ClientApp extends Application implements ConnectionListener {
      * @param message
      * @author Julia, Paula
      * @since Sprint3
-     *
      */
     @Subscribe
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
@@ -218,6 +216,11 @@ public class ClientApp extends Application implements ConnectionListener {
         }
         lobbyService.retrieveAllLobbies();
     }
+
+
+    // -----------------------------------------------------
+    // JavFX Help methods
+    // -----------------------------------------------------
 
     /**
      * Empfängt vom Server die Message, dass sich der Nutzer ausgeloggt hat. Der Nutzer wird aus allen Lobbys gelöscht.
@@ -236,16 +239,6 @@ public class ClientApp extends Application implements ConnectionListener {
         }
         lobbyService.retrieveAllLobbies();
 
-    }
-
-
-    // -----------------------------------------------------
-    // JavFX Help methods
-    // -----------------------------------------------------
-
-
-    public static void main(String[] args) {
-        launch(args);
     }
 
     /**

@@ -47,7 +47,7 @@ public class UUIDSession implements Session {
 
     @Override
     public String toString() {
-        return "SessionId: "+sessionId;
+        return "SessionId: " + sessionId;
     }
 
 }

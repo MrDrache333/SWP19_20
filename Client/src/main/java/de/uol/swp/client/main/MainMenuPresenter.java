@@ -65,21 +65,6 @@ public class MainMenuPresenter extends AbstractPresenter {
     private Pane chatView;
 
     /**
-     * Methode fängt ButtonKlick ab, User verlässt alle Lobbies, in denen er angemeldet ist und wird ausgeloggt
-     *
-     * @param actionEvent
-     * @author Julia, Paula
-     * @since sprint3
-     */
-
-    @FXML
-    public void onLogoutButtonPressed(ActionEvent actionEvent) {
-        lobbyService.leaveAllLobbiesOnLogout(new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
-        userService.logout(loggedInUser);
-    }
-
-
-    /**
      * @author Paula, Haschem, Ferit
      * @version 0.1
      * Fängt den Button ab und sendet den Request zur Erstellung der Lobby an den Server.
@@ -92,6 +77,20 @@ public class MainMenuPresenter extends AbstractPresenter {
         alert.getDialogPane().setContentText(message);
         alert.getDialogPane().setHeaderText(title);
         alert.show();
+    }
+
+    /**
+     * Methode fängt ButtonKlick ab, User verlässt alle Lobbies, in denen er angemeldet ist und wird ausgeloggt
+     *
+     * @param actionEvent
+     * @author Julia, Paula
+     * @since sprint3
+     */
+
+    @FXML
+    public void onLogoutButtonPressed(ActionEvent actionEvent) {
+        lobbyService.leaveAllLobbiesOnLogout(new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
+        userService.logout(loggedInUser);
     }
 
     //--------------------------------------
@@ -152,16 +151,14 @@ public class MainMenuPresenter extends AbstractPresenter {
     public void OnCreateLobbyButtonPressed(ActionEvent event) {
         List<String> lobbyNames = new ArrayList<>();
         lobbies.forEach(lobby -> lobbyNames.add(lobby.getName()));
-        if(lobbyNames.contains(lobbyName.getText())) {
+        if (lobbyNames.contains(lobbyName.getText())) {
             showAlert(Alert.AlertType.WARNING, "Dieser Name ist bereits vergeben", "Fehler");
             lobbyName.requestFocus();
-        }
-        else if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName.getText())){
+        } else if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName.getText())) {
             CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
             eventBus.post(msg);
             LOG.info("Request wurde gesendet.");
-        }
-        else{
+        } else {
             showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden", "Fehler");
             lobbyName.requestFocus();
         }
@@ -276,6 +273,7 @@ public class MainMenuPresenter extends AbstractPresenter {
 
                 return new TableCell<>() {
                     final Button joinLobbyButton = new Button("Beitreten");
+
                     {
                         joinLobbyButton.setOnAction((ActionEvent event) -> {
                             Lobby lobby = getTableView().getItems().get(getIndex());

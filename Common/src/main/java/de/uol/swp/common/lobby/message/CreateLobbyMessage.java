@@ -2,6 +2,7 @@ package de.uol.swp.common.lobby.message;
 
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.user.UserDTO;
+
 import java.util.UUID;
 
 public class CreateLobbyMessage extends AbstractLobbyMessage {
@@ -11,7 +12,8 @@ public class CreateLobbyMessage extends AbstractLobbyMessage {
 
     private Lobby lobby;
 
-    public CreateLobbyMessage() {}
+    public CreateLobbyMessage() {
+    }
 
     public CreateLobbyMessage(String lobbyName, UserDTO user, UUID ChatID) {
         this.lobbyName = lobbyName;

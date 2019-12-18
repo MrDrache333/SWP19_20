@@ -31,17 +31,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class LobbyServiceTest {
 
-    private CountDownLatch lock = new CountDownLatch(1);
-    private Object event;
-
     static final User lobbyOwner = new UserDTO("Marco", "Marco", "Marco@Grawunder.com");
     static final User lobbyUser = new UserDTO("Testuser", "1234", "123@test.de");
     static final String defaultLobbyName = "Lobby";
-
     final EventBus bus = new EventBus();
     final UserManagement userManagement = new UserManagement(new MainMemoryBasedUserStore());
     final LobbyManagement lobbyManagement = new LobbyManagement();
     final LobbyService lobbyService = new LobbyService(lobbyManagement, new AuthenticationService(bus, userManagement), new ChatManagement(), bus);
+    private CountDownLatch lock = new CountDownLatch(1);
+    private Object event;
 
     @Subscribe
     void handle(DeadEvent e) {

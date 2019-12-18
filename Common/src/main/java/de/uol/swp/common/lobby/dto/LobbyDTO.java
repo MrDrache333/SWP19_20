@@ -16,9 +16,9 @@ import java.util.UUID;
 public class LobbyDTO implements Lobby, Serializable {
 
     private final String name;
+    private final Set<User> users = new TreeSet<>();
     private User owner;
     private ArrayList<LobbyUser> lobbyUsers = new ArrayList<>();
-    private final Set<User> users = new TreeSet<>();
     private int players;
     /**
      * Eindeutige UUID für die Lobby um Lobbys mit gleichen Namen unterscheiden zu können Serverseitig.

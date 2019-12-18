@@ -5,6 +5,7 @@ import de.uol.swp.common.user.UserDTO;
 
 /**
  * The type Lobby user.
+ *
  * @author Keno Oelrichs Garcia
  * @Version 1.0
  * @since Sprint3

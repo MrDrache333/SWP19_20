@@ -1,6 +1,5 @@
 package de.uol.swp.common;
 
-import de.uol.swp.common.SerializationTestHelper;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import de.uol.swp.common.user.message.UsersListMessage;

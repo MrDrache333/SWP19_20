@@ -7,7 +7,7 @@
 <?import javafx.scene.text.*?>
 <?import java.net.URL?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="750.0" prefWidth="1280.0"
-            xmlns="http://javafx.com/javafx/11.0.1" fx:controller="de.uol.swp.client.auth.LoginPresenter">
+            xmlns="http://javafx.com/javafx/10.0.2-internal" fx:controller="de.uol.swp.client.auth.LoginPresenter">
     <stylesheets>
         <URL value="@../css/LoginView.css"/>
         <URL value="@../css/global.css"/>

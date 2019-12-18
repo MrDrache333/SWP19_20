@@ -10,7 +10,8 @@ public class AbstractLobbyRequest extends AbstractRequestMessage {
     private String lobbyName;
     private UserDTO user;
 
-    public AbstractLobbyRequest() {}
+    public AbstractLobbyRequest() {
+    }
 
     public AbstractLobbyRequest(String lobbyName, UserDTO user) {
         this.lobbyName = lobbyName;

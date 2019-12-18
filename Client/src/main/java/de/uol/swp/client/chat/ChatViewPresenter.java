@@ -120,7 +120,7 @@ public class ChatViewPresenter extends AbstractPresenter {
     /**
      * Instantiates a new Chat view presenter.
      *
-     * @param chatTitle        the name
+     * @param chatTitle   the name
      * @param theme       the theme
      * @param chatService the chat service
      */
@@ -243,7 +243,6 @@ public class ChatViewPresenter extends AbstractPresenter {
     //--------------------------------------
     // METHODS
     //--------------------------------------
-
 
 
     /**

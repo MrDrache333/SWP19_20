@@ -1,6 +1,7 @@
 package de.uol.swp.common.lobby.message;
 
 import de.uol.swp.common.message.AbstractServerMessage;
+
 import java.util.UUID;
 
 public class StartGameMessage extends AbstractServerMessage {

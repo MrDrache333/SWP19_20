@@ -11,7 +11,8 @@ import de.uol.swp.common.user.UserDTO;
  */
 public class CreateLobbyRequest extends AbstractLobbyRequest {
 
-    public CreateLobbyRequest() {}
+    public CreateLobbyRequest() {
+    }
 
     public CreateLobbyRequest(String lobbyName, UserDTO owner) {
         super(lobbyName, owner);
