@@ -1,54 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            prefHeight="750.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/10.0.2-internal">
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="900.0" stylesheets="@../css/LobbyPresenter.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
     <children>
+      <ImageView fitHeight="777.0" fitWidth="900.0" opacity="0.9" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="-27.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <image>
+            <Image url="@../images/lobby_background.png" />
+         </image>
+      </ImageView>
         <GridPane prefHeight="750.0" prefWidth="900.0">
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints maxHeight="56.0" minHeight="10.0" prefHeight="49.0" vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="587.0" minHeight="10.0" prefHeight="587.0" vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="-Infinity" minHeight="0.0" prefHeight="50.0" vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="-Infinity" minHeight="0.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="56.0" minHeight="10.0" prefHeight="49.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="587.0" minHeight="10.0" prefHeight="587.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="-Infinity" minHeight="0.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="-Infinity" minHeight="0.0" prefHeight="50.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
                 <AnchorPane prefHeight="200.0" prefWidth="200.0">
                     <children>
-                        <Button layoutX="770.0" layoutY="16.0" mnemonicParsing="false" onAction="#onLeaveLobbyButtonPressed" text="Lobby verlassen"
-                                AnchorPane.rightAnchor="20.0">
+                        <Button layoutX="770.0" layoutY="16.0" mnemonicParsing="false" onAction="#onLeaveLobbyButtonPressed" text="Lobby verlassen" AnchorPane.rightAnchor="20.0">
                             <font>
-                                <Font name="Arial" size="15.0"/>
+                                <Font name="Arial" size="15.0" />
                             </font>
                         </Button>
                     </children>
                 </AnchorPane>
                 <GridPane GridPane.rowIndex="1">
                     <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="428.0" minWidth="10.0" prefWidth="221.0"/>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="450.0"/>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="0.0" prefWidth="25.0"/>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="250.0"/>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="0.0" prefWidth="25.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="428.0" minWidth="10.0" prefWidth="221.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="450.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="0.0" prefWidth="25.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="250.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="0.0" prefWidth="25.0" />
                     </columnConstraints>
                     <rowConstraints>
-                        <RowConstraints maxHeight="289.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                        <RowConstraints maxHeight="557.0" minHeight="10.0" prefHeight="557.0" vgrow="SOMETIMES"/>
+                        <RowConstraints maxHeight="289.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="557.0" minHeight="10.0" prefHeight="557.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                     <children>
-                        <Pane fx:id="chatView" prefHeight="557.0" prefWidth="436.0" GridPane.columnIndex="1"
-                              GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS"/>
-                        <ListView fx:id="usersView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3"
-                                  GridPane.rowIndex="1"/>
+                        <Pane fx:id="chatView" prefHeight="557.0" prefWidth="436.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" />
+                        <ListView fx:id="usersView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                         <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3">
+
                             <children>
                                 <Label layoutX="104.0" layoutY="6.0" text="User">
                                     <font>
-                                        <Font name="Arial Bold" size="15.0"/>
+                                        <Font name="Arial Bold" size="15.0" />
                                     </font>
                                 </Label>
                             </children>
@@ -57,7 +62,7 @@
                             <children>
                                 <Label layoutX="201.0" layoutY="7.0" text="Chat">
                                     <font>
-                                        <Font name="Arial Bold" size="15.0"/>
+                                        <Font name="Arial Bold" size="15.0" />
                                     </font>
                                 </Label>
                             </children>
@@ -66,29 +71,24 @@
                 </GridPane>
                 <AnchorPane prefHeight="196.0" prefWidth="900.0" GridPane.rowIndex="2">
                     <children>
-                        <Button layoutX="26.0" layoutY="13.0" mnemonicParsing="false"
-                                onAction="#onInstructionsButtonPressed" text="Spielanleitung"
-                                AnchorPane.leftAnchor="25.0"/>
+                        <Button layoutX="26.0" layoutY="13.0" mnemonicParsing="false" onAction="#onInstructionsButtonPressed" text="Spielanleitung" AnchorPane.leftAnchor="25.0" />
                     </children>
                 </AnchorPane>
                 <AnchorPane prefHeight="34.0" prefWidth="600.0" GridPane.rowIndex="3">
                     <children>
-                        <Button layoutX="31.0" layoutY="10.0" mnemonicParsing="false" text="Einstellungen"
-                                AnchorPane.leftAnchor="25.0">
+                        <Button layoutX="31.0" layoutY="10.0" mnemonicParsing="false" text="Einstellungen" AnchorPane.leftAnchor="25.0">
                             <font>
-                                <Font size="15.0"/>
+                                <Font size="15.0" />
                             </font>
                         </Button>
-                        <Button fx:id="readyButton" layoutX="181.0" layoutY="10.0" mnemonicParsing="false"
-                                onAction="#onReadyButtonPressed" text="Bereit">
+                        <Button fx:id="readyButton" layoutX="181.0" layoutY="10.0" mnemonicParsing="false" onAction="#onReadyButtonPressed" text="Bereit">
                             <font>
-                                <Font size="15.0"/>
+                                <Font size="15.0" />
                             </font>
                         </Button>
-                        <Button layoutX="818.0" layoutY="10.0" mnemonicParsing="false" onAction="#onLogoutButtonPressed"
-                                text="Logout" AnchorPane.rightAnchor="20.0">
+                        <Button layoutX="818.0" layoutY="10.0" mnemonicParsing="false" onAction="#onLogoutButtonPressed" text="Logout" AnchorPane.rightAnchor="20.0">
                             <font>
-                                <Font size="15.0"/>
+                                <Font size="15.0" />
                             </font>
                         </Button>
                     </children>
