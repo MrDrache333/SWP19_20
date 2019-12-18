@@ -7,11 +7,11 @@ import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.lobby.request.CreateLobbyRequest;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
-import de.uol.swp.common.user.dto.UserDTO;
+import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import de.uol.swp.common.user.response.AllOnlineUsersResponse;
-import de.uol.swp.common.user.response.LoginSuccessfulMessage;
+import de.uol.swp.common.user.response.LoginSuccessfulResponse;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -65,21 +65,6 @@ public class MainMenuPresenter extends AbstractPresenter {
     private Pane chatView;
 
     /**
-     * Methode fängt ButtonKlick ab, User verlässt alle Lobbies, in denen er angemeldet ist und wird ausgeloggt
-     *
-     * @param actionEvent
-     * @author Julia, Paula
-     * @since sprint3
-     */
-
-    @FXML
-    public void onLogoutButtonPressed(ActionEvent actionEvent) {
-        lobbyService.leaveAllLobbiesOnLogout(loggedInUser);
-        userService.logout(loggedInUser);
-    }
-
-
-    /**
      * @author Paula, Haschem, Ferit
      * @version 0.1
      * Fängt den Button ab und sendet den Request zur Erstellung der Lobby an den Server.
@@ -92,6 +77,20 @@ public class MainMenuPresenter extends AbstractPresenter {
         alert.getDialogPane().setContentText(message);
         alert.getDialogPane().setHeaderText(title);
         alert.show();
+    }
+
+    /**
+     * Methode fängt ButtonKlick ab, User verlässt alle Lobbies, in denen er angemeldet ist und wird ausgeloggt
+     *
+     * @param actionEvent
+     * @author Julia, Paula
+     * @since sprint3
+     */
+
+    @FXML
+    public void onLogoutButtonPressed(ActionEvent actionEvent) {
+        lobbyService.leaveAllLobbiesOnLogout(new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
+        userService.logout(loggedInUser);
     }
 
     //--------------------------------------
@@ -152,16 +151,14 @@ public class MainMenuPresenter extends AbstractPresenter {
     public void OnCreateLobbyButtonPressed(ActionEvent event) {
         List<String> lobbyNames = new ArrayList<>();
         lobbies.forEach(lobby -> lobbyNames.add(lobby.getName()));
-        if(lobbyNames.contains(lobbyName.getText())) {
+        if (lobbyNames.contains(lobbyName.getText())) {
             showAlert(Alert.AlertType.WARNING, "Dieser Name ist bereits vergeben", "Fehler");
             lobbyName.requestFocus();
-        }
-        else if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName.getText())){
-            CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), loggedInUser);
+        } else if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName.getText())) {
+            CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
             eventBus.post(msg);
             LOG.info("Request wurde gesendet.");
-        }
-        else{
+        } else {
             showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden", "Fehler");
             lobbyName.requestFocus();
         }
@@ -175,7 +172,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      * @param message the message
      */
     @Subscribe
-    public void loginSuccessful(LoginSuccessfulMessage message) {
+    public void loginSuccessful(LoginSuccessfulResponse message) {
         loggedInUser = message.getUser();
         chatViewPresenter.setloggedInUser(loggedInUser);
         chatViewPresenter.userJoined(loggedInUser.getUsername());
@@ -193,7 +190,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     public void newUser(UserLoggedInMessage message) {
         LOG.debug("New user " + message.getUsername() + " logged in");
         Platform.runLater(() -> {
-            if (users != null && loggedInUser != null && !loggedInUser.equals(message.getUsername())) {
+            if (users != null && loggedInUser != null && !loggedInUser.getUsername().equals(message.getUsername())) {
                 chatViewPresenter.userJoined(message.getUsername());
                 users.add(message.getUsername());
             }
@@ -273,8 +270,10 @@ public class MainMenuPresenter extends AbstractPresenter {
         Callback<TableColumn<Lobby, Void>, TableCell<Lobby, Void>> cellFactory = new Callback<>() {
             @Override
             public TableCell<Lobby, Void> call(final TableColumn<Lobby, Void> param) {
-                final TableCell<Lobby, Void> cell = new TableCell<>() {
+
+                return new TableCell<>() {
                     final Button joinLobbyButton = new Button("Beitreten");
+
                     {
                         joinLobbyButton.setOnAction((ActionEvent event) -> {
                             Lobby lobby = getTableView().getItems().get(getIndex());
@@ -283,7 +282,7 @@ public class MainMenuPresenter extends AbstractPresenter {
                             } else if (lobby.getUsers().contains(loggedInUser)) {
                                 showAlert(Alert.AlertType.WARNING, "Du bist dieser Lobby schon beigetreten!", "Fehler");
                             } else {
-                                lobbyService.joinLobby(lobby.getName(), loggedInUser, lobby.getLobbyID());
+                                lobbyService.joinLobby(lobby.getName(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), lobby.getLobbyID());
                             }
                         });
                     }
@@ -298,8 +297,6 @@ public class MainMenuPresenter extends AbstractPresenter {
                         }
                     }
                 };
-
-                return cell;
             }
         };
 

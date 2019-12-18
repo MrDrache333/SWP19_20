@@ -1,6 +1,7 @@
 package de.uol.swp.server.usermanagement;
 
 import com.google.common.base.Strings;
+import com.google.inject.Inject;
 import de.uol.swp.common.user.User;
 import de.uol.swp.server.usermanagement.store.UserStore;
 
@@ -14,6 +15,7 @@ public class UserManagement extends AbstractUserManagement {
     private final UserStore userStore;
     private final SortedMap<String, User> loggedInUsers = new TreeMap<>();
 
+    @Inject
     public UserManagement(UserStore userStore) {
         this.userStore = userStore;
     }

@@ -1,14 +1,15 @@
 package de.uol.swp.common.lobby.message;
 
-import de.uol.swp.common.user.User;
+import de.uol.swp.common.user.UserDTO;
 
 import java.util.UUID;
 
 public class UserLeftLobbyMessage extends AbstractLobbyMessage {
 
-    public UserLeftLobbyMessage() {}
+    public UserLeftLobbyMessage() {
+    }
 
-    public UserLeftLobbyMessage(String lobbyName, User user, UUID lobbyID) {
+    public UserLeftLobbyMessage(String lobbyName, UserDTO user, UUID lobbyID) {
         super(lobbyName, user, lobbyID);
     }
 }

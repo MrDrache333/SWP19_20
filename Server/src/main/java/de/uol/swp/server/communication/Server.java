@@ -10,7 +10,7 @@ import de.uol.swp.common.message.*;
 import de.uol.swp.common.user.Session;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
-import de.uol.swp.common.user.response.LoginSuccessfulMessage;
+import de.uol.swp.common.user.response.LoginSuccessfulResponse;
 import de.uol.swp.server.message.ClientAuthorizedMessage;
 import de.uol.swp.server.message.ClientDisconnectedMessage;
 import de.uol.swp.server.message.ServerExceptionMessage;
@@ -157,9 +157,9 @@ public class Server implements ServerHandlerDelegate {
     @Subscribe
     private void onClientAuthorized(ClientAuthorizedMessage msg) {
         Optional<ChannelHandlerContext> ctx = getCtx(msg);
-        if (ctx.isPresent()) {
+        if (ctx.isPresent() && msg.getSession().isPresent()) {
             putSession(ctx.get(), msg.getSession().get());
-            sendToClient(ctx.get(), new LoginSuccessfulMessage(msg.getUser()));
+            sendToClient(ctx.get(), new LoginSuccessfulResponse(msg.getUser()));
             sendMessage(new UserLoggedInMessage(msg.getUser().getUsername()));
         } else {
             LOG.warn("No context for " + msg);
@@ -169,9 +169,7 @@ public class Server implements ServerHandlerDelegate {
     @Subscribe
     private void onUserLoggedOutMessage(UserLoggedOutMessage msg) {
         Optional<ChannelHandlerContext> ctx = getCtx(msg);
-        if (ctx.isPresent()) {
-            removeSession(ctx.get());
-        }
+        ctx.ifPresent(this::removeSession);
         sendMessage(msg);
     }
 
@@ -247,9 +245,7 @@ public class Server implements ServerHandlerDelegate {
         List<ChannelHandlerContext> ctxs = new ArrayList<>();
         receiver.forEach(r -> {
             Optional<ChannelHandlerContext> s = getCtx(r);
-            if (s.isPresent()) {
-                ctxs.add(s.get());
-            }
+            s.ifPresent(ctxs::add);
         });
         return ctxs;
     }

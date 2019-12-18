@@ -5,7 +5,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.common.user.Session;
 import de.uol.swp.common.user.User;
-import de.uol.swp.common.user.dto.UserDTO;
+import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import de.uol.swp.common.user.request.LoginRequest;
 import de.uol.swp.common.user.request.LogoutRequest;
@@ -34,7 +34,7 @@ class AuthenticationServiceTest {
     final EventBus bus = new EventBus();
     final UserManagement userManagement = new UserManagement(userStore);
     final AuthenticationService authService = new AuthenticationService(bus, userManagement);
-    private CountDownLatch lock = new CountDownLatch(1);
+    private final CountDownLatch lock = new CountDownLatch(1);
     private Object event;
 
     @Subscribe
@@ -93,6 +93,7 @@ class AuthenticationServiceTest {
         lock.await(1000, TimeUnit.MILLISECONDS);
 
         assertFalse(userManagement.isLoggedIn(user));
+        assertTrue(authService.getSession(user).isEmpty());
         assertTrue(event instanceof UserLoggedOutMessage);
     }
 
@@ -128,7 +129,7 @@ class AuthenticationServiceTest {
         users.add(user2);
         Collections.sort(users);
 
-        users.forEach(u -> loginUser(u));
+        users.forEach(this::loginUser);
 
         RetrieveAllOnlineUsersRequest request = new RetrieveAllOnlineUsersRequest();
         bus.post(request);
@@ -136,8 +137,7 @@ class AuthenticationServiceTest {
         lock.await(1000, TimeUnit.MILLISECONDS);
         assertTrue(event instanceof AllOnlineUsersResponse);
 
-        List<User> returnedUsers = new ArrayList<>();
-        returnedUsers.addAll(((AllOnlineUsersResponse) event).getUsers());
+        List<User> returnedUsers = new ArrayList<>(((AllOnlineUsersResponse) event).getUsers());
 
         assertEquals(returnedUsers.size(), 2);
 

@@ -214,7 +214,6 @@ public class LobbyService extends AbstractService {
     }
 
 
-
     /**
      * überprüft ob alle Spieler bereit sind
      * Spiel startet wenn 4 Spieler Bereit sind

@@ -15,6 +15,7 @@ import java.util.UUID;
 public class LobbyDTO implements Lobby, Serializable {
 
     private final String name;
+    private final Set<User> users = new TreeSet<>();
     private User owner;
     private TreeMap<String, Boolean> readyStatus = new TreeMap<>();
     private Set<User> users = new TreeSet<>();
@@ -49,7 +50,7 @@ public class LobbyDTO implements Lobby, Serializable {
      * @param lobbyID the lobby id
      * @param players the players
      */
-    public LobbyDTO(String name, User creator, UUID lobbyID, Set<User> users, int players) {
+    public LobbyDTO(String name, User creator, UUID lobbyID, int players) {
         this.name = name;
         this.owner = creator;
         this.readyStatus.put(creator.getUsername(), false);
