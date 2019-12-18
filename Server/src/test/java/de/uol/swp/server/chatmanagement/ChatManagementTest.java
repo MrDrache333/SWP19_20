@@ -3,7 +3,7 @@ package de.uol.swp.server.chatmanagement;
 import com.google.common.eventbus.EventBus;
 import de.uol.swp.common.chat.ChatMessage;
 import de.uol.swp.common.user.User;
-import de.uol.swp.common.user.dto.UserDTO;
+import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.chat.ChatManagement;
 import org.junit.jupiter.api.Test;
 

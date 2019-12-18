@@ -7,11 +7,11 @@ import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.lobby.request.CreateLobbyRequest;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
-import de.uol.swp.common.user.dto.UserDTO;
+import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import de.uol.swp.common.user.response.AllOnlineUsersResponse;
-import de.uol.swp.common.user.response.LoginSuccessfulMessage;
+import de.uol.swp.common.user.response.LoginSuccessfulResponse;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -28,6 +28,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -40,6 +41,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      * The constant fxml.
      */
     public static final String fxml = "/fxml/MainMenuView.fxml";
+    public static final String css = "css/MainMenuPresenter.css";
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
     private ObservableList<String> users;
     private ChatViewPresenter chatViewPresenter;
@@ -63,21 +65,6 @@ public class MainMenuPresenter extends AbstractPresenter {
     private Pane chatView;
 
     /**
-     * Methode fängt ButtonKlick ab, User verlässt alle Lobbies, in denen er angemeldet ist und wird ausgeloggt
-     *
-     * @param actionEvent
-     * @author Julia, Paula
-     * @since sprint3
-     */
-
-    @FXML
-    public void onLogoutButtonPressed(ActionEvent actionEvent) {
-        lobbyService.leaveAllLobbiesOnLogout(loggedInUser);
-        userService.logout(loggedInUser);
-    }
-
-
-    /**
      * @author Paula, Haschem, Ferit
      * @version 0.1
      * Fängt den Button ab und sendet den Request zur Erstellung der Lobby an den Server.
@@ -92,6 +79,20 @@ public class MainMenuPresenter extends AbstractPresenter {
         alert.show();
     }
 
+    /**
+     * Methode fängt ButtonKlick ab, User verlässt alle Lobbies, in denen er angemeldet ist und wird ausgeloggt
+     *
+     * @param actionEvent
+     * @author Julia, Paula
+     * @since sprint3
+     */
+
+    @FXML
+    public void onLogoutButtonPressed(ActionEvent actionEvent) {
+        lobbyService.leaveAllLobbiesOnLogout(new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
+        userService.logout(loggedInUser);
+    }
+
     //--------------------------------------
     // EVENTBUS
     //--------------------------------------
@@ -104,7 +105,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     @FXML
     public void initialize() throws IOException {
         //Neue Instanz einer ChatViewPresenter-Controller-Klasse erstellen und nötige Parameter uebergeben
-        chatViewPresenter = new ChatViewPresenter("allgemeiner", "global", loggedInUser, ChatViewPresenter.THEME.Light, chatService);
+        chatViewPresenter = new ChatViewPresenter("globaler", "global", loggedInUser, ChatViewPresenter.THEME.Light, chatService);
         chatViewPresenter.setChatId("global");
         eventBus.register(chatViewPresenter);
         //FXML laden
@@ -114,8 +115,8 @@ public class MainMenuPresenter extends AbstractPresenter {
         //Den ChatView in die chatView-Pane dieses Controllers laden
         chatView.getChildren().add(loader.load());
         //Fenstergroesse uebernehmen
-        ((Pane) chatView.getChildren().get(0)).setPrefHeight(chatView.getPrefHeight());
-        ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getPrefWidth());
+        ((Pane) chatView.getChildren().get(0)).setMinHeight(chatView.getMinHeight());
+        ((Pane) chatView.getChildren().get(0)).setMinWidth(chatView.getMinWidth());
 
         //Initialisieren der Lobbytabelle
         name.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getName()));
@@ -133,7 +134,7 @@ public class MainMenuPresenter extends AbstractPresenter {
         players.setStyle("-fx-alignment: CENTER-LEFT;");
         name.setPrefWidth(235);
         host.setPrefWidth(135);
-        joinLobby.setPrefWidth(110);
+        joinLobby.setPrefWidth(90);
     }
 
     /**
@@ -148,8 +149,13 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @FXML
     public void OnCreateLobbyButtonPressed(ActionEvent event) {
-        if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName.getText())) {
-            CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), loggedInUser);
+        List<String> lobbyNames = new ArrayList<>();
+        lobbies.forEach(lobby -> lobbyNames.add(lobby.getName()));
+        if (lobbyNames.contains(lobbyName.getText())) {
+            showAlert(Alert.AlertType.WARNING, "Dieser Name ist bereits vergeben", "Fehler");
+            lobbyName.requestFocus();
+        } else if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName.getText())) {
+            CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
             eventBus.post(msg);
             LOG.info("Request wurde gesendet.");
         } else {
@@ -166,7 +172,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      * @param message the message
      */
     @Subscribe
-    public void loginSuccessful(LoginSuccessfulMessage message) {
+    public void loginSuccessful(LoginSuccessfulResponse message) {
         loggedInUser = message.getUser();
         chatViewPresenter.setloggedInUser(loggedInUser);
         chatViewPresenter.userJoined(loggedInUser.getUsername());
@@ -184,7 +190,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     public void newUser(UserLoggedInMessage message) {
         LOG.debug("New user " + message.getUsername() + " logged in");
         Platform.runLater(() -> {
-            if (users != null && loggedInUser != null && !loggedInUser.equals(message.getUsername())) {
+            if (users != null && loggedInUser != null && !loggedInUser.getUsername().equals(message.getUsername())) {
                 chatViewPresenter.userJoined(message.getUsername());
                 users.add(message.getUsername());
             }
@@ -260,8 +266,9 @@ public class MainMenuPresenter extends AbstractPresenter {
         Callback<TableColumn<Lobby, Void>, TableCell<Lobby, Void>> cellFactory = new Callback<>() {
             @Override
             public TableCell<Lobby, Void> call(final TableColumn<Lobby, Void> param) {
-                final TableCell<Lobby, Void> cell = new TableCell<>() {
-                    final Button joinLobbyButton = new Button("Lobby beitreten");
+
+                return new TableCell<>() {
+                    final Button joinLobbyButton = new Button("Beitreten");
 
                     {
                         joinLobbyButton.setOnAction((ActionEvent event) -> {
@@ -271,7 +278,7 @@ public class MainMenuPresenter extends AbstractPresenter {
                             } else if (lobby.getUsers().contains(loggedInUser)) {
                                 showAlert(Alert.AlertType.WARNING, "Du bist dieser Lobby schon beigetreten!", "Fehler");
                             } else {
-                                lobbyService.joinLobby(lobby.getName(), loggedInUser, lobby.getLobbyID());
+                                lobbyService.joinLobby(lobby.getName(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), lobby.getLobbyID());
                             }
                         });
                     }
@@ -286,8 +293,6 @@ public class MainMenuPresenter extends AbstractPresenter {
                         }
                     }
                 };
-
-                return cell;
             }
         };
 

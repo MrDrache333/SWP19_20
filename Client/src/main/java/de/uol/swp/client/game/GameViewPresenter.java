@@ -11,8 +11,8 @@ import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
+import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
-import de.uol.swp.common.user.dto.UserDTO;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -28,8 +28,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -39,15 +39,13 @@ import java.util.UUID;
  */
 public class GameViewPresenter extends AbstractPresenter {
 
-    private UUID lobbyID;
-
-    private User loggedInUser;
     /**
      * The constant fxml.
      */
     public static final String fxml = "/fxml/GameView.fxml";
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
-
+    private UUID lobbyID;
+    private User loggedInUser;
     @FXML
     private Pane chatView;
     @FXML
@@ -133,7 +131,7 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
-
+        lobbyService.leaveAllLobbiesOnLogout(new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
         userService.logout(loggedInUser);
     }
 
@@ -156,7 +154,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * @since Sprint3
      */
     public void initializeUserList() {
-        lobbyService.retrieveAllUsersInLobby(lobbyID.toString());
+        lobbyService.retrieveAllUsersInLobby(lobbyID);
     }
 
     /**
@@ -169,7 +167,7 @@ public class GameViewPresenter extends AbstractPresenter {
     @Subscribe
     public void newUser(UserJoinedLobbyMessage userJoinedLobbyMessage) {
         if (userJoinedLobbyMessage.getLobbyID().equals(this.lobbyID)) {
-            lobbyService.retrieveAllUsersInLobby(lobbyID.toString());
+            lobbyService.retrieveAllUsersInLobby(lobbyID);
             LOG.debug("New user in Lobby, LobbyService is retrieving users");
         }
     }
@@ -186,7 +184,7 @@ public class GameViewPresenter extends AbstractPresenter {
     public void userList(AllOnlineUsersInLobbyResponse allOnlineUsersInLobbyResponse) {
         if (allOnlineUsersInLobbyResponse.getLobbyID().equals(this.lobbyID)) {
             LOG.debug("Update of user list with" + allOnlineUsersInLobbyResponse.getUsers());
-            updateUsersList(List.copyOf(allOnlineUsersInLobbyResponse.getUsers()));
+            updateUsersList(allOnlineUsersInLobbyResponse.getUsers());
         }
     }
 
@@ -196,16 +194,19 @@ public class GameViewPresenter extends AbstractPresenter {
      *
      * @author Marvin
      * @since Sprint3
+     * @param userList
      */
-    private void updateUsersList(List<UserDTO> userList) {
+    private void updateUsersList(Set<User> userList) {
         // Attention: This must be done on the FX Thread!
         Platform.runLater(() -> {
-            if (users == null) {
-                users = FXCollections.observableArrayList();
-                usersView.setItems(users);
+            if (usersView != null) {
+                if (users == null) {
+                    users = FXCollections.observableArrayList();
+                    usersView.setItems(users);
+                }
+                users.clear();
+                userList.forEach(u -> users.add(u.getUsername()));
             }
-            users.clear();
-            userList.forEach(u -> users.add(u.getUsername()));
         });
     }
 }

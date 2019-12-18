@@ -32,7 +32,7 @@ public class UserService implements de.uol.swp.common.user.UserService {
     public User login(String username, String password) {
         LoginRequest msg = new LoginRequest(username, password);
         bus.post(msg);
-        return null; // asynch call
+        return null; // async call
     }
 
     @Override
@@ -69,7 +69,7 @@ public class UserService implements de.uol.swp.common.user.UserService {
     public List<User> retrieveAllUsers() {
         RetrieveAllOnlineUsersRequest cmd = new RetrieveAllOnlineUsersRequest();
         bus.post(cmd);
-        return null; // asynch call
+        return null; // async call
     }
 
 }

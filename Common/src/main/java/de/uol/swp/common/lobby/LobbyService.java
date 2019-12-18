@@ -1,11 +1,14 @@
 package de.uol.swp.common.lobby;
 
-import de.uol.swp.common.user.User;
+import de.uol.swp.common.user.UserDTO;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * The interface Lobby service.
+ */
 public interface LobbyService {
 
     /**
@@ -18,31 +21,44 @@ public interface LobbyService {
     /**
      * Lobby beitreten
      *
-     * @param lobbyName
-     * @param user
-     * @param lobbyID
+     * @param lobbyName the lobby name
+     * @param user      the user
+     * @param lobbyID   the lobby id
      */
-    void joinLobby(String lobbyName, User user, UUID lobbyID);
+    void joinLobby(String lobbyName, UserDTO user, UUID lobbyID);
 
     /**
      * Lobby verlassen
      *
-     * @param lobbyName
-     * @param user
-     * @param lobbyID
+     * @param lobbyName the lobby name
+     * @param user      the user
+     * @param lobbyID   the lobby id
      */
-    void leaveLobby(String lobbyName, User user, UUID lobbyID);
+    void leaveLobby(String lobbyName, UserDTO user, UUID lobbyID);
 
     /**
      * Verlassen aller beigetretenen Lobbies beim Logout
      *
-     * @param user
+     * @param user the user
      */
-    void leaveAllLobbiesOnLogout(User user);
+    void leaveAllLobbiesOnLogout(UserDTO user);
 
-    ArrayList<LobbyUser> retrieveAllUsersInLobby(String LobbyName);
+    /**
+     * Retrieve all users in lobby array list.
+     *
+     * @param lobbyID the lobby id
+     * @return the array list
+     */
+    ArrayList<LobbyUser> retrieveAllUsersInLobby(UUID lobbyID);
 
-    void setLobbyUserStatus(String LobbyName, User user, boolean Status);
+    /**
+     * Sets lobby user status.
+     *
+     * @param LobbyName the lobby name
+     * @param user      the user
+     * @param Status    the status
+     */
+    void setLobbyUserStatus(String LobbyName, UserDTO user, boolean Status);
 
     /**
      * @author Timo, Rike

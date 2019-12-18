@@ -2,8 +2,8 @@ package de.uol.swp.common.lobby;
 
 import de.uol.swp.common.user.User;
 
-import java.util.ArrayList;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.UUID;
 
 /**
@@ -54,13 +54,6 @@ public interface Lobby {
     Set<User> getUsers();
 
     /**
-     * Gets lobby users.
-     *
-     * @return the lobby users
-     */
-    ArrayList<LobbyUser> getLobbyUsers();
-
-    /**
      * Gets lobby id.
      *
      * @return the lobby id
@@ -104,6 +97,13 @@ public interface Lobby {
      */
     Integer getMaxPlayer();
     void setMaxPlayer(Integer maxPlayer);
+
+    /**
+     * Gets every ready status.
+     *
+     * @return every ready status
+     */
+    TreeMap<String, Boolean> getEveryReadyStatus();
 
 
 }

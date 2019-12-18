@@ -11,7 +11,7 @@ import java.util.*;
 public class LobbyManagement {
     static final Logger LOG = LogManager.getLogger(LobbyManagement.class);
 
-    private Map<String, Lobby> lobbies = new HashMap<>();
+    private final Map<String, Lobby> lobbies = new HashMap<>();
 
     /**
      * Um UUID Map erweitert

@@ -8,7 +8,7 @@ import de.uol.swp.common.chat.ChatService;
 import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.chat.response.ChatResponseMessage;
 import de.uol.swp.common.user.User;
-import de.uol.swp.common.user.dto.UserDTO;
+import de.uol.swp.common.user.UserDTO;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -120,7 +120,7 @@ public class ChatViewPresenter extends AbstractPresenter {
     /**
      * Instantiates a new Chat view presenter.
      *
-     * @param chatTitle        the name
+     * @param chatTitle   the name
      * @param theme       the theme
      * @param chatService the chat service
      */
@@ -194,9 +194,8 @@ public class ChatViewPresenter extends AbstractPresenter {
         if (CHATTHEME.equals(ChatViewPresenter.THEME.Light)) {
             LOG.debug("Loading Light Theme");
             chatViewAnchorPane.getStylesheets().add(styleSheet_light);
-            chatViewAnchorPane.setStyle("-fx-background-color: white");
-            titleLabel.setStyle("-fx-background-color: white; -fx-text-fill: black");
-            messageView.setStyle("-fx-background-color: white;");
+            //chatViewAnchorPane.setStyle("-fx-background-color: white");
+            //titleLabel.setStyle("-fx-background-color: white; -fx-text-fill: black");
         } else if (CHATTHEME.equals(THEME.Dark)) {
             LOG.debug("Loading Dark Theme");
             chatViewAnchorPane.getStylesheets().add(styleSheet_dark);
@@ -246,7 +245,6 @@ public class ChatViewPresenter extends AbstractPresenter {
     //--------------------------------------
 
 
-
     /**
      * User joined.
      *
@@ -255,7 +253,7 @@ public class ChatViewPresenter extends AbstractPresenter {
 //Display a Message when a User joined the Chat
     public void userJoined(String username) {
         if (!chatId.equals(""))
-            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(new UserDTO("server", "", ""), username + " ist dem Chat beigereten")));
+            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(new UserDTO("server", "", ""), username + " ist " + (chatId.equals("global") ? "dem Chat" : "der Lobby") + " beigereten")));
     }
 
     /**
@@ -266,7 +264,7 @@ public class ChatViewPresenter extends AbstractPresenter {
 //Display a Message when a User left the Chat
     public void userLeft(String username) {
         if (!chatId.equals(""))
-            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(new UserDTO("server", "", ""), username + " hat den Chat verlassen")));
+            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(new UserDTO("server", "", ""), username + " hat " + (chatId.equals("global") ? "den Chat" : "die Lobby") + " verlassen")));
     }
 
     /**
@@ -305,7 +303,7 @@ public class ChatViewPresenter extends AbstractPresenter {
         message.setMaxWidth(maxChatMessageWidth);
         //Als Tooltip der Nachricht die Eingangs-Zeit anzeigen
         message.setTooltip(new Tooltip(new SimpleDateFormat("HH:mm:ss").format(msg.getTimeStamp())));
-        sender.setStyle("-fx-text-fill: grey; -fx-font-size: 12");
+        sender.setStyle("-fx-text-fill: black; -fx-font-size: 12");
 
         //Je nachdem wer die Nachriht gesendet hat, diese auf der richtigen Seite darstellen
         VBox box = new VBox();
@@ -384,7 +382,7 @@ public class ChatViewPresenter extends AbstractPresenter {
             }
         } else {
             //Wenn die empfangene Nachricht eine ServerMessage ist
-            message.setStyle("-fx-text-fill: grey; -fx-background-color: transparent; -fx-font-size: 14");
+            message.setStyle("-fx-text-fill: black; -fx-background-color: transparent; -fx-font-size: 14");
             hbox.setAlignment(Pos.CENTER);
             hbox.getChildren().add(message);
         }

@@ -1,16 +1,6 @@
 
 .list-view .list-cell {
-    -fx-background-color: white;
-}
-
-
-.text-field {
-    -fx-background-color: white;
-    -fx-text-fill: black;
-}
-
-.hbox {
-    -fx-background-color: white;
+    -fx-background-color: rgba(150, 123, 111, 0.65);
 }
 
 .scroll-bar {

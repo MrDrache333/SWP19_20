@@ -16,6 +16,6 @@ public interface ConnectionListener {
      *
      * @param cause
      */
-    void exceptionOccured(String cause);
+    void exceptionOccurred(String cause);
 
 }

@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="chatViewAnchorPane" minHeight="300.0" minWidth="300.0"
-            prefHeight="500.0" prefWidth="400.0" style="-fx-background-color: black; -fx-background-radius: 10;"
-            stylesheets="@../css/ChatViewPresenter.css" xmlns="http://javafx.com/javafx/11.0.1">
+            prefHeight="500.0" prefWidth="400.0" stylesheets="@../css/ChatViewPresenter.css"
+            xmlns="http://javafx.com/javafx/10.0.2-internal">
     <VBox alignment="CENTER" minHeight="400.0" minWidth="300.0" prefHeight="400.0" prefWidth="300.0"
           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
           AnchorPane.topAnchor="0.0">
         <Label fx:id="titleLabel" alignment="CENTER" maxHeight="30.0" minHeight="30.0" minWidth="100.0"
-               mouseTransparent="true" prefHeight="30.0" text="GLOBAL CHAT" textFill="WHITE" VBox.vgrow="NEVER">
+               mouseTransparent="true" prefHeight="30.0" text="GLOBAL CHAT" VBox.vgrow="NEVER">
             <padding>
                 <Insets bottom="5.0" top="5.0"/>
             </padding>
@@ -19,11 +22,9 @@
                 <Font name="Arial Bold" size="15.0"/>
             </font>
         </Label>
-        <Separator disable="true" mouseTransparent="true"/>
-        <ListView fx:id="messageView" minHeight="100.0" minWidth="260.0" prefHeight="400.0" prefWidth="300.0"
+        <ListView fx:id="messageView" minHeight="100.0" minWidth="300.0" prefHeight="400.0" prefWidth="300.0"
                   VBox.vgrow="ALWAYS">
         </ListView>
-        <Separator disable="true" mouseTransparent="true"/>
         <HBox maxHeight="40.0" minHeight="40.0" minWidth="260.0" VBox.vgrow="NEVER">
             <padding>
                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>

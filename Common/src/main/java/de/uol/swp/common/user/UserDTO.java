@@ -1,6 +1,4 @@
-package de.uol.swp.common.user.dto;
-
-import de.uol.swp.common.user.User;
+package de.uol.swp.common.user;
 
 import java.util.Objects;
 

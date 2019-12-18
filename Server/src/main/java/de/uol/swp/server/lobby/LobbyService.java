@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import de.uol.swp.common.lobby.Lobby;
+import de.uol.swp.common.lobby.LobbyUser;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.request.*;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
@@ -62,10 +63,9 @@ public class LobbyService extends AbstractService {
      * @version 0.1
      * @since Sprint2
      */
-
     @Subscribe
     public void onCreateLobbyRequest(CreateLobbyRequest msg) {
-        UUID chatID = lobbyManagement.createLobby(msg.getLobbyName(), msg.getOwner());
+        UUID chatID = lobbyManagement.createLobby(msg.getLobbyName(), new LobbyUser(msg.getOwner()));
 
         chatManagement.createChat(chatID.toString());
         LOG.info("Der Chat mir der UUID " + chatID + " wurde erfolgreich erstellt");
@@ -79,17 +79,16 @@ public class LobbyService extends AbstractService {
      * LobbyManagment auf dem Server wird aufgerufen und übergibt den Namen des Nutzers.
      * Wenn dies erfolgt ist, folgt eine UserJoinedLobbyMessage an den Client, um den User zur Lobby hinzuzufügen
      *
-     * @param msg
-     * @author Julia, Paula
+     * @param msg the msg
+     * @author Paula, Julia
      * @since Sprint3
      */
-
     @Subscribe
     public void onLobbyJoinUserRequest(LobbyJoinUserRequest msg) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getLobbyName());
-        if (lobby.isPresent()) {
+        if (lobby.isPresent() && !lobby.get().getUsers().contains(msg.getUser()) && lobby.get().getPlayers() < 4) {
             LOG.info("User " + msg.getUser().getUsername() + " is joining lobby " + msg.getLobbyName());
-            lobby.get().joinUser(msg.getUser());
+            lobby.get().joinUser(new LobbyUser(msg.getUser()));
             ServerMessage returnMessage = new UserJoinedLobbyMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID());
             sendToAll(msg.getLobbyName(), returnMessage);
         }
@@ -99,7 +98,7 @@ public class LobbyService extends AbstractService {
      * lobbyManagment wird aufgerufen und übergibt Namen der Lobby und User.
      * UserLeftLobbyMessage wird an Client gesendet
      *
-     * @param msg
+     * @param msg the msg
      * @author Julia, Paula
      * @since Sprint3
      */
@@ -117,7 +116,7 @@ public class LobbyService extends AbstractService {
     /**
      * Lobbys, in denen User drinnen ist, werden verlassen
      *
-     * @param msg
+     * @param msg the msg
      * @author Julia, Paula
      * @since Sprint3
      */
@@ -139,7 +138,6 @@ public class LobbyService extends AbstractService {
      *
      * @param request the request
      * @author Keno Oelrichs Garcia
-     * @Version 1.0
      * @since Sprint3
      */
     @Subscribe
@@ -151,7 +149,7 @@ public class LobbyService extends AbstractService {
             ServerMessage msg = new UpdatedLobbyReadyStatusMessage(lobby.get().getLobbyID(), lobby.get().getName(), request.getUser(), lobby.get().getReadyStatus(request.getUser()));
             sendToAll(lobby.get().getName(), msg);
             LOG.debug("Sending Updated Status of User " + request.getUser().getUsername() + " to " + request.isReady() + " in Lobby: " + lobby.get().getLobbyID());
-            allPlayersReady(lobby);
+            allPlayersReady(lobby.get());
         } else
             LOG.debug("Lobby " + request.getLobbyName() + " NOT FOUND!");
     }
@@ -170,7 +168,7 @@ public class LobbyService extends AbstractService {
             Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyName.get());
 
             if (lobby.isPresent()) {
-                ResponseMessage msg = new AllOnlineUsersInLobbyResponse(lobby.get().getLobbyID(), lobby.get().getLobbyUsers());
+                ResponseMessage msg = new AllOnlineUsersInLobbyResponse(lobby.get().getLobbyID(), lobby.get().getUsers(), lobby.get().getEveryReadyStatus());
                 msg.initWithMessage(request);
                 post(msg);
             } else {
@@ -184,6 +182,7 @@ public class LobbyService extends AbstractService {
     /**
      * erstellt eine AllOnlineLobbiesResponse mit allen Lobbies im LobbyManagement und schickt diese ab
      *
+     * @param msg the msg
      * @author Julia
      * @since Sprint2
      */
@@ -199,6 +198,12 @@ public class LobbyService extends AbstractService {
     //--------------------------------------
 
 
+    /**
+     * Send to all.
+     *
+     * @param lobbyName the lobby name
+     * @param message   the message
+     */
     public void sendToAll(String lobbyName, ServerMessage message) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyName);
         if (lobby.isPresent()) {
@@ -209,25 +214,24 @@ public class LobbyService extends AbstractService {
     }
 
 
-
     /**
      * überprüft ob alle Spieler bereit sind
      * Spiel startet wenn 4 Spieler Bereit sind
      *
      * @param lobby the lobby
+     * @author Darian, Keno
+     * @since Sprint 4
      */
-    private void allPlayersReady(Optional<Lobby> lobby) {
-        int counter = 0;
-        for (User user : lobby.get().getLobbyUsers()) {
-            counter++;
-            if (!lobby.get().getReadyStatus(user)) return;
-            //TODO Change Counter to 4; FOr Testing leave 1
-            if (counter == 1) {
-                LOG.debug("Game starts in Lobby: " + lobby.get().getName());
-                StartGameMessage msg = new StartGameMessage(lobby.get().getName(), lobby.get().getLobbyID());
-                sendToAll(lobby.get().getName(), msg);
-            }
+    private void allPlayersReady(Lobby lobby) {
+        if (lobby.getPlayers() == 1) return;
+        //Prüfen, ob jeder Spieler in der Lobby fertig ist
+        for (User user : lobby.getUsers()) {
+            if (!lobby.getReadyStatus(user)) return;
         }
+        //Lobby starten
+        LOG.debug("Game starts in Lobby: " + lobby.getName());
+        StartGameMessage msg = new StartGameMessage(lobby.getName(), lobby.getLobbyID());
+        sendToAll(lobby.getName(), msg);
     }
 
     /**

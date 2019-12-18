@@ -35,13 +35,14 @@ import java.util.UUID;
 public class SceneManager {
 
     static final Logger LOG = LogManager.getLogger(SceneManager.class);
-    static final String styleSheet = "css/swp.css";
+    static final String styleSheet = "css/global.css";
 
     final private Stage primaryStage;
     final private EventBus eventBus;
     final private UserService userService;
     final private LobbyService lobbyService;
     final private ChatService chatService;
+    private final Injector injector;
     private Scene loginScene;
     private String lastTitle;
     private Scene registrationScene;
@@ -49,11 +50,7 @@ public class SceneManager {
     private Scene gameScene;
     private Scene lastScene = null;
     private Scene currentScene = null;
-
     private User currentUser;
-
-    private Injector injector;
-
     private Map<UUID, Scene> lobbyScenes = new HashMap<>();
     private Map<UUID, GameManagement> games = new HashMap<>();
     private Map<UUID, Stage> lobbyStages = new HashMap<>();
@@ -119,6 +116,7 @@ public class SceneManager {
             Parent rootPane = initPresenter(MainMenuPresenter.fxml);
             mainScene = new Scene(rootPane, 1280, 750);
             mainScene.getStylesheets().add(styleSheet);
+            mainScene.getStylesheets().add(MainMenuPresenter.css);
         }
     }
 
@@ -127,6 +125,7 @@ public class SceneManager {
             Parent rootPane = initPresenter(LoginPresenter.fxml);
             loginScene = new Scene(rootPane, 1280, 750);
             loginScene.getStylesheets().add(styleSheet);
+            loginScene.getStylesheets().add(LoginPresenter.css);
         }
     }
 
@@ -135,6 +134,7 @@ public class SceneManager {
             Parent rootPane = initPresenter(RegistrationPresenter.fxml);
             registrationScene = new Scene(rootPane, 1280, 750);
             registrationScene.getStylesheets().add(styleSheet);
+            registrationScene.getStylesheets().add(RegistrationPresenter.css);
         }
     }
 
@@ -181,7 +181,6 @@ public class SceneManager {
     }
 
     public void showMainScreen(User currentUser) {
-        this.currentUser = currentUser;
         showScene(mainScene, "Welcome " + currentUser.getUsername());
     }
 

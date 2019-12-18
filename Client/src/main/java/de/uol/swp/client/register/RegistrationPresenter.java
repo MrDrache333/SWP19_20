@@ -6,8 +6,8 @@ import com.google.inject.Inject;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.register.event.RegistrationCanceledEvent;
 import de.uol.swp.client.register.event.RegistrationErrorEvent;
+import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
-import de.uol.swp.common.user.dto.UserDTO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
@@ -16,6 +16,7 @@ import javafx.scene.control.TextField;
 public class RegistrationPresenter extends AbstractPresenter {
 
     public static final String fxml = "/fxml/RegistrationView.fxml";
+    public static final String css = "css/RegistrationViewPresenter.css";
 
     private static final RegistrationCanceledEvent registrationCanceledEvent = new RegistrationCanceledEvent();
 

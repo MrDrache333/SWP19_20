@@ -7,7 +7,7 @@
 <?import javafx.scene.text.*?>
 <?import java.net.URL?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="750.0" prefWidth="1280.0"
-            xmlns="http://javafx.com/javafx/11.0.1" fx:controller="de.uol.swp.client.auth.LoginPresenter">
+            xmlns="http://javafx.com/javafx/10.0.2-internal" fx:controller="de.uol.swp.client.auth.LoginPresenter">
     <stylesheets>
         <URL value="@../css/LoginView.css"/>
         <URL value="@../css/global.css"/>
@@ -44,18 +44,36 @@
             <Font size="48.0"/>
         </font>
     </Label>
-    <TextField fx:id="userField" alignment="CENTER" blendMode="MULTIPLY" layoutX="868.0" layoutY="353.0"
-               promptText="Benutzername">
-        <font>
-            <Font size="24.0"/>
-        </font>
-    </TextField>
-    <PasswordField fx:id="passwordField" alignment="CENTER" blendMode="MULTIPLY" layoutX="868.0" layoutY="415.0"
-                   promptText="Passwort">
-        <font>
-            <Font size="24.0"/>
-        </font>
-    </PasswordField>
+    <HBox alignment="CENTER_LEFT" layoutX="868.0" layoutY="359.0" prefHeight="46.0" prefWidth="295.0" spacing="7.0">
+        <children>
+            <ImageView fitHeight="35.0" fitWidth="37.0" opacity="0.7" pickOnBounds="true" preserveRatio="true"
+                       HBox.hgrow="NEVER">
+                <image>
+                    <Image url="@../images/login_knight_icon.png"/>
+                </image>
+            </ImageView>
+            <TextField fx:id="userField" blendMode="MULTIPLY" promptText="Benutzername">
+                <font>
+                    <Font size="24.0"/>
+                </font>
+            </TextField>
+        </children>
+    </HBox>
+    <HBox alignment="CENTER_LEFT" layoutX="868.0" layoutY="415.0" prefHeight="45.0" prefWidth="295.0" spacing="5.0">
+        <children>
+            <ImageView fitHeight="30.0" fitWidth="36.0" opacity="0.7" pickOnBounds="true" preserveRatio="true"
+                       HBox.hgrow="NEVER">
+                <image>
+                    <Image url="@../images/login_lock_icon.png"/>
+                </image>
+            </ImageView>
+            <PasswordField fx:id="passwordField" blendMode="MULTIPLY" promptText="Passwort">
+                <font>
+                    <Font size="24.0"/>
+                </font>
+            </PasswordField>
+        </children>
+    </HBox>
     <Button defaultButton="true" layoutX="948.0" layoutY="505.0" mnemonicParsing="false"
             onAction="#onLoginButtonPressed" text="Absenden" textAlignment="CENTER">
         <font>

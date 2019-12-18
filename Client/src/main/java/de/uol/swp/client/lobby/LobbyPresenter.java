@@ -8,8 +8,14 @@ import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
 import de.uol.swp.common.chat.ChatService;
 import de.uol.swp.common.lobby.LobbyService;
+import de.uol.swp.common.lobby.message.StartGameMessage;
+import de.uol.swp.common.lobby.message.UpdatedLobbyReadyStatusMessage;
+import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
+import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
+import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.user.User;
+import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import javafx.application.Platform;
@@ -63,8 +69,8 @@ public class LobbyPresenter extends AbstractPresenter {
     private UUID lobbyID;
     private String lobbyName;
     private User loggedInUser;
+    private UserDTO loggedInUserDTO;
     private Injector injector;
-
 
     //Eigener Status in der Lobby
     private boolean ownReadyStatus = false;
@@ -84,7 +90,7 @@ public class LobbyPresenter extends AbstractPresenter {
     @FXML
     ChoiceBox<Integer> chooseMaxPlayer;
 
-    private ObservableList<HBox> users;
+    private ObservableList<HBox> userHBoxes;
 
     private GameManagement gameManagement;
 
@@ -111,6 +117,7 @@ public class LobbyPresenter extends AbstractPresenter {
         this.chatViewPresenter = chatViewPresenter;
         this.injector = injector;
         this.gameManagement = gameManagement;
+        this.loggedInUserDTO = new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail());
     }
 
     //--------------------------------------
@@ -119,7 +126,7 @@ public class LobbyPresenter extends AbstractPresenter {
 
     @FXML
     public void onLeaveLobbyButtonPressed(ActionEvent event) {
-        lobbyService.leaveLobby(lobbyName, loggedInUser, lobbyID);
+        lobbyService.leaveLobby(lobbyName, loggedInUserDTO, lobbyID);
     }
 
     /**
@@ -140,6 +147,7 @@ public class LobbyPresenter extends AbstractPresenter {
         ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getPrefWidth());
         chatViewPresenter.userJoined(loggedInUser.getUsername());
 
+        lobbyService.retrieveAllUsersInLobby(lobbyID);
         readyUserList.put(loggedInUser.getUsername(), getHboxFromReadyUser(loggedInUser.getUsername(), false));
         updateUsersList();
         //Setzt choseMaxPlayer auf den Default-Wert
@@ -153,6 +161,7 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
+        lobbyService.leaveAllLobbiesOnLogout(loggedInUserDTO);
         userService.logout(loggedInUser);
     }
 
@@ -185,7 +194,7 @@ public class LobbyPresenter extends AbstractPresenter {
             ownReadyStatus = true;
         }
         LOG.debug("Set own ReadyStauts in Lobby " + lobbyID + " to " + (ownReadyStatus ? "Ready" : "Not Ready"));
-        lobbyService.setLobbyUserStatus(lobbyName, loggedInUser, ownReadyStatus);
+        lobbyService.setLobbyUserStatus(lobbyName, loggedInUserDTO, ownReadyStatus);
     }
 
     /**
@@ -214,6 +223,17 @@ public class LobbyPresenter extends AbstractPresenter {
         if (readyUserList.containsKey(message.getUser().getUsername())) {
             LOG.debug("User " + message.getUser().getUsername() + " changed his status to " + (message.isReady() ? "Ready" : "Not Ready") + " in Lobby " + lobbyID);
             updateReadyUser(message.getUser().getUsername(), message.isReady());
+        }
+    }
+
+    @Subscribe
+    private void onReceiveAllUsersInLobby(AllOnlineUsersInLobbyResponse response) {
+        if (response.getLobbyID().equals(lobbyID)) {
+            readyUserList = new TreeMap<>();
+            response.getUsers().forEach(e -> {
+                readyUserList.put(e.getUsername(), getHboxFromReadyUser(e.getUsername(), response.getStatus(e)));
+            });
+            updateUsersList();
         }
     }
 
@@ -268,9 +288,8 @@ public class LobbyPresenter extends AbstractPresenter {
         if (!message.getLobbyID().equals(lobbyID)) return;
         LOG.debug("New user " + message.getUser() + " logged in");
         Platform.runLater(() -> {
-            if (users != null && loggedInUser != null && !loggedInUser.toString().equals(message.getLobbyName())) {
+            if (readyUserList != null && loggedInUser != null && !loggedInUser.toString().equals(message.getLobbyName())) {
                 readyUserList.put(message.getUser().getUsername(), getHboxFromReadyUser(message.getUser().getUsername(), false));
-                users.add(readyUserList.get(message.getUser().getUsername()));
                 updateUsersList();
                 chatViewPresenter.userJoined(message.getUser().getUsername());
             }
@@ -295,9 +314,9 @@ public class LobbyPresenter extends AbstractPresenter {
     //--------------------------------------
 
     private void userLeftLobby(String username) {
-        if (users.contains(username)) {
+        if (readyUserList.get(username) != null) {
             Platform.runLater(() -> {
-                users.remove(username);
+                readyUserList.remove(username);
                 updateUsersList();
                 chatViewPresenter.userLeft(username);
                 if (readyUserList.containsKey(username)) {
@@ -311,12 +330,12 @@ public class LobbyPresenter extends AbstractPresenter {
     private void updateUsersList() {
         // Attention: This must be done on the FX Thread!
         Platform.runLater(() -> {
-            if (users == null) {
-                users = FXCollections.observableArrayList();
-                usersView.setItems(users);
+            if (userHBoxes == null) {
+                userHBoxes = FXCollections.observableArrayList();
+                usersView.setItems(userHBoxes);
             }
-            users.clear();
-            users.addAll(getAllHBoxes());
+            userHBoxes.clear();
+            userHBoxes.addAll(getAllHBoxes());
         });
     }
 
@@ -353,8 +372,7 @@ public class LobbyPresenter extends AbstractPresenter {
      * @return All HBoxes as ArrayList
      */
     private ArrayList<HBox> getAllHBoxes() {
-        ArrayList<HBox> list = new ArrayList<>(readyUserList.values());
-        return list;
+        return new ArrayList<>(readyUserList.values());
     }
 
     //--------------------------------------
@@ -384,5 +402,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @return the lobby service
      */
-    public LobbyService getLobbyService() { return lobbyService; }
+    public LobbyService getLobbyService() {
+        return lobbyService;
+    }
 }
