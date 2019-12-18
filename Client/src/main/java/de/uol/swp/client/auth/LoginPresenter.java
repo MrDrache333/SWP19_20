@@ -12,8 +12,6 @@ import javafx.scene.control.TextField;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
-
 
 public class LoginPresenter extends AbstractPresenter {
 
@@ -37,26 +35,26 @@ public class LoginPresenter extends AbstractPresenter {
     @FXML
     private void initialize() {
         LoginButton.setOnMouseEntered(event -> {
-            new MediaPlayer(new File("/sounds/button_mouseover.wav"), MediaPlayer.Type.Sound).play();
+            new MediaPlayer(MediaPlayer.Sound.Button_Hover, MediaPlayer.Type.Sound).play();
         });
         registerButton.setOnMouseEntered(event -> {
-            new MediaPlayer(new File("/sounds/button_mouseover.wav"), MediaPlayer.Type.Sound).play();
+            new MediaPlayer(MediaPlayer.Sound.Button_Hover, MediaPlayer.Type.Sound).play();
         });
         forgotPasswordButton.setOnMouseEntered(event -> {
-            new MediaPlayer(new File("/sounds/button_mouseover.wav"), MediaPlayer.Type.Sound).play();
+            new MediaPlayer(MediaPlayer.Sound.Button_Hover, MediaPlayer.Type.Sound).play();
         });
 
     }
 
     @FXML
     private void onLoginButtonPressed(ActionEvent event) {
-        new MediaPlayer(new File("/sounds/button_pressed.wav"), MediaPlayer.Type.Sound).play();
+        new MediaPlayer(MediaPlayer.Sound.Button_Pressed, MediaPlayer.Type.Sound).play();
         userService.login(userField.getText(), passwordField.getText());
     }
 
     @FXML
     private void onRegisterButtonPressed(ActionEvent event) {
-        new MediaPlayer(new File("/sounds/button_pressed.wav"), MediaPlayer.Type.Sound).play();
+        new MediaPlayer(MediaPlayer.Sound.Button_Pressed, MediaPlayer.Type.Sound).play();
         eventBus.post(showRegViewMessage);
     }
 }

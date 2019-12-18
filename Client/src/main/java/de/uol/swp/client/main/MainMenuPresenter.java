@@ -28,7 +28,6 @@ import javafx.util.Callback;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +77,7 @@ public class MainMenuPresenter extends AbstractPresenter {
 
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
-        new MediaPlayer(new File("/sounds/button_pressed.wav"), MediaPlayer.Type.Sound).play();
+        new MediaPlayer(MediaPlayer.Sound.Button_Hover, MediaPlayer.Type.Sound).play();
         lobbyService.leaveAllLobbiesOnLogout(loggedInUser);
         userService.logout(loggedInUser);
     }
@@ -142,8 +141,8 @@ public class MainMenuPresenter extends AbstractPresenter {
         host.setPrefWidth(135);
         joinLobby.setPrefWidth(90);
 
-        createLobbyButton.setOnMouseEntered(event -> new MediaPlayer(new File("/sounds/button_mouseover.wav"), MediaPlayer.Type.Sound).play());
-        logoutButton.setOnMouseEntered(event -> new MediaPlayer(new File("/sounds/button_mouseover.wav"), MediaPlayer.Type.Sound).play());
+        createLobbyButton.setOnMouseEntered(event -> new MediaPlayer(MediaPlayer.Sound.Button_Hover, MediaPlayer.Type.Sound).play());
+        logoutButton.setOnMouseEntered(event -> new MediaPlayer(MediaPlayer.Sound.Button_Hover, MediaPlayer.Type.Sound).play());
 
     }
 
@@ -159,7 +158,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @FXML
     public void OnCreateLobbyButtonPressed(ActionEvent event) {
-        new MediaPlayer(new File("/sounds/button_pressed.wav"), MediaPlayer.Type.Sound).play();
+        new MediaPlayer(MediaPlayer.Sound.Button_Pressed, MediaPlayer.Type.Sound).play();
         List<String> lobbyNames = new ArrayList<>();
         lobbies.forEach(lobby -> lobbyNames.add(lobby.getName()));
         if(lobbyNames.contains(lobbyName.getText())) {

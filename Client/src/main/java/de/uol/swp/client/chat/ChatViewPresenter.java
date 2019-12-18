@@ -29,7 +29,6 @@ import javafx.scene.layout.VBox;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -202,7 +201,7 @@ public class ChatViewPresenter extends AbstractPresenter {
             chatViewAnchorPane.getStylesheets().add(styleSheet_dark);
         }
 
-        sendButton.setOnMouseEntered(event -> new MediaPlayer(new File("/sounds/button_mouseover.wav"), MediaPlayer.Type.Sound).play());
+        sendButton.setOnMouseEntered(event -> new MediaPlayer(MediaPlayer.Sound.Button_Hover, MediaPlayer.Type.Sound).play());
     }
 
     //--------------------------------------
@@ -276,7 +275,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      */
     @FXML
     private void onSendChatButtonPressed() {
-        new MediaPlayer(new File("/sounds/button_pressed.wav"), MediaPlayer.Type.Sound).play();
+        new MediaPlayer(MediaPlayer.Sound.Button_Pressed, MediaPlayer.Type.Sound).play();
         if (chatId.equals("")) return;
         String message;
 

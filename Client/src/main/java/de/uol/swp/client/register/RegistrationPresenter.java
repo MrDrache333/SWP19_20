@@ -16,8 +16,6 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
-import java.io.File;
-
 public class RegistrationPresenter extends AbstractPresenter {
 
     public static final String fxml = "/fxml/RegistrationView.fxml";
@@ -44,10 +42,10 @@ public class RegistrationPresenter extends AbstractPresenter {
     @FXML
     private void initialize() {
         registerButton.setOnMouseEntered(event -> {
-            new MediaPlayer(new File("/sounds/button_mouseover.wav"), MediaPlayer.Type.Sound).play();
+            new MediaPlayer(MediaPlayer.Sound.Button_Hover, MediaPlayer.Type.Sound).play();
         });
         cancelButton.setOnMouseEntered(event -> {
-            new MediaPlayer(new File("/sounds/button_mouseover.wav"), MediaPlayer.Type.Sound).play();
+            new MediaPlayer(MediaPlayer.Sound.Button_Hover, MediaPlayer.Type.Sound).play();
         });
     }
 
@@ -58,13 +56,13 @@ public class RegistrationPresenter extends AbstractPresenter {
 
     @FXML
     void onCancelButtonPressed(ActionEvent event) {
-        new MediaPlayer(new File("/sounds/button_pressed.wav"), MediaPlayer.Type.Sound).play();
+        new MediaPlayer(MediaPlayer.Sound.Button_Pressed, MediaPlayer.Type.Sound).play();
         eventBus.post(registrationCanceledEvent);
     }
 
     @FXML
     void onRegisterButtonPressed(ActionEvent event) {
-        new MediaPlayer(new File("/sounds/button_pressed.wav"), MediaPlayer.Type.Sound).play();
+        new MediaPlayer(MediaPlayer.Sound.Button_Pressed, MediaPlayer.Type.Sound).play();
         if (Strings.isNullOrEmpty(loginField.getText())) {
             eventBus.post(new RegistrationErrorEvent("Username cannot be empty"));
         } else if (!passwordField1.getText().equals(passwordField2.getText())) {
