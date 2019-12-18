@@ -1,6 +1,7 @@
 package de.uol.swp.common.lobby;
 
 import de.uol.swp.common.SerializationTestHelper;
+import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.lobby.request.CreateLobbyRequest;
@@ -15,6 +16,7 @@ public class LobbyMessageSerializableTest {
 
     private static final UserDTO defaultUser = new UserDTO("marco", "marco", "marco@grawunder.de");
     private final UUID testUUID = UUID.randomUUID();
+    private final LobbyDTO defaultLobby = new LobbyDTO("test", defaultUser, testUUID);
 
     @Test
     void testLobbyMessagesSerializable() {
@@ -24,9 +26,9 @@ public class LobbyMessageSerializableTest {
                 LobbyJoinUserRequest.class);
         SerializationTestHelper.checkSerializableAndDeserializable(new LobbyLeaveUserRequest("test", defaultUser, testUUID),
                 LobbyLeaveUserRequest.class);
-        SerializationTestHelper.checkSerializableAndDeserializable(new UserJoinedLobbyMessage("test", defaultUser, testUUID),
+        SerializationTestHelper.checkSerializableAndDeserializable(new UserJoinedLobbyMessage("test", defaultUser, testUUID, defaultLobby),
                 UserJoinedLobbyMessage.class);
-        SerializationTestHelper.checkSerializableAndDeserializable(new UserLeftLobbyMessage("test", defaultUser, testUUID),
+        SerializationTestHelper.checkSerializableAndDeserializable(new UserLeftLobbyMessage("test", defaultUser, testUUID, defaultLobby),
                 UserLeftLobbyMessage.class);
     }
 
