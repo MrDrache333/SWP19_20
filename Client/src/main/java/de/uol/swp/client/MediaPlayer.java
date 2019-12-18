@@ -21,6 +21,9 @@ public class MediaPlayer {
         this.media = media;
         this.type = type;
         this.started = false;
+        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+            this.media = new File(media.getPath().replace("/", "\\"));
+        }
     }
 
     public void play() {
