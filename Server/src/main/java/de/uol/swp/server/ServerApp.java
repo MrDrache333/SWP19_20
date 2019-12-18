@@ -2,7 +2,7 @@ package de.uol.swp.server;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import de.uol.swp.common.user.dto.UserDTO;
+import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.chat.ChatManagement;
 import de.uol.swp.server.chat.ChatService;
 import de.uol.swp.server.communication.Server;

@@ -130,7 +130,7 @@ public class ClientConnection {
     @Subscribe
     public void onExceptionMessage(ExceptionMessage message) {
         for (ConnectionListener l : connectionListener) {
-            l.exceptionOccured(message.getException());
+            l.exceptionOccurred(message.getException());
         }
     }
 
@@ -141,7 +141,7 @@ public class ClientConnection {
 
     public void process(Throwable message) {
         for (ConnectionListener l : connectionListener) {
-            l.exceptionOccured(message.getMessage());
+            l.exceptionOccurred(message.getMessage());
         }
     }
 }

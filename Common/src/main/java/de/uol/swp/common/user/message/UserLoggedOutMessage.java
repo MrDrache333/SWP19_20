@@ -2,6 +2,8 @@ package de.uol.swp.common.user.message;
 
 import de.uol.swp.common.message.AbstractServerMessage;
 
+import java.util.Objects;
+
 /**
  * A message to indicate a logged out user
  *
@@ -23,4 +25,16 @@ public class UserLoggedOutMessage extends AbstractServerMessage {
         return username;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserLoggedOutMessage that = (UserLoggedOutMessage) o;
+        return Objects.equals(username, that.username);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username);
+    }
 }

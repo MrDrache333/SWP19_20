@@ -8,7 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Netty handler for incomming communication
+ * Netty handler for incoming communication
  *
  * @author Marco Grawunder
  */

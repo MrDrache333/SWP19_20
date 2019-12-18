@@ -18,7 +18,7 @@ public class AllOnlineUsersInLobbyResponse extends AbstractResponseMessage {
      * Instantiates a new All online users in lobby response.
      *
      * @param lobbyID the lobbyID
-     * @param users     the users
+     * @param users   the users
      */
     public AllOnlineUsersInLobbyResponse(UUID lobbyID, Collection<User> users, TreeMap<String, Boolean> readyStatus) {
         this.lobbyID = lobbyID;

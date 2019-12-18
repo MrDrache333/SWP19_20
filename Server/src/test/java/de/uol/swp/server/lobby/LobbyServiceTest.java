@@ -10,7 +10,7 @@ import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.lobby.request.*;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.user.User;
-import de.uol.swp.common.user.dto.UserDTO;
+import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.chat.ChatManagement;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import de.uol.swp.server.usermanagement.UserManagement;
@@ -31,17 +31,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class LobbyServiceTest {
 
-    private CountDownLatch lock = new CountDownLatch(1);
-    private Object event;
-
     static final User lobbyOwner = new UserDTO("Marco", "Marco", "Marco@Grawunder.com");
     static final User lobbyUser = new UserDTO("Testuser", "1234", "123@test.de");
     static final String defaultLobbyName = "Lobby";
-
     final EventBus bus = new EventBus();
     final UserManagement userManagement = new UserManagement(new MainMemoryBasedUserStore());
     final LobbyManagement lobbyManagement = new LobbyManagement();
     final LobbyService lobbyService = new LobbyService(lobbyManagement, new AuthenticationService(bus, userManagement), new ChatManagement(), bus);
+    private CountDownLatch lock = new CountDownLatch(1);
+    private Object event;
 
     @Subscribe
     void handle(DeadEvent e) {
@@ -63,7 +61,7 @@ class LobbyServiceTest {
 
     @Test
     void onCreateLobbyRequestTest() throws InterruptedException {
-        lobbyService.onCreateLobbyRequest(new CreateLobbyRequest(defaultLobbyName, lobbyOwner));
+        lobbyService.onCreateLobbyRequest(new CreateLobbyRequest(defaultLobbyName, new UserDTO(lobbyOwner.getUsername(), lobbyOwner.getPassword(), lobbyOwner.getEMail())));
 
         lock.await(1000, TimeUnit.MILLISECONDS);
 
@@ -80,7 +78,7 @@ class LobbyServiceTest {
     @Test
     void onLobbyJoinUserRequestTest() throws InterruptedException {
         final UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, lobbyOwner);
-        lobbyService.onLobbyJoinUserRequest(new LobbyJoinUserRequest(defaultLobbyName, lobbyUser, lobbyID));
+        lobbyService.onLobbyJoinUserRequest(new LobbyJoinUserRequest(defaultLobbyName, new UserDTO(lobbyUser.getUsername(), lobbyUser.getPassword(), lobbyUser.getEMail()), lobbyID));
 
         lock.await(1000, TimeUnit.MILLISECONDS);
 
@@ -99,7 +97,7 @@ class LobbyServiceTest {
     void onLobbyLeaveUserRequestTest() throws InterruptedException {
         final UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, lobbyOwner);
         lobbyManagement.getLobby(defaultLobbyName).get().joinUser(lobbyUser);
-        lobbyService.onLobbyLeaveUserRequest(new LobbyLeaveUserRequest(defaultLobbyName, lobbyOwner, lobbyID));
+        lobbyService.onLobbyLeaveUserRequest(new LobbyLeaveUserRequest(defaultLobbyName, new UserDTO(lobbyOwner.getUsername(), lobbyOwner.getPassword(), lobbyOwner.getEMail()), lobbyID));
 
         lock.await(1000, TimeUnit.MILLISECONDS);
 
@@ -116,7 +114,7 @@ class LobbyServiceTest {
         assertEquals(lobbyUser, lobby.get().getOwner());
 
         //Test if user left lobby and lobby was deleted
-        lobbyService.onLobbyLeaveUserRequest(new LobbyLeaveUserRequest(defaultLobbyName, lobbyUser, lobbyID));
+        lobbyService.onLobbyLeaveUserRequest(new LobbyLeaveUserRequest(defaultLobbyName, new UserDTO(lobbyUser.getUsername(), lobbyUser.getPassword(), lobbyUser.getEMail()), lobbyID));
         lobby = lobbyManagement.getLobby(defaultLobbyName);
         assertTrue(lobby.isEmpty());
     }
@@ -126,7 +124,7 @@ class LobbyServiceTest {
         lobbyManagement.createLobby(defaultLobbyName, lobbyOwner);
         lobbyManagement.createLobby("Lobby2", lobbyOwner);
         lobbyManagement.getLobby(defaultLobbyName).get().joinUser(lobbyUser);
-        lobbyService.onLeaveAllLobbiesOnLogoutRequest(new LeaveAllLobbiesOnLogoutRequest(lobbyOwner));
+        lobbyService.onLeaveAllLobbiesOnLogoutRequest(new LeaveAllLobbiesOnLogoutRequest(new UserDTO(lobbyOwner.getUsername(), lobbyOwner.getPassword(), lobbyOwner.getEMail())));
 
         //Test if user was removed from all lobbies
         Optional<Lobby> lobby = lobbyManagement.getLobby(defaultLobbyName);

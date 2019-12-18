@@ -7,7 +7,7 @@ import java.util.List;
 
 public class AbstractServerMessage extends AbstractMessage implements ServerMessage {
 
-    private List<Session> receiver = new ArrayList<>();
+    transient private List<Session> receiver = new ArrayList<>();
 
     public List<Session> getReceiver() {
         return receiver;
