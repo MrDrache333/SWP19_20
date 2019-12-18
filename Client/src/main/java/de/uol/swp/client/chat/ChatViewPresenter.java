@@ -3,8 +3,8 @@ package de.uol.swp.client.chat;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.ClientApp;
 import de.uol.swp.client.game.GameManagement;
-import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.common.chat.ChatMessage;
 import de.uol.swp.common.chat.ChatService;
 import de.uol.swp.common.chat.message.NewChatMessage;
@@ -88,7 +88,6 @@ public class ChatViewPresenter extends AbstractPresenter {
     private String chatTitle;
 
     private GameManagement gameManagement;
-    private MainMenuPresenter presenter;
 
     private ChatMessage lastMessage;
 
@@ -149,7 +148,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      * @param theme       the theme
      * @param chatService the chat service
      */
-    public ChatViewPresenter(String chatTitle, String chatId, User currentUser, THEME theme, ChatService chatService, MainMenuPresenter presenter) {
+    public ChatViewPresenter(String chatTitle, String chatId, User currentUser, THEME theme, ChatService chatService) {
         this.chatTitle = chatTitle;
         this.CHATTHEME = theme;
         this.chatService = chatService;
@@ -221,7 +220,7 @@ public class ChatViewPresenter extends AbstractPresenter {
     @Subscribe
     private void onNewChatMessage(NewChatMessage msg) {
         if (!chatId.equals("") && msg.getChatId().equals(chatId) && (lastMessage == null || !(msg.getMessage().getSender().getUsername().equals("server") && lastMessage.getSender().getUsername().equals("server") && msg.getMessage().getMessage().equals(lastMessage.getMessage())))) {
-            if (System.getProperty("os.name").toLowerCase().contains("mac") && !loggedInUser.getUsername().equals(msg.getMessage().getSender().getUsername()) && ((gameManagement != null && !gameManagement.hasFocus()) || (presenter != null && !presenter.hasFocus())))
+            if (System.getProperty("os.name").toLowerCase().contains("mac") && !loggedInUser.getUsername().equals(msg.getMessage().getSender().getUsername()) && ((gameManagement != null && !gameManagement.hasFocus()) || (gameManagement == null && !ClientApp.getSceneManager().hasFocus())))
                 try {
                     Runtime.getRuntime().exec(new String[]{"osascript", "-e", "display notification \"" + msg.getMessage().getMessage() + "\" with title \"" + titleLabel.getText() + "\" subtitle \"Neue Nachricht von " + msg.getMessage().getSender().getUsername() + "\" sound name \"Pop\""});
                 } catch (IOException e) {

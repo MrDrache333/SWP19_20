@@ -106,7 +106,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     @FXML
     public void initialize() throws IOException {
         //Neue Instanz einer ChatViewPresenter-Controller-Klasse erstellen und nötige Parameter uebergeben
-        chatViewPresenter = new ChatViewPresenter("globaler", "global", loggedInUser, ChatViewPresenter.THEME.Light, chatService, this);
+        chatViewPresenter = new ChatViewPresenter("globaler", "global", loggedInUser, ChatViewPresenter.THEME.Light, chatService);
         chatViewPresenter.setChatId("global");
         eventBus.register(chatViewPresenter);
         //FXML laden
