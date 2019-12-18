@@ -4,6 +4,7 @@ import de.uol.swp.common.message.AbstractServerMessage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A message containing all current logged in usernames
@@ -23,4 +24,16 @@ public class UsersListMessage extends AbstractServerMessage {
         return users;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UsersListMessage that = (UsersListMessage) o;
+        return Objects.equals(users, that.users);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(users);
+    }
 }

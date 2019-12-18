@@ -1,4 +1,4 @@
-package de.uol.swp.common.user.dto;
+package de.uol.swp.common;
 
 import de.uol.swp.common.SerializationTestHelper;
 import de.uol.swp.common.user.message.UserLoggedInMessage;

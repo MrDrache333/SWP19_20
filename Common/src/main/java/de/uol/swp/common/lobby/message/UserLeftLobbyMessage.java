@@ -1,6 +1,6 @@
 package de.uol.swp.common.lobby.message;
 
-import de.uol.swp.common.user.dto.UserDTO;
+import de.uol.swp.common.user.UserDTO;
 import java.util.UUID;
 
 public class UserLeftLobbyMessage extends AbstractLobbyMessage {

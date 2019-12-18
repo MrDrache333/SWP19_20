@@ -1,6 +1,7 @@
-package de.uol.swp.common.user.dto;
+package de.uol.swp.common;
 
 import de.uol.swp.common.user.User;
+import de.uol.swp.common.user.UserDTO;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

@@ -1,6 +1,6 @@
 package de.uol.swp.common.lobby.request;
 
-import de.uol.swp.common.user.dto.UserDTO;
+import de.uol.swp.common.user.UserDTO;
 
 
 public class LeaveAllLobbiesOnLogoutRequest extends AbstractLobbyRequest {

@@ -1,7 +1,7 @@
 package de.uol.swp.common.lobby;
 
 import de.uol.swp.common.user.User;
-import de.uol.swp.common.user.dto.UserDTO;
+import de.uol.swp.common.user.UserDTO;
 
 /**
  * The type Lobby user.

@@ -2,7 +2,7 @@ package de.uol.swp.common.lobby;
 
 import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.user.User;
-import de.uol.swp.common.user.dto.UserDTO;
+import de.uol.swp.common.user.UserDTO;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

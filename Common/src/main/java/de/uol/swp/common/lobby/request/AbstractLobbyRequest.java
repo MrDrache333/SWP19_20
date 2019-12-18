@@ -1,7 +1,9 @@
 package de.uol.swp.common.lobby.request;
 
 import de.uol.swp.common.message.AbstractRequestMessage;
-import de.uol.swp.common.user.dto.UserDTO;
+import de.uol.swp.common.user.UserDTO;
+
+import java.util.Objects;
 
 public class AbstractLobbyRequest extends AbstractRequestMessage {
 
@@ -29,5 +31,19 @@ public class AbstractLobbyRequest extends AbstractRequestMessage {
 
     public void setUser(UserDTO user) {
         this.user = user;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AbstractLobbyRequest that = (AbstractLobbyRequest) o;
+        return Objects.equals(lobbyName, that.lobbyName) &&
+                Objects.equals(user, that.user);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(lobbyName, user);
     }
 }
