@@ -4,6 +4,7 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.ClientApp;
+import de.uol.swp.client.Notifyer;
 import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.common.chat.ChatMessage;
 import de.uol.swp.common.chat.ChatService;
@@ -33,7 +34,6 @@ import javafx.scene.layout.VBox;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -222,8 +222,8 @@ public class ChatViewPresenter extends AbstractPresenter {
         if (!chatId.equals("") && msg.getChatId().equals(chatId) && (lastMessage == null || !(msg.getMessage().getSender().getUsername().equals("server") && lastMessage.getSender().getUsername().equals("server") && msg.getMessage().getMessage().equals(lastMessage.getMessage())))) {
             if (System.getProperty("os.name").toLowerCase().contains("mac") && !loggedInUser.getUsername().equals(msg.getMessage().getSender().getUsername()) && ((gameManagement != null && !gameManagement.hasFocus()) || (gameManagement == null && !ClientApp.getSceneManager().hasFocus())))
                 try {
-                    Runtime.getRuntime().exec(new String[]{"osascript", "-e", "display notification \"" + msg.getMessage().getMessage() + "\" with title \"" + titleLabel.getText() + "\" subtitle \"Neue Nachricht von " + msg.getMessage().getSender().getUsername() + "\" sound name \"Pop\""});
-                } catch (IOException e) {
+                    new Notifyer().notify(Notifyer.MessageType.INFO, "Nachricht von " + msg.getMessage().getSender().getUsername() + " in " + chatTitle.toUpperCase(), msg.getMessage().getMessage());
+                } catch (Exception e) {
                     LOG.debug("Failed to Show Notification");
                 }
             Platform.runLater(() -> {
