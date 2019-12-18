@@ -2,6 +2,7 @@ package de.uol.swp.client.main;
 
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.ClientApp;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
@@ -105,7 +106,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     @FXML
     public void initialize() throws IOException {
         //Neue Instanz einer ChatViewPresenter-Controller-Klasse erstellen und nötige Parameter uebergeben
-        chatViewPresenter = new ChatViewPresenter("globaler", "global", loggedInUser, ChatViewPresenter.THEME.Light, chatService);
+        chatViewPresenter = new ChatViewPresenter("globaler", "global", loggedInUser, ChatViewPresenter.THEME.Light, chatService, this);
         chatViewPresenter.setChatId("global");
         eventBus.register(chatViewPresenter);
         //FXML laden
@@ -163,6 +164,10 @@ public class MainMenuPresenter extends AbstractPresenter {
             lobbyName.requestFocus();
         }
         lobbyName.clear();
+    }
+
+    public boolean hasFocus() {
+        return ClientApp.getSceneManager().hasFocus();
     }
 
 

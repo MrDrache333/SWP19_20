@@ -41,7 +41,7 @@ public class ClientApp extends Application implements ConnectionListener {
 
     private EventBus eventBus;
 
-    private SceneManager sceneManager;
+    private static SceneManager sceneManager;
 
     // -----------------------------------------------------
     // Java FX Methods
@@ -71,43 +71,8 @@ public class ClientApp extends Application implements ConnectionListener {
         // exceptions are only visible in console!
     }
 
-    @Override
-    public void start(Stage primaryStage) {
-
-        // Client app is created by java, so injection must
-        // be handled here manually
-        Injector injector = Guice.createInjector(new ClientModule());
-
-        // get user service from guice, is needed for logout
-        this.userService = injector.getInstance(UserService.class);
-        this.lobbyService = injector.getInstance(LobbyService.class);
-
-        // get event bus from guice
-        eventBus = injector.getInstance(EventBus.class);
-        // Register this class for de.uol.swp.client.events (e.g. for exceptions)
-        eventBus.register(this);
-
-        // Client app is created by java, so injection must
-        // be handled here manually
-        SceneManagerFactory sceneManagerFactory = injector.getInstance(SceneManagerFactory.class);
-        this.sceneManager = sceneManagerFactory.create(primaryStage);
-
-        //  close request calls method to close all windows
-        primaryStage.setOnCloseRequest(event -> closeAllWindows());
-
-        ClientConnectionFactory connectionFactory = injector.getInstance(ClientConnectionFactory.class);
-        clientConnection = connectionFactory.create(host, port);
-        clientConnection.addConnectionListener(this);
-        // JavaFX Thread should not be blocked to long!
-        Thread t = new Thread(() -> {
-            try {
-                clientConnection.start();
-            } catch (Exception e) {
-                exceptionOccurred(e.getMessage());
-            }
-        });
-        t.setDaemon(true);
-        t.start();
+    public static SceneManager getSceneManager() {
+        return sceneManager;
     }
 
     @Override
@@ -257,4 +222,42 @@ public class ClientApp extends Application implements ConnectionListener {
 
     }
 
+    @Override
+    public void start(Stage primaryStage) {
+
+        // Client app is created by java, so injection must
+        // be handled here manually
+        Injector injector = Guice.createInjector(new ClientModule());
+
+        // get user service from guice, is needed for logout
+        this.userService = injector.getInstance(UserService.class);
+        this.lobbyService = injector.getInstance(LobbyService.class);
+
+        // get event bus from guice
+        eventBus = injector.getInstance(EventBus.class);
+        // Register this class for de.uol.swp.client.events (e.g. for exceptions)
+        eventBus.register(this);
+
+        // Client app is created by java, so injection must
+        // be handled here manually
+        SceneManagerFactory sceneManagerFactory = injector.getInstance(SceneManagerFactory.class);
+        sceneManager = sceneManagerFactory.create(primaryStage);
+
+        //  close request calls method to close all windows
+        primaryStage.setOnCloseRequest(event -> closeAllWindows());
+
+        ClientConnectionFactory connectionFactory = injector.getInstance(ClientConnectionFactory.class);
+        clientConnection = connectionFactory.create(host, port);
+        clientConnection.addConnectionListener(this);
+        // JavaFX Thread should not be blocked to long!
+        Thread t = new Thread(() -> {
+            try {
+                clientConnection.start();
+            } catch (Exception e) {
+                exceptionOccurred(e.getMessage());
+            }
+        });
+        t.setDaemon(true);
+        t.start();
+    }
 }
