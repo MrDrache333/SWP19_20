@@ -1,5 +1,6 @@
 package de.uol.swp.common.lobby;
 
+import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 
 import java.util.ArrayList;

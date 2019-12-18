@@ -23,6 +23,7 @@ public class LobbyDTO implements Lobby, Serializable {
      * Eindeutige UUID für die Lobby um Lobbys mit gleichen Namen unterscheiden zu können Serverseitig.
      */
     private UUID lobbyID;
+
     /**
      * @author Timo, Rike
      * @since Sprint 3
@@ -64,7 +65,7 @@ public class LobbyDTO implements Lobby, Serializable {
         this.users = users;
         this.lobbyID = lobbyID;
         this.players = players;
-        this.maxPlyer = maxPlayer;
+        this.maxPlayer= maxPlayer;
     }
 
     @Override

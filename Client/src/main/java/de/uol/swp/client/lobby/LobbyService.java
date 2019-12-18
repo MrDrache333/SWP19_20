@@ -10,6 +10,7 @@ import de.uol.swp.common.lobby.request.SetMaxPlayerRequest;
 import de.uol.swp.common.lobby.request.UpdateLobbyReadyStatusRequest;
 import de.uol.swp.common.lobby.request.*;
 import de.uol.swp.common.message.RequestMessage;
+import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

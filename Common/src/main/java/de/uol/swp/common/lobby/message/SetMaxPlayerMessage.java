@@ -33,16 +33,8 @@ public class SetMaxPlayerMessage extends AbstractLobbyMessage
         return maxPlayer;
     }
 
-    public void setMaxPlayer(Integer maxPlayer) {
-        this.maxPlayer = maxPlayer;
-    }
-
     public boolean getSetMaxPlayerSet() {
         return setMaxPlayerSet;
-    }
-
-    public void setSetMaxPlayerSet(boolean setMaxPlayerSet) {
-        this.setMaxPlayerSet = setMaxPlayerSet;
     }
 
     public boolean isSetMaxPlayerSet() {
@@ -51,10 +43,6 @@ public class SetMaxPlayerMessage extends AbstractLobbyMessage
 
     public User getOwner() {
         return owner;
-    }
-
-    public void setOwner(User owner) {
-        this.owner = owner;
     }
 
     @Override
