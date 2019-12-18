@@ -71,8 +71,7 @@ public class LobbyService extends AbstractService {
         chatManagement.createChat(chatID.toString());
         LOG.info("Der Chat mir der UUID " + chatID + " wurde erfolgreich erstellt");
         Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getLobbyName());
-        LobbyDTO lobbyDTO = new LobbyDTO(lobby.get().getName(), lobby.get().getOwner(),  lobby.get().getLobbyID(), lobby.get().getUsers(), lobby.get().getPlayers());
-        ServerMessage returnMessage = new CreateLobbyMessage(msg.getLobbyName(), msg.getUser(), chatID, lobbyDTO);
+        ServerMessage returnMessage = new CreateLobbyMessage(msg.getLobbyName(), msg.getUser(), chatID, (LobbyDTO) lobby.get());
         post(returnMessage);
         LOG.info("onCreateLobbyRequest wird auf dem Server aufgerufen.");
     }
@@ -91,8 +90,7 @@ public class LobbyService extends AbstractService {
         if (lobby.isPresent() && !lobby.get().getUsers().contains(msg.getUser()) && lobby.get().getPlayers() < 4) {
             LOG.info("User " + msg.getUser().getUsername() + " is joining lobby " + msg.getLobbyName());
             lobby.get().joinUser(new LobbyUser(msg.getUser()));
-            LobbyDTO lobbyDTO = new LobbyDTO(lobby.get().getName(), lobby.get().getOwner(),  lobby.get().getLobbyID(), lobby.get().getUsers(), lobby.get().getPlayers());
-            ServerMessage returnMessage = new UserJoinedLobbyMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID(), lobbyDTO);
+            ServerMessage returnMessage = new UserJoinedLobbyMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID(), (LobbyDTO) lobby.get());
             post(returnMessage);
         }
         else {
@@ -115,8 +113,7 @@ public class LobbyService extends AbstractService {
             ServerMessage returnMessage;
             Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getLobbyName());
             if(lobby.isPresent()) {
-                LobbyDTO lobbyDTO = new LobbyDTO(lobby.get().getName(), lobby.get().getOwner(),  lobby.get().getLobbyID(), lobby.get().getUsers(), lobby.get().getPlayers());
-                returnMessage = new UserLeftLobbyMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID(), lobbyDTO);
+                returnMessage = new UserLeftLobbyMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID(), (LobbyDTO) lobby.get());
             }
             else {
                 returnMessage = new UserLeftLobbyMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID(), null);
