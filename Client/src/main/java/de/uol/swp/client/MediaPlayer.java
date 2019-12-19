@@ -49,6 +49,7 @@ public class MediaPlayer {
                 bufferedInputStream.read(audio, 0, size);   //Sounddatei gebuffert einlesen
                 clip = (Clip) AudioSystem.getLine(info);    //Eingelesene Sounddatei als "Clip" speichern
                 clip.open(af, audio, 0, size);  //Clip oeffnen mit gegebenen Informationen
+                setVolume(type.equals(Type.Music) ? 0.1 : 0.5);
                 clip.addLineListener(event -> {
                     if (event.getType().equals(LineEvent.Type.STOP)) {
                         started = false;
@@ -65,6 +66,41 @@ public class MediaPlayer {
                 LOG.debug("Fehler beim abspielen von " + sound.getPath());
             }
         });
+    }
+
+    /**
+     * Mute the current playing Track.
+     */
+    public void mute() {
+        setMuted(true);
+    }
+
+    /**
+     * @param muted The State, wether the Track should be muted or not
+     */
+    private void setMuted(boolean muted) {
+        BooleanControl muteControl = (BooleanControl) clip
+                .getControl(BooleanControl.Type.MUTE);
+        muteControl.setValue(muted);
+    }
+
+    /**
+     * Un mute the current playing Track.
+     */
+    public void unMute() {
+        setMuted(true);
+    }
+
+    /**
+     * Set the Volume of the current Track (Must be between 0.0 and 1.0).
+     *
+     * @param Volume the final volume
+     */
+    public void setVolume(double Volume) {
+        if (Volume < 0 || Volume > 1) return;
+        double dB = (Math.log(Volume) / Math.log(10.0) * 20.0);
+        FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+        gainControl.setValue((float) dB);
     }
 
     /**
