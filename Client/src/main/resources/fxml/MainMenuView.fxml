@@ -55,10 +55,8 @@
                                 <ButtonBar minWidth="70.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="54.0"
                                            prefWidth="558.0" style="-fx-border-color: black;">
                                     <buttons>
-                                        <TextField fx:id="lobbyName" prefHeight="27.0" prefWidth="450.0"
-                                                   promptText="Name der neuen Lobby"/>
                                         <Button fx:id="CreateLobby" maxWidth="160.0" minWidth="160.0"
-                                                mnemonicParsing="false" onAction="#OnCreateLobbyButtonPressed"
+                                                mnemonicParsing="false" onAction="#onShowLobbyDialogButtonPressed"
                                                 prefHeight="27.0" prefWidth="160.0" text="Lobby erstellen"
                                                 textAlignment="CENTER"/>
                                     </buttons>

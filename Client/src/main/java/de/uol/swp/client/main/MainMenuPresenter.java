@@ -27,6 +27,8 @@ import javafx.util.Callback;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.swing.*;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -138,6 +140,72 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     /**
+     * Lobby erstellen Button: Sobald gedrückt, oeffnet sich Dialog. Aufforderung Name und optional Passwort anzugeben.
+     *
+     * @author Paula
+     * @since Sprint4
+     */
+    @FXML
+    public void onShowLobbyDialogButtonPressed(ActionEvent event) {
+
+        // Erzeugung Dialog
+        JDialog createLobbyDialoge = new JDialog();
+        createLobbyDialoge.setTitle("Lobby erstellen");
+        createLobbyDialoge.setSize(300, 150);
+
+
+        JPanel panel = new JPanel();
+
+        // Textfeld für Name wird erstellt und Panel hinzugefügt
+        // Text und Spaltenanzahl werden dabei direkt gesetzt
+        JLabel lname = new JLabel("Lobbyname: ");
+        JTextField lName = new JTextField("", 15);
+        lname.setSize(60, 60);
+        panel.add(lname);
+        panel.add(lName);
+
+
+        // Textfeld für Passwort wird erstellt und Panel hinzugefügt´
+        JLabel lobbyPassword = new JLabel("Password: ");
+        JPasswordField lPassword = new JPasswordField("", 15);
+        panel.add(lobbyPassword);
+        panel.add(lPassword);
+
+        //Lobby erstellen Button + Action aus altem Button übernommen ( Fehlermeldung funk. noch nicht)
+        JButton createLobby = new JButton("Lobby erstellen");
+        ActionListener onCreateLobbyButtonPressed = new ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+
+                List<String> lobbyNames = new ArrayList<>();
+
+                String lobbyName = lName.getText();
+
+                lobbies.forEach(lName -> lobbyNames.add(lobbyName));
+
+                if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName)) {
+                    CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
+                    eventBus.post(msg);
+                    LOG.info("Request wurde gesendet.");
+
+                }
+                lName.setText("");
+                createLobbyDialoge.setVisible(false);
+
+            }
+        };
+        createLobby.addActionListener(onCreateLobbyButtonPressed);
+
+        panel.add(createLobby);
+
+
+        createLobbyDialoge.add(panel);
+        createLobbyDialoge.setVisible(true);
+
+
+    }
+
+    /**
      * Die Methode fängt den Button-Klick ab und prüft, ob der LobbyName gültig ist.
      * Falls nein: Wird eine Fehlermeldung rausgegeben.
      * Falls ja: Wir eine CreateLobbyRequest mit dem eingegeben LobbyNamen und dem eingeloggten User auf den
@@ -147,6 +215,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      * @version 0.2
      * @since Sprint2
      */
+    /*
     @FXML
     public void OnCreateLobbyButtonPressed(ActionEvent event) {
         List<String> lobbyNames = new ArrayList<>();
@@ -164,6 +233,8 @@ public class MainMenuPresenter extends AbstractPresenter {
         }
         lobbyName.clear();
     }
+
+     */
 
 
     /**
