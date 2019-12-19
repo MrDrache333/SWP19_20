@@ -89,7 +89,7 @@ public class ClientApp extends Application implements ConnectionListener {
         // be handled here manually
         SceneManagerFactory sceneManagerFactory = injector.getInstance(SceneManagerFactory.class);
         this.sceneManager = sceneManagerFactory.create(primaryStage);
-        new MediaPlayer(MediaPlayer.Sound.Intro, MediaPlayer.Type.Sound).play();
+        //new MediaPlayer(MediaPlayer.Sound.Intro, MediaPlayer.Type.Sound).play();
 
         //  close request calls method to close all windows
         primaryStage.setOnCloseRequest(event -> closeAllWindows());

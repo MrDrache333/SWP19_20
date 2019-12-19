@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.sound.sampled.*;
 import java.io.BufferedInputStream;
+import java.io.File;
 
 /**
  * The type Media player.
@@ -39,7 +40,7 @@ public class MediaPlayer {
             try {
 
                 //Sound laden
-                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(getClass().getResource(sound.getPath()));  //Sound als Stream oeffnen
+                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(getClass().getResource(sound.getPath()).toExternalForm().replace("file:", "")));  //Sound als Stream oeffnen
                 BufferedInputStream bufferedInputStream = new BufferedInputStream(audioInputStream);    //Stream Buffer erstellen
                 AudioFormat af = audioInputStream.getFormat();  //AudioFormat laden
                 int size = (int) (af.getFrameSize() * audioInputStream.getFrameLength());   //Sounddatenlaenge bestimmen
@@ -109,7 +110,15 @@ public class MediaPlayer {
         /**
          * Window opened sound.
          */
-        Window_Opened("/sounds/window_opened.wav");
+        Window_Opened("/sounds/window_opened.wav"),
+        /**
+         * Message send sound.
+         */
+        Message_Send("/sounds/message_send.wav"),
+        /**
+         * Message receive sound.
+         */
+        Message_Receive("/sounds/message_receive.wav");
 
         private String path;
 

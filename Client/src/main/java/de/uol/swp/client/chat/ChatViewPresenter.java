@@ -216,6 +216,8 @@ public class ChatViewPresenter extends AbstractPresenter {
     @Subscribe
     private void onNewChatMessage(NewChatMessage msg) {
         if (!chatId.equals("") && msg.getChatId().equals(chatId) && (lastMessage == null || !(msg.getMessage().getSender().getUsername().equals("server") && lastMessage.getSender().getUsername().equals("server") && msg.getMessage().getMessage().equals(lastMessage.getMessage())))) {
+            if (!loggedInUser.getUsername().equals(msg.getMessage().getSender().getUsername()) && msg.getMessage().getSender().equals("server"))
+                new MediaPlayer(MediaPlayer.Sound.Message_Receive, MediaPlayer.Type.Sound).play();
             Platform.runLater(() -> {
                 //Loesche alte Nachrichten bei bedarf
                 if (chatMessages.size() > MAXCHATMESSAGEHISTORY) {
@@ -275,7 +277,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      */
     @FXML
     private void onSendChatButtonPressed() {
-        new MediaPlayer(MediaPlayer.Sound.Button_Pressed, MediaPlayer.Type.Sound).play();
+        new MediaPlayer(MediaPlayer.Sound.Message_Send, MediaPlayer.Type.Sound).play();
         if (chatId.equals("")) return;
         String message;
 
