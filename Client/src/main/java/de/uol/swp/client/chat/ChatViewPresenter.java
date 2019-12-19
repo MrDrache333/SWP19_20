@@ -220,9 +220,9 @@ public class ChatViewPresenter extends AbstractPresenter {
     @Subscribe
     private void onNewChatMessage(NewChatMessage msg) {
         if (!chatId.equals("") && msg.getChatId().equals(chatId) && (lastMessage == null || !(msg.getMessage().getSender().getUsername().equals("server") && lastMessage.getSender().getUsername().equals("server") && msg.getMessage().getMessage().equals(lastMessage.getMessage())))) {
-            if (System.getProperty("os.name").toLowerCase().contains("mac") && !loggedInUser.getUsername().equals(msg.getMessage().getSender().getUsername()) && ((gameManagement != null && !gameManagement.hasFocus()) || (gameManagement == null && !ClientApp.getSceneManager().hasFocus())))
+            if (lastMessage != null && !loggedInUser.getUsername().equals(msg.getMessage().getSender().getUsername()) && ((gameManagement != null && !gameManagement.hasFocus()) || (gameManagement == null && !ClientApp.getSceneManager().hasFocus())))
                 try {
-                    new Notifyer().notify(Notifyer.MessageType.INFO, "Nachricht von " + msg.getMessage().getSender().getUsername() + " in " + chatTitle.toUpperCase(), msg.getMessage().getMessage());
+                    new Notifyer().notify(Notifyer.MessageType.INFO, "Nachricht von " + msg.getMessage().getSender().getUsername() + " in " + (chatId.equals("global") ? "GLOBAL" : chatTitle), msg.getMessage().getMessage());
                 } catch (Exception e) {
                     LOG.debug("Failed to Show Notification");
                 }
