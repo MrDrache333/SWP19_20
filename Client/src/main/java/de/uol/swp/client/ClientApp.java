@@ -14,6 +14,7 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.exception.RegistrationExceptionMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
+import de.uol.swp.common.user.request.OpenSettingsRequest;
 import de.uol.swp.common.user.response.LoginSuccessfulResponse;
 import de.uol.swp.common.user.response.RegistrationSuccessfulResponse;
 import io.netty.channel.Channel;
@@ -220,6 +221,20 @@ public class ClientApp extends Application implements ConnectionListener {
             sceneManager.getGameManagement(message.getLobbyID()).close();
         }
         lobbyService.retrieveAllLobbies();
+    }
+
+    /**
+     * Empfänt die Nachricht (vom MainMenuPresenter), dass das Einstellungsfenster geöffnet werden soll
+     *
+     * @param message
+     * @author Anna
+     * @since Sprint4
+     */
+    @Subscribe
+    public void onOpenSettingsRequest(OpenSettingsRequest message){
+        if (message.getUser().getUsername().equals(user.getUsername())) {
+            sceneManager.showSettingsScreen();
+        }
     }
 
 

@@ -16,6 +16,7 @@ import de.uol.swp.client.register.RegistrationPresenter;
 import de.uol.swp.client.register.event.RegistrationCanceledEvent;
 import de.uol.swp.client.register.event.RegistrationErrorEvent;
 import de.uol.swp.client.register.event.ShowRegistrationViewEvent;
+import de.uol.swp.client.settings.SettingsPresenter;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import javafx.application.Platform;
@@ -47,6 +48,7 @@ public class SceneManager {
     private String lastTitle;
     private Scene registrationScene;
     private Scene mainScene;
+    private Scene settingsScene;
     private Scene gameScene;
     private Scene lastScene = null;
     private Scene currentScene = null;
@@ -95,6 +97,7 @@ public class SceneManager {
         initLoginView();
         initMainView();
         initRegistrationView();
+        initSettingsView();
     }
 
     private Parent initPresenter(String fxmlFile) {
@@ -135,6 +138,14 @@ public class SceneManager {
             registrationScene = new Scene(rootPane, 1280, 750);
             registrationScene.getStylesheets().add(styleSheet);
             registrationScene.getStylesheets().add(RegistrationPresenter.css);
+        }
+    }
+
+    private void initSettingsView() {
+        if (settingsScene == null) {
+            Parent rootPane = initPresenter(SettingsPresenter.fxml);
+            settingsScene = new Scene(rootPane, 450, 300);
+            settingsScene.getStylesheets().add(styleSheet);
         }
     }
 
@@ -238,4 +249,19 @@ public class SceneManager {
         Platform.runLater(() -> games.values().forEach(GameManagement::close));
     }
 
+    /**
+     * Öffnet das Einstellungsfenster, indem eine neue Stage erstellt wird, mit der settingsScene.
+     *
+     * @author Anna
+     * @since Sprint4
+     */
+    public void showSettingsScreen() {
+        Platform.runLater(() -> {
+            Stage settingsStage = new Stage();
+            settingsStage.setTitle("Einstellungen");
+            settingsStage.setScene(settingsScene);
+            settingsStage.setResizable(false);
+            settingsStage.show();
+        });
+    }
 }

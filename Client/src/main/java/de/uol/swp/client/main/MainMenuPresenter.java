@@ -10,6 +10,7 @@ import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
+import de.uol.swp.common.user.request.OpenSettingsRequest;
 import de.uol.swp.common.user.response.AllOnlineUsersResponse;
 import de.uol.swp.common.user.response.LoginSuccessfulResponse;
 import javafx.application.Platform;
@@ -165,6 +166,18 @@ public class MainMenuPresenter extends AbstractPresenter {
         lobbyName.clear();
     }
 
+    /**
+     * Die Methode postet ein Request auf den Bus, wenn der Einstellungen-Button gedrückt wird
+     *
+     * @param actionEvent
+     * @author Anna
+     * @since Sprint4
+     */
+    @FXML
+    public void onSettingsButtonPressed(ActionEvent actionEvent) {
+        OpenSettingsRequest request = new OpenSettingsRequest(loggedInUser);
+        eventBus.post(request);
+    }
 
     /**
      * Login successful.
