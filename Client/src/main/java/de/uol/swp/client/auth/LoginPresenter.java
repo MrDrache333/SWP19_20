@@ -1,8 +1,8 @@
 package de.uol.swp.client.auth;
 
 import de.uol.swp.client.AbstractPresenter;
-import de.uol.swp.client.MediaPlayer;
 import de.uol.swp.client.register.event.ShowRegistrationViewEvent;
+import de.uol.swp.client.sound.SoundMediaPlayer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -35,26 +35,26 @@ public class LoginPresenter extends AbstractPresenter {
     @FXML
     private void initialize() {
         LoginButton.setOnMouseEntered(event -> {
-            new MediaPlayer(MediaPlayer.Sound.Button_Hover, MediaPlayer.Type.Sound).play();
+            new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play();
         });
         registerButton.setOnMouseEntered(event -> {
-            new MediaPlayer(MediaPlayer.Sound.Button_Hover, MediaPlayer.Type.Sound).play();
+            new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play();
         });
         forgotPasswordButton.setOnMouseEntered(event -> {
-            new MediaPlayer(MediaPlayer.Sound.Button_Hover, MediaPlayer.Type.Sound).play();
+            new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play();
         });
 
     }
 
     @FXML
     private void onLoginButtonPressed(ActionEvent event) {
-        new MediaPlayer(MediaPlayer.Sound.Button_Pressed, MediaPlayer.Type.Sound).play();
+        new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Pressed, SoundMediaPlayer.Type.Sound).play();
         userService.login(userField.getText(), passwordField.getText());
     }
 
     @FXML
     private void onRegisterButtonPressed(ActionEvent event) {
-        new MediaPlayer(MediaPlayer.Sound.Button_Pressed, MediaPlayer.Type.Sound).play();
+        new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Pressed, SoundMediaPlayer.Type.Sound).play();
         eventBus.post(showRegViewMessage);
     }
 }

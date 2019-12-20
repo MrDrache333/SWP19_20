@@ -16,6 +16,7 @@ import de.uol.swp.client.register.RegistrationPresenter;
 import de.uol.swp.client.register.event.RegistrationCanceledEvent;
 import de.uol.swp.client.register.event.RegistrationErrorEvent;
 import de.uol.swp.client.register.event.ShowRegistrationViewEvent;
+import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import javafx.application.Platform;
@@ -173,7 +174,7 @@ public class SceneManager {
             primaryStage.setScene(scene);
             primaryStage.setResizable(false);
             primaryStage.show();
-            new MediaPlayer(MediaPlayer.Sound.Window_Opened, MediaPlayer.Type.Sound).play();
+            new SoundMediaPlayer(SoundMediaPlayer.Sound.Window_Opened, SoundMediaPlayer.Type.Sound).play();
         });
     }
 

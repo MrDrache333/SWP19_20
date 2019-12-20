@@ -3,7 +3,7 @@ package de.uol.swp.client.chat;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
-import de.uol.swp.client.MediaPlayer;
+import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.chat.ChatMessage;
 import de.uol.swp.common.chat.ChatService;
 import de.uol.swp.common.chat.message.NewChatMessage;
@@ -201,7 +201,7 @@ public class ChatViewPresenter extends AbstractPresenter {
             chatViewAnchorPane.getStylesheets().add(styleSheet_dark);
         }
 
-        sendButton.setOnMouseEntered(event -> new MediaPlayer(MediaPlayer.Sound.Button_Hover, MediaPlayer.Type.Sound).play());
+        sendButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
     }
 
     //--------------------------------------
@@ -217,7 +217,7 @@ public class ChatViewPresenter extends AbstractPresenter {
     private void onNewChatMessage(NewChatMessage msg) {
         if (!chatId.equals("") && msg.getChatId().equals(chatId) && (lastMessage == null || !(msg.getMessage().getSender().getUsername().equals("server") && lastMessage.getSender().getUsername().equals("server") && msg.getMessage().getMessage().equals(lastMessage.getMessage())))) {
             if (!loggedInUser.getUsername().equals(msg.getMessage().getSender().getUsername()) && msg.getMessage().getSender().equals("server"))
-                new MediaPlayer(MediaPlayer.Sound.Message_Receive, MediaPlayer.Type.Sound).play();
+                new SoundMediaPlayer(SoundMediaPlayer.Sound.Message_Receive, SoundMediaPlayer.Type.Sound).play();
             Platform.runLater(() -> {
                 //Loesche alte Nachrichten bei bedarf
                 if (chatMessages.size() > MAXCHATMESSAGEHISTORY) {
@@ -277,7 +277,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      */
     @FXML
     private void onSendChatButtonPressed() {
-        new MediaPlayer(MediaPlayer.Sound.Message_Send, MediaPlayer.Type.Sound).play();
+        new SoundMediaPlayer(SoundMediaPlayer.Sound.Message_Send, SoundMediaPlayer.Type.Sound).play();
         if (chatId.equals("")) return;
         String message;
 

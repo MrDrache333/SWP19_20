@@ -1,4 +1,4 @@
-package de.uol.swp.client;
+package de.uol.swp.client.sound;
 
 import javafx.application.Platform;
 import org.apache.logging.log4j.LogManager;
@@ -11,7 +11,7 @@ import java.io.File;
 /**
  * The type Media player.
  */
-public class MediaPlayer {
+public class SoundMediaPlayer implements MediaPlayer {
 
     private Logger LOG = LogManager.getLogger(getClass());
 
@@ -26,15 +26,16 @@ public class MediaPlayer {
      * @param sound the sound
      * @param type  the type
      */
-    public MediaPlayer(Sound sound, Type type) {
+    public SoundMediaPlayer(Sound sound, Type type) {
         this.sound = sound;
         this.type = type;
         this.started = false;
     }
 
     /**
-     * Play.
+     * Plays the current Track.
      */
+    @Override
     public void play() {
         Platform.runLater(() -> {
             try {
@@ -71,6 +72,7 @@ public class MediaPlayer {
     /**
      * Mute the current playing Track.
      */
+    @Override
     public void mute() {
         setMuted(true);
     }
@@ -87,6 +89,7 @@ public class MediaPlayer {
     /**
      * Un mute the current playing Track.
      */
+    @Override
     public void unMute() {
         setMuted(true);
     }
@@ -96,6 +99,7 @@ public class MediaPlayer {
      *
      * @param Volume the final volume
      */
+    @Override
     public void setVolume(double Volume) {
         if (Volume < 0 || Volume > 1) return;
         double dB = (Math.log(Volume) / Math.log(10.0) * 20.0);
@@ -108,8 +112,18 @@ public class MediaPlayer {
      *
      * @return Value of started.
      */
+    @Override
     public boolean isStarted() {
         return started;
+    }
+
+    /**
+     * Stops the current Track.
+     */
+    @Override
+    public void stop() {
+        clip.stop();
+        started = false;
     }
 
     /**

@@ -4,11 +4,11 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
-import de.uol.swp.client.MediaPlayer;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.LobbyPresenter;
 import de.uol.swp.client.lobby.LobbyService;
+import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
@@ -169,7 +169,7 @@ public class GameManagement {
                 }
             });
             primaryStage.show();
-            new MediaPlayer(MediaPlayer.Sound.Window_Opened, MediaPlayer.Type.Sound).play();
+            new SoundMediaPlayer(SoundMediaPlayer.Sound.Window_Opened, SoundMediaPlayer.Type.Sound).play();
         });
     }
 

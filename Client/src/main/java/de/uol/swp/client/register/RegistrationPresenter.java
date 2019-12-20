@@ -4,9 +4,9 @@ import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import de.uol.swp.client.AbstractPresenter;
-import de.uol.swp.client.MediaPlayer;
 import de.uol.swp.client.register.event.RegistrationCanceledEvent;
 import de.uol.swp.client.register.event.RegistrationErrorEvent;
+import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.dto.UserDTO;
 import javafx.event.ActionEvent;
@@ -42,10 +42,10 @@ public class RegistrationPresenter extends AbstractPresenter {
     @FXML
     private void initialize() {
         registerButton.setOnMouseEntered(event -> {
-            new MediaPlayer(MediaPlayer.Sound.Button_Hover, MediaPlayer.Type.Sound).play();
+            new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play();
         });
         cancelButton.setOnMouseEntered(event -> {
-            new MediaPlayer(MediaPlayer.Sound.Button_Hover, MediaPlayer.Type.Sound).play();
+            new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play();
         });
     }
 
@@ -56,13 +56,13 @@ public class RegistrationPresenter extends AbstractPresenter {
 
     @FXML
     void onCancelButtonPressed(ActionEvent event) {
-        new MediaPlayer(MediaPlayer.Sound.Button_Pressed, MediaPlayer.Type.Sound).play();
+        new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Pressed, SoundMediaPlayer.Type.Sound).play();
         eventBus.post(registrationCanceledEvent);
     }
 
     @FXML
     void onRegisterButtonPressed(ActionEvent event) {
-        new MediaPlayer(MediaPlayer.Sound.Button_Pressed, MediaPlayer.Type.Sound).play();
+        new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Pressed, SoundMediaPlayer.Type.Sound).play();
         if (Strings.isNullOrEmpty(loginField.getText())) {
             eventBus.post(new RegistrationErrorEvent("Username cannot be empty"));
         } else if (!passwordField1.getText().equals(passwordField2.getText())) {

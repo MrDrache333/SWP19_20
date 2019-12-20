@@ -2,8 +2,8 @@ package de.uol.swp.client.main;
 
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
-import de.uol.swp.client.MediaPlayer;
 import de.uol.swp.client.chat.ChatViewPresenter;
+import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.lobby.request.CreateLobbyRequest;
@@ -77,7 +77,7 @@ public class MainMenuPresenter extends AbstractPresenter {
 
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
-        new MediaPlayer(MediaPlayer.Sound.Button_Hover, MediaPlayer.Type.Sound).play();
+        new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play();
         lobbyService.leaveAllLobbiesOnLogout(loggedInUser);
         userService.logout(loggedInUser);
     }
@@ -141,8 +141,8 @@ public class MainMenuPresenter extends AbstractPresenter {
         host.setPrefWidth(135);
         joinLobby.setPrefWidth(90);
 
-        createLobbyButton.setOnMouseEntered(event -> new MediaPlayer(MediaPlayer.Sound.Button_Hover, MediaPlayer.Type.Sound).play());
-        logoutButton.setOnMouseEntered(event -> new MediaPlayer(MediaPlayer.Sound.Button_Hover, MediaPlayer.Type.Sound).play());
+        createLobbyButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
+        logoutButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
 
     }
 
@@ -158,7 +158,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @FXML
     public void OnCreateLobbyButtonPressed(ActionEvent event) {
-        new MediaPlayer(MediaPlayer.Sound.Button_Pressed, MediaPlayer.Type.Sound).play();
+        new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Pressed, SoundMediaPlayer.Type.Sound).play();
         List<String> lobbyNames = new ArrayList<>();
         lobbies.forEach(lobby -> lobbyNames.add(lobby.getName()));
         if(lobbyNames.contains(lobbyName.getText())) {

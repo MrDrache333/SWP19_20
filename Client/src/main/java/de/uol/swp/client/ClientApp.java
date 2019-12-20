@@ -6,6 +6,7 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import de.uol.swp.client.di.ClientModule;
+import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.lobby.LobbyService;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
@@ -89,7 +90,7 @@ public class ClientApp extends Application implements ConnectionListener {
         // be handled here manually
         SceneManagerFactory sceneManagerFactory = injector.getInstance(SceneManagerFactory.class);
         this.sceneManager = sceneManagerFactory.create(primaryStage);
-        new MediaPlayer(MediaPlayer.Sound.Intro, MediaPlayer.Type.Music).play();
+        new SoundMediaPlayer(SoundMediaPlayer.Sound.Intro, SoundMediaPlayer.Type.Music).play();
 
         //  close request calls method to close all windows
         primaryStage.setOnCloseRequest(event -> closeAllWindows());
