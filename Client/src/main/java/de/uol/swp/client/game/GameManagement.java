@@ -42,6 +42,7 @@ public class GameManagement {
     private ChatViewPresenter chatViewPresenter;
     private UUID ID;    //Die Lobby, Chat and GameID
     private User loggedInUser;  //Der aktuell angemeldete Benutzer
+    private UserDTO gameOwner;
     private String lobbyName;
 
     private Scene gameScene;
@@ -64,19 +65,20 @@ public class GameManagement {
      * @param lobbyService the lobby service
      * @param userService  the user service
      * @param injector     the injector
-     * @author Keno
+     * @author Keno, Darian
      */
-    public GameManagement(EventBus eventBus, UUID id, String lobbyName, User loggedInUser, ChatService chatService, LobbyService lobbyService, UserService userService, Injector injector) {
+    public GameManagement(EventBus eventBus, UUID id, String lobbyName, User loggedInUser, ChatService chatService, LobbyService lobbyService, UserService userService, Injector injector, UserDTO gameOwner) {
         this.ID = id;
         this.loggedInUser = loggedInUser;
         this.injector = injector;
         this.primaryStage = new Stage();
         this.lobbyName = lobbyName;
         this.eventBus = eventBus;
+        this.gameOwner = gameOwner;
 
         this.chatViewPresenter = new ChatViewPresenter(lobbyName, id, loggedInUser, ChatViewPresenter.THEME.Light, chatService, injector);
         this.gameViewPresenter = new GameViewPresenter(loggedInUser, id, chatService, chatViewPresenter, lobbyService, userService, injector, this);
-        this.lobbyPresenter = new LobbyPresenter(loggedInUser, lobbyName, id, chatService, chatViewPresenter, lobbyService, userService, injector, this);
+        this.lobbyPresenter = new LobbyPresenter(loggedInUser, lobbyName, id, chatService, chatViewPresenter, lobbyService, userService, injector, gameOwner, this);
 
         eventBus.register(chatViewPresenter);
         eventBus.register(lobbyPresenter);

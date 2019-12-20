@@ -8,10 +8,7 @@ import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
 import de.uol.swp.common.chat.ChatService;
 import de.uol.swp.common.lobby.LobbyService;
-import de.uol.swp.common.lobby.message.StartGameMessage;
-import de.uol.swp.common.lobby.message.UpdatedLobbyReadyStatusMessage;
-import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
-import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
+import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
@@ -21,6 +18,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -68,6 +66,7 @@ public class LobbyPresenter extends AbstractPresenter {
     private String lobbyName;
     private User loggedInUser;
     private UserDTO loggedInUserDTO;
+    private UserDTO gameOwner;
     private Injector injector;
 
     //Eigener Status in der Lobby
@@ -97,7 +96,7 @@ public class LobbyPresenter extends AbstractPresenter {
      * @param injector          the injector
      * @param gameManagement    the game management
      */
-    public LobbyPresenter(User loggedInUser, String name, UUID lobbyID, ChatService chatService, ChatViewPresenter chatViewPresenter, LobbyService lobbyService, UserService userService, Injector injector, GameManagement gameManagement) {
+    public LobbyPresenter(User loggedInUser, String name, UUID lobbyID, ChatService chatService, ChatViewPresenter chatViewPresenter, LobbyService lobbyService, UserService userService, Injector injector, UserDTO gameOwner, GameManagement gameManagement) {
         this.loggedInUser = loggedInUser;
         this.lobbyName = name;
         this.lobbyID = lobbyID;
@@ -106,6 +105,7 @@ public class LobbyPresenter extends AbstractPresenter {
         this.userService = userService;
         this.chatViewPresenter = chatViewPresenter;
         this.injector = injector;
+        this.gameOwner = gameOwner;
         this.gameManagement = gameManagement;
         this.loggedInUserDTO = new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail());
     }
@@ -113,11 +113,6 @@ public class LobbyPresenter extends AbstractPresenter {
     //--------------------------------------
     // FXML METHODS
     //--------------------------------------
-
-    @FXML
-    public void onLeaveLobbyButtonPressed(ActionEvent event) {
-        lobbyService.leaveLobby(lobbyName, loggedInUserDTO, lobbyID);
-    }
 
     /**
      * Initialize.
@@ -138,8 +133,13 @@ public class LobbyPresenter extends AbstractPresenter {
         chatViewPresenter.userJoined(loggedInUser.getUsername());
 
         lobbyService.retrieveAllUsersInLobby(lobbyID);
-        readyUserList.put(loggedInUser.getUsername(), getHboxFromReadyUser(loggedInUser.getUsername(), false));
+        readyUserList.put(loggedInUser.getUsername(), getHboxFromReadyUser(loggedInUser, false));
         updateUsersList();
+    }
+
+    @FXML
+    public void onLeaveLobbyButtonPressed(ActionEvent event) {
+        lobbyService.leaveLobby(lobbyName, loggedInUserDTO, lobbyID);
     }
 
     /**
@@ -199,7 +199,7 @@ public class LobbyPresenter extends AbstractPresenter {
         if (!message.getLobbyID().equals(lobbyID)) return;
         if (readyUserList.containsKey(message.getUser().getUsername())) {
             LOG.debug("User " + message.getUser().getUsername() + " changed his status to " + (message.isReady() ? "Ready" : "Not Ready") + " in Lobby " + lobbyID);
-            updateReadyUser(message.getUser().getUsername(), message.isReady());
+            updateReadyUser(message.getUser(), message.isReady());
         }
     }
 
@@ -207,8 +207,8 @@ public class LobbyPresenter extends AbstractPresenter {
     private void onReceiveAllUsersInLobby(AllOnlineUsersInLobbyResponse response) {
         if (response.getLobbyID().equals(lobbyID)) {
             readyUserList = new TreeMap<>();
-            response.getUsers().forEach(e -> {
-                readyUserList.put(e.getUsername(), getHboxFromReadyUser(e.getUsername(), response.getStatus(e)));
+            response.getUsers().forEach(user -> {
+                readyUserList.put(user.getUsername(), getHboxFromReadyUser(user, response.getStatus(user)));
             });
             updateUsersList();
         }
@@ -247,7 +247,7 @@ public class LobbyPresenter extends AbstractPresenter {
         LOG.debug("New user " + message.getUser() + " logged in");
         Platform.runLater(() -> {
             if (readyUserList != null && loggedInUser != null && !loggedInUser.toString().equals(message.getLobbyName())) {
-                readyUserList.put(message.getUser().getUsername(), getHboxFromReadyUser(message.getUser().getUsername(), false));
+                readyUserList.put(message.getUser().getUsername(), getHboxFromReadyUser(message.getUser(), false));
                 updateUsersList();
                 chatViewPresenter.userJoined(message.getUser().getUsername());
             }
@@ -261,6 +261,21 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
+        if (!message.getLobbyID().equals(lobbyID)) return;
+        LOG.debug("User " + message.getLobbyName() + " left the Lobby");
+        userLeftLobby(message.getUser().getUsername());
+        chatViewPresenter.userLeft(message.getUser().getUsername());
+    }
+
+    /**
+     *
+     *
+     * @param message
+     * @author Darian
+     * @since sprint4
+     */
+    @Subscribe
+    public void onKickUserMessage(KickUserMessage message){
         if (!message.getLobbyID().equals(lobbyID)) return;
         LOG.debug("User " + message.getLobbyName() + " left the Lobby");
         userLeftLobby(message.getUser().getUsername());
@@ -297,29 +312,41 @@ public class LobbyPresenter extends AbstractPresenter {
         });
     }
 
-
     /**
-     * Creates a new HBox for a User
+     * Es wird eine HBox erstellt in der man den Benutzernamen sieht und den Bereit-Status. Wenn man der Besitzer der
+     * Lobby ist kann man mit einem Button daneben die Spieler aus der Lobby entfernen
      *
-     * @param username The User
+     * @param user The User
      * @param status   The actual Status
      * @return The generated HBox
+     * @author Darian
      */
-    private HBox getHboxFromReadyUser(String username, boolean status) {
+    private HBox getHboxFromReadyUser(User user, boolean status) {
         HBox box = new HBox();
         box.setAlignment(Pos.CENTER_LEFT);
         box.setSpacing(5);
         Circle circle = new Circle(12.0f, status ? Paint.valueOf("green") : Paint.valueOf("red"));
-        Label usernameLabel = new Label(username);
+        Label usernameLabel = new Label(user.getUsername());
         box.getChildren().add(circle);
         box.getChildren().add(usernameLabel);
+        //Es wird geprüft ob man der Besitzer der Lobby ist und ob der Button neben einem selber auftaucht
+        if(loggedInUser.getUsername().equals(gameOwner.getUsername()) && !user.getUsername().equals(gameOwner.getUsername())){
+            Button button = new Button("Spieler entfernen");
+            box.getChildren().add(button);
+            //Wenn der Button gedrückt wird der Spieler entfernt.
+            button.setOnAction(new EventHandler<ActionEvent>() {
+                @Override public void handle(ActionEvent e) {
+                    lobbyService.kickUser(lobbyName, (UserDTO) loggedInUser, lobbyID, (UserDTO) user);
+                }
+            });
+        }
         return box;
     }
 
-    private void updateReadyUser(String userName, boolean status) {
-        if (readyUserList.containsKey(userName)) {
-            readyUserList.remove(userName);
-            readyUserList.put(userName, getHboxFromReadyUser(userName, status));
+    private void updateReadyUser(User user, boolean status) {
+        if (readyUserList.containsKey(user.getUsername())) {
+            readyUserList.remove(user.getUsername());
+            readyUserList.put(user.getUsername(), getHboxFromReadyUser(user, status));
             updateUsersList();
         }
     }

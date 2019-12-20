@@ -8,17 +8,17 @@ import java.util.UUID;
 public class CreateLobbyMessage extends AbstractLobbyMessage {
     private String lobbyName;
     private UserDTO user;
-    private UUID ChatID;
+    private UUID chatID;
 
     private Lobby lobby;
 
     public CreateLobbyMessage() {
     }
 
-    public CreateLobbyMessage(String lobbyName, UserDTO user, UUID ChatID) {
+    public CreateLobbyMessage(String lobbyName, UserDTO user, UUID chatID) {
         this.lobbyName = lobbyName;
         this.user = user;
-        this.ChatID = ChatID;
+        this.chatID = chatID;
     }
 
     public CreateLobbyMessage(Lobby lobby) {
@@ -42,10 +42,10 @@ public class CreateLobbyMessage extends AbstractLobbyMessage {
     }
 
     public UUID getChatID() {
-        return ChatID;
+        return chatID;
     }
 
     public void setChatID(UUID chatID) {
-        ChatID = chatID;
+        chatID = chatID;
     }
 }

@@ -17,6 +17,7 @@ import de.uol.swp.client.register.event.RegistrationCanceledEvent;
 import de.uol.swp.client.register.event.RegistrationErrorEvent;
 import de.uol.swp.client.register.event.ShowRegistrationViewEvent;
 import de.uol.swp.common.user.User;
+import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -198,14 +199,14 @@ public class SceneManager {
      *
      * @param title   der Übergebene Titel aus dem MainMenuPresenter
      * @param lobbyID die übergebene LobbyID aus der empfangenen Message in der ClientApp
-     * @author Paula, Haschem, Ferit, Anna
+     * @author Paula, Haschem, Ferit, Anna, Darian
      * @version 0.2
      * @since Sprint3
      */
-    public void showLobbyScreen(User currentUser, String title, UUID lobbyID) {
+    public void showLobbyScreen(User currentUser, String title, UUID lobbyID, UserDTO gameOwner) {
         Platform.runLater(() -> {
             //LobbyPresenter neue Instanz mit (name, id) wird erstellt
-            GameManagement gameManagement = new GameManagement(eventBus, lobbyID, title, currentUser, chatService, lobbyService, userService, injector);
+            GameManagement gameManagement = new GameManagement(eventBus, lobbyID, title, currentUser, chatService, lobbyService, userService, injector, gameOwner);
 
             eventBus.register(gameManagement);
 

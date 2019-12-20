@@ -59,4 +59,6 @@ public interface LobbyService {
      * @param Status    the status
      */
     void setLobbyUserStatus(String LobbyName, UserDTO user, boolean Status);
+
+    void kickUser(String lobbyName, UserDTO gameOwner, UUID lobbyID, UserDTO userToKick);
 }

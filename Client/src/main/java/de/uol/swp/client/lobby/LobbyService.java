@@ -107,4 +107,19 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
         RequestMessage request = new UpdateLobbyReadyStatusRequest(LobbyName, user, Status);
         bus.post(request);
     }
+
+    /**
+     *
+     *
+     * @param lobbyName
+     * @param owner
+     * @param lobbyID
+     * @param userToKick
+     * @since sprint4
+     * @author Darian
+     */
+    public void kickUser(String lobbyName, UserDTO gameOwner, UUID lobbyID, UserDTO userToKick){
+        RequestMessage request = new KickUserRequest(lobbyName, gameOwner, lobbyID, userToKick);
+        bus.post(request);
+    }
 }

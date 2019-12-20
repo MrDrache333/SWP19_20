@@ -12,6 +12,7 @@ import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.message.ResponseMessage;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
+import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.chat.ChatManagement;
 import de.uol.swp.server.usermanagement.AuthenticationService;
@@ -89,7 +90,7 @@ public class LobbyService extends AbstractService {
         if (lobby.isPresent() && !lobby.get().getUsers().contains(msg.getUser()) && lobby.get().getPlayers() < 4) {
             LOG.info("User " + msg.getUser().getUsername() + " is joining lobby " + msg.getLobbyName());
             lobby.get().joinUser(new LobbyUser(msg.getUser()));
-            ServerMessage returnMessage = new UserJoinedLobbyMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID());
+            ServerMessage returnMessage = new UserJoinedLobbyMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID(),(UserDTO) lobby.get().getOwner());
             sendToAll(msg.getLobbyName(), returnMessage);
         }
     }
@@ -193,10 +194,26 @@ public class LobbyService extends AbstractService {
         post(response);
     }
 
+    /**
+     * Bei der Anfrage einen Spieler aus einer Lobby zu entfernen, wird dieser entfernt.
+     *
+     * @param msg the request message
+     * @author Darian
+     */
+    @Subscribe
+    public void onKickUserRequest(KickUserRequest msg){
+        if (lobbyManagement.kickUser(msg.getLobbyName(), msg.getUserToKick(), msg.getUser())) {
+            LOG.info("User " + msg.getUser().getUsername() + " is kicked from lobby " + msg.getLobbyName());
+            ServerMessage returnMessage = new KickUserMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID());
+            post(returnMessage);
+        } else {
+            LOG.error("Kicking " + msg.getLobbyName() + " from Lobby has failed");
+        }
+    }
+
     //--------------------------------------
     // Help Methods
     //--------------------------------------
-
 
     /**
      * Send to all.
