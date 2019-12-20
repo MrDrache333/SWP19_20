@@ -1,10 +1,9 @@
-package de.uol.swp.client.register.event;
+package de.uol.swp.client.register.pattern;
 import de.uol.swp.client.main.MainMenuPresenter;
 import org.junit.jupiter.api.Test;
 
 import java.util.regex.Pattern;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
