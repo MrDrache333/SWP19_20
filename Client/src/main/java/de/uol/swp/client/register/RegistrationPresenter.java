@@ -13,6 +13,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
+import java.util.regex.Pattern;
+
 public class RegistrationPresenter extends AbstractPresenter {
 
     public static final String fxml = "/fxml/RegistrationView.fxml";
@@ -29,6 +31,14 @@ public class RegistrationPresenter extends AbstractPresenter {
     @FXML
     private PasswordField passwordField2;
 
+    /**
+     * @since Sprint 4
+     * @author Timo Siems
+     * @implNote Anlegen des E-Mailfeldes
+     */
+    @FXML
+    private TextField mailField;
+
     public RegistrationPresenter() {
     }
 
@@ -42,6 +52,10 @@ public class RegistrationPresenter extends AbstractPresenter {
         eventBus.post(registrationCanceledEvent);
     }
 
+    /**
+     * @param event
+     * @implNote Sprint 4: Timo Siems, E-Mailfeld wird abgefragt.
+     */
     @FXML
     void onRegisterButtonPressed(ActionEvent event) {
         if (Strings.isNullOrEmpty(loginField.getText())) {
@@ -50,10 +64,12 @@ public class RegistrationPresenter extends AbstractPresenter {
             eventBus.post(new RegistrationErrorEvent("Passwords are not equal"));
         } else if (Strings.isNullOrEmpty(passwordField1.getText())) {
             eventBus.post(new RegistrationErrorEvent("Password cannot be empty"));
+        } else if (Strings.isNullOrEmpty(mailField.getText())) {
+            eventBus.post(new RegistrationErrorEvent("E-Mail cannot be empty"));
+        } else if (!(Pattern.matches("(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])", mailField.getText()))) {
+            eventBus.post(new RegistrationErrorEvent("E-Mail is not valid"));
         } else {
-            userService.createUser(new UserDTO(loginField.getText(), passwordField1.getText(), "empty"));
+            userService.createUser(new UserDTO(loginField.getText(), passwordField1.getText(), mailField.getText()));
         }
     }
-
-
 }
