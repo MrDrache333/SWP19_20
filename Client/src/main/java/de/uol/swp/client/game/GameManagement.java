@@ -11,6 +11,7 @@ import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.user.User;
+import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import javafx.application.Platform;
@@ -65,7 +66,6 @@ public class GameManagement {
      * @param userService  the user service
      * @param injector     the injector
      * @author Keno
-     *
      */
     public GameManagement(EventBus eventBus, UUID id, String lobbyName, User loggedInUser, ChatService chatService, LobbyService lobbyService, UserService userService, Injector injector) {
         this.ID = id;
@@ -164,8 +164,8 @@ public class GameManagement {
             primaryStage.setResizable(false);
             //User wird aus der Lobby ausgeloggt, wenn er das Lobbyfenster schließt
             primaryStage.setOnCloseRequest(windowEvent -> {
-                if(primaryStage.getScene().equals(lobbyScene)) {
-                    lobbyPresenter.getLobbyService().leaveLobby(lobbyName, loggedInUser, ID);
+                if (primaryStage.getScene().equals(lobbyScene)) {
+                    lobbyPresenter.getLobbyService().leaveLobby(lobbyName, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), ID);
                 }
             });
             primaryStage.show();

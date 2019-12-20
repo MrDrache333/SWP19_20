@@ -5,9 +5,10 @@
 
 
 .button:hover {
-    -fx-background-color:#4f1b1e;
+    -fx-background-color: #4f1b1e;
     -fx-cursor: hand;
 }
+
 .button {
     -fx-background-color: #2b170c;
     -fx-text-fill: #e5c7ba;

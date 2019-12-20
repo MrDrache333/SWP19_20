@@ -15,8 +15,8 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.exception.RegistrationExceptionMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
-import de.uol.swp.common.user.response.LoginSuccessfulMessage;
-import de.uol.swp.common.user.response.RegistrationSuccessfulEvent;
+import de.uol.swp.common.user.response.LoginSuccessfulResponse;
+import de.uol.swp.common.user.response.RegistrationSuccessfulResponse;
 import io.netty.channel.Channel;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -48,6 +48,9 @@ public class ClientApp extends Application implements ConnectionListener {
     // Java FX Methods
     // ----------------------------------------------------
 
+    public static void main(String[] args) {
+        launch(args);
+    }
 
     @Override
     public void init() {
@@ -68,7 +71,6 @@ public class ClientApp extends Application implements ConnectionListener {
         // if connection is established in this stage, no GUI is shown and
         // exceptions are only visible in console!
     }
-
 
     @Override
     public void start(Stage primaryStage) {
@@ -103,19 +105,17 @@ public class ClientApp extends Application implements ConnectionListener {
             try {
                 clientConnection.start();
             } catch (Exception e) {
-                exceptionOccured(e.getMessage());
+                exceptionOccurred(e.getMessage());
             }
         });
         t.setDaemon(true);
         t.start();
     }
 
-
     @Override
     public void connectionEstablished(Channel ch) {
         sceneManager.showLoginScreen();
     }
-
 
     @Override
     public void stop() {
@@ -123,6 +123,7 @@ public class ClientApp extends Application implements ConnectionListener {
             userService.logout(user);
             user = null;
         }
+        eventBus.unregister(this);
         // Important: Close connection so connection thread can terminate
         // else client application will not stop
         LOG.trace("Trying to shutting down client ...");
@@ -133,18 +134,18 @@ public class ClientApp extends Application implements ConnectionListener {
         LOG.info("ClientConnection shutdown");
     }
 
-    @Override
-    public void exceptionOccured(String e) {
-        sceneManager.showServerError(e);
-    }
-
     //----------------
     // EVENTBUS
     //----------------
 
+    @Override
+    public void exceptionOccurred(String e) {
+        sceneManager.showServerError(e);
+    }
+
     @Subscribe
-    public void userLoggedIn(LoginSuccessfulMessage message) {
-        LOG.debug("user logged in sucessfully " + message.getUser().getUsername());
+    public void userLoggedIn(LoginSuccessfulResponse message) {
+        LOG.debug("user logged in successfully " + message.getUser().getUsername());
         this.user = message.getUser();
         sceneManager.showMainScreen(user);
     }
@@ -156,7 +157,7 @@ public class ClientApp extends Application implements ConnectionListener {
     }
 
     @Subscribe
-    public void onRegistrationSuccessfulMessage(RegistrationSuccessfulEvent message) {
+    public void onRegistrationSuccessfulMessage(RegistrationSuccessfulResponse message) {
         LOG.info("Registration successful.");
         sceneManager.showLoginScreen();
     }
@@ -165,7 +166,6 @@ public class ClientApp extends Application implements ConnectionListener {
     private void handleEventBusError(DeadEvent deadEvent) {
         LOG.error("DeadEvent detected " + deadEvent);
     }
-
 
     /**
      * Empfängt vom Server die Message, dass die Lobby erstellt worden ist und öffnet im SceneManager
@@ -190,13 +190,18 @@ public class ClientApp extends Application implements ConnectionListener {
      * Empfängt vom Server die Message, dass der User der Lobby beigetreten ist. Lobbys in Hauptmenü werden aktualisiert.
      *
      * @param message
-     * @author Julia, Paula
+     * @author Paula; Julia
      * @since Sprint3
      */
     @Subscribe
     public void onUserJoinedLobbyMessage(UserJoinedLobbyMessage message) {
         if (message.getUser().getUsername().equals(user.getUsername())) {
-            sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getLobbyID());
+            if(sceneManager.getGameManagement(message.getLobbyID()) != null) {
+                sceneManager.getGameManagement(message.getLobbyID()).showLobbyView();
+            }
+            else {
+                sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getLobbyID());
+            }
             LOG.info("User " + message.getUser().getUsername() + " joined lobby successfully");
         }
         lobbyService.retrieveAllLobbies();
@@ -208,7 +213,6 @@ public class ClientApp extends Application implements ConnectionListener {
      * @param message
      * @author Julia, Paula
      * @since Sprint3
-     *
      */
     @Subscribe
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
@@ -219,6 +223,11 @@ public class ClientApp extends Application implements ConnectionListener {
         }
         lobbyService.retrieveAllLobbies();
     }
+
+
+    // -----------------------------------------------------
+    // JavFX Help methods
+    // -----------------------------------------------------
 
     /**
      * Empfängt vom Server die Message, dass sich der Nutzer ausgeloggt hat. Der Nutzer wird aus allen Lobbys gelöscht.
@@ -237,16 +246,6 @@ public class ClientApp extends Application implements ConnectionListener {
         }
         lobbyService.retrieveAllLobbies();
 
-    }
-
-
-    // -----------------------------------------------------
-    // JavFX Help methods
-    // -----------------------------------------------------
-
-
-    public static void main(String[] args) {
-        launch(args);
     }
 
     /**

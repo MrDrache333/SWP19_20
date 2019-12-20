@@ -10,7 +10,7 @@ import de.uol.swp.common.lobby.request.LobbyJoinUserRequest;
 import de.uol.swp.common.lobby.request.LobbyLeaveUserRequest;
 import de.uol.swp.common.lobby.request.RetrieveAllOnlineLobbiesRequest;
 import de.uol.swp.common.user.User;
-import de.uol.swp.common.user.dto.UserDTO;
+import de.uol.swp.common.user.UserDTO;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -62,7 +62,7 @@ class LobbyServiceTest {
 
     private void joinLobby() throws InterruptedException {
         LobbyService userService = new LobbyService(bus);
-        userService.joinLobby(defaultLobby.getName(), defaultUser, defaultLobby.getLobbyID());
+        userService.joinLobby(defaultLobby.getName(), new UserDTO(defaultUser.getUsername(), defaultUser.getPassword(), defaultUser.getEMail()), defaultLobby.getLobbyID());
         lock.await(1000, TimeUnit.MILLISECONDS);
     }
 
@@ -85,7 +85,7 @@ class LobbyServiceTest {
         event = null;
 
         LobbyService lobbyService = new LobbyService(bus);
-        lobbyService.leaveLobby(defaultLobby.getName(), defaultUser, defaultLobby.getLobbyID());
+        lobbyService.leaveLobby(defaultLobby.getName(), new UserDTO(defaultUser.getUsername(), defaultUser.getPassword(), defaultUser.getEMail()), defaultLobby.getLobbyID());
 
         lock.await(1000, TimeUnit.MILLISECONDS);
 
@@ -105,7 +105,7 @@ class LobbyServiceTest {
         event = null;
 
         LobbyService lobbyService = new LobbyService(bus);
-        lobbyService.leaveAllLobbiesOnLogout(defaultUser);
+        lobbyService.leaveAllLobbiesOnLogout(new UserDTO(defaultUser.getUsername(), defaultUser.getPassword(), defaultUser.getEMail()));
 
         lock.await(1000, TimeUnit.MILLISECONDS);
 

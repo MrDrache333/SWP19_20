@@ -80,13 +80,13 @@ public class LobbyService extends AbstractService {
      * Wenn dies erfolgt ist, folgt eine UserJoinedLobbyMessage an den Client, um den User zur Lobby hinzuzufügen
      *
      * @param msg the msg
-     * @author Julia, Paula
+     * @author Paula, Julia
      * @since Sprint3
      */
     @Subscribe
     public void onLobbyJoinUserRequest(LobbyJoinUserRequest msg) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getLobbyName());
-        if (lobby.isPresent()) {
+        if (lobby.isPresent() && !lobby.get().getUsers().contains(msg.getUser()) && lobby.get().getPlayers() < 4) {
             LOG.info("User " + msg.getUser().getUsername() + " is joining lobby " + msg.getLobbyName());
             lobby.get().joinUser(new LobbyUser(msg.getUser()));
             ServerMessage returnMessage = new UserJoinedLobbyMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID());
@@ -212,7 +212,6 @@ public class LobbyService extends AbstractService {
         }
         // TODO: error handling not existing lobby
     }
-
 
 
     /**

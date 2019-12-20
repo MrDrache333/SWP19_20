@@ -6,7 +6,7 @@ import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.LobbyUser;
 import de.uol.swp.common.lobby.request.*;
 import de.uol.swp.common.message.RequestMessage;
-import de.uol.swp.common.user.User;
+import de.uol.swp.common.user.UserDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -42,7 +42,7 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
      * @since Sprint3
      */
     @Override
-    public void joinLobby(String lobbyName, User user, UUID lobbyID) {
+    public void joinLobby(String lobbyName, UserDTO user, UUID lobbyID) {
         LobbyJoinUserRequest request = new LobbyJoinUserRequest(lobbyName, user, lobbyID);
         bus.post(request);
     }
@@ -57,7 +57,7 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
      * @since Sprint3
      */
     @Override
-    public void leaveLobby(String lobbyName, User user, UUID lobbyID) {
+    public void leaveLobby(String lobbyName, UserDTO user, UUID lobbyID) {
         LobbyLeaveUserRequest request = new LobbyLeaveUserRequest(lobbyName, user, lobbyID);
         bus.post(request);
     }
@@ -70,7 +70,7 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
      * @since Sprint3
      */
     @Override
-    public void leaveAllLobbiesOnLogout(User user) {
+    public void leaveAllLobbiesOnLogout(UserDTO user) {
         LeaveAllLobbiesOnLogoutRequest request = new LeaveAllLobbiesOnLogoutRequest(user);
         bus.post(request);
     }
@@ -103,7 +103,7 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
     }
 
     @Override
-    public void setLobbyUserStatus(String LobbyName, User user, boolean Status) {
+    public void setLobbyUserStatus(String LobbyName, UserDTO user, boolean Status) {
         RequestMessage request = new UpdateLobbyReadyStatusRequest(LobbyName, user, Status);
         bus.post(request);
     }

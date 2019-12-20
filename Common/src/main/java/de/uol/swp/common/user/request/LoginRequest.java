@@ -2,6 +2,8 @@ package de.uol.swp.common.user.request;
 
 import de.uol.swp.common.message.AbstractRequestMessage;
 
+import java.util.Objects;
+
 /**
  * A request send from client to server, trying to log in with
  * username and password
@@ -40,4 +42,17 @@ public class LoginRequest extends AbstractRequestMessage {
         this.password = password;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LoginRequest that = (LoginRequest) o;
+        return Objects.equals(username, that.username) &&
+                Objects.equals(password, that.password);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username, password);
+    }
 }

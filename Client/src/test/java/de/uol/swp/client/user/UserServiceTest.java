@@ -4,7 +4,7 @@ import com.google.common.eventbus.DeadEvent;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.common.user.User;
-import de.uol.swp.common.user.dto.UserDTO;
+import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.request.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,10 +17,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UserServiceTest {
 
-    User defaultUser = new UserDTO("Marco", "test", "marco@test.de");
+    final User defaultUser = new UserDTO("Marco", "test", "marco@test.de");
 
-    EventBus bus = new EventBus();
-    CountDownLatch lock = new CountDownLatch(1);
+    final EventBus bus = new EventBus();
+    final CountDownLatch lock = new CountDownLatch(1);
     Object event;
 
     @Subscribe
@@ -78,7 +78,7 @@ class UserServiceTest {
 
         LogoutRequest request = (LogoutRequest) event;
 
-        assertEquals(request.authorizationNeeded(), true);
+        assertTrue(request.authorizationNeeded());
     }
 
     @Test
@@ -95,7 +95,7 @@ class UserServiceTest {
         assertEquals(request.getUser().getUsername(), defaultUser.getUsername());
         assertEquals(request.getUser().getPassword(), defaultUser.getPassword());
         assertEquals(request.getUser().getEMail(), defaultUser.getEMail());
-        assertEquals(request.authorizationNeeded(), false);
+        assertFalse(request.authorizationNeeded());
 
     }
 
@@ -113,7 +113,7 @@ class UserServiceTest {
         assertEquals(request.getUser().getUsername(), defaultUser.getUsername());
         assertEquals(request.getUser().getPassword(), defaultUser.getPassword());
         assertEquals(request.getUser().getEMail(), defaultUser.getEMail());
-        assertEquals(request.authorizationNeeded(), true);
+        assertTrue(request.authorizationNeeded());
     }
 
     @Test

@@ -14,6 +14,7 @@ import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
+import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import javafx.application.Platform;
@@ -66,6 +67,7 @@ public class LobbyPresenter extends AbstractPresenter {
     private UUID lobbyID;
     private String lobbyName;
     private User loggedInUser;
+    private UserDTO loggedInUserDTO;
     private Injector injector;
 
     //Eigener Status in der Lobby
@@ -105,6 +107,7 @@ public class LobbyPresenter extends AbstractPresenter {
         this.chatViewPresenter = chatViewPresenter;
         this.injector = injector;
         this.gameManagement = gameManagement;
+        this.loggedInUserDTO = new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail());
     }
 
     //--------------------------------------
@@ -113,7 +116,7 @@ public class LobbyPresenter extends AbstractPresenter {
 
     @FXML
     public void onLeaveLobbyButtonPressed(ActionEvent event) {
-        lobbyService.leaveLobby(lobbyName, loggedInUser, lobbyID);
+        lobbyService.leaveLobby(lobbyName, loggedInUserDTO, lobbyID);
     }
 
     /**
@@ -146,7 +149,7 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
-        lobbyService.leaveAllLobbiesOnLogout(loggedInUser);
+        lobbyService.leaveAllLobbiesOnLogout(loggedInUserDTO);
         userService.logout(loggedInUser);
     }
 
@@ -179,7 +182,7 @@ public class LobbyPresenter extends AbstractPresenter {
             ownReadyStatus = true;
         }
         LOG.debug("Set own ReadyStauts in Lobby " + lobbyID + " to " + (ownReadyStatus ? "Ready" : "Not Ready"));
-        lobbyService.setLobbyUserStatus(lobbyName, loggedInUser, ownReadyStatus);
+        lobbyService.setLobbyUserStatus(lobbyName, loggedInUserDTO, ownReadyStatus);
     }
 
     //--------------------------------------
@@ -327,8 +330,7 @@ public class LobbyPresenter extends AbstractPresenter {
      * @return All HBoxes as ArrayList
      */
     private ArrayList<HBox> getAllHBoxes() {
-        ArrayList<HBox> list = new ArrayList<>(readyUserList.values());
-        return list;
+        return new ArrayList<>(readyUserList.values());
     }
 
     //--------------------------------------
@@ -358,5 +360,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @return the lobby service
      */
-    public LobbyService getLobbyService() { return lobbyService; }
+    public LobbyService getLobbyService() {
+        return lobbyService;
+    }
 }

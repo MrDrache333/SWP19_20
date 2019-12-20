@@ -12,7 +12,7 @@
     -fx-background-color: #967b6f;
     -fx-text-fill: #2b170c;
     -fx-prompt-text-fill: #e5c7ba;
-   -fx-background-color-opacity:0.1 ;
+    -fx-background-color-opacity: 0.1;
     -fx-blend-mode: darken;
 }
 

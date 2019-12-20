@@ -11,6 +11,7 @@ import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
+import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -38,15 +39,13 @@ import java.util.UUID;
  */
 public class GameViewPresenter extends AbstractPresenter {
 
-    private UUID lobbyID;
-
-    private User loggedInUser;
     /**
      * The constant fxml.
      */
     public static final String fxml = "/fxml/GameView.fxml";
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
-
+    private UUID lobbyID;
+    private User loggedInUser;
     @FXML
     private Pane chatView;
     @FXML
@@ -132,7 +131,7 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
-        lobbyService.leaveAllLobbiesOnLogout(loggedInUser);
+        lobbyService.leaveAllLobbiesOnLogout(new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
         userService.logout(loggedInUser);
     }
 
