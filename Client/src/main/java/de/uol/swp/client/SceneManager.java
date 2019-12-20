@@ -44,6 +44,7 @@ public class SceneManager {
     final private LobbyService lobbyService;
     final private ChatService chatService;
     private final Injector injector;
+    private Stage settingsStage;
     private Scene loginScene;
     private String lastTitle;
     private Scene registrationScene;
@@ -79,7 +80,6 @@ public class SceneManager {
 
     @Subscribe
     public void onShowLoginViewEvent(ShowLoginViewEvent event) {
-
         showLoginScreen();
     }
 
@@ -97,7 +97,6 @@ public class SceneManager {
         initLoginView();
         initMainView();
         initRegistrationView();
-        initSettingsView();
     }
 
     private Parent initPresenter(String fxmlFile) {
@@ -107,6 +106,21 @@ public class SceneManager {
             URL url = getClass().getResource(fxmlFile);
             LOG.debug("Loading " + url);
             loader.setLocation(url);
+            rootPane = loader.load();
+        } catch (Exception e) {
+            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
+        }
+        return rootPane;
+    }
+
+    private Parent initSettingsPresenter(SettingsPresenter settingsPresenter) {
+        Parent rootPane;
+        FXMLLoader loader = injector.getInstance(FXMLLoader.class);
+        try {
+            URL url = getClass().getResource(SettingsPresenter.fxml);
+            LOG.debug("Loading " + url);
+            loader.setLocation(url);
+            loader.setController(settingsPresenter);
             rootPane = loader.load();
         } catch (Exception e) {
             throw new RuntimeException("Could not load View!" + e.getMessage(), e);
@@ -141,9 +155,9 @@ public class SceneManager {
         }
     }
 
-    private void initSettingsView() {
+    private void initSettingsView(SettingsPresenter settingsPresenter) {
         if (settingsScene == null) {
-            Parent rootPane = initPresenter(SettingsPresenter.fxml);
+            Parent rootPane = initSettingsPresenter(settingsPresenter);
             settingsScene = new Scene(rootPane, 450, 300);
             settingsScene.getStylesheets().add(styleSheet);
         }
@@ -228,6 +242,24 @@ public class SceneManager {
     }
 
     /**
+     * Öffnet das Einstellungsfenster, indem eine neue Stage erstellt wird, mit der settingsScene.
+     *
+     * @author Anna
+     * @since Sprint4
+     */
+    public void showSettingsScreen(User loggedInUser) {
+        Platform.runLater(() -> {
+            SettingsPresenter settingsPresenter = new SettingsPresenter(loggedInUser, lobbyService, userService);
+            initSettingsView(settingsPresenter);
+            settingsStage = new Stage();
+            settingsStage.setTitle("Einstellungen");
+            settingsStage.setScene(settingsScene);
+            settingsStage.setResizable(false);
+            settingsStage.show();
+        });
+    }
+
+    /**
      * Gibt das zur übergebenen lobbyID gehörige GameManagement zurück
      *
      * @param lobbyID
@@ -246,22 +278,11 @@ public class SceneManager {
      * @since Sprint3
      */
     public void closeAllStages() {
-        Platform.runLater(() -> games.values().forEach(GameManagement::close));
-    }
-
-    /**
-     * Öffnet das Einstellungsfenster, indem eine neue Stage erstellt wird, mit der settingsScene.
-     *
-     * @author Anna
-     * @since Sprint4
-     */
-    public void showSettingsScreen() {
         Platform.runLater(() -> {
-            Stage settingsStage = new Stage();
-            settingsStage.setTitle("Einstellungen");
-            settingsStage.setScene(settingsScene);
-            settingsStage.setResizable(false);
-            settingsStage.show();
+            games.values().forEach(GameManagement::close);
+            settingsStage.close();
         });
     }
+
+    public void closeSettings() { Platform.runLater(() -> settingsStage.close());}
 }

@@ -8,6 +8,7 @@ import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.lobby.request.CreateLobbyRequest;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.user.UserDTO;
+import de.uol.swp.common.user.message.UpdatedUserMessage;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import de.uol.swp.common.user.request.OpenSettingsRequest;
@@ -222,11 +223,38 @@ public class MainMenuPresenter extends AbstractPresenter {
             if (users.contains(message.getUsername())) {
                 users.remove(message.getUsername());
                 chatViewPresenter.userLeft(message.getUsername());
-
-
             }
         });
 
+    }
+
+    /**
+     * aktualisiert den loggedInUser sowie die Userliste, falls sich der USername geändert hat
+     * und die Lobbytabelle, falls der Owner seinen Namen geändert hat
+     *
+     * @param message
+     * @author Julia
+     * @since Sprint4
+     */
+    @Subscribe
+    public void updatedUser(UpdatedUserMessage message) {
+        if(loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
+            loggedInUser = message.getUser();
+        }
+        //Listen nur aktualisieren, wenn sich der Username geändert hat
+        if(!message.getUser().getUsername().equals(message.getOldUser().getUsername())) {
+            Platform.runLater(() -> {
+                users.removeIf(user -> user.equals(message.getOldUser().getUsername()));
+                users.add(message.getUser().getUsername());
+                for(Lobby lobby : lobbies) {
+                    if(lobby.getOwner().getUsername().equals(message.getOldUser().getUsername())) {
+                        Lobby lobbyToUpdate = new LobbyDTO(lobby.getName(), message.getUser(), lobby.getLobbyID(), lobby.getUsers(), lobby.getPlayers());
+                        lobbies.remove(lobby);
+                        lobbies.add(0, lobbyToUpdate);
+                    }
+                }
+            });
+        }
     }
 
     /**

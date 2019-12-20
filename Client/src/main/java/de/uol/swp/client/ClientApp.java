@@ -13,6 +13,7 @@ import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.exception.RegistrationExceptionMessage;
+import de.uol.swp.common.user.message.UpdatedUserMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import de.uol.swp.common.user.request.OpenSettingsRequest;
 import de.uol.swp.common.user.response.LoginSuccessfulResponse;
@@ -233,7 +234,22 @@ public class ClientApp extends Application implements ConnectionListener {
     @Subscribe
     public void onOpenSettingsRequest(OpenSettingsRequest message){
         if (message.getUser().getUsername().equals(user.getUsername())) {
-            sceneManager.showSettingsScreen();
+            sceneManager.showSettingsScreen(message.getUser());
+        }
+    }
+
+    /**
+     * aktualsiert den user und schließt das Einstellungsfenster
+     *
+     * @param message
+     * @author Julia
+     * @since Sprint4
+     */
+    @Subscribe
+    public void onUpdatedUserMessage(UpdatedUserMessage message) {
+        if(user.getUsername().equals(message.getOldUser().getUsername())) {
+            user = message.getUser();
+            sceneManager.closeSettings();
         }
     }
 

@@ -6,10 +6,13 @@ import com.google.inject.Inject;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.Session;
 import de.uol.swp.common.user.User;
+import de.uol.swp.common.user.message.UpdateUserFailedMessage;
+import de.uol.swp.common.user.message.UpdatedUserMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import de.uol.swp.common.user.request.LoginRequest;
 import de.uol.swp.common.user.request.LogoutRequest;
 import de.uol.swp.common.user.request.RetrieveAllOnlineUsersRequest;
+import de.uol.swp.common.user.request.UpdateUserRequest;
 import de.uol.swp.common.user.response.AllOnlineUsersResponse;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.communication.UUIDSession;
@@ -109,5 +112,25 @@ public class AuthenticationService extends AbstractService {
         post(response);
     }
 
+    /**
+     * Aktualisierung des Users wird versucht, bei Erfolg wird die alte Session entfernt und eine neue mit dem aktualisierten
+     * User hinzugefügt, sowie eine UpdatedUserMessage abgesendet. Andernfalls wird eine UpdateUserFailedMessage
+     * mit entsprechender Fehlermeldung gesendet
+     * @param msg
+     */
+    @Subscribe
+    public void onUpdateUserRequest(UpdateUserRequest msg) {
+        ServerMessage returnMessage;
+        try {
+            User user = userManagement.updateUser(msg.getUser(), msg.getOldUser());
+            returnMessage = new UpdatedUserMessage(user, msg.getOldUser());
+            userSessions.remove(getSession(msg.getOldUser()).get());
+            userSessions.put(msg.getSession().get(), user);
+        }
+        catch (Exception e) {
+            returnMessage = new UpdateUserFailedMessage(msg.getOldUser(), e.getMessage());
+        }
+        post(returnMessage);
+    }
 
 }

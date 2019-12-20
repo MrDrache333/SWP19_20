@@ -42,7 +42,7 @@ public interface UserStore {
      * @param eMail
      * @return The User without password information
      */
-    User updateUser(String username, String password, String eMail);
+    User updateUser(String username, String password, String eMail, String oldUsername);
 
     /**
      * Remove user from store

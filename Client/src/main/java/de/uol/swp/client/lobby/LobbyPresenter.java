@@ -16,6 +16,7 @@ import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
+import de.uol.swp.common.user.message.UpdatedUserMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -212,6 +213,21 @@ public class LobbyPresenter extends AbstractPresenter {
             });
             updateUsersList();
         }
+    }
+
+    /**
+     * aktualisiert den loggedInUser sowie die Liste, falls sich der USername geändert hat
+
+     * @param message
+     * @author Julia
+     * @since Sprint4
+     */
+    @Subscribe
+    public void updatedUser(UpdatedUserMessage message) {
+        if(loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
+            loggedInUser = message.getUser();
+        }
+        //TODO Liste aktualisieren, falls sich der Username geändert hat
     }
 
     /**

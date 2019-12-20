@@ -114,7 +114,7 @@ class MainMemoryBasedUserStoreTest {
         MainMemoryBasedUserStore store = getDefaultStore();
         User userToUpdate = getDefaultUsers().get(2);
 
-        store.updateUser(userToUpdate.getUsername(), userToUpdate.getPassword(), userToUpdate.getEMail() + "@TESTING");
+        store.updateUser(userToUpdate.getUsername(), userToUpdate.getPassword(), userToUpdate.getEMail() + "@TESTING", userToUpdate.getUsername());
 
         Optional<User> userFound = store.findUser(userToUpdate.getUsername());
 
@@ -128,7 +128,7 @@ class MainMemoryBasedUserStoreTest {
         MainMemoryBasedUserStore store = getDefaultStore();
         User userToUpdate = getDefaultUsers().get(2);
 
-        store.updateUser(userToUpdate.getUsername(), userToUpdate.getPassword() + "_NEWPASS", userToUpdate.getEMail());
+        store.updateUser(userToUpdate.getUsername(), userToUpdate.getPassword() + "_NEWPASS", userToUpdate.getEMail(), userToUpdate.getUsername());
 
         Optional<User> userFound = store.findUser(userToUpdate.getUsername(), userToUpdate.getPassword() + "_NEWPASS");
 

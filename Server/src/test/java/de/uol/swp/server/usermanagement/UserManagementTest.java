@@ -131,7 +131,7 @@ class UserManagementTest {
         User updatedUser = new UserDTO(userToUpdate.getUsername(), "newPassword", null);
 
         assertFalse(management.isLoggedIn(userToUpdate));
-        management.updateUser(updatedUser);
+        management.updateUser(updatedUser, updatedUser);
 
         management.login(updatedUser.getUsername(), updatedUser.getPassword());
         assertTrue(management.isLoggedIn(updatedUser));
@@ -143,7 +143,7 @@ class UserManagementTest {
         User userToUpdate = users.get(0);
         User updatedUser = new UserDTO(userToUpdate.getUsername(), "", "newMail@mail.com");
 
-        management.updateUser(updatedUser);
+        management.updateUser(updatedUser, updatedUser);
 
         User user = management.login(updatedUser.getUsername(), updatedUser.getPassword());
         assertTrue(management.isLoggedIn(updatedUser));
@@ -159,7 +159,7 @@ class UserManagementTest {
         management.login(userToUpdate.getUsername(), userToUpdate.getPassword());
         assertTrue(management.isLoggedIn(userToUpdate));
 
-        management.updateUser(updatedUser);
+        management.updateUser(updatedUser, updatedUser);
         assertTrue(management.isLoggedIn(updatedUser));
 
         management.logout(updatedUser);
@@ -173,7 +173,7 @@ class UserManagementTest {
     @Test
     void updateUnknownUser() {
         UserManagement management = getDefaultManagement();
-        assertThrows(UserManagementException.class, () -> management.updateUser(userNotInStore));
+        assertThrows(UserManagementException.class, () -> management.updateUser(userNotInStore, userNotInStore));
     }
 
     @Test

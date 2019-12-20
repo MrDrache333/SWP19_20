@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public class UserManagement extends AbstractUserManagement {
 
@@ -46,16 +47,22 @@ public class UserManagement extends AbstractUserManagement {
     }
 
     @Override
-    public User updateUser(User userToUpdate) {
-        Optional<User> user = userStore.findUser(userToUpdate.getUsername());
+    public User updateUser(User userToUpdate, User oldUser) {
+        Optional<User> user = userStore.findUser(oldUser.getUsername());
         if (user.isEmpty()) {
             throw new UserManagementException("Username unknown!");
         }
-        // Only update if there are new values
-        String newPassword = firstNotNull(userToUpdate.getPassword(), user.get().getPassword());
-        String newEMail = firstNotNull(userToUpdate.getEMail(), user.get().getEMail());
-        return userStore.updateUser(userToUpdate.getUsername(), newPassword, newEMail);
-
+        //Überprüft ob der Username bereits vergeben ist
+        user = userStore.findUser(userToUpdate.getUsername());
+        if (user.isPresent() && !userToUpdate.getUsername().equals(oldUser.getUsername())) {
+            throw new UserManagementException("Dieser Name ist bereits vergeben!");
+        }
+        //Überprüft ob bereits ein Account mit der Email existiert
+        List<String> mails = userStore.getAllUsers().stream().map(User::getEMail).collect(Collectors.toList());
+        if (mails.contains(userToUpdate.getEMail()) && !userToUpdate.getEMail().equals(oldUser.getEMail())) {
+            throw new UserManagementException("Diese Email ist bereits vergeben!");
+        }
+       return userStore.updateUser(userToUpdate.getUsername(), userToUpdate.getPassword(), userToUpdate.getEMail(), oldUser.getUsername());
     }
 
     @Override
@@ -64,6 +71,7 @@ public class UserManagement extends AbstractUserManagement {
         if (user.isEmpty()) {
             throw new UserManagementException("Username unknown!");
         }
+        logout(userToDrop);
         userStore.removeUser(userToDrop.getUsername());
 
     }

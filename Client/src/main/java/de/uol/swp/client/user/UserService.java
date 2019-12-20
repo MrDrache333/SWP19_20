@@ -58,8 +58,8 @@ public class UserService implements de.uol.swp.common.user.UserService {
     }
 
     @Override
-    public User updateUser(User user) {
-        UpdateUserRequest request = new UpdateUserRequest(user);
+    public User updateUser(User user, User oldUser) {
+        UpdateUserRequest request = new UpdateUserRequest(user, oldUser);
         bus.post(request);
         return null;
     }
