@@ -178,17 +178,15 @@ public class ClientApp extends Application implements ConnectionListener {
     public void onCreateLobbyMessage(CreateLobbyMessage message) {
         if (message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getChatID());
-            //sceneManager.showGameScreen();
             LOG.debug("CreateLobbyMessage vom Server erfolgreich angekommen");
         }
-        lobbyService.retrieveAllLobbies();
     }
 
     /**
      * Empfängt vom Server die Message, dass der User der Lobby beigetreten ist. Lobbys in Hauptmenü werden aktualisiert.
      *
      * @param message
-     * @author Paula; Julia
+     * @author Paula, Julia
      * @since Sprint3
      */
     @Subscribe
@@ -202,7 +200,6 @@ public class ClientApp extends Application implements ConnectionListener {
             }
             LOG.info("User " + message.getUser().getUsername() + " joined lobby successfully");
         }
-        lobbyService.retrieveAllLobbies();
     }
 
     /**
@@ -219,7 +216,6 @@ public class ClientApp extends Application implements ConnectionListener {
             LOG.info("User " + message.getUser().getUsername() + " left lobby successfully");
             sceneManager.getGameManagement(message.getLobbyID()).close();
         }
-        lobbyService.retrieveAllLobbies();
     }
 
 
