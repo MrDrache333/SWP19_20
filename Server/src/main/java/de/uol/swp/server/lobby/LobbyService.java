@@ -193,6 +193,12 @@ public class LobbyService extends AbstractService {
         post(response);
     }
 
+    @Subscribe
+    public void onUpdateLobbiesRequest(UpdateLobbiesRequest msg) {
+        lobbyManagement.updateLobbies(msg.getUpdatedUser(), msg.getOldUser());
+    }
+
+
     //--------------------------------------
     // Help Methods
     //--------------------------------------

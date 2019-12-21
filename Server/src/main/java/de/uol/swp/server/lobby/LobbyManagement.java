@@ -3,6 +3,7 @@ package de.uol.swp.server.lobby;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.user.User;
+import de.uol.swp.common.user.UserDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -69,6 +70,40 @@ public class LobbyManagement {
         }
         return false;
         // TODO: error handling not existing lobby
+    }
+
+    /**
+     * Aktualisiert jede Lobby, in der der aktualisierte User drin ist
+     *
+     * @param updatedUser der aktualisierte User
+     * @param oldUser der alte User
+     * @author Julia
+     * @since Sprint4
+     */
+    public void updateLobbies(UserDTO updatedUser, UserDTO oldUser) {
+        for (Lobby lobby : lobbies.values()) {;
+            List<String> userNames = new ArrayList<>();
+            List<User> users = new ArrayList<>(lobby.getUsers());
+            users.forEach(user -> userNames.add(user.getUsername()));
+            if (userNames.contains(oldUser.getUsername())) {
+                User updatedOwner = lobby.getOwner();
+                //ggf. Owner aktualisieren
+                if (lobby.getOwner().getUsername().equals(oldUser.getUsername())) {
+                    updatedOwner = updatedUser;
+                }
+                //ReadyStatus Set aktualisieren
+                lobby.getEveryReadyStatus().put(updatedUser.getUsername(), lobby.getReadyStatus(oldUser));
+                lobby.getEveryReadyStatus().remove(oldUser.getUsername());
+                //Userliste aktualisieren
+                List<User> updatedUsers = new ArrayList<>(lobby.getUsers());
+                updatedUsers.remove(oldUser);
+                updatedUsers.add(updatedUser);
+                Set<User> newUsers = new TreeSet<>(updatedUsers);
+                Lobby lobbyToUpdate = new LobbyDTO(lobby.getName(), updatedOwner, lobby.getLobbyID(), newUsers, lobby.getPlayers());
+                lobbies.remove(lobby.getLobbyID());
+                lobbies.put(lobby.getName(), lobbyToUpdate);
+            }
+        }
     }
 
     public Collection<Lobby> getLobbies() {

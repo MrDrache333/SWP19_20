@@ -3,9 +3,11 @@ package de.uol.swp.server.usermanagement;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import de.uol.swp.common.lobby.request.UpdateLobbiesRequest;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.Session;
 import de.uol.swp.common.user.User;
+import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.message.UpdateUserFailedMessage;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
@@ -130,6 +132,7 @@ public class AuthenticationService extends AbstractService {
             userSessions.remove(getSession(msg.getOldUser()).get());
             userSessions.put(msg.getSession().get(), user);
             LOG.info("User " + msg.getOldUser().getUsername() + " updated successfully");
+            post(new UpdateLobbiesRequest((UserDTO)user, (UserDTO)msg.getOldUser()));
         }
         catch (UserUpdateException e) {
             returnMessage = new UpdateUserFailedMessage(msg.getOldUser(), e.getMessage());
