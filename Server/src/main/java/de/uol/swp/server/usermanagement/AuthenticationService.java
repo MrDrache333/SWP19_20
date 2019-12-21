@@ -116,7 +116,10 @@ public class AuthenticationService extends AbstractService {
      * Aktualisierung des Users wird versucht, bei Erfolg wird die alte Session entfernt und eine neue mit dem aktualisierten
      * User hinzugefügt, sowie eine UpdatedUserMessage abgesendet. Andernfalls wird eine UpdateUserFailedMessage
      * mit entsprechender Fehlermeldung gesendet
+     *
      * @param msg
+     * @author Julia
+     * @since Sprint4
      */
     @Subscribe
     public void onUpdateUserRequest(UpdateUserRequest msg) {
@@ -126,9 +129,11 @@ public class AuthenticationService extends AbstractService {
             returnMessage = new UpdatedUserMessage(user, msg.getOldUser());
             userSessions.remove(getSession(msg.getOldUser()).get());
             userSessions.put(msg.getSession().get(), user);
+            LOG.info("User " + msg.getOldUser().getUsername() + " updated successfully");
         }
-        catch (Exception e) {
+        catch (UserUpdateException e) {
             returnMessage = new UpdateUserFailedMessage(msg.getOldUser(), e.getMessage());
+            LOG.info("Update of user " + msg.getOldUser().getUsername() + " failed");
         }
         post(returnMessage);
     }

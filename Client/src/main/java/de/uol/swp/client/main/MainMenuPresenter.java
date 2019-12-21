@@ -229,7 +229,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     /**
-     * aktualisiert den loggedInUser sowie die Userliste, falls sich der USername geändert hat
+     * aktualisiert den loggedInUser sowie die Userliste, falls sich der Username geändert hat
      * und die Lobbytabelle, falls der Owner seinen Namen geändert hat
      *
      * @param message

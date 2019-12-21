@@ -251,6 +251,7 @@ public class ClientApp extends Application implements ConnectionListener {
             this.user = message.getUser();
             sceneManager.closeSettings();
             sceneManager.getSettingsPresenter().updateLoggedInUser(message.getUser());
+            LOG.info("User" + message.getOldUser().getUsername() + " updated his data");
         }
     }
 

@@ -1,19 +1,19 @@
 package de.uol.swp.client.settings;
 
 import com.google.common.base.Strings;
+import com.google.common.eventbus.EventBus;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.lobby.LobbyService;
+import de.uol.swp.client.settings.event.CloseSettingsEvent;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,6 +33,7 @@ public class SettingsPresenter extends AbstractPresenter {
     private User loggedInUser;
     private LobbyService lobbyService;
     private UserService userService;
+    private EventBus eventBus;
 
     @FXML
     private Button cancelButton;
@@ -45,10 +46,11 @@ public class SettingsPresenter extends AbstractPresenter {
     @FXML
     private PasswordField password2Field;
 
-    public SettingsPresenter(User loggedInUser, LobbyService lobbyService, UserService userService) {
+    public SettingsPresenter(User loggedInUser, LobbyService lobbyService, UserService userService, EventBus eventBus) {
         this.loggedInUser = loggedInUser;
         this.lobbyService = lobbyService;
         this.userService = userService;
+        this.eventBus = eventBus;
     }
 
     /**
@@ -68,7 +70,8 @@ public class SettingsPresenter extends AbstractPresenter {
 
         //keine Eingaben vom Nutzer
         if(Strings.isNullOrEmpty(username) && Strings.isNullOrEmpty(email) && Strings.isNullOrEmpty(password) && Strings.isNullOrEmpty(password2)) {
-            cancel();
+            eventBus.post(new CloseSettingsEvent());
+            clearAll();
         } else if(!password.equals(password2)) {
             showAlert(Alert.AlertType.ERROR, "Die Passwörter sind nicht gleich", "Fehler");
             passwordField.clear();
@@ -97,7 +100,8 @@ public class SettingsPresenter extends AbstractPresenter {
 
     @FXML
     public void onCancelButtonPressed(ActionEvent actionEvent) {
-        cancel();
+        eventBus.post(new CloseSettingsEvent());
+        clearAll();
     }
 
     public void updateLoggedInUser(User user) {
@@ -111,17 +115,4 @@ public class SettingsPresenter extends AbstractPresenter {
         password2Field.clear();
     }
 
-    /**
-     * schließt das Einstellungsfenster
-     *
-     * @author Julia
-     * @since Sprint4
-     */
-    private void cancel() {
-        Platform.runLater(() -> {
-            Stage stage = (Stage) cancelButton.getScene().getWindow();
-            stage.close();
-        });
-        clearAll();
-    }
 }

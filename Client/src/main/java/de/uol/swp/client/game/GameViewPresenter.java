@@ -174,7 +174,7 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * aktualisiert den loggedInUser sowie die Liste, falls sich der USername geändert hat
+     * aktualisiert den loggedInUser sowie die Liste, falls sich der Username geändert hat
 
      * @param message
      * @author Julia

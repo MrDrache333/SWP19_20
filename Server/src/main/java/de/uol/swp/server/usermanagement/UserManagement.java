@@ -55,12 +55,12 @@ public class UserManagement extends AbstractUserManagement {
         //Überprüft ob der Username bereits vergeben ist
         user = userStore.findUser(userToUpdate.getUsername());
         if (user.isPresent() && !userToUpdate.getUsername().equals(oldUser.getUsername())) {
-            throw new UserManagementException("Dieser Name ist bereits vergeben!");
+            throw new UserUpdateException("Dieser Name ist bereits vergeben!");
         }
         //Überprüft ob bereits ein Account mit der Email existiert
         List<String> mails = userStore.getAllUsers().stream().map(User::getEMail).collect(Collectors.toList());
         if (mails.contains(userToUpdate.getEMail()) && !userToUpdate.getEMail().equals(oldUser.getEMail())) {
-            throw new UserManagementException("Diese Email ist bereits vergeben!");
+            throw new UserUpdateException("Diese Email ist bereits vergeben!");
         }
        return userStore.updateUser(userToUpdate.getUsername(), userToUpdate.getPassword(), userToUpdate.getEMail(), oldUser.getUsername());
     }

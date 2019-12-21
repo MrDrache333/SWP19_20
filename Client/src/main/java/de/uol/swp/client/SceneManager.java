@@ -17,6 +17,7 @@ import de.uol.swp.client.register.event.RegistrationCanceledEvent;
 import de.uol.swp.client.register.event.RegistrationErrorEvent;
 import de.uol.swp.client.register.event.ShowRegistrationViewEvent;
 import de.uol.swp.client.settings.SettingsPresenter;
+import de.uol.swp.client.settings.event.CloseSettingsEvent;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import javafx.application.Platform;
@@ -93,6 +94,9 @@ public class SceneManager {
     public void onRegistrationErrorEvent(RegistrationErrorEvent event) {
         showError(event.getMessage());
     }
+
+    @Subscribe
+    public void onCloseSettingsEvent(CloseSettingsEvent event) { closeSettings(); }
 
     private void initViews() {
         initLoginView();
@@ -245,18 +249,19 @@ public class SceneManager {
     /**
      * Öffnet das Einstellungsfenster, indem eine neue Stage erstellt wird, mit der settingsScene.
      *
-     * @author Anna
+     * @author Anna, Julia
      * @since Sprint4
      */
     public void showSettingsScreen(User loggedInUser) {
         Platform.runLater(() -> {
-            settingsPresenter = new SettingsPresenter(loggedInUser, lobbyService, userService);
+            settingsPresenter = new SettingsPresenter(loggedInUser, lobbyService, userService, eventBus);
             initSettingsView(settingsPresenter);
             settingsStage = new Stage();
             settingsStage.setTitle("Einstellungen");
             settingsStage.setScene(settingsScene);
             settingsStage.setResizable(false);
             settingsStage.show();
+            eventBus.register(settingsPresenter);
         });
     }
 
