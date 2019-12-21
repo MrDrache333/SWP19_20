@@ -22,19 +22,19 @@ public class LobbyManagement {
     private Map<UUID, String> lobbyNames = new HashMap<>();
 
     /**
-     * @author Paula, Haschem, Ferit
+     * @author Paula, Haschem, Ferit, Rike
      * @version 0.1
      * lobbyID hat folgende Form: 067e6162-3b6f-4ae2-a171-2470b63dff00  (Beispiel) / UUID Object
      */
 
-    public UUID createLobby(String name, User owner) {
+    public UUID createLobby(String name, String lobbyPassword, User owner) {
         if (lobbies.containsKey(name)) {
             throw new IllegalArgumentException("Lobby name " + name + " already exists!");
         }
         // Erstellen der UUID für die Lobbys.
         UUID lobbyID = UUID.randomUUID();
         LOG.info("Die Lobby " + name + " hat folgende UUID erstellt bekommen: " + lobbyID);
-        lobbies.put(name, new LobbyDTO(name, owner, lobbyID));
+        lobbies.put(name, new LobbyDTO(name, owner, lobbyID, lobbyPassword));
         lobbyNames.put(lobbyID, name);
         return lobbyID;
     }

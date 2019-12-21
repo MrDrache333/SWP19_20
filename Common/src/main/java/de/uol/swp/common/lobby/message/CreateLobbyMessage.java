@@ -9,16 +9,18 @@ public class CreateLobbyMessage extends AbstractLobbyMessage {
     private String lobbyName;
     private UserDTO user;
     private UUID ChatID;
+    private String lobbyPassword;
 
     private Lobby lobby;
 
     public CreateLobbyMessage() {
     }
 
-    public CreateLobbyMessage(String lobbyName, UserDTO user, UUID ChatID) {
+    public CreateLobbyMessage(String lobbyName, String lobbyPassword, UserDTO user, UUID ChatID) {
         this.lobbyName = lobbyName;
         this.user = user;
         this.ChatID = ChatID;
+        this.lobbyPassword = lobbyPassword;
     }
 
     public CreateLobbyMessage(Lobby lobby) {
@@ -47,5 +49,9 @@ public class CreateLobbyMessage extends AbstractLobbyMessage {
 
     public void setChatID(UUID chatID) {
         ChatID = chatID;
+    }
+
+    public String getLobbyPassword() {
+        return lobbyPassword;
     }
 }

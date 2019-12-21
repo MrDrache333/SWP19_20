@@ -142,7 +142,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     /**
      * Lobby erstellen Button: Sobald gedrückt, oeffnet sich Dialog. Aufforderung Name und optional Passwort anzugeben.
      *
-     * @author Paula
+     * @author Paula, Rike
      * @since Sprint4
      */
     @FXML
@@ -166,7 +166,7 @@ public class MainMenuPresenter extends AbstractPresenter {
 
 
         // Textfeld für Passwort wird erstellt und Panel hinzugefügt´
-        JLabel lobbyPassword = new JLabel("Password: ");
+        JLabel lobbyPassword = new JLabel("Passwort (optional): ");
         JPasswordField lPassword = new JPasswordField("", 15);
         panel.add(lobbyPassword);
         panel.add(lPassword);
@@ -180,11 +180,12 @@ public class MainMenuPresenter extends AbstractPresenter {
                 List<String> lobbyNames = new ArrayList<>();
 
                 String lobbyName = lName.getText();
+                String lobbyPassword = String.valueOf(lPassword.getPassword());
 
                 lobbies.forEach(lName -> lobbyNames.add(lobbyName));
 
                 if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName)) {
-                    CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
+                    CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName, lobbyPassword, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
                     eventBus.post(msg);
                     LOG.info("Request wurde gesendet.");
 
@@ -335,7 +336,9 @@ public class MainMenuPresenter extends AbstractPresenter {
 
 
     /**
+     * @author Rike
      * Hilfsmethode zum Erstellen des Buttons zum Betreten einer Lobby
+     * beim join wird ebenfalls überprüft ob die Lobby ein lobbyPassword besitzt und ggf. dieses abgefragt
      */
     private void addJoinLobbyButton() {
         Callback<TableColumn<Lobby, Void>, TableCell<Lobby, Void>> cellFactory = new Callback<>() {
@@ -353,7 +356,43 @@ public class MainMenuPresenter extends AbstractPresenter {
                             } else if (lobby.getUsers().contains(loggedInUser)) {
                                 showAlert(Alert.AlertType.WARNING, "Du bist dieser Lobby schon beigetreten!", "Fehler");
                             } else {
-                                lobbyService.joinLobby(lobby.getName(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), lobby.getLobbyID());
+                                if(lobby.getLobbyPassword().isEmpty()){
+                                    lobbyService.joinLobby(lobby.getName(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), lobby.getLobbyID());
+                                }
+                                else if (!lobby.getLobbyPassword().isEmpty()) {
+                                    // Es soll ein Dialogfenster geöffnet werden, wenn für die Lobby ein lobbyPassword existiert
+                                    // Erzeugung Dialog
+                                    JDialog joinLobbyDialog = new JDialog();
+                                    joinLobbyDialog.setTitle("Lobby erstellen");
+                                    joinLobbyDialog.setSize(300, 150);
+
+                                    JPanel panel = new JPanel();
+
+                                    // Textfeld für Passwort wird erstellt und Panel hinzugefügt
+                                    JLabel enteredPassword = new JLabel("Passwort eingeben: ");
+                                    JPasswordField ePassword = new JPasswordField("", 15);
+                                    panel.add(enteredPassword);
+                                    panel.add(ePassword);
+
+                                    // enteredPassword mit dem lobbyPassword vergleichen, wenn "Beitreten"-Button gedrückt
+                                    // wenn true -> joinLobby
+                                    JButton joinLobby = new JButton("Lobby beitreten");
+                                    ActionListener onEnteredPasswordPressed = new ActionListener() {
+                                        @Override
+                                        public void actionPerformed(java.awt.event.ActionEvent e) {
+                                            if(lobby.getLobbyPassword().equals(String.valueOf(ePassword.getPassword()))){
+                                                lobbyService.joinLobby(lobby.getName(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), lobby.getLobbyID());
+                                            }
+                                            // TODO: Alert für falsches Passwort fehlt
+                                        }
+                                    };
+                                    joinLobby.addActionListener(onEnteredPasswordPressed);
+
+                                    panel.add(joinLobby);
+
+                                    joinLobbyDialog.add(panel);
+                                    joinLobbyDialog.setVisible(true);
+                                }
                             }
                         });
                     }

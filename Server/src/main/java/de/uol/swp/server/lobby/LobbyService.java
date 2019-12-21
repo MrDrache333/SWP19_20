@@ -55,22 +55,22 @@ public class LobbyService extends AbstractService {
     //--------------------------------------
 
     /**
-     * lobbyManagment auf dem Server wird aufgerufen und übergibt LobbyNamen und den Besitzer.
+     * lobbyManagment auf dem Server wird aufgerufen und übergibt LobbyNamen, LobbyPassword und den Besitzer.
      * Wenn dies erfolgt ist, folgt eine returnMessage an den Client die LobbyView anzuzeigen.
      *
      * @param msg enthält die Message vom Client mit den benötigten Daten um die Lobby zu erstellen.
-     * @author Paula, Haschem, Ferit
+     * @author Paula, Haschem, Ferit, Rike
      * @version 0.1
      * @since Sprint2
      */
     @Subscribe
     public void onCreateLobbyRequest(CreateLobbyRequest msg) {
-        UUID chatID = lobbyManagement.createLobby(msg.getLobbyName(), new LobbyUser(msg.getOwner()));
+        UUID chatID = lobbyManagement.createLobby(msg.getLobbyName(), msg.getLobbyPassword(), new LobbyUser(msg.getOwner()));
 
         chatManagement.createChat(chatID.toString());
         LOG.info("Der Chat mir der UUID " + chatID + " wurde erfolgreich erstellt");
 
-        ServerMessage returnMessage = new CreateLobbyMessage(msg.getLobbyName(), msg.getUser(), chatID);
+        ServerMessage returnMessage = new CreateLobbyMessage(msg.getLobbyName(), msg.getLobbyPassword(), msg.getUser(), chatID);
         post(returnMessage);
         LOG.info("onCreateLobbyRequest wird auf dem Server aufgerufen.");
     }
