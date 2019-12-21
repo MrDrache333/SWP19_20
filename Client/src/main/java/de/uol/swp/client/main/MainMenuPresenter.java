@@ -5,6 +5,9 @@ import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
+import de.uol.swp.common.lobby.message.CreateLobbyMessage;
+import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
+import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.lobby.request.CreateLobbyRequest;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.user.User;
@@ -232,6 +235,58 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     /**
+     * Fügt eine neu erstellte Lobby zur Tabelle hinzu
+     *
+     * @param message
+     * @author Julia
+     * @since Sprint4
+     */
+    @Subscribe
+    public void newLobbyCreated(CreateLobbyMessage message) {
+        if(lobbies != null) {
+            Platform.runLater(() -> {
+                lobbies.add(0, message.getLobby());
+            });
+        }
+    }
+
+    /**
+     * Aktualisiert die Lobbytabelle, nachdem ein User einer Lobby beigetreten ist
+     *
+     * @param message
+     * @author Julia
+     * @since Sprint4
+     */
+    @Subscribe
+    public void userJoinedLobby(UserJoinedLobbyMessage message) {
+        if(lobbies != null) {
+            Platform.runLater(() -> {
+                lobbies.removeIf(lobby -> lobby.getName().equals(message.getLobbyName()));
+                lobbies.add(0, message.getLobby());
+            });
+        }
+    }
+
+    /**
+     * Aktualisiert die Lobbytabelle, nachdem ein User eine Lobby verlassen hat
+     *
+     * @param message
+     * @author Julia
+     * @since Sprint4
+     */
+    @Subscribe
+    public void userLeftLobby(UserLeftLobbyMessage message) {
+        if (lobbies != null) {
+            Platform.runLater(() -> {
+                lobbies.removeIf(lobby -> lobby.getName().equals(message.getLobbyName()));
+                if (message.getLobby() != null) {
+                    lobbies.add(0, message.getLobby());
+                }
+            });
+        }
+    }
+
+    /**
      * aktualisiert den loggedInUser und die Lobbytabelle sowie die Userliste, falls sich der Username geändert hat
      *
      * @param message
@@ -246,13 +301,10 @@ public class MainMenuPresenter extends AbstractPresenter {
         Platform.runLater(() -> {
             for(Lobby lobby : lobbies) {
                 if(lobby.getUsers().contains(message.getOldUser())) {
-                    User updatedOwner;
+                    User updatedOwner = lobby.getOwner;
                     //ggf. Owner aktualisieren
                     if(lobby.getOwner().getUsername().equals(message.getOldUser().getUsername())) {
                         updatedOwner = message.getUser();
-                    }
-                    else {
-                        updatedOwner = lobby.getOwner();
                     }
                     //Userliste der Lobby aktualisieren
                     List<User> updatedUsers = new ArrayList<>(lobby.getUsers());
@@ -287,7 +339,7 @@ public class MainMenuPresenter extends AbstractPresenter {
 
 
     /**
-     * Erstes Erstellen der Lobbytabelle beim Login und Aktualisierung
+     * Erstes Erstellen der Lobbytabelle beim Login
      *
      * @param allLobbiesResponse
      * @author Julia

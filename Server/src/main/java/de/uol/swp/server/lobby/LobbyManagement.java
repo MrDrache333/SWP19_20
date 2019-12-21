@@ -69,7 +69,6 @@ public class LobbyManagement {
             return true;
         }
         return false;
-        // TODO: error handling not existing lobby
     }
 
     /**

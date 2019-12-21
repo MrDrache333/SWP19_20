@@ -278,7 +278,7 @@ public class LobbyPresenter extends AbstractPresenter {
     @Subscribe
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
         if (!message.getLobbyID().equals(lobbyID)) return;
-        LOG.debug("User " + message.getLobbyName() + " left the Lobby");
+        LOG.debug("User " + message.getUser().getUsername() + " left the Lobby");
         userLeftLobby(message.getUser().getUsername());
         chatViewPresenter.userLeft(message.getUser().getUsername());
     }

@@ -42,7 +42,7 @@ public class LobbyDTO implements Lobby, Serializable {
     }
 
     /**
-     * Instantiates a new Lobby dto.
+     * Instantiates a new Lobby dto for lobby table in main menu
      *
      * @param name    the name
      * @param creator the creator
@@ -70,7 +70,6 @@ public class LobbyDTO implements Lobby, Serializable {
             this.readyStatus.put(user.getUsername(), false);
             players++;
         }
-        // TODO: Hier Fehlermeldung implementieren?
     }
 
     @Override
