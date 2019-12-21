@@ -7,6 +7,7 @@ import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.lobby.request.CreateLobbyRequest;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
+import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
@@ -32,6 +33,8 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 /**
@@ -229,8 +232,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     /**
-     * aktualisiert den loggedInUser sowie die Userliste, falls sich der Username geändert hat
-     * und die Lobbytabelle, falls der Owner seinen Namen geändert hat
+     * aktualisiert den loggedInUser und die Lobbytabelle sowie die Userliste, falls sich der Username geändert hat
      *
      * @param message
      * @author Julia
@@ -241,21 +243,36 @@ public class MainMenuPresenter extends AbstractPresenter {
         if(loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
             this.loggedInUser = message.getUser();
         }
-        //Listen nur aktualisieren, wenn sich der Username geändert hat
-        if(!message.getUser().getUsername().equals(message.getOldUser().getUsername())) {
-            Platform.runLater(() -> {
+        Platform.runLater(() -> {
+            for(Lobby lobby : lobbies) {
+                if(lobby.getUsers().contains(message.getOldUser())) {
+                    User updatedOwner;
+                    //ggf. Owner aktualisieren
+                    if(lobby.getOwner().getUsername().equals(message.getOldUser().getUsername())) {
+                        updatedOwner = message.getUser();
+                    }
+                    else {
+                        updatedOwner = lobby.getOwner();
+                    }
+                    //Userliste der Lobby aktualisieren
+                    List<User> updatedUsers = new ArrayList<>(lobby.getUsers());
+                    updatedUsers.remove(message.getOldUser());
+                    updatedUsers.add(message.getUser());
+                    Set<User> newUsers = new TreeSet<>(updatedUsers);
+                    Lobby lobbyToUpdate = new LobbyDTO(lobby.getName(), updatedOwner, lobby.getLobbyID(), newUsers, lobby.getPlayers());
+                    lobbies.remove(lobby);
+                    lobbies.add(0, lobbyToUpdate);
+                }
+            }
+
+            //Userliste nur aktualisieren, wenn sich der Username geändert hat
+            if(!message.getUser().getUsername().equals(message.getOldUser().getUsername())) {
                 users.removeIf(user -> user.equals(message.getOldUser().getUsername()));
                 users.add(message.getUser().getUsername());
-                for(Lobby lobby : lobbies) {
-                    if(lobby.getOwner().getUsername().equals(message.getOldUser().getUsername())) {
-                        Lobby lobbyToUpdate = new LobbyDTO(lobby.getName(), message.getUser(), lobby.getLobbyID(), lobby.getUsers(), lobby.getPlayers());
-                        lobbies.remove(lobby);
-                        lobbies.add(0, lobbyToUpdate);
-                    }
-                }
-            });
-        }
+            }
+        });
     }
+
 
     /**
      * User list.
