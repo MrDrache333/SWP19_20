@@ -28,6 +28,7 @@ public class SettingsPresenter extends AbstractPresenter {
      * The constant fxml.
      */
     public static final String fxml = "/fxml/SettingsView.fxml";
+    public static final String css = "css/SettingsPresenter.css";
     private static final Logger LOG = LogManager.getLogger(SettingsPresenter.class);
 
     private User loggedInUser;

@@ -163,8 +163,8 @@ public class SceneManager {
     private void initSettingsView(SettingsPresenter settingsPresenter) {
         if (settingsScene == null) {
             Parent rootPane = initSettingsPresenter(settingsPresenter);
-            settingsScene = new Scene(rootPane, 450, 300);
-            settingsScene.getStylesheets().add(styleSheet);
+            settingsScene = new Scene(rootPane, 400, 255);
+            settingsScene.getStylesheets().add(SettingsPresenter.css);
         }
     }
 
