@@ -225,7 +225,7 @@ public class ClientApp extends Application implements ConnectionListener {
     }
 
     /**
-     * Empfänt die Nachricht (vom MainMenuPresenter), dass das Einstellungsfenster geöffnet werden soll
+     * Empfängt die Nachricht (vom MainMenuPresenter), dass das Einstellungsfenster geöffnet werden soll
      *
      * @param message
      * @author Anna
@@ -239,7 +239,7 @@ public class ClientApp extends Application implements ConnectionListener {
     }
 
     /**
-     * aktualsiert den user und schließt das Einstellungsfenster
+     * aktualsiert den user sowie den loggedInUser im SettingsPresenter und schließt das Einstellungsfenster
      *
      * @param message
      * @author Julia
@@ -248,8 +248,9 @@ public class ClientApp extends Application implements ConnectionListener {
     @Subscribe
     public void onUpdatedUserMessage(UpdatedUserMessage message) {
         if(user.getUsername().equals(message.getOldUser().getUsername())) {
-            user = message.getUser();
+            this.user = message.getUser();
             sceneManager.closeSettings();
+            sceneManager.getSettingsPresenter().updateLoggedInUser(message.getUser());
         }
     }
 

@@ -44,6 +44,7 @@ public class SceneManager {
     final private LobbyService lobbyService;
     final private ChatService chatService;
     private final Injector injector;
+    private SettingsPresenter settingsPresenter;
     private Stage settingsStage;
     private Scene loginScene;
     private String lastTitle;
@@ -249,7 +250,7 @@ public class SceneManager {
      */
     public void showSettingsScreen(User loggedInUser) {
         Platform.runLater(() -> {
-            SettingsPresenter settingsPresenter = new SettingsPresenter(loggedInUser, lobbyService, userService);
+            settingsPresenter = new SettingsPresenter(loggedInUser, lobbyService, userService);
             initSettingsView(settingsPresenter);
             settingsStage = new Stage();
             settingsStage.setTitle("Einstellungen");
@@ -272,7 +273,7 @@ public class SceneManager {
     }
 
     /**
-     * Schließt alle GameManagement Stages
+     * Schließt alle Stages
      *
      * @author Julia, Paula
      * @since Sprint3
@@ -285,4 +286,6 @@ public class SceneManager {
     }
 
     public void closeSettings() { Platform.runLater(() -> settingsStage.close());}
+
+    public SettingsPresenter getSettingsPresenter() { return settingsPresenter; }
 }

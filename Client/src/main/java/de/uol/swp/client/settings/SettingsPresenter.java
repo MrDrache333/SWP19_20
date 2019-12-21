@@ -100,6 +100,10 @@ public class SettingsPresenter extends AbstractPresenter {
         cancel();
     }
 
+    public void updateLoggedInUser(User user) {
+        this.loggedInUser = user;
+    }
+
     private void clearAll() {
         usernameField.clear();
         emailField.clear();

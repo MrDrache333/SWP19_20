@@ -239,7 +239,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     @Subscribe
     public void updatedUser(UpdatedUserMessage message) {
         if(loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
-            loggedInUser = message.getUser();
+            this.loggedInUser = message.getUser();
         }
         //Listen nur aktualisieren, wenn sich der Username geändert hat
         if(!message.getUser().getUsername().equals(message.getOldUser().getUsername())) {
