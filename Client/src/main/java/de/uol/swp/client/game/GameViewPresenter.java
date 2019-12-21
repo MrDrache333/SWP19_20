@@ -92,6 +92,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * @param message the message
      * @param title   the title
      */
+
     public void showAlert(Alert.AlertType type, String message, String title) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "");
         alert.setResizable(false);
@@ -100,7 +101,6 @@ public class GameViewPresenter extends AbstractPresenter {
         alert.getDialogPane().setHeaderText(title);
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
-
             eventBus.post(new GameQuitEvent());
         }//so funktioniert das nicht
     }
@@ -144,7 +144,6 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     public void onGiveUpButtonPressed(ActionEvent actionEvent) {
         showAlert(Alert.AlertType.CONFIRMATION, " ", "Möchtest du wirklich aufgeben?");
-
     }
 
     /**

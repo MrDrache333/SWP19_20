@@ -8,6 +8,7 @@ import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.LobbyPresenter;
 import de.uol.swp.client.lobby.LobbyService;
+import de.uol.swp.common.lobby.message.KickUserMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
@@ -99,6 +100,20 @@ public class GameManagement {
     }
 
     /**
+     * Wenn die Nachricht abgefangen wird und man der gekickte Benutzer ist und in der Lobby ist wird das Lobbyfenster
+     * geschlossen
+     *
+     * @author Darian
+     * @since sprint4
+     */
+    @Subscribe
+    private void onKickUserMessage(KickUserMessage msg) {
+        if (msg.getLobbyID().equals(ID) && msg.getUser().getUsername().equals(loggedInUser.getUsername())) {
+            close();
+        }
+    }
+
+    /**
      * Wenn es der aktuelle Benutzer in dieser Lobby ist, dann schließe das Fenster
      *
      * @param msg
@@ -129,7 +144,6 @@ public class GameManagement {
      * LobbyView wird initalisiert und deklariert.
      * Neue Szene für die neue Lobby wird erstellt und gespeichert
      *
-     * @param
      * @Keno
      */
     private void initLobbyView() {

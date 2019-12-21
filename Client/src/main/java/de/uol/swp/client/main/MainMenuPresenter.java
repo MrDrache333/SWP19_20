@@ -2,6 +2,7 @@ package de.uol.swp.client.main;
 
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
@@ -65,21 +66,6 @@ public class MainMenuPresenter extends AbstractPresenter {
     private Pane chatView;
 
     /**
-     * @author Paula, Haschem, Ferit
-     * @version 0.1
-     * Fängt den Button ab und sendet den Request zur Erstellung der Lobby an den Server.
-     */
-
-    public static void showAlert(Alert.AlertType type, String message, String title) {
-        Alert alert = new Alert(type, "");
-        alert.setResizable(false);
-        alert.initModality(Modality.APPLICATION_MODAL);
-        alert.getDialogPane().setContentText(message);
-        alert.getDialogPane().setHeaderText(title);
-        alert.show();
-    }
-
-    /**
      * Methode fängt ButtonKlick ab, User verlässt alle Lobbies, in denen er angemeldet ist und wird ausgeloggt
      *
      * @param actionEvent
@@ -92,10 +78,6 @@ public class MainMenuPresenter extends AbstractPresenter {
         lobbyService.leaveAllLobbiesOnLogout(new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
         userService.logout(loggedInUser);
     }
-
-    //--------------------------------------
-    // EVENTBUS
-    //--------------------------------------
 
     /**
      * Initialize.
@@ -152,19 +134,22 @@ public class MainMenuPresenter extends AbstractPresenter {
         List<String> lobbyNames = new ArrayList<>();
         lobbies.forEach(lobby -> lobbyNames.add(lobby.getName()));
         if (lobbyNames.contains(lobbyName.getText())) {
-            showAlert(Alert.AlertType.WARNING, "Dieser Name ist bereits vergeben", "Fehler");
+            SceneManager.showAlert(Alert.AlertType.WARNING, "Dieser Name ist bereits vergeben", "Fehler");
             lobbyName.requestFocus();
         } else if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName.getText())) {
             CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
             eventBus.post(msg);
             LOG.info("Request wurde gesendet.");
         } else {
-            showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden", "Fehler");
+            SceneManager.showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden", "Fehler");
             lobbyName.requestFocus();
         }
         lobbyName.clear();
     }
 
+    //--------------------------------------
+    // EVENTBUS
+    //--------------------------------------
 
     /**
      * Login successful.
@@ -213,7 +198,6 @@ public class MainMenuPresenter extends AbstractPresenter {
 
             }
         });
-
     }
 
     /**
@@ -226,7 +210,6 @@ public class MainMenuPresenter extends AbstractPresenter {
         LOG.debug("Update of user list " + allUsersResponse.getUsers());
         updateUsersList(allUsersResponse.getUsers());
     }
-
 
     /**
      * Erstes Erstellen der Lobbytabelle beim Login und Aktualisierung
@@ -242,7 +225,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     //-----------------
-    // Help methods
+    // PRIVATE METHODS
     //-----------------
 
     /**
@@ -262,7 +245,6 @@ public class MainMenuPresenter extends AbstractPresenter {
         });
     }
 
-
     /**
      * Hilfsmethode zum Erstellen des Buttons zum Betreten einer Lobby
      */
@@ -270,23 +252,20 @@ public class MainMenuPresenter extends AbstractPresenter {
         Callback<TableColumn<Lobby, Void>, TableCell<Lobby, Void>> cellFactory = new Callback<>() {
             @Override
             public TableCell<Lobby, Void> call(final TableColumn<Lobby, Void> param) {
-
                 return new TableCell<>() {
                     final Button joinLobbyButton = new Button("Beitreten");
-
                     {
                         joinLobbyButton.setOnAction((ActionEvent event) -> {
                             Lobby lobby = getTableView().getItems().get(getIndex());
                             if (lobby.getPlayers() == 4) {
-                                showAlert(Alert.AlertType.WARNING, "Diese Lobby ist voll!", "Fehler");
+                                SceneManager.showAlert(Alert.AlertType.WARNING, "Diese Lobby ist voll!", "Fehler");
                             } else if (lobby.getUsers().contains(loggedInUser)) {
-                                showAlert(Alert.AlertType.WARNING, "Du bist dieser Lobby schon beigetreten!", "Fehler");
+                                SceneManager.showAlert(Alert.AlertType.WARNING, "Du bist dieser Lobby schon beigetreten!", "Fehler");
                             } else {
                                 lobbyService.joinLobby(lobby.getName(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), lobby.getLobbyID());
                             }
                         });
                     }
-
                     @Override
                     public void updateItem(Void item, boolean empty) {
                         super.updateItem(item, empty);
@@ -299,7 +278,6 @@ public class MainMenuPresenter extends AbstractPresenter {
                 };
             }
         };
-
         joinLobby.setCellFactory(cellFactory);
     }
 
@@ -314,6 +292,4 @@ public class MainMenuPresenter extends AbstractPresenter {
             userList.forEach(u -> users.add(u.getUsername()));
         });
     }
-
-
 }

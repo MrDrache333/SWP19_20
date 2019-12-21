@@ -6,8 +6,7 @@ import java.util.UUID;
 
 public class KickUserMessage extends AbstractLobbyMessage {
 
-    public KickUserMessage(String lobbyName, UserDTO user, UUID lobbyID) {
-        super(lobbyName, user, lobbyID);
+    public KickUserMessage(String lobbyName, UserDTO userToKick, UUID lobbyID) {
+        super(lobbyName, userToKick, lobbyID);
     }
-
 }

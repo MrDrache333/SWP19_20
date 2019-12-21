@@ -50,7 +50,6 @@ public class LobbyService extends AbstractService {
         this.chatManagement = chatManagement;
     }
 
-
     //--------------------------------------
     // EVENTBUS
     //--------------------------------------
@@ -204,7 +203,7 @@ public class LobbyService extends AbstractService {
     public void onKickUserRequest(KickUserRequest msg){
         if (lobbyManagement.kickUser(msg.getLobbyName(), msg.getUserToKick(), msg.getUser())) {
             LOG.info("User " + msg.getUser().getUsername() + " is kicked from lobby " + msg.getLobbyName());
-            ServerMessage returnMessage = new KickUserMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID());
+            ServerMessage returnMessage = new KickUserMessage(msg.getLobbyName(), msg.getUserToKick(), msg.getLobbyID());
             post(returnMessage);
         } else {
             LOG.error("Kicking " + msg.getLobbyName() + " from Lobby has failed");

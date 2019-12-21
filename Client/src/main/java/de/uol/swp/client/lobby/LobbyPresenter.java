@@ -233,7 +233,7 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void onUserLoggedOutMessage(UserLoggedOutMessage message) {
-        userLeftLobby(message.getUsername());
+        userLeftLobby(message.getUsername(), false);
     }
 
     /**
@@ -263,35 +263,50 @@ public class LobbyPresenter extends AbstractPresenter {
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
         if (!message.getLobbyID().equals(lobbyID)) return;
         LOG.debug("User " + message.getLobbyName() + " left the Lobby");
-        userLeftLobby(message.getUser().getUsername());
+        userLeftLobby(message.getUser().getUsername(), false);
         chatViewPresenter.userLeft(message.getUser().getUsername());
     }
 
     /**
+     * Wenn die Nachrticht eingeht dass ein Spieler gekickt wird, wird dieser aus der UserListe enntfernt. Dies wird
+     * Ebenfalls im Chat angezeigt.
      *
-     *
-     * @param message
+     * @param message die eingehende Nachricht vom Server
      * @author Darian
      * @since sprint4
      */
     @Subscribe
     public void onKickUserMessage(KickUserMessage message){
         if (!message.getLobbyID().equals(lobbyID)) return;
-        LOG.debug("User " + message.getLobbyName() + " left the Lobby");
-        userLeftLobby(message.getUser().getUsername());
-        chatViewPresenter.userLeft(message.getUser().getUsername());
+        LOG.debug("User " + message.getLobbyName() + " kicked out of the Lobby");
+        userLeftLobby(message.getUser().getUsername(), true);
+        chatViewPresenter.userKicked(message.getUser().getUsername());
     }
 
     //--------------------------------------
     // PRIVATE METHODS
     //--------------------------------------
 
-    private void userLeftLobby(String username) {
+    /**
+     * Wenn der Benutzer aus der Lobby gegangen/gekickt ist wird das im Chat angezeigt und er wird aus der UserListe
+     * entfernt.
+     *
+     * @param username Benutzername des Benutzers der gegangen ist
+     * @param kicked True wenn der Benutzer aus der Lobby gekickt wurde
+     * @author Darian
+     * @since sprint4
+     */
+    private void userLeftLobby(String username, boolean kicked) {
         if (readyUserList.get(username) != null) {
             Platform.runLater(() -> {
                 readyUserList.remove(username);
                 updateUsersList();
-                chatViewPresenter.userLeft(username);
+                //Je nachdem ob der Benutzer gekickt wurde oder freiwillig aus der Lobby gegangen ist wird es auch so angezeigt
+                if (kicked) {
+                    chatViewPresenter.userKicked(username);
+                } else {
+                    chatViewPresenter.userLeft(username);
+                }
                 if (readyUserList.containsKey(username)) {
                     readyUserList.remove(username);
                     updateUsersList();

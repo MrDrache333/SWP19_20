@@ -24,6 +24,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,6 +33,7 @@ import org.apache.logging.log4j.Logger;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 public class SceneManager {
@@ -92,53 +95,19 @@ public class SceneManager {
         showError(event.getMessage());
     }
 
-    private void initViews() {
-        initLoginView();
-        initMainView();
-        initRegistrationView();
+    /**
+     * @author Paula, Haschem, Ferit, Darian
+     * @version 0.1
+     * Fängt den Button ab und sendet den Request zur Erstellung der Lobby an den Server.
+     */
+    public static void showAlert(Alert.AlertType type, String message, String title) {
+        Alert alert = new Alert(type, "");
+        alert.setResizable(false);
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.getDialogPane().setContentText(message);
+        alert.getDialogPane().setHeaderText(title);
+        alert.show();
     }
-
-    private Parent initPresenter(String fxmlFile) {
-        Parent rootPane;
-        FXMLLoader loader = injector.getInstance(FXMLLoader.class);
-        try {
-            URL url = getClass().getResource(fxmlFile);
-            LOG.debug("Loading " + url);
-            loader.setLocation(url);
-            rootPane = loader.load();
-        } catch (Exception e) {
-            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
-        }
-        return rootPane;
-    }
-
-    private void initMainView() {
-        if (mainScene == null) {
-            Parent rootPane = initPresenter(MainMenuPresenter.fxml);
-            mainScene = new Scene(rootPane, 1280, 750);
-            mainScene.getStylesheets().add(styleSheet);
-            mainScene.getStylesheets().add(MainMenuPresenter.css);
-        }
-    }
-
-    private void initLoginView() {
-        if (loginScene == null) {
-            Parent rootPane = initPresenter(LoginPresenter.fxml);
-            loginScene = new Scene(rootPane, 1280, 750);
-            loginScene.getStylesheets().add(styleSheet);
-            loginScene.getStylesheets().add(LoginPresenter.css);
-        }
-    }
-
-    private void initRegistrationView() {
-        if (registrationScene == null) {
-            Parent rootPane = initPresenter(RegistrationPresenter.fxml);
-            registrationScene = new Scene(rootPane, 1280, 750);
-            registrationScene.getStylesheets().add(styleSheet);
-            registrationScene.getStylesheets().add(RegistrationPresenter.css);
-        }
-    }
-
 
     @Subscribe
     public void onGameQuitEvent(GameQuitEvent event) {
@@ -239,4 +208,54 @@ public class SceneManager {
         Platform.runLater(() -> games.values().forEach(GameManagement::close));
     }
 
+    //-----------------
+    // PRIVATE METHODS
+    //-----------------
+
+    private void initViews() {
+        initLoginView();
+        initMainView();
+        initRegistrationView();
+    }
+
+    private Parent initPresenter(String fxmlFile) {
+        Parent rootPane;
+        FXMLLoader loader = injector.getInstance(FXMLLoader.class);
+        try {
+            URL url = getClass().getResource(fxmlFile);
+            LOG.debug("Loading " + url);
+            loader.setLocation(url);
+            rootPane = loader.load();
+        } catch (Exception e) {
+            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
+        }
+        return rootPane;
+    }
+
+    private void initMainView() {
+        if (mainScene == null) {
+            Parent rootPane = initPresenter(MainMenuPresenter.fxml);
+            mainScene = new Scene(rootPane, 1280, 750);
+            mainScene.getStylesheets().add(styleSheet);
+            mainScene.getStylesheets().add(MainMenuPresenter.css);
+        }
+    }
+
+    private void initLoginView() {
+        if (loginScene == null) {
+            Parent rootPane = initPresenter(LoginPresenter.fxml);
+            loginScene = new Scene(rootPane, 1280, 750);
+            loginScene.getStylesheets().add(styleSheet);
+            loginScene.getStylesheets().add(LoginPresenter.css);
+        }
+    }
+
+    private void initRegistrationView() {
+        if (registrationScene == null) {
+            Parent rootPane = initPresenter(RegistrationPresenter.fxml);
+            registrationScene = new Scene(rootPane, 1280, 750);
+            registrationScene.getStylesheets().add(styleSheet);
+            registrationScene.getStylesheets().add(RegistrationPresenter.css);
+        }
+    }
 }

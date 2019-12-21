@@ -8,6 +8,7 @@ import com.google.inject.Injector;
 import de.uol.swp.client.di.ClientModule;
 import de.uol.swp.common.lobby.LobbyService;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
+import de.uol.swp.common.lobby.message.KickUserMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.user.User;
@@ -19,6 +20,7 @@ import de.uol.swp.common.user.response.RegistrationSuccessfulResponse;
 import io.netty.channel.Channel;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -143,7 +145,7 @@ public class ClientApp extends Application implements ConnectionListener {
 
     @Subscribe
     public void userLoggedIn(LoginSuccessfulResponse message) {
-        LOG.debug("user logged in successfully " + message.getUser().getUsername());
+        LOG.debug("User logged in successfully " + message.getUser().getUsername());
         this.user = message.getUser();
         sceneManager.showMainScreen(user);
     }
@@ -221,6 +223,19 @@ public class ClientApp extends Application implements ConnectionListener {
         lobbyService.retrieveAllLobbies();
     }
 
+    /**
+     *
+     */
+    @Subscribe
+    public void onKickUserMessage(KickUserMessage message) {
+        if (message.getUser().getUsername().equals(user.getUsername())) {
+            sceneManager.showMainScreen(user);
+            LOG.info("User " + message.getUser().getUsername() + " is kicked from the lobby successfully");
+            sceneManager.getGameManagement(message.getLobbyID()).close();
+            //SceneManager.showAlert(Alert.AlertType.WARNING,"Sie wurden aus der Lobby entfernt","Lobby verlassen");
+        }
+        lobbyService.retrieveAllLobbies();
+    }
 
     // -----------------------------------------------------
     // JavFX Help methods
