@@ -17,7 +17,7 @@
       <PasswordField fx:id="passwordField" layoutX="216.0" layoutY="74.0" promptText="Neues Passwort" />
       <PasswordField fx:id="password2Field" layoutX="216.0" layoutY="152.0" promptText="Passwort wiederholen" />
       <Button fx:id="cancelButton" layoutX="216.0" layoutY="214.0" mnemonicParsing="false" onAction="#onCancelButtonPressed" text="Abbrechen" />
-      <Button fx:id="saveButton" layoutX="300.0" layoutY="214.0" mnemonicParsing="false" onAction="#onSaveButtonPressed" text="Speichern" />
+      <Button fx:id="saveButton" defaultButton="true" layoutX="300.0" layoutY="214.0" mnemonicParsing="false" onAction="#onSaveButtonPressed" text="Speichern" />
       <Button fx:id="deleteAccount" layoutX="33.0" layoutY="214.0" mnemonicParsing="false" onAction="#onDeleteAccountButtonPressed" text="Account löschen" />
       <Label layoutX="33.0" layoutY="10.0" prefWidth="142.0" text="Einstellungen">
          <font>

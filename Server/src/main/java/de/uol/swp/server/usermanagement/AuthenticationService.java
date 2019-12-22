@@ -115,8 +115,7 @@ public class AuthenticationService extends AbstractService {
     }
 
     /**
-     * Aktualisierung des Users wird versucht, bei Erfolg wird die alte Session entfernt und eine neue mit dem aktualisierten
-     * User hinzugefügt, sowie eine UpdatedUserMessage abgesendet. Andernfalls wird eine UpdateUserFailedMessage
+     * Aktualisierung des Users wird versucht, bei Erfolg wird eine UpdatedUserMessage abgesendet, andernfalls wird eine UpdateUserFailedMessage
      * mit entsprechender Fehlermeldung gesendet
      *
      * @param msg
@@ -125,16 +124,16 @@ public class AuthenticationService extends AbstractService {
      */
     @Subscribe
     public void onUpdateUserRequest(UpdateUserRequest msg) {
+        userSessions.put(msg.getSession().get(), msg.getUser());
         ServerMessage returnMessage;
         try {
             User user = userManagement.updateUser(msg.getUser(), msg.getOldUser());
             returnMessage = new UpdatedUserMessage(user, msg.getOldUser());
-            userSessions.remove(getSession(msg.getOldUser()).get());
-            userSessions.put(msg.getSession().get(), user);
             LOG.info("User " + msg.getOldUser().getUsername() + " updated successfully");
             post(new UpdateLobbiesRequest((UserDTO)user, (UserDTO)msg.getOldUser()));
         }
         catch (UserUpdateException e) {
+            userSessions.replace(msg.getSession().get(), msg.getOldUser());
             returnMessage = new UpdateUserFailedMessage(msg.getOldUser(), e.getMessage());
             LOG.info("Update of user " + msg.getOldUser().getUsername() + " failed");
         }

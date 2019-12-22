@@ -212,7 +212,9 @@ public class MainMenuPresenter extends AbstractPresenter {
         Platform.runLater(() -> {
             if (users != null && loggedInUser != null && !loggedInUser.getUsername().equals(message.getUsername())) {
                 chatViewPresenter.userJoined(message.getUsername());
-                users.add(message.getUsername());
+                if(!users.contains(message.getUsername())) {
+                    users.add(message.getUsername());
+                }
             }
         });
     }
