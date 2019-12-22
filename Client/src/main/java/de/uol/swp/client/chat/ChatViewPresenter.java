@@ -9,6 +9,7 @@ import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.chat.response.ChatResponseMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
+import de.uol.swp.common.user.message.UpdatedUserMessage;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -237,6 +238,20 @@ public class ChatViewPresenter extends AbstractPresenter {
     private void onChatResponseMessage(ChatResponseMessage msg) {
         if (msg.getChat().getChatId().equals(chatId) && msg.getSender().equals(loggedInUser.getUsername())) {
             updateChat(msg.getChat().getMessages());
+        }
+    }
+
+    /**
+     * Aktualisiert den loggedInUser
+     *
+     * @param message
+     * @author Julia
+     * @since Sprint4
+     */
+    @Subscribe
+    public void updatedUser(UpdatedUserMessage message) {
+        if (loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
+            loggedInUser = message.getUser();
         }
     }
 

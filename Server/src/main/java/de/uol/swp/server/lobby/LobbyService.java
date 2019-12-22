@@ -92,8 +92,7 @@ public class LobbyService extends AbstractService {
             lobby.get().joinUser(new LobbyUser(msg.getUser()));
             ServerMessage returnMessage = new UserJoinedLobbyMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID(), (LobbyDTO) lobby.get());
             post(returnMessage);
-        }
-        else {
+        } else {
             LOG.error("Joining lobby " + msg.getLobbyName() + " failed");
         }
     }
@@ -112,10 +111,9 @@ public class LobbyService extends AbstractService {
             LOG.info("User " + msg.getUser().getUsername() + " is leaving lobby " + msg.getLobbyName());
             ServerMessage returnMessage;
             Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getLobbyName());
-            if(lobby.isPresent()) {
+            if (lobby.isPresent()) {
                 returnMessage = new UserLeftLobbyMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID(), (LobbyDTO) lobby.get());
-            }
-            else {
+            } else {
                 returnMessage = new UserLeftLobbyMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID(), null);
             }
             post(returnMessage);
@@ -192,7 +190,7 @@ public class LobbyService extends AbstractService {
     }
 
     /**
-     * erstellt eine AllOnlineLobbiesResponse mit allen Lobbies im LobbyManagement und schickt diese ab
+     * Erstellt eine AllOnlineLobbiesResponse mit allen Lobbies im LobbyManagement und schickt diese ab
      *
      * @param msg the msg
      * @author Julia
@@ -205,6 +203,13 @@ public class LobbyService extends AbstractService {
         post(response);
     }
 
+    /**
+     * Lobbies werden aktualisiert nachdem ein User seine Daten geändert hat
+     *
+     * @param msg
+     * @author Julis
+     * @since Sprint4
+     */
     @Subscribe
     public void onUpdateLobbiesRequest(UpdateLobbiesRequest msg) {
         lobbyManagement.updateLobbies(msg.getUpdatedUser(), msg.getOldUser());

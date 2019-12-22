@@ -70,10 +70,10 @@ public class SettingsPresenter extends AbstractPresenter {
         String password2 = password2Field.getText();
 
         //keine Eingaben vom Nutzer
-        if(Strings.isNullOrEmpty(username) && Strings.isNullOrEmpty(email) && Strings.isNullOrEmpty(password) && Strings.isNullOrEmpty(password2)) {
+        if (Strings.isNullOrEmpty(username) && Strings.isNullOrEmpty(email) && Strings.isNullOrEmpty(password) && Strings.isNullOrEmpty(password2)) {
             eventBus.post(new CloseSettingsEvent());
             clearAll();
-        } else if(!password.equals(password2)) {
+        } else if (!password.equals(password2)) {
             showAlert(Alert.AlertType.ERROR, "Die Passwörter sind nicht gleich", "Fehler");
             passwordField.clear();
             password2Field.clear();
@@ -81,11 +81,13 @@ public class SettingsPresenter extends AbstractPresenter {
         } //TODO add check for valid email
         else {
             //Wenn Felder leer sind, Daten vom loggedInUser übernehmen
-            if(Strings.isNullOrEmpty(username)) {
+            if (Strings.isNullOrEmpty(username)) {
                 username = loggedInUser.getUsername();
-            } if(Strings.isNullOrEmpty(email)) {
+            }
+            if (Strings.isNullOrEmpty(email)) {
                 email = loggedInUser.getEMail();
-            } if(Strings.isNullOrEmpty(password)) {
+            }
+            if (Strings.isNullOrEmpty(password)) {
                 password = loggedInUser.getPassword();
             }
             userService.updateUser(new UserDTO(username, password, email), loggedInUser);

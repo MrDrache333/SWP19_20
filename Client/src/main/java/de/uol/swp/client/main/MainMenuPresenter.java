@@ -77,7 +77,6 @@ public class MainMenuPresenter extends AbstractPresenter {
      * @version 0.1
      * Fängt den Button ab und sendet den Request zur Erstellung der Lobby an den Server.
      */
-
     public static void showAlert(Alert.AlertType type, String message, String title) {
         Alert alert = new Alert(type, "");
         alert.setResizable(false);
@@ -92,9 +91,8 @@ public class MainMenuPresenter extends AbstractPresenter {
      *
      * @param actionEvent
      * @author Julia, Paula
-     * @since sprint3
+     * @since Sprint3
      */
-
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
         lobbyService.leaveAllLobbiesOnLogout(new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
@@ -212,7 +210,7 @@ public class MainMenuPresenter extends AbstractPresenter {
         Platform.runLater(() -> {
             if (users != null && loggedInUser != null && !loggedInUser.getUsername().equals(message.getUsername())) {
                 chatViewPresenter.userJoined(message.getUsername());
-                if(!users.contains(message.getUsername())) {
+                if (!users.contains(message.getUsername())) {
                     users.add(message.getUsername());
                 }
             }
@@ -244,15 +242,14 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void newLobbyCreated(CreateLobbyMessage message) {
-        if(lobbies != null) {
-            Platform.runLater(() -> {
-                lobbies.add(0, message.getLobby());
-            });
-        }
+        LOG.debug("New lobby " + message.getLobbyName() + " created");
+        Platform.runLater(() -> {
+            lobbies.add(0, message.getLobby());
+        });
     }
 
     /**
-     * Aktualisiert die Lobbytabelle, nachdem ein User einer Lobby beigetreten ist
+     * Aktualisiert die Lobbytabelle nachdem ein User einer Lobby beigetreten ist
      *
      * @param message
      * @author Julia
@@ -260,16 +257,15 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void userJoinedLobby(UserJoinedLobbyMessage message) {
-        if(lobbies != null) {
-            Platform.runLater(() -> {
-                lobbies.removeIf(lobby -> lobby.getName().equals(message.getLobbyName()));
-                lobbies.add(0, message.getLobby());
-            });
-        }
+        LOG.debug("User " + message.getUser().getUsername() + " joined lobby " + message.getLobbyName());
+        Platform.runLater(() -> {
+            lobbies.removeIf(lobby -> lobby.getName().equals(message.getLobbyName()));
+            lobbies.add(0, message.getLobby());
+        });
     }
 
     /**
-     * Aktualisiert die Lobbytabelle, nachdem ein User eine Lobby verlassen hat
+     * Aktualisiert die Lobbytabelle nachdem ein User eine Lobby verlassen hat
      *
      * @param message
      * @author Julia
@@ -277,18 +273,17 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void userLeftLobby(UserLeftLobbyMessage message) {
-        if (lobbies != null) {
-            Platform.runLater(() -> {
-                lobbies.removeIf(lobby -> lobby.getName().equals(message.getLobbyName()));
-                if (message.getLobby() != null) {
-                    lobbies.add(0, message.getLobby());
-                }
-            });
-        }
+        LOG.debug("User " + message.getUser().getUsername() + " left lobby " + message.getLobbyName());
+        Platform.runLater(() -> {
+            lobbies.removeIf(lobby -> lobby.getName().equals(message.getLobbyName()));
+            if (message.getLobby() != null) {
+                lobbies.add(0, message.getLobby());
+            }
+        });
     }
 
     /**
-     * aktualisiert den loggedInUser und die Lobbytabelle sowie die Userliste, falls sich der Username geändert hat
+     * Aktualisiert den loggedInUser und die Lobbytabelle sowie die Userliste, falls sich der Username geändert hat
      *
      * @param message
      * @author Julia
@@ -296,17 +291,18 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void updatedUser(UpdatedUserMessage message) {
-        if(loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
+        LOG.debug("User " + message.getOldUser().getUsername() + " updated his data. Updating lobby table and user list");
+        if (loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
             loggedInUser = message.getUser();
         }
         Platform.runLater(() -> {
             List<Lobby> toRemove = new ArrayList<>();
             List<Lobby> toAdd = new ArrayList<>();
-            for(Lobby lobby : lobbies) {
-                if(lobby.getUsers().contains(message.getOldUser())) {
+            for (Lobby lobby : lobbies) {
+                if (lobby.getUsers().contains(message.getOldUser())) {
                     User updatedOwner = lobby.getOwner();
                     //ggf. Owner aktualisieren
-                    if(lobby.getOwner().getUsername().equals(message.getOldUser().getUsername())) {
+                    if (lobby.getOwner().getUsername().equals(message.getOldUser().getUsername())) {
                         updatedOwner = message.getUser();
                     }
                     //Userliste der Lobby aktualisieren
@@ -325,7 +321,7 @@ public class MainMenuPresenter extends AbstractPresenter {
             lobbies.addAll(toAdd);
 
             //Userliste nur aktualisieren, wenn sich der Username geändert hat
-            if(!message.getUser().getUsername().equals(message.getOldUser().getUsername())) {
+            if (!message.getUser().getUsername().equals(message.getOldUser().getUsername())) {
                 users.removeIf(user -> user.equals(message.getOldUser().getUsername()));
                 users.add(message.getUser().getUsername());
             }
@@ -363,7 +359,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     //-----------------
 
     /**
-     * updatet die lobbytabelle
+     * Updatet die lobbytabelle
      *
      * @author Julia
      * @since Sprint2
@@ -382,6 +378,9 @@ public class MainMenuPresenter extends AbstractPresenter {
 
     /**
      * Hilfsmethode zum Erstellen des Buttons zum Betreten einer Lobby
+     *
+     * @author Paula, Julia
+     * @since Sprint3
      */
     private void addJoinLobbyButton() {
         Callback<TableColumn<Lobby, Void>, TableCell<Lobby, Void>> cellFactory = new Callback<>() {

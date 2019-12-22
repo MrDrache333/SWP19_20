@@ -75,12 +75,13 @@ public class LobbyManagement {
      * Aktualisiert jede Lobby, in der der aktualisierte User drin ist
      *
      * @param updatedUser der aktualisierte User
-     * @param oldUser der alte User
+     * @param oldUser     der alte User
      * @author Julia
      * @since Sprint4
      */
     public void updateLobbies(UserDTO updatedUser, UserDTO oldUser) {
-        for (Lobby lobby : lobbies.values()) {;
+        Map<String, Lobby> updatedLobbies = new HashMap<>();
+        for (Lobby lobby : lobbies.values()) {
             List<String> userNames = new ArrayList<>();
             List<User> users = new ArrayList<>(lobby.getUsers());
             users.forEach(user -> userNames.add(user.getUsername()));
@@ -99,10 +100,10 @@ public class LobbyManagement {
                 updatedUsers.add(updatedUser);
                 Set<User> newUsers = new TreeSet<>(updatedUsers);
                 Lobby lobbyToUpdate = new LobbyDTO(lobby.getName(), updatedOwner, lobby.getLobbyID(), newUsers, lobby.getPlayers());
-                lobbies.remove(lobby.getLobbyID());
-                lobbies.put(lobby.getName(), lobbyToUpdate);
+                updatedLobbies.put(lobbyToUpdate.getName(), lobbyToUpdate);
             }
         }
+        updatedLobbies.entrySet().forEach(l -> lobbies.replace(l.getKey(), l.getValue()));
     }
 
     public Collection<Lobby> getLobbies() {

@@ -194,10 +194,9 @@ public class ClientApp extends Application implements ConnectionListener {
     @Subscribe
     public void onUserJoinedLobbyMessage(UserJoinedLobbyMessage message) {
         if (message.getUser().getUsername().equals(user.getUsername())) {
-            if(sceneManager.getGameManagement(message.getLobbyID()) != null) {
+            if (sceneManager.getGameManagement(message.getLobbyID()) != null) {
                 sceneManager.getGameManagement(message.getLobbyID()).showLobbyView();
-            }
-            else {
+            } else {
                 sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getLobbyID());
             }
             LOG.info("User " + message.getUser().getUsername() + " joined lobby successfully");
@@ -228,14 +227,14 @@ public class ClientApp extends Application implements ConnectionListener {
      * @since Sprint4
      */
     @Subscribe
-    public void onOpenSettingsRequest(OpenSettingsRequest message){
+    public void onOpenSettingsRequest(OpenSettingsRequest message) {
         if (message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showSettingsScreen(message.getUser());
         }
     }
 
     /**
-     * aktualsiert den user sowie den loggedInUser im SettingsPresenter und schließt das Einstellungsfenster
+     * Aktualsiert den user sowie den loggedInUser im SettingsPresenter und schließt das Einstellungsfenster
      *
      * @param message
      * @author Julia
@@ -243,7 +242,7 @@ public class ClientApp extends Application implements ConnectionListener {
      */
     @Subscribe
     public void onUpdatedUserMessage(UpdatedUserMessage message) {
-        if(user.getUsername().equals(message.getOldUser().getUsername())) {
+        if (user.getUsername().equals(message.getOldUser().getUsername())) {
             user = message.getUser();
             sceneManager.closeSettings();
             sceneManager.getSettingsPresenter().updateLoggedInUser(message.getUser());
@@ -259,7 +258,7 @@ public class ClientApp extends Application implements ConnectionListener {
 
     /**
      * Empfängt vom Server die Message, dass sich der Nutzer ausgeloggt hat. Der Nutzer wird aus allen Lobbys gelöscht.
-     * Lobbys im Hauptmenü werden aktualisiert. LobbyStage schließt sich, man gelangt ins Hauptmenüfenster zurück
+     * Lobbys im Hauptmenü werden aktualisiert, alle Stages werden geschlossen und das Loginfenster wird geöffnet
      *
      * @param message
      * @author Julia, Paula
@@ -273,7 +272,6 @@ public class ClientApp extends Application implements ConnectionListener {
             sceneManager.showLoginScreen();
         }
         lobbyService.retrieveAllLobbies();
-
     }
 
     /**
@@ -284,7 +282,6 @@ public class ClientApp extends Application implements ConnectionListener {
      */
     public void closeAllWindows() {
         Platform.exit();
-
     }
 
 }

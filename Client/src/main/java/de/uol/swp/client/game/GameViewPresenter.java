@@ -174,15 +174,15 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * aktualisiert den loggedInUser sowie die Liste, falls sich der Username geändert hat
-
+     * Aktualisiert den loggedInUser sowie die Liste, falls sich der Username geändert hat
+     *
      * @param message
      * @author Julia
      * @since Sprint4
      */
     @Subscribe
     public void updatedUser(UpdatedUserMessage message) {
-        if(loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
+        if (loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
             loggedInUser = message.getUser();
         }
         //TODO Liste aktualisieren, falls sich der Username geändert hat
@@ -208,9 +208,9 @@ public class GameViewPresenter extends AbstractPresenter {
      * Die usersView Liste wird geupdatet.
      * Äquivalent zu MainMenuPresenter.updateUsersList.
      *
+     * @param userList
      * @author Marvin
      * @since Sprint3
-     * @param userList
      */
     private void updateUsersList(Set<User> userList) {
         // Attention: This must be done on the FX Thread!
