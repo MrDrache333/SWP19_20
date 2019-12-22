@@ -54,7 +54,6 @@ public class MainMenuPresenter extends AbstractPresenter {
     private ObservableList<String> users;
     private ChatViewPresenter chatViewPresenter;
     private ObservableList<Lobby> lobbies;
-    private int count = 0; //siehe updateUsersList()
 
     @FXML
     private TextField lobbyName;
@@ -232,7 +231,6 @@ public class MainMenuPresenter extends AbstractPresenter {
                 chatViewPresenter.userLeft(message.getUsername());
             }
         });
-        count = 0;
     }
 
     /**
@@ -421,8 +419,6 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     private void updateUsersList(List<UserDTO> userList) {
-        //temporärer Fix -> Liste wird jeweils nur bei der ersten angekommenen ResponseMessage aktualisiert
-        if(count > 0) return;
         // Attention: This must be done on the FX Thread!
         Platform.runLater(() -> {
             if (users == null) {
@@ -432,7 +428,6 @@ public class MainMenuPresenter extends AbstractPresenter {
             users.clear();
             userList.forEach(u -> users.add(u.getUsername()));
         });
-        count++;
     }
 
 

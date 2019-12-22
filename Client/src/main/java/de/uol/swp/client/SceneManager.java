@@ -286,7 +286,9 @@ public class SceneManager {
     public void closeAllStages() {
         Platform.runLater(() -> {
             games.values().forEach(GameManagement::close);
-            settingsStage.close();
+            if(settingsStage != null) {
+                settingsStage.close();
+            }
         });
     }
 
