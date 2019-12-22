@@ -1,6 +1,7 @@
 package de.uol.swp.client.main;
 
 import com.google.common.eventbus.Subscribe;
+import com.sun.glass.ui.PlatformFactory;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.common.lobby.Lobby;
@@ -28,8 +29,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
+import javax.swing.text.html.ImageView;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -140,9 +144,9 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     /**
-     * Lobby erstellen Button: Sobald gedrückt, oeffnet sich Dialog. Aufforderung Name und optional Passwort anzugeben.
+     * Lobby erstellen Button: Sobald gedrückt, öffnet sich Dialog. Aufforderung Name und optional Passwort anzugeben.
      *
-     * @author Paula, Rike
+     * @author Rike, Paula
      * @since Sprint4
      */
     @FXML
@@ -150,92 +154,78 @@ public class MainMenuPresenter extends AbstractPresenter {
 
         // Erzeugung Dialog
         JDialog createLobbyDialoge = new JDialog();
+        createLobbyDialoge.setResizable(false);
         createLobbyDialoge.setTitle("Lobby erstellen");
-        createLobbyDialoge.setSize(300, 150);
-
+        createLobbyDialoge.setSize(400, 150);
 
         JPanel panel = new JPanel();
 
         // Textfeld für Name wird erstellt und Panel hinzugefügt
         // Text und Spaltenanzahl werden dabei direkt gesetzt
         JLabel lname = new JLabel("Lobbyname: ");
-        JTextField lName = new JTextField("", 15);
+        JTextField lName_input = new JTextField("", 15);
         lname.setSize(60, 60);
         panel.add(lname);
-        panel.add(lName);
+        panel.add(lName_input);
 
 
         // Textfeld für Passwort wird erstellt und Panel hinzugefügt´
         JLabel lobbyPassword = new JLabel("Passwort (optional): ");
-        JPasswordField lPassword = new JPasswordField("", 15);
+        JPasswordField lPassword_input = new JPasswordField("", 15);
+        lPassword_input.setEchoChar('*');
         panel.add(lobbyPassword);
-        panel.add(lPassword);
+        panel.add(lPassword_input);
 
-        //Lobby erstellen Button + Action aus altem Button übernommen ( Fehlermeldung funk. noch nicht)
+        //Lobby erstellen Button + Action
         JButton createLobby = new JButton("Lobby erstellen");
         ActionListener onCreateLobbyButtonPressed = new ActionListener() {
+
+
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
-
                 List<String> lobbyNames = new ArrayList<>();
+                //Eingaben des Nutzers als String speichern
+                String lobbyName = lName_input.getText();
+                String lobbyPassword = String.valueOf(lPassword_input.getPassword());
+                //Lobbys werden durchgegangen
+                lobbies.forEach(lobby -> lobbyNames.add(lobby.getName()));
+                // wenn Name vorhanden: Alert + Moeglichkeit neuen Namen anzugeben
+                if (lobbyNames.contains(lName_input.getText())) {
+                    Platform.runLater(() -> {
+                        showAlert(Alert.AlertType.WARNING, "Dieser Name ist bereits vergeben", "Fehler");
+                        lName_input.setText("");
 
-                String lobbyName = lName.getText();
-                String lobbyPassword = String.valueOf(lPassword.getPassword());
-
-                lobbies.forEach(lName -> lobbyNames.add(lobbyName));
-
-                if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName)) {
+                        //TODO: Fokus wird auf MainMenu gelegt, fixen ?
+                        createLobbyDialoge.requestFocus();
+                    });
+                }
+                // Wenn Name nicht vorhanden: Erstellen neuer Lobby
+                else if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName)) {
                     CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName, lobbyPassword, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
                     eventBus.post(msg);
                     LOG.info("Request wurde gesendet.");
 
-                }
-                lName.setText("");
-                createLobbyDialoge.setVisible(false);
+                    //  Dialog wird geschlossen
+                    createLobbyDialoge.setVisible(false);
 
+                    // TODO: hier  Icon einfügen  (lobby_offen für ohne Passwort und login_lock_icon mit Passwort; evtl auch in LobbyTabelle im MainMenu?)
+
+                    // Alert
+                } else {
+                    Platform.runLater(() -> {
+                        showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden", "Fehler");
+                        lName_input.setText("");
+                        createLobbyDialoge.requestFocus();
+                    });
+                }
             }
         };
         createLobby.addActionListener(onCreateLobbyButtonPressed);
-
         panel.add(createLobby);
-
-
         createLobbyDialoge.add(panel);
         createLobbyDialoge.setVisible(true);
 
-
     }
-
-    /**
-     * Die Methode fängt den Button-Klick ab und prüft, ob der LobbyName gültig ist.
-     * Falls nein: Wird eine Fehlermeldung rausgegeben.
-     * Falls ja: Wir eine CreateLobbyRequest mit dem eingegeben LobbyNamen und dem eingeloggten User auf den
-     * Eventbus gepackt.
-     *
-     * @author Paula, Haschem, Ferit, Julia, Keno O.
-     * @version 0.2
-     * @since Sprint2
-     */
-    /*
-    @FXML
-    public void OnCreateLobbyButtonPressed(ActionEvent event) {
-        List<String> lobbyNames = new ArrayList<>();
-        lobbies.forEach(lobby -> lobbyNames.add(lobby.getName()));
-        if (lobbyNames.contains(lobbyName.getText())) {
-            showAlert(Alert.AlertType.WARNING, "Dieser Name ist bereits vergeben", "Fehler");
-            lobbyName.requestFocus();
-        } else if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName.getText())) {
-            CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
-            eventBus.post(msg);
-            LOG.info("Request wurde gesendet.");
-        } else {
-            showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden", "Fehler");
-            lobbyName.requestFocus();
-        }
-        lobbyName.clear();
-    }
-
-     */
 
 
     /**
@@ -336,7 +326,7 @@ public class MainMenuPresenter extends AbstractPresenter {
 
 
     /**
-     * @author Rike
+     * @author Rike, Paula
      * Hilfsmethode zum Erstellen des Buttons zum Betreten einer Lobby
      * beim join wird ebenfalls überprüft ob die Lobby ein lobbyPassword besitzt und ggf. dieses abgefragt
      */
@@ -356,40 +346,50 @@ public class MainMenuPresenter extends AbstractPresenter {
                             } else if (lobby.getUsers().contains(loggedInUser)) {
                                 showAlert(Alert.AlertType.WARNING, "Du bist dieser Lobby schon beigetreten!", "Fehler");
                             } else {
-                                if(lobby.getLobbyPassword().isEmpty()){
+                                if (lobby.getLobbyPassword().isEmpty()) {
                                     lobbyService.joinLobby(lobby.getName(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), lobby.getLobbyID());
-                                }
-                                else if (!lobby.getLobbyPassword().isEmpty()) {
+                                } else if (!lobby.getLobbyPassword().isEmpty()) {
                                     // Es soll ein Dialogfenster geöffnet werden, wenn für die Lobby ein lobbyPassword existiert
-                                    // Erzeugung Dialog
                                     JDialog joinLobbyDialog = new JDialog();
-                                    joinLobbyDialog.setTitle("Lobby erstellen");
-                                    joinLobbyDialog.setSize(300, 150);
+                                    joinLobbyDialog.setResizable(false);
+                                    joinLobbyDialog.setTitle("Lobby beitreten");
+                                    joinLobbyDialog.setSize(400, 150);
 
                                     JPanel panel = new JPanel();
 
                                     // Textfeld für Passwort wird erstellt und Panel hinzugefügt
-                                    JLabel enteredPassword = new JLabel("Passwort eingeben: ");
+                                    JLabel enteredPassword = new JLabel("Passwort: ");
                                     JPasswordField ePassword = new JPasswordField("", 15);
                                     panel.add(enteredPassword);
                                     panel.add(ePassword);
 
                                     // enteredPassword mit dem lobbyPassword vergleichen, wenn "Beitreten"-Button gedrückt
-                                    // wenn true -> joinLobby
+
                                     JButton joinLobby = new JButton("Lobby beitreten");
                                     ActionListener onEnteredPasswordPressed = new ActionListener() {
                                         @Override
                                         public void actionPerformed(java.awt.event.ActionEvent e) {
-                                            if(lobby.getLobbyPassword().equals(String.valueOf(ePassword.getPassword()))){
+                                            // Passwort ist gleich, man wird der Lobby hinzugefügt
+                                            if (lobby.getLobbyPassword().equals(String.valueOf(ePassword.getPassword()))) {
                                                 lobbyService.joinLobby(lobby.getName(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), lobby.getLobbyID());
+
+                                                // Passwort ist nicht gliech, Fehlermeldung erscheint
+                                            } else if (!lobby.getLobbyPassword().equals(String.valueOf(ePassword.getPassword()))) {
+
+
+                                                Platform.runLater(() -> {
+                                                    showAlert(Alert.AlertType.ERROR, "Das eingegebene Passwort ist falsch.", "Fehler");
+
+                                                });
                                             }
-                                            // TODO: Alert für falsches Passwort fehlt
+                                            // Dialog wird nicht mehr angezeigt
+                                            joinLobbyDialog.setVisible(false);
+
                                         }
+
                                     };
                                     joinLobby.addActionListener(onEnteredPasswordPressed);
-
                                     panel.add(joinLobby);
-
                                     joinLobbyDialog.add(panel);
                                     joinLobbyDialog.setVisible(true);
                                 }
