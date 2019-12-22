@@ -183,7 +183,7 @@ public class GameViewPresenter extends AbstractPresenter {
     @Subscribe
     public void updatedUser(UpdatedUserMessage message) {
         if(loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
-            this.loggedInUser = message.getUser();
+            loggedInUser = message.getUser();
         }
         //TODO Liste aktualisieren, falls sich der Username geändert hat
     }

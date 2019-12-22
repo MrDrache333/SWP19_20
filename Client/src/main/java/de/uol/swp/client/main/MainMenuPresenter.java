@@ -54,6 +54,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     private ObservableList<String> users;
     private ChatViewPresenter chatViewPresenter;
     private ObservableList<Lobby> lobbies;
+    private int count = 0; //siehe updateUsersList()
 
     @FXML
     private TextField lobbyName;
@@ -231,7 +232,7 @@ public class MainMenuPresenter extends AbstractPresenter {
                 chatViewPresenter.userLeft(message.getUsername());
             }
         });
-
+        count = 0;
     }
 
     /**
@@ -296,12 +297,14 @@ public class MainMenuPresenter extends AbstractPresenter {
     @Subscribe
     public void updatedUser(UpdatedUserMessage message) {
         if(loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
-            this.loggedInUser = message.getUser();
+            loggedInUser = message.getUser();
         }
         Platform.runLater(() -> {
+            List<Lobby> toRemove = new ArrayList<>();
+            List<Lobby> toAdd = new ArrayList<>();
             for(Lobby lobby : lobbies) {
                 if(lobby.getUsers().contains(message.getOldUser())) {
-                    User updatedOwner = lobby.getOwner;
+                    User updatedOwner = lobby.getOwner();
                     //ggf. Owner aktualisieren
                     if(lobby.getOwner().getUsername().equals(message.getOldUser().getUsername())) {
                         updatedOwner = message.getUser();
@@ -312,10 +315,14 @@ public class MainMenuPresenter extends AbstractPresenter {
                     updatedUsers.add(message.getUser());
                     Set<User> newUsers = new TreeSet<>(updatedUsers);
                     Lobby lobbyToUpdate = new LobbyDTO(lobby.getName(), updatedOwner, lobby.getLobbyID(), newUsers, lobby.getPlayers());
-                    lobbies.remove(lobby);
-                    lobbies.add(0, lobbyToUpdate);
+                    toRemove.add(lobby);
+                    toAdd.add(lobbyToUpdate);
                 }
             }
+
+            //Lobbytabelle aktualisieren
+            lobbies.removeAll(toRemove);
+            lobbies.addAll(toAdd);
 
             //Userliste nur aktualisieren, wenn sich der Username geändert hat
             if(!message.getUser().getUsername().equals(message.getOldUser().getUsername())) {
@@ -414,6 +421,8 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     private void updateUsersList(List<UserDTO> userList) {
+        //temporärer Fix -> Liste wird jeweils nur bei der ersten angekommenen ResponseMessage aktualisiert
+        if(count > 0) return;
         // Attention: This must be done on the FX Thread!
         Platform.runLater(() -> {
             if (users == null) {
@@ -423,6 +432,7 @@ public class MainMenuPresenter extends AbstractPresenter {
             users.clear();
             userList.forEach(u -> users.add(u.getUsername()));
         });
+        count++;
     }
 
 

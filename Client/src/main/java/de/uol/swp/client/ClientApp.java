@@ -244,7 +244,7 @@ public class ClientApp extends Application implements ConnectionListener {
     @Subscribe
     public void onUpdatedUserMessage(UpdatedUserMessage message) {
         if(user.getUsername().equals(message.getOldUser().getUsername())) {
-            this.user = message.getUser();
+            user = message.getUser();
             sceneManager.closeSettings();
             sceneManager.getSettingsPresenter().updateLoggedInUser(message.getUser());
             sceneManager.showMainScreen(user);
