@@ -3,6 +3,9 @@ package de.uol.swp.client.chat;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.ClientApp;
+import de.uol.swp.client.Notifyer;
+import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.chat.ChatMessage;
 import de.uol.swp.common.chat.ChatService;
@@ -82,6 +85,8 @@ public class ChatViewPresenter extends AbstractPresenter {
     //Name of the Chat (FOr the Title Label)
     private String chatTitle;
 
+    private GameManagement gameManagement;
+
     private ChatMessage lastMessage;
 
     private Injector injector;
@@ -124,13 +129,14 @@ public class ChatViewPresenter extends AbstractPresenter {
      * @param theme       the theme
      * @param chatService the chat service
      */
-    public ChatViewPresenter(String chatTitle, UUID chatId, User currentUser, THEME theme, ChatService chatService, Injector injector) {
+    public ChatViewPresenter(String chatTitle, UUID chatId, User currentUser, THEME theme, ChatService chatService, Injector injector, GameManagement gameManagement) {
         this.chatTitle = chatTitle;
         this.CHATTHEME = theme;
         this.chatService = chatService;
         this.chatId = chatId.toString();
         this.loggedInUser = currentUser;
         this.injector = injector;
+        this.gameManagement = gameManagement;
 
         setTheme(CHATTHEME);
     }
@@ -216,6 +222,12 @@ public class ChatViewPresenter extends AbstractPresenter {
     @Subscribe
     private void onNewChatMessage(NewChatMessage msg) {
         if (!chatId.equals("") && msg.getChatId().equals(chatId) && (lastMessage == null || !(msg.getMessage().getSender().getUsername().equals("server") && lastMessage.getSender().getUsername().equals("server") && msg.getMessage().getMessage().equals(lastMessage.getMessage())))) {
+            if (lastMessage != null && !loggedInUser.getUsername().equals(msg.getMessage().getSender().getUsername()) && ((gameManagement != null && !gameManagement.hasFocus()) || (gameManagement == null && !ClientApp.getSceneManager().hasFocus())))
+                try {
+                    new Notifyer().notify(Notifyer.MessageType.INFO, "Nachricht von " + msg.getMessage().getSender().getUsername() + " in " + (chatId.equals("global") ? "GLOBAL" : chatTitle), msg.getMessage().getMessage());
+                } catch (Exception e) {
+                    LOG.debug("Failed to Show Notification");
+                }
             if (!loggedInUser.getUsername().equals(msg.getMessage().getSender().getUsername()) && msg.getMessage().getSender().equals("server"))
                 new SoundMediaPlayer(SoundMediaPlayer.Sound.Message_Receive, SoundMediaPlayer.Type.Sound).play();
             Platform.runLater(() -> {

@@ -75,7 +75,7 @@ public class GameManagement {
         this.lobbyName = lobbyName;
         this.eventBus = eventBus;
 
-        this.chatViewPresenter = new ChatViewPresenter(lobbyName, id, loggedInUser, ChatViewPresenter.THEME.Light, chatService, injector);
+        this.chatViewPresenter = new ChatViewPresenter(lobbyName, id, loggedInUser, ChatViewPresenter.THEME.Light, chatService, injector, this);
         this.gameViewPresenter = new GameViewPresenter(loggedInUser, id, chatService, chatViewPresenter, lobbyService, userService, injector, this);
         this.lobbyPresenter = new LobbyPresenter(loggedInUser, lobbyName, id, chatService, chatViewPresenter, lobbyService, userService, injector, this);
 
@@ -171,6 +171,10 @@ public class GameManagement {
             primaryStage.show();
             new SoundMediaPlayer(SoundMediaPlayer.Sound.Window_Opened, SoundMediaPlayer.Type.Sound).play();
         });
+    }
+
+    public boolean hasFocus() {
+        return primaryStage.isFocused();
     }
 
     /**

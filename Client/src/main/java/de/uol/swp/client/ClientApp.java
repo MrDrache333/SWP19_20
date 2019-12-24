@@ -42,7 +42,7 @@ public class ClientApp extends Application implements ConnectionListener {
 
     private EventBus eventBus;
 
-    private SceneManager sceneManager;
+    private static SceneManager sceneManager;
 
     // -----------------------------------------------------
     // Java FX Methods
@@ -50,6 +50,10 @@ public class ClientApp extends Application implements ConnectionListener {
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    public static SceneManager getSceneManager() {
+        return sceneManager;
     }
 
     @Override
@@ -91,7 +95,7 @@ public class ClientApp extends Application implements ConnectionListener {
         // Client app is created by java, so injection must
         // be handled here manually
         SceneManagerFactory sceneManagerFactory = injector.getInstance(SceneManagerFactory.class);
-        this.sceneManager = sceneManagerFactory.create(primaryStage);
+        sceneManager = sceneManagerFactory.create(primaryStage);
         new SoundMediaPlayer(SoundMediaPlayer.Sound.Intro, SoundMediaPlayer.Type.Music).play();
 
         //  close request calls method to close all windows

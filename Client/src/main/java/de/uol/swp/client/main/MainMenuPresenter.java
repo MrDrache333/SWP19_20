@@ -2,6 +2,7 @@ package de.uol.swp.client.main;
 
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.ClientApp;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.lobby.Lobby;
@@ -175,6 +176,10 @@ public class MainMenuPresenter extends AbstractPresenter {
             lobbyName.requestFocus();
         }
         lobbyName.clear();
+    }
+
+    public boolean hasFocus() {
+        return ClientApp.getSceneManager().hasFocus();
     }
 
 

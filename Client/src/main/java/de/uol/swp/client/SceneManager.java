@@ -220,6 +220,10 @@ public class SceneManager {
 
     }
 
+    public boolean hasFocus() {
+        return primaryStage.isFocused();
+    }
+
     /**
      * Gibt das zur übergebenen lobbyID gehörige GameManagement zurück
      *
