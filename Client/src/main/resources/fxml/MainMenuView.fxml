@@ -57,7 +57,7 @@
                                     <buttons>
                                         <TextField fx:id="lobbyName" prefHeight="27.0" prefWidth="450.0"
                                                    promptText="Name der neuen Lobby"/>
-                                        <Button fx:id="CreateLobby" maxWidth="160.0" minWidth="160.0"
+                                        <Button fx:id="createLobbyButton" maxWidth="160.0" minWidth="160.0"
                                                 mnemonicParsing="false" onAction="#OnCreateLobbyButtonPressed"
                                                 prefHeight="27.0" prefWidth="160.0" text="Lobby erstellen"
                                                 textAlignment="CENTER"/>

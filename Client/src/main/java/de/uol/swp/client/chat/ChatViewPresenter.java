@@ -3,6 +3,7 @@ package de.uol.swp.client.chat;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.chat.ChatMessage;
 import de.uol.swp.common.chat.ChatService;
 import de.uol.swp.common.chat.message.NewChatMessage;
@@ -17,10 +18,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -104,6 +102,8 @@ public class ChatViewPresenter extends AbstractPresenter {
     private TextField chatTextField;
     @FXML
     private ListView<VBox> messageView;
+    @FXML
+    private Button sendButton;
 
     private ChatService chatService;
     //Liste mit formatierten Chatnachrichten
@@ -200,6 +200,8 @@ public class ChatViewPresenter extends AbstractPresenter {
             LOG.debug("Loading Dark Theme");
             chatViewAnchorPane.getStylesheets().add(styleSheet_dark);
         }
+
+        sendButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
     }
 
     //--------------------------------------
@@ -214,6 +216,8 @@ public class ChatViewPresenter extends AbstractPresenter {
     @Subscribe
     private void onNewChatMessage(NewChatMessage msg) {
         if (!chatId.equals("") && msg.getChatId().equals(chatId) && (lastMessage == null || !(msg.getMessage().getSender().getUsername().equals("server") && lastMessage.getSender().getUsername().equals("server") && msg.getMessage().getMessage().equals(lastMessage.getMessage())))) {
+            if (!loggedInUser.getUsername().equals(msg.getMessage().getSender().getUsername()) && msg.getMessage().getSender().equals("server"))
+                new SoundMediaPlayer(SoundMediaPlayer.Sound.Message_Receive, SoundMediaPlayer.Type.Sound).play();
             Platform.runLater(() -> {
                 //Loesche alte Nachrichten bei bedarf
                 if (chatMessages.size() > MAXCHATMESSAGEHISTORY) {
@@ -272,6 +276,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      */
     @FXML
     private void onSendChatButtonPressed() {
+        new SoundMediaPlayer(SoundMediaPlayer.Sound.Message_Send, SoundMediaPlayer.Type.Sound).play();
         if (chatId.equals("")) return;
         String message;
 
