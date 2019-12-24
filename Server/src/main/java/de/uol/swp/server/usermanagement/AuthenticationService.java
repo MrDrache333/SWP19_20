@@ -124,6 +124,7 @@ public class AuthenticationService extends AbstractService {
      */
     @Subscribe
     public void onUpdateUserRequest(UpdateUserRequest msg) {
+        msg.getSession().get().updateUser(msg.getUser());
         userSessions.put(msg.getSession().get(), msg.getUser());
         ServerMessage returnMessage;
         try {
@@ -133,6 +134,7 @@ public class AuthenticationService extends AbstractService {
             post(new UpdateLobbiesRequest((UserDTO) user, (UserDTO) msg.getOldUser()));
         } catch (UserUpdateException e) {
             userSessions.replace(msg.getSession().get(), msg.getOldUser());
+            msg.getSession().get().updateUser(msg.getOldUser());
             returnMessage = new UpdateUserFailedMessage(msg.getOldUser(), e.getMessage());
             LOG.info("Update of user " + msg.getOldUser().getUsername() + " failed");
         }

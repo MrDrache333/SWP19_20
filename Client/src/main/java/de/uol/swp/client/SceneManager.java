@@ -292,7 +292,7 @@ public class SceneManager {
         });
     }
 
-    public void closeSettings() { Platform.runLater(() -> settingsStage.close());}
-
-    public SettingsPresenter getSettingsPresenter() { return settingsPresenter; }
+    public void closeSettings() {
+        Platform.runLater(() -> settingsStage.close());
+    }
 }

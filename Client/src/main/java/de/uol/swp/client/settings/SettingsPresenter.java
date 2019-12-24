@@ -2,12 +2,14 @@ package de.uol.swp.client.settings;
 
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.settings.event.CloseSettingsEvent;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
+import de.uol.swp.common.user.message.UpdatedUserMessage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -107,8 +109,18 @@ public class SettingsPresenter extends AbstractPresenter {
         clearAll();
     }
 
-    public void updateLoggedInUser(User user) {
-        this.loggedInUser = user;
+    /**
+     * Aktualisiert den loggedInUser
+     *
+     * @param message
+     * @author Julia
+     * @since Sprint4
+     */
+    @Subscribe
+    public void updatedUser(UpdatedUserMessage message) {
+        if(loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
+            loggedInUser = message.getUser();
+        }
     }
 
     private void clearAll() {
