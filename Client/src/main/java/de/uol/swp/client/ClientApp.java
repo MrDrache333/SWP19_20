@@ -52,6 +52,10 @@ public class ClientApp extends Application implements ConnectionListener {
         launch(args);
     }
 
+    public static SceneManager getSceneManager() {
+        return sceneManager;
+    }
+
     @Override
     public void init() {
         Parameters p = getParameters();
@@ -91,7 +95,7 @@ public class ClientApp extends Application implements ConnectionListener {
         // Client app is created by java, so injection must
         // be handled here manually
         SceneManagerFactory sceneManagerFactory = injector.getInstance(SceneManagerFactory.class);
-        this.sceneManager = sceneManagerFactory.create(primaryStage);
+        sceneManager = sceneManagerFactory.create(primaryStage);
         new SoundMediaPlayer(SoundMediaPlayer.Sound.Intro, SoundMediaPlayer.Type.Music).play();
 
         //  close request calls method to close all windows
