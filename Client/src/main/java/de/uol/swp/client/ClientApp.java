@@ -6,6 +6,7 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import de.uol.swp.client.di.ClientModule;
+import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.lobby.LobbyService;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
@@ -71,8 +72,44 @@ public class ClientApp extends Application implements ConnectionListener {
         // exceptions are only visible in console!
     }
 
-    public static SceneManager getSceneManager() {
-        return sceneManager;
+    @Override
+    public void start(Stage primaryStage) {
+
+        // Client app is created by java, so injection must
+        // be handled here manually
+        Injector injector = Guice.createInjector(new ClientModule());
+
+        // get user service from guice, is needed for logout
+        this.userService = injector.getInstance(UserService.class);
+        this.lobbyService = injector.getInstance(LobbyService.class);
+
+        // get event bus from guice
+        eventBus = injector.getInstance(EventBus.class);
+        // Register this class for de.uol.swp.client.events (e.g. for exceptions)
+        eventBus.register(this);
+
+        // Client app is created by java, so injection must
+        // be handled here manually
+        SceneManagerFactory sceneManagerFactory = injector.getInstance(SceneManagerFactory.class);
+        this.sceneManager = sceneManagerFactory.create(primaryStage);
+        new SoundMediaPlayer(SoundMediaPlayer.Sound.Intro, SoundMediaPlayer.Type.Music).play();
+
+        //  close request calls method to close all windows
+        primaryStage.setOnCloseRequest(event -> closeAllWindows());
+
+        ClientConnectionFactory connectionFactory = injector.getInstance(ClientConnectionFactory.class);
+        clientConnection = connectionFactory.create(host, port);
+        clientConnection.addConnectionListener(this);
+        // JavaFX Thread should not be blocked to long!
+        Thread t = new Thread(() -> {
+            try {
+                clientConnection.start();
+            } catch (Exception e) {
+                exceptionOccurred(e.getMessage());
+            }
+        });
+        t.setDaemon(true);
+        t.start();
     }
 
     @Override
@@ -143,17 +180,15 @@ public class ClientApp extends Application implements ConnectionListener {
     public void onCreateLobbyMessage(CreateLobbyMessage message) {
         if (message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getChatID());
-            //sceneManager.showGameScreen();
             LOG.debug("CreateLobbyMessage vom Server erfolgreich angekommen");
         }
-        lobbyService.retrieveAllLobbies();
     }
 
     /**
      * Empfängt vom Server die Message, dass der User der Lobby beigetreten ist. Lobbys in Hauptmenü werden aktualisiert.
      *
      * @param message
-     * @author Paula; Julia
+     * @author Paula, Julia
      * @since Sprint3
      */
     @Subscribe
@@ -167,7 +202,6 @@ public class ClientApp extends Application implements ConnectionListener {
             }
             LOG.info("User " + message.getUser().getUsername() + " joined lobby successfully");
         }
-        lobbyService.retrieveAllLobbies();
     }
 
     /**
@@ -184,7 +218,6 @@ public class ClientApp extends Application implements ConnectionListener {
             LOG.info("User " + message.getUser().getUsername() + " left lobby successfully");
             sceneManager.getGameManagement(message.getLobbyID()).close();
         }
-        lobbyService.retrieveAllLobbies();
     }
 
 
@@ -222,42 +255,4 @@ public class ClientApp extends Application implements ConnectionListener {
 
     }
 
-    @Override
-    public void start(Stage primaryStage) {
-
-        // Client app is created by java, so injection must
-        // be handled here manually
-        Injector injector = Guice.createInjector(new ClientModule());
-
-        // get user service from guice, is needed for logout
-        this.userService = injector.getInstance(UserService.class);
-        this.lobbyService = injector.getInstance(LobbyService.class);
-
-        // get event bus from guice
-        eventBus = injector.getInstance(EventBus.class);
-        // Register this class for de.uol.swp.client.events (e.g. for exceptions)
-        eventBus.register(this);
-
-        // Client app is created by java, so injection must
-        // be handled here manually
-        SceneManagerFactory sceneManagerFactory = injector.getInstance(SceneManagerFactory.class);
-        sceneManager = sceneManagerFactory.create(primaryStage);
-
-        //  close request calls method to close all windows
-        primaryStage.setOnCloseRequest(event -> closeAllWindows());
-
-        ClientConnectionFactory connectionFactory = injector.getInstance(ClientConnectionFactory.class);
-        clientConnection = connectionFactory.create(host, port);
-        clientConnection.addConnectionListener(this);
-        // JavaFX Thread should not be blocked to long!
-        Thread t = new Thread(() -> {
-            try {
-                clientConnection.start();
-            } catch (Exception e) {
-                exceptionOccurred(e.getMessage());
-            }
-        });
-        t.setDaemon(true);
-        t.start();
-    }
 }

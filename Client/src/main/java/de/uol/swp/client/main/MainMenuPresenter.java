@@ -4,8 +4,12 @@ import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.ClientApp;
 import de.uol.swp.client.chat.ChatViewPresenter;
+import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
+import de.uol.swp.common.lobby.message.CreateLobbyMessage;
+import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
+import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.lobby.request.CreateLobbyRequest;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.user.UserDTO;
@@ -64,6 +68,8 @@ public class MainMenuPresenter extends AbstractPresenter {
     private TableColumn<Lobby, Void> joinLobby = new TableColumn<>();
     @FXML
     private Pane chatView;
+    @FXML
+    private Button createLobbyButton, logoutButton;
 
     /**
      * @author Paula, Haschem, Ferit
@@ -90,6 +96,7 @@ public class MainMenuPresenter extends AbstractPresenter {
 
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
+        new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Pressed, SoundMediaPlayer.Type.Sound).play();
         lobbyService.leaveAllLobbiesOnLogout(new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
         userService.logout(loggedInUser);
     }
@@ -136,6 +143,10 @@ public class MainMenuPresenter extends AbstractPresenter {
         name.setPrefWidth(235);
         host.setPrefWidth(135);
         joinLobby.setPrefWidth(90);
+
+        createLobbyButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
+        logoutButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
+
     }
 
     /**
@@ -150,6 +161,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @FXML
     public void OnCreateLobbyButtonPressed(ActionEvent event) {
+        new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Pressed, SoundMediaPlayer.Type.Sound).play();
         List<String> lobbyNames = new ArrayList<>();
         lobbies.forEach(lobby -> lobbyNames.add(lobby.getName()));
         if (lobbyNames.contains(lobbyName.getText())) {
@@ -214,11 +226,61 @@ public class MainMenuPresenter extends AbstractPresenter {
             if (users.contains(message.getUsername())) {
                 users.remove(message.getUsername());
                 chatViewPresenter.userLeft(message.getUsername());
-
-
             }
         });
 
+    }
+
+    /**
+     * Fügt eine neu erstellte Lobby zur Tabelle hinzu
+     *
+     * @param message
+     * @author Julia
+     * @since Sprint4
+     */
+    @Subscribe
+    public void newLobbyCreated(CreateLobbyMessage message) {
+        if(lobbies != null) {
+            Platform.runLater(() -> {
+                lobbies.add(0, message.getLobby());
+            });
+        }
+    }
+
+    /**
+     * Aktualisiert die Lobbytabelle, nachdem ein User einer Lobby beigetreten ist
+     *
+     * @param message
+     * @author Julia
+     * @since Sprint4
+     */
+    @Subscribe
+    public void userJoinedLobby(UserJoinedLobbyMessage message) {
+        if(lobbies != null) {
+            Platform.runLater(() -> {
+                lobbies.removeIf(lobby -> lobby.getName().equals(message.getLobbyName()));
+                lobbies.add(0, message.getLobby());
+            });
+        }
+    }
+
+    /**
+     * Aktualisiert die Lobbytabelle, nachdem ein User eine Lobby verlassen hat
+     *
+     * @param message
+     * @author Julia
+     * @since Sprint4
+     */
+    @Subscribe
+    public void userLeftLobby(UserLeftLobbyMessage message) {
+        if(lobbies != null) {
+            Platform.runLater(() -> {
+                lobbies.removeIf(lobby -> lobby.getName().equals(message.getLobbyName()));
+                if(message.getLobby() != null) {
+                    lobbies.add(0, message.getLobby());
+                }
+            });
+        }
     }
 
     /**
@@ -234,7 +296,7 @@ public class MainMenuPresenter extends AbstractPresenter {
 
 
     /**
-     * Erstes Erstellen der Lobbytabelle beim Login und Aktualisierung
+     * Erstes Erstellen der Lobbytabelle beim Login
      *
      * @param allLobbiesResponse
      * @author Julia

@@ -16,6 +16,7 @@ import de.uol.swp.client.register.RegistrationPresenter;
 import de.uol.swp.client.register.event.RegistrationCanceledEvent;
 import de.uol.swp.client.register.event.RegistrationErrorEvent;
 import de.uol.swp.client.register.event.ShowRegistrationViewEvent;
+import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import javafx.application.Platform;
@@ -50,6 +51,8 @@ public class SceneManager {
     private Scene gameScene;
     private Scene lastScene = null;
     private Scene currentScene = null;
+
+
     private User currentUser;
     private Map<UUID, Scene> lobbyScenes = new HashMap<>();
     private Map<UUID, GameManagement> games = new HashMap<>();
@@ -169,6 +172,7 @@ public class SceneManager {
             primaryStage.setScene(scene);
             primaryStage.setResizable(false);
             primaryStage.show();
+            new SoundMediaPlayer(SoundMediaPlayer.Sound.Window_Opened, SoundMediaPlayer.Type.Sound).play();
         });
     }
 

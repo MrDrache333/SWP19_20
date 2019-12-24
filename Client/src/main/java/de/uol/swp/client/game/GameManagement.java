@@ -8,6 +8,7 @@ import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.LobbyPresenter;
 import de.uol.swp.client.lobby.LobbyService;
+import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
@@ -168,6 +169,7 @@ public class GameManagement {
                 }
             });
             primaryStage.show();
+            new SoundMediaPlayer(SoundMediaPlayer.Sound.Window_Opened, SoundMediaPlayer.Type.Sound).play();
         });
     }
 
