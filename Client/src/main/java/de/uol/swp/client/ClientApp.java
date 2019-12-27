@@ -234,7 +234,7 @@ public class ClientApp extends Application implements ConnectionListener {
     }
 
     /**
-     * Aktualsiert den user sowie den loggedInUser im SettingsPresenter und schließt das Einstellungsfenster
+     * Aktualsiert den user und schließt das Einstellungsfenster
      *
      * @param message
      * @author Julia

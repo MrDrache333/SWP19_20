@@ -19,6 +19,8 @@ import javafx.scene.control.TextField;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.regex.Pattern;
+
 import static de.uol.swp.client.main.MainMenuPresenter.showAlert;
 
 /**
@@ -71,16 +73,20 @@ public class SettingsPresenter extends AbstractPresenter {
         String password = passwordField.getText();
         String password2 = password2Field.getText();
 
-        //keine Eingaben vom Nutzer
+        //keine Eingaben vom User -> Fenster schließen
         if (Strings.isNullOrEmpty(username) && Strings.isNullOrEmpty(email) && Strings.isNullOrEmpty(password) && Strings.isNullOrEmpty(password2)) {
             eventBus.post(new CloseSettingsEvent());
             clearAll();
         } else if (!password.equals(password2)) {
-            showAlert(Alert.AlertType.ERROR, "Die Passwörter sind nicht gleich", "Fehler");
+            showAlert(Alert.AlertType.ERROR, "Die Passwörter stimmen nicht überein", "Fehler");
             passwordField.clear();
             password2Field.clear();
             passwordField.requestFocus();
-        } //TODO add check for valid email
+        } else if(!Pattern.matches("(?:[a-z0-9!#$%&'+/=?^_`{|}~-]+(?:.[a-z0-9!#$%&'+/=?^_`{|}~-]+)|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])\")@(?:(?:[a-z0-9](?:[a-z0-9-][a-z0-9])?.)+[a-z0-9](?:[a-z0-9-][a-z0-9])?|[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+", email)) {
+            showAlert(Alert.AlertType.ERROR, email + " ist keine gültige E-Mail-Adresse", "Fehler");
+            emailField.clear();
+            emailField.requestFocus();
+        }
         else {
             //Wenn Felder leer sind, Daten vom loggedInUser übernehmen
             if (Strings.isNullOrEmpty(username)) {
