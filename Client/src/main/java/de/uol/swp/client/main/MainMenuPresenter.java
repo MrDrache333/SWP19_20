@@ -125,7 +125,7 @@ public class MainMenuPresenter extends AbstractPresenter {
         ((Pane) chatView.getChildren().get(0)).setMinWidth(chatView.getMinWidth());
 
         //Initialisieren der Lobbytabelle
-        name.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getName()));
+        name.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getName() + showLobbyPrivacy(c.getValue().getLobbyPassword())));
         host.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getOwner().getUsername()));
         players.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getPlayers()).asObject());
         addJoinLobbyButton();
@@ -163,7 +163,7 @@ public class MainMenuPresenter extends AbstractPresenter {
         // Textfeld für Name wird erstellt und Panel hinzugefügt
         // Text und Spaltenanzahl werden dabei direkt gesetzt
         JLabel lname = new JLabel("Lobbyname: ");
-        JTextField lName_input = new JTextField("", 15);
+        JTextField lName_input = new JTextField("", 20);
         lname.setSize(60, 60);
         panel.add(lname);
         panel.add(lName_input);
@@ -171,7 +171,7 @@ public class MainMenuPresenter extends AbstractPresenter {
 
         // Textfeld für Passwort wird erstellt und Panel hinzugefügt´
         JLabel lobbyPassword = new JLabel("Passwort (optional): ");
-        JPasswordField lPassword_input = new JPasswordField("", 15);
+        JPasswordField lPassword_input = new JPasswordField("", 20);
         lPassword_input.setEchoChar('*');
         panel.add(lobbyPassword);
         panel.add(lPassword_input);
@@ -425,5 +425,23 @@ public class MainMenuPresenter extends AbstractPresenter {
         });
     }
 
-
+    /**
+     * @since Sprint 4
+     * @author Rike
+     * Hilfsmethode die anzeigen soll, ob eine Lobby private ist oder nicht
+     */
+    //TODO: Statt dem Text soll das Icon angezeigt werden
+    private String showLobbyPrivacy(String lobbyPassword){
+        JLabel lobbyPrivacy = new JLabel();
+        if(lobbyPassword.isEmpty()){
+            Icon lobbyOffen = new ImageIcon ("images/lobby_offen.png");
+            lobbyPrivacy.setIcon(lobbyOffen);
+            return " (offen)";
+        }
+        else{
+            Icon lobbyGeschlossen = new ImageIcon ("images/login_lock_icon.png");
+            lobbyPrivacy.setIcon(lobbyGeschlossen);
+            return " (privat)";
+        }
+    }
 }
