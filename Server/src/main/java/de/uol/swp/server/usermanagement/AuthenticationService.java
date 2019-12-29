@@ -10,11 +10,9 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.message.UpdateUserFailedMessage;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
+import de.uol.swp.common.user.message.UserDroppedMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
-import de.uol.swp.common.user.request.LoginRequest;
-import de.uol.swp.common.user.request.LogoutRequest;
-import de.uol.swp.common.user.request.RetrieveAllOnlineUsersRequest;
-import de.uol.swp.common.user.request.UpdateUserRequest;
+import de.uol.swp.common.user.request.*;
 import de.uol.swp.common.user.response.AllOnlineUsersResponse;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.communication.UUIDSession;
@@ -139,6 +137,33 @@ public class AuthenticationService extends AbstractService {
             LOG.info("Update of user " + msg.getOldUser().getUsername() + " failed");
         }
         post(returnMessage);
+    }
+
+
+    /**
+     * Der Nutzer wird gelöscht und eine entprechende Message zurückgesendet
+     *
+     * @author Anna
+     * @since Sprint4
+     */
+    @Subscribe
+    public void onDropUserRequest(DropUserRequest msg){
+            Session session = msg.getSession().get();
+            User userToDrop = msg.getUser();
+
+            // Could be already logged out/removed
+            if (userToDrop != null) {
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Dropping user " + userToDrop.getUsername());
+                }
+
+                userManagement.dropUser(userToDrop);
+                userSessions.remove(session);
+
+                ServerMessage returnMessage = new UserDroppedMessage(userToDrop);
+                post(returnMessage);
+        }
     }
 
 }

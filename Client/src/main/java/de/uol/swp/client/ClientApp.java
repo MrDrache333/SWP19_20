@@ -14,6 +14,7 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.exception.RegistrationExceptionMessage;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
+import de.uol.swp.common.user.message.UserDroppedMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import de.uol.swp.common.user.request.OpenSettingsRequest;
 import de.uol.swp.common.user.response.LoginSuccessfulResponse;
@@ -273,6 +274,21 @@ public class ClientApp extends Application implements ConnectionListener {
         lobbyService.retrieveAllLobbies();
     }
 
+    /**
+     * Nachdem der Account gelöscht wurde, werden alle Fenster geschlossen und der Login-Screen angezeigt
+     *
+     * @author Anna
+     * @since Sprint4
+     */
+    @Subscribe
+    public void onUserDroppedMessage(UserDroppedMessage message) {
+        LOG.info("Deleting Account and leaving of all lobbies successful.");
+        if (message.getUser().getUsername().equals(user.getUsername())) {
+            sceneManager.closeAllStages();
+            sceneManager.showLoginScreen();
+        }
+        lobbyService.retrieveAllLobbies();
+    }
     /**
      * Schließen aller Fenster
      *

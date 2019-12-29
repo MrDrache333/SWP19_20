@@ -6,6 +6,7 @@ import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.settings.event.CloseSettingsEvent;
+import de.uol.swp.client.settings.event.DeleteAccountEvent;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
@@ -105,8 +106,7 @@ public class SettingsPresenter extends AbstractPresenter {
 
     @FXML
     public void onDeleteAccountButtonPressed(ActionEvent actionEvent) {
-        lobbyService.leaveAllLobbiesOnLogout((UserDTO) loggedInUser);
-        //TODO implement
+        eventBus.post(new DeleteAccountEvent(loggedInUser));
     }
 
     @FXML

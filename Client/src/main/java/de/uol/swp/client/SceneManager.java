@@ -16,8 +16,11 @@ import de.uol.swp.client.register.RegistrationPresenter;
 import de.uol.swp.client.register.event.RegistrationCanceledEvent;
 import de.uol.swp.client.register.event.RegistrationErrorEvent;
 import de.uol.swp.client.register.event.ShowRegistrationViewEvent;
+import de.uol.swp.client.settings.DeleteAccountPresenter;
 import de.uol.swp.client.settings.SettingsPresenter;
+import de.uol.swp.client.settings.event.CloseDeleteAccountEvent;
 import de.uol.swp.client.settings.event.CloseSettingsEvent;
+import de.uol.swp.client.settings.event.DeleteAccountEvent;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import javafx.application.Platform;
@@ -47,11 +50,13 @@ public class SceneManager {
     private final Injector injector;
     private SettingsPresenter settingsPresenter;
     private Stage settingsStage;
+    private Stage deleteAccountStage;
     private Scene loginScene;
     private String lastTitle;
     private Scene registrationScene;
     private Scene mainScene;
     private Scene settingsScene;
+    private Scene deleteAccountScene;
     private Scene gameScene;
     private Scene lastScene = null;
     private Scene currentScene = null;
@@ -98,6 +103,29 @@ public class SceneManager {
     @Subscribe
     public void onCloseSettingsEvent(CloseSettingsEvent event) { closeSettings(); }
 
+    @Subscribe
+    public void onCloseDeleteAccountEvent(CloseDeleteAccountEvent event) {closeDeleteAccount();}
+
+    /**
+     * Wenn in den Einstellungen auf den BUtton Account löschen gegangen wird, wird ein neues Fenster geöffnet, in dem nachgefragt wird,
+     * ob man den Account auch wirklich löschen will
+     *
+     * @author Anna
+     * @since Sprint4
+     */
+    @Subscribe
+    public void onDeleteAccountEvent(DeleteAccountEvent event) {
+        Platform.runLater(() -> {
+            currentUser = event.getUser();
+            initDeleteAccountView();
+            deleteAccountStage = new Stage();
+            deleteAccountStage.setTitle("Account löschen");
+            deleteAccountStage.setScene(deleteAccountScene);
+            deleteAccountStage.setResizable(false);
+            deleteAccountStage.show();
+        });
+    }
+
     private void initViews() {
         initLoginView();
         initMainView();
@@ -126,6 +154,21 @@ public class SceneManager {
             LOG.debug("Loading " + url);
             loader.setLocation(url);
             loader.setController(settingsPresenter);
+            rootPane = loader.load();
+        } catch (Exception e) {
+            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
+        }
+        return rootPane;
+    }
+
+    private Parent initDeleteAccountPresenter(DeleteAccountPresenter deleteAccountPresenter) {
+        Parent rootPane;
+        FXMLLoader loader = injector.getInstance(FXMLLoader.class);
+        try {
+            URL url = getClass().getResource(DeleteAccountPresenter.fxml);
+            LOG.debug("Loading " + url);
+            loader.setLocation(url);
+            loader.setController(deleteAccountPresenter);
             rootPane = loader.load();
         } catch (Exception e) {
             throw new RuntimeException("Could not load View!" + e.getMessage(), e);
@@ -168,6 +211,14 @@ public class SceneManager {
         }
     }
 
+    private void initDeleteAccountView() {
+        if (deleteAccountScene == null) {
+            Parent rootPane = initDeleteAccountPresenter(new DeleteAccountPresenter(currentUser, lobbyService, userService, eventBus));
+            deleteAccountScene = new Scene(rootPane, 200, 100);
+            deleteAccountScene.getStylesheets().add(SettingsPresenter.css);
+
+        }
+    }
 
     @Subscribe
     public void onGameQuitEvent(GameQuitEvent event) {
@@ -294,5 +345,10 @@ public class SceneManager {
 
     public void closeSettings() {
         Platform.runLater(() -> settingsStage.close());
+    }
+
+
+    private void closeDeleteAccount() {
+        Platform.runLater(() -> deleteAccountStage.close());
     }
 }
