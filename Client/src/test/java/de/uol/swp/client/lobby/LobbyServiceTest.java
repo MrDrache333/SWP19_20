@@ -26,7 +26,7 @@ class LobbyServiceTest {
 
     User defaultUser = new UserDTO("Marco", "test", "marco@test.de");
     User defaultOwner = new UserDTO("Owner", "test", "123@test.de");
-    Lobby defaultLobby = new LobbyDTO("TestLobby", defaultOwner, UUID.randomUUID());
+    Lobby defaultLobby = new LobbyDTO("TestLobby", defaultOwner, UUID.randomUUID(), "test");
 
     EventBus bus = new EventBus();
     CountDownLatch lock = new CountDownLatch(1);

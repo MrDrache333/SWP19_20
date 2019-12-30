@@ -26,21 +26,6 @@ public class LobbyDTO implements Lobby, Serializable {
     private UUID lobbyID;
 
 
-    /**
-     * Instantiates a new Lobby dto.
-     *
-     * @param name    the name
-     * @param creator the creator
-     * @param lobbyID the lobby id
-     */
-    public LobbyDTO(String name, User creator, UUID lobbyID) {
-        this.name = name;
-        this.owner = creator;
-        this.users.add(creator);
-        this.readyStatus.put(creator.getUsername(), false);
-        this.lobbyID = lobbyID;
-        this.players = 1;
-    }
 
     /**
      * Instantiates a new Lobby dto.
