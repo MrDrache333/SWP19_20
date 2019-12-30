@@ -99,14 +99,20 @@ public class LobbyService extends AbstractService {
      * UserLeftLobbyMessage wird an Client gesendet
      *
      * @param msg the msg
-     * @author Julia, Paula
+     * @author Julia, Paula, Darian
      * @since Sprint3
      */
     @Subscribe
     public void onLobbyLeaveUserRequest(LobbyLeaveUserRequest msg) {
         if (lobbyManagement.leaveLobby(msg.getLobbyName(), msg.getUser())) {
             LOG.info("User " + msg.getUser().getUsername() + " is leaving lobby " + msg.getLobbyName());
-            ServerMessage returnMessage = new UserLeftLobbyMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID());
+            //Falls der Besitzer der Lobby aus der Lobby geht wird dieser aktualisiert
+            Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getLobbyName());
+            User gameOwner = null;
+            if(!lobby.isEmpty()) {
+                gameOwner = lobby.get().getOwner();
+            }
+            ServerMessage returnMessage = new UserLeftLobbyMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID(), (UserDTO) gameOwner);
             post(returnMessage);
         } else {
             LOG.error("Leaving lobby " + msg.getLobbyName() + " failed");
@@ -206,7 +212,7 @@ public class LobbyService extends AbstractService {
             ServerMessage returnMessage = new KickUserMessage(msg.getLobbyName(), msg.getUserToKick(), msg.getLobbyID());
             post(returnMessage);
         } else {
-            LOG.error("Kicking " + msg.getLobbyName() + " from Lobby has failed");
+            LOG.error("Kicking " + msg.getUserToKick() + " from Lobby " + msg.getLobbyName() + " has failed");
         }
     }
 

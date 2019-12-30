@@ -109,10 +109,9 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
     }
 
     /**
-     *
+     * Anfrage wird erstellt und abgeschickt um Spieler zu kicken.
      *
      * @param lobbyName
-     * @param owner
      * @param lobbyID
      * @param userToKick
      * @since sprint4

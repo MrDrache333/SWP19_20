@@ -268,7 +268,5 @@ public class ClientApp extends Application implements ConnectionListener {
      */
     public void closeAllWindows() {
         Platform.exit();
-
     }
-
 }

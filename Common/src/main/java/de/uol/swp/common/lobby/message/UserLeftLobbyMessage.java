@@ -6,10 +6,17 @@ import java.util.UUID;
 
 public class UserLeftLobbyMessage extends AbstractLobbyMessage {
 
+    UserDTO gameOwner;
+
     public UserLeftLobbyMessage() {
     }
 
-    public UserLeftLobbyMessage(String lobbyName, UserDTO user, UUID lobbyID) {
+    public UserLeftLobbyMessage(String lobbyName, UserDTO user, UUID lobbyID, UserDTO gameOwner) {
         super(lobbyName, user, lobbyID);
+        this.gameOwner = gameOwner;
+    }
+
+    public UserDTO getGameOwner(){
+        return gameOwner;
     }
 }

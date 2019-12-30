@@ -247,6 +247,7 @@ public class LobbyPresenter extends AbstractPresenter {
         LOG.debug("New user " + message.getUser() + " logged in");
         Platform.runLater(() -> {
             if (readyUserList != null && loggedInUser != null && !loggedInUser.toString().equals(message.getLobbyName())) {
+                gameOwner = message.getGameOwner();
                 readyUserList.put(message.getUser().getUsername(), getHboxFromReadyUser(message.getUser(), false));
                 updateUsersList();
                 chatViewPresenter.userJoined(message.getUser().getUsername());
@@ -264,6 +265,7 @@ public class LobbyPresenter extends AbstractPresenter {
         if (!message.getLobbyID().equals(lobbyID)) return;
         LOG.debug("User " + message.getLobbyName() + " left the Lobby");
         userLeftLobby(message.getUser().getUsername(), false);
+        gameOwner = message.getGameOwner();
         chatViewPresenter.userLeft(message.getUser().getUsername());
     }
 
