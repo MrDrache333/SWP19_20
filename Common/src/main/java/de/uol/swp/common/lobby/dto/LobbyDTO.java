@@ -40,7 +40,6 @@ public class LobbyDTO implements Lobby, Serializable {
         this.readyStatus.put(creator.getUsername(), false);
         this.lobbyID = lobbyID;
         this.players = 1;
-        this.lobbyPassword = "";
     }
 
     /**

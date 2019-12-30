@@ -125,7 +125,7 @@ public class MainMenuPresenter extends AbstractPresenter {
         ((Pane) chatView.getChildren().get(0)).setMinWidth(chatView.getMinWidth());
 
         //Initialisieren der Lobbytabelle
-        name.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getName() + showLobbyPrivacy(c.getValue().getLobbyPassword())));
+        name.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getName() + (c.getValue().getLobbyPassword().equals("") ? " (offen)" : " (privat)")));
         host.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getOwner().getUsername()));
         players.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getPlayers()).asObject());
         addJoinLobbyButton();
@@ -358,22 +358,23 @@ public class MainMenuPresenter extends AbstractPresenter {
                                     ActionListener onEnteredPasswordPressed = new ActionListener() {
                                         @Override
                                         public void actionPerformed(java.awt.event.ActionEvent e) {
-                                            // Passwort ist gleich, man wird zur Lobby hinzugefügt
-                                            if (lobby.getLobbyPassword().equals(String.valueOf(ePassword.getPassword()))) {
-                                                lobbyService.joinLobby(lobby.getName(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), lobby.getLobbyID());
-
-                                                // Passwort ist nicht gliech, Fehlermeldung erscheint
-                                            } else if (!lobby.getLobbyPassword().equals(String.valueOf(ePassword.getPassword()))) {
+                                            // Passwort ist nicht gliech, Fehlermeldung erscheint
+                                            if (!lobby.getLobbyPassword().equals(String.valueOf(ePassword.getPassword()))) {
                                                 Platform.runLater(() -> {
                                                     showAlert(Alert.AlertType.ERROR, "Das eingegebene Passwort ist falsch.", "Fehler");
+                                                    ePassword.setText("");
                                                 });
                                             }
-                                            // Dialog wird nicht mehr angezeigt
-                                            joinLobbyDialog.setVisible(false);
-
+                                            // Passwort ist gleich, man wird zur Lobby hinzugefügt
+                                            else if (lobby.getLobbyPassword().equals(String.valueOf(ePassword.getPassword()))) {
+                                                lobbyService.joinLobby(lobby.getName(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), lobby.getLobbyID());
+                                                // Dialog wird nicht mehr angezeigt
+                                                joinLobbyDialog.setVisible(false);
+                                            }
                                         }
-
                                     };
+
+
                                     joinLobby.addActionListener(onEnteredPasswordPressed);
                                     panel.add(joinLobby);
                                     joinLobbyDialog.add(panel);
@@ -409,23 +410,6 @@ public class MainMenuPresenter extends AbstractPresenter {
             users.clear();
             userList.forEach(u -> users.add(u.getUsername()));
         });
-    }
-
-    /**
-     * @author Rike
-     * Hilfsmethode die anzeigen soll, ob eine Lobby private ist oder nicht
-     * @since Sprint 4
-     */
-
-    private String showLobbyPrivacy(String lobbyPassword) {
-        JLabel lobbyPrivacy = new JLabel();
-        if (lobbyPassword.isEmpty()) {
-            return " (offen)";
-
-        } else {
-            return " (privat)";
-        }
-
     }
 }
 
