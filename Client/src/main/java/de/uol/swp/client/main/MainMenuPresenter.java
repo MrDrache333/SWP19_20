@@ -151,13 +151,11 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @FXML
     public void onShowLobbyDialogButtonPressed(ActionEvent event) {
-
         // Erzeugung Dialog
         JDialog createLobbyDialoge = new JDialog();
         createLobbyDialoge.setResizable(false);
         createLobbyDialoge.setTitle("Lobby erstellen");
         createLobbyDialoge.setSize(400, 150);
-
         JPanel panel = new JPanel();
 
         // Textfeld für Name wird erstellt und Panel hinzugefügt
@@ -167,7 +165,6 @@ public class MainMenuPresenter extends AbstractPresenter {
         lname.setSize(60, 60);
         panel.add(lname);
         panel.add(lName_input);
-
 
         // Textfeld für Passwort wird erstellt und Panel hinzugefügt´
         JLabel lobbyPassword = new JLabel("Passwort (optional): ");
@@ -194,12 +191,10 @@ public class MainMenuPresenter extends AbstractPresenter {
                     Platform.runLater(() -> {
                         showAlert(Alert.AlertType.WARNING, "Dieser Name ist bereits vergeben", "Fehler");
                         lName_input.setText("");
-
-                        //TODO: Fokus wird auf MainMenu gelegt, fixen ?
                         createLobbyDialoge.requestFocus();
                     });
                 }
-                // Wenn Name nicht vorhanden: Erstellen neuer Lobby
+                // Wenn Name noch nicht vorhanden: Erstellen neuer Lobby
                 else if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName)) {
                     CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName, lobbyPassword, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
                     eventBus.post(msg);
@@ -207,10 +202,6 @@ public class MainMenuPresenter extends AbstractPresenter {
 
                     //  Dialog wird geschlossen
                     createLobbyDialoge.setVisible(false);
-
-                    // TODO: hier  Icon einfügen  (lobby_offen für ohne Passwort und login_lock_icon mit Passwort; evtl auch in LobbyTabelle im MainMenu?)
-
-                    // Alert
                 } else {
                     Platform.runLater(() -> {
                         showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden", "Fehler");
@@ -356,7 +347,6 @@ public class MainMenuPresenter extends AbstractPresenter {
                                     joinLobbyDialog.setSize(400, 150);
 
                                     JPanel panel = new JPanel();
-
                                     // Textfeld für Passwort wird erstellt und Panel hinzugefügt
                                     JLabel enteredPassword = new JLabel("Passwort: ");
                                     JPasswordField ePassword = new JPasswordField("", 15);
@@ -364,22 +354,18 @@ public class MainMenuPresenter extends AbstractPresenter {
                                     panel.add(ePassword);
 
                                     // enteredPassword mit dem lobbyPassword vergleichen, wenn "Beitreten"-Button gedrückt
-
                                     JButton joinLobby = new JButton("Lobby beitreten");
                                     ActionListener onEnteredPasswordPressed = new ActionListener() {
                                         @Override
                                         public void actionPerformed(java.awt.event.ActionEvent e) {
-                                            // Passwort ist gleich, man wird der Lobby hinzugefügt
+                                            // Passwort ist gleich, man wird zur Lobby hinzugefügt
                                             if (lobby.getLobbyPassword().equals(String.valueOf(ePassword.getPassword()))) {
                                                 lobbyService.joinLobby(lobby.getName(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), lobby.getLobbyID());
 
                                                 // Passwort ist nicht gliech, Fehlermeldung erscheint
                                             } else if (!lobby.getLobbyPassword().equals(String.valueOf(ePassword.getPassword()))) {
-
-
                                                 Platform.runLater(() -> {
                                                     showAlert(Alert.AlertType.ERROR, "Das eingegebene Passwort ist falsch.", "Fehler");
-
                                                 });
                                             }
                                             // Dialog wird nicht mehr angezeigt
@@ -426,22 +412,20 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     /**
-     * @since Sprint 4
      * @author Rike
      * Hilfsmethode die anzeigen soll, ob eine Lobby private ist oder nicht
+     * @since Sprint 4
      */
-    //TODO: Statt dem Text soll das Icon angezeigt werden
-    private String showLobbyPrivacy(String lobbyPassword){
+
+    private String showLobbyPrivacy(String lobbyPassword) {
         JLabel lobbyPrivacy = new JLabel();
-        if(lobbyPassword.isEmpty()){
-            Icon lobbyOffen = new ImageIcon ("images/lobby_offen.png");
-            lobbyPrivacy.setIcon(lobbyOffen);
+        if (lobbyPassword.isEmpty()) {
             return " (offen)";
-        }
-        else{
-            Icon lobbyGeschlossen = new ImageIcon ("images/login_lock_icon.png");
-            lobbyPrivacy.setIcon(lobbyGeschlossen);
+
+        } else {
             return " (privat)";
         }
+
     }
 }
+
