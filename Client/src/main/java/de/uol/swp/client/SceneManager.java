@@ -340,6 +340,9 @@ public class SceneManager {
             if(settingsStage != null) {
                 settingsStage.close();
             }
+            if(deleteAccountStage != null) {
+                deleteAccountStage.close();
+            }
         });
     }
 

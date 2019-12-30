@@ -236,7 +236,7 @@ public class LobbyPresenter extends AbstractPresenter {
      * Aktualisiert den loggedInUser sowie die Liste, falls sich der Username geändert hat
      *
      * @param message
-     * @author Julia
+     * @author Julia, Anna
      * @since Sprint4
      */
     @Subscribe
@@ -244,8 +244,19 @@ public class LobbyPresenter extends AbstractPresenter {
         if (loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
             loggedInUser = message.getUser();
             loggedInUserDTO = (UserDTO) message.getUser();
+            LOG.debug("User " + message.getOldUser().getUsername() + " changed his name to " + message.getUser().getUsername());
         }
-        //TODO Liste aktualisieren, falls sich der Username geändert hat
+        //der alte User wird aus der Lobby entfernt und der neue hinzugefügt
+        Platform.runLater(() -> {
+            for (int i=0; i<readyUserList.size(); i++){
+                if (readyUserList.containsKey(message.getOldUser().getUsername())){
+                    userLeftLobby(message.getOldUser().getUsername());
+                    readyUserList.put(message.getUser().getUsername(), getHboxFromReadyUser(message.getUser().getUsername(), false));
+                    updateUsersList();
+                    chatViewPresenter.userJoined(message.getUser().getUsername());
+                }
+            }
+        });
     }
 
     /**
