@@ -122,8 +122,8 @@ public class AuthenticationService extends AbstractService {
      */
     @Subscribe
     public void onUpdateUserRequest(UpdateUserRequest msg) {
-        msg.getSession().get().updateUser(msg.getUser());
         userSessions.put(msg.getSession().get(), msg.getUser());
+        msg.getSession().get().updateUser(msg.getUser());
         ServerMessage returnMessage;
         try {
             User user = userManagement.updateUser(msg.getUser(), msg.getOldUser());
