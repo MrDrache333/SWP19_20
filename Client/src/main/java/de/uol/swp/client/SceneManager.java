@@ -106,6 +106,7 @@ public class SceneManager {
     @Subscribe
     public void onCloseDeleteAccountEvent(CloseDeleteAccountEvent event) {closeDeleteAccount();}
 
+
     /**
      * Wenn in den Einstellungen auf den BUtton Account löschen gegangen wird, wird ein neues Fenster geöffnet, in dem nachgefragt wird,
      * ob man den Account auch wirklich löschen will
@@ -351,7 +352,7 @@ public class SceneManager {
     }
 
 
-    private void closeDeleteAccount() {
+    public void closeDeleteAccount() {
         Platform.runLater(() -> deleteAccountStage.close());
     }
 }

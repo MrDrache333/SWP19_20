@@ -13,6 +13,7 @@ import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.exception.RegistrationExceptionMessage;
+import de.uol.swp.common.user.message.UpdateUserFailedMessage;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
 import de.uol.swp.common.user.message.UserDroppedMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
@@ -250,6 +251,14 @@ public class ClientApp extends Application implements ConnectionListener {
             LOG.info("User " + message.getOldUser().getUsername() + " updated his data");
         }
     }
+
+    @Subscribe
+    public void onUpdateUserFailedMessage(UpdateUserFailedMessage message){
+        if (user.getUsername().equals(message.getUser().getUsername())){
+            sceneManager.showError(message.getMessage());
+        }
+    }
+
 
 
     // -----------------------------------------------------
