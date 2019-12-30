@@ -248,13 +248,11 @@ public class LobbyPresenter extends AbstractPresenter {
         }
         //der alte User wird aus der Lobby entfernt und der neue hinzugefügt
         Platform.runLater(() -> {
-            for (int i=0; i<readyUserList.size(); i++){
-                if (readyUserList.containsKey(message.getOldUser().getUsername())){
-                    userLeftLobby(message.getOldUser().getUsername());
-                    readyUserList.put(message.getUser().getUsername(), getHboxFromReadyUser(message.getUser().getUsername(), false));
-                    updateUsersList();
-                    chatViewPresenter.userJoined(message.getUser().getUsername());
-                }
+            if (readyUserList.containsKey(message.getOldUser().getUsername())){
+                userLeftLobby(message.getOldUser().getUsername());
+                readyUserList.put(message.getUser().getUsername(), getHboxFromReadyUser(message.getUser().getUsername(), false));
+                updateUsersList();
+                chatViewPresenter.userJoined(message.getUser().getUsername());
             }
         });
     }

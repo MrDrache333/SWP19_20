@@ -185,7 +185,10 @@ public class GameViewPresenter extends AbstractPresenter {
         if (loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
             loggedInUser = message.getUser();
         }
-        //TODO Liste aktualisieren, falls sich der Username geändert hat
+        if (users.contains(message.getOldUser().getUsername())){
+            users.remove(message.getOldUser().getUsername());
+            users.add(message.getUser().getUsername());
+        }
     }
 
     /**
