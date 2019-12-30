@@ -32,13 +32,6 @@
     -fx-background-color: rgba(150, 123, 111, 0.65);
 }
 
-.button {
-    -fx-background-color: #2b170c;
-    -fx-text-fill: #e5c7ba;
-    -fx-background-radius: 90;
-    -fx-border-radius: 90;
-}
-
 .text-field {
     -fx-background-color: #967b6f;
     -fx-text-fill: #2b170c;

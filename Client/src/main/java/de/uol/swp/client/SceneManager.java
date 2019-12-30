@@ -21,6 +21,7 @@ import de.uol.swp.client.settings.SettingsPresenter;
 import de.uol.swp.client.settings.event.CloseDeleteAccountEvent;
 import de.uol.swp.client.settings.event.CloseSettingsEvent;
 import de.uol.swp.client.settings.event.DeleteAccountEvent;
+import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import javafx.application.Platform;
@@ -251,6 +252,7 @@ public class SceneManager {
             primaryStage.setScene(scene);
             primaryStage.setResizable(false);
             primaryStage.show();
+            new SoundMediaPlayer(SoundMediaPlayer.Sound.Window_Opened, SoundMediaPlayer.Type.Sound).play();
         });
     }
 
@@ -296,6 +298,10 @@ public class SceneManager {
             gameManagement.showLobbyView();
         });
 
+    }
+
+    public boolean hasFocus() {
+        return primaryStage.isFocused();
     }
 
     /**

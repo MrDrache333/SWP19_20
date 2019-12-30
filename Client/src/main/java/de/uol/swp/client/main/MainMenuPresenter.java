@@ -2,7 +2,9 @@ package de.uol.swp.client.main;
 
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.ClientApp;
 import de.uol.swp.client.chat.ChatViewPresenter;
+import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
@@ -71,6 +73,8 @@ public class MainMenuPresenter extends AbstractPresenter {
     private TableColumn<Lobby, Void> joinLobby = new TableColumn<>();
     @FXML
     private Pane chatView;
+    @FXML
+    private Button createLobbyButton, logoutButton;
 
     /**
      * @author Paula, Haschem, Ferit
@@ -95,6 +99,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
+        new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Pressed, SoundMediaPlayer.Type.Sound).play();
         lobbyService.leaveAllLobbiesOnLogout(new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
         userService.logout(loggedInUser);
     }
@@ -141,6 +146,10 @@ public class MainMenuPresenter extends AbstractPresenter {
         name.setPrefWidth(235);
         host.setPrefWidth(135);
         joinLobby.setPrefWidth(90);
+
+        createLobbyButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
+        logoutButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
+
     }
 
     /**
@@ -155,6 +164,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @FXML
     public void OnCreateLobbyButtonPressed(ActionEvent event) {
+        new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Pressed, SoundMediaPlayer.Type.Sound).play();
         List<String> lobbyNames = new ArrayList<>();
         lobbies.forEach(lobby -> lobbyNames.add(lobby.getName()));
         if (lobbyNames.contains(lobbyName.getText())) {
@@ -169,6 +179,10 @@ public class MainMenuPresenter extends AbstractPresenter {
             lobbyName.requestFocus();
         }
         lobbyName.clear();
+    }
+
+    public boolean hasFocus() {
+        return ClientApp.getSceneManager().hasFocus();
     }
 
     /**
