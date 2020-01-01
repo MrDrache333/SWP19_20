@@ -14,7 +14,11 @@ import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.exception.RegistrationExceptionMessage;
+import de.uol.swp.common.user.message.UpdateUserFailedMessage;
+import de.uol.swp.common.user.message.UpdatedUserMessage;
+import de.uol.swp.common.user.message.UserDroppedMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
+import de.uol.swp.common.user.request.OpenSettingsRequest;
 import de.uol.swp.common.user.response.LoginSuccessfulResponse;
 import de.uol.swp.common.user.response.RegistrationSuccessfulResponse;
 import io.netty.channel.Channel;
@@ -198,10 +202,9 @@ public class ClientApp extends Application implements ConnectionListener {
     @Subscribe
     public void onUserJoinedLobbyMessage(UserJoinedLobbyMessage message) {
         if (message.getUser().getUsername().equals(user.getUsername())) {
-            if(sceneManager.getGameManagement(message.getLobbyID()) != null) {
+            if (sceneManager.getGameManagement(message.getLobbyID()) != null) {
                 sceneManager.getGameManagement(message.getLobbyID()).showLobbyView();
-            }
-            else {
+            } else {
                 sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getLobbyID());
             }
             LOG.info("User " + message.getUser().getUsername() + " joined lobby successfully");
@@ -224,6 +227,45 @@ public class ClientApp extends Application implements ConnectionListener {
         }
     }
 
+    /**
+     * Empfängt die Nachricht (vom MainMenuPresenter), dass das Einstellungsfenster geöffnet werden soll
+     *
+     * @param message
+     * @author Anna
+     * @since Sprint4
+     */
+    @Subscribe
+    public void onOpenSettingsRequest(OpenSettingsRequest message) {
+        if (message.getUser().getUsername().equals(user.getUsername())) {
+            sceneManager.showSettingsScreen(message.getUser());
+        }
+    }
+
+    /**
+     * Aktualsiert den user und schließt das Einstellungsfenster
+     *
+     * @param message
+     * @author Julia
+     * @since Sprint4
+     */
+    @Subscribe
+    public void onUpdatedUserMessage(UpdatedUserMessage message) {
+        if (user.getUsername().equals(message.getOldUser().getUsername())) {
+            user = message.getUser();
+            sceneManager.closeSettings();
+            sceneManager.showMainScreen(user);
+            LOG.info("User " + message.getOldUser().getUsername() + " updated his data");
+        }
+    }
+
+    @Subscribe
+    public void onUpdateUserFailedMessage(UpdateUserFailedMessage message){
+        if (user.getUsername().equals(message.getUser().getUsername())){
+            sceneManager.showError(message.getMessage());
+        }
+    }
+
+
 
     // -----------------------------------------------------
     // JavFX Help methods
@@ -231,7 +273,7 @@ public class ClientApp extends Application implements ConnectionListener {
 
     /**
      * Empfängt vom Server die Message, dass sich der Nutzer ausgeloggt hat. Der Nutzer wird aus allen Lobbys gelöscht.
-     * Lobbys im Hauptmenü werden aktualisiert. LobbyStage schließt sich, man gelangt ins Hauptmenüfenster zurück
+     * Lobbys im Hauptmenü werden aktualisiert, alle Stages werden geschlossen und das Loginfenster wird geöffnet
      *
      * @param message
      * @author Julia, Paula
@@ -245,9 +287,23 @@ public class ClientApp extends Application implements ConnectionListener {
             sceneManager.showLoginScreen();
         }
         lobbyService.retrieveAllLobbies();
-
     }
 
+    /**
+     * Nachdem der Account gelöscht wurde, werden alle Fenster geschlossen und der Login-Screen angezeigt
+     *
+     * @author Anna
+     * @since Sprint4
+     */
+    @Subscribe
+    public void onUserDroppedMessage(UserDroppedMessage message) {
+        LOG.info("Deleting Account and leaving of all lobbies successful.");
+        if (message.getUser().getUsername().equals(user.getUsername())) {
+            sceneManager.closeAllStages();
+            sceneManager.showLoginScreen();
+        }
+        lobbyService.retrieveAllLobbies();
+    }
     /**
      * Schließen aller Fenster
      *
@@ -256,7 +312,6 @@ public class ClientApp extends Application implements ConnectionListener {
      */
     public void closeAllWindows() {
         Platform.exit();
-
     }
 
 }

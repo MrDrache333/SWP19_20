@@ -13,6 +13,7 @@ import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
+import de.uol.swp.common.user.message.UpdatedUserMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -77,7 +78,7 @@ public class GameManagement {
 
         this.chatViewPresenter = new ChatViewPresenter(lobbyName, id, loggedInUser, ChatViewPresenter.THEME.Light, chatService, injector, this);
         this.gameViewPresenter = new GameViewPresenter(loggedInUser, id, chatService, chatViewPresenter, lobbyService, userService, injector, this);
-        this.lobbyPresenter = new LobbyPresenter(loggedInUser, lobbyName, id, chatService, chatViewPresenter, lobbyService, userService, injector, this);
+        this.lobbyPresenter = new LobbyPresenter(loggedInUser, lobbyName, id, chatService, chatViewPresenter, lobbyService, userService, injector, this, eventBus);
 
         eventBus.register(chatViewPresenter);
         eventBus.register(lobbyPresenter);
@@ -107,6 +108,20 @@ public class GameManagement {
     private void userLoggedOut(UserLoggedOutMessage msg) {
         if (msg.getUsername().equals(loggedInUser.getUsername())) {
             close();
+        }
+    }
+
+    /**
+     * Aktualisiert den loggedInUser
+     *
+     * @param message
+     * @author Julia
+     * @since Sprint4
+     */
+    @Subscribe
+    public void updatedUser(UpdatedUserMessage message) {
+        if (loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
+            loggedInUser = message.getUser();
         }
     }
 
