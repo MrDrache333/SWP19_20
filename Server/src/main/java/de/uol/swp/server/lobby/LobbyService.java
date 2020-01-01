@@ -55,7 +55,7 @@ public class LobbyService extends AbstractService {
     //--------------------------------------
 
     /**
-     * LobbyManagment auf dem Server wird aufgerufen und übergibt LobbyNamen, LobbyPassword und den Besitzer.
+     * LobbyManagement auf dem Server wird aufgerufen und übergibt LobbyNamen, LobbyPassword und den Besitzer.
      * Wenn dies erfolgt ist, folgt eine returnMessage an den Client die LobbyView anzuzeigen.
      *
      * @param msg enthält die Message vom Client mit den benötigten Daten um die Lobby zu erstellen.
@@ -76,7 +76,7 @@ public class LobbyService extends AbstractService {
     }
 
     /**
-     * LobbyManagment auf dem Server wird aufgerufen und übergibt den Namen des Nutzers.
+     * LobbyManagement auf dem Server wird aufgerufen und übergibt den Namen des Nutzers.
      * Wenn dies erfolgt ist, folgt eine UserJoinedLobbyMessage an den Client, um den User zur Lobby hinzuzufügen
      *
      * @param msg the msg
@@ -95,7 +95,7 @@ public class LobbyService extends AbstractService {
     }
 
     /**
-     * lobbyManagment wird aufgerufen und übergibt Namen der Lobby und User.
+     * LobbyManagement wird aufgerufen und übergibt Namen der Lobby und User.
      * UserLeftLobbyMessage wird an Client gesendet
      *
      * @param msg the msg
