@@ -358,7 +358,7 @@ public class MainMenuPresenter extends AbstractPresenter {
                                     ActionListener onEnteredPasswordPressed = new ActionListener() {
                                         @Override
                                         public void actionPerformed(java.awt.event.ActionEvent e) {
-                                            // Passwort ist nicht gliech, Fehlermeldung erscheint
+                                            // Passwort ist nicht gleich, Fehlermeldung erscheint
                                             if (!lobby.getLobbyPassword().equals(String.valueOf(ePassword.getPassword()))) {
                                                 Platform.runLater(() -> {
                                                     showAlert(Alert.AlertType.ERROR, "Das eingegebene Passwort ist falsch.", "Fehler");
