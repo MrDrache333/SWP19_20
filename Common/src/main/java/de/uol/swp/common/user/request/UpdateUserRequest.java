@@ -8,14 +8,18 @@ import java.util.Objects;
 public class UpdateUserRequest extends AbstractRequestMessage {
 
     final private User toUpdate;
+    private User oldUser;
 
-    public UpdateUserRequest(User user) {
+    public UpdateUserRequest(User user, User oldUser) {
         this.toUpdate = user;
+        this.oldUser = oldUser;
     }
 
     public User getUser() {
         return toUpdate;
     }
+
+    public User getOldUser() { return oldUser; }
 
     @Override
     public boolean equals(Object o) {

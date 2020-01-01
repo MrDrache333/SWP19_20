@@ -102,7 +102,7 @@ class UserServiceTest {
     @Test
     void updateUserTest() throws InterruptedException {
         UserService userService = new UserService(bus);
-        userService.updateUser(defaultUser);
+        userService.updateUser(defaultUser, defaultUser);
 
         lock.await(1000, TimeUnit.MILLISECONDS);
 

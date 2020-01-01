@@ -35,14 +35,14 @@ public interface UserStore {
     User createUser(String username, String password, String eMail);
 
     /**
-     * Update user. Update only given fields. Username cannot be changed
+     * Update user
      *
      * @param username
      * @param password
      * @param eMail
-     * @return The User without password information
+     * @return the updated user
      */
-    User updateUser(String username, String password, String eMail);
+    User updateUser(String username, String password, String eMail, String oldUsername);
 
     /**
      * Remove user from store

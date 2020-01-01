@@ -9,7 +9,7 @@ import java.util.UUID;
 public class UUIDSession implements Session {
 
     private final String sessionId;
-    private final User user;
+    private User user;
 
     private UUIDSession(User user) {
         synchronized (UUIDSession.class) {
@@ -30,6 +30,11 @@ public class UUIDSession implements Session {
     @Override
     public User getUser() {
         return user;
+    }
+
+    @Override
+    public void updateUser(User user) {
+        this.user = user;
     }
 
     @Override

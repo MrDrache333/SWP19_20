@@ -7,9 +7,12 @@ import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.register.event.RegistrationCanceledEvent;
 import de.uol.swp.client.register.event.RegistrationErrorEvent;
 import de.uol.swp.common.user.UserDTO;
+import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.user.UserService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
@@ -28,8 +31,22 @@ public class RegistrationPresenter extends AbstractPresenter {
 
     @FXML
     private PasswordField passwordField2;
+    @FXML
+    private Button registerButton;
+    @FXML
+    private Hyperlink cancelButton;
 
     public RegistrationPresenter() {
+    }
+
+    @FXML
+    private void initialize() {
+        registerButton.setOnMouseEntered(event -> {
+            new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play();
+        });
+        cancelButton.setOnMouseEntered(event -> {
+            new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play();
+        });
     }
 
     @Inject
@@ -39,11 +56,13 @@ public class RegistrationPresenter extends AbstractPresenter {
 
     @FXML
     void onCancelButtonPressed(ActionEvent event) {
+        new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Pressed, SoundMediaPlayer.Type.Sound).play();
         eventBus.post(registrationCanceledEvent);
     }
 
     @FXML
     void onRegisterButtonPressed(ActionEvent event) {
+        new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Pressed, SoundMediaPlayer.Type.Sound).play();
         if (Strings.isNullOrEmpty(loginField.getText())) {
             eventBus.post(new RegistrationErrorEvent("Username cannot be empty"));
         } else if (!passwordField1.getText().equals(passwordField2.getText())) {

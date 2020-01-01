@@ -3,12 +3,17 @@ package de.uol.swp.client.chat;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.ClientApp;
+import de.uol.swp.client.Notifyer;
+import de.uol.swp.client.game.GameManagement;
+import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.chat.ChatMessage;
 import de.uol.swp.common.chat.ChatService;
 import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.chat.response.ChatResponseMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
+import de.uol.swp.common.user.message.UpdatedUserMessage;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -17,10 +22,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -84,6 +86,8 @@ public class ChatViewPresenter extends AbstractPresenter {
     //Name of the Chat (FOr the Title Label)
     private String chatTitle;
 
+    private GameManagement gameManagement;
+
     private ChatMessage lastMessage;
 
     private Injector injector;
@@ -104,6 +108,8 @@ public class ChatViewPresenter extends AbstractPresenter {
     private TextField chatTextField;
     @FXML
     private ListView<VBox> messageView;
+    @FXML
+    private Button sendButton;
 
     private ChatService chatService;
     //Liste mit formatierten Chatnachrichten
@@ -124,13 +130,14 @@ public class ChatViewPresenter extends AbstractPresenter {
      * @param theme       the theme
      * @param chatService the chat service
      */
-    public ChatViewPresenter(String chatTitle, UUID chatId, User currentUser, THEME theme, ChatService chatService, Injector injector) {
+    public ChatViewPresenter(String chatTitle, UUID chatId, User currentUser, THEME theme, ChatService chatService, Injector injector, GameManagement gameManagement) {
         this.chatTitle = chatTitle;
         this.CHATTHEME = theme;
         this.chatService = chatService;
         this.chatId = chatId.toString();
         this.loggedInUser = currentUser;
         this.injector = injector;
+        this.gameManagement = gameManagement;
 
         setTheme(CHATTHEME);
     }
@@ -200,6 +207,8 @@ public class ChatViewPresenter extends AbstractPresenter {
             LOG.debug("Loading Dark Theme");
             chatViewAnchorPane.getStylesheets().add(styleSheet_dark);
         }
+
+        sendButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
     }
 
     //--------------------------------------
@@ -214,6 +223,14 @@ public class ChatViewPresenter extends AbstractPresenter {
     @Subscribe
     private void onNewChatMessage(NewChatMessage msg) {
         if (!chatId.equals("") && msg.getChatId().equals(chatId) && (lastMessage == null || !(msg.getMessage().getSender().getUsername().equals("server") && lastMessage.getSender().getUsername().equals("server") && msg.getMessage().getMessage().equals(lastMessage.getMessage())))) {
+            if (lastMessage != null && !loggedInUser.getUsername().equals(msg.getMessage().getSender().getUsername()) && ((gameManagement != null && !gameManagement.hasFocus()) || (gameManagement == null && !ClientApp.getSceneManager().hasFocus())))
+                try {
+                    new Notifyer().notify(Notifyer.MessageType.INFO, "Nachricht von " + msg.getMessage().getSender().getUsername() + " in " + (chatId.equals("global") ? "GLOBAL" : chatTitle), msg.getMessage().getMessage());
+                } catch (Exception e) {
+                    LOG.debug("Failed to Show Notification");
+                }
+            if (!loggedInUser.getUsername().equals(msg.getMessage().getSender().getUsername()) && msg.getMessage().getSender().equals("server"))
+                new SoundMediaPlayer(SoundMediaPlayer.Sound.Message_Receive, SoundMediaPlayer.Type.Sound).play();
             Platform.runLater(() -> {
                 //Loesche alte Nachrichten bei bedarf
                 if (chatMessages.size() > MAXCHATMESSAGEHISTORY) {
@@ -237,6 +254,20 @@ public class ChatViewPresenter extends AbstractPresenter {
     private void onChatResponseMessage(ChatResponseMessage msg) {
         if (msg.getChat().getChatId().equals(chatId) && msg.getSender().equals(loggedInUser.getUsername())) {
             updateChat(msg.getChat().getMessages());
+        }
+    }
+
+    /**
+     * Aktualisiert den loggedInUser
+     *
+     * @param message
+     * @author Julia
+     * @since Sprint4
+     */
+    @Subscribe
+    public void updatedUser(UpdatedUserMessage message) {
+        if (loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
+            loggedInUser = message.getUser();
         }
     }
 
@@ -272,6 +303,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      */
     @FXML
     private void onSendChatButtonPressed() {
+        new SoundMediaPlayer(SoundMediaPlayer.Sound.Message_Send, SoundMediaPlayer.Type.Sound).play();
         if (chatId.equals("")) return;
         String message;
 
