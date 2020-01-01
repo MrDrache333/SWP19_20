@@ -15,6 +15,7 @@ import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
+import de.uol.swp.common.user.message.UserDroppedMessage;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import de.uol.swp.common.user.request.OpenSettingsRequest;
@@ -243,6 +244,24 @@ public class MainMenuPresenter extends AbstractPresenter {
             if (users.contains(message.getUsername())) {
                 users.remove(message.getUsername());
                 chatViewPresenter.userLeft(message.getUsername());
+            }
+        });
+    }
+
+    /**
+     * User wird aus der Liste entfernt, wenn er seinen Account gelöscht hat
+     *
+     * @param message
+     * @author Julia
+     * @since Sprint4
+     */
+    @Subscribe
+    public void userDropped(UserDroppedMessage message) {
+        LOG.debug("User " + message.getUser().getUsername() + " deleted his account");
+        Platform.runLater(() -> {
+            if (users.contains(message.getUser().getUsername())) {
+                users.remove(message.getUser().getUsername());
+                chatViewPresenter.userLeft(message.getUser().getUsername());
             }
         });
     }

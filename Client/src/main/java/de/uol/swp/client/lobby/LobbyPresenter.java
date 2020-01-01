@@ -18,6 +18,7 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
+import de.uol.swp.common.user.message.UserDroppedMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import de.uol.swp.common.user.request.OpenSettingsRequest;
 import javafx.application.Platform;
@@ -277,6 +278,18 @@ public class LobbyPresenter extends AbstractPresenter {
     @Subscribe
     public void onUserLoggedOutMessage(UserLoggedOutMessage message) {
         userLeftLobby(message.getUsername());
+    }
+
+    /**
+     * User wird aus der Liste entfernt, wenn er seinen Account gelöscht hat
+     *
+     * @param message
+     * @author Julia
+     * @since Sprint4
+     */
+    @Subscribe
+    public void onUserDroppedMessage(UserDroppedMessage message) {
+        userLeftLobby(message.getUser().getUsername());
     }
 
     /**

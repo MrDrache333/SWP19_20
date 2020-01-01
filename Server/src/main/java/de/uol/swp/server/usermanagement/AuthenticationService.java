@@ -3,6 +3,7 @@ package de.uol.swp.server.usermanagement;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import de.uol.swp.common.lobby.request.LeaveAllLobbiesOnLogoutRequest;
 import de.uol.swp.common.lobby.request.UpdateLobbiesRequest;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.Session;
@@ -143,23 +144,29 @@ public class AuthenticationService extends AbstractService {
     /**
      * Der Nutzer wird gelöscht und eine entprechende Message zurückgesendet
      *
-     * @author Anna
+     * @author Anna, Julia
      * @since Sprint4
      */
     @Subscribe
     public void onDropUserRequest(DropUserRequest msg){
-            Session session = msg.getSession().get();
             User userToDrop = msg.getUser();
 
             // Could be already logged out/removed
             if (userToDrop != null) {
+                post(new LeaveAllLobbiesOnLogoutRequest((UserDTO) msg.getUser()));
 
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Dropping user " + userToDrop.getUsername());
                 }
 
+                final User[] toRemove = new User[1];
+                userSessions.values().forEach(user -> {
+                    if(user.getUsername().equals(msg.getUser().getUsername())) {
+                        toRemove[0] = user;
+                    }
+                });
+                userSessions.remove(getSession(toRemove[0]).get());
                 userManagement.dropUser(userToDrop);
-                userSessions.remove(session);
 
                 ServerMessage returnMessage = new UserDroppedMessage(userToDrop);
                 post(returnMessage);
