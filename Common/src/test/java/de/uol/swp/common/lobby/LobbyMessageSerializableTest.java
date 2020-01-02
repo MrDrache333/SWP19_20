@@ -16,7 +16,7 @@ public class LobbyMessageSerializableTest {
 
     private static final UserDTO defaultUser = new UserDTO("marco", "marco", "marco@grawunder.de");
     private final UUID testUUID = UUID.randomUUID();
-    private final LobbyDTO defaultLobby = new LobbyDTO("test", defaultUser, testUUID);
+    private final LobbyDTO defaultLobby = new LobbyDTO("test", defaultUser, testUUID, "test");
 
     @Test
     void testLobbyMessagesSerializable() {

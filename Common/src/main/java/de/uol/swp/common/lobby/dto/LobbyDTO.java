@@ -19,10 +19,12 @@ public class LobbyDTO implements Lobby, Serializable {
     private TreeMap<String, Boolean> readyStatus = new TreeMap<>();
     private Set<User> users = new TreeSet<>();
     private int players;
+    private String lobbyPassword;
     /**
      * Eindeutige UUID für die Lobby um Lobbys mit gleichen Namen unterscheiden zu können Serverseitig.
      */
     private UUID lobbyID;
+
 
 
     /**
@@ -31,14 +33,16 @@ public class LobbyDTO implements Lobby, Serializable {
      * @param name    the name
      * @param creator the creator
      * @param lobbyID the lobby id
+     * @param lobbyPassword the lobbyPassword
      */
-    public LobbyDTO(String name, User creator, UUID lobbyID) {
+    public LobbyDTO(String name, User creator, UUID lobbyID, String lobbyPassword) {
         this.name = name;
         this.owner = creator;
         this.users.add(creator);
         this.readyStatus.put(creator.getUsername(), false);
         this.lobbyID = lobbyID;
         this.players = 1;
+        this.lobbyPassword = lobbyPassword;
     }
 
     /**
@@ -49,13 +53,14 @@ public class LobbyDTO implements Lobby, Serializable {
      * @param lobbyID the lobby id
      * @param players the players
      */
-    public LobbyDTO(String name, User creator, UUID lobbyID, Set<User> users, int players) {
+    public LobbyDTO(String name, User creator, UUID lobbyID, String lobbyPassword, Set<User> users, int players) {
         this.name = name;
         this.owner = creator;
         this.readyStatus.put(creator.getUsername(), false);
         this.users = users;
         this.lobbyID = lobbyID;
         this.players = players;
+        this.lobbyPassword = lobbyPassword;
     }
 
     @Override
@@ -130,6 +135,11 @@ public class LobbyDTO implements Lobby, Serializable {
     public boolean getReadyStatus(User user) {
         if (!readyStatus.containsKey(user.getUsername())) return false;
         return readyStatus.get(user.getUsername());
+    }
+
+    @Override
+    public String getLobbyPassword(){
+        return lobbyPassword;
     }
 
     /**

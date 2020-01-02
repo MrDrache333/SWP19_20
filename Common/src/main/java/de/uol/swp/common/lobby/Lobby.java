@@ -98,4 +98,8 @@ public interface Lobby {
     TreeMap<String, Boolean> getEveryReadyStatus();
 
 
+    /**
+     * @return gibt das Passwort einer Lobby zurück
+     */
+    String getLobbyPassword();
 }

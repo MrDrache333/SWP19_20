@@ -56,28 +56,28 @@ public class LobbyService extends AbstractService {
     //--------------------------------------
 
     /**
-     * lobbyManagment auf dem Server wird aufgerufen und übergibt LobbyNamen und den Besitzer.
+     * LobbyManagement auf dem Server wird aufgerufen und übergibt LobbyNamen, LobbyPassword und den Besitzer.
      * Wenn dies erfolgt ist, folgt eine returnMessage an den Client die LobbyView anzuzeigen.
      *
      * @param msg enthält die Message vom Client mit den benötigten Daten um die Lobby zu erstellen.
-     * @author Paula, Haschem, Ferit
+     * @author Paula, Haschem, Ferit, Rike
      * @version 0.1
      * @since Sprint2
      */
     @Subscribe
     public void onCreateLobbyRequest(CreateLobbyRequest msg) {
-        UUID chatID = lobbyManagement.createLobby(msg.getLobbyName(), new LobbyUser(msg.getOwner()));
+        UUID chatID = lobbyManagement.createLobby(msg.getLobbyName(), msg.getLobbyPassword(), new LobbyUser(msg.getOwner()));
 
         chatManagement.createChat(chatID.toString());
         LOG.info("Der Chat mir der UUID " + chatID + " wurde erfolgreich erstellt");
         Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getLobbyName());
-        ServerMessage returnMessage = new CreateLobbyMessage(msg.getLobbyName(), msg.getUser(), chatID, (LobbyDTO) lobby.get());
+        ServerMessage returnMessage = new CreateLobbyMessage(msg.getLobbyName(), msg.getLobbyPassword(), msg.getUser(), chatID, (LobbyDTO) lobby.get());
         post(returnMessage);
         LOG.info("onCreateLobbyRequest wird auf dem Server aufgerufen.");
     }
 
     /**
-     * LobbyManagment auf dem Server wird aufgerufen und übergibt den Namen des Nutzers.
+     * LobbyManagement auf dem Server wird aufgerufen und übergibt den Namen des Nutzers.
      * Wenn dies erfolgt ist, folgt eine UserJoinedLobbyMessage an den Client, um den User zur Lobby hinzuzufügen
      *
      * @param msg the msg
@@ -98,7 +98,7 @@ public class LobbyService extends AbstractService {
     }
 
     /**
-     * lobbyManagment wird aufgerufen und übergibt Namen der Lobby und User.
+     * LobbyManagement wird aufgerufen und übergibt Namen der Lobby und User.
      * UserLeftLobbyMessage wird an Client gesendet
      *
      * @param msg the msg
