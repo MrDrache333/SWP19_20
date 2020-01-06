@@ -25,7 +25,6 @@ import de.uol.swp.common.user.response.RegistrationSuccessfulResponse;
 import io.netty.channel.Channel;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -189,7 +188,7 @@ public class ClientApp extends Application implements ConnectionListener {
     @Subscribe
     public void onCreateLobbyMessage(CreateLobbyMessage message) {
         if (message.getUser().getUsername().equals(user.getUsername())) {
-            sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getChatID());
+            sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getChatID(), message.getUser());
             LOG.debug("CreateLobbyMessage vom Server erfolgreich angekommen");
         }
     }
@@ -207,7 +206,7 @@ public class ClientApp extends Application implements ConnectionListener {
             if (sceneManager.getGameManagement(message.getLobbyID()) != null) {
                 sceneManager.getGameManagement(message.getLobbyID()).showLobbyView();
             } else {
-                sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getLobbyID());
+                sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getLobbyID(), message.getGameOwner());
             }
             LOG.info("User " + message.getUser().getUsername() + " joined lobby successfully");
         }

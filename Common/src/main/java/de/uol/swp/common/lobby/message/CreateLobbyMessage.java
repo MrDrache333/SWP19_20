@@ -1,7 +1,6 @@
 package de.uol.swp.common.lobby.message;
 
 import de.uol.swp.common.lobby.dto.LobbyDTO;
-import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.user.UserDTO;
 
 import java.util.UUID;
@@ -17,19 +16,14 @@ public class CreateLobbyMessage extends AbstractLobbyMessage {
     public CreateLobbyMessage() {
     }
 
-    public CreateLobbyMessage(String lobbyName, String lobbyPassword, UserDTO user, UUID chatID) {
+    public CreateLobbyMessage(String lobbyName, String lobbyPassword, UserDTO user, UUID chatID, LobbyDTO lobby) {
         this.lobbyName = lobbyName;
         this.user = user;
-        this.chatID = ChatID;
+        this.chatID = chatID;
         this.lobbyPassword = lobbyPassword;
         this.chatID = chatID;
-    }
-
-    public CreateLobbyMessage(Lobby lobby) {
         this.lobby = lobby;
     }
-
-
 
     public String getLobbyName() {
         return lobbyName;
@@ -46,6 +40,7 @@ public class CreateLobbyMessage extends AbstractLobbyMessage {
 
     public String getLobbyPassword() {
         return lobbyPassword;
+    }
 
     public void setChatID(UUID chatID) {
         chatID = chatID;

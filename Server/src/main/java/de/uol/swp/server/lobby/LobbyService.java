@@ -90,7 +90,7 @@ public class LobbyService extends AbstractService {
         if (lobby.isPresent() && !lobby.get().getUsers().contains(msg.getUser()) && lobby.get().getPlayers() < 4) {
             LOG.info("User " + msg.getUser().getUsername() + " is joining lobby " + msg.getLobbyName());
             lobby.get().joinUser(new LobbyUser(msg.getUser()));
-            ServerMessage returnMessage = new UserJoinedLobbyMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID(), (LobbyDTO) lobby.get());
+            ServerMessage returnMessage = new UserJoinedLobbyMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID(),(UserDTO) lobby.get().getOwner(), (LobbyDTO) lobby.get());
             post(returnMessage);
         } else {
             LOG.error("Joining lobby " + msg.getLobbyName() + " failed");
@@ -111,17 +111,11 @@ public class LobbyService extends AbstractService {
             LOG.info("User " + msg.getUser().getUsername() + " is leaving lobby " + msg.getLobbyName());
             //Falls der Besitzer der Lobby aus der Lobby geht wird dieser aktualisiert
             Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getLobbyName());
-            User gameOwner = null;
-            if(!lobby.isEmpty()) {
-                gameOwner = lobby.get().getOwner();
-            }
-            ServerMessage returnMessage = new UserLeftLobbyMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID(), (UserDTO) gameOwner);
             ServerMessage returnMessage;
-            Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getLobbyName());
             if (lobby.isPresent()) {
-                returnMessage = new UserLeftLobbyMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID(), (LobbyDTO) lobby.get());
+                returnMessage = new UserLeftLobbyMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID(), (UserDTO) lobby.get().getOwner(), (LobbyDTO) lobby.get());
             } else {
-                returnMessage = new UserLeftLobbyMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID(), null);
+                returnMessage = new UserLeftLobbyMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID(), null, null);
             }
             post(returnMessage);
 

@@ -161,11 +161,6 @@ public class LobbyPresenter extends AbstractPresenter {
         updateUsersList();
     }
 
-    @FXML
-    public void onLeaveLobbyButtonPressed(ActionEvent event) {
-        lobbyService.leaveLobby(lobbyName, loggedInUserDTO, lobbyID);
-    }
-
     /**
      * On logout button pressed.
      *
@@ -255,8 +250,8 @@ public class LobbyPresenter extends AbstractPresenter {
         //der alte User wird aus der Lobby entfernt und der neue hinzugefügt
         Platform.runLater(() -> {
             if (readyUserList.containsKey(message.getOldUser().getUsername())){
-                userLeftLobby(message.getOldUser().getUsername());
-                readyUserList.put(message.getUser().getUsername(), getHboxFromReadyUser(message.getUser().getUsername(), false));
+                userLeftLobby(message.getOldUser().getUsername(), false);
+                readyUserList.put(message.getUser().getUsername(), getHboxFromReadyUser(message.getUser(), false));
                 updateUsersList();
                 chatViewPresenter.userJoined(message.getUser().getUsername());
             }
@@ -294,7 +289,7 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void onUserDroppedMessage(UserDroppedMessage message) {
-        userLeftLobby(message.getUser().getUsername());
+        userLeftLobby(message.getUser().getUsername(), false);
     }
 
     /**

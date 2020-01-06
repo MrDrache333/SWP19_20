@@ -30,7 +30,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
@@ -39,7 +38,6 @@ import org.apache.logging.log4j.Logger;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 public class SceneManager {
@@ -117,6 +115,8 @@ public class SceneManager {
         alert.getDialogPane().setContentText(message);
         alert.getDialogPane().setHeaderText(title);
         alert.show();
+    }
+
     @Subscribe
     public void onCloseSettingsEvent(CloseSettingsEvent event) { closeSettings(); }
 
@@ -144,100 +144,6 @@ public class SceneManager {
         });
     }
 
-    private void initViews() {
-        initLoginView();
-        initMainView();
-        initRegistrationView();
-    }
-
-    private Parent initPresenter(String fxmlFile) {
-        Parent rootPane;
-        FXMLLoader loader = injector.getInstance(FXMLLoader.class);
-        try {
-            URL url = getClass().getResource(fxmlFile);
-            LOG.debug("Loading " + url);
-            loader.setLocation(url);
-            rootPane = loader.load();
-        } catch (Exception e) {
-            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
-        }
-        return rootPane;
-    }
-
-    private Parent initSettingsPresenter(SettingsPresenter settingsPresenter) {
-        Parent rootPane;
-        FXMLLoader loader = injector.getInstance(FXMLLoader.class);
-        try {
-            URL url = getClass().getResource(SettingsPresenter.fxml);
-            LOG.debug("Loading " + url);
-            loader.setLocation(url);
-            loader.setController(settingsPresenter);
-            rootPane = loader.load();
-        } catch (Exception e) {
-            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
-        }
-        return rootPane;
-    }
-
-    private Parent initDeleteAccountPresenter(DeleteAccountPresenter deleteAccountPresenter) {
-        Parent rootPane;
-        FXMLLoader loader = injector.getInstance(FXMLLoader.class);
-        try {
-            URL url = getClass().getResource(DeleteAccountPresenter.fxml);
-            LOG.debug("Loading " + url);
-            loader.setLocation(url);
-            loader.setController(deleteAccountPresenter);
-            rootPane = loader.load();
-        } catch (Exception e) {
-            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
-        }
-        return rootPane;
-    }
-
-    private void initMainView() {
-        if (mainScene == null) {
-            Parent rootPane = initPresenter(MainMenuPresenter.fxml);
-            mainScene = new Scene(rootPane, 1280, 750);
-            mainScene.getStylesheets().add(styleSheet);
-            mainScene.getStylesheets().add(MainMenuPresenter.css);
-        }
-    }
-
-    private void initLoginView() {
-        if (loginScene == null) {
-            Parent rootPane = initPresenter(LoginPresenter.fxml);
-            loginScene = new Scene(rootPane, 1280, 750);
-            loginScene.getStylesheets().add(styleSheet);
-            loginScene.getStylesheets().add(LoginPresenter.css);
-        }
-    }
-
-    private void initRegistrationView() {
-        if (registrationScene == null) {
-            Parent rootPane = initPresenter(RegistrationPresenter.fxml);
-            registrationScene = new Scene(rootPane, 1280, 750);
-            registrationScene.getStylesheets().add(styleSheet);
-            registrationScene.getStylesheets().add(RegistrationPresenter.css);
-        }
-    }
-
-    private void initSettingsView(SettingsPresenter settingsPresenter) {
-        if (settingsScene == null) {
-            Parent rootPane = initSettingsPresenter(settingsPresenter);
-            settingsScene = new Scene(rootPane, 400, 255);
-            settingsScene.getStylesheets().add(SettingsPresenter.css);
-        }
-    }
-
-    private void initDeleteAccountView() {
-        if (deleteAccountScene == null) {
-            Parent rootPane = initDeleteAccountPresenter(new DeleteAccountPresenter(currentUser, lobbyService, userService, eventBus));
-            deleteAccountScene = new Scene(rootPane, 200, 100);
-            deleteAccountScene.getStylesheets().add(SettingsPresenter.css);
-
-        }
-    }
-
     @Subscribe
     public void onGameQuitEvent(GameQuitEvent event) {
         showScene(mainScene, "test");
@@ -257,6 +163,10 @@ public class SceneManager {
 
     public void showError(String e) {
         showError("Error:\n", e);
+    }
+
+    public void closeDeleteAccount() {
+        Platform.runLater(() -> deleteAccountStage.close());
     }
 
     private void showScene(final Scene scene, final String title) {
@@ -397,6 +307,36 @@ public class SceneManager {
         return rootPane;
     }
 
+    private Parent initSettingsPresenter(SettingsPresenter settingsPresenter) {
+        Parent rootPane;
+        FXMLLoader loader = injector.getInstance(FXMLLoader.class);
+        try {
+            URL url = getClass().getResource(SettingsPresenter.fxml);
+            LOG.debug("Loading " + url);
+            loader.setLocation(url);
+            loader.setController(settingsPresenter);
+            rootPane = loader.load();
+        } catch (Exception e) {
+            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
+        }
+        return rootPane;
+    }
+
+    private Parent initDeleteAccountPresenter(DeleteAccountPresenter deleteAccountPresenter) {
+        Parent rootPane;
+        FXMLLoader loader = injector.getInstance(FXMLLoader.class);
+        try {
+            URL url = getClass().getResource(DeleteAccountPresenter.fxml);
+            LOG.debug("Loading " + url);
+            loader.setLocation(url);
+            loader.setController(deleteAccountPresenter);
+            rootPane = loader.load();
+        } catch (Exception e) {
+            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
+        }
+        return rootPane;
+    }
+
     private void initMainView() {
         if (mainScene == null) {
             Parent rootPane = initPresenter(MainMenuPresenter.fxml);
@@ -424,7 +364,20 @@ public class SceneManager {
         }
     }
 
-    public void closeDeleteAccount() {
-        Platform.runLater(() -> deleteAccountStage.close());
+    private void initSettingsView(SettingsPresenter settingsPresenter) {
+        if (settingsScene == null) {
+            Parent rootPane = initSettingsPresenter(settingsPresenter);
+            settingsScene = new Scene(rootPane, 400, 255);
+            settingsScene.getStylesheets().add(SettingsPresenter.css);
+        }
+    }
+
+    private void initDeleteAccountView() {
+        if (deleteAccountScene == null) {
+            Parent rootPane = initDeleteAccountPresenter(new DeleteAccountPresenter(currentUser, lobbyService, userService, eventBus));
+            deleteAccountScene = new Scene(rootPane, 200, 100);
+            deleteAccountScene.getStylesheets().add(SettingsPresenter.css);
+
+        }
     }
 }

@@ -1,7 +1,6 @@
 package de.uol.swp.client.main;
 
 import com.google.common.eventbus.Subscribe;
-import com.sun.glass.ui.PlatformFactory;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.ClientApp;
 import de.uol.swp.client.SceneManager;
@@ -33,17 +32,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
-import javafx.stage.Modality;
 import javafx.util.Callback;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
-import javax.swing.text.html.ImageView;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -164,6 +159,8 @@ public class MainMenuPresenter extends AbstractPresenter {
             lobbyName.requestFocus();
         }
         lobbyName.clear();
+    }
+
     public void onShowLobbyDialogButtonPressed(ActionEvent event) {
         // Erzeugung Dialog
         JDialog createLobbyDialoge = new JDialog();
@@ -203,7 +200,7 @@ public class MainMenuPresenter extends AbstractPresenter {
                 // wenn Name vorhanden: Alert + Moeglichkeit neuen Namen anzugeben
                 if (lobbyNames.contains(lName_input.getText())) {
                     Platform.runLater(() -> {
-                        showAlert(Alert.AlertType.WARNING, "Dieser Name ist bereits vergeben", "Fehler");
+                        SceneManager.showAlert(Alert.AlertType.WARNING, "Dieser Name ist bereits vergeben", "Fehler");
                         lName_input.setText("");
                         createLobbyDialoge.requestFocus();
                     });
@@ -218,7 +215,7 @@ public class MainMenuPresenter extends AbstractPresenter {
                     createLobbyDialoge.setVisible(false);
                 } else {
                     Platform.runLater(() -> {
-                        showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden", "Fehler");
+                        SceneManager.showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden", "Fehler");
                         lName_input.setText("");
                         createLobbyDialoge.requestFocus();
                     });
@@ -229,15 +226,14 @@ public class MainMenuPresenter extends AbstractPresenter {
         panel.add(createLobby);
         createLobbyDialoge.add(panel);
         createLobbyDialoge.setVisible(true);
-
     }
 
+    public boolean hasFocus(){
+        return ClientApp.getSceneManager().hasFocus();
+    }
     //--------------------------------------
     // EVENTBUS
     //--------------------------------------
-    public boolean hasFocus() {
-        return ClientApp.getSceneManager().hasFocus();
-    }
 
     /**
      * Die Methode postet ein Request auf den Bus, wenn der Einstellungen-Button gedrückt wird
@@ -506,7 +502,7 @@ public class MainMenuPresenter extends AbstractPresenter {
                                             // Passwort ist nicht gleich, Fehlermeldung erscheint
                                             if (!lobby.getLobbyPassword().equals(String.valueOf(ePassword.getPassword()))) {
                                                 Platform.runLater(() -> {
-                                                    showAlert(Alert.AlertType.ERROR, "Das eingegebene Passwort ist falsch.", "Fehler");
+                                                    SceneManager.showAlert(Alert.AlertType.ERROR, "Das eingegebene Passwort ist falsch.", "Fehler");
                                                     ePassword.setText("");
                                                 });
                                             }
@@ -557,4 +553,3 @@ public class MainMenuPresenter extends AbstractPresenter {
 }
 
 
-}
