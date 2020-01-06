@@ -3,13 +3,17 @@ package de.uol.swp.server.usermanagement;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import de.uol.swp.common.lobby.request.LeaveAllLobbiesOnLogoutRequest;
+import de.uol.swp.common.lobby.request.UpdateLobbiesRequest;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.Session;
 import de.uol.swp.common.user.User;
+import de.uol.swp.common.user.UserDTO;
+import de.uol.swp.common.user.message.UpdateUserFailedMessage;
+import de.uol.swp.common.user.message.UpdatedUserMessage;
+import de.uol.swp.common.user.message.UserDroppedMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
-import de.uol.swp.common.user.request.LoginRequest;
-import de.uol.swp.common.user.request.LogoutRequest;
-import de.uol.swp.common.user.request.RetrieveAllOnlineUsersRequest;
+import de.uol.swp.common.user.request.*;
 import de.uol.swp.common.user.response.AllOnlineUsersResponse;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.communication.UUIDSession;
@@ -109,5 +113,64 @@ public class AuthenticationService extends AbstractService {
         post(response);
     }
 
+    /**
+     * Aktualisierung des Users wird versucht, bei Erfolg wird eine UpdatedUserMessage gesendet, andernfalls wird eine UpdateUserFailedMessage
+     * mit entsprechender Fehlermeldung gesendet
+     *
+     * @param msg
+     * @author Julia
+     * @since Sprint4
+     */
+    @Subscribe
+    public void onUpdateUserRequest(UpdateUserRequest msg) {
+        userSessions.put(msg.getSession().get(), msg.getUser());
+        msg.getSession().get().updateUser(msg.getUser());
+        ServerMessage returnMessage;
+        try {
+            User user = userManagement.updateUser(msg.getUser(), msg.getOldUser());
+            returnMessage = new UpdatedUserMessage(user, msg.getOldUser());
+            LOG.info("User " + msg.getOldUser().getUsername() + " updated successfully");
+            post(new UpdateLobbiesRequest((UserDTO) user, (UserDTO) msg.getOldUser()));
+        } catch (UserUpdateException e) {
+            userSessions.replace(msg.getSession().get(), msg.getOldUser());
+            msg.getSession().get().updateUser(msg.getOldUser());
+            returnMessage = new UpdateUserFailedMessage(msg.getOldUser(), e.getMessage());
+            LOG.info("Update of user " + msg.getOldUser().getUsername() + " failed");
+        }
+        post(returnMessage);
+    }
+
+
+    /**
+     * Der Nutzer wird gelöscht und eine entprechende Message zurückgesendet
+     *
+     * @author Anna, Julia
+     * @since Sprint4
+     */
+    @Subscribe
+    public void onDropUserRequest(DropUserRequest msg){
+            User userToDrop = msg.getUser();
+
+            // Could be already logged out/removed
+            if (userToDrop != null) {
+                post(new LeaveAllLobbiesOnLogoutRequest((UserDTO) msg.getUser()));
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Dropping user " + userToDrop.getUsername());
+                }
+
+                final User[] toRemove = new User[1];
+                userSessions.values().forEach(user -> {
+                    if(user.getUsername().equals(msg.getUser().getUsername())) {
+                        toRemove[0] = user;
+                    }
+                });
+                userSessions.remove(getSession(toRemove[0]).get());
+                userManagement.dropUser(userToDrop);
+
+                ServerMessage returnMessage = new UserDroppedMessage(userToDrop);
+                post(returnMessage);
+        }
+    }
 
 }

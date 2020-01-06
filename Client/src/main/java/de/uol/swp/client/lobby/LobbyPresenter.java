@@ -1,5 +1,6 @@
 package de.uol.swp.client.lobby;
 
+import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
@@ -13,7 +14,10 @@ import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
+import de.uol.swp.common.user.message.UpdatedUserMessage;
+import de.uol.swp.common.user.message.UserDroppedMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
+import de.uol.swp.common.user.request.OpenSettingsRequest;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -67,6 +71,7 @@ public class LobbyPresenter extends AbstractPresenter {
     private User loggedInUser;
     private UserDTO loggedInUserDTO;
     private UserDTO gameOwner;
+    private EventBus eventBus;
     private Injector injector;
 
     //Eigener Status in der Lobby
@@ -96,7 +101,7 @@ public class LobbyPresenter extends AbstractPresenter {
      * @param injector          the injector
      * @param gameManagement    the game management
      */
-    public LobbyPresenter(User loggedInUser, String name, UUID lobbyID, ChatService chatService, ChatViewPresenter chatViewPresenter, LobbyService lobbyService, UserService userService, Injector injector, UserDTO gameOwner, GameManagement gameManagement) {
+    public LobbyPresenter(User loggedInUser, String name, UUID lobbyID, ChatService chatService, ChatViewPresenter chatViewPresenter, LobbyService lobbyService, UserService userService, Injector injector, UserDTO gameOwner, GameManagement gameManagement, EventBus eventBus) {
         this.loggedInUser = loggedInUser;
         this.lobbyName = name;
         this.lobbyID = lobbyID;
@@ -107,12 +112,31 @@ public class LobbyPresenter extends AbstractPresenter {
         this.injector = injector;
         this.gameOwner = gameOwner;
         this.gameManagement = gameManagement;
+        this.eventBus = eventBus;
         this.loggedInUserDTO = new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail());
     }
 
     //--------------------------------------
     // FXML METHODS
     //--------------------------------------
+
+    @FXML
+    public void onLeaveLobbyButtonPressed(ActionEvent event) {
+        lobbyService.leaveLobby(lobbyName, loggedInUserDTO, lobbyID);
+    }
+
+    /**
+     * Die Methode postet ein Request auf den Bus, wenn der Einstellungen-Button gedrückt wird
+     *
+     * @param actionEvent
+     * @author Anna
+     * @since Sprint4
+     */
+    @FXML
+    public void onSettingsButtonPressed(ActionEvent actionEvent) {
+        OpenSettingsRequest request = new OpenSettingsRequest(loggedInUser);
+        eventBus.post(request);
+    }
 
     /**
      * Initialize.
@@ -215,6 +239,31 @@ public class LobbyPresenter extends AbstractPresenter {
     }
 
     /**
+     * Aktualisiert den loggedInUser sowie die Liste, falls sich der Username geändert hat
+     *
+     * @param message
+     * @author Julia, Anna
+     * @since Sprint4
+     */
+    @Subscribe
+    public void updatedUser(UpdatedUserMessage message) {
+        if (loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
+            loggedInUser = message.getUser();
+            loggedInUserDTO = (UserDTO) message.getUser();
+            LOG.debug("User " + message.getOldUser().getUsername() + " changed his name to " + message.getUser().getUsername());
+        }
+        //der alte User wird aus der Lobby entfernt und der neue hinzugefügt
+        Platform.runLater(() -> {
+            if (readyUserList.containsKey(message.getOldUser().getUsername())){
+                userLeftLobby(message.getOldUser().getUsername());
+                readyUserList.put(message.getUser().getUsername(), getHboxFromReadyUser(message.getUser().getUsername(), false));
+                updateUsersList();
+                chatViewPresenter.userJoined(message.getUser().getUsername());
+            }
+        });
+    }
+
+    /**
      * On game start message.
      *
      * @param message the message
@@ -234,6 +283,18 @@ public class LobbyPresenter extends AbstractPresenter {
     @Subscribe
     public void onUserLoggedOutMessage(UserLoggedOutMessage message) {
         userLeftLobby(message.getUsername(), false);
+    }
+
+    /**
+     * User wird aus der Liste entfernt, wenn er seinen Account gelöscht hat
+     *
+     * @param message
+     * @author Julia
+     * @since Sprint4
+     */
+    @Subscribe
+    public void onUserDroppedMessage(UserDroppedMessage message) {
+        userLeftLobby(message.getUser().getUsername());
     }
 
     /**
@@ -263,7 +324,7 @@ public class LobbyPresenter extends AbstractPresenter {
     @Subscribe
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
         if (!message.getLobbyID().equals(lobbyID)) return;
-        LOG.debug("User " + message.getLobbyName() + " left the Lobby");
+        LOG.debug("User " + message.getUser().getUsername() + " left the Lobby");
         userLeftLobby(message.getUser().getUsername(), false);
         gameOwner = message.getGameOwner();
         chatViewPresenter.userLeft(message.getUser().getUsername());

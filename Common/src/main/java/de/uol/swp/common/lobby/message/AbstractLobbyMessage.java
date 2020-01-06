@@ -8,11 +8,9 @@ import java.util.UUID;
 
 public class AbstractLobbyMessage extends AbstractServerMessage {
 
-    private String name;
     private UserDTO user;
     private UUID lobbyID;
     private String lobbyName;
-
 
     public AbstractLobbyMessage() {
     }
@@ -27,24 +25,12 @@ public class AbstractLobbyMessage extends AbstractServerMessage {
         return lobbyName;
     }
 
-    public void setLobbyName(String lobbyName) {
-        this.lobbyName = lobbyName;
-    }
-
     public UserDTO getUser() {
         return user;
     }
 
-    public void setUser(UserDTO user) {
-        this.user = user;
-    }
-
     public UUID getLobbyID() {
         return lobbyID;
-    }
-
-    public void setLobbyID(UUID lobbyID) {
-        this.lobbyID = lobbyID;
     }
 
     @Override
@@ -52,12 +38,12 @@ public class AbstractLobbyMessage extends AbstractServerMessage {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AbstractLobbyMessage that = (AbstractLobbyMessage) o;
-        return Objects.equals(name, that.name) &&
+        return Objects.equals(lobbyName, that.lobbyName) &&
                 Objects.equals(user, that.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, user);
+        return Objects.hash(lobbyName, user);
     }
 }

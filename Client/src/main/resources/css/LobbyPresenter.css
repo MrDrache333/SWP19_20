@@ -1,0 +1,30 @@
+.button:hover {
+    -fx-background-color: #a3915f;
+    -fx-cursor: hand;
+}
+
+.button {
+    -fx-background-color: #6b6040;
+    -fx-text-fill: #e5c7ba;
+    -fx-background-radius: 90;
+    -fx-border-radius: 90;
+}
+
+.list-view {
+    -fx-background-color: transparent;
+    -fx-border-color: black;
+    -fx-border-width: 2;
+}
+
+.table-view {
+    -fx-background-color: transparent;
+    -fx-border-color: black;
+    -fx-border-width: 2;
+}
+.table-view .column-header, .table-view .column-header .filler, .table-view .column-header .background .filler {
+    -fx-background-color: #a3915f;
+    -fx-text-fill: #6b6040;
+    -fx-prompt-text-fill: #e5c7ba;
+    -fx-background-color-opacity:0.1 ;
+    -fx-blend-mode: darken;
+}

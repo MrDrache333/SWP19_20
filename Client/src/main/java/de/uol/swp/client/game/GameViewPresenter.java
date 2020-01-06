@@ -13,6 +13,7 @@ import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
+import de.uol.swp.common.user.message.UpdatedUserMessage;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -172,6 +173,24 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
+     * Aktualisiert den loggedInUser sowie die Liste, falls sich der Username geändert hat
+     *
+     * @param message
+     * @author Julia
+     * @since Sprint4
+     */
+    @Subscribe
+    public void updatedUser(UpdatedUserMessage message) {
+        if (loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
+            loggedInUser = message.getUser();
+        }
+        if (users.contains(message.getOldUser().getUsername())){
+            users.remove(message.getOldUser().getUsername());
+            users.add(message.getUser().getUsername());
+        }
+    }
+
+    /**
      * Bei einer AllLobbyUsersResponse wird updateUsersList ausgeführt, wenn es diese Lobby betrifft.
      * Bis auf die Lobby-Überprüfung & Response-Typ quasi äquivalent zu MainMenuPresenter.userList.
      *
@@ -191,9 +210,9 @@ public class GameViewPresenter extends AbstractPresenter {
      * Die usersView Liste wird geupdatet.
      * Äquivalent zu MainMenuPresenter.updateUsersList.
      *
+     * @param userList
      * @author Marvin
      * @since Sprint3
-     * @param userList
      */
     private void updateUsersList(Set<User> userList) {
         // Attention: This must be done on the FX Thread!

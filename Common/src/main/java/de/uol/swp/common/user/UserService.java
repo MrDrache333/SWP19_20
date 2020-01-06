@@ -49,14 +49,13 @@ public interface UserService {
     void dropUser(User user);
 
     /**
-     * Update a user
+     * Aktualisiert einen User
      *
-     * @param user the user object containing all infos to
-     *             update, if some values are not set, (e.g. password is "")
-     *             these fields are not updated
-     * @return the updated user object
+     * @param user User mit neuen Daten
+     * @param oldUser User mit alten Daten
+     * @return
      */
-    User updateUser(User user);
+    User updateUser(User user, User oldUser);
 
     /**
      * Retrieve the list of all current logged in users

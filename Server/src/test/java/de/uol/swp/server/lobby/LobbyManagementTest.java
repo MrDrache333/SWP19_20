@@ -14,11 +14,12 @@ class LobbyManagementTest {
 
     static final User defaultLobbyOwner = new UserDTO("Owner", "Test", "123@test.de");
     static final String defaultLobbyName = "Lobby";
+    static final String defaultLobbyPassword = "Lobby";
     final LobbyManagement lobbyManagement = new LobbyManagement();
 
     @BeforeEach
     void createLobby() {
-        lobbyManagement.createLobby(defaultLobbyName, defaultLobbyOwner);
+        lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, defaultLobbyOwner);
     }
 
     @Test
@@ -30,7 +31,7 @@ class LobbyManagementTest {
     @Test
     void createLobbyFailedTest() {
         //Lobby name already exists
-        assertThrows(IllegalArgumentException.class, () -> lobbyManagement.createLobby(defaultLobbyName, defaultLobbyOwner));
+        assertThrows(IllegalArgumentException.class, () -> lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, defaultLobbyOwner));
     }
 
     @Test
@@ -65,7 +66,7 @@ class LobbyManagementTest {
     @Test
     void getLobbiesTest() {
         assertEquals(1, lobbyManagement.getLobbies().size());
-        lobbyManagement.createLobby("Lobby2", new UserDTO("", "", ""));
+        lobbyManagement.createLobby("Lobby2","", new UserDTO("", "", ""));
         assertEquals(2, lobbyManagement.getLobbies().size());
         lobbyManagement.dropLobby(defaultLobbyName);
         lobbyManagement.dropLobby("Lobby2");

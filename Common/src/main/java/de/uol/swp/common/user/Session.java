@@ -4,4 +4,6 @@ public interface Session {
     String getSessionId();
 
     User getUser();
+
+    void updateUser(User user);
 }
