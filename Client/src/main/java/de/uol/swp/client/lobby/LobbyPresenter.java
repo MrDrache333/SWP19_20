@@ -29,6 +29,8 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Paint;
@@ -37,6 +39,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.awt.*;
+import java.awt.image.ImageObserver;
+import java.awt.image.ImageProducer;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -412,6 +416,13 @@ public class LobbyPresenter extends AbstractPresenter {
                     lobbyService.kickUser(lobbyName, (UserDTO) loggedInUser, lobbyID, (UserDTO) user);
                 }
             });
+        }
+        if(user.getUsername().equals(gameOwner.getUsername())){
+            Image crown = new Image("images/crown.png");
+            ImageView crownView = new ImageView(crown);
+            crownView.setFitHeight(15);
+            crownView.setFitWidth(15);
+            box.getChildren().add(crownView);
         }
         return box;
     }
