@@ -47,14 +47,19 @@ public class RegistrationPresenter extends AbstractPresenter {
         setEventBus(eventBus);
     }
 
+    //--------------------------------------
+    // FXML METHODS
+    //--------------------------------------
     @FXML
     void onCancelButtonPressed(ActionEvent event) {
         eventBus.post(registrationCanceledEvent);
     }
 
     /**
+     * Logik des Registrierungsfensters
      * @param event
-     * @implNote Sprint 4: Timo Siems, E-Mailfeld wird abgefragt.
+     * @author <Bitte ergänzen>, Timo Siems
+     * @since Sprint 1
      */
     @FXML
     void onRegisterButtonPressed(ActionEvent event) {
