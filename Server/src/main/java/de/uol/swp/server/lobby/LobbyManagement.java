@@ -99,7 +99,7 @@ public class LobbyManagement {
                 updatedUsers.remove(oldUser);
                 updatedUsers.add(updatedUser);
                 Set<User> newUsers = new TreeSet<>(updatedUsers);
-                Lobby lobbyToUpdate = new LobbyDTO(lobby.getName(), updatedOwner, lobby.getLobbyID(),lobby.getLobbyPassword(), newUsers, lobby.getPlayers());
+                Lobby lobbyToUpdate = new LobbyDTO(lobby.getName(), updatedOwner, lobby.getLobbyID(),lobby.getLobbyPassword(), newUsers, lobby.getPlayers(), lobby.getMaxPlayer());
                 updatedLobbies.put(lobbyToUpdate.getName(), lobbyToUpdate);
             }
         }
@@ -119,5 +119,35 @@ public class LobbyManagement {
      */
     public Optional<String> getName(UUID lobbyID) {
         return lobbyNames.get(lobbyID) != null ? Optional.of(lobbyNames.get(lobbyID)) : Optional.empty();
+    }
+
+    /**
+     * @author Timo, Rike
+     * @since Sprint 3
+     * @implNote Gibt den Lobbyowner zurück
+     */
+    public User getLobbyOwner(UUID lobbyID)
+    {
+        return lobbies.get(lobbyNames.get(lobbyID)).getOwner();
+    }
+
+    /**
+     * @author Timo, Rike
+     * @since Sprint 3
+     * @implNote Setzt den Wert der maximalen Spieleranzahl einer Lobby
+     */
+    public boolean setMaxPlayer(Integer maxPlayerValue, UUID lobbyID, User loggedInUser)
+    {
+        String tmp = lobbyNames.get(lobbyID);
+
+        if(lobbies.get(tmp).getOwner().equals(loggedInUser))
+        {
+            lobbies.get(tmp).setMaxPlayer(maxPlayerValue);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

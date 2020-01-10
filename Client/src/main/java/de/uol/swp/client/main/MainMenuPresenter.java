@@ -75,7 +75,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     @FXML
     private TableColumn<Lobby, String> host = new TableColumn<>("Host");
     @FXML
-    private TableColumn<Lobby, Integer> players = new TableColumn<>("Spieler");
+    private TableColumn<Lobby, String> players = new TableColumn<>("Spieler");
     @FXML
     private TableColumn<Lobby, Void> joinLobby = new TableColumn<>();
     @FXML
@@ -139,10 +139,10 @@ public class MainMenuPresenter extends AbstractPresenter {
         //Initialisieren der Lobbytabelle
         name.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getName() + (c.getValue().getLobbyPassword().equals("") ? " (offen)" : " (privat)")));
         host.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getOwner().getUsername()));
-        players.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getPlayers()).asObject());
         addJoinLobbyButton();
         lobbiesView.getColumns().addAll(name, host, players, joinLobby);
         lobbiesView.setPlaceholder(new Label("Keine Lobbies vorhanden"));
+        players.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getPlayers() + " / " + c.getValue().getMaxPlayer()));
         name.setResizable(false);
         host.setResizable(false);
         players.setResizable(false);
@@ -395,7 +395,7 @@ public class MainMenuPresenter extends AbstractPresenter {
                     updatedUsers.remove(message.getOldUser());
                     updatedUsers.add(message.getUser());
                     Set<User> newUsers = new TreeSet<>(updatedUsers);
-                    Lobby lobbyToUpdate = new LobbyDTO(lobby.getName(), updatedOwner, lobby.getLobbyID(), lobby.getLobbyPassword(), newUsers, lobby.getPlayers());
+                    Lobby lobbyToUpdate = new LobbyDTO(lobby.getName(), updatedOwner, lobby.getLobbyID(), lobby.getLobbyPassword(), newUsers, lobby.getPlayers(), lobby.getMaxPlayer());
                     toRemove.add(lobby);
                     toAdd.add(lobbyToUpdate);
                 }
@@ -412,7 +412,6 @@ public class MainMenuPresenter extends AbstractPresenter {
             }
         });
     }
-
 
     /**
      * User list.
@@ -480,7 +479,7 @@ public class MainMenuPresenter extends AbstractPresenter {
                     {
                         joinLobbyButton.setOnAction((ActionEvent event) -> {
                             Lobby lobby = getTableView().getItems().get(getIndex());
-                            if (lobby.getPlayers() == 4) {
+                            if (lobby.getPlayers() == lobby.getMaxPlayer()) {
                                 showAlert(Alert.AlertType.WARNING, "Diese Lobby ist voll!", "Fehler");
                             } else if (lobby.getUsers().contains(loggedInUser)) {
                                 showAlert(Alert.AlertType.WARNING, "Du bist dieser Lobby schon beigetreten!", "Fehler");
@@ -560,4 +559,3 @@ public class MainMenuPresenter extends AbstractPresenter {
         });
     }
 }
-

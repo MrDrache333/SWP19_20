@@ -1,5 +1,6 @@
 package de.uol.swp.common.lobby;
 
+import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 
 import java.util.ArrayList;
@@ -59,4 +60,11 @@ public interface LobbyService {
      * @param Status    the status
      */
     void setLobbyUserStatus(String LobbyName, UserDTO user, boolean Status);
+
+    /**
+     * @author Timo, Rike
+     * @since Sprint 3
+     * @implNote Notwendige Ergänzung im LobbyService Interface
+     */
+    void setMaxPlayer(Integer maxPlayer, UUID lobbyID, User loggedInUser);
 }
