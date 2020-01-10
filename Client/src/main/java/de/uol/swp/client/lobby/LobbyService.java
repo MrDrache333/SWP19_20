@@ -39,7 +39,7 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
     }
 
     /**
-     * erstellt ein LobbyJoinUserRequest und postet es auf den Eventbus
+     * Erstellt ein LobbyJoinUserRequest und postet es auf den Eventbus
      *
      * @param lobbyName
      * @param user
@@ -54,7 +54,7 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
     }
 
     /**
-     * erstellt eine LobbyLeaveUserRequest, postet es auf den EventBus
+     * Erstellt eine LobbyLeaveUserRequest, postet es auf den EventBus
      *
      * @param lobbyName
      * @param user
@@ -69,7 +69,7 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
     }
 
     /**
-     * erstellt eine LeaveAllLobbiesOnLogoutRequest und postet es auf den EventBus
+     * Erstellt eine LeaveAllLobbiesOnLogoutRequest und postet es auf den EventBus
      *
      * @param user
      * @author Julia, Paula
@@ -82,7 +82,7 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
     }
 
     /**
-     * erstellt ein RetrieveAllOnlineLobbiesRequest und postet es auf den Eventbus
+     * Erstellt ein RetrieveAllOnlineLobbiesRequest und postet es auf den Eventbus
      *
      * @author Julia
      * @since Sprint2

@@ -95,7 +95,7 @@
                 </AnchorPane>
                 <AnchorPane prefHeight="34.0" prefWidth="600.0" GridPane.rowIndex="3">
                     <children>
-                        <Button layoutX="31.0" layoutY="10.0" mnemonicParsing="false" text="Einstellungen"
+                        <Button layoutX="31.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSettingsButtonPressed" text="Einstellungen"
                                 AnchorPane.leftAnchor="25.0">
                             <font>
                                 <Font size="15.0"/>

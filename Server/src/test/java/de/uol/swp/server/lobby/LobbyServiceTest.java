@@ -34,6 +34,7 @@ class LobbyServiceTest {
     static final User lobbyOwner = new UserDTO("Marco", "Marco", "Marco@Grawunder.com");
     static final User lobbyUser = new UserDTO("Testuser", "1234", "123@test.de");
     static final String defaultLobbyName = "Lobby";
+    static final String defaultLobbyPassword = "Lobby";
     final EventBus bus = new EventBus();
     final UserManagement userManagement = new UserManagement(new MainMemoryBasedUserStore());
     final LobbyManagement lobbyManagement = new LobbyManagement();
@@ -77,7 +78,7 @@ class LobbyServiceTest {
 
     @Test
     void onLobbyJoinUserRequestTest() throws InterruptedException {
-        final UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, lobbyOwner);
+        final UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
         lobbyService.onLobbyJoinUserRequest(new LobbyJoinUserRequest(defaultLobbyName, new UserDTO(lobbyUser.getUsername(), lobbyUser.getPassword(), lobbyUser.getEMail()), lobbyID));
 
         lock.await(1000, TimeUnit.MILLISECONDS);
@@ -95,7 +96,7 @@ class LobbyServiceTest {
 
     @Test
     void onLobbyLeaveUserRequestTest() throws InterruptedException {
-        final UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, lobbyOwner);
+        final UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName,defaultLobbyPassword, lobbyOwner);
         lobbyManagement.getLobby(defaultLobbyName).get().joinUser(lobbyUser);
         lobbyService.onLobbyLeaveUserRequest(new LobbyLeaveUserRequest(defaultLobbyName, new UserDTO(lobbyOwner.getUsername(), lobbyOwner.getPassword(), lobbyOwner.getEMail()), lobbyID));
 
@@ -121,8 +122,8 @@ class LobbyServiceTest {
 
     @Test
     void onLeaveAllLobbiesOnLogoutRequestTest() {
-        lobbyManagement.createLobby(defaultLobbyName, lobbyOwner);
-        lobbyManagement.createLobby("Lobby2", lobbyOwner);
+        lobbyManagement.createLobby(defaultLobbyName,defaultLobbyPassword, lobbyOwner);
+        lobbyManagement.createLobby("Lobby2", "", lobbyOwner);
         lobbyManagement.getLobby(defaultLobbyName).get().joinUser(lobbyUser);
         lobbyService.onLeaveAllLobbiesOnLogoutRequest(new LeaveAllLobbiesOnLogoutRequest(new UserDTO(lobbyOwner.getUsername(), lobbyOwner.getPassword(), lobbyOwner.getEMail())));
 
@@ -136,8 +137,8 @@ class LobbyServiceTest {
 
     @Test
     void onRetrieveAllOnlineLobbiesRequestTest() throws InterruptedException {
-        lobbyManagement.createLobby(defaultLobbyName, lobbyOwner);
-        lobbyManagement.createLobby("Lobby2", lobbyOwner);
+        lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
+        lobbyManagement.createLobby("Lobby2", defaultLobbyPassword, lobbyOwner);
         lobbyService.onRetrieveAllOnlineLobbiesRequest(new RetrieveAllOnlineLobbiesRequest());
 
         lock.await(1000, TimeUnit.MILLISECONDS);

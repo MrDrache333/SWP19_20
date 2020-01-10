@@ -16,6 +16,12 @@ import de.uol.swp.client.register.RegistrationPresenter;
 import de.uol.swp.client.register.event.RegistrationCanceledEvent;
 import de.uol.swp.client.register.event.RegistrationErrorEvent;
 import de.uol.swp.client.register.event.ShowRegistrationViewEvent;
+import de.uol.swp.client.settings.DeleteAccountPresenter;
+import de.uol.swp.client.settings.SettingsPresenter;
+import de.uol.swp.client.settings.event.CloseDeleteAccountEvent;
+import de.uol.swp.client.settings.event.CloseSettingsEvent;
+import de.uol.swp.client.settings.event.DeleteAccountEvent;
+import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import javafx.application.Platform;
@@ -43,10 +49,15 @@ public class SceneManager {
     final private LobbyService lobbyService;
     final private ChatService chatService;
     private final Injector injector;
+    private SettingsPresenter settingsPresenter;
+    private Stage settingsStage;
+    private Stage deleteAccountStage;
     private Scene loginScene;
     private String lastTitle;
     private Scene registrationScene;
     private Scene mainScene;
+    private Scene settingsScene;
+    private Scene deleteAccountScene;
     private Scene gameScene;
     private Scene lastScene = null;
     private Scene currentScene = null;
@@ -77,7 +88,6 @@ public class SceneManager {
 
     @Subscribe
     public void onShowLoginViewEvent(ShowLoginViewEvent event) {
-
         showLoginScreen();
     }
 
@@ -89,6 +99,33 @@ public class SceneManager {
     @Subscribe
     public void onRegistrationErrorEvent(RegistrationErrorEvent event) {
         showError(event.getMessage());
+    }
+
+    @Subscribe
+    public void onCloseSettingsEvent(CloseSettingsEvent event) { closeSettings(); }
+
+    @Subscribe
+    public void onCloseDeleteAccountEvent(CloseDeleteAccountEvent event) {closeDeleteAccount();}
+
+
+    /**
+     * Wenn in den Einstellungen auf den BUtton Account löschen gegangen wird, wird ein neues Fenster geöffnet, in dem nachgefragt wird,
+     * ob man den Account auch wirklich löschen will
+     *
+     * @author Anna
+     * @since Sprint4
+     */
+    @Subscribe
+    public void onDeleteAccountEvent(DeleteAccountEvent event) {
+        Platform.runLater(() -> {
+            currentUser = event.getUser();
+            initDeleteAccountView();
+            deleteAccountStage = new Stage();
+            deleteAccountStage.setTitle("Account löschen");
+            deleteAccountStage.setScene(deleteAccountScene);
+            deleteAccountStage.setResizable(false);
+            deleteAccountStage.show();
+        });
     }
 
     private void initViews() {
@@ -104,6 +141,36 @@ public class SceneManager {
             URL url = getClass().getResource(fxmlFile);
             LOG.debug("Loading " + url);
             loader.setLocation(url);
+            rootPane = loader.load();
+        } catch (Exception e) {
+            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
+        }
+        return rootPane;
+    }
+
+    private Parent initSettingsPresenter(SettingsPresenter settingsPresenter) {
+        Parent rootPane;
+        FXMLLoader loader = injector.getInstance(FXMLLoader.class);
+        try {
+            URL url = getClass().getResource(SettingsPresenter.fxml);
+            LOG.debug("Loading " + url);
+            loader.setLocation(url);
+            loader.setController(settingsPresenter);
+            rootPane = loader.load();
+        } catch (Exception e) {
+            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
+        }
+        return rootPane;
+    }
+
+    private Parent initDeleteAccountPresenter(DeleteAccountPresenter deleteAccountPresenter) {
+        Parent rootPane;
+        FXMLLoader loader = injector.getInstance(FXMLLoader.class);
+        try {
+            URL url = getClass().getResource(DeleteAccountPresenter.fxml);
+            LOG.debug("Loading " + url);
+            loader.setLocation(url);
+            loader.setController(deleteAccountPresenter);
             rootPane = loader.load();
         } catch (Exception e) {
             throw new RuntimeException("Could not load View!" + e.getMessage(), e);
@@ -138,6 +205,22 @@ public class SceneManager {
         }
     }
 
+    private void initSettingsView(SettingsPresenter settingsPresenter) {
+        if (settingsScene == null) {
+            Parent rootPane = initSettingsPresenter(settingsPresenter);
+            settingsScene = new Scene(rootPane, 400, 255);
+            settingsScene.getStylesheets().add(SettingsPresenter.css);
+        }
+    }
+
+    private void initDeleteAccountView() {
+        if (deleteAccountScene == null) {
+            Parent rootPane = initDeleteAccountPresenter(new DeleteAccountPresenter(currentUser, lobbyService, userService, eventBus));
+            deleteAccountScene = new Scene(rootPane, 200, 100);
+            deleteAccountScene.getStylesheets().add(SettingsPresenter.css);
+
+        }
+    }
 
     @Subscribe
     public void onGameQuitEvent(GameQuitEvent event) {
@@ -169,6 +252,7 @@ public class SceneManager {
             primaryStage.setScene(scene);
             primaryStage.setResizable(false);
             primaryStage.show();
+            new SoundMediaPlayer(SoundMediaPlayer.Sound.Window_Opened, SoundMediaPlayer.Type.Sound).play();
         });
     }
 
@@ -216,6 +300,29 @@ public class SceneManager {
 
     }
 
+    public boolean hasFocus() {
+        return primaryStage.isFocused();
+    }
+
+    /**
+     * Öffnet das Einstellungsfenster, indem eine neue Stage erstellt wird, mit der settingsScene.
+     *
+     * @author Anna, Julia
+     * @since Sprint4
+     */
+    public void showSettingsScreen(User loggedInUser) {
+        Platform.runLater(() -> {
+            settingsPresenter = new SettingsPresenter(loggedInUser, lobbyService, userService, eventBus);
+            initSettingsView(settingsPresenter);
+            settingsStage = new Stage();
+            settingsStage.setTitle("Einstellungen");
+            settingsStage.setScene(settingsScene);
+            settingsStage.setResizable(false);
+            settingsStage.show();
+            eventBus.register(settingsPresenter);
+        });
+    }
+
     /**
      * Gibt das zur übergebenen lobbyID gehörige GameManagement zurück
      *
@@ -229,13 +336,29 @@ public class SceneManager {
     }
 
     /**
-     * Schließt alle GameManagement Stages
+     * Schließt alle Stages
      *
      * @author Julia, Paula
      * @since Sprint3
      */
     public void closeAllStages() {
-        Platform.runLater(() -> games.values().forEach(GameManagement::close));
+        Platform.runLater(() -> {
+            games.values().forEach(GameManagement::close);
+            if(settingsStage != null) {
+                settingsStage.close();
+            }
+            if(deleteAccountStage != null) {
+                deleteAccountStage.close();
+            }
+        });
     }
 
+    public void closeSettings() {
+        Platform.runLater(() -> settingsStage.close());
+    }
+
+
+    public void closeDeleteAccount() {
+        Platform.runLater(() -> deleteAccountStage.close());
+    }
 }

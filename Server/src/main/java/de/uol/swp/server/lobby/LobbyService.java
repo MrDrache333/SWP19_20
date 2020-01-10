@@ -5,6 +5,7 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.LobbyUser;
+import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.request.*;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
@@ -55,28 +56,28 @@ public class LobbyService extends AbstractService {
     //--------------------------------------
 
     /**
-     * lobbyManagment auf dem Server wird aufgerufen und übergibt LobbyNamen und den Besitzer.
+     * LobbyManagement auf dem Server wird aufgerufen und übergibt LobbyNamen, LobbyPassword und den Besitzer.
      * Wenn dies erfolgt ist, folgt eine returnMessage an den Client die LobbyView anzuzeigen.
      *
      * @param msg enthält die Message vom Client mit den benötigten Daten um die Lobby zu erstellen.
-     * @author Paula, Haschem, Ferit
+     * @author Paula, Haschem, Ferit, Rike
      * @version 0.1
      * @since Sprint2
      */
     @Subscribe
     public void onCreateLobbyRequest(CreateLobbyRequest msg) {
-        UUID chatID = lobbyManagement.createLobby(msg.getLobbyName(), new LobbyUser(msg.getOwner()));
+        UUID chatID = lobbyManagement.createLobby(msg.getLobbyName(), msg.getLobbyPassword(), new LobbyUser(msg.getOwner()));
 
         chatManagement.createChat(chatID.toString());
         LOG.info("Der Chat mir der UUID " + chatID + " wurde erfolgreich erstellt");
-
-        ServerMessage returnMessage = new CreateLobbyMessage(msg.getLobbyName(), msg.getUser(), chatID);
+        Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getLobbyName());
+        ServerMessage returnMessage = new CreateLobbyMessage(msg.getLobbyName(), msg.getLobbyPassword(), msg.getUser(), chatID, (LobbyDTO) lobby.get());
         post(returnMessage);
         LOG.info("onCreateLobbyRequest wird auf dem Server aufgerufen.");
     }
 
     /**
-     * LobbyManagment auf dem Server wird aufgerufen und übergibt den Namen des Nutzers.
+     * LobbyManagement auf dem Server wird aufgerufen und übergibt den Namen des Nutzers.
      * Wenn dies erfolgt ist, folgt eine UserJoinedLobbyMessage an den Client, um den User zur Lobby hinzuzufügen
      *
      * @param msg the msg
@@ -89,13 +90,15 @@ public class LobbyService extends AbstractService {
         if (lobby.isPresent() && !lobby.get().getUsers().contains(msg.getUser()) && lobby.get().getPlayers() < 4) {
             LOG.info("User " + msg.getUser().getUsername() + " is joining lobby " + msg.getLobbyName());
             lobby.get().joinUser(new LobbyUser(msg.getUser()));
-            ServerMessage returnMessage = new UserJoinedLobbyMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID());
-            sendToAll(msg.getLobbyName(), returnMessage);
+            ServerMessage returnMessage = new UserJoinedLobbyMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID(), (LobbyDTO) lobby.get());
+            post(returnMessage);
+        } else {
+            LOG.error("Joining lobby " + msg.getLobbyName() + " failed");
         }
     }
 
     /**
-     * lobbyManagment wird aufgerufen und übergibt Namen der Lobby und User.
+     * LobbyManagement wird aufgerufen und übergibt Namen der Lobby und User.
      * UserLeftLobbyMessage wird an Client gesendet
      *
      * @param msg the msg
@@ -106,8 +109,15 @@ public class LobbyService extends AbstractService {
     public void onLobbyLeaveUserRequest(LobbyLeaveUserRequest msg) {
         if (lobbyManagement.leaveLobby(msg.getLobbyName(), msg.getUser())) {
             LOG.info("User " + msg.getUser().getUsername() + " is leaving lobby " + msg.getLobbyName());
-            ServerMessage returnMessage = new UserLeftLobbyMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID());
+            ServerMessage returnMessage;
+            Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getLobbyName());
+            if (lobby.isPresent()) {
+                returnMessage = new UserLeftLobbyMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID(), (LobbyDTO) lobby.get());
+            } else {
+                returnMessage = new UserLeftLobbyMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID(), null);
+            }
             post(returnMessage);
+
         } else {
             LOG.error("Leaving lobby " + msg.getLobbyName() + " failed");
         }
@@ -180,7 +190,7 @@ public class LobbyService extends AbstractService {
     }
 
     /**
-     * erstellt eine AllOnlineLobbiesResponse mit allen Lobbies im LobbyManagement und schickt diese ab
+     * Erstellt eine AllOnlineLobbiesResponse mit allen Lobbies im LobbyManagement und schickt diese ab
      *
      * @param msg the msg
      * @author Julia
@@ -192,6 +202,19 @@ public class LobbyService extends AbstractService {
         response.initWithMessage(msg);
         post(response);
     }
+
+    /**
+     * Lobbies werden aktualisiert nachdem ein User seine Daten geändert hat
+     *
+     * @param msg
+     * @author Julis
+     * @since Sprint4
+     */
+    @Subscribe
+    public void onUpdateLobbiesRequest(UpdateLobbiesRequest msg) {
+        lobbyManagement.updateLobbies(msg.getUpdatedUser(), msg.getOldUser());
+    }
+
 
     //--------------------------------------
     // Help Methods
