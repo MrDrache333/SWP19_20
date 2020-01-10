@@ -50,7 +50,6 @@ public class SetMaxPlayerMessage extends AbstractLobbyMessage
         return lobbyID;
     }
 
-    @Override
     public void setLobbyID(UUID lobbyID) {
         this.lobbyID = lobbyID;
     }

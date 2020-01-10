@@ -395,7 +395,7 @@ public class MainMenuPresenter extends AbstractPresenter {
                     updatedUsers.remove(message.getOldUser());
                     updatedUsers.add(message.getUser());
                     Set<User> newUsers = new TreeSet<>(updatedUsers);
-                    Lobby lobbyToUpdate = new LobbyDTO(lobby.getName(), updatedOwner, lobby.getLobbyID(), lobby.getLobbyPassword(), newUsers, lobby.getPlayers());
+                    Lobby lobbyToUpdate = new LobbyDTO(lobby.getName(), updatedOwner, lobby.getLobbyID(), lobby.getLobbyPassword(), newUsers, lobby.getPlayers(), lobby.getMaxPlayer());
                     toRemove.add(lobby);
                     toAdd.add(lobbyToUpdate);
                 }
