@@ -4,8 +4,13 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.LobbyUser;
+import de.uol.swp.common.lobby.request.RetrieveAllOnlineLobbiesRequest;
+import de.uol.swp.common.lobby.request.RetrieveAllOnlineUsersInLobbyRequest;
+import de.uol.swp.common.lobby.request.SetMaxPlayerRequest;
+import de.uol.swp.common.lobby.request.UpdateLobbyReadyStatusRequest;
 import de.uol.swp.common.lobby.request.*;
 import de.uol.swp.common.message.RequestMessage;
+import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,6 +32,7 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
      *
      * @param bus the bus
      */
+
     @Inject
     public LobbyService(EventBus bus) {
         this.bus = bus;
@@ -120,5 +126,17 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
     public void kickUser(String lobbyName, UserDTO gameOwner, UUID lobbyID, UserDTO userToKick){
         RequestMessage request = new KickUserRequest(lobbyName, gameOwner, lobbyID, userToKick);
         bus.post(request);
+    }
+
+    @Override
+    /**
+     * @author Timo, Rike
+     * @since Sprint 3
+     * @implNote Erstellt einen SetMaxPlayerRequest
+     */
+    public void setMaxPlayer(Integer maxPlayer, UUID lobbyID, User loggedInUser)
+    {
+        SetMaxPlayerRequest cmd = new SetMaxPlayerRequest(maxPlayer, lobbyID, loggedInUser);
+        bus.post(cmd);
     }
 }

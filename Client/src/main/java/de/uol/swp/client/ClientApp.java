@@ -12,6 +12,7 @@ import de.uol.swp.common.lobby.message.CreateLobbyMessage;
 import de.uol.swp.common.lobby.message.KickUserMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
+import de.uol.swp.common.lobby.message.SetMaxPlayerMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.exception.RegistrationExceptionMessage;
@@ -139,7 +140,6 @@ public class ClientApp extends Application implements ConnectionListener {
         if (clientConnection != null) {
             clientConnection.close();
         }
-
         LOG.info("ClientConnection shutdown");
     }
 
@@ -302,6 +302,31 @@ public class ClientApp extends Application implements ConnectionListener {
         }
         lobbyService.retrieveAllLobbies();
     }
+
+
+    // -----------------------------------------------------
+    // JavFX Help methods
+    // -----------------------------------------------------
+
+    /**
+     * @auhor Timo, Rike
+     * @since Sprint 3
+     * @implNote Reaktion auf die onSetMaxPlayerMessage
+     */
+     @Subscribe
+     public void onSetMaxPlayerMessage(SetMaxPlayerMessage msg)
+     {
+         if(msg.getSetMaxPlayerSet() == true)
+         {
+             LOG.info("Max. Spieler der Lobby: " + msg.getLobbyID() + " erfolgreich auf " + msg.getMaxPlayer() + " gesetzt.");
+             lobbyService.retrieveAllLobbies();
+         }
+
+         else
+         {
+             LOG.info("Max. Spieler der Lobby: " + msg.getLobbyID() + " nicht gesetzt. User ist nicht der Lobbyowner!");
+         }
+     }
 
     /**
      * Nachdem der Account gelöscht wurde, werden alle Fenster geschlossen und der Login-Screen angezeigt

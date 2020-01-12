@@ -91,6 +91,14 @@ public interface Lobby {
     boolean getReadyStatus(User user);
 
     /**
+     * @author Timo, Rike
+     * @since Sprint 3
+     * @implNote Notwendige Interface implementierung für die set & get MaxPlayer Methoden
+     */
+    Integer getMaxPlayer();
+    void setMaxPlayer(Integer maxPlayer);
+
+    /**
      * Gets every ready status.
      *
      * @return every ready status

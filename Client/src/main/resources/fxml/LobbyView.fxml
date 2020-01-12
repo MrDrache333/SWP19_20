@@ -3,6 +3,18 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+<?import java.lang.Integer?>
+<?import javafx.collections.FXCollections?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
             minWidth="-Infinity"
             prefHeight="750.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/10.0.2-internal">
@@ -27,6 +39,16 @@
                                 <Font name="Arial" size="15.0"/>
                             </font>
                         </Button>
+                  <ChoiceBox fx:id="chooseMaxPlayer" layoutX="95.0" layoutY="17.0" prefHeight="25.0" prefWidth="92.0" onAction="#onMaxPlayerSelected">
+                          <items>
+                              <FXCollections fx:factory="observableArrayList">
+                              <Integer fx:value ="2" />
+                              <Integer fx:value ="3" />
+                              <Integer fx:value ="4" />
+                              </FXCollections>
+                          </items>
+                  </ChoiceBox>
+                  <Label layoutX="21.0" layoutY="20.0" text="Max. Spieler:" />
                     </children>
                 </AnchorPane>
                 <GridPane GridPane.rowIndex="1">
@@ -42,10 +64,8 @@
                         <RowConstraints maxHeight="557.0" minHeight="10.0" prefHeight="557.0" vgrow="SOMETIMES"/>
                     </rowConstraints>
                     <children>
-                        <Pane fx:id="chatView" prefHeight="557.0" prefWidth="436.0" GridPane.columnIndex="1"
-                              GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS"/>
-                        <ListView fx:id="usersView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3"
-                                  GridPane.rowIndex="1"/>
+                        <Pane fx:id="chatView" prefHeight="557.0" prefWidth="436.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" />
+                        <ListView fx:id="usersView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                         <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3">
                             <children>
                                 <Label layoutX="104.0" layoutY="6.0" text="User">
