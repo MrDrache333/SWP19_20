@@ -170,7 +170,7 @@ public class GameManagement {
         }
     }
 
-    //initPresenter für Lobbies, hier wird dann der jeweilige lobbyPresenter als Controller gesetzt
+    //initPresenter für Lobbies, hier wird dann der jeweilige lobbyPresenter als Controller gesetzt.
     private Parent initPresenter(AbstractPresenter presenter, String fxml) {
         Parent rootPane;
         FXMLLoader loader = injector.getInstance(FXMLLoader.class);
