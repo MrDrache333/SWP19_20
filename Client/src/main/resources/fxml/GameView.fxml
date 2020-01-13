@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.Pane?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="400.0" prefWidth="604.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <Button fx:id="logoutButton" layoutX="550.0" layoutY="376.0" mnemonicParsing="false" onAction="#onLogoutButtonPressed" text="Logout" translateX="-10.0" translateY="-10.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" />
         <Button fx:id="giveUpButton" layoutX="534.0" layoutY="78.0" mnemonicParsing="false" onAction="#onGiveUpButtonPressed" text="Aufgeben" />
@@ -17,18 +17,11 @@
       <Pane layoutX="123.0" layoutY="336.0" prefHeight="59.0" prefWidth="43.0" style="-fx-background-color: blue; -fx-border-color: black;" />
       <Pane layoutX="167.0" layoutY="336.0" prefHeight="59.0" prefWidth="43.0" style="-fx-background-color: blue; -fx-border-color: black;" />
       <Pane layoutX="341.0" layoutY="336.0" prefHeight="59.0" prefWidth="43.0" style="-fx-background-color: green; -fx-border-color: black;" />
-      <Pane layoutX="194.0" layoutY="252.0" prefHeight="84.0" prefWidth="141.0" style="-fx-background-color: yellow; -fx-border-color: black;" />
-      <Pane layoutX="335.0" layoutY="264.0" prefHeight="59.0" prefWidth="43.0" style="-fx-background-color: purple; -fx-border-color: black;" />
-      <Pane layoutX="150.0" layoutY="264.0" prefHeight="59.0" prefWidth="43.0" style="-fx-background-color: red; -fx-border-color: black;" />
-      <Pane layoutX="255.0" prefHeight="59.0" prefWidth="43.0" style="-fx-background-color: blue; -fx-border-color: black;" />
-      <Pane layoutX="298.0" prefHeight="59.0" prefWidth="43.0" style="-fx-background-color: blue; -fx-border-color: black;" />
-      <Pane layoutX="341.0" prefHeight="59.0" prefWidth="43.0" style="-fx-background-color: blue; -fx-border-color: black;" />
-      <Pane layoutX="167.0" prefHeight="59.0" prefWidth="43.0" style="-fx-background-color: blue; -fx-border-color: black;" />
-      <Pane layoutX="211.0" prefHeight="59.0" prefWidth="43.0" style="-fx-background-color: blue; -fx-border-color: black;" />
-      <Pane layoutX="123.0" prefHeight="59.0" prefWidth="43.0" style="-fx-background-color: green; -fx-border-color: black;" />
-      <Pane layoutX="194.0" layoutY="61.0" prefHeight="84.0" prefWidth="141.0" style="-fx-background-color: yellow; -fx-border-color: black;" />
-      <Pane layoutX="150.0" layoutY="73.0" prefHeight="59.0" prefWidth="43.0" style="-fx-background-color: purple; -fx-border-color: black;" />
-      <Pane layoutX="335.0" layoutY="73.0" prefHeight="59.0" prefWidth="43.0" style="-fx-background-color: red; -fx-border-color: black;" />
-      <Pane layoutX="136.0" layoutY="154.0" prefHeight="91.0" prefWidth="243.0" style="-fx-border-color: black; -fx-background-color: lightgrey;" />
+      <Pane layoutX="187.0" layoutY="252.0" prefHeight="84.0" prefWidth="147.0" style="-fx-background-color: yellow; -fx-border-color: black;" />
+      <Pane layoutX="79.0" layoutY="170.0" prefHeight="59.0" prefWidth="43.0" style="-fx-background-color: purple; -fx-border-color: black;" />
+      <Pane layoutX="144.0" layoutY="264.0" prefHeight="59.0" prefWidth="43.0" style="-fx-background-color: red; -fx-border-color: black;" />
+      <Pane layoutX="187.0" layoutY="17.0" prefHeight="84.0" prefWidth="147.0" style="-fx-background-color: yellow; -fx-border-color: black;" />
+      <Pane layoutX="334.0" layoutY="29.0" prefHeight="59.0" prefWidth="43.0" style="-fx-background-color: red; -fx-border-color: black;" />
+      <Pane layoutX="136.0" layoutY="114.0" prefHeight="131.0" prefWidth="255.0" style="-fx-border-color: black; -fx-background-color: lightgrey;" />
     </children>
 </AnchorPane>
