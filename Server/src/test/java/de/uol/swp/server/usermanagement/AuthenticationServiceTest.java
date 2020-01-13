@@ -37,6 +37,11 @@ class AuthenticationServiceTest {
     private final CountDownLatch lock = new CountDownLatch(1);
     private Object event;
 
+    /**
+     * Bei Auftreten eines DeadEvents wird dieses ausgegeben und der CountDownLatch wird um eins verringert
+     *
+     * @param e das DeadEvent
+     */
     @Subscribe
     void handle(DeadEvent e) {
         this.event = e.getEvent();
@@ -44,17 +49,28 @@ class AuthenticationServiceTest {
         lock.countDown();
     }
 
+    /**
+     * Setzt vor jedem Test das aktuelle Event auf null und registriert diese Testklasse auf dem Eventbus
+     */
     @BeforeEach
     void registerBus() {
         event = null;
         bus.register(this);
     }
 
+    /**
+     * Meldet diese Testklasse nach jedem Test vom Eventbus ab
+     */
     @AfterEach
     void deregisterBus() {
         bus.unregister(this);
     }
 
+    /**
+     * Test für einen erfolgreichen Login
+     *
+     * @throws InterruptedException
+     */
     @Test
     void loginTest() throws InterruptedException {
         userManagement.createUser(user);
@@ -67,6 +83,11 @@ class AuthenticationServiceTest {
         userManagement.dropUser(user);
     }
 
+    /**
+     * Test für einen fehlgeschlagenen Login
+     *
+     * @throws InterruptedException
+     */
     @Test
     void loginTestFail() throws InterruptedException {
         userManagement.createUser(user);
@@ -79,6 +100,11 @@ class AuthenticationServiceTest {
         userManagement.dropUser(user);
     }
 
+    /**
+     * Test für den Logout
+     *
+     * @throws InterruptedException
+     */
     @Test
     void logoutTest() throws InterruptedException {
         loginUser(user);
@@ -97,15 +123,11 @@ class AuthenticationServiceTest {
         assertTrue(event instanceof UserLoggedOutMessage);
     }
 
-    private void loginUser(User userToLogin) {
-        userManagement.createUser(userToLogin);
-        final LoginRequest loginRequest = new LoginRequest(userToLogin.getUsername(), userToLogin.getPassword());
-        bus.post(loginRequest);
-
-        assertTrue(userManagement.isLoggedIn(userToLogin));
-        userManagement.dropUser(userToLogin);
-    }
-
+    /**
+     * Testet die retrieveAllOnlineUsers() Methode bei einem eingeloggten User
+     *
+     * @throws InterruptedException
+     */
     @Test
     void loggedInUsers() throws InterruptedException {
         loginUser(user);
@@ -121,6 +143,11 @@ class AuthenticationServiceTest {
 
     }
 
+    /**
+     * Testet die retrieveAllOnlineUsers() Methode bei zwei eingeloggten Usern
+     *
+     * @throws InterruptedException
+     */
     // TODO: replace with parametrized test
     @Test
     void twoLoggedInUsers() throws InterruptedException {
@@ -146,7 +173,11 @@ class AuthenticationServiceTest {
 
     }
 
-
+    /**
+     * Testet die retrieveAllOnlineUsers() Methode bei keinen eingeloggten Usern
+     *
+     * @throws InterruptedException
+     */
     @Test
     void loggedInUsersEmpty() throws InterruptedException {
         RetrieveAllOnlineUsersRequest request = new RetrieveAllOnlineUsersRequest();
@@ -159,6 +190,9 @@ class AuthenticationServiceTest {
 
     }
 
+    /**
+     * Testet, ob UserSessions korrekt erstellt werden
+     */
     @Test
     void getSessionsForUsersTest() {
         loginUser(user);
@@ -185,6 +219,20 @@ class AuthenticationServiceTest {
         assertTrue(sessions.contains(session2.get()));
         assertTrue(sessions.contains(session3.get()));
 
+    }
+
+    /**
+     * Loggt einen User ein
+     *
+     * @param userToLogin der User, der eingeloggt werden soll
+     */
+    private void loginUser(User userToLogin) {
+        userManagement.createUser(userToLogin);
+        final LoginRequest loginRequest = new LoginRequest(userToLogin.getUsername(), userToLogin.getPassword());
+        bus.post(loginRequest);
+
+        assertTrue(userManagement.isLoggedIn(userToLogin));
+        userManagement.dropUser(userToLogin);
     }
 
 }

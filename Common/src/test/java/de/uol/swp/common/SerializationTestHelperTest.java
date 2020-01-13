@@ -9,12 +9,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SerializationTestHelperTest {
 
+    /**
+     * Test, ob ein nicht serialisierbares Objekt als solches erkannt und dementsprechend eine RuntimeException geworfen wird
+     */
     @Test
     void checkNonSerializable() {
         assertThrows(RuntimeException.class, () ->
                 SerializationTestHelper.checkSerializableAndDeserializable(new NotSerializable(), NotSerializable.class));
     }
 
+    /**
+     * Test, ob ein serialisierbares Objekt korrekt verarbeitet wird
+     */
     @Test
     void checkSerializable() {
         assertTrue(SerializationTestHelper.checkSerializableAndDeserializable("Hallo", String.class));
