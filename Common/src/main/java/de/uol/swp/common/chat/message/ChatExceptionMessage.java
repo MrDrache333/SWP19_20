@@ -5,7 +5,10 @@ import de.uol.swp.common.message.AbstractResponseMessage;
 import de.uol.swp.common.user.User;
 
 /**
- * The type Chat exception message.
+ * Die Klasse der Chat exception message.
+ *
+ * @author Keno O.
+ * @since Sprint 2
  */
 public class ChatExceptionMessage extends AbstractResponseMessage {
 
@@ -13,10 +16,12 @@ public class ChatExceptionMessage extends AbstractResponseMessage {
     private ChatException exception;
 
     /**
-     * Instantiates a new Chat exception message.
+     * Konstruktor der Chat exception message.
      *
-     * @param sender the sender
-     * @param e      the e
+     * @author Keno O.
+     * @since Sprint 2
+     * @param sender Der Sender
+     * @param e      Die Exception
      */
     public ChatExceptionMessage(User sender, ChatException e) {
         this.Sender = sender;
@@ -24,18 +29,22 @@ public class ChatExceptionMessage extends AbstractResponseMessage {
     }
 
     /**
-     * Gets sender.
+     * Gibt den Sender zurück.
      *
-     * @return the sender
+     * @author Keno O.
+     * @since Sprint 2
+     * @return Sender the sender
      */
     public User getSender() {
         return Sender;
     }
 
     /**
-     * Gets exception.
+     * Gibt die Exception zurück.
      *
-     * @return the exception
+     * @author Keno O.
+     * @since Sprint 2
+     * @return exception Die Exception
      */
     public ChatException getException() {
         return exception;

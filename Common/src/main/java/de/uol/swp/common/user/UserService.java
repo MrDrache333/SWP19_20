@@ -3,64 +3,79 @@ package de.uol.swp.common.user;
 import java.util.List;
 
 /**
- * An interface for all methods of the user service
+ * Das User Service Interface
  *
  * @author Marco Grawunder
+ * @since Sprint 0
  */
-
 public interface UserService {
 
     /**
-     * Login with username and password
+     * Login-Methode mit dem Username und dem Passwort als Übergabeparameter
      *
-     * @param username the name of the user
-     * @param password the password of the user
-     * @return a new user object
+     * @author Marco Grawunder
+     * @since Sprint 0
+     * @param username Der Username des Users
+     * @param password Das Password des Users
+     * @return Userobjekt Der User
      */
     User login(String username, String password);
 
-
     /**
-     * Test, if given user is logged in
+     * Prüft, ob der User eingeloggt ist.
      *
-     * @param user
-     * @return
+     * @author Marco Grawunder
+     * @since Sprint 0
+     * @param user Userobjekt
+     * @return boolean Ob eingeloggt (true) oder nicht (false)
      */
     boolean isLoggedIn(User user);
 
     /**
-     * Login out from server
+     * Loggt den User aus.
+     *
+     * @author Marco Grawunder
+     * @since Sprint 0
+     * @param user Userobjekt
      */
     void logout(User user);
 
     /**
-     * Create a new persistent user
+     * Legt einen neuen User an.
      *
-     * @param user The user to create
-     * @return the new created user
+     * @author Marco Grawunder
+     * @since Sprint 0
+     * @param user User, welcher angelegt werden soll
+     * @return Userobjekt Der erstellte User
      */
     User createUser(User user);
 
     /**
-     * Removes a user from the sore
+     * Löscht einen User.
      *
-     * @param user The user to remove
+     * @author Marco Grawunder
+     * @since Sprint 0
+     * @param user User, welcher gelöscht werden soll
      */
     void dropUser(User user);
 
     /**
      * Aktualisiert einen User
      *
+     * @author Julia
+     * @since Sprint 4
      * @param user User mit neuen Daten
      * @param oldUser User mit alten Daten
-     * @return
+     * @return Userobjekt Der aktualisierte User
      */
     User updateUser(User user, User oldUser);
 
     /**
-     * Retrieve the list of all current logged in users
+     * Gibt alle eingeloggten User als Liste zurück.
      *
-     * @return a list of users
+     * @author Marco Grawunder
+     * @since Sprint 0
+     * @return List<User> Eine List mit allen eingeloggten Usern.
      */
     List<User> retrieveAllUsers();
 
