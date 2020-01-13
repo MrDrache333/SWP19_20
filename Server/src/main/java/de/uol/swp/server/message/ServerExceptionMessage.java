@@ -8,6 +8,8 @@ public class ServerExceptionMessage extends AbstractServerInternalMessage {
      * Instanziiert eine neue ServerExceptionMessage
      *
      * @param e die Exception
+     * @author Marco
+     * @since Sprint0
      */
     public ServerExceptionMessage(Exception e) {
         super();
@@ -18,6 +20,8 @@ public class ServerExceptionMessage extends AbstractServerInternalMessage {
      * Gibt die Exception zurück
      *
      * @return die Exception
+     * @author Marco
+     * @since Sprint0
      */
     public Exception getException() {
         return e;

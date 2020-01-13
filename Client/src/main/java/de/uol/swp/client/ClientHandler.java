@@ -21,6 +21,8 @@ class ClientHandler extends ChannelInboundHandlerAdapter {
      * Instanziiert einen neuen ClientHandler
      *
      * @param clientConnection die clientConnection
+     * @author Marco
+     * @since Sprint0
      */
     ClientHandler(ClientConnection clientConnection) {
         this.clientConnection = clientConnection;
@@ -31,6 +33,8 @@ class ClientHandler extends ChannelInboundHandlerAdapter {
      * der an den übergebenen ChannelHandlerContext gebunden ist, auf
      *
      * @param ctx der ChannelHandlerContext
+     * @author Marco
+     * @since Sprint0
      */
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
@@ -40,11 +44,13 @@ class ClientHandler extends ChannelInboundHandlerAdapter {
 
     /**
      * Wenn es sich bei dem übergebenen Objekt um eine Message handelt, wird es zu einer Message gecastet und
-     * damit in der ClientConnection die Methode receivedMessage aufgerufen
-     * Andernfalls wird eine Fehlermeldung ausgegeben
+     * damit in der ClientConnection die Methode receivedMessage aufgerufen,
+     * andernfalls wird eine Fehlermeldung ausgegeben
      *
      * @param ctx der ChannelHandlerContext
      * @param in  das eingehende Objekt
+     * @author Marco
+     * @since Sprint0
      */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object in) {
@@ -61,6 +67,8 @@ class ClientHandler extends ChannelInboundHandlerAdapter {
      *
      * @param ctx   der ChannelHandlerContext
      * @param cause die Fehlerursache
+     * @author Marco
+     * @since Sprint0
      */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {

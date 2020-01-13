@@ -41,6 +41,8 @@ class AuthenticationServiceTest {
      * Bei Auftreten eines DeadEvents wird dieses ausgegeben und der CountDownLatch wird um eins verringert
      *
      * @param e das DeadEvent
+     * @author Marco
+     * @since Sprint0
      */
     @Subscribe
     void handle(DeadEvent e) {
@@ -51,6 +53,9 @@ class AuthenticationServiceTest {
 
     /**
      * Setzt vor jedem Test das aktuelle Event auf null und registriert diese Testklasse auf dem Eventbus
+     *
+     * @author Marco
+     * @since Sprint0
      */
     @BeforeEach
     void registerBus() {
@@ -60,6 +65,9 @@ class AuthenticationServiceTest {
 
     /**
      * Meldet diese Testklasse nach jedem Test vom Eventbus ab
+     *
+     * @author Marco
+     * @since Sprint0
      */
     @AfterEach
     void deregisterBus() {
@@ -68,6 +76,9 @@ class AuthenticationServiceTest {
 
     /**
      * Test für einen erfolgreichen Login
+     *
+     * @author Marco
+     * @since Sprint0
      *
      * @throws InterruptedException
      */
@@ -87,6 +98,8 @@ class AuthenticationServiceTest {
      * Test für einen fehlgeschlagenen Login
      *
      * @throws InterruptedException
+     * @author Marco
+     * @since Sprint0
      */
     @Test
     void loginTestFail() throws InterruptedException {
@@ -104,6 +117,8 @@ class AuthenticationServiceTest {
      * Test für den Logout
      *
      * @throws InterruptedException
+     * @author Marco
+     * @since Sprint0
      */
     @Test
     void logoutTest() throws InterruptedException {
@@ -127,6 +142,8 @@ class AuthenticationServiceTest {
      * Testet die retrieveAllOnlineUsers() Methode bei einem eingeloggten User
      *
      * @throws InterruptedException
+     * @author Marco
+     * @since Sprint0
      */
     @Test
     void loggedInUsers() throws InterruptedException {
@@ -147,6 +164,8 @@ class AuthenticationServiceTest {
      * Testet die retrieveAllOnlineUsers() Methode bei zwei eingeloggten Usern
      *
      * @throws InterruptedException
+     * @author Marco
+     * @since Sprint0
      */
     // TODO: replace with parametrized test
     @Test
@@ -177,6 +196,8 @@ class AuthenticationServiceTest {
      * Testet die retrieveAllOnlineUsers() Methode bei keinen eingeloggten Usern
      *
      * @throws InterruptedException
+     * @author Marco
+     * @since Sprint0
      */
     @Test
     void loggedInUsersEmpty() throws InterruptedException {
@@ -191,7 +212,10 @@ class AuthenticationServiceTest {
     }
 
     /**
-     * Testet, ob UserSessions korrekt erstellt werden
+     * Testet ob UserSessions korrekt erstellt werden
+     *
+     * @author Marco
+     * @since Sprint0
      */
     @Test
     void getSessionsForUsersTest() {
@@ -225,6 +249,8 @@ class AuthenticationServiceTest {
      * Loggt einen User ein
      *
      * @param userToLogin der User, der eingeloggt werden soll
+     * @author Marco
+     * @since Sprint0
      */
     private void loginUser(User userToLogin) {
         userManagement.createUser(userToLogin);

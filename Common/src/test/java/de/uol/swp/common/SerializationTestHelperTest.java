@@ -11,6 +11,9 @@ class SerializationTestHelperTest {
 
     /**
      * Test, ob ein nicht serialisierbares Objekt als solches erkannt und dementsprechend eine RuntimeException geworfen wird
+     *
+     * @author Marco
+     * @since Sprint0
      */
     @Test
     void checkNonSerializable() {
@@ -20,12 +23,21 @@ class SerializationTestHelperTest {
 
     /**
      * Test, ob ein serialisierbares Objekt korrekt verarbeitet wird
+     *
+     * @author Marco
+     * @since Sprint0
      */
     @Test
     void checkSerializable() {
         assertTrue(SerializationTestHelper.checkSerializableAndDeserializable("Hallo", String.class));
     }
 
+    /**
+     * Private Klasse, die einen neuen Thread für den checkNonSerializable()-Test erstellt
+     *
+     * @author Marco
+     * @since Sprint0
+     */
     private static class NotSerializable implements Serializable {
         private Thread thread = new Thread();
     }

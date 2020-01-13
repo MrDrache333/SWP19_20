@@ -13,6 +13,8 @@ public class RegisterUserRequest extends AbstractRequestMessage {
      * Instanziiert einen neuen RegisterUserRequest
      *
      * @param user der User, der registriert werden soll
+     * @author Marco
+     * @since Sprint0
      */
     public RegisterUserRequest(User user) {
         this.toCreate = user;
@@ -22,6 +24,8 @@ public class RegisterUserRequest extends AbstractRequestMessage {
      * Gibt den User zurück
      *
      * @return der User
+     * @author Marco
+     * @since Sprint0
      */
     public User getUser() {
         return toCreate;
@@ -30,13 +34,23 @@ public class RegisterUserRequest extends AbstractRequestMessage {
     /**
      * User muss nicht autorisiert sein, um diesen Request nutzen zu können
      *
-     * @return
+     * @return false
+     * @author Marco
+     * @since Sprint0
      */
     @Override
     public boolean authorizationNeeded() {
         return false;
     }
 
+    /**
+     * Überprüft ob das übergebene Objekt mit diesem (this) übereinstimmt
+     *
+     * @param o das Objekt
+     * @return true wenn die Objekte gleich sind, sonst false
+     * @author Marco
+     * @since Sprint0
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -45,6 +59,13 @@ public class RegisterUserRequest extends AbstractRequestMessage {
         return Objects.equals(toCreate, that.toCreate);
     }
 
+    /**
+     * Generiert einen Hash Code aus dem zu registrierenden User
+     *
+     * @return der Hash Code
+     * @author Marco
+     * @since Sprint0
+     */
     @Override
     public int hashCode() {
         return Objects.hash(toCreate);

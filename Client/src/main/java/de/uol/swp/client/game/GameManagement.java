@@ -181,7 +181,6 @@ public class GameManagement {
      * LobbyView wird initalisiert und deklariert.
      * Neue Szene für die neue Lobby wird erstellt und gespeichert
      *
-     * @param
      * @author Keno O.
      * @since Sprint3
      */
@@ -194,11 +193,11 @@ public class GameManagement {
     }
 
     /**
-     * initPresenter für Lobbies, hier wird dann der jeweilige lobbyPresenter als Controller gesetzt
+     * initPresenter für Lobbies, setzt den jeweilige lobbyPresenter als Controller
      *
      * @param presenter der Presenter
      * @param fxml die zum Presenter gehörige fxml
-     * @return
+     * @return die rootPane
      * @author Keno O.
      * @since Sprint3
      */
@@ -220,7 +219,7 @@ public class GameManagement {
     }
 
     /**
-     * Setzt die Szene der primaryStage auf die übergebene Szene und aktualisiert den Titel
+     * Setzt die Szene der primaryStage auf die übergebene Szene und aktualisiert den Titel der Stage
      *
      * @param scene die Szene
      * @param title der Titel der Stage

@@ -3,7 +3,6 @@ package de.uol.swp.common.message;
 /**
  * Kapselt eine Exception in einem Message-Objekt
  *
- * @author Marco Grawunder
  */
 public class ExceptionMessage extends AbstractResponseMessage {
 
@@ -14,6 +13,8 @@ public class ExceptionMessage extends AbstractResponseMessage {
      * Instanziiert eine neue ExceptionMessage
      *
      * @param message die Nachricht
+     * @author Marco
+     * @since Sprint0
      */
     public ExceptionMessage(String message) {
         this.exception = message;
@@ -23,6 +24,8 @@ public class ExceptionMessage extends AbstractResponseMessage {
      * Gibt die ExceptionMessage zurück
      *
      * @return die Nachricht
+     * @author Marco
+     * @since Sprint0
      */
     public String getException() {
         return exception;
