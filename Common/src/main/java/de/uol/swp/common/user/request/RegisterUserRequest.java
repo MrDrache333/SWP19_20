@@ -9,17 +9,32 @@ public class RegisterUserRequest extends AbstractRequestMessage {
 
     final private User toCreate;
 
+    /**
+     * Instanziiert einen neuen RegisterUserRequest
+     *
+     * @param user der User, der registriert werden soll
+     */
     public RegisterUserRequest(User user) {
         this.toCreate = user;
     }
 
+    /**
+     * Gibt den User zurück
+     *
+     * @return der User
+     */
+    public User getUser() {
+        return toCreate;
+    }
+
+    /**
+     * User muss nicht autorisiert sein, um diesen Request nutzen zu können
+     *
+     * @return
+     */
     @Override
     public boolean authorizationNeeded() {
         return false;
-    }
-
-    public User getUser() {
-        return toCreate;
     }
 
     @Override
