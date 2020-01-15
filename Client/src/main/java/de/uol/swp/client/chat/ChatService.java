@@ -11,7 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * The type Chat service.
+ * Der Clientseitige ChatService-Handler.
  */
 @SuppressWarnings("UnstableApiUsage")
 public class ChatService implements de.uol.swp.common.chat.ChatService {
@@ -20,7 +20,7 @@ public class ChatService implements de.uol.swp.common.chat.ChatService {
     private final EventBus bus;
 
     /**
-     * Instantiates a new Chat service.
+     * Initiert einen Chatservice mit dem Injizierten EventBus
      *
      * @param bus the bus
      */
@@ -30,9 +30,10 @@ public class ChatService implements de.uol.swp.common.chat.ChatService {
     }
 
     /**
-     * Posts a New Message Request to the bus
+     * Diese Methode bekommt eine ChatMessage übergeben und erstellt eine NewChatMessageRequest mit der übergebenen ChatMessage.
+     * Diese NewChatMessageRequest wird dann auf den EventBus gepackt.
      *
-     * @param message the message
+     * @param message ChatMessage mit dem Nachrichten Inhalt.
      */
     @Override
     public void sendMessage(ChatMessage message) {
@@ -42,10 +43,11 @@ public class ChatService implements de.uol.swp.common.chat.ChatService {
     }
 
     /**
-     * Posts a New Message Request to the bus for specified ChatID
+     * Diese Methode bekommt eine ChatMessage und ChatID übergeben und erstellt eine NewChatMessageRequest mit der übergebenen ChatMessage und der ChatID.
+     * Diese NewChatMessageRequest wird dann auf den EventBus gepackt.
      *
-     * @param ChatId  the chat id of any Specific ChatID
-     * @param message the message
+     * @param ChatId  die ChatID der zugehörigen übergebenen Nachricht
+     * @param message ChatMessage mit dem Nachrichten Inhalt.
      */
     @Override
     public void sendMessage(String ChatId, ChatMessage message) {
@@ -54,6 +56,12 @@ public class ChatService implements de.uol.swp.common.chat.ChatService {
         bus.post(request);
     }
 
+    /**
+     * Diese Methode fordert eine Chat-History an für den übergebenen User.
+     *
+     * @param sender Der User, welcher die ChatHistory angefordert hat.
+     * @return null, da es nur die Anfrage ist.
+     */
     @Override
     public Chat getChatHistory(User sender) {
         ChatHistoryRequest req = new ChatHistoryRequest(sender);
@@ -62,6 +70,13 @@ public class ChatService implements de.uol.swp.common.chat.ChatService {
         return null;
     }
 
+    /**
+     * Diese Methode fordert eine Chat-History an für den übergebenen User und der zugehörigen LobbyID.
+     *
+     * @param sender Der User, welcher die ChatHistory angefordert hat.
+     * @param ChatId Die ChatID, für den spezifizierten Chat.
+     * @return null, da es nur die Anfrage ist.
+     */
     @Override
     public Chat getChatHistory(String ChatId, User sender) {
         ChatHistoryRequest req = new ChatHistoryRequest(ChatId, sender);

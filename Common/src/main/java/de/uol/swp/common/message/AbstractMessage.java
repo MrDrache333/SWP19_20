@@ -6,7 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Base class of all messages. Basic handling of session information
+ * Basis Klasse für alle Messages. Basis Handling Session Informationen.
  *
  * @author Marco Grawunder
  */
