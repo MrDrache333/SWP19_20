@@ -25,6 +25,12 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Testklasse für den AuthenticationService
+ *
+ * @author Marco
+ * @since Start
+ */
 class AuthenticationServiceTest {
 
     final User user = new UserDTO("name", "password", "email@test.de");
@@ -42,7 +48,7 @@ class AuthenticationServiceTest {
      *
      * @param e das DeadEvent
      * @author Marco
-     * @since Sprint0
+     * @since Start
      */
     @Subscribe
     void handle(DeadEvent e) {
@@ -55,7 +61,7 @@ class AuthenticationServiceTest {
      * Setzt vor jedem Test das aktuelle Event auf null und registriert diese Testklasse auf dem Eventbus
      *
      * @author Marco
-     * @since Sprint0
+     * @since Start
      */
     @BeforeEach
     void registerBus() {
@@ -67,7 +73,7 @@ class AuthenticationServiceTest {
      * Meldet diese Testklasse nach jedem Test vom Eventbus ab
      *
      * @author Marco
-     * @since Sprint0
+     * @since Start
      */
     @AfterEach
     void deregisterBus() {
@@ -77,10 +83,9 @@ class AuthenticationServiceTest {
     /**
      * Test für einen erfolgreichen Login
      *
-     * @author Marco
-     * @since Sprint0
-     *
      * @throws InterruptedException
+     * @author Marco
+     * @since Start
      */
     @Test
     void loginTest() throws InterruptedException {
@@ -99,7 +104,7 @@ class AuthenticationServiceTest {
      *
      * @throws InterruptedException
      * @author Marco
-     * @since Sprint0
+     * @since Start
      */
     @Test
     void loginTestFail() throws InterruptedException {
@@ -118,7 +123,7 @@ class AuthenticationServiceTest {
      *
      * @throws InterruptedException
      * @author Marco
-     * @since Sprint0
+     * @since Start
      */
     @Test
     void logoutTest() throws InterruptedException {
@@ -143,7 +148,7 @@ class AuthenticationServiceTest {
      *
      * @throws InterruptedException
      * @author Marco
-     * @since Sprint0
+     * @since Start
      */
     @Test
     void loggedInUsers() throws InterruptedException {
@@ -165,7 +170,7 @@ class AuthenticationServiceTest {
      *
      * @throws InterruptedException
      * @author Marco
-     * @since Sprint0
+     * @since Start
      */
     // TODO: replace with parametrized test
     @Test
@@ -193,11 +198,12 @@ class AuthenticationServiceTest {
     }
 
     /**
-     * Testet die retrieveAllOnlineUsers() Methode bei keinen eingeloggten Usern
+     * Testet die retrieveAllOnlineUsers() Methode bei null eingeloggten Usern
+     *
+     * @author Marco
+     * @since Start
      *
      * @throws InterruptedException
-     * @author Marco
-     * @since Sprint0
      */
     @Test
     void loggedInUsersEmpty() throws InterruptedException {
@@ -215,7 +221,7 @@ class AuthenticationServiceTest {
      * Testet ob UserSessions korrekt erstellt werden
      *
      * @author Marco
-     * @since Sprint0
+     * @since Start
      */
     @Test
     void getSessionsForUsersTest() {
@@ -250,7 +256,7 @@ class AuthenticationServiceTest {
      *
      * @param userToLogin der User, der eingeloggt werden soll
      * @author Marco
-     * @since Sprint0
+     * @since Start
      */
     private void loginUser(User userToLogin) {
         userManagement.createUser(userToLogin);

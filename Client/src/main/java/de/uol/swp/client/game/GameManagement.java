@@ -26,6 +26,12 @@ import org.apache.logging.log4j.Logger;
 import java.net.URL;
 import java.util.UUID;
 
+/**
+ * Das GameManagement
+ *
+ * @author Keno O.
+ * @since Sprint3
+ */
 public class GameManagement {
 
     static final Logger LOG = LogManager.getLogger(GameManagement.class);
@@ -34,7 +40,13 @@ public class GameManagement {
     private LobbyPresenter lobbyPresenter;
     private GameViewPresenter gameViewPresenter;
     private ChatViewPresenter chatViewPresenter;
+    /**
+     * Lobby-, Chat- und Game-ID
+     */
     private UUID id;
+    /**
+     * Der aktuell angemeldete Benutzer
+     */
     private User loggedInUser;
     private String lobbyName;
 
@@ -48,10 +60,10 @@ public class GameManagement {
 
 
     /**
-     * Instanziiert ein neues GameManagement. Dafür werden nötige Controller initialisiert und auf dem Eventbus registriert
+     * Instanziiert ein GameManagement. Dafür werden nötige Controller initialisiert und auf dem Eventbus registriert
      *
      * @param eventBus     der Eventbus
-     * @param id           die ID
+     * @param id           die ID der Lobby, des Spiels und des internen Chats
      * @param lobbyName    der Lobbyname
      * @param loggedInUser der aktuelle Benutzer
      * @param chatService  der ChatService
@@ -60,6 +72,7 @@ public class GameManagement {
      * @param injector     der Injector
      * @author Keno O.
      * @since Sprint3
+     *
      */
     public GameManagement(EventBus eventBus, UUID id, String lobbyName, User loggedInUser, ChatService chatService, LobbyService lobbyService, UserService userService, Injector injector) {
         this.id = id;
@@ -123,7 +136,7 @@ public class GameManagement {
     /**
      * Überprüft ob sich die aktuelle Stage im Vordergrund befindet
      *
-     * @return
+     * @return true wenn sie im Vordergrund ist, sonst false
      * @author Keno O.
      * @since Sprint3
      */
@@ -193,10 +206,10 @@ public class GameManagement {
     }
 
     /**
-     * initPresenter für Lobbies, setzt den jeweilige lobbyPresenter als Controller
+     * initPresenter für Lobbies, setzt den jeweiligen lobbyPresenter als Controller
      *
      * @param presenter der Presenter
-     * @param fxml die zum Presenter gehörige fxml
+     * @param fxml      die zum Presenter gehörige fxml
      * @return die rootPane
      * @author Keno O.
      * @since Sprint3
@@ -208,7 +221,6 @@ public class GameManagement {
             URL url = getClass().getResource(fxml);
             LOG.debug("Loading " + url);
             loader.setLocation(url);
-            //Controller wird gesetzt (Instanz der LobbyPresenter Klasse)
             loader.setController(presenter);
             rootPane = loader.load();
         } catch (Exception e) {
