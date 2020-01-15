@@ -9,8 +9,12 @@ import java.io.BufferedInputStream;
 import java.io.File;
 
 /**
- * The type Media player.
+ * Die Klasse SoundMediaPlayer.
+ *
+ * @author Keno Oelrichs Garcia
+ * @since Sprint3
  */
+
 public class SoundMediaPlayer implements MediaPlayer {
 
     private Logger LOG = LogManager.getLogger(getClass());
@@ -21,11 +25,14 @@ public class SoundMediaPlayer implements MediaPlayer {
     private Type type;
 
     /**
-     * Instantiates a new Media player.
+     * Initialisiert einen neuen SoundMediaPlayer.
      *
-     * @param sound the sound
-     * @param type  the type
+     * @param sound Die Sound Art, die festgelegt werden soll.
+     * @param type Der Typ (entweder Sound oder Music).
+     * @author Keno Oelrichs Garcia
+     * @since Sprint3
      */
+
     public SoundMediaPlayer(Sound sound, Type type) {
         this.sound = sound;
         this.type = type;
@@ -33,8 +40,12 @@ public class SoundMediaPlayer implements MediaPlayer {
     }
 
     /**
-     * Plays the current Track.
+     * Spielt den aktuellen Track ab.
+     *
+     * @author Keno Oelrichs Garcia
+     * @since Sprint3
      */
+
     @Override
     public void play() {
         Platform.runLater(() -> {
@@ -70,16 +81,23 @@ public class SoundMediaPlayer implements MediaPlayer {
     }
 
     /**
-     * Mute the current playing Track.
+     * Ruft eine Funktion auf, um den Ton für den Player auszuschalten.
+     *
+     * @author Keno Oelrichs Garcia
+     * @since Sprint3
      */
+
     @Override
     public void mute() {
         setMuted(true);
     }
 
     /**
-     * @param muted The State, wether the Track should be muted or not
+     * Stellt den Ton für den Nutzer an oder aus.
+     *
+     * @param muted Der Status, ob der Track stumm sein soll oder nicht.
      */
+
     private void setMuted(boolean muted) {
         BooleanControl muteControl = (BooleanControl) clip
                 .getControl(BooleanControl.Type.MUTE);
@@ -87,18 +105,25 @@ public class SoundMediaPlayer implements MediaPlayer {
     }
 
     /**
-     * Un mute the current playing Track.
+     * Stellt den Ton für den Nutzer ein.
+     *
+     * @author Keno Oelrichs Garcia
+     * @since Sprint3
      */
+
     @Override
     public void unMute() {
         setMuted(true);
     }
 
     /**
-     * Set the Volume of the current Track (Must be between 0.0 and 1.0).
+     * Setzt die Lautstärke des Aktuellen Players (Wert muss zwischen 0.0 und 1.0 liegen).
      *
-     * @param Volume the final volume
+     * @param Volume Die finale Lautstärke.
+     * @author Keno Oelrichs Garcia
+     * @since Sprint3
      */
+
     @Override
     public void setVolume(double Volume) {
         if (Volume < 0 || Volume > 1) return;
@@ -108,18 +133,25 @@ public class SoundMediaPlayer implements MediaPlayer {
     }
 
     /**
-     * Gibt .
+     * Gibt den Wert zurück, ob der Player läuft oder nicht.
      *
-     * @return Value of started.
+     * @return Den Wert von started.
+     * @author Keno Oelrichs Garcia
+     * @since Sprint3
      */
+
     @Override
     public boolean isStarted() {
         return started;
     }
 
     /**
-     * Stops the current Track.
+     * Stoppt den aktuellen Player
+     *
+     * @author Keno Oelrichs Garcia
+     * @since Sprint3
      */
+
     @Override
     public void stop() {
         clip.stop();
@@ -127,61 +159,62 @@ public class SoundMediaPlayer implements MediaPlayer {
     }
 
     /**
-     * The enum Type.
+     * Die Enumeration Type.
+     *
+     * @author Keno Oelrichs Garcia
+     * @since Sprint3
      */
+
     public enum Type {
-        /**
-         * Music type.
-         */
+
         Music,
-        /**
-         * Sound type.
-         */
+
         Sound
     }
 
     /**
-     * The enum Sound.
+     * Die Enumeration Sound.
+     *
+     * @author Keno Oelrichs Garcia
+     * @since Sprint3
      */
+
     public enum Sound {
 
-        /**
-         * Intro sound.
-         */
         Intro("/music/intro.wav"),
-        /**
-         * Button hover sound.
-         */
+
         Button_Hover("/sounds/button_mouseover.wav"),
-        /**
-         * Button pressed sound.
-         */
+
         Button_Pressed("/sounds/button_pressed.wav"),
-        /**
-         * Window opened sound.
-         */
+
         Window_Opened("/sounds/window_opened.wav"),
-        /**
-         * Message send sound.
-         */
+
         Message_Send("/sounds/message_send.wav"),
-        /**
-         * Message receive sound.
-         */
+
         Message_Receive("/sounds/message_receive.wav");
 
         private String path;
 
+        /**
+         * Setzt den Pfad-String.
+         *
+         * @param path Der Pfad
+         * @author Keno Oelrichs Garcia
+         * @since Sprint3
+         */
 
         Sound(String path) {
             this.path = path;
         }
 
         /**
-         * Get path string.
+         * Gibt den Pfad-String zurück.
          *
          * @return the Path
+         * @author Keno Oelrichs Garcia
+         * @since Sprint3
          */
+
         public String getPath() {
             return this.path;
         }

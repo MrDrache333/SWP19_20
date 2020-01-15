@@ -20,10 +20,11 @@ public class UserLoggedInMessage extends AbstractServerMessage {
     /**
      * Der Konstruktor bekommt einen Usernamen, den er als Attribut speichert.
      *
-     * @param constructor
-     * @author Keno S.
+     * @param username Der aktuelle Username
+     * @author Marco Grawunder
      * @since Sprint2
      */
+
     public UserLoggedInMessage(String username) {
         this.username = username;
     }
@@ -35,10 +36,11 @@ public class UserLoggedInMessage extends AbstractServerMessage {
     /**
      * Vergleicht diese Klasse mit einem anderen Objekt
      *
-     * @param method
-     * @author Keno S.
+     * @param o Das zu vergleichende Objekt.
+     * @author Marco Grawunder
      * @since Sprint3
      */
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
