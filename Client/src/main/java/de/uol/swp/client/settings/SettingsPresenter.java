@@ -25,12 +25,16 @@ import java.util.regex.Pattern;
 import static de.uol.swp.client.main.MainMenuPresenter.showAlert;
 
 /**
- * The type Settings presenter.
+ * Der Settings Presenter für den Typ.
+ * @author Anna
+ * @since Sprint4
  */
 public class SettingsPresenter extends AbstractPresenter {
 
     /**
-     * The constant fxml.
+     * Die FXML Konstante.
+     * @author Anna
+     * @since Sprint4
      */
     public static final String fxml = "/fxml/SettingsView.fxml";
     public static final String css = "css/SettingsPresenter.css";
@@ -75,6 +79,7 @@ public class SettingsPresenter extends AbstractPresenter {
         String password2 = password2Field.getText();
 
         //keine Eingaben vom User -> Fenster schließen
+
         if (Strings.isNullOrEmpty(username) && Strings.isNullOrEmpty(email) && Strings.isNullOrEmpty(password) && Strings.isNullOrEmpty(password2)) {
             eventBus.post(new CloseSettingsEvent());
             clearAll();
@@ -109,11 +114,25 @@ public class SettingsPresenter extends AbstractPresenter {
         }
     }
 
+    /**
+     * Postet auf den EventBus das Accountlöschung-Event
+     *
+     * @param event
+     * @author Julia
+     * @since Sprint4
+     */
     @FXML
     public void onDeleteAccountButtonPressed(ActionEvent actionEvent) {
         eventBus.post(new DeleteAccountEvent(loggedInUser));
     }
 
+    /**
+     * Postet auf den EventBus das Schließe-Settings-Event
+     *
+     * @param event
+     * @author Julia
+     * @since Sprint4
+     */
     @FXML
     public void onCancelButtonPressed(ActionEvent actionEvent) {
         eventBus.post(new CloseSettingsEvent());
@@ -133,7 +152,13 @@ public class SettingsPresenter extends AbstractPresenter {
             loggedInUser = message.getUser();
         }
     }
-
+    /**
+     * Leert all alle Felder (Das Benutzernamefeld, E-Mailfeld, Passwortfeld und Passwortfeld2
+     *
+     * @param method
+     * @author Julia
+     * @since Sprint4
+     */
     private void clearAll() {
         usernameField.clear();
         emailField.clear();

@@ -5,7 +5,7 @@ import de.uol.swp.common.message.AbstractServerMessage;
 import java.util.Objects;
 
 /**
- * A message to indicate a new logged in user
+ * Eine Nachricht, die einen neuen eingelogten Nutzer angibt.
  *
  * @author Marco Grawunder
  */
@@ -17,6 +17,13 @@ public class UserLoggedInMessage extends AbstractServerMessage {
     public UserLoggedInMessage() {
     }
 
+    /**
+     * Der Konstruktor bekommt einen Usernamen, den er als Attribut speichert.
+     *
+     * @param constructor
+     * @author Keno S.
+     * @since Sprint2
+     */
     public UserLoggedInMessage(String username) {
         this.username = username;
     }
@@ -25,6 +32,13 @@ public class UserLoggedInMessage extends AbstractServerMessage {
         return username;
     }
 
+    /**
+     * Vergleicht diese Klasse mit einem anderen Objekt
+     *
+     * @param method
+     * @author Keno S.
+     * @since Sprint3
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

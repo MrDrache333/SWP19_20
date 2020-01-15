@@ -2,6 +2,9 @@ package de.uol.swp.common.user;
 
 import java.util.Objects;
 
+/**
+ * @author Marco
+ */
 public class UserDTO implements User {
 
     private final String username;

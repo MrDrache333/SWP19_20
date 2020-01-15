@@ -9,6 +9,13 @@ public class StartGameMessage extends AbstractServerMessage {
     private String lobbyName;
     private UUID lobbyID;
 
+    /**
+     * Die Spielstartnachricht bekommt den Lobbynamen und die LobbyID übergeben
+     *
+     * @param constructor
+     * @author Darian
+     * @since Sprint3
+     */
     public StartGameMessage(String lobbyName, UUID lobbyID) {
         this.lobbyName = lobbyName;
         this.lobbyID = lobbyID;
