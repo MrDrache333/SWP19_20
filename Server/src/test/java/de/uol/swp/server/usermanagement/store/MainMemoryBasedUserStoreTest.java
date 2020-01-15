@@ -11,6 +11,13 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Klasse, die den MainMemoryBaseUserStore testet
+ *
+ * @author Marco
+ * @since Start
+ */
+
 class MainMemoryBasedUserStoreTest {
 
     private static final int NO_USERS = 10;

@@ -9,6 +9,7 @@ import java.util.Optional;
  * Basis Klasse für alle Messages. Basis Handling Session Informationen.
  *
  * @author Marco Grawunder
+ * @since Start
  */
 @SuppressWarnings("serial")
 abstract public class AbstractMessage implements Message {
