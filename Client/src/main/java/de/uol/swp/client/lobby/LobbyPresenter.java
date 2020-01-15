@@ -6,7 +6,6 @@ import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.GameManagement;
-import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
 import de.uol.swp.common.chat.ChatService;
 import de.uol.swp.common.lobby.LobbyService;
 import de.uol.swp.common.lobby.message.StartGameMessage;
@@ -49,21 +48,11 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 
-/**
- * The type Lobby presenter.
- *
- * @author Paula, Haschem, Ferit, Anna
- * @version 0.2
- */
 public class LobbyPresenter extends AbstractPresenter {
 
-    /**
-     * The constant fxml.
-     */
     public static final String fxml = "/fxml/LobbyView.fxml";
     private static final String url = "https://confluence.swl.informatik.uni-oldenburg.de/display/SWP2019B/Spielanleitung?preview=/126746667/126746668/Dominion%20-%20Anleitung%20-%20V1.pdf";
 
-    private static final ShowLobbyViewEvent showLobbyViewMessage = new ShowLobbyViewEvent();
     private static final Logger LOG = LogManager.getLogger(ChatViewPresenter.class);
 
     private ChatViewPresenter chatViewPresenter;
@@ -77,7 +66,6 @@ public class LobbyPresenter extends AbstractPresenter {
     private EventBus eventBus;
     private Injector injector;
 
-    //Eigener Status in der Lobby
     private boolean ownReadyStatus = false;
 
     @FXML
@@ -86,12 +74,6 @@ public class LobbyPresenter extends AbstractPresenter {
     private Pane chatView;
     @FXML
     private Button readyButton;
-
-    /**
-     * @author Timo, Rike
-     * @since Sprint 3
-     * @implNote Anlegen des Chosebox-Objektes
-     */
     @FXML
     ChoiceBox<Integer> chooseMaxPlayer;
 
@@ -100,17 +82,20 @@ public class LobbyPresenter extends AbstractPresenter {
     private GameManagement gameManagement;
 
     /**
-     * Instantiates a new Lobby presenter.
+     * Instanziiert einen neuen LobbyPresenter.
      *
-     * @param loggedInUser      the logged in user
-     * @param name              the name
-     * @param lobbyID           the lobby id
-     * @param chatService       the chat service
-     * @param chatViewPresenter the chat view presenter
-     * @param lobbyService      the lobby service
-     * @param userService       the user service
-     * @param injector          the injector
-     * @param gameManagement    the game management
+     * @param loggedInUser      der eingeloggte Nutzer
+     * @param name              der Name
+     * @param lobbyID           die LobbyID
+     * @param chatService       der ChatService
+     * @param chatViewPresenter der ChatViewPresenter
+     * @param lobbyService      der LobbyService
+     * @param userService       der UserService
+     * @param injector          der Injector
+     * @param gameManagement    das GameManagement
+     *
+     * @author Julia, Keno O, Anna, Darian, Keno S.
+     * @since Sprint2
      */
     public LobbyPresenter(User loggedInUser, String name, UUID lobbyID, ChatService chatService, ChatViewPresenter chatViewPresenter, LobbyService lobbyService, UserService userService, Injector injector, GameManagement gameManagement, EventBus eventBus) {
         this.loggedInUser = loggedInUser;
@@ -129,14 +114,20 @@ public class LobbyPresenter extends AbstractPresenter {
     //--------------------------------------
     // FXML METHODS
     //--------------------------------------
-
+    /**
+     * Wird aufgerufen wenn der Lobby verlassen Button gedrückt wird.
+     *
+     * @param event
+     * @author Julia, Keno S.
+     * @since Sprint3
+     */
     @FXML
     public void onLeaveLobbyButtonPressed(ActionEvent event) {
         lobbyService.leaveLobby(lobbyName, loggedInUserDTO, lobbyID);
     }
 
     /**
-     * Die Methode postet ein Request auf den Bus, wenn der Einstellungen-Button gedrückt wird
+     * Die Methode postet ein Request auf den Bus, wenn der Einstellungen-Button gedrückt wird.
      *
      * @param actionEvent
      * @author Anna
@@ -149,18 +140,20 @@ public class LobbyPresenter extends AbstractPresenter {
     }
 
     /**
-     * Initialize.
+     * Intitialisieren des Chats - FXML laden, Controller setzen (muss immer eine eigene Instanz sein)
+     * und chatView ind die chatView-Pane dieses Controllers laden.
+     * Der eingeloggte User wird zur Userliste hinzugefügt und diese wird aktualisiert.
+     * chooserMaxPlayer wird auf den Default Wert (4) gesetzt.
      *
-     * @throws IOException the io exception
+     * @throws IOException die IO-Exception
+     * @author Ferit, Keno O, Darian, Timo
+     * @since Sprint2
      */
     @FXML
     public void initialize() throws IOException {
-        //FXML laden
         FXMLLoader loader = injector.getInstance(FXMLLoader.class);
         loader.setLocation(getClass().getResource(ChatViewPresenter.fxml));
-        //Controller der FXML setzen (Nicht in der FXML festlegen, da es immer eine eigene Instanz davon sein muss)
         loader.setController(chatViewPresenter);
-        //Den ChatView in die chatView-Pane dieses Controllers laden
         chatView.getChildren().add(loader.load());
         ((Pane) chatView.getChildren().get(0)).setPrefHeight(chatView.getPrefHeight());
         ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getPrefWidth());
@@ -169,14 +162,16 @@ public class LobbyPresenter extends AbstractPresenter {
         lobbyService.retrieveAllUsersInLobby(lobbyID);
         readyUserList.put(loggedInUser.getUsername(), getHboxFromReadyUser(loggedInUser.getUsername(), false));
         updateUsersList();
-        //Setzt choseMaxPlayer auf den Default-Wert
+
         chooseMaxPlayer.setValue(4);
     }
 
     /**
-     * On logout button pressed.
+     * Wird aufgerufen wenn der Logout-Button gedrückt wird.
      *
-     * @param actionEvent the action event
+     * @param actionEvent
+     * @author Keno S, Keno O.
+     * @since Sprint3
      */
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
@@ -185,9 +180,11 @@ public class LobbyPresenter extends AbstractPresenter {
     }
 
     /**
-     * On instructions button pressed.
+     * Wird aufgerufen wenn der Spielanleitung-Button gedrückt wird.
      *
-     * @param actionEvent the action event
+     * @param actionEvent
+     * @author Keno S, Keno O.
+     * @since Sprint3
      */
     @FXML
     public void onInstructionsButtonPressed(ActionEvent actionEvent) {
@@ -199,9 +196,12 @@ public class LobbyPresenter extends AbstractPresenter {
     }
 
     /**
-     * On ready button pressed.
+     * Wird aufgerufen wenn der Bereit-Button gedrückt wird.
+     * Der Text auf dem Button und der ownReadyStatus werden dabei jeweils geändert.
      *
-     * @param actionEvent the action event
+     * @param actionEvent
+     * @author Darian, Keno S, Keno O.
+     * @since Sprint3
      */
     @FXML
     public void onReadyButtonPressed(ActionEvent actionEvent) {
@@ -217,9 +217,11 @@ public class LobbyPresenter extends AbstractPresenter {
     }
 
     /**
+     * Wird aufgerufen wenn der Wert in der max. Spieler-Box geändert wird.
+     *
+     * @param actionEvent
      * @author Timo, Rike
-     * @Since Sprint 3
-     * @param actionEvent the action event
+     * @since Sprint 3
      */
     @FXML
     public void onMaxPlayerSelected(ActionEvent actionEvent)
@@ -232,9 +234,11 @@ public class LobbyPresenter extends AbstractPresenter {
     //--------------------------------------
 
     /**
-     * On updated lobby ready status message.
+     * Ruft Methode auf, die den Status des Nutzers ändert, nachdem der Bereit-Status des Nutzers serverseitig geändert wurde.
      *
-     * @param message the message
+     * @param message die UpdatedLobbyReadyStatusMessage
+     * @author Darian, Keno O.
+     * @since Sprint3
      */
     @Subscribe
     public void onUpdatedLobbyReadyStatusMessage(UpdatedLobbyReadyStatusMessage message) {
@@ -244,6 +248,15 @@ public class LobbyPresenter extends AbstractPresenter {
             updateReadyUser(message.getUser().getUsername(), message.isReady());
         }
     }
+
+    /**
+     * Reaktion auf die AllOnlineUsersInLobbyResponse vom Server.
+     * Die Userliste wird aktualisiert.
+     *
+     * @param response die AllOnlineUsersInLobbyResponse
+     * @author Keno O.
+     * @since Sprint3
+     */
 
     @Subscribe
     private void onReceiveAllUsersInLobby(AllOnlineUsersInLobbyResponse response) {
@@ -257,9 +270,9 @@ public class LobbyPresenter extends AbstractPresenter {
     }
 
     /**
-     * Aktualisiert den loggedInUser sowie die Liste, falls sich der Username geändert hat
+     * Aktualisiert den loggedInUser sowie die Userliste.
      *
-     * @param message
+     * @param message die UpdatedUserMessage
      * @author Julia, Anna
      * @since Sprint4
      */
@@ -270,7 +283,6 @@ public class LobbyPresenter extends AbstractPresenter {
             loggedInUserDTO = (UserDTO) message.getUser();
             LOG.debug("User " + message.getOldUser().getUsername() + " changed his name to " + message.getUser().getUsername());
         }
-        //der alte User wird aus der Lobby entfernt und der neue hinzugefügt
         Platform.runLater(() -> {
             if (readyUserList.containsKey(message.getOldUser().getUsername())){
                 userLeftLobby(message.getOldUser().getUsername());
@@ -282,9 +294,11 @@ public class LobbyPresenter extends AbstractPresenter {
     }
 
     /**
+     * Deaktivieren der Max. Spieler ChoiceBox, sofern der eingeloggte Nutzer nicht der Lobbyowner ist.
+     *
+     * @param msg die SetMaxPlayerMessage
      * @author Timo, Rike
      * @since Sprint 3
-     * @implNote Deaktivieren der Max. Spieler ChoiceBox, sofern der eingeloggte User nicht der Lobbyowner ist.
      */
     @Subscribe
     public void onSetMaxPlayerMessage(SetMaxPlayerMessage msg) {
@@ -301,9 +315,11 @@ public class LobbyPresenter extends AbstractPresenter {
     }
 
     /**
-     * On game start message.
+     * GameView wird aufgerufen.
      *
-     * @param message the message
+     * @param message die StartGameMessage
+     * @author Darian, Keno O.
+     * @since Sprint3
      */
     @Subscribe
     public void onGameStartMessage(StartGameMessage message) {
@@ -313,9 +329,11 @@ public class LobbyPresenter extends AbstractPresenter {
     }
 
     /**
-     * User left.
+     * Nachdem der Nutzer sich ausgeloggt hat, wird er auch aus der Lobbyliste gelöscht.
      *
-     * @param message the message
+     * @param message die UserLoggedOutMessage
+     * @author Darian
+     * @since Sprint3
      */
     @Subscribe
     public void onUserLoggedOutMessage(UserLoggedOutMessage message) {
@@ -325,7 +343,7 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * User wird aus der Liste entfernt, wenn er seinen Account gelöscht hat
      *
-     * @param message
+     * @param message die UserDroppedMessage
      * @author Julia
      * @since Sprint4
      */
@@ -335,9 +353,11 @@ public class LobbyPresenter extends AbstractPresenter {
     }
 
     /**
-     * New user.
+     * Ein neuer Nutzer tritt der Lobby bei, die Userliste der Lobby wird aktualisiert und eine Nachricht im Chat angezeigt.
      *
-     * @param message the message
+     * @param message die UserJoinedLobbyMessage
+     * @author Darian, Keno O.
+     * @since Sprint3
      */
     @Subscribe
     public void onUserJoinedLobbyMessage(UserJoinedLobbyMessage message) {
@@ -353,9 +373,11 @@ public class LobbyPresenter extends AbstractPresenter {
     }
 
     /**
-     * User left.
+     * Ein Nutzer verlässt die Lobby, die Userliste wird aktualisiert.
      *
-     * @param message the message
+     * @param message die UserLeftLobbyMessage
+     * @author Darian, Keno O, Julia
+     * @since Sprint3
      */
     @Subscribe
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
@@ -369,6 +391,13 @@ public class LobbyPresenter extends AbstractPresenter {
     // PRIVATE METHODS
     //--------------------------------------
 
+    /**
+     * Nutzer wird aus der Userliste der Lobby gelöscht und eine Nachricht im Chat angezeigt.
+     *
+     * @param username der Username
+     * @author Darian, Keno O.
+     * @since Sprint3
+     */
     private void userLeftLobby(String username) {
         if (readyUserList.get(username) != null) {
             Platform.runLater(() -> {
@@ -383,8 +412,14 @@ public class LobbyPresenter extends AbstractPresenter {
         }
     }
 
+    /**
+     * Geänderte Userliste wird angezeigt.
+     *
+     *@author Darian, Keno O.
+     *@since Sprint3
+     */
+
     private void updateUsersList() {
-        // Attention: This must be done on the FX Thread!
         Platform.runLater(() -> {
             if (userHBoxes == null) {
                 userHBoxes = FXCollections.observableArrayList();
@@ -397,11 +432,13 @@ public class LobbyPresenter extends AbstractPresenter {
 
 
     /**
-     * Creates a new HBox for a User
+     * Erstellt eine neue HBox für einen Nutzer.
      *
-     * @param username The User
-     * @param status   The actual Status
-     * @return The generated HBox
+     * @param username der Nutzer
+     * @param status   der aktuelle Bereit-Status
+     * @return die generierte HBox
+     * @author Darian
+     * @since Sprint3
      */
     private HBox getHboxFromReadyUser(String username, boolean status) {
         HBox box = new HBox();
@@ -414,6 +451,14 @@ public class LobbyPresenter extends AbstractPresenter {
         return box;
     }
 
+    /**
+     * Nutzer wird erst aus der Userliste gelöscht und dann mit seinem neuen Status wieder hinzugefügt.
+     *
+     * @param userName der Username
+     * @param status der aktuelle Bereit-Status
+     * @author Darian
+     * @since Sprint3
+     */
     private void updateReadyUser(String userName, boolean status) {
         if (readyUserList.containsKey(userName)) {
             readyUserList.remove(userName);
@@ -423,9 +468,11 @@ public class LobbyPresenter extends AbstractPresenter {
     }
 
     /**
-     * Converts the HBox Map to a ArrayList
+     * Konvertiert die HBox Map in eine ArrayList.
      *
-     * @return All HBoxes as ArrayList
+     * @return alle HBoxes als ArrayList
+     * @author Darian, Keno S.
+     * @since Sprint3
      */
     private ArrayList<HBox> getAllHBoxes() {
         return new ArrayList<>(readyUserList.values());
@@ -436,27 +483,33 @@ public class LobbyPresenter extends AbstractPresenter {
     //--------------------------------------
 
     /**
-     * Gets lobby id.
+     * Gibt die LobyID zurück.
      *
-     * @return the lobby id
+     * @return die LobbyID
+     * @author Darian
+     * @since Sprint3
      */
     public UUID getLobbyID() {
         return lobbyID;
     }
 
     /**
-     * Gets lobby name.
+     * Gibt den Lobbynamen zurück.
      *
-     * @return the lobby name
+     * @return den Lobbynamen
+     * @author Darian
+     * @since Sprint3
      */
     public String getLobbyName() {
         return lobbyName;
     }
 
     /**
-     * Gets lobby service
+     * Gibt den LobbyService zurück.
      *
-     * @return the lobby service
+     * @return den LobbyService
+     * @author Ferit
+     * @since Sprint3
      */
     public LobbyService getLobbyService() {
         return lobbyService;

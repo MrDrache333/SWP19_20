@@ -9,9 +9,9 @@ import de.uol.swp.client.di.ClientModule;
 import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.lobby.LobbyService;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
+import de.uol.swp.common.lobby.message.SetMaxPlayerMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
-import de.uol.swp.common.lobby.message.SetMaxPlayerMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.exception.RegistrationExceptionMessage;
@@ -34,20 +34,14 @@ import java.util.List;
 public class ClientApp extends Application implements ConnectionListener {
 
     private static final Logger LOG = LogManager.getLogger(ClientApp.class);
-
+    private static SceneManager sceneManager;
     private String host;
     private int port;
-
     private UserService userService;
     private LobbyService lobbyService;
-
     private User user;
-
     private ClientConnection clientConnection;
-
     private EventBus eventBus;
-
-    private static SceneManager sceneManager;
 
     // -----------------------------------------------------
     // Java FX Methods
@@ -57,10 +51,20 @@ public class ClientApp extends Application implements ConnectionListener {
         launch(args);
     }
 
+    /**
+     * Getter Methode um einen SceneManager zu erhalten.
+     *
+     * @return Einen SceneManager
+     */
     public static SceneManager getSceneManager() {
         return sceneManager;
     }
 
+    /**
+     * Diese Methode setzt die Verbindungsdaten zum Server.
+     * host: localhost - Der Server auf der eigenen Maschine.
+     * port: 8889 - Der Port auf dem der Server läuft.
+     */
     @Override
     public void init() {
         Parameters p = getParameters();
@@ -81,6 +85,11 @@ public class ClientApp extends Application implements ConnectionListener {
         // exceptions are only visible in console!
     }
 
+    /**
+     * Diese Methode startet die ClientApp und initialisiert alle benötigten Elemente zum starten der ClientApp.
+     *
+     * @param primaryStage Die Stage zu der zugehörigen ClientApp gehört.
+     */
     @Override
     public void start(Stage primaryStage) {
 
@@ -121,11 +130,19 @@ public class ClientApp extends Application implements ConnectionListener {
         t.start();
     }
 
+    /**
+     * Zeigt den LoginScreen, wenn eine Verbindung zum Server besteht.
+     *
+     * @param ch Der Übergeben Channel für die Verbindung zum Server.
+     */
     @Override
     public void connectionEstablished(Channel ch) {
         sceneManager.showLoginScreen();
     }
 
+    /**
+     * Stoppt die ClientApp des Users und loggt den zugehörigen User aus.
+     */
     @Override
     public void stop() {
         if (userService != null && user != null) {
@@ -151,6 +168,11 @@ public class ClientApp extends Application implements ConnectionListener {
         sceneManager.showServerError(e);
     }
 
+    /**
+     * Diese Methode zeigt den MainScreen für den übergebenen User der message an.
+     *
+     * @param message Eine message vom Server, dass der User eingeloggt worden ist.
+     */
     @Subscribe
     public void userLoggedIn(LoginSuccessfulResponse message) {
         LOG.debug("user logged in successfully " + message.getUser().getUsername());
@@ -164,6 +186,11 @@ public class ClientApp extends Application implements ConnectionListener {
         LOG.error("Registration error " + message);
     }
 
+    /**
+     * Diese Methode zeigt den LoginScreen für den übergebenen User der message an.
+     *
+     * @param message Eine message vom Server, dass der User registriert worden ist.
+     */
     @Subscribe
     public void onRegistrationSuccessfulMessage(RegistrationSuccessfulResponse message) {
         LOG.info("Registration successful.");
@@ -180,6 +207,7 @@ public class ClientApp extends Application implements ConnectionListener {
      * somit die Lobby. Überprüft außerdem ob der Ersteller mit dem eingeloggten User übereinstimmt, damit
      * nur dem ersteller ein neu erstelltes Lobbyfenster angezeigt wird.
      *
+     * @param message CreateLobbyMessage vom Server, dass die Lobby erstellt worden ist.
      * @author Paula, Haschem, Ferit, Anna
      * @version 0.2
      * @since Sprint3
@@ -193,9 +221,10 @@ public class ClientApp extends Application implements ConnectionListener {
     }
 
     /**
-     * Empfängt vom Server die Message, dass der User der Lobby beigetreten ist. Lobbys in Hauptmenü werden aktualisiert.
+     * Empfängt vom Server die Message, dass der User der Lobby beigetreten ist.
+     * Lobbys in Hauptmenü werden aktualisiert.
      *
-     * @param message
+     * @param message UserJoinedLobbyMessage Das ein User der Lobby beigetreten ist.
      * @author Paula, Julia
      * @since Sprint3
      */
@@ -212,9 +241,10 @@ public class ClientApp extends Application implements ConnectionListener {
     }
 
     /**
-     * Empfängt vom Server die Message, dass User Lobby verlassen hat. Lobby wird geschlossen. User wird aus Lobby gelöscht
+     * Empfängt vom Server die Message, dass User Lobby verlassen hat.
+     * Lobby wird geschlossen. User wird aus Lobby gelöscht.
      *
-     * @param message
+     * @param message UserLeftLobbyMessage
      * @author Julia, Paula
      * @since Sprint3
      */
@@ -228,9 +258,10 @@ public class ClientApp extends Application implements ConnectionListener {
     }
 
     /**
-     * Empfängt die Nachricht (vom MainMenuPresenter), dass das Einstellungsfenster geöffnet werden soll
+     * Empfängt die Nachricht (vom MainMenuPresenter), dass das Einstellungsfenster geöffnet werden soll.
+     * Öffnet das Einstellungsfenster.
      *
-     * @param message
+     * @param message Die Anfrage zum öffnen des Fensters
      * @author Anna
      * @since Sprint4
      */
@@ -242,9 +273,9 @@ public class ClientApp extends Application implements ConnectionListener {
     }
 
     /**
-     * Aktualsiert den user und schließt das Einstellungsfenster
+     * Aktualisiert den User und schließt das Einstellungsfenster.
      *
-     * @param message
+     * @param message Nachricht um die neuen Daten des Users anzuzeigen und zu setzen.
      * @author Julia
      * @since Sprint4
      */
@@ -258,13 +289,17 @@ public class ClientApp extends Application implements ConnectionListener {
         }
     }
 
+    /**
+     * Zeigt den Fehler beim Updaten der Daten an.
+     *
+     * @param message UpdateUserFailedMessage
+     */
     @Subscribe
-    public void onUpdateUserFailedMessage(UpdateUserFailedMessage message){
-        if (user.getUsername().equals(message.getUser().getUsername())){
+    public void onUpdateUserFailedMessage(UpdateUserFailedMessage message) {
+        if (user.getUsername().equals(message.getUser().getUsername())) {
             sceneManager.showError(message.getMessage());
         }
     }
-
 
 
     // -----------------------------------------------------
@@ -275,7 +310,7 @@ public class ClientApp extends Application implements ConnectionListener {
      * Empfängt vom Server die Message, dass sich der Nutzer ausgeloggt hat. Der Nutzer wird aus allen Lobbys gelöscht.
      * Lobbys im Hauptmenü werden aktualisiert, alle Stages werden geschlossen und das Loginfenster wird geöffnet
      *
-     * @param message
+     * @param message UserLoggedOutMessage
      * @author Julia, Paula
      * @since Sprint3
      */
@@ -295,24 +330,20 @@ public class ClientApp extends Application implements ConnectionListener {
     // -----------------------------------------------------
 
     /**
-     * @auhor Timo, Rike
+     * Aktualisiert die Max Player Anzahl der Lobbys wenn eine SetMaxPlayerMessage eingeht.
+     *
+     * @author Timo, Rike
      * @since Sprint 3
-     * @implNote Reaktion auf die onSetMaxPlayerMessage
      */
-     @Subscribe
-     public void onSetMaxPlayerMessage(SetMaxPlayerMessage msg)
-     {
-         if(msg.getSetMaxPlayerSet() == true)
-         {
-             LOG.info("Max. Spieler der Lobby: " + msg.getLobbyID() + " erfolgreich auf " + msg.getMaxPlayer() + " gesetzt.");
-             lobbyService.retrieveAllLobbies();
-         }
-
-         else
-         {
-             LOG.info("Max. Spieler der Lobby: " + msg.getLobbyID() + " nicht gesetzt. User ist nicht der Lobbyowner!");
-         }
-     }
+    @Subscribe
+    public void onSetMaxPlayerMessage(SetMaxPlayerMessage msg) {
+        if (msg.getSetMaxPlayerSet() == true) {
+            LOG.info("Max. Spieler der Lobby: " + msg.getLobbyID() + " erfolgreich auf " + msg.getMaxPlayer() + " gesetzt.");
+            lobbyService.retrieveAllLobbies();
+        } else {
+            LOG.info("Max. Spieler der Lobby: " + msg.getLobbyID() + " nicht gesetzt. User ist nicht der Lobbyowner!");
+        }
+    }
 
     /**
      * Nachdem der Account gelöscht wurde, werden alle Fenster geschlossen und der Login-Screen angezeigt
@@ -329,8 +360,9 @@ public class ClientApp extends Application implements ConnectionListener {
         }
         lobbyService.retrieveAllLobbies();
     }
+
     /**
-     * Schließen aller Fenster
+     * Schließen aller Fenster, wenn die Methode aufgerufen wird.
      *
      * @author Julia, Paula
      * @since Sprint3
