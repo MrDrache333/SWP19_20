@@ -5,57 +5,77 @@ import de.uol.swp.common.user.User;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Der UserStore
+ *
+ * @author Marco
+ * @since Start
+ */
+
 public interface UserStore {
 
     /**
-     * Find a user by username and password
+     * Findet den User mit dem Username und dem Passwort
      *
-     * @param username
-     * @param password
-     * @return The User without password information, if found
+     * @param username  der Username
+     * @param password  das Passwort des Users
+     * @return Der User ohne Passwortinformationen, wenn er gefunden wurde
+     * @author Marco
+     * @since Start
      */
     Optional<User> findUser(String username, String password);
 
     /**
-     * Find a user only by name
+     * Findet einen User nur mit dem Namen
      *
-     * @param username
-     * @return The User without password information, if found
+     * @param username  der Username
+     * @return der User ohne Passwortinformationen, wenn er gefunden wurde
+     * @author Marco
+     * @since Start
      */
     Optional<User> findUser(String username);
 
     /**
-     * Create a new user
+     * Erstellt einen neuen User
      *
-     * @param username
-     * @param password
-     * @param eMail
-     * @return The User without password information
+     * @param username  der gewählte Username
+     * @param password  das gewählte Passwort
+     * @param eMail     die angegebene E-Mail-Adresse
+     * @return der User ohne Passwortinformationen
+     * @author Marco
+     * @since Start
      */
     User createUser(String username, String password, String eMail);
 
     /**
-     * Update user
+     * Aktualisiert einen User
      *
-     * @param username
-     * @param password
-     * @param eMail
-     * @return the updated user
+     * @param username      der neue Username
+     * @param password      das Passwort des Users
+     * @param eMail         die E-Mail-Adresse des Users
+     * @param oldUsername   der alter Username
+     * @return den aktualisierten User
+     * @author Marco
+     * @since Start
      */
     User updateUser(String username, String password, String eMail, String oldUsername);
 
     /**
-     * Remove user from store
+     * Löscht einen User aus der Liste
      *
-     * @param username
+     * @param username  der zu löschende User
+     * @author Marco
+     * @since Start
      */
     void removeUser(String username);
 
 
     /**
-     * Retrieves the list of all users.
+     * Gibt die Liste aller User wieder
      *
-     * @return A list of all users without password information
+     * @return Eine Liste mit allen Usern ohne Passwortinformationenen
+     * @author Marco
+     * @since Start
      */
     List<User> getAllUsers();
 

@@ -7,107 +7,120 @@ import java.util.TreeMap;
 import java.util.UUID;
 
 /**
- * The interface Lobby.
+ * Das Interface Lobby.
+ * @author Marco Grawunder
+ * @since Sprint0
  */
 public interface Lobby {
 
     /**
-     * Gets name.
+     * Gibt den Namen zurück.
      *
-     * @return the name
+     * @return Den Namen
      */
     String getName();
 
     /**
-     * Update owner.
+     * Aktualisiert den Besitzer einer Lobby.
      *
-     * @param user the user
+     * @param user Der Nutzer
      */
     void updateOwner(User user);
 
     /**
-     * Gets owner.
+     * Gibt den aktuellen Lobby Owner zurück.
      *
-     * @return the owner
+     * @return Der Lobby Owner
      */
     User getOwner();
 
     /**
-     * Join user.
+     * Fügt einen Nutzer zu der Lobby hinzu.
      *
-     * @param user the user
+     * @param user Der Nutzer
      */
     void joinUser(User user);
 
     /**
-     * Leave user.
+     * Entfernt einen Nutzer aus der Lobby.
      *
-     * @param user the user
+     * @param user Der Nutzer
      */
     void leaveUser(User user);
 
     /**
-     * Gets users.
+     * Gibt alle Nutzer zurück.
      *
-     * @return the users
+     * @return Die Nutzer
      */
     Set<User> getUsers();
 
     /**
-     * Gets lobby id.
+     * Gibt die Lobby ID zurück.
      *
-     * @return the lobby id
+     * @return Die Lobby ID
      */
     UUID getLobbyID();
 
     /**
-     * Sets lobby id.
+     * Setzt die Lobby ID für die Lobby.
      *
-     * @param lobbyID the lobby id
+     * @param lobbyID Die Lobby ID
      */
     void setLobbyID(UUID lobbyID);
 
     /**
-     * Gets players.
+     * Gibt die Anzahl der Spieler zurück.
      *
-     * @return the players
+     * @return Die Spieler
      */
     int getPlayers();
 
     /**
-     * Sets ready status.
+     * Setzt den Bereit Status eines Nutzers.
      *
-     * @param user   the user
-     * @param status the status
+     * @param user   Der Nutzer
+     * @param status Der Status
      */
     void setReadyStatus(User user, boolean status);
 
     /**
-     * Gets ready status.
+     * Gibt den Bereit Status zurück.
      *
-     * @param user the user
-     * @return the ready status
+     * @param user Der Nutzer
+     * @return Der Bereit Status
      */
     boolean getReadyStatus(User user);
 
     /**
+     * Gibt zurück, wie groß die Lobby maximal sein kann.
+     *
      * @author Timo, Rike
      * @since Sprint 3
-     * @implNote Notwendige Interface implementierung für die set & get MaxPlayer Methoden
      */
     Integer getMaxPlayer();
+
+    /**
+     * Setzt die maximale Lobbygröße.
+     *
+     * @param maxPlayer Die neue maximale Lobbygröße
+     * @author Timo, Rike
+     * @since Sprint 3
+     */
+
     void setMaxPlayer(Integer maxPlayer);
 
     /**
-     * Gets every ready status.
+     * Gibt jeden Bereit Status zurück.
      *
-     * @return every ready status
+     * @return Jeden Bereit Status
      */
     TreeMap<String, Boolean> getEveryReadyStatus();
 
 
     /**
      * @return gibt das Passwort einer Lobby zurück
+     * @author Rike Hochheiden
      */
     String getLobbyPassword();
 }

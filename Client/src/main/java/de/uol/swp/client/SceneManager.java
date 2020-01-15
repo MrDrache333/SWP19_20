@@ -38,6 +38,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Der SceneManager
+ *
+ * @author Marco
+ * @since Start
+ */
 public class SceneManager {
 
     static final Logger LOG = LogManager.getLogger(SceneManager.class);
@@ -109,9 +115,10 @@ public class SceneManager {
 
 
     /**
-     * Wenn in den Einstellungen auf den BUtton Account löschen gegangen wird, wird ein neues Fenster geöffnet, in dem nachgefragt wird,
-     * ob man den Account auch wirklich löschen will
+     * Wenn in den Einstellungen auf den Button "Account löschen" geklickt wird, wird ein neues Fenster geöffnet,
+     * in dem nachgefragt wird, ob man seinen Account wirklich löschen will.
      *
+     * @param event das Event
      * @author Anna
      * @since Sprint4
      */
@@ -278,9 +285,9 @@ public class SceneManager {
     }
 
     /**
-     * Es wird eine neue Stage mit der lobbyScene angezeigt und mit dem Attribut geöffnet.
+     * Es wird eine neue Stage mit der lobbyScene angezeigt und mit dem Parametern geöffnet.
      *
-     * @param title   der Übergebene Titel aus dem MainMenuPresenter
+     * @param title   der übergebene Titel aus dem MainMenuPresenter
      * @param lobbyID die übergebene LobbyID aus der empfangenen Message in der ClientApp
      * @author Paula, Haschem, Ferit, Anna
      * @version 0.2
@@ -288,12 +295,12 @@ public class SceneManager {
      */
     public void showLobbyScreen(User currentUser, String title, UUID lobbyID) {
         Platform.runLater(() -> {
-            //LobbyPresenter neue Instanz mit (name, id) wird erstellt
+            //neue Instanz des LobbyPresenter mit (name, id) wird erstellt
             GameManagement gameManagement = new GameManagement(eventBus, lobbyID, title, currentUser, chatService, lobbyService, userService, injector);
 
             eventBus.register(gameManagement);
 
-            //LobbyPresenter und lobbyStage in die jeweilige Map packen, mit lobbyID als Schlüssel
+            //LobbyPresenter und lobbyStage in der jeweilige Map speichern. Die lobbyID dient als Schlüssel.
             games.put(lobbyID, gameManagement);
             gameManagement.showLobbyView();
         });
@@ -305,8 +312,9 @@ public class SceneManager {
     }
 
     /**
-     * Öffnet das Einstellungsfenster, indem eine neue Stage erstellt wird, mit der settingsScene.
+     * Öffnet das Einstellungsfenster, indem eine neue Stage mit der settingsScene erstellt wird.
      *
+     * @param loggedInUser  der eingeloggte User
      * @author Anna, Julia
      * @since Sprint4
      */
@@ -324,9 +332,9 @@ public class SceneManager {
     }
 
     /**
-     * Gibt das zur übergebenen lobbyID gehörige GameManagement zurück
+     * Gibt die übergebenen lobbyID zurück, die zum jeweiligen GameManagement gehört.
      *
-     * @param lobbyID
+     * @param lobbyID   die übergebene LobbyID
      * @return GameManagement
      * @author Julia, Paula
      * @since Sprint3

@@ -3,9 +3,11 @@ package de.uol.swp.common;
 import java.io.*;
 
 /**
- * Helper class to test if an object is serializable
+ * Hilfsklasse, um zu Testen ob ein Objekt serialisierbar ist
  * <p>
  * https://stackoverflow.com/questions/3840356/how-to-test-in-java-that-a-class-implements-serializable-correctly-not-just-is
+ * @author KenoS
+ * @since Sprint 3
  */
 
 public class SerializationTestHelper {

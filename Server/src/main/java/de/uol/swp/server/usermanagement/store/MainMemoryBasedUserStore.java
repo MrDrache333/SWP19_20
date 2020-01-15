@@ -10,6 +10,7 @@ import java.util.*;
  * Das ist ein UserStore.
  * <p>
  * Wichtig: Dieser Store wird nie das Passwort eines Nutzers zurückgeben
+ *
  */
 
 public class MainMemoryBasedUserStore extends AbstractUserStore implements UserStore {

@@ -5,7 +5,10 @@ import de.uol.swp.common.chat.ChatMessage;
 import java.util.ArrayList;
 
 /**
- * The type Chat.
+ * Die Klasse Chat
+ *
+ * @author Keno
+ * @since Sprint 2
  */
 public class Chat implements de.uol.swp.common.chat.Chat {
 
@@ -17,36 +20,46 @@ public class Chat implements de.uol.swp.common.chat.Chat {
     }
 
     /**
-     * Gets ChatId.
+     * Übergibt die ChatID.
      *
-     * @return Value of ChatId.
+     * @return  Wert der ChatID
+     * @author Keno
+     * @since Sprint 2
+     *
      */
     public String getChatId() {
         return ChatId;
     }
 
     /**
-     * Sets new ChatId.
+     * Setzt die ChatID
      *
-     * @param ChatId New value of ChatId.
+     * @param ChatId Neuer Wert der ChatID.
+     * @author KenoS
+     * @since Sprint3
+     *
      */
     public void setChatId(String ChatId) {
         this.ChatId = ChatId;
     }
 
     /**
-     * Gets Messages.
+     * Bekommt die Nachrichten
      *
-     * @return Value of Messages.
+     * @return Wert der Nachrichten
+     * @author KenoO
+     * @since Sprint2
      */
     public ArrayList<ChatMessage> getMessages() {
         return Messages;
     }
 
     /**
-     * Sets new Messages.
-     *
-     * @param Messages New value of Messages.
+*Setzt die Nachrichten
+     *  *
+     * @param Messages Neuen Wert der Nachricht.
+     * @author KenoO
+     * @since Sprint2
      */
     public void setMessages(ArrayList<ChatMessage> Messages) {
         this.Messages = Messages;

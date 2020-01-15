@@ -9,13 +9,30 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * die Testklasse ChatManagementTest .
+ *
+ * @author Keno Oelrichs Garcia
+ */
 class ChatManagementTest {
 
-    static final User chatMember = new UserDTO("Keno", "Keno", "Keno@OG.com");
+    /**
+     * Der neue Chat Member (riecht ein bisschen).
+     */
+    static final User chatMember = new UserDTO("Keno riecht", "nach Sportstunde", "Keno@OG.com");
 
+    /**
+     * Der Eventbus.
+     */
     final EventBus bus = new EventBus();
+    /**
+     * Der Chat Management.
+     */
     final ChatManagement chatManagement = new ChatManagement();
 
+    /**
+     * Erstellt den Chat "global" und prüft daraufhin, das der Chat "global" nicht null ist.
+     */
     @Test
     void getChat() {
         //Create a global Chat
@@ -23,12 +40,18 @@ class ChatManagementTest {
         assertNotNull(chatManagement.getChat("global"));
     }
 
+    /**
+     * Erstellt eine Variable, die den Wert eines neu generierten Chats annimmt und prüft, dass dieser nicht null ist.
+     */
     @Test
     void createChat() {
         String newChat = chatManagement.createChat();
         assertNotNull(chatManagement.getChat(newChat));
     }
 
+    /**
+     * Erstellt einen Chat und speichert dessen Wert in einer Variable und löscht diesen wieder. Pfüfung, ob der Chat Null ist.
+     */
     @Test
     void deleteChat() {
         String newChat = chatManagement.createChat();
@@ -36,6 +59,9 @@ class ChatManagementTest {
         assertNull(chatManagement.getChat(newChat));
     }
 
+    /**
+     * Erstellt einen Chat und fügt diesem Chat eine Nachricht mit Nutzer hinzu. Prüfung, ob der Chat nun die zuvor gesendete Nachricht enthält.
+     */
     @Test
     void addMessage() {
         //Create a global Chat
