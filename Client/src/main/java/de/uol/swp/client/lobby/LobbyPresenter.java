@@ -8,12 +8,8 @@ import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.common.chat.ChatService;
 import de.uol.swp.common.lobby.LobbyService;
-import de.uol.swp.common.lobby.message.StartGameMessage;
-import de.uol.swp.common.lobby.message.UpdatedLobbyReadyStatusMessage;
-import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
-import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
-import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.lobby.message.*;
+import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
@@ -384,7 +380,6 @@ public class LobbyPresenter extends AbstractPresenter {
         if (!message.getLobbyID().equals(lobbyID)) return;
         LOG.debug("User " + message.getUser().getUsername() + " left the Lobby");
         userLeftLobby(message.getUser().getUsername());
-        chatViewPresenter.userLeft(message.getUser().getUsername());
     }
 
     //--------------------------------------
