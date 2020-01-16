@@ -16,12 +16,26 @@ public class AllOnlineUsersResponse extends AbstractResponseMessage {
         // needed for serialization
     }
 
+    /**
+     *Instanziieren der AllOnlineUsersResponse.
+     *
+     * @param users die Nutzer
+     * @author Marco
+     * @since Sprint0
+     */
     public AllOnlineUsersResponse(Collection<User> users) {
         for (User user : users) {
             this.users.add(UserDTO.createWithoutPassword(user));
         }
     }
 
+    /**
+     * Eine Liste von Nutzern wird zurückgegeben.
+     *
+     * @return Liste von Nutzern
+     * @author Marco
+     * @since Sprint0
+     */
     public List<UserDTO> getUsers() {
         return users;
     }

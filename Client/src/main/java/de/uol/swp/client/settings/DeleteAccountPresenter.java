@@ -17,9 +17,16 @@ import org.apache.logging.log4j.Logger;
  * @author Anna
  * @since Sprint4
  */
+@SuppressWarnings("UnstableApiUsage")
 public class DeleteAccountPresenter {
 
+    /**
+     * Der Pfad zur FXML dieses Presenters.
+     */
     public static final String fxml = "/fxml/DeleteAccountView.fxml";
+    /**
+     * Der Pfad zum Stylesheet.
+     */
     public static final String css = "css/DeleteAccountPresenter.css";
     private static final Logger LOG = LogManager.getLogger(DeleteAccountPresenter.class);
 
@@ -29,19 +36,45 @@ public class DeleteAccountPresenter {
     private EventBus eventBus;
 
 
-    public DeleteAccountPresenter(User loggedInUser,LobbyService lobbyService, UserService userService, EventBus eventBus) {
+    /**
+     * Instanziert ein neuen DeleteAccountPresenter.
+     *
+     * @param loggedInUser Der aktuelle Benutzer
+     * @param lobbyService Der zu verwendene Lobby-Service
+     * @param userService  Der zu verwendene User-Service
+     * @param eventBus     Der zu verwendene Event-Bus
+     * @author Anna
+     * @since Sprint 4
+     */
+    public DeleteAccountPresenter(User loggedInUser, LobbyService lobbyService, UserService userService, EventBus eventBus) {
         this.loggedInUser = loggedInUser;
         this.lobbyService = lobbyService;
         this.userService = userService;
         this.eventBus = eventBus;
     }
 
+    /**
+     * Wenn der Ja-Button innerhalb des Fenster gedrückt wurde.
+     *
+     * @param actionEvent Das ActionEvent, was diese Methode aufgerufen hat
+     * @author Anna
+     * @since Sprint 4
+     */
     @FXML
-    public void onYesButtonPressed(javafx.event.ActionEvent actionEvent) {
+    public void onYesButtonPressed(ActionEvent actionEvent) {
+        LOG.debug("Der Benutzer " + loggedInUser.getUsername() + " löscht seinen Account!");
         lobbyService.leaveAllLobbiesOnLogout((UserDTO) loggedInUser);
         userService.dropUser(loggedInUser);
     }
 
+    /**
+     * Wenn der Nein-Button innerhalb des Fenster gedrückt wurde.
+     *
+     * @param actionEvent Das ActionEvent, was diese Methode aufgerufen hat
+     * @author Anna
+     * @since Sprint 4
+     */
+    @FXML
     public void onNoButtonPressed(ActionEvent actionEvent) {
         eventBus.post(new CloseDeleteAccountEvent());
     }

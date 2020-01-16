@@ -6,9 +6,10 @@ import de.uol.swp.common.user.User;
 import java.util.Objects;
 
 /**
- * A message containing the session (typically for a new logged in user)
+ * Eine Nachricht die die Sitzung beinhaltet (in der Regel für einen neu eingeloggten User)
  *
- * @author Marco Grawunder
+ * @author Marco
+ * @since Start
  */
 public class LoginSuccessfulResponse extends AbstractResponseMessage {
 

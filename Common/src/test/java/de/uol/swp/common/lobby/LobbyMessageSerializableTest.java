@@ -18,6 +18,10 @@ public class LobbyMessageSerializableTest {
     private final UUID testUUID = UUID.randomUUID();
     private final LobbyDTO defaultLobby = new LobbyDTO("test", defaultUser, testUUID, "test");
 
+    /**
+     * Test um die Lobby zu testen.
+     */
+
     @Test
     void testLobbyMessagesSerializable() {
         SerializationTestHelper.checkSerializableAndDeserializable(new CreateLobbyRequest("test", defaultUser),

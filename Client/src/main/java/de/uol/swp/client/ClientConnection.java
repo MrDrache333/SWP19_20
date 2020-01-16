@@ -25,9 +25,9 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * The ClientConnection Connection class
- *
+ * Die ClientConnection Klasse
  * @author Marco Grawunder
+ * @since Start
  */
 
 public class ClientConnection {
@@ -42,10 +42,12 @@ public class ClientConnection {
     private Channel channel;
 
     /**
-     * Create a new connection to a specific port on the given host
+     * Kreiert eine neue Verbidnung zu einem bestimmten Port bei einem gegebenen Host
      *
-     * @param host The server name to connect to
-     * @param port The server port to connect to
+     * @param host Den server name zu dem eine Verbindung hergestellt wird
+     * @param port Der server port zu dem eine Verbindung hergestellt wird
+     * @author Marco Grawunder
+     * @since Start
      */
     @Inject
     public ClientConnection(@Assisted String host, @Assisted int port, EventBus eventBus) {
@@ -60,9 +62,11 @@ public class ClientConnection {
     }
 
     /**
-     * The netty init method
+     * Die netty initialisierende Methode
      *
      * @throws Exception
+     * @author Marco Grawunder
+     * @since Start
      */
     public void start() throws Exception {
         group = new NioEventLoopGroup();
@@ -73,10 +77,10 @@ public class ClientConnection {
 
                         @Override
                         protected void initChannel(SocketChannel ch) {
-                            // Add both Encoder and Decoder to send and receive serializable objects
+                            //Hinzufügen vom Encoder und Decoder zum Senden und Empfangen von serialisierbaren Objekten
                             ch.pipeline().addLast(new ObjectEncoder());
                             ch.pipeline().addLast(new MyObjectDecoder(ClassResolvers.cacheDisabled(null)));
-                            // Add a client handler
+                            //füge einen client handler hinzu
                             ch.pipeline().addLast(new ClientHandler(ClientConnection.this));
                         }
                     });

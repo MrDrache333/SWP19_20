@@ -25,7 +25,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * The type Lobby service.
+ * Die Klasse LobbyService, welche eine Lobby erstellt
+ *
+ * @author KenoO
+ * @since Sprint2
  */
 public class LobbyService extends AbstractService {
     private static final Logger LOG = LogManager.getLogger(LobbyService.class);
@@ -35,12 +38,14 @@ public class LobbyService extends AbstractService {
     private final AuthenticationService authenticationService;
 
     /**
-     * Instantiates a new Lobby service.
+     * Instanziiert einen neuen Lobby Service
      *
-     * @param lobbyManagement       the lobby management
-     * @param authenticationService the authentication service
-     * @param chatManagement        the chat management
-     * @param eventBus              the event bus
+     * @param lobbyManagement       das Lobby management
+     * @param authenticationService den Authetifizierenden Service
+     * @param chatManagement        den Chat Mannagement
+     * @param eventBus              den Eventbus
+     * @author KenoO
+     * @since Sprint 2
      */
     @Inject
     public LobbyService(LobbyManagement lobbyManagement, AuthenticationService authenticationService, ChatManagement chatManagement, EventBus eventBus) {
@@ -59,7 +64,7 @@ public class LobbyService extends AbstractService {
      * LobbyManagement auf dem Server wird aufgerufen und übergibt LobbyNamen, LobbyPassword und den Besitzer.
      * Wenn dies erfolgt ist, folgt eine returnMessage an den Client die LobbyView anzuzeigen.
      *
-     * @param msg enthält die Message vom Client mit den benötigten Daten um die Lobby zu erstellen.
+     * @param msg enthält die Message vom Client mit den benötigten Daten, um die Lobby zu erstellen.
      * @author Paula, Haschem, Ferit, Rike
      * @version 0.1
      * @since Sprint2
@@ -144,9 +149,9 @@ public class LobbyService extends AbstractService {
     }
 
     /**
-     * On update lobby ready status reqest.
+     * Der Status eines Spielers wird abgefragt, ob der geupdatet wurde
      *
-     * @param request the request
+     * @param request den geupdateteten Status des Users
      * @author Keno Oelrichs Garcia
      * @since Sprint3
      */
@@ -165,9 +170,9 @@ public class LobbyService extends AbstractService {
     }
 
     /**
-     * Auf ID umgestellt
+     * Ruft alle Online User in der Lobby ab
      *
-     * @param request the request
+     * @param request die RetrieveAllOnlineUsersInLobbyRequest
      * @author Marvin
      * @since Sprint3
      */
@@ -222,10 +227,12 @@ public class LobbyService extends AbstractService {
 
 
     /**
-     * Send to all.
+     * Hilfsmethode, die die Nachricht an alle Spieler in der Lobby sendet
      *
-     * @param lobbyName the lobby name
-     * @param message   the message
+     * @param lobbyName den Lobbynamen
+     * @param message   die Nachricht
+     * @author KenoO, Paula
+     * @since Sprint 2
      */
     public void sendToAll(String lobbyName, ServerMessage message) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyName);
@@ -239,7 +246,7 @@ public class LobbyService extends AbstractService {
 
     /**
      * überprüft ob alle Spieler bereit sind
-     * Spiel startet wenn 4 Spieler Bereit sind
+     * Spiel startet wenn alle in der Lobby vorhandenen Spieler Bereit sind
      *
      * @param lobby the lobby
      * @author Darian, Keno
@@ -258,13 +265,12 @@ public class LobbyService extends AbstractService {
     }
 
     /**
+     * Definiert, was bei einem onSetMaxPlayerRequest passieren soll.
      * @author Timo Rike
      * @since Sprint 3
-     * @implNote Definiert, was bei einem onSetMaxPlayerRequest passieren soll.
      */
     @Subscribe
-    public void onSetMaxPlayerRequest(SetMaxPlayerRequest msg)
-    {
+    public void onSetMaxPlayerRequest(SetMaxPlayerRequest msg) {
         boolean setMaxPlayerSet = lobbyManagement.setMaxPlayer(msg.getMaxPlayerValue(), msg.getLobbyID(), msg.getLoggedInUser());
         SetMaxPlayerMessage returnMessage = new SetMaxPlayerMessage(msg.getMaxPlayerValue(), msg.getLobbyID(), setMaxPlayerSet, lobbyManagement.getLobbyOwner(msg.getLobbyID()));
         post(returnMessage);

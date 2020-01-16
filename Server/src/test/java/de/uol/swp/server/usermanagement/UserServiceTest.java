@@ -18,20 +18,30 @@ class UserServiceTest {
     final UserManagement userManagement = new UserManagement(new MainMemoryBasedUserStore());
     final UserService userService = new UserService(bus, userManagement);
 
+    /**
+     *Test, ob ein neuer Nutzer registriert werden kann.
+     *
+     * @author Marco
+     * @since Sprint0
+     */
     @Test
     void registerUserTest() {
         final RegisterUserRequest request = new RegisterUserRequest(userToRegister);
 
-        // The post will lead to a call of a UserService function
         bus.post(request);
 
-        // can only test, if something in the state has changed
         final User loggedInUser = userManagement.login(userToRegister.getUsername(), userToRegister.getPassword());
 
         assertNotNull(loggedInUser);
         assertEquals(loggedInUser, userToRegister);
     }
 
+    /**
+     *Test, dass der alte Nutzer nicht überschrieben wird, falls versucht wird einen neuen Nutzer mit dem gleichem Namen zu registrieren.
+     *
+     * @author Marco
+     * @since Sprint0
+     */
     @Test
     void registerSecondUserWithSameName() {
         final RegisterUserRequest request = new RegisterUserRequest(userToRegister);
@@ -42,11 +52,9 @@ class UserServiceTest {
 
         final User loggedInUser = userManagement.login(userToRegister.getUsername(), userToRegister.getPassword());
 
-        // old user should be still in the store
         assertNotNull(loggedInUser);
         assertEquals(loggedInUser, userToRegister);
 
-        // old user should not be overwritten!
         assertNotEquals(loggedInUser.getEMail(), userWithSameName.getEMail());
 
     }

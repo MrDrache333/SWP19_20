@@ -15,14 +15,38 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * The type User service test.
+ *
+ * @author Marco, KenoS
+ * @since Sprint 4
+ */
+@SuppressWarnings("UnstableApiUsage")
 class UserServiceTest {
 
-    final User defaultUser = new UserDTO("Marco", "test", "marco@test.de");
+    /**
+     * Der Standardbenutzer zum testen.
+     */
+    private final User defaultUser = new UserDTO("Marco", "test", "marco@test.de");
 
-    final EventBus bus = new EventBus();
-    final CountDownLatch lock = new CountDownLatch(1);
-    Object event;
+    /**
+     * Der zu verwendene Event-Bus.
+     */
+    private final EventBus bus = new EventBus();
+    /**
+     * Der Counterdown-Timer zum warten für ausgeführte Befehle auf dem Bus.
+     */
+    private final CountDownLatch lock = new CountDownLatch(1);
+    /**
+     * Speicher für erstellte Instanzen von Bus-Events.
+     */
+    private Object event;
 
+    /**
+     * Methode zum behandeln von auf dem Bus aufgetretene Dead-Events.
+     *
+     * @param e Das aufgetretene Dead-Event
+     */
     @Subscribe
     void handle(DeadEvent e) {
         this.event = e.getEvent();
@@ -30,12 +54,18 @@ class UserServiceTest {
         lock.countDown();
     }
 
+    /**
+     * Eventbus initialisieren.
+     */
     @BeforeEach
     void registerBus() {
         event = null;
         bus.register(this);
     }
 
+    /**
+     * Klasse vom Eventbus deregistrieren
+     */
     @AfterEach
     void deregisterBus() {
         bus.unregister(this);
@@ -47,6 +77,11 @@ class UserServiceTest {
         lock.await(1000, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * Überprüfen, ob ein User auf dem Server erfolgreich anmelden kann.
+     *
+     * @throws InterruptedException Fehler, der auftreten könnte
+     */
     @Test
     void loginTest() throws InterruptedException {
         loginUser();
@@ -58,12 +93,20 @@ class UserServiceTest {
         assertEquals(loginRequest.getPassword(), defaultUser.getPassword());
     }
 
+    /**
+     * Überprüfen, ob ein Benutzer auf dem Server bereits angemeldet ist.
+     */
     @Test
     void isLoggedInTest() {
         UserService userService = new UserService(bus);
         assertThrows(UnsupportedOperationException.class, () -> userService.isLoggedIn(defaultUser));
     }
 
+    /**
+     * Einen Benutzer versuchen vom Server abzumelden.
+     *
+     * @throws InterruptedException Die evtl. auftretene Fehlermeldung
+     */
     @Test
     void logoutTest() throws InterruptedException {
         loginUser();
@@ -81,6 +124,11 @@ class UserServiceTest {
         assertTrue(request.authorizationNeeded());
     }
 
+    /**
+     * Einen Benutzer versuchen in dem Server-Speicher zu erstellen
+     *
+     * @throws InterruptedException Die evtl. auftretene Fehlermeldung
+     */
     @Test
     void createUserTest() throws InterruptedException {
         UserService userService = new UserService(bus);
@@ -99,6 +147,11 @@ class UserServiceTest {
 
     }
 
+    /**
+     * Einen Benutzer versuchen in dem Server-Speicher zu aktualisieren
+     *
+     * @throws InterruptedException Die evtl. auftretene Fehlermeldung
+     */
     @Test
     void updateUserTest() throws InterruptedException {
         UserService userService = new UserService(bus);
@@ -116,6 +169,9 @@ class UserServiceTest {
         assertTrue(request.authorizationNeeded());
     }
 
+    /**
+     * Einen Benutzer versuchen aus dem Server-Speicher zu löschen
+     */
     @Test
     void dropUserTest() {
         UserService userService = new UserService(bus);
@@ -124,6 +180,11 @@ class UserServiceTest {
         // TODO: Add when method is implemented
     }
 
+    /**
+     * Versuchen alle angemeldeten Benutzer vom Server abzurufen.
+     *
+     * @throws InterruptedException Die evtl. auftretene Fehlermeldung
+     */
     @Test
     void retrieveAllUsersTest() throws InterruptedException {
         UserService userService = new UserService(bus);

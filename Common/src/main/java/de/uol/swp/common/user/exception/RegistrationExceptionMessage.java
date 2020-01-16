@@ -4,6 +4,13 @@ import de.uol.swp.common.message.AbstractResponseMessage;
 
 import java.util.Objects;
 
+/**
+ * Die RegistrationExceptionMessage
+ *
+ * @author Marco
+ * @since Start
+ */
+
 public class RegistrationExceptionMessage extends AbstractResponseMessage {
 
     private final String message;
