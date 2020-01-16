@@ -15,6 +15,13 @@ public class Chat implements de.uol.swp.common.chat.Chat {
     private String ChatId;
     private ArrayList<ChatMessage> Messages = new ArrayList<>();
 
+    /**
+     * Initalisiert einen neuen Chat
+     *
+     * @param chatId
+     * @author Keno S
+     * @since SPrint2
+     */
     public Chat(String chatId) {
         this.ChatId = chatId;
     }
@@ -55,8 +62,8 @@ public class Chat implements de.uol.swp.common.chat.Chat {
     }
 
     /**
-*Setzt die Nachrichten
-     *  *
+     *Setzt die Nachrichten
+     *
      * @param Messages Neuen Wert der Nachricht.
      * @author KenoO
      * @since Sprint2

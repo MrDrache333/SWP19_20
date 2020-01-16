@@ -27,31 +27,59 @@ import javax.security.auth.login.LoginException;
 import java.util.*;
 
 /**
- * Mapping vom authentication event bus calls to user management calls
+ * Request zum Authenfizieren werden hier behandelt
  *
  * @author Marco Grawunder
+ * @since Start
  */
 public class AuthenticationService extends AbstractService {
     private static final Logger LOG = LogManager.getLogger(AuthenticationService.class);
 
     /**
-     * The list of current logged in users
+     * Die Liste mit den aktuell eingeloggten User
+     *
+     * @author Marco
+     * @since Start
      */
     final private Map<Session, User> userSessions = new HashMap<>();
 
     private final UserManagement userManagement;
 
+    /**
+     * AuthenticationService wird initialisiert
+     *
+     * @param bus EventBus
+     * @param userManagement das UserManagement
+     * @author Marco
+     * @since Start
+     */
     @Inject
     public AuthenticationService(EventBus bus, UserManagement userManagement) {
         super(bus);
         this.userManagement = userManagement;
     }
 
+    /**
+     * Session von einem User wird übergeben
+     *
+     * @param user User
+     * @return Map mit Sessions
+     * @author Marco
+     * @since Start
+     */
     public Optional<Session> getSession(User user) {
         Optional<Map.Entry<Session, User>> entry = userSessions.entrySet().stream().filter(e -> e.getValue().equals(user)).findFirst();
         return entry.map(Map.Entry::getKey);
     }
 
+    /**
+     * mehrere Sessions von mehreren Usern werden übergeben
+     *
+     * @param users ein Set von Usern
+     * @return Liste von Sessions
+     * @author Marco
+     * @since Start
+     */
     public List<Session> getSessions(Set<User> users) {
         List<Session> sessions = new ArrayList<>();
         users.forEach(u -> {
@@ -61,6 +89,13 @@ public class AuthenticationService extends AbstractService {
         return sessions;
     }
 
+    /**
+     * Servlogik vom LoginRequest
+     *
+     * @param msg LoginRequest
+     * @author Marco
+     * @since Start
+     */
     @Subscribe
     public void onLoginRequest(LoginRequest msg) {
         if (LOG.isDebugEnabled()) {
@@ -83,6 +118,13 @@ public class AuthenticationService extends AbstractService {
         post(returnMessage);
     }
 
+    /**
+     * Serverlogikg vom LogoutRequest
+     *
+     * @param msg LogoutRequest
+     * @author Marco
+     * @since Start
+     */
     @Subscribe
     public void onLogoutRequest(LogoutRequest msg) {
         if (msg.getSession().isPresent()) {
@@ -106,6 +148,13 @@ public class AuthenticationService extends AbstractService {
         }
     }
 
+    /**
+     * Serverlogik vom RetrieveAllOnlineUsersRequest
+     *
+     * @param msg RetrieveAllOnlineUsersRequest
+     * @author Marco
+     * @since Start
+     */
     @Subscribe
     public void onRetrieveAllOnlineUsersRequest(RetrieveAllOnlineUsersRequest msg) {
         AllOnlineUsersResponse response = new AllOnlineUsersResponse(userSessions.values());
@@ -117,7 +166,7 @@ public class AuthenticationService extends AbstractService {
      * Aktualisierung des Users wird versucht, bei Erfolg wird eine UpdatedUserMessage gesendet, andernfalls wird eine UpdateUserFailedMessage
      * mit entsprechender Fehlermeldung gesendet
      *
-     * @param msg
+     * @param msg die UpdateUserRequest
      * @author Julia
      * @since Sprint4
      */

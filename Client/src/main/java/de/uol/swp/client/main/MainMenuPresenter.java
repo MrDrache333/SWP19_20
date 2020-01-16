@@ -49,14 +49,10 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
-/**
- * The type Main menu presenter.
- */
+
 public class MainMenuPresenter extends AbstractPresenter {
 
-    /**
-     * The constant fxml.
-     */
+
     public static final String fxml = "/fxml/MainMenuView.fxml";
     public static final String css = "css/MainMenuPresenter.css";
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
@@ -83,42 +79,17 @@ public class MainMenuPresenter extends AbstractPresenter {
     @FXML
     private Button createLobbyButton, logoutButton;
 
-    /**
-     * @author Paula, Haschem, Ferit
-     * @version 0.1
-     * Fängt den Button ab und sendet den Request zur Erstellung der Lobby an den Server.
-     */
-    public static void showAlert(Alert.AlertType type, String message, String title) {
-        Alert alert = new Alert(type, "");
-        alert.setResizable(false);
-        alert.initModality(Modality.APPLICATION_MODAL);
-        alert.getDialogPane().setContentText(message);
-        alert.getDialogPane().setHeaderText(title);
-        alert.show();
-    }
-
-    /**
-     * Methode fängt ButtonKlick ab, User verlässt alle Lobbies, in denen er angemeldet ist und wird ausgeloggt
-     *
-     * @param actionEvent
-     * @author Julia, Paula
-     * @since Sprint3
-     */
-    @FXML
-    public void onLogoutButtonPressed(ActionEvent actionEvent) {
-        new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Pressed, SoundMediaPlayer.Type.Sound).play();
-        lobbyService.leaveAllLobbiesOnLogout(new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
-        userService.logout(loggedInUser);
-    }
 
     //--------------------------------------
-    // EVENTBUS
+    // FXML METHODS
     //--------------------------------------
 
     /**
-     * Initialize.
+     * Hauptmenü initialisiert
      *
-     * @throws IOException the io exception
+     * @throws IOException mögliche Fehlermeldung
+     * @author Marco, Julia, Keno O.
+     * @since Start
      */
     @FXML
     public void initialize() throws IOException {
@@ -160,8 +131,11 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     /**
-     * Lobby erstellen Button: Sobald gedrückt, öffnet sich Dialog. Aufforderung Name und optional Passwort anzugeben.
      *
+     * Sobald der Lobby erstellen Button gedrückt wird, öffnet sich ein Dialog. Hier wird man aufgefordert einen Namen für die Lobby anzugeben. Das Passwortfeld ist optional
+     * auszufüllen. Bleibt das Passwortfeld leer, wird die Lobby offen. Wird ein Passwort angegegben, wird dieses gespeicherrt und die Lobby wird privat
+     *
+     * @param event das Event
      * @author Rike, Paula
      * @since Sprint4
      */
@@ -234,14 +208,11 @@ public class MainMenuPresenter extends AbstractPresenter {
 
     }
 
-    public boolean hasFocus() {
-        return ClientApp.getSceneManager().hasFocus();
-    }
 
     /**
      * Die Methode postet ein Request auf den Bus, wenn der Einstellungen-Button gedrückt wird
      *
-     * @param actionEvent
+     * @param actionEvent das ActionEvent
      * @author Anna
      * @since Sprint4
      */
@@ -252,9 +223,32 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     /**
-     * Login successful.
+     * Drückt man auf den LogoutButton, wird der User aus allen Lobbys, in denen er angemeldet ist, entfernt
+     * Zudem wird der User ausgeloggt.
      *
-     * @param message the message
+     * @param actionEvent das ActionEvent
+     * @author Julia, Paula
+     * @since Sprint3
+     */
+    @FXML
+    public void onLogoutButtonPressed(ActionEvent actionEvent) {
+        new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Pressed, SoundMediaPlayer.Type.Sound).play();
+        lobbyService.leaveAllLobbiesOnLogout(new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
+        userService.logout(loggedInUser);
+    }
+
+
+    //--------------------------------------
+    // EVENTBUS
+    //--------------------------------------
+
+
+    /**
+     * Login war erfolgreich. Der User tritt dem globalen Chat bei. Lobbys werden aktualisiert
+     *
+     * @param message Die Nachricht
+     * @author Marco
+     * @since Start
      */
     @Subscribe
     public void loginSuccessful(LoginSuccessfulResponse message) {
@@ -267,9 +261,11 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     /**
-     * New user.
+     * Neuer User loggt sich sein
      *
-     * @param message the message
+     * @param message Die UserLoggedInMessage
+     * @author Marco
+     * @since Start
      */
     @Subscribe
     public void newUser(UserLoggedInMessage message) {
@@ -285,9 +281,11 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     /**
-     * User left.
+     * User wird aus der Liste entfernt, wenn er sich asuegloggt hat
      *
-     * @param message the message
+     * @param message die UserLoggedOutMessage
+     * @author Marco, Keno O.
+     * @since Start
      */
     @Subscribe
     public void userLeft(UserLoggedOutMessage message) {
@@ -303,7 +301,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     /**
      * User wird aus der Liste entfernt, wenn er seinen Account gelöscht hat
      *
-     * @param message
+     * @param message die UserDroppedMessage
      * @author Julia
      * @since Sprint4
      */
@@ -321,7 +319,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     /**
      * Fügt eine neu erstellte Lobby zur Tabelle hinzu
      *
-     * @param message
+     * @param message die CreateLobbyMessage
      * @author Julia
      * @since Sprint4
      */
@@ -334,9 +332,9 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     /**
-     * Aktualisiert die Lobbytabelle nachdem ein User einer Lobby beigetreten ist
+     * Aktualisiert die Lobbytabelle, nachdem ein User einer Lobby beigetreten ist
      *
-     * @param message
+     * @param message die UserJoinedLobbyMessage
      * @author Julia
      * @since Sprint4
      */
@@ -350,9 +348,9 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     /**
-     * Aktualisiert die Lobbytabelle nachdem ein User eine Lobby verlassen hat
+     * Aktualisiert die Lobbytabelle, nachdem ein User eine Lobby verlassen hat
      *
-     * @param message
+     * @param message die UserLeftLobbyMessage
      * @author Julia
      * @since Sprint4
      */
@@ -370,7 +368,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     /**
      * Aktualisiert den loggedInUser und die Lobbytabelle sowie die Userliste, falls sich der Username geändert hat
      *
-     * @param message
+     * @param message die UpdatedUserMessage
      * @author Julia
      * @since Sprint4
      */
@@ -414,9 +412,11 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     /**
-     * User list.
+     * User Liste wird aktualisiert
      *
-     * @param allUsersResponse the all users response
+     * @param allUsersResponse die AllOnlineUsersResoinse
+     * @author Marco
+     * @since Start
      */
     @Subscribe
     public void userList(AllOnlineUsersResponse allUsersResponse) {
@@ -428,7 +428,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     /**
      * Erstes Erstellen der Lobbytabelle beim Login
      *
-     * @param allLobbiesResponse
+     * @param allLobbiesResponse Die AllOnlineLobbiesResponse
      * @author Julia
      * @since Sprint2
      */
@@ -438,13 +438,38 @@ public class MainMenuPresenter extends AbstractPresenter {
         updateLobbiesTable(allLobbiesResponse.getLobbies());
     }
 
-    //-----------------
-    // Help methods
-    //-----------------
+
+    //--------------------------------------
+    // PUBLIC METHODS
+    //--------------------------------------
+
+
+    /**
+     * Alert wird erstellt
+     *
+     * @param type    der Alert-Typ
+     * @param message die Message
+     * @param title   der Titel des Alerts
+     * @author Paula, Haschem, Ferit
+     * @since Sprint1
+     */
+    public static void showAlert(Alert.AlertType type, String message, String title) {
+        Alert alert = new Alert(type, "");
+        alert.setResizable(false);
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.getDialogPane().setContentText(message);
+        alert.getDialogPane().setHeaderText(title);
+        alert.show();
+    }
+
+    //--------------------------------------
+    // PRIVATE METHODS
+    //--------------------------------------
 
     /**
      * Updatet die lobbytabelle
      *
+     * @param lobbyList die LobbyListe, die alle Lobbys enthält
      * @author Julia
      * @since Sprint2
      */
@@ -461,11 +486,10 @@ public class MainMenuPresenter extends AbstractPresenter {
 
 
     /**
-     * @author Rike, Paula
      * Hilfsmethode zum Erstellen des Buttons zum Betreten einer Lobby
      * beim join wird ebenfalls überprüft ob die Lobby ein lobbyPassword besitzt und ggf. dieses abgefragt
      *
-     * @author Paula, Julia
+     * @author Rike, Julia, Paula
      * @since Sprint3
      */
     private void addJoinLobbyButton() {
@@ -547,6 +571,14 @@ public class MainMenuPresenter extends AbstractPresenter {
         joinLobby.setCellFactory(cellFactory);
     }
 
+    /**
+     * Updatet die Liste mit den angemeldeten Usern
+     *
+     * @param userList Die Liste, die, die eingeloggten User enthält
+     * @author Marco
+     * @since Start
+     *
+     */
     private void updateUsersList(List<UserDTO> userList) {
         // Attention: This must be done on the FX Thread!
         Platform.runLater(() -> {
