@@ -5,6 +5,12 @@ import de.uol.swp.common.user.User;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * Die ChatMessage
+ *
+ * @author Keno O.
+ * @since Sprint2
+ */
 public class ChatMessage implements Serializable {
 
     private User sender;
@@ -12,12 +18,10 @@ public class ChatMessage implements Serializable {
     private Date timeStamp;
 
     /**
-     * Instanziiert eine neue ChatMessage
+     * Instanziiert eine ChatMessage
      *
      * @param sender  der Absender
      * @param message die Nachricht
-     * @author Keno O.
-     * @since Sprint2
      */
     public ChatMessage(User sender, String message) {
         this.sender = sender;
@@ -29,8 +33,6 @@ public class ChatMessage implements Serializable {
      * Gibt die Nachricht zurück
      *
      * @return die Nachricht
-     * @author Keno O.
-     * @since Sprint2
      */
     public String getMessage() {
         return message;
@@ -40,8 +42,6 @@ public class ChatMessage implements Serializable {
      * Gibt den Absender zurück
      *
      * @return der Absender
-     * @author Keno O.
-     * @since Sprint2
      */
     public User getSender() {
         return sender;
@@ -51,8 +51,6 @@ public class ChatMessage implements Serializable {
      * Gibt den Zeitstempel zurück
      *
      * @return der Zeitstempel
-     * @author Keno O.
-     * @since Sprint2
      */
     public Date getTimeStamp() {
         return timeStamp;

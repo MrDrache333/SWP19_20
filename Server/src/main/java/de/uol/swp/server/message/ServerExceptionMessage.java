@@ -1,15 +1,19 @@
 package de.uol.swp.server.message;
 
+/**
+ * Die ServerExceptionMessage
+ *
+ * @author Marco
+ * @since Start
+ */
 public class ServerExceptionMessage extends AbstractServerInternalMessage {
 
     private final Exception e;
 
     /**
-     * Instanziiert eine neue ServerExceptionMessage
+     * Instanziiert eine ServerExceptionMessage
      *
      * @param e die Exception
-     * @author Marco
-     * @since Sprint0
      */
     public ServerExceptionMessage(Exception e) {
         super();
@@ -20,8 +24,6 @@ public class ServerExceptionMessage extends AbstractServerInternalMessage {
      * Gibt die Exception zurück
      *
      * @return die Exception
-     * @author Marco
-     * @since Sprint0
      */
     public Exception getException() {
         return e;

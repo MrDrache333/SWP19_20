@@ -4,16 +4,31 @@ import de.uol.swp.common.user.UserDTO;
 
 import java.util.UUID;
 
+/**
+ * Request zum Beitreten einer Lobby
+ *
+ * @author Julia, Paula
+ * @since Sprint3
+ */
 public class LobbyJoinUserRequest extends AbstractLobbyRequest {
 
     private UUID lobbyID;
 
     /**
-     * Instanziiert einen neuen LobbyJoinUserRequest
+     * Konstruktor für die Serialisierung
+     *
+     * @author Julia, Paula
+     * @since Sprint3
+     */
+    public LobbyJoinUserRequest() {
+    }
+
+    /**
+     * Instanziiert ein LobbyJoinUserRequest
      *
      * @param lobbyName der Name der Lobby
-     * @param user der User, von dem der Request gesendet wurde
-     * @param lobbyID die ID der Lobby
+     * @param user      der User, der der Lobby beitreten will
+     * @param lobbyID   die ID der Lobby
      * @author Julia, Paula
      * @since Sprint3
      */
@@ -23,7 +38,7 @@ public class LobbyJoinUserRequest extends AbstractLobbyRequest {
     }
 
     /**
-     * Gibt die lobbyID zurück
+     * Gibt die ID der Lobby zurück
      *
      * @return die lobbyID
      * @author Julia, Paula

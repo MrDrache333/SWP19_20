@@ -5,16 +5,20 @@ import de.uol.swp.common.user.User;
 
 import java.util.Objects;
 
+/**
+ * Request zum Registrieren eines neues Users
+ *
+ * @author Marco
+ * @since Start
+ */
 public class RegisterUserRequest extends AbstractRequestMessage {
 
     final private User toCreate;
 
     /**
-     * Instanziiert einen neuen RegisterUserRequest
+     * Instanziiert ein RegisterUserRequest
      *
      * @param user der User, der registriert werden soll
-     * @author Marco
-     * @since Sprint0
      */
     public RegisterUserRequest(User user) {
         this.toCreate = user;
@@ -24,8 +28,6 @@ public class RegisterUserRequest extends AbstractRequestMessage {
      * Gibt den User zurück
      *
      * @return der User
-     * @author Marco
-     * @since Sprint0
      */
     public User getUser() {
         return toCreate;
@@ -35,8 +37,6 @@ public class RegisterUserRequest extends AbstractRequestMessage {
      * User muss nicht autorisiert sein, um diesen Request nutzen zu können
      *
      * @return false
-     * @author Marco
-     * @since Sprint0
      */
     @Override
     public boolean authorizationNeeded() {
@@ -48,8 +48,6 @@ public class RegisterUserRequest extends AbstractRequestMessage {
      *
      * @param o das Objekt
      * @return true wenn die Objekte gleich sind, sonst false
-     * @author Marco
-     * @since Sprint0
      */
     @Override
     public boolean equals(Object o) {
@@ -62,9 +60,7 @@ public class RegisterUserRequest extends AbstractRequestMessage {
     /**
      * Generiert einen Hash Code aus dem zu registrierenden User
      *
-     * @return der Hash Code
-     * @author Marco
-     * @since Sprint0
+     * @return der HashCode
      */
     @Override
     public int hashCode() {

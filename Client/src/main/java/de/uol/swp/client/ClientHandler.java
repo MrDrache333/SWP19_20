@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
  * Netty Handler für eingehende Verbindungen
  *
  * @author Marco Grawunder
+ * @since Start
  */
 class ClientHandler extends ChannelInboundHandlerAdapter {
 
@@ -18,11 +19,11 @@ class ClientHandler extends ChannelInboundHandlerAdapter {
     private final ClientConnection clientConnection;
 
     /**
-     * Instanziiert einen neuen ClientHandler
+     * Instanziiert einen ClientHandler
      *
      * @param clientConnection die clientConnection
      * @author Marco
-     * @since Sprint0
+     * @since Start
      */
     ClientHandler(ClientConnection clientConnection) {
         this.clientConnection = clientConnection;
@@ -34,7 +35,7 @@ class ClientHandler extends ChannelInboundHandlerAdapter {
      *
      * @param ctx der ChannelHandlerContext
      * @author Marco
-     * @since Sprint0
+     * @since Start
      */
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
@@ -50,7 +51,7 @@ class ClientHandler extends ChannelInboundHandlerAdapter {
      * @param ctx der ChannelHandlerContext
      * @param in  das eingehende Objekt
      * @author Marco
-     * @since Sprint0
+     * @since Start
      */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object in) {
@@ -68,7 +69,7 @@ class ClientHandler extends ChannelInboundHandlerAdapter {
      * @param ctx   der ChannelHandlerContext
      * @param cause die Fehlerursache
      * @author Marco
-     * @since Sprint0
+     * @since Start
      */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
