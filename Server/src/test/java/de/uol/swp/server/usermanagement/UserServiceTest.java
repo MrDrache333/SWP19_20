@@ -22,7 +22,7 @@ class UserServiceTest {
      *Test, ob ein neuer Nutzer registriert werden kann.
      *
      * @author Marco
-     * @since Sprint0
+     * @since Start
      */
     @Test
     void registerUserTest() {
@@ -40,7 +40,7 @@ class UserServiceTest {
      *Test, dass der alte Nutzer nicht überschrieben wird, falls versucht wird einen neuen Nutzer mit dem gleichem Namen zu registrieren.
      *
      * @author Marco
-     * @since Sprint0
+     * @since Start
      */
     @Test
     void registerSecondUserWithSameName() {

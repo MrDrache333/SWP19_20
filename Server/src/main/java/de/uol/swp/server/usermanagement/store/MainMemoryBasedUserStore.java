@@ -25,7 +25,7 @@ public class MainMemoryBasedUserStore extends AbstractUserStore implements UserS
      * @param password das Passwort
      * @return User oder nichts
      * @author Marco, Julia
-     *@since Sprint0
+     *@since Start
      */
     @Override
     public Optional<User> findUser(String username, String password) {
@@ -42,7 +42,7 @@ public class MainMemoryBasedUserStore extends AbstractUserStore implements UserS
      * @param username der Username
      * @return den User oder nichts
      * @author Marco
-     * @since Sprint0
+     * @since Start
      */
     @Override
     public Optional<User> findUser(String username) {
@@ -61,7 +61,7 @@ public class MainMemoryBasedUserStore extends AbstractUserStore implements UserS
      * @param eMail die e-Mail
      * @return den neuen Nutzer
      * @author Marco
-     * @since Sprint0
+     * @since Start
      */
     @Override
     public User createUser(String username, String password, String eMail) {
@@ -82,7 +82,7 @@ public class MainMemoryBasedUserStore extends AbstractUserStore implements UserS
      * @param oldUsername der alte Username
      * @return den aktualisierten Nutzer
      * @author Marco, Julia
-     * @since Sprint0
+     * @since Start
      */
     @Override
     public User updateUser(String username, String password, String eMail, String oldUsername) {
@@ -97,7 +97,7 @@ public class MainMemoryBasedUserStore extends AbstractUserStore implements UserS
      *
      * @param username der Username
      * @author Marco
-     * @since Sprint0
+     * @since Start
      */
     @Override
     public void removeUser(String username) {
@@ -109,7 +109,7 @@ public class MainMemoryBasedUserStore extends AbstractUserStore implements UserS
      *
      * @return eine Liste aller Nutzer
      * @author Marco
-     * @since Sprint0
+     * @since Start
      */
     @Override
     public List<User> getAllUsers() {

@@ -8,6 +8,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Klasse, die alle Nutzer enthält die online sind
+ * @author Marco
+ * @since Start
+ */
 public class AllOnlineUsersResponse extends AbstractResponseMessage {
 
     final private ArrayList<UserDTO> users = new ArrayList<>();
@@ -20,8 +25,6 @@ public class AllOnlineUsersResponse extends AbstractResponseMessage {
      *Instanziieren der AllOnlineUsersResponse.
      *
      * @param users die Nutzer
-     * @author Marco
-     * @since Sprint0
      */
     public AllOnlineUsersResponse(Collection<User> users) {
         for (User user : users) {
@@ -33,8 +36,6 @@ public class AllOnlineUsersResponse extends AbstractResponseMessage {
      * Eine Liste von Nutzern wird zurückgegeben.
      *
      * @return Liste von Nutzern
-     * @author Marco
-     * @since Sprint0
      */
     public List<UserDTO> getUsers() {
         return users;
