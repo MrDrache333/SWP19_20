@@ -8,11 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
+ * Testen des Pattern Matches anhand von verschiedenen E-Mail Beispielen. Bei falschen E-Mail Adressen darf kein Match stattfinden.
+ *
  * @author Timo
  * @Since Sprint 4
- * @implNote Testen des Pattern Matches anhand von verschiedenen E-Mail Beispielen. Bei falschen E-Mail Adressen darf kein Match stattfinden:
- * @implNote Dieses Pattern wurde in der MainMenuPresenter Klasse verwendet.
- * @implNote FXML Tests sind mir nicht bekannt.
  */
 public class RegisterEMailPatternTest
 {
