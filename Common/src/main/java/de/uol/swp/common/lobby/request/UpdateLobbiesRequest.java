@@ -2,9 +2,7 @@ package de.uol.swp.common.lobby.request;
 
 import de.uol.swp.common.user.UserDTO;
 
-/**
- * ???
- */
+
 public class UpdateLobbiesRequest extends AbstractLobbyRequest {
 
     private UserDTO oldUser;
