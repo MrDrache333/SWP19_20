@@ -55,6 +55,8 @@ public class SettingsPresenter extends AbstractPresenter {
     private PasswordField passwordField;
     @FXML
     private PasswordField password2Field;
+    @FXML
+    private PasswordField currentPasswordField;
 
     public SettingsPresenter(User loggedInUser, LobbyService lobbyService, UserService userService, EventBus eventBus) {
         this.loggedInUser = loggedInUser;
@@ -77,6 +79,7 @@ public class SettingsPresenter extends AbstractPresenter {
         String email = emailField.getText();
         String password = passwordField.getText();
         String password2 = password2Field.getText();
+        String currentPassword = currentPasswordField.getText();
 
         //keine Eingaben vom User -> Fenster schließen
 
@@ -107,9 +110,9 @@ public class SettingsPresenter extends AbstractPresenter {
                 email = loggedInUser.getEMail();
             }
             if (Strings.isNullOrEmpty(password)) {
-                password = loggedInUser.getPassword();
+                password = currentPassword;
             }
-            userService.updateUser(new UserDTO(username, password, email), loggedInUser);
+            userService.updateUser(new UserDTO(username, password, email), loggedInUser, currentPassword);
             clearAll();
         }
     }
@@ -117,7 +120,7 @@ public class SettingsPresenter extends AbstractPresenter {
     /**
      * Postet auf den EventBus das Accountlöschung-Event
      *
-     * @param event
+     * @param actionEvent
      * @author Julia
      * @since Sprint4
      */
@@ -129,7 +132,7 @@ public class SettingsPresenter extends AbstractPresenter {
     /**
      * Postet auf den EventBus das Schließe-Settings-Event
      *
-     * @param event
+     * @param actionEvent
      * @author Julia
      * @since Sprint4
      */
@@ -152,10 +155,10 @@ public class SettingsPresenter extends AbstractPresenter {
             loggedInUser = message.getUser();
         }
     }
+
     /**
      * Leert all alle Felder (Das Benutzernamefeld, E-Mailfeld, Passwortfeld und Passwortfeld2
      *
-     * @param method
      * @author Julia
      * @since Sprint4
      */

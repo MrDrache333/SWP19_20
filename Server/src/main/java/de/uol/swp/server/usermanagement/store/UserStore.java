@@ -58,7 +58,7 @@ public interface UserStore {
      * @author Marco
      * @since Start
      */
-    User updateUser(String username, String password, String eMail, String oldUsername);
+    User updateUser(String username, String password, String eMail, String oldUsername, String oldPassword);
 
     /**
      * Löscht einen User aus der Liste

@@ -3,6 +3,7 @@ package de.uol.swp.server.usermanagement.store;
 import com.google.common.base.Strings;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
+import de.uol.swp.server.usermanagement.UserUpdateException;
 
 import java.util.*;
 
@@ -24,14 +25,14 @@ public class MainMemoryBasedUserStore extends AbstractUserStore implements UserS
      * @param username der Username
      * @param password das Passwort
      * @return User oder nichts
-     * @author Marco, Julia
-     *@since Start
+     * @author Marco
+     * @since Start
      */
     @Override
     public Optional<User> findUser(String username, String password) {
         User usr = users.get(username);
-        if (usr != null && usr.getPassword().equals(password)) {
-            return Optional.of(usr);
+        if (usr != null && Objects.equals(usr.getPassword(), hash(password))) {
+            return Optional.of(usr.getWithoutPassword());
         }
         return Optional.empty();
     }
@@ -68,7 +69,7 @@ public class MainMemoryBasedUserStore extends AbstractUserStore implements UserS
         if (Strings.isNullOrEmpty(username)) {
             throw new IllegalArgumentException("Username must not be null");
         }
-        User usr = new UserDTO(username, password, eMail);
+        User usr = new UserDTO(username, hash(password), eMail);
         users.put(username, usr);
         return usr;
     }
@@ -85,11 +86,14 @@ public class MainMemoryBasedUserStore extends AbstractUserStore implements UserS
      * @since Start
      */
     @Override
-    public User updateUser(String username, String password, String eMail, String oldUsername) {
-        users.remove(oldUsername);
-        User usr = new UserDTO(username, password, eMail);
-        users.put(username, usr);
-        return usr;
+    public User updateUser(String username, String password, String eMail, String oldUsername, String oldPassword) {
+        User usr = users.get(oldUsername);
+        if (Objects.equals(usr.getPassword(), hash(oldPassword))) {
+            users.remove(oldUsername);
+            return createUser(username, password, eMail);
+        } else {
+            throw new UserUpdateException("Das eingebene Passwort ist nicht korrekt");
+        }
     }
 
     /**

@@ -1,9 +1,7 @@
 package de.uol.swp.client.main;
 
 import com.google.common.eventbus.Subscribe;
-import com.sun.glass.ui.PlatformFactory;
 import de.uol.swp.client.AbstractPresenter;
-import de.uol.swp.client.ClientApp;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.lobby.Lobby;
@@ -23,7 +21,6 @@ import de.uol.swp.common.user.request.OpenSettingsRequest;
 import de.uol.swp.common.user.response.AllOnlineUsersResponse;
 import de.uol.swp.common.user.response.LoginSuccessfulResponse;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -38,11 +35,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
-import javax.swing.text.html.ImageView;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -287,14 +281,9 @@ public class MainMenuPresenter extends AbstractPresenter {
      * @since Start
      */
     @Subscribe
-    public void userLeft(UserLoggedOutMessage message) {
+    public void userLoggedOut(UserLoggedOutMessage message) {
         LOG.debug("User " + message.getUsername() + " logged out");
-        Platform.runLater(() -> {
-            if (users.contains(message.getUsername())) {
-                users.remove(message.getUsername());
-                chatViewPresenter.userLeft(message.getUsername());
-            }
-        });
+        userLeft(message.getUsername());
     }
 
     /**
@@ -307,12 +296,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     @Subscribe
     public void userDropped(UserDroppedMessage message) {
         LOG.debug("User " + message.getUser().getUsername() + " deleted his account");
-        Platform.runLater(() -> {
-            if (users.contains(message.getUser().getUsername())) {
-                users.remove(message.getUser().getUsername());
-                chatViewPresenter.userLeft(message.getUser().getUsername());
-            }
-        });
+        userLeft(message.getUser().getUsername());
     }
 
     /**
@@ -586,6 +570,22 @@ public class MainMenuPresenter extends AbstractPresenter {
             }
             users.clear();
             userList.forEach(u -> users.add(u.getUsername()));
+        });
+    }
+
+    /**
+     * User wird aus der Userliste entfernt und im Chat wird angezeigt, dass er das Spiel verlassen hat
+     *
+     * @param username der Name des Users
+     * @author Julia
+     * @since Sprint4
+     */
+    private void userLeft(String username) {
+        Platform.runLater(() -> {
+            if (users.contains(username)) {
+                users.remove(username);
+                chatViewPresenter.userLeft(username);
+            }
         });
     }
 }

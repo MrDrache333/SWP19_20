@@ -9,17 +9,25 @@ public class UpdateUserRequest extends AbstractRequestMessage {
 
     final private User toUpdate;
     private User oldUser;
+    private String currentPassword;
 
-    public UpdateUserRequest(User user, User oldUser) {
+    public UpdateUserRequest(User user, User oldUser, String currentPassword) {
         this.toUpdate = user;
         this.oldUser = oldUser;
+        this.currentPassword = currentPassword;
     }
 
     public User getUser() {
         return toUpdate;
     }
 
-    public User getOldUser() { return oldUser; }
+    public User getOldUser() {
+        return oldUser;
+    }
+
+    public String getCurrentPassword() {
+        return currentPassword;
+    }
 
     @Override
     public boolean equals(Object o) {
