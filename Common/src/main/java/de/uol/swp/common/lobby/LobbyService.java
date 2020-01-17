@@ -67,4 +67,6 @@ public interface LobbyService {
      * @implNote Notwendige Ergänzung im LobbyService Interface
      */
     void setMaxPlayer(Integer maxPlayer, UUID lobbyID, User loggedInUser);
+
+    void kickUser(String lobbyName, UserDTO gameOwner, UUID lobbyID, UserDTO userToKick);
 }

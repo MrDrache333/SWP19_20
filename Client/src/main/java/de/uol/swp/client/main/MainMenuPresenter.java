@@ -1,9 +1,9 @@
 package de.uol.swp.client.main;
 
 import com.google.common.eventbus.Subscribe;
-import com.sun.glass.ui.PlatformFactory;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.ClientApp;
+import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.lobby.Lobby;
@@ -32,17 +32,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
-import javafx.stage.Modality;
 import javafx.util.Callback;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
-import javax.swing.text.html.ImageView;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -84,20 +80,6 @@ public class MainMenuPresenter extends AbstractPresenter {
     private Button createLobbyButton, logoutButton;
 
     /**
-     * @author Paula, Haschem, Ferit
-     * @version 0.1
-     * Fängt den Button ab und sendet den Request zur Erstellung der Lobby an den Server.
-     */
-    public static void showAlert(Alert.AlertType type, String message, String title) {
-        Alert alert = new Alert(type, "");
-        alert.setResizable(false);
-        alert.initModality(Modality.APPLICATION_MODAL);
-        alert.getDialogPane().setContentText(message);
-        alert.getDialogPane().setHeaderText(title);
-        alert.show();
-    }
-
-    /**
      * Methode fängt ButtonKlick ab, User verlässt alle Lobbies, in denen er angemeldet ist und wird ausgeloggt
      *
      * @param actionEvent
@@ -110,10 +92,6 @@ public class MainMenuPresenter extends AbstractPresenter {
         lobbyService.leaveAllLobbiesOnLogout(new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
         userService.logout(loggedInUser);
     }
-
-    //--------------------------------------
-    // EVENTBUS
-    //--------------------------------------
 
     /**
      * Initialize.
@@ -166,6 +144,24 @@ public class MainMenuPresenter extends AbstractPresenter {
      * @since Sprint4
      */
     @FXML
+    public void OnCreateLobbyButtonPressed(ActionEvent event) {
+        List<String> lobbyNames = new ArrayList<>();
+        lobbies.forEach(lobby -> lobbyNames.add(lobby.getName()));
+        if (lobbyNames.contains(lobbyName.getText())) {
+            SceneManager.showAlert(Alert.AlertType.WARNING, "Dieser Name ist bereits vergeben", "Fehler");
+            lobbyName.requestFocus();
+        } else if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName.getText())) {
+            CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
+            eventBus.post(msg);
+            LOG.info("Request wurde gesendet.");
+        } else {
+            SceneManager.showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden", "Fehler");
+            lobbyName.requestFocus();
+        }
+        lobbyName.clear();
+    }
+
+    @FXML
     public void onShowLobbyDialogButtonPressed(ActionEvent event) {
         // Erzeugung Dialog
         JDialog createLobbyDialoge = new JDialog();
@@ -205,7 +201,7 @@ public class MainMenuPresenter extends AbstractPresenter {
                 // wenn Name vorhanden: Alert + Moeglichkeit neuen Namen anzugeben
                 if (lobbyNames.contains(lName_input.getText())) {
                     Platform.runLater(() -> {
-                        showAlert(Alert.AlertType.WARNING, "Dieser Name ist bereits vergeben", "Fehler");
+                        SceneManager.showAlert(Alert.AlertType.WARNING, "Dieser Name ist bereits vergeben", "Fehler");
                         lName_input.setText("");
                         createLobbyDialoge.requestFocus();
                     });
@@ -220,7 +216,7 @@ public class MainMenuPresenter extends AbstractPresenter {
                     createLobbyDialoge.setVisible(false);
                 } else {
                     Platform.runLater(() -> {
-                        showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden", "Fehler");
+                        SceneManager.showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden", "Fehler");
                         lName_input.setText("");
                         createLobbyDialoge.requestFocus();
                     });
@@ -231,12 +227,14 @@ public class MainMenuPresenter extends AbstractPresenter {
         panel.add(createLobby);
         createLobbyDialoge.add(panel);
         createLobbyDialoge.setVisible(true);
-
     }
 
-    public boolean hasFocus() {
+    public boolean hasFocus(){
         return ClientApp.getSceneManager().hasFocus();
     }
+    //--------------------------------------
+    // EVENTBUS
+    //--------------------------------------
 
     /**
      * Die Methode postet ein Request auf den Bus, wenn der Einstellungen-Button gedrückt wird
@@ -424,7 +422,6 @@ public class MainMenuPresenter extends AbstractPresenter {
         updateUsersList(allUsersResponse.getUsers());
     }
 
-
     /**
      * Erstes Erstellen der Lobbytabelle beim Login
      *
@@ -439,7 +436,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     //-----------------
-    // Help methods
+    // PRIVATE METHODS
     //-----------------
 
     /**
@@ -459,7 +456,6 @@ public class MainMenuPresenter extends AbstractPresenter {
         });
     }
 
-
     /**
      * @author Rike, Paula
      * Hilfsmethode zum Erstellen des Buttons zum Betreten einer Lobby
@@ -472,17 +468,15 @@ public class MainMenuPresenter extends AbstractPresenter {
         Callback<TableColumn<Lobby, Void>, TableCell<Lobby, Void>> cellFactory = new Callback<>() {
             @Override
             public TableCell<Lobby, Void> call(final TableColumn<Lobby, Void> param) {
-
                 return new TableCell<>() {
                     final Button joinLobbyButton = new Button("Beitreten");
-
                     {
                         joinLobbyButton.setOnAction((ActionEvent event) -> {
                             Lobby lobby = getTableView().getItems().get(getIndex());
                             if (lobby.getPlayers() == lobby.getMaxPlayer()) {
-                                showAlert(Alert.AlertType.WARNING, "Diese Lobby ist voll!", "Fehler");
+                                SceneManager.showAlert(Alert.AlertType.WARNING, "Diese Lobby ist voll!", "Fehler");
                             } else if (lobby.getUsers().contains(loggedInUser)) {
-                                showAlert(Alert.AlertType.WARNING, "Du bist dieser Lobby schon beigetreten!", "Fehler");
+                                SceneManager.showAlert(Alert.AlertType.WARNING, "Du bist dieser Lobby schon beigetreten!", "Fehler");
                             } else {
                                 if (lobby.getLobbyPassword().isEmpty()) {
                                     lobbyService.joinLobby(lobby.getName(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), lobby.getLobbyID());
@@ -508,7 +502,7 @@ public class MainMenuPresenter extends AbstractPresenter {
                                             // Passwort ist nicht gleich, Fehlermeldung erscheint
                                             if (!lobby.getLobbyPassword().equals(String.valueOf(ePassword.getPassword()))) {
                                                 Platform.runLater(() -> {
-                                                    showAlert(Alert.AlertType.ERROR, "Das eingegebene Passwort ist falsch.", "Fehler");
+                                                    SceneManager.showAlert(Alert.AlertType.ERROR, "Das eingegebene Passwort ist falsch.", "Fehler");
                                                     ePassword.setText("");
                                                 });
                                             }
@@ -530,7 +524,6 @@ public class MainMenuPresenter extends AbstractPresenter {
                             }
                         });
                     }
-
                     @Override
                     public void updateItem(Void item, boolean empty) {
                         super.updateItem(item, empty);
@@ -543,7 +536,6 @@ public class MainMenuPresenter extends AbstractPresenter {
                 };
             }
         };
-
         joinLobby.setCellFactory(cellFactory);
     }
 

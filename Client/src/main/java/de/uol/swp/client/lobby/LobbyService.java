@@ -114,6 +114,20 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
         bus.post(request);
     }
 
+    /**
+     * Anfrage wird erstellt und abgeschickt um Spieler zu kicken.
+     *
+     * @param lobbyName
+     * @param lobbyID
+     * @param userToKick
+     * @since sprint4
+     * @author Darian
+     */
+    public void kickUser(String lobbyName, UserDTO gameOwner, UUID lobbyID, UserDTO userToKick){
+        RequestMessage request = new KickUserRequest(lobbyName, gameOwner, lobbyID, userToKick);
+        bus.post(request);
+    }
+
     @Override
     /**
      * @author Timo, Rike

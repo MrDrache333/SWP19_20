@@ -9,6 +9,7 @@ import de.uol.swp.client.di.ClientModule;
 import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.lobby.LobbyService;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
+import de.uol.swp.common.lobby.message.KickUserMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.lobby.message.SetMaxPlayerMessage;
@@ -153,7 +154,7 @@ public class ClientApp extends Application implements ConnectionListener {
 
     @Subscribe
     public void userLoggedIn(LoginSuccessfulResponse message) {
-        LOG.debug("user logged in successfully " + message.getUser().getUsername());
+        LOG.debug("User logged in successfully " + message.getUser().getUsername());
         this.user = message.getUser();
         sceneManager.showMainScreen(user);
     }
@@ -180,14 +181,14 @@ public class ClientApp extends Application implements ConnectionListener {
      * somit die Lobby. Überprüft außerdem ob der Ersteller mit dem eingeloggten User übereinstimmt, damit
      * nur dem ersteller ein neu erstelltes Lobbyfenster angezeigt wird.
      *
-     * @author Paula, Haschem, Ferit, Anna
+     * @author Paula, Haschem, Ferit, Anna, Darian
      * @version 0.2
      * @since Sprint3
      */
     @Subscribe
     public void onCreateLobbyMessage(CreateLobbyMessage message) {
         if (message.getUser().getUsername().equals(user.getUsername())) {
-            sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getChatID());
+            sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getChatID(), message.getUser());
             LOG.debug("CreateLobbyMessage vom Server erfolgreich angekommen");
         }
     }
@@ -205,7 +206,7 @@ public class ClientApp extends Application implements ConnectionListener {
             if (sceneManager.getGameManagement(message.getLobbyID()) != null) {
                 sceneManager.getGameManagement(message.getLobbyID()).showLobbyView();
             } else {
-                sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getLobbyID());
+                sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getLobbyID(), message.getGameOwner());
             }
             LOG.info("User " + message.getUser().getUsername() + " joined lobby successfully");
         }
@@ -266,6 +267,19 @@ public class ClientApp extends Application implements ConnectionListener {
     }
 
 
+    /**
+     *
+     */
+    @Subscribe
+    public void onKickUserMessage(KickUserMessage message) {
+        if (message.getUser().getUsername().equals(user.getUsername())) {
+            sceneManager.showMainScreen(user);
+            LOG.info("User " + message.getUser().getUsername() + " is kicked from the lobby successfully");
+            sceneManager.getGameManagement(message.getLobbyID()).close();
+            //SceneManager.showAlert(Alert.AlertType.WARNING,"Sie wurden aus der Lobby entfernt","Lobby verlassen");
+        }
+        lobbyService.retrieveAllLobbies();
+    }
 
     // -----------------------------------------------------
     // JavFX Help methods
@@ -329,6 +343,7 @@ public class ClientApp extends Application implements ConnectionListener {
         }
         lobbyService.retrieveAllLobbies();
     }
+
     /**
      * Schließen aller Fenster
      *
@@ -338,5 +353,4 @@ public class ClientApp extends Application implements ConnectionListener {
     public void closeAllWindows() {
         Platform.exit();
     }
-
 }

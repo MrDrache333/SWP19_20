@@ -299,6 +299,18 @@ public class ChatViewPresenter extends AbstractPresenter {
     }
 
     /**
+     * Nachricht, dass der Spieler gekickt wurde, wird im Chat angezeigt.
+     *
+     * @param username Benutzername des gekickten Spielers
+     * @author Darian
+     * @since sprint4
+     */
+    public void userKicked(String username) {
+        if (!chatId.equals(""))
+            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(new UserDTO("server", "", ""), username + " wurde aus der Lobby entfernt")));
+    }
+
+    /**
      * On send chat button pressed.
      */
     @FXML

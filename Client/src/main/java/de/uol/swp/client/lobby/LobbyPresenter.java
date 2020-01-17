@@ -9,10 +9,7 @@ import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.client.lobby.event.ShowLobbyViewEvent;
 import de.uol.swp.common.chat.ChatService;
 import de.uol.swp.common.lobby.LobbyService;
-import de.uol.swp.common.lobby.message.StartGameMessage;
-import de.uol.swp.common.lobby.message.UpdatedLobbyReadyStatusMessage;
-import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
-import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
+import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.user.User;
@@ -26,6 +23,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -33,6 +31,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Paint;
@@ -41,6 +41,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.awt.*;
+import java.awt.image.ImageObserver;
+import java.awt.image.ImageProducer;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -74,6 +76,7 @@ public class LobbyPresenter extends AbstractPresenter {
     private String lobbyName;
     private User loggedInUser;
     private UserDTO loggedInUserDTO;
+    private UserDTO gameOwner;
     private EventBus eventBus;
     private Injector injector;
 
@@ -112,7 +115,7 @@ public class LobbyPresenter extends AbstractPresenter {
      * @param injector          the injector
      * @param gameManagement    the game management
      */
-    public LobbyPresenter(User loggedInUser, String name, UUID lobbyID, ChatService chatService, ChatViewPresenter chatViewPresenter, LobbyService lobbyService, UserService userService, Injector injector, GameManagement gameManagement, EventBus eventBus) {
+    public LobbyPresenter(User loggedInUser, String name, UUID lobbyID, ChatService chatService, ChatViewPresenter chatViewPresenter, LobbyService lobbyService, UserService userService, Injector injector, UserDTO gameOwner, GameManagement gameManagement, EventBus eventBus) {
         this.loggedInUser = loggedInUser;
         this.lobbyName = name;
         this.lobbyID = lobbyID;
@@ -121,6 +124,7 @@ public class LobbyPresenter extends AbstractPresenter {
         this.userService = userService;
         this.chatViewPresenter = chatViewPresenter;
         this.injector = injector;
+        this.gameOwner = gameOwner;
         this.gameManagement = gameManagement;
         this.eventBus = eventBus;
         this.loggedInUserDTO = new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail());
@@ -167,7 +171,7 @@ public class LobbyPresenter extends AbstractPresenter {
         chatViewPresenter.userJoined(loggedInUser.getUsername());
 
         lobbyService.retrieveAllUsersInLobby(lobbyID);
-        readyUserList.put(loggedInUser.getUsername(), getHboxFromReadyUser(loggedInUser.getUsername(), false));
+        readyUserList.put(loggedInUser.getUsername(), getHboxFromReadyUser(loggedInUser, false));
         updateUsersList();
         //Setzt choseMaxPlayer auf den Default-Wert
         chooseMaxPlayer.setValue(4);
@@ -241,7 +245,7 @@ public class LobbyPresenter extends AbstractPresenter {
         if (!message.getLobbyID().equals(lobbyID)) return;
         if (readyUserList.containsKey(message.getUser().getUsername())) {
             LOG.debug("User " + message.getUser().getUsername() + " changed his status to " + (message.isReady() ? "Ready" : "Not Ready") + " in Lobby " + lobbyID);
-            updateReadyUser(message.getUser().getUsername(), message.isReady());
+            updateReadyUser(message.getUser(), message.isReady());
         }
     }
 
@@ -249,8 +253,8 @@ public class LobbyPresenter extends AbstractPresenter {
     private void onReceiveAllUsersInLobby(AllOnlineUsersInLobbyResponse response) {
         if (response.getLobbyID().equals(lobbyID)) {
             readyUserList = new TreeMap<>();
-            response.getUsers().forEach(e -> {
-                readyUserList.put(e.getUsername(), getHboxFromReadyUser(e.getUsername(), response.getStatus(e)));
+            response.getUsers().forEach(user -> {
+                readyUserList.put(user.getUsername(), getHboxFromReadyUser(user, response.getStatus(user)));
             });
             updateUsersList();
         }
@@ -273,8 +277,8 @@ public class LobbyPresenter extends AbstractPresenter {
         //der alte User wird aus der Lobby entfernt und der neue hinzugefügt
         Platform.runLater(() -> {
             if (readyUserList.containsKey(message.getOldUser().getUsername())){
-                userLeftLobby(message.getOldUser().getUsername());
-                readyUserList.put(message.getUser().getUsername(), getHboxFromReadyUser(message.getUser().getUsername(), false));
+                userLeftLobby(message.getOldUser().getUsername(), false);
+                readyUserList.put(message.getUser().getUsername(), getHboxFromReadyUser(message.getUser(), false));
                 updateUsersList();
                 chatViewPresenter.userJoined(message.getUser().getUsername());
             }
@@ -319,7 +323,7 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void onUserLoggedOutMessage(UserLoggedOutMessage message) {
-        userLeftLobby(message.getUsername());
+        userLeftLobby(message.getUsername(), false);
     }
 
     /**
@@ -331,7 +335,7 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void onUserDroppedMessage(UserDroppedMessage message) {
-        userLeftLobby(message.getUser().getUsername());
+        userLeftLobby(message.getUser().getUsername(), false);
     }
 
     /**
@@ -345,7 +349,8 @@ public class LobbyPresenter extends AbstractPresenter {
         LOG.debug("New user " + message.getUser() + " logged in");
         Platform.runLater(() -> {
             if (readyUserList != null && loggedInUser != null && !loggedInUser.toString().equals(message.getLobbyName())) {
-                readyUserList.put(message.getUser().getUsername(), getHboxFromReadyUser(message.getUser().getUsername(), false));
+                gameOwner = message.getGameOwner();
+                readyUserList.put(message.getUser().getUsername(), getHboxFromReadyUser(message.getUser(), false));
                 updateUsersList();
                 chatViewPresenter.userJoined(message.getUser().getUsername());
             }
@@ -361,20 +366,51 @@ public class LobbyPresenter extends AbstractPresenter {
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
         if (!message.getLobbyID().equals(lobbyID)) return;
         LOG.debug("User " + message.getUser().getUsername() + " left the Lobby");
-        userLeftLobby(message.getUser().getUsername());
+        userLeftLobby(message.getUser().getUsername(), false);
+        gameOwner = message.getGameOwner();
         chatViewPresenter.userLeft(message.getUser().getUsername());
+    }
+
+    /**
+     * Wenn die Nachrticht eingeht dass ein Spieler gekickt wird, wird dieser aus der UserListe enntfernt. Dies wird
+     * Ebenfalls im Chat angezeigt.
+     *
+     * @param message die eingehende Nachricht vom Server
+     * @author Darian
+     * @since sprint4
+     */
+    @Subscribe
+    public void onKickUserMessage(KickUserMessage message){
+        if (!message.getLobbyID().equals(lobbyID)) return;
+        LOG.debug("User " + message.getLobbyName() + " kicked out of the Lobby");
+        userLeftLobby(message.getUser().getUsername(), true);
+        chatViewPresenter.userKicked(message.getUser().getUsername());
     }
 
     //--------------------------------------
     // PRIVATE METHODS
     //--------------------------------------
 
-    private void userLeftLobby(String username) {
+    /**
+     * Wenn der Benutzer aus der Lobby gegangen/gekickt ist wird das im Chat angezeigt und er wird aus der UserListe
+     * entfernt.
+     *
+     * @param username Benutzername des Benutzers der gegangen ist
+     * @param kicked True wenn der Benutzer aus der Lobby gekickt wurde
+     * @author Darian
+     * @since sprint4
+     */
+    private void userLeftLobby(String username, boolean kicked) {
         if (readyUserList.get(username) != null) {
             Platform.runLater(() -> {
                 readyUserList.remove(username);
                 updateUsersList();
-                chatViewPresenter.userLeft(username);
+                //Je nachdem ob der Benutzer gekickt wurde oder freiwillig aus der Lobby gegangen ist wird es auch so angezeigt
+                if (kicked) {
+                    chatViewPresenter.userKicked(username);
+                } else {
+                    chatViewPresenter.userLeft(username);
+                }
                 if (readyUserList.containsKey(username)) {
                     readyUserList.remove(username);
                     updateUsersList();
@@ -395,29 +431,48 @@ public class LobbyPresenter extends AbstractPresenter {
         });
     }
 
-
     /**
-     * Creates a new HBox for a User
+     * Es wird eine HBox erstellt in der man den Benutzernamen sieht und den Bereit-Status. Wenn man der Besitzer der
+     * Lobby ist kann man mit einem Button daneben die Spieler aus der Lobby entfernen
      *
-     * @param username The User
+     * @param user The User
      * @param status   The actual Status
      * @return The generated HBox
+     * @author Darian
      */
-    private HBox getHboxFromReadyUser(String username, boolean status) {
+    private HBox getHboxFromReadyUser(User user, boolean status) {
         HBox box = new HBox();
         box.setAlignment(Pos.CENTER_LEFT);
         box.setSpacing(5);
         Circle circle = new Circle(12.0f, status ? Paint.valueOf("green") : Paint.valueOf("red"));
-        Label usernameLabel = new Label(username);
+        Label usernameLabel = new Label(user.getUsername());
         box.getChildren().add(circle);
         box.getChildren().add(usernameLabel);
+        //Es wird geprüft ob man der Besitzer der Lobby ist und ob der Button neben einem selber auftaucht
+        if(loggedInUser.getUsername().equals(gameOwner.getUsername()) && !user.getUsername().equals(gameOwner.getUsername())){
+            Button button = new Button("Spieler entfernen");
+            box.getChildren().add(button);
+            //Wenn der Button gedrückt wird der Spieler entfernt.
+            button.setOnAction(new EventHandler<ActionEvent>() {
+                @Override public void handle(ActionEvent e) {
+                    lobbyService.kickUser(lobbyName, (UserDTO) loggedInUser, lobbyID, (UserDTO) user);
+                }
+            });
+        }
+        if(user.getUsername().equals(gameOwner.getUsername())){
+            Image crown = new Image("images/crown.png");
+            ImageView crownView = new ImageView(crown);
+            crownView.setFitHeight(15);
+            crownView.setFitWidth(15);
+            box.getChildren().add(crownView);
+        }
         return box;
     }
 
-    private void updateReadyUser(String userName, boolean status) {
-        if (readyUserList.containsKey(userName)) {
-            readyUserList.remove(userName);
-            readyUserList.put(userName, getHboxFromReadyUser(userName, status));
+    private void updateReadyUser(User user, boolean status) {
+        if (readyUserList.containsKey(user.getUsername())) {
+            readyUserList.remove(user.getUsername());
+            readyUserList.put(user.getUsername(), getHboxFromReadyUser(user, status));
             updateUsersList();
         }
     }

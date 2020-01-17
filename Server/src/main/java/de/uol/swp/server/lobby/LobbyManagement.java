@@ -106,6 +106,32 @@ public class LobbyManagement {
         updatedLobbies.entrySet().forEach(l -> lobbies.replace(l.getKey(), l.getValue()));
     }
 
+    /**
+     * Benutzer wird aus der Lobby-Liste entfernt wenn der Spielbesitzer ihn gekickt hat.
+     *
+     * @param name
+     * @param userToKick
+     * @param owner
+     * @author Darian
+     * @since sprint4
+     * @return Boolean ob der Kick gerechtfertigt ist
+     */
+    public boolean kickUser(String name, User userToKick, User owner) {
+        Optional<Lobby> lobby = this.getLobby(name);
+        if (lobby.isPresent() && lobby.get().getOwner().getUsername().equals(owner.getUsername())) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("User " + userToKick.getUsername() + " is kicked out of the lobby " + name);
+            }
+            lobby.get().leaveUser(userToKick);
+            if (lobby.get().getPlayers() == 0) {
+                this.dropLobby(name);
+            }
+            return true;
+        }
+        return false;
+        // TODO: error handling not existing lobby
+    }
+
     public Collection<Lobby> getLobbies() {
         return lobbies.values();
     }
