@@ -131,7 +131,6 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     /**
-     *
      * Sobald der Lobby erstellen Button gedrückt wird, öffnet sich ein Dialog. Hier wird man aufgefordert einen Namen für die Lobby anzugeben. Das Passwortfeld ist optional
      * auszufüllen. Bleibt das Passwortfeld leer, wird die Lobby offen. Wird ein Passwort angegegben, wird dieses gespeicherrt und die Lobby wird privat
      *
@@ -577,7 +576,6 @@ public class MainMenuPresenter extends AbstractPresenter {
      * @param userList Die Liste, die, die eingeloggten User enthält
      * @author Marco
      * @since Start
-     *
      */
     private void updateUsersList(List<UserDTO> userList) {
         // Attention: This must be done on the FX Thread!

@@ -31,6 +31,20 @@ public class SetMaxPlayerRequest extends AbstractRequestMessage {
         this.loggedInUser = loggedInUser;
     }
 
+    /**
+     * Gibt die maximale Spieleranzahl zurück
+     * @return maximale Spieleranzahl
+     * @author Timo
+     * @since Sprint3
+     */
+    public Integer getMaxPlayerValue() {
+        return maxPlayerValue;
+    }
+
+    public void setMaxPlayerValue(Integer maxPlayerValue) {
+        this.maxPlayerValue = maxPlayerValue;
+    }
+
 
     /**
      * Gibt die LobbyID zurück
