@@ -25,7 +25,7 @@
               onAction="#onSaveButtonPressed" text="Speichern"/>
       <Button fx:id="deleteAccount" layoutX="265.0" layoutY="20.0" mnemonicParsing="false"
               onAction="#onDeleteAccountButtonPressed" text="Account löschen"/>
-      <Label layoutX="33.0" layoutY="10.0" prefWidth="142.0" text="Einstellungen">
+      <Label layoutX="33.0" layoutY="10.0" prefHeight="46.0" prefWidth="183.0" text="Einstellungen">
          <font>
             <Font size="30.0"/>
          </font>
