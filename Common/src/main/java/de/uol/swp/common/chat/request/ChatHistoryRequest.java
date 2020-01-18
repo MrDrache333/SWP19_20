@@ -3,19 +3,18 @@ package de.uol.swp.common.chat.request;
 import de.uol.swp.common.message.AbstractRequestMessage;
 import de.uol.swp.common.user.User;
 
-/**
- * The type Chat history request.
- */
 public class ChatHistoryRequest extends AbstractRequestMessage {
 
     private String ChatId;
     private User Sender;
 
     /**
-     * Instantiates a new Chat history request.
+     * Konstruktor für ChatHistoryRequest mit ChatID
      *
-     * @param chatId the chat id
-     * @param sender the sender
+     * @param chatId Die ChatID
+     * @param sender Der Absender
+     * @author Keno O
+     * @since Sprint 1
      */
     public ChatHistoryRequest(String chatId, User sender) {
         this.ChatId = chatId;
@@ -23,9 +22,11 @@ public class ChatHistoryRequest extends AbstractRequestMessage {
     }
 
     /**
-     * Instantiates a new Chat history request.
+     * Konstruktor für ChatHistoryRequest ohne ChatID
      *
-     * @param sender the sender
+     * @param sender Der Absender
+     * @author Keno O
+     * @since Sprint 1
      */
     public ChatHistoryRequest(User sender) {
         this.ChatId = "global";
@@ -34,18 +35,22 @@ public class ChatHistoryRequest extends AbstractRequestMessage {
 
 
     /**
-     * Gets ChatId.
+     * Getter für ChatID
      *
-     * @return Value of ChatId.
+     * @return ChatID
+     * @author Keno O
+     * @since Sprint 1
      */
     public String getChatId() {
         return ChatId;
     }
 
     /**
-     * Gets sender.
+     * Getter für Absender
      *
-     * @return the sender
+     * @return Absender
+     * @author Keno O
+     * @since Sprint 1
      */
     public User getSender() {
         return Sender;

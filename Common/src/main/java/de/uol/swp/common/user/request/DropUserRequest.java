@@ -7,10 +7,25 @@ public class DropUserRequest extends AbstractRequestMessage {
 
     private User user;
 
+    /**
+     * Instanziiert die Request
+     *
+     * @param user Der zu löschende User
+     * @author Anna
+     * @since Sprint 4
+     */
+
     public DropUserRequest(User user){
         this.user = user;
     }
 
+    /**
+     * Getter für User
+     *
+     * @return Der zu löschende User
+     * @author Anna
+     * @since Sprint 4
+     */
     public User getUser(){
         return user;
     }
