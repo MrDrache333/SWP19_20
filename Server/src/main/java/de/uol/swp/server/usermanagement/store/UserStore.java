@@ -50,15 +50,16 @@ public interface UserStore {
     /**
      * Aktualisiert einen User
      *
-     * @param username      der neue Username
-     * @param password      das Passwort des Users
-     * @param eMail         die E-Mail-Adresse des Users
-     * @param oldUsername   der alter Username
+     * @param username        der neue Username
+     * @param password        das Passwort des Users
+     * @param eMail           die E-Mail-Adresse des Users
+     * @param oldUsername     der alter Username
+     * @param currentPassword das momentane Passwort des Users
      * @return den aktualisierten User
-     * @author Marco
+     * @author Marco, Julia
      * @since Start
      */
-    User updateUser(String username, String password, String eMail, String oldUsername);
+    User updateUser(String username, String password, String eMail, String oldUsername, String currentPassword);
 
     /**
      * Löscht einen User aus der Liste

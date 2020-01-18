@@ -55,6 +55,8 @@ public class SettingsPresenter extends AbstractPresenter {
     private PasswordField passwordField;
     @FXML
     private PasswordField password2Field;
+    @FXML
+    private PasswordField currentPasswordField;
 
     public SettingsPresenter(User loggedInUser, LobbyService lobbyService, UserService userService, EventBus eventBus) {
         this.loggedInUser = loggedInUser;
@@ -77,6 +79,7 @@ public class SettingsPresenter extends AbstractPresenter {
         String email = emailField.getText();
         String password = passwordField.getText();
         String password2 = password2Field.getText();
+        String currentPassword = currentPasswordField.getText();
 
         //keine Eingaben vom User -> Fenster schließen
 
@@ -93,12 +96,15 @@ public class SettingsPresenter extends AbstractPresenter {
             passwordField.clear();
             password2Field.clear();
             passwordField.requestFocus();
-        } else if(!Strings.isNullOrEmpty(email) && !Pattern.matches("(?:[a-z0-9!#$%&'+/=?^_`{|}~-]+(?:.[a-z0-9!#$%&'+/=?^_`{|}~-]+)|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])\")@(?:(?:[a-z0-9](?:[a-z0-9-][a-z0-9])?.)+[a-z0-9](?:[a-z0-9-][a-z0-9])?|[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+", email)) {
+        } else if (!Strings.isNullOrEmpty(email) && !Pattern.matches("(?:[a-z0-9!#$%&'+/=?^_`{|}~-]+(?:.[a-z0-9!#$%&'+/=?^_`{|}~-]+)|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])\")@(?:(?:[a-z0-9](?:[a-z0-9-][a-z0-9])?.)+[a-z0-9](?:[a-z0-9-][a-z0-9])?|[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+", email)) {
             showAlert(Alert.AlertType.ERROR, email + " ist keine gültige E-Mail-Adresse", "Fehler");
             emailField.clear();
             emailField.requestFocus();
-        }
-        else {
+        } else if (Strings.isNullOrEmpty(currentPassword)) {
+            showAlert(Alert.AlertType.ERROR, "Gib dein aktuelles Passwort ein", "Fehler");
+            currentPasswordField.clear();
+            currentPasswordField.requestFocus();
+        } else {
             //Wenn Felder leer sind, Daten vom loggedInUser übernehmen
             if (Strings.isNullOrEmpty(username)) {
                 username = loggedInUser.getUsername();
@@ -107,9 +113,9 @@ public class SettingsPresenter extends AbstractPresenter {
                 email = loggedInUser.getEMail();
             }
             if (Strings.isNullOrEmpty(password)) {
-                password = loggedInUser.getPassword();
+                password = currentPassword;
             }
-            userService.updateUser(new UserDTO(username, password, email), loggedInUser);
+            userService.updateUser(new UserDTO(username, password, email), loggedInUser, currentPassword);
             clearAll();
         }
     }
@@ -117,7 +123,7 @@ public class SettingsPresenter extends AbstractPresenter {
     /**
      * Postet auf den EventBus das Accountlöschung-Event
      *
-     * @param event
+     * @param actionEvent
      * @author Julia
      * @since Sprint4
      */
@@ -129,7 +135,7 @@ public class SettingsPresenter extends AbstractPresenter {
     /**
      * Postet auf den EventBus das Schließe-Settings-Event
      *
-     * @param event
+     * @param actionEvent
      * @author Julia
      * @since Sprint4
      */
@@ -152,10 +158,10 @@ public class SettingsPresenter extends AbstractPresenter {
             loggedInUser = message.getUser();
         }
     }
+
     /**
-     * Leert all alle Felder (Das Benutzernamefeld, E-Mailfeld, Passwortfeld und Passwortfeld2
+     * Leert alle Felder (Benutzername, E-Mail und alle Passwortfelder)
      *
-     * @param method
      * @author Julia
      * @since Sprint4
      */
@@ -164,6 +170,7 @@ public class SettingsPresenter extends AbstractPresenter {
         emailField.clear();
         passwordField.clear();
         password2Field.clear();
+        currentPasswordField.clear();
     }
 
 }

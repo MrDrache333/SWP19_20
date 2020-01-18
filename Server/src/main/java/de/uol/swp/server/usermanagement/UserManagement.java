@@ -79,16 +79,17 @@ public class UserManagement extends AbstractUserManagement {
     /**
      * Aktualisiert Nutzerdaten.
      *
-     * @param userToUpdate der User
-     * @param oldUser User mit alten Daten
+     * @param userToUpdate    der User
+     * @param oldUser         User mit alten Daten
+     * @param currentPassword das momentane Passwort des Users
      * @return den neuen User
-     * @throws UserUpdateException wenn Name/Email bereits vergeben sind.
+     * @throws UserUpdateException     wenn Name/Email bereits vergeben sind.
      * @throws UserManagementException wenn der Benutzer nicht existiert.
      * @author Julia, Keno, Marco
      * @since Basisprojekt
      */
     @Override
-    public User updateUser(User userToUpdate, User oldUser) {
+    public User updateUser(User userToUpdate, User oldUser, String currentPassword) {
         Optional<User> user = userStore.findUser(oldUser.getUsername());
         if (user.isEmpty()) {
             throw new UserManagementException("Username unknown!");
@@ -103,7 +104,7 @@ public class UserManagement extends AbstractUserManagement {
         if (mails.contains(userToUpdate.getEMail()) && !userToUpdate.getEMail().equals(oldUser.getEMail())) {
             throw new UserUpdateException("Diese Email ist bereits vergeben!");
         }
-       return userStore.updateUser(userToUpdate.getUsername(), userToUpdate.getPassword(), userToUpdate.getEMail(), oldUser.getUsername());
+        return userStore.updateUser(userToUpdate.getUsername(), userToUpdate.getPassword(), userToUpdate.getEMail(), oldUser.getUsername(), currentPassword);
     }
 
     /**

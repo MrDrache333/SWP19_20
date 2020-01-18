@@ -12,7 +12,7 @@ import java.awt.*;
 public class Notifyer {
 
     /**
-     * Überprüft ob die Klasse unterstützt wird.
+     * Überprüft ob Benachrichtigungen unterstützt werden.
      *
      * @return ob die Notification unterstützt wird.
      */

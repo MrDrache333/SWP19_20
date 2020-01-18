@@ -62,13 +62,14 @@ public interface UserService {
     /**
      * Aktualisiert einen User
      *
+     * @param user            User mit neuen Daten
+     * @param oldUser         User mit alten Daten
+     * @param currentPassword das momentane Passwort des Users
+     * @return Userobjekt Der aktualisierte User
      * @author Julia
      * @since Sprint 4
-     * @param user User mit neuen Daten
-     * @param oldUser User mit alten Daten
-     * @return Userobjekt Der aktualisierte User
      */
-    User updateUser(User user, User oldUser);
+    User updateUser(User user, User oldUser, String currentPassword);
 
     /**
      * Gibt alle eingeloggten User als Liste zurück.

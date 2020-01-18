@@ -4,7 +4,7 @@ package de.uol.swp.common.message;
  * Ein Basis Interface für alle Nachrichten vom Client zum Server.
  *
  * @author: Marco
- * @since Sprint0
+ * @since Start
  */
 
 public interface RequestMessage extends Message {

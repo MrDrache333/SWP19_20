@@ -77,7 +77,7 @@ class MainMemoryBasedUserStoreTest {
 
         assertTrue(userFound.isPresent());
         assertEquals(userToCreate, userFound.get());
-        assertEquals(userFound.get().getPassword(), userToCreate.getPassword());
+        assertEquals(userFound.get().getPassword(), "");
     }
 
     @Test
@@ -121,7 +121,7 @@ class MainMemoryBasedUserStoreTest {
         MainMemoryBasedUserStore store = getDefaultStore();
         User userToUpdate = getDefaultUsers().get(2);
 
-        store.updateUser(userToUpdate.getUsername(), userToUpdate.getPassword(), userToUpdate.getEMail() + "@TESTING", userToUpdate.getUsername());
+        store.updateUser(userToUpdate.getUsername(), userToUpdate.getPassword(), userToUpdate.getEMail() + "@TESTING", userToUpdate.getUsername(), "marco2");
 
         Optional<User> userFound = store.findUser(userToUpdate.getUsername());
 
@@ -135,7 +135,7 @@ class MainMemoryBasedUserStoreTest {
         MainMemoryBasedUserStore store = getDefaultStore();
         User userToUpdate = getDefaultUsers().get(2);
 
-        store.updateUser(userToUpdate.getUsername(), userToUpdate.getPassword() + "_NEWPASS", userToUpdate.getEMail(), userToUpdate.getUsername());
+        store.updateUser(userToUpdate.getUsername(), userToUpdate.getPassword() + "_NEWPASS", userToUpdate.getEMail(), userToUpdate.getUsername(), "marco2");
 
         Optional<User> userFound = store.findUser(userToUpdate.getUsername(), userToUpdate.getPassword() + "_NEWPASS");
 

@@ -155,7 +155,7 @@ class UserServiceTest {
     @Test
     void updateUserTest() throws InterruptedException {
         UserService userService = new UserService(bus);
-        userService.updateUser(defaultUser, defaultUser);
+        userService.updateUser(defaultUser, defaultUser, "test");
 
         lock.await(1000, TimeUnit.MILLISECONDS);
 
@@ -166,6 +166,9 @@ class UserServiceTest {
         assertEquals(request.getUser().getUsername(), defaultUser.getUsername());
         assertEquals(request.getUser().getPassword(), defaultUser.getPassword());
         assertEquals(request.getUser().getEMail(), defaultUser.getEMail());
+        assertEquals(request.getOldUser().getUsername(), defaultUser.getUsername());
+        assertEquals(request.getOldUser().getPassword(), defaultUser.getPassword());
+        assertEquals(request.getOldUser().getEMail(), defaultUser.getEMail());
         assertTrue(request.authorizationNeeded());
     }
 

@@ -4,7 +4,7 @@ package de.uol.swp.common.exception;
  * Exception um z.B. darauf hinzuweisen, dass ein auth benötigt wird.
  *
  * @author Marco Grawunder
- * @since Sprint0
+ * @since Start
  */
 public class SecurityException extends RuntimeException {
 

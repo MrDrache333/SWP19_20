@@ -3,6 +3,7 @@ package de.uol.swp.server.usermanagement.store;
 import com.google.common.base.Strings;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
+import de.uol.swp.server.usermanagement.UserUpdateException;
 
 import java.util.*;
 
@@ -24,14 +25,14 @@ public class MainMemoryBasedUserStore extends AbstractUserStore implements UserS
      * @param username der Username
      * @param password das Passwort
      * @return User oder nichts
-     * @author Marco, Julia
-     *@since Sprint0
+     * @author Marco
+     * @since Start
      */
     @Override
     public Optional<User> findUser(String username, String password) {
         User usr = users.get(username);
-        if (usr != null && usr.getPassword().equals(password)) {
-            return Optional.of(usr);
+        if (usr != null && Objects.equals(usr.getPassword(), hash(password))) {
+            return Optional.of(usr.getWithoutPassword());
         }
         return Optional.empty();
     }
@@ -42,7 +43,7 @@ public class MainMemoryBasedUserStore extends AbstractUserStore implements UserS
      * @param username der Username
      * @return den User oder nichts
      * @author Marco
-     * @since Sprint0
+     * @since Start
      */
     @Override
     public Optional<User> findUser(String username) {
@@ -61,14 +62,14 @@ public class MainMemoryBasedUserStore extends AbstractUserStore implements UserS
      * @param eMail die e-Mail
      * @return den neuen Nutzer
      * @author Marco
-     * @since Sprint0
+     * @since Start
      */
     @Override
     public User createUser(String username, String password, String eMail) {
         if (Strings.isNullOrEmpty(username)) {
             throw new IllegalArgumentException("Username must not be null");
         }
-        User usr = new UserDTO(username, password, eMail);
+        User usr = new UserDTO(username, hash(password), eMail);
         users.put(username, usr);
         return usr;
     }
@@ -76,20 +77,24 @@ public class MainMemoryBasedUserStore extends AbstractUserStore implements UserS
     /**
      * Der alte Nutzer wird aus dem Store entfernt und der aus den übergeben Daten neu ertsellte dafür hinzugefügt.
      *
-     * @param username der neue Username
-     * @param password das Passwort
-     * @param eMail die e-Mail
-     * @param oldUsername der alte Username
+     * @param username        der neue Username
+     * @param password        das Passwort
+     * @param eMail           die e-Mail
+     * @param oldUsername     der alte Username
+     * @param currentPassword das momentane Passwort des Users
      * @return den aktualisierten Nutzer
      * @author Marco, Julia
-     * @since Sprint0
+     * @since Start
      */
     @Override
-    public User updateUser(String username, String password, String eMail, String oldUsername) {
-        users.remove(oldUsername);
-        User usr = new UserDTO(username, password, eMail);
-        users.put(username, usr);
-        return usr;
+    public User updateUser(String username, String password, String eMail, String oldUsername, String currentPassword) {
+        User usr = users.get(oldUsername);
+        if (Objects.equals(usr.getPassword(), hash(currentPassword))) {
+            users.remove(oldUsername);
+            return createUser(username, password, eMail);
+        } else {
+            throw new UserUpdateException("Das eingegebene Passwort ist nicht korrekt.\n\n Gib dein aktuelles Passwort ein.");
+        }
     }
 
     /**
@@ -97,7 +102,7 @@ public class MainMemoryBasedUserStore extends AbstractUserStore implements UserS
      *
      * @param username der Username
      * @author Marco
-     * @since Sprint0
+     * @since Start
      */
     @Override
     public void removeUser(String username) {
@@ -109,7 +114,7 @@ public class MainMemoryBasedUserStore extends AbstractUserStore implements UserS
      *
      * @return eine Liste aller Nutzer
      * @author Marco
-     * @since Sprint0
+     * @since Start
      */
     @Override
     public List<User> getAllUsers() {
