@@ -277,7 +277,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      * User wird aus der Liste entfernt, wenn er sich asuegloggt hat
      *
      * @param message die UserLoggedOutMessage
-     * @author Marco, Keno O.
+     * @author Marco, Keno O., Julia
      * @since Start
      */
     @Subscribe

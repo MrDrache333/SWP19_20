@@ -160,7 +160,7 @@ public class SettingsPresenter extends AbstractPresenter {
     }
 
     /**
-     * Leert all alle Felder (Das Benutzernamefeld, E-Mailfeld, Passwortfeld und Passwortfeld2
+     * Leert alle Felder (Benutzername, E-Mail und alle Passwortfelder)
      *
      * @author Julia
      * @since Sprint4

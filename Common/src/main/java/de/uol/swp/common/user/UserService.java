@@ -64,7 +64,7 @@ public interface UserService {
      *
      * @param user            User mit neuen Daten
      * @param oldUser         User mit alten Daten
-     * @param currentPassword das alte Passwort des Users
+     * @param currentPassword das momentane Passwort des Users
      * @return Userobjekt Der aktualisierte User
      * @author Julia
      * @since Sprint 4

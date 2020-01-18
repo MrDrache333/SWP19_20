@@ -77,22 +77,23 @@ public class MainMemoryBasedUserStore extends AbstractUserStore implements UserS
     /**
      * Der alte Nutzer wird aus dem Store entfernt und der aus den übergeben Daten neu ertsellte dafür hinzugefügt.
      *
-     * @param username der neue Username
-     * @param password das Passwort
-     * @param eMail die e-Mail
-     * @param oldUsername der alte Username
+     * @param username        der neue Username
+     * @param password        das Passwort
+     * @param eMail           die e-Mail
+     * @param oldUsername     der alte Username
+     * @param currentPassword das momentane Passwort des Users
      * @return den aktualisierten Nutzer
      * @author Marco, Julia
      * @since Start
      */
     @Override
-    public User updateUser(String username, String password, String eMail, String oldUsername, String oldPassword) {
+    public User updateUser(String username, String password, String eMail, String oldUsername, String currentPassword) {
         User usr = users.get(oldUsername);
-        if (Objects.equals(usr.getPassword(), hash(oldPassword))) {
+        if (Objects.equals(usr.getPassword(), hash(currentPassword))) {
             users.remove(oldUsername);
             return createUser(username, password, eMail);
         } else {
-            throw new UserUpdateException("Das eingebene Passwort ist nicht korrekt");
+            throw new UserUpdateException("Das eingegebene Passwort ist nicht korrekt.\n\n Gib dein aktuelles Passwort ein.");
         }
     }
 

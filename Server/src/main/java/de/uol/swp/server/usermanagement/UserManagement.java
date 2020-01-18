@@ -79,10 +79,11 @@ public class UserManagement extends AbstractUserManagement {
     /**
      * Aktualisiert Nutzerdaten.
      *
-     * @param userToUpdate der User
-     * @param oldUser User mit alten Daten
+     * @param userToUpdate    der User
+     * @param oldUser         User mit alten Daten
+     * @param currentPassword das momentane Passwort des Users
      * @return den neuen User
-     * @throws UserUpdateException wenn Name/Email bereits vergeben sind.
+     * @throws UserUpdateException     wenn Name/Email bereits vergeben sind.
      * @throws UserManagementException wenn der Benutzer nicht existiert.
      * @author Julia, Keno, Marco
      * @since Basisprojekt
