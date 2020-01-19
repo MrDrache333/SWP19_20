@@ -48,32 +48,73 @@ public class UserDTO implements User {
         return new UserDTO(user.getUsername(), "", user.getEMail());
     }
 
-
+    /**
+     * Der Name des Benutzers wird zurückgegeben.
+     *
+     * @return Name des Useres
+     */
     @Override
     public String getUsername() {
         return username;
     }
 
+    /**
+     * Das Passwort des Benutzers wird zurückgeben
+     *
+     * @retrun das Passwort des Benutzers
+     * @author Marco
+     * @since Start
+     */
     @Override
     public String getPassword() {
         return password;
     }
 
+    /**
+     * Die Email des Benutzers wird zurückgeben
+     *
+     * @retrun Die Email des Benutzers
+     * @author Marco
+     * @since Start
+     */
     @Override
     public String getEMail() {
         return eMail;
     }
 
+    /**
+     * Der Benutzers wird zurückgeben ohne Passwort
+     *
+     * @retrun Der Benutzer ohne Passwort
+     * @author Marco
+     * @since Start
+     */
     @Override
     public User getWithoutPassword() {
         return new UserDTO(username, "", eMail);
     }
 
+    /**
+     * Es wird ermittelt um wie viel Chars der Username länger ist als der vom Parameter
+     *
+     * @param user Der User dessen Username verglichen werden soll
+     * @return Länge der Differenz
+     * @author Marco, Darian
+     * @since Start
+     */
     @Override
-    public int compareTo(User o) {
-        return username.compareTo(o.getUsername());
+    public int compareTo(User user) {
+        return username.compareTo(user.getUsername());
     }
 
+    /**
+     * Es wird überprüft ob die zwei Objekte gleich sind
+     *
+     * @param o Das Objekt mit der verglichen werden soll
+     * @return True wenn die Objekte gleich sind
+     * @author Marco
+     * @since Start
+     */
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof UserDTO)) {
@@ -82,6 +123,13 @@ public class UserDTO implements User {
         return Objects.equals(this.username, ((UserDTO) obj).username);
     }
 
+    /**
+     * Es wird der Username gehasht
+     *
+     * @return Der hashCode aus Username
+     * @author Marco
+     * @since Start
+     */
     @Override
     public int hashCode() {
         return Objects.hashCode(username);

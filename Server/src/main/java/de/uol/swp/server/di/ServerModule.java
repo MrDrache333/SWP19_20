@@ -11,13 +11,18 @@ public class ServerModule extends AbstractModule {
     private final EventBus bus = new EventBus();
     private final UserStore store = new MainMemoryBasedUserStore();
 
+    /**
+     * Alle Usermanagements und Eventbusse bekommen die gleichen Instanzen
+     *
+     * @author Marco
+     * @since Start
+     */
     @Override
     protected void configure() {
         // All usermanagements and eventbusses must be the same instance (!)
         bind(ChatManagement.class).toInstance(new ChatManagement());
         bind(UserStore.class).toInstance(store);
         bind(EventBus.class).toInstance(bus);
-
     }
 }
 

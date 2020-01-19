@@ -32,6 +32,13 @@ public class LoginPresenter extends AbstractPresenter {
     public LoginPresenter() {
     }
 
+
+    /**
+     * Der SoundMediaPlayer wird initialisiert.
+     *
+     * @author Keno O
+     * @since Sprint 4
+     */
     @FXML
     private void initialize() {
         LoginButton.setOnMouseEntered(event -> {
@@ -43,15 +50,28 @@ public class LoginPresenter extends AbstractPresenter {
         forgotPasswordButton.setOnMouseEntered(event -> {
             new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play();
         });
-
     }
 
+    /**
+     * Beim drücken des Login-Buttons werden die eingegebenen Daten zum Server geschickt
+     *
+     * @param event Das Event, dass die Methode Aufruft
+     * @author Keno O
+     * @since Sprint 4
+     */
     @FXML
     private void onLoginButtonPressed(ActionEvent event) {
         new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Pressed, SoundMediaPlayer.Type.Sound).play();
         userService.login(userField.getText(), passwordField.getText());
     }
 
+    /**
+     * Beim drücken des Registrieren-Buttons wird das Fenster zum registrieren geöffnet
+     *
+     * @param event Das Event, dass die Methode Aufruft
+     * @author Keno O
+     * @since Sprint 4
+     */
     @FXML
     private void onRegisterButtonPressed(ActionEvent event) {
         new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Pressed, SoundMediaPlayer.Type.Sound).play();

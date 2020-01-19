@@ -13,27 +13,53 @@ public class AbstractLobbyRequest extends AbstractRequestMessage {
     public AbstractLobbyRequest() {
     }
 
+    /**
+     * Eine Anfrage wird erstellt die allgemein mit der Lobby zu tun hat.
+     *
+     * @param lobbyName Lobbyname um die sich die Anfrage handelt
+     * @param user User der die Anfrage verschickt
+     * @author Marco
+     * @since Start
+     */
     public AbstractLobbyRequest(String lobbyName, UserDTO user) {
         this.lobbyName = lobbyName;
         this.user = user;
     }
 
+    /**
+     * Lobbyname wird zurückgegeben um die sich Anfrage handelt.
+     *
+     * @return Der Lobbyname
+     * @author Marco
+     * @since Start
+     */
     public String getLobbyName() {
         return lobbyName;
-    }
-
-    public void setLobbyName(String lobbyName) {
-        this.lobbyName = lobbyName;
-    }
-
-    public UserDTO getUser() {
-        return user;
     }
 
     public void setUser(UserDTO user) {
         this.user = user;
     }
 
+    /**
+     * Benutzer wird zurückgegben der die Anfrage verschickt hat.
+     *
+     * @return User der die Anfrage verschickt hat
+     * @author Marco
+     * @since Start
+     */
+    public UserDTO getUser() {
+        return user;
+    }
+
+    /**
+     * Es wird verglichen ob zwei Objekte gleich sind.
+     *
+     * @param o Objekt mit dem verglichen werden soll
+     * @return True wenn die Benutzer gleich sind
+     * @author Marco
+     * @since Start
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -43,6 +69,13 @@ public class AbstractLobbyRequest extends AbstractRequestMessage {
                 Objects.equals(user, that.user);
     }
 
+    /**
+     * Es wird der Lobbyname und der Benutzer gehasht
+     *
+     * @return hashCode aus Lobbyname und User
+     * @author Marco
+     * @since Start
+     */
     @Override
     public int hashCode() {
         return Objects.hash(lobbyName, user);

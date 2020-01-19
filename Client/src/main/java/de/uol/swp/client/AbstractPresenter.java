@@ -8,9 +8,6 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 
 public class AbstractPresenter {
-
-    protected User loggedInUser;
-
     @Inject
     protected UserService userService;
     @Inject
@@ -18,14 +15,28 @@ public class AbstractPresenter {
     @Inject
     protected ChatService chatService;
 
+    protected User loggedInUser;
     protected EventBus eventBus;
 
+    /**
+     * Es wird ein neuer Eventbus gesetzt.
+     *
+     * @param eventBus Der neue Eventbus
+     * @author Marco
+     * @since Start
+     */
     @Inject
     public void setEventBus(EventBus eventBus) {
         this.eventBus = eventBus;
         eventBus.register(this);
     }
 
+    /**
+     * Es wird der gesetzte Eventbus gelöscht
+     *
+     * @author Marco
+     * @since Start
+     */
     public void clearEventBus() {
         this.eventBus.unregister(this);
         this.eventBus = null;

@@ -11,10 +11,13 @@ public class NewChatMessageRequest extends AbstractRequestMessage {
     private String ChatId;
     private ChatMessage Message;
 
+
     /**
-     * Instantiates a new New chat message request.
+     * Erstellt eine neue MainMenu-Chatnachticht-Request
      *
-     * @param message the message
+     * @param message Die Chatnachricht die versendet werden soll
+     * @author Keno O
+     * @since Sprint 2
      */
     public NewChatMessageRequest(ChatMessage message) {
         this.ChatId = "global";
@@ -22,10 +25,12 @@ public class NewChatMessageRequest extends AbstractRequestMessage {
     }
 
     /**
-     * Instantiates a new New chat message request.
+     * Erstellt eine neue Lobbychatnachticht-Request
      *
-     * @param chatId  the chatid
-     * @param message the message
+     * @param message       Die Chatnachricht die versendet werden soll
+     * @param chatId        Die ChatId für den Chat für den die Chatnachricht ist
+     * @author Keno O
+     * @since Sprint 2
      */
     public NewChatMessageRequest(String chatId, ChatMessage message) {
         this.Message = message;
@@ -33,18 +38,22 @@ public class NewChatMessageRequest extends AbstractRequestMessage {
     }
 
     /**
-     * Gets chatid.
+     * Gibt die ChatId zurück für den Chat für den die Nachricht bestimmt ist.
      *
-     * @return the chatid
+     * @return die ChatId für den Chat für die die Nachricht ist
+     * @author Keno O
+     * @since Sprint 2
      */
     public String getChatid() {
         return ChatId;
     }
 
     /**
-     * Gets message.
+     * Gibt die Chatnachricht zurück die von dem Benutzer versendet wurde.
      *
-     * @return the message
+     * @return versendete Chatnachricht
+     * @author Keno O
+     * @since Sprint 2
      */
     public ChatMessage getMessage() {
         return Message;
