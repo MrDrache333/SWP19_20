@@ -25,7 +25,7 @@ import java.util.UUID;
  * @author Marco
  * @since Start
  */
-public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
+public class LobbyService  {
 
     private static final Logger LOG = LogManager.getLogger(LobbyService.class);
     private final EventBus bus;
@@ -52,7 +52,7 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
      * @author Julia, Paula
      * @since Sprint3
      */
-    @Override
+
     public void joinLobby(String lobbyName, UserDTO user, UUID lobbyID) {
         LobbyJoinUserRequest request = new LobbyJoinUserRequest(lobbyName, user, lobbyID);
         bus.post(request);
@@ -67,7 +67,7 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
      * @author Julia, Paula
      * @since Sprint3
      */
-    @Override
+
     public void leaveLobby(String lobbyName, UserDTO user, UUID lobbyID) {
         LobbyLeaveUserRequest request = new LobbyLeaveUserRequest(lobbyName, user, lobbyID);
         bus.post(request);
@@ -80,7 +80,7 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
      * @author Julia, Paula
      * @since Sprint3
      */
-    @Override
+
     public void leaveAllLobbiesOnLogout(UserDTO user) {
         LeaveAllLobbiesOnLogoutRequest request = new LeaveAllLobbiesOnLogoutRequest(user);
         bus.post(request);
@@ -92,7 +92,7 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
      * @author Julia
      * @since Sprint2
      */
-    @Override
+
     public List<Lobby> retrieveAllLobbies() {
         RetrieveAllOnlineLobbiesRequest request = new RetrieveAllOnlineLobbiesRequest();
         bus.post(request);
@@ -106,20 +106,20 @@ public class LobbyService implements de.uol.swp.common.lobby.LobbyService {
      * @author Marvin
      * @since Sprint3
      */
-    @Override
+
     public ArrayList<LobbyUser> retrieveAllUsersInLobby(UUID lobbyID) {
         RequestMessage request = new RetrieveAllOnlineUsersInLobbyRequest(lobbyID);
         bus.post(request);
         return null;
     }
 
-    @Override
+
     public void setLobbyUserStatus(String LobbyName, UserDTO user, boolean Status) {
         RequestMessage request = new UpdateLobbyReadyStatusRequest(LobbyName, user, Status);
         bus.post(request);
     }
 
-    @Override
+
     /**
      * Erstellt einen SetMaxPlayerRequest.
      *

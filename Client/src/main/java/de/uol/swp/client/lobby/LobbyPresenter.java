@@ -7,7 +7,6 @@ import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.common.chat.ChatService;
-import de.uol.swp.common.lobby.LobbyService;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
