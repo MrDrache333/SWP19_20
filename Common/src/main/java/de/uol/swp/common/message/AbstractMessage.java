@@ -14,6 +14,7 @@ import java.util.Optional;
 @SuppressWarnings("serial")
 abstract public class AbstractMessage implements Message {
 
+    private static final long serialVersionUID = 3929743744148011068L;
     transient private MessageContext messageContext;
     transient private Session session = null;
 

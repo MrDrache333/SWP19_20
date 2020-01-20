@@ -7,6 +7,7 @@ import java.util.Objects;
 
 public class UpdateUserRequest extends AbstractRequestMessage {
 
+    private static final long serialVersionUID = 1834977681414180873L;
     final private User toUpdate;
     private User oldUser;
     private String currentPassword;

@@ -17,6 +17,7 @@ import java.util.UUID;
  */
 public class LobbyDTO implements Lobby, Serializable {
 
+    private static final long serialVersionUID = 998701048176852816L;
     private final String name;
     private User owner;
     private TreeMap<String, Boolean> readyStatus = new TreeMap<>();
@@ -34,8 +35,8 @@ public class LobbyDTO implements Lobby, Serializable {
      * @param creator       der Ersteller
      * @param lobbyID       die LobbyID, um Lobbys mit gleichem Namen unterscheiden zu können - Serverseitig
      * @param lobbyPassword das Lobbypasswort
-     * @since Start
      * @author Marco, Paula, Julia, Timo, Rike
+     * @since Start
      */
     public LobbyDTO(String name, User creator, UUID lobbyID, String lobbyPassword) {
         this.name = name;
@@ -57,8 +58,8 @@ public class LobbyDTO implements Lobby, Serializable {
      * @param lobbyPassword das Lobbypasswort
      * @param players       die Spieler
      * @param maxPlayer     die maximale Spieleranzahl
-     * @since Start
      * @author Marco, Julia, Rike, Timo
+     * @since Start
      */
     public LobbyDTO(String name, User creator, UUID lobbyID, String lobbyPassword, Set<User> users, int players, Integer maxPlayer) {
         this.name = name;
@@ -68,7 +69,7 @@ public class LobbyDTO implements Lobby, Serializable {
         this.lobbyID = lobbyID;
         this.players = players;
         this.lobbyPassword = lobbyPassword;
-        this.maxPlayer= maxPlayer;
+        this.maxPlayer = maxPlayer;
     }
 
     @Override
@@ -146,7 +147,7 @@ public class LobbyDTO implements Lobby, Serializable {
     }
 
     @Override
-    public String getLobbyPassword(){
+    public String getLobbyPassword() {
         return lobbyPassword;
     }
 
@@ -161,7 +162,10 @@ public class LobbyDTO implements Lobby, Serializable {
         return readyStatus;
     }
 
-
+    @Override
+    public Integer getMaxPlayer() {
+        return this.maxPlayer;
+    }
 
     /**
      * Setzt den Max Player Wert bzw. gibt ihn zurück.
@@ -171,17 +175,9 @@ public class LobbyDTO implements Lobby, Serializable {
      * @since Sprint 3
      */
     @Override
-    public void setMaxPlayer(Integer maxPlayer)
-    {
+    public void setMaxPlayer(Integer maxPlayer) {
         this.maxPlayer = maxPlayer;
     }
-
-    @Override
-    public Integer getMaxPlayer()
-    {
-        return this.maxPlayer;
-    }
-
 
 
 }

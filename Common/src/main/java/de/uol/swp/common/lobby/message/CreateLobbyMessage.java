@@ -1,7 +1,6 @@
 package de.uol.swp.common.lobby.message;
 
 import de.uol.swp.common.lobby.dto.LobbyDTO;
-import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.user.UserDTO;
 
 import java.util.UUID;
@@ -11,6 +10,7 @@ import java.util.UUID;
  */
 public class CreateLobbyMessage extends AbstractLobbyMessage {
 
+    private static final long serialVersionUID = 4697332702211276379L;
     private String lobbyName;
     private String lobbyPassword;
     private UUID chatID;
@@ -23,11 +23,11 @@ public class CreateLobbyMessage extends AbstractLobbyMessage {
     /**
      * Konstruktor einer CreateLobbyMessage.
      *
-     * @param lobbyName Der Name der Lobby
+     * @param lobbyName     Der Name der Lobby
      * @param lobbyPassword Das Lobby Passwort
-     * @param user Der User
-     * @param ChatID die UUID des Chats der Lobby
-     * @param lobby Das Objekt der Lobby
+     * @param user          Der User
+     * @param ChatID        die UUID des Chats der Lobby
+     * @param lobby         Das Objekt der Lobby
      * @author Paula, Rike, Darian
      */
     public CreateLobbyMessage(String lobbyName, String lobbyPassword, UserDTO user, UUID ChatID, LobbyDTO lobby) {

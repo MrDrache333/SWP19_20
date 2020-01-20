@@ -12,16 +12,18 @@ import de.uol.swp.common.user.User;
  */
 public class ChatExceptionMessage extends AbstractResponseMessage {
 
+    private static final long serialVersionUID = 2939228420446388785L;
+
     private User Sender;
     private ChatException exception;
 
     /**
      * Konstruktor der Chat exception message.
      *
-     * @author Keno O.
-     * @since Sprint 2
      * @param sender Der Sender
      * @param e      Die Exception
+     * @author Keno O.
+     * @since Sprint 2
      */
     public ChatExceptionMessage(User sender, ChatException e) {
         this.Sender = sender;
@@ -31,9 +33,9 @@ public class ChatExceptionMessage extends AbstractResponseMessage {
     /**
      * Gibt den Sender zurück.
      *
+     * @return Sender the sender
      * @author Keno O.
      * @since Sprint 2
-     * @return Sender the sender
      */
     public User getSender() {
         return Sender;
@@ -42,9 +44,9 @@ public class ChatExceptionMessage extends AbstractResponseMessage {
     /**
      * Gibt die Exception zurück.
      *
+     * @return exception Die Exception
      * @author Keno O.
      * @since Sprint 2
-     * @return exception Die Exception
      */
     public ChatException getException() {
         return exception;

@@ -12,7 +12,7 @@ import de.uol.swp.common.user.UserDTO;
  */
 public class LobbyUser extends UserDTO {
 
-    //Currents Status
+    //Current Status
     private boolean Ready;
 
     /**

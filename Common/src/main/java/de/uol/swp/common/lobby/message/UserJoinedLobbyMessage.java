@@ -10,6 +10,7 @@ import java.util.UUID;
  */
 public class UserJoinedLobbyMessage extends AbstractLobbyMessage {
 
+    private static final long serialVersionUID = -2228023228166981549L;
     private LobbyDTO lobby;
 
     /**
@@ -33,5 +34,7 @@ public class UserJoinedLobbyMessage extends AbstractLobbyMessage {
      *
      * @return Die Lobby
      */
-    public LobbyDTO getLobby() { return lobby; }
+    public LobbyDTO getLobby() {
+        return lobby;
+    }
 }

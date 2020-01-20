@@ -13,6 +13,7 @@ import java.util.Objects;
  */
 public class RegisterUserRequest extends AbstractRequestMessage {
 
+    private static final long serialVersionUID = 1196229889978856066L;
     final private User toCreate;
 
     /**

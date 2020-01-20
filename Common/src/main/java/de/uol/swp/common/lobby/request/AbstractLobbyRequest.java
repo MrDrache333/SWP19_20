@@ -7,6 +7,7 @@ import java.util.Objects;
 
 public class AbstractLobbyRequest extends AbstractRequestMessage {
 
+    private static final long serialVersionUID = -7532249321141216659L;
     private String lobbyName;
     private UserDTO user;
 
@@ -17,7 +18,7 @@ public class AbstractLobbyRequest extends AbstractRequestMessage {
      * Eine Anfrage wird erstellt die allgemein mit der Lobby zu tun hat.
      *
      * @param lobbyName Lobbyname um die sich die Anfrage handelt
-     * @param user User der die Anfrage verschickt
+     * @param user      User der die Anfrage verschickt
      * @author Marco
      * @since Start
      */

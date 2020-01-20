@@ -10,11 +10,13 @@ import java.util.List;
 
 /**
  * Klasse, die alle Nutzer enthält die online sind
+ *
  * @author Marco
  * @since Start
  */
 public class AllOnlineUsersResponse extends AbstractResponseMessage {
 
+    private static final long serialVersionUID = -3448927852063041265L;
     final private ArrayList<UserDTO> users = new ArrayList<>();
 
     public AllOnlineUsersResponse() {
@@ -22,7 +24,7 @@ public class AllOnlineUsersResponse extends AbstractResponseMessage {
     }
 
     /**
-     *Instanziieren der AllOnlineUsersResponse.
+     * Instanziieren der AllOnlineUsersResponse.
      *
      * @param users die Nutzer
      */

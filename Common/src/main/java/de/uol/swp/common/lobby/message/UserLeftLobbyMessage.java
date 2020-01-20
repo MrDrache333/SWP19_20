@@ -7,6 +7,7 @@ import java.util.UUID;
 
 public class UserLeftLobbyMessage extends AbstractLobbyMessage {
 
+    private static final long serialVersionUID = -5546005208705943803L;
     private LobbyDTO lobby;
 
     public UserLeftLobbyMessage() {

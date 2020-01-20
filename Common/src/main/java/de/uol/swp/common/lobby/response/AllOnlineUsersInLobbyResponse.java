@@ -13,6 +13,7 @@ import java.util.*;
  */
 public class AllOnlineUsersInLobbyResponse extends AbstractResponseMessage {
 
+    private static final long serialVersionUID = -2995292304508692414L;
     private Set<User> users = new TreeSet<>();
     private TreeMap<String, Boolean> readyStatus = new TreeMap<>();
     private UUID lobbyID;
@@ -20,10 +21,10 @@ public class AllOnlineUsersInLobbyResponse extends AbstractResponseMessage {
     /**
      * Konstruktor der All online users in lobby response.
      *
-     * @author Keno O., Marvin
-     * @since Sprint 3
      * @param lobbyID Die lobbyID
      * @param users   Die User
+     * @author Keno O., Marvin
+     * @since Sprint 3
      */
     public AllOnlineUsersInLobbyResponse(UUID lobbyID, Collection<User> users, TreeMap<String, Boolean> readyStatus) {
         this.lobbyID = lobbyID;
@@ -34,9 +35,9 @@ public class AllOnlineUsersInLobbyResponse extends AbstractResponseMessage {
     /**
      * Gibt die User zurück.
      *
+     * @return users Die User
      * @author Keno O., Keno S.
      * @since Sprint 3
-     * @return users Die User
      */
     public Set<User> getUsers() {
         return users;
@@ -46,9 +47,9 @@ public class AllOnlineUsersInLobbyResponse extends AbstractResponseMessage {
     /**
      * Gibt zurück, ob der User bereit ist.
      *
+     * @return users Die User
      * @author Keno O.
      * @since Sprint 3
-     * @return users Die User
      */
     public boolean getStatus(User user) {
         if (!readyStatus.containsKey(user.getUsername())) return false;
@@ -58,9 +59,9 @@ public class AllOnlineUsersInLobbyResponse extends AbstractResponseMessage {
     /**
      * Gibt die LobbyID zurück.
      *
+     * @return lobbyID Die ID der Lobby
      * @author Keno O., Keno S.
      * @since Sprint 3
-     * @return lobbyID Die ID der Lobby
      */
     public UUID getLobbyID() {
         return lobbyID;

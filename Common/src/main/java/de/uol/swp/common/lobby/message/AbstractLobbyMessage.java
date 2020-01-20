@@ -9,6 +9,7 @@ import java.util.UUID;
 public class AbstractLobbyMessage extends AbstractServerMessage {
 
 
+    private static final long serialVersionUID = 5623324582947276712L;
     private UserDTO user;
     private UUID lobbyID;
     private String lobbyName;
@@ -20,17 +21,17 @@ public class AbstractLobbyMessage extends AbstractServerMessage {
      * Initialisiert eine neue AbstractLobbyMessage
      *
      * @param lobbyName Der Lobbyname
-     * @param user Der User
-     * @param lobbyID Die LobbyID
+     * @param user      Der User
+     * @param lobbyID   Die LobbyID
      * @author Marco, Anna, Keno S
      * @since Start
-     *
      */
     public AbstractLobbyMessage(String lobbyName, UserDTO user, UUID lobbyID) {
         this.lobbyName = lobbyName;
         this.user = user;
         this.lobbyID = lobbyID;
     }
+
     /**
      * Gibt den Namen der Lobby zurück
      *
@@ -41,6 +42,7 @@ public class AbstractLobbyMessage extends AbstractServerMessage {
     public String getLobbyName() {
         return lobbyName;
     }
+
     /**
      * Gibt den UserDTO der Lobby zurück
      *
@@ -51,6 +53,7 @@ public class AbstractLobbyMessage extends AbstractServerMessage {
     public UserDTO getUser() {
         return user;
     }
+
     /**
      * Gibt die ID der Lobby zurück
      *
@@ -61,6 +64,7 @@ public class AbstractLobbyMessage extends AbstractServerMessage {
     public UUID getLobbyID() {
         return lobbyID;
     }
+
     /**
      * ???
      *
@@ -76,6 +80,7 @@ public class AbstractLobbyMessage extends AbstractServerMessage {
         return Objects.equals(lobbyName, that.lobbyName) &&
                 Objects.equals(user, that.user);
     }
+
     /**
      * Generiert HashCode aus Lobbynamen und User
      *

@@ -9,6 +9,7 @@ import java.util.Objects;
  */
 public class UserDTO implements User {
 
+    private static final long serialVersionUID = 4146689909145644727L;
     private final String username;
     private final String password;
     private final String eMail;

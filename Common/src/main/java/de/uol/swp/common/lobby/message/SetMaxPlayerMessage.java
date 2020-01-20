@@ -11,6 +11,8 @@ import java.util.UUID;
  * @since Sprint 3
  */
 public class SetMaxPlayerMessage extends AbstractLobbyMessage {
+
+    private static final long serialVersionUID = 8520048304588405366L;
     private Integer maxPlayer;
     private UUID lobbyID;
     private boolean setMaxPlayerSet;

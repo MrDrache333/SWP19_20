@@ -12,6 +12,7 @@ import java.util.UUID;
  */
 public class LobbyJoinUserRequest extends AbstractLobbyRequest {
 
+    private static final long serialVersionUID = 5835542658263297422L;
     private UUID lobbyID;
 
     /**
