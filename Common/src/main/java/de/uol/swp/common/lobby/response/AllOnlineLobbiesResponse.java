@@ -18,13 +18,13 @@ public class AllOnlineLobbiesResponse extends AbstractResponseMessage {
     /**
      * Die Antwortnachricht darauf, dass alle Lobbies online sind. Bekommt mehrer Lobbies übergeben.
      *
-     * @param construtor
-     * @author Julia,Tim
+     * @param lobbies Liste aller Lobbies
+     * @author Julia, Tim
      * @since Sprint3
      */
     public AllOnlineLobbiesResponse(Collection<Lobby> lobbies) {
         for (Lobby lobby : lobbies) {
-            this.lobbies.add(new LobbyDTO(lobby.getName(), lobby.getOwner(), lobby.getLobbyID(),lobby.getLobbyPassword(), lobby.getUsers(), lobby.getPlayers(), lobby.getMaxPlayer()));
+            this.lobbies.add((LobbyDTO) lobby);
         }
     }
 
