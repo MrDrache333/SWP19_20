@@ -23,12 +23,14 @@ import de.uol.swp.client.settings.event.CloseSettingsEvent;
 import de.uol.swp.client.settings.event.DeleteAccountEvent;
 import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.user.User;
+import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -86,7 +88,6 @@ public class SceneManager {
         initViews();
     }
 
-
     @Subscribe
     public void onShowRegistrationViewEvent(ShowRegistrationViewEvent event) {
         showRegistrationScreen();
@@ -105,6 +106,24 @@ public class SceneManager {
     @Subscribe
     public void onRegistrationErrorEvent(RegistrationErrorEvent event) {
         showError(event.getMessage());
+    }
+
+    /**
+     * Alert wird erstellt
+     *
+     * @param type    der Alert-Typ
+     * @param message die Message
+     * @param title   der Titel des Alerts
+     * @author Paula, Haschem, Ferit
+     * @since Sprint1
+     */
+    public static void showAlert(Alert.AlertType type, String message, String title) {
+        Alert alert = new Alert(type, "");
+        alert.setResizable(false);
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.getDialogPane().setContentText(message);
+        alert.getDialogPane().setHeaderText(title);
+        alert.show();
     }
 
     @Subscribe
@@ -134,6 +153,149 @@ public class SceneManager {
             deleteAccountStage.show();
         });
     }
+
+    @Subscribe
+    public void onGameQuitEvent(GameQuitEvent event) {
+        showScene(mainScene, "test");
+    }
+
+
+    public void showError(String message, String e) {
+        Platform.runLater(() -> {
+            Alert a = new Alert(Alert.AlertType.ERROR, message + e);
+            a.showAndWait();
+        });
+    }
+
+    public void showServerError(String e) {
+        showError("Server returned an error:\n", e);
+    }
+
+    public void showError(String e) {
+        showError("Error:\n", e);
+    }
+
+    public void closeDeleteAccount() {
+        Platform.runLater(() -> deleteAccountStage.close());
+    }
+
+    private void showScene(final Scene scene, final String title) {
+        this.lastScene = currentScene;
+        this.lastTitle = primaryStage.getTitle();
+        this.currentScene = scene;
+        Platform.runLater(() -> {
+            primaryStage.setTitle(title);
+            primaryStage.setScene(scene);
+            primaryStage.setResizable(false);
+            primaryStage.show();
+            new SoundMediaPlayer(SoundMediaPlayer.Sound.Window_Opened, SoundMediaPlayer.Type.Sound).play();
+        });
+    }
+
+    public void showLoginErrorScreen() {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Error logging in to server");
+            alert.showAndWait();
+            showLoginScreen();
+        });
+    }
+
+    public void showMainScreen(User currentUser) {
+        showScene(mainScene, "Welcome " + currentUser.getUsername());
+    }
+
+
+    public void showLoginScreen() {
+        showScene(loginScene, "Login");
+    }
+
+    public void showRegistrationScreen() {
+        showScene(registrationScene, "Registration");
+    }
+
+    /**
+     * Es wird eine neue Stage mit der lobbyScene angezeigt und mit dem Parametern geöffnet.
+     *
+     * @param title   der übergebene Titel aus dem MainMenuPresenter
+     * @param lobbyID die übergebene LobbyID aus der empfangenen Message in der ClientApp
+     * @author Paula, Haschem, Ferit, Anna, Darian
+     * @version 0.2
+     * @since Sprint3
+     */
+    public void showLobbyScreen(User currentUser, String title, UUID lobbyID, UserDTO gameOwner) {
+        Platform.runLater(() -> {
+            //neue Instanz des LobbyPresenter mit (name, id) wird erstellt
+            GameManagement gameManagement = new GameManagement(eventBus, lobbyID, title, currentUser, chatService, lobbyService, userService, injector, gameOwner);
+
+            eventBus.register(gameManagement);
+
+            //LobbyPresenter und lobbyStage in der jeweilige Map speichern. Die lobbyID dient als Schlüssel.
+            games.put(lobbyID, gameManagement);
+            gameManagement.showLobbyView();
+        });
+    }
+
+    public boolean hasFocus() {
+        return primaryStage.isFocused();
+    }
+
+    /**
+     * Öffnet das Einstellungsfenster, indem eine neue Stage mit der settingsScene erstellt wird.
+     *
+     * @param loggedInUser  der eingeloggte User
+     * @author Anna, Julia
+     * @since Sprint4
+     */
+    public void showSettingsScreen(User loggedInUser) {
+        Platform.runLater(() -> {
+            settingsPresenter = new SettingsPresenter(loggedInUser, lobbyService, userService, eventBus);
+            initSettingsView(settingsPresenter);
+            settingsStage = new Stage();
+            settingsStage.setTitle("Einstellungen");
+            settingsStage.setScene(settingsScene);
+            settingsStage.setResizable(false);
+            settingsStage.show();
+            eventBus.register(settingsPresenter);
+        });
+    }
+
+    /**
+     * Gibt die übergebenen lobbyID zurück, die zum jeweiligen GameManagement gehört.
+     *
+     * @param lobbyID   die übergebene LobbyID
+     * @return GameManagement
+     * @author Julia, Paula
+     * @since Sprint3
+     */
+    public GameManagement getGameManagement(UUID lobbyID) {
+        return games.get(lobbyID);
+    }
+
+    /**
+     * Schließt alle Stages
+     *
+     * @author Julia, Paula
+     * @since Sprint3
+     */
+    public void closeAllStages() {
+        Platform.runLater(() -> {
+            games.values().forEach(GameManagement::close);
+            if(settingsStage != null) {
+                settingsStage.close();
+            }
+            if(deleteAccountStage != null) {
+                deleteAccountStage.close();
+            }
+        });
+    }
+
+    public void closeSettings() {
+        Platform.runLater(() -> settingsStage.close());
+    }
+
+    //-----------------
+    // PRIVATE METHODS
+    //-----------------
 
     private void initViews() {
         initLoginView();
@@ -227,146 +389,5 @@ public class SceneManager {
             deleteAccountScene.getStylesheets().add(SettingsPresenter.css);
 
         }
-    }
-
-    @Subscribe
-    public void onGameQuitEvent(GameQuitEvent event) {
-        showScene(mainScene, "test");
-    }
-
-
-    public void showError(String message, String e) {
-        Platform.runLater(() -> {
-            Alert a = new Alert(Alert.AlertType.ERROR, message + e);
-            a.showAndWait();
-        });
-    }
-
-    public void showServerError(String e) {
-        showError("Server returned an error:\n", e);
-    }
-
-    public void showError(String e) {
-        showError("Error:\n", e);
-    }
-
-    private void showScene(final Scene scene, final String title) {
-        this.lastScene = currentScene;
-        this.lastTitle = primaryStage.getTitle();
-        this.currentScene = scene;
-        Platform.runLater(() -> {
-            primaryStage.setTitle(title);
-            primaryStage.setScene(scene);
-            primaryStage.setResizable(false);
-            primaryStage.show();
-            new SoundMediaPlayer(SoundMediaPlayer.Sound.Window_Opened, SoundMediaPlayer.Type.Sound).play();
-        });
-    }
-
-    public void showLoginErrorScreen() {
-        Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Error logging in to server");
-            alert.showAndWait();
-            showLoginScreen();
-        });
-    }
-
-    public void showMainScreen(User currentUser) {
-        showScene(mainScene, "Welcome " + currentUser.getUsername());
-    }
-
-
-    public void showLoginScreen() {
-        showScene(loginScene, "Login");
-    }
-
-    public void showRegistrationScreen() {
-        showScene(registrationScene, "Registration");
-    }
-
-    /**
-     * Es wird eine neue Stage mit der lobbyScene angezeigt und mit dem Parametern geöffnet.
-     *
-     * @param title   der übergebene Titel aus dem MainMenuPresenter
-     * @param lobbyID die übergebene LobbyID aus der empfangenen Message in der ClientApp
-     * @author Paula, Haschem, Ferit, Anna
-     * @version 0.2
-     * @since Sprint3
-     */
-    public void showLobbyScreen(User currentUser, String title, UUID lobbyID) {
-        Platform.runLater(() -> {
-            //neue Instanz des LobbyPresenter mit (name, id) wird erstellt
-            GameManagement gameManagement = new GameManagement(eventBus, lobbyID, title, currentUser, chatService, lobbyService, userService, injector);
-
-            eventBus.register(gameManagement);
-
-            //LobbyPresenter und lobbyStage in der jeweilige Map speichern. Die lobbyID dient als Schlüssel.
-            games.put(lobbyID, gameManagement);
-            gameManagement.showLobbyView();
-        });
-
-    }
-
-    public boolean hasFocus() {
-        return primaryStage.isFocused();
-    }
-
-    /**
-     * Öffnet das Einstellungsfenster, indem eine neue Stage mit der settingsScene erstellt wird.
-     *
-     * @param loggedInUser  der eingeloggte User
-     * @author Anna, Julia
-     * @since Sprint4
-     */
-    public void showSettingsScreen(User loggedInUser) {
-        Platform.runLater(() -> {
-            settingsPresenter = new SettingsPresenter(loggedInUser, lobbyService, userService, eventBus);
-            initSettingsView(settingsPresenter);
-            settingsStage = new Stage();
-            settingsStage.setTitle("Einstellungen");
-            settingsStage.setScene(settingsScene);
-            settingsStage.setResizable(false);
-            settingsStage.show();
-            eventBus.register(settingsPresenter);
-        });
-    }
-
-    /**
-     * Gibt die übergebenen lobbyID zurück, die zum jeweiligen GameManagement gehört.
-     *
-     * @param lobbyID   die übergebene LobbyID
-     * @return GameManagement
-     * @author Julia, Paula
-     * @since Sprint3
-     */
-    public GameManagement getGameManagement(UUID lobbyID) {
-        return games.get(lobbyID);
-    }
-
-    /**
-     * Schließt alle Stages
-     *
-     * @author Julia, Paula
-     * @since Sprint3
-     */
-    public void closeAllStages() {
-        Platform.runLater(() -> {
-            games.values().forEach(GameManagement::close);
-            if(settingsStage != null) {
-                settingsStage.close();
-            }
-            if(deleteAccountStage != null) {
-                deleteAccountStage.close();
-            }
-        });
-    }
-
-    public void closeSettings() {
-        Platform.runLater(() -> settingsStage.close());
-    }
-
-
-    public void closeDeleteAccount() {
-        Platform.runLater(() -> deleteAccountStage.close());
     }
 }

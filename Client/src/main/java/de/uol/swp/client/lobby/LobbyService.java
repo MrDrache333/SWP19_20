@@ -4,10 +4,6 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.LobbyUser;
-import de.uol.swp.common.lobby.request.RetrieveAllOnlineLobbiesRequest;
-import de.uol.swp.common.lobby.request.RetrieveAllOnlineUsersInLobbyRequest;
-import de.uol.swp.common.lobby.request.SetMaxPlayerRequest;
-import de.uol.swp.common.lobby.request.UpdateLobbyReadyStatusRequest;
 import de.uol.swp.common.lobby.request.*;
 import de.uol.swp.common.message.RequestMessage;
 import de.uol.swp.common.user.User;
@@ -119,6 +115,19 @@ public class LobbyService  {
         bus.post(request);
     }
 
+    /**
+     * Anfrage wird erstellt und abgeschickt um Spieler zu kicken.
+     *
+     * @param lobbyName
+     * @param lobbyID
+     * @param userToKick
+     * @since sprint4
+     * @author Darian
+     */
+    public void kickUser(String lobbyName, UserDTO gameOwner, UUID lobbyID, UserDTO userToKick){
+        RequestMessage request = new KickUserRequest(lobbyName, gameOwner, lobbyID, userToKick);
+        bus.post(request);
+    }
 
     /**
      * Erstellt einen SetMaxPlayerRequest.

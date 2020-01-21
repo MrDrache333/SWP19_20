@@ -26,15 +26,16 @@ public class CreateLobbyMessage extends AbstractLobbyMessage {
      * @param lobbyName     Der Name der Lobby
      * @param lobbyPassword Das Lobby Passwort
      * @param user          Der User
-     * @param ChatID        die UUID des Chats der Lobby
+     * @param chatID        die UUID des Chats der Lobby
      * @param lobby         Das Objekt der Lobby
      * @author Paula, Rike, Darian
      */
-    public CreateLobbyMessage(String lobbyName, String lobbyPassword, UserDTO user, UUID ChatID, LobbyDTO lobby) {
+    public CreateLobbyMessage(String lobbyName, String lobbyPassword, UserDTO user, UUID chatID, LobbyDTO lobby) {
         this.lobbyName = lobbyName;
         this.user = user;
-        this.chatID = ChatID;
+        this.chatID = chatID;
         this.lobbyPassword = lobbyPassword;
+        this.chatID = chatID;
         this.lobby = lobby;
     }
 
@@ -81,5 +82,9 @@ public class CreateLobbyMessage extends AbstractLobbyMessage {
      */
     public String getLobbyPassword() {
         return lobbyPassword;
+    }
+
+    public void setChatID(UUID chatID) {
+        chatID = chatID;
     }
 }

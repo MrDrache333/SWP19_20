@@ -9,6 +9,7 @@ import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.LobbyPresenter;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.sound.SoundMediaPlayer;
+import de.uol.swp.common.lobby.message.KickUserMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
@@ -40,14 +41,9 @@ public class GameManagement {
     private LobbyPresenter lobbyPresenter;
     private GameViewPresenter gameViewPresenter;
     private ChatViewPresenter chatViewPresenter;
-    /**
-     * Lobby-, Chat- und Game-ID
-     */
-    private UUID id;
-    /**
-     * Der aktuell angemeldete Benutzer
-     */
-    private User loggedInUser;
+    private UUID id;    //Die Lobby, Chat and GameID
+    private User loggedInUser;  //Der aktuell angemeldete Benutzer
+    private UserDTO gameOwner;
     private String lobbyName;
 
     private Scene gameScene;
@@ -70,21 +66,22 @@ public class GameManagement {
      * @param lobbyService der LobbyService
      * @param userService  der UserService
      * @param injector     der Injector
-     * @author Keno O.
+     * @author Keno O., Darian
      * @since Sprint3
      *
      */
-    public GameManagement(EventBus eventBus, UUID id, String lobbyName, User loggedInUser, ChatService chatService, LobbyService lobbyService, UserService userService, Injector injector) {
+    public GameManagement(EventBus eventBus, UUID id, String lobbyName, User loggedInUser, ChatService chatService, LobbyService lobbyService, UserService userService, Injector injector, UserDTO gameOwner) {
         this.id = id;
         this.loggedInUser = loggedInUser;
         this.injector = injector;
         this.primaryStage = new Stage();
         this.lobbyName = lobbyName;
         this.eventBus = eventBus;
+        this.gameOwner = gameOwner;
 
         this.chatViewPresenter = new ChatViewPresenter(lobbyName, id, loggedInUser, ChatViewPresenter.THEME.Light, chatService, injector, this);
         this.gameViewPresenter = new GameViewPresenter(loggedInUser, id, chatService, chatViewPresenter, lobbyService, userService, injector, this);
-        this.lobbyPresenter = new LobbyPresenter(loggedInUser, lobbyName, id, chatService, chatViewPresenter, lobbyService, userService, injector, this, eventBus);
+        this.lobbyPresenter = new LobbyPresenter(loggedInUser, lobbyName, id, chatService, chatViewPresenter, lobbyService, userService, injector, gameOwner, this, eventBus);
 
         eventBus.register(chatViewPresenter);
         eventBus.register(lobbyPresenter);
@@ -100,6 +97,20 @@ public class GameManagement {
      */
     @Subscribe
     private void userLeft(UserLeftLobbyMessage msg) {
+        if (msg.getLobbyID().equals(id) && msg.getUser().getUsername().equals(loggedInUser.getUsername())) {
+            close();
+        }
+    }
+
+    /**
+     * Wenn die Nachricht abgefangen wird und man der gekickte Benutzer ist und in der Lobby ist wird das Lobbyfenster
+     * geschlossen
+     *
+     * @author Darian
+     * @since sprint4
+     */
+    @Subscribe
+    private void onKickUserMessage(KickUserMessage msg) {
         if (msg.getLobbyID().equals(id) && msg.getUser().getUsername().equals(loggedInUser.getUsername())) {
             close();
         }

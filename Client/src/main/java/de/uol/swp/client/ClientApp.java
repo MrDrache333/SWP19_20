@@ -8,10 +8,7 @@ import com.google.inject.Injector;
 import de.uol.swp.client.di.ClientModule;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.sound.SoundMediaPlayer;
-import de.uol.swp.common.lobby.message.CreateLobbyMessage;
-import de.uol.swp.common.lobby.message.SetMaxPlayerMessage;
-import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
-import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
+import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.exception.RegistrationExceptionMessage;
@@ -25,6 +22,7 @@ import de.uol.swp.common.user.response.RegistrationSuccessfulResponse;
 import io.netty.channel.Channel;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -175,7 +173,7 @@ public class ClientApp extends Application implements ConnectionListener {
      */
     @Subscribe
     public void userLoggedIn(LoginSuccessfulResponse message) {
-        LOG.debug("user logged in successfully " + message.getUser().getUsername());
+        LOG.debug("User logged in successfully " + message.getUser().getUsername());
         this.user = message.getUser();
         sceneManager.showMainScreen(user);
     }
@@ -208,14 +206,14 @@ public class ClientApp extends Application implements ConnectionListener {
      * nur dem ersteller ein neu erstelltes Lobbyfenster angezeigt wird.
      *
      * @param message CreateLobbyMessage vom Server, dass die Lobby erstellt worden ist.
-     * @author Paula, Haschem, Ferit, Anna
+     * @author Paula, Haschem, Ferit, Anna, Darian
      * @version 0.2
      * @since Sprint3
      */
     @Subscribe
     public void onCreateLobbyMessage(CreateLobbyMessage message) {
         if (message.getUser().getUsername().equals(user.getUsername())) {
-            sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getChatID());
+            sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getChatID(), message.getUser());
             LOG.debug("CreateLobbyMessage vom Server erfolgreich angekommen");
         }
     }
@@ -234,7 +232,7 @@ public class ClientApp extends Application implements ConnectionListener {
             if (sceneManager.getGameManagement(message.getLobbyID()) != null) {
                 sceneManager.getGameManagement(message.getLobbyID()).showLobbyView();
             } else {
-                sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getLobbyID());
+                sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getLobbyID(), message.getGameOwner());
             }
             LOG.info("User " + message.getUser().getUsername() + " joined lobby successfully");
         }
@@ -301,6 +299,25 @@ public class ClientApp extends Application implements ConnectionListener {
         }
     }
 
+
+    /**
+     * Empfängt vom Server die Message, dass ein User gekickt wurde. Bei diesem User wird das Lobbyfenster
+     * geschlossen und das MainMenu wird angezeigt
+     *
+     * @param message KickUserMessage
+     * @author Darian
+     * @since Sprint 4
+     */
+    @Subscribe
+    public void onKickUserMessage(KickUserMessage message) {
+        if (message.getUser().getUsername().equals(user.getUsername())) {
+            sceneManager.showMainScreen(user);
+            LOG.info("User " + message.getUser().getUsername() + " is kicked from the lobby successfully");
+            sceneManager.getGameManagement(message.getLobbyID()).close();
+            SceneManager.showAlert(Alert.AlertType.ERROR,"Sie wurden aus der Lobby entfernt","Lobby verlassen");
+        }
+        lobbyService.retrieveAllLobbies();
+    }
 
     // -----------------------------------------------------
     // JavFX Help methods
@@ -370,5 +387,4 @@ public class ClientApp extends Application implements ConnectionListener {
     public void closeAllWindows() {
         Platform.exit();
     }
-
 }

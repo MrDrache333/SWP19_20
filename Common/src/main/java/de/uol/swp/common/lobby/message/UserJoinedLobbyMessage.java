@@ -10,6 +10,7 @@ import java.util.UUID;
  */
 public class UserJoinedLobbyMessage extends AbstractLobbyMessage {
 
+    private UserDTO gameOwner;
     private static final long serialVersionUID = -2228023228166981549L;
     private LobbyDTO lobby;
 
@@ -24,9 +25,14 @@ public class UserJoinedLobbyMessage extends AbstractLobbyMessage {
      * @since Sprint1
      */
 
-    public UserJoinedLobbyMessage(String lobbyName, UserDTO user, UUID lobbyID, LobbyDTO lobby) {
+    public UserJoinedLobbyMessage(String lobbyName, UserDTO user, UUID lobbyID, UserDTO gameOwner, LobbyDTO lobby) {
         super(lobbyName, user, lobbyID);
+        this.gameOwner = gameOwner;
         this.lobby = lobby;
+    }
+
+    public UserDTO getGameOwner() {
+        return gameOwner;
     }
 
     /**
