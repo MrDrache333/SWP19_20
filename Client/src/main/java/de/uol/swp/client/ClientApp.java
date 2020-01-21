@@ -314,7 +314,7 @@ public class ClientApp extends Application implements ConnectionListener {
             sceneManager.showMainScreen(user);
             LOG.info("User " + message.getUser().getUsername() + " is kicked from the lobby successfully");
             sceneManager.getGameManagement(message.getLobbyID()).close();
-            SceneManager.showAlert(Alert.AlertType.ERROR,"Sie wurden aus der Lobby entfernt","Lobby verlassen");
+            SceneManager.showAlert(Alert.AlertType.WARNING,"Sie wurden aus der Lobby entfernt","Lobby verlassen");
         }
         lobbyService.retrieveAllLobbies();
     }

@@ -118,12 +118,14 @@ public class SceneManager {
      * @since Sprint1
      */
     public static void showAlert(Alert.AlertType type, String message, String title) {
-        Alert alert = new Alert(type, "");
-        alert.setResizable(false);
-        alert.initModality(Modality.APPLICATION_MODAL);
-        alert.getDialogPane().setContentText(message);
-        alert.getDialogPane().setHeaderText(title);
-        alert.show();
+        Platform.runLater(() -> {
+            Alert alert = new Alert(type, "");
+            alert.setResizable(false);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.getDialogPane().setContentText(message);
+            alert.getDialogPane().setHeaderText(title);
+            alert.show();
+        });
     }
 
     @Subscribe
