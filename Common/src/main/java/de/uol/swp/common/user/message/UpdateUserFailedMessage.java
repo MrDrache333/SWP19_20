@@ -8,13 +8,14 @@ import de.uol.swp.common.user.User;
  */
 public class UpdateUserFailedMessage extends AbstractServerMessage {
 
+    private static final long serialVersionUID = -8102266479611328349L;
     private User user;
     private String message;
 
     /**
      * Konstruktor der UpdateUserFailedMessage.
      *
-     * @param user der User
+     * @param user    der User
      * @param message die Nachricht des Fehlers
      * @author Julia
      */

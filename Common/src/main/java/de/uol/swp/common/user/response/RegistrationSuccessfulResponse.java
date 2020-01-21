@@ -9,4 +9,5 @@ import de.uol.swp.common.message.AbstractResponseMessage;
  * @since Start
  */
 public class RegistrationSuccessfulResponse extends AbstractResponseMessage {
+    private static final long serialVersionUID = 4877367271591484607L;
 }

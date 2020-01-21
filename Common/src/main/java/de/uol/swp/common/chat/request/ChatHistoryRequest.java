@@ -5,6 +5,8 @@ import de.uol.swp.common.user.User;
 
 public class ChatHistoryRequest extends AbstractRequestMessage {
 
+    private static final long serialVersionUID = -2223203712515500868L;
+
     private String ChatId;
     private User Sender;
 

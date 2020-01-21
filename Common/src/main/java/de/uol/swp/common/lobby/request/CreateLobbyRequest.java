@@ -11,6 +11,7 @@ import de.uol.swp.common.user.UserDTO;
  */
 public class CreateLobbyRequest extends AbstractLobbyRequest {
 
+    private static final long serialVersionUID = -1053476876954594887L;
     String lobbyPassword;
 
     /**

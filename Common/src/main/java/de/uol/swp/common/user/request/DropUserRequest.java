@@ -5,6 +5,7 @@ import de.uol.swp.common.user.User;
 
 public class DropUserRequest extends AbstractRequestMessage {
 
+    private static final long serialVersionUID = 5260937585947688764L;
     private User user;
 
     /**
@@ -15,7 +16,7 @@ public class DropUserRequest extends AbstractRequestMessage {
      * @since Sprint 4
      */
 
-    public DropUserRequest(User user){
+    public DropUserRequest(User user) {
         this.user = user;
     }
 
@@ -26,7 +27,7 @@ public class DropUserRequest extends AbstractRequestMessage {
      * @author Anna
      * @since Sprint 4
      */
-    public User getUser(){
+    public User getUser() {
         return user;
     }
 }

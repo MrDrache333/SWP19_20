@@ -9,4 +9,5 @@ import de.uol.swp.common.message.AbstractRequestMessage;
  * @since Sprint2
  */
 public class RetrieveAllOnlineLobbiesRequest extends AbstractRequestMessage {
+    private static final long serialVersionUID = 3454679040227806435L;
 }

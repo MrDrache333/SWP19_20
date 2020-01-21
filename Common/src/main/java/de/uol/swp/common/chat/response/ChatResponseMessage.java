@@ -9,6 +9,8 @@ import de.uol.swp.common.message.ResponseMessage;
  */
 public class ChatResponseMessage extends AbstractResponseMessage implements ResponseMessage {
 
+    private static final long serialVersionUID = -7034555716301881050L;
+
     private Chat chat;
     private String sender;
 

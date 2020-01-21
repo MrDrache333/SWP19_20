@@ -8,6 +8,9 @@ import de.uol.swp.common.message.AbstractRequestMessage;
  */
 public class NewChatMessageRequest extends AbstractRequestMessage {
 
+
+    private static final long serialVersionUID = -194748656024041083L;
+
     private String ChatId;
     private ChatMessage Message;
 
@@ -27,8 +30,8 @@ public class NewChatMessageRequest extends AbstractRequestMessage {
     /**
      * Erstellt eine neue Lobbychatnachticht-Request
      *
-     * @param message       Die Chatnachricht die versendet werden soll
-     * @param chatId        Die ChatId für den Chat für den die Chatnachricht ist
+     * @param message Die Chatnachricht die versendet werden soll
+     * @param chatId  Die ChatId für den Chat für den die Chatnachricht ist
      * @author Keno O
      * @since Sprint 2
      */

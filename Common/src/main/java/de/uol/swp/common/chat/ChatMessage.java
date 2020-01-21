@@ -13,6 +13,8 @@ import java.util.Date;
  */
 public class ChatMessage implements Serializable {
 
+    private static final long serialVersionUID = 9222541795987990407L;
+
     private User sender;
     private String message;
     private Date timeStamp;

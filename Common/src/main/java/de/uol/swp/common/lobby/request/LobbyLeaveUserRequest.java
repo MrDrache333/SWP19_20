@@ -14,6 +14,7 @@ import java.util.UUID;
 public class LobbyLeaveUserRequest extends AbstractLobbyRequest {
 
 
+    private static final long serialVersionUID = -1015160817744213145L;
     private UUID lobbyID;
 
     public LobbyLeaveUserRequest() {

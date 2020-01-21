@@ -27,9 +27,9 @@ public class UserLoggedOutMessage extends AbstractServerMessage {
     /**
      * Die Klasse der User logged out messages.
      *
+     * @param username Der Username
      * @author Marco Grawunder
      * @since Sprint 0
-     * @param username Der Username
      */
     public UserLoggedOutMessage(String username) {
         this.username = username;
@@ -38,9 +38,9 @@ public class UserLoggedOutMessage extends AbstractServerMessage {
     /**
      * Gibt den Username zurück.
      *
+     * @return username Der Username
      * @author Marco Grawunder
      * @since Sprint 0
-     * @return username Der Username
      */
     public String getUsername() {
         return username;
@@ -52,10 +52,10 @@ public class UserLoggedOutMessage extends AbstractServerMessage {
      * wird "false" zurückgegeben. Andersweitig wird das Ergebnis eines weiteren Objektvergleiches der
      * Nutzernamen zurückgegeben.
      *
-     * @author Keno S.
-     * @since Sprint 4
      * @param o Ein Objekt
      * @return boolean
+     * @author Keno S.
+     * @since Sprint 4
      */
     @Override
     public boolean equals(Object o) {
@@ -68,9 +68,9 @@ public class UserLoggedOutMessage extends AbstractServerMessage {
     /**
      * Generiert einen Hashwert des Usernames und gibt diesen zurück.
      *
+     * @return hash Ein Hashwert des Usernames
      * @author Keno S.
      * @since Sprint 4
-     * @return hash Ein Hashwert des Usernames
      */
     @Override
     public int hashCode() {

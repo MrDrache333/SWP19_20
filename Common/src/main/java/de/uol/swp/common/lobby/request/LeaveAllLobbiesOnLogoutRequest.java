@@ -4,11 +4,13 @@ import de.uol.swp.common.user.UserDTO;
 
 /**
  * Klasse des LeaveAllLobbiesOnLogoutRequest
+ *
  * @author Paula
  * @since Sprint2
  */
 public class LeaveAllLobbiesOnLogoutRequest extends AbstractLobbyRequest {
 
+    private static final long serialVersionUID = -6775833613653810675L;
     private UserDTO user;
 
     public LeaveAllLobbiesOnLogoutRequest() {

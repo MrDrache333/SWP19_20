@@ -9,6 +9,7 @@ import java.util.List;
  * is not necessary a response to a request (ska server push)
  */
 public interface ServerMessage extends Message {
+
     List<Session> getReceiver();
 
     void setReceiver(List<Session> receiver);
