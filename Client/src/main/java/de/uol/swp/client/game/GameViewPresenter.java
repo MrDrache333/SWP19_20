@@ -34,14 +34,15 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * The type Game view presenter.
+ * Der Presenter für die Spielansicht.
  *
  * @author fenja, hashem, marvin
+ * @since Sprint 3
  */
 public class GameViewPresenter extends AbstractPresenter {
 
     /**
-     * The constant fxml.
+     * Die Konstante fxml.
      */
     public static final String fxml = "/fxml/GameView.fxml";
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
@@ -58,16 +59,16 @@ public class GameViewPresenter extends AbstractPresenter {
     private GameManagement gameManagement;
 
     /**
-     * Instantiates a new Game view presenter.
+     * Instantiiert einen neuen GameView Presenter.
      *
-     * @param loggedInUser      the logged in user
-     * @param lobbyID           the lobby id
-     * @param chatService       the chat service
-     * @param chatViewPresenter the chat view presenter
-     * @param lobbyService      the lobby service
-     * @param userService       the user service
-     * @param injector          the injector
-     * @param gameManagement    the game management
+     * @param loggedInUser      der angemeldete Benutzer
+     * @param lobbyID           die Lobby ID
+     * @param chatService       der Chat Service
+     * @param chatViewPresenter der Chat View Presenter
+     * @param lobbyService      der Lobby Service
+     * @param userService       der User Service
+     * @param injector          der Injector
+     * @param gameManagement    das Game Management
      */
     public GameViewPresenter(User loggedInUser, UUID lobbyID, ChatService chatService, ChatViewPresenter chatViewPresenter, LobbyService lobbyService, UserService userService, Injector injector, GameManagement gameManagement) {
         this.loggedInUser = loggedInUser;
@@ -86,12 +87,15 @@ public class GameViewPresenter extends AbstractPresenter {
          */
 
 
+
     /**
-     * Show alert.
+     * Show Alert für den Aufgeben Button
      *
-     * @param type    the type
-     * @param message the message
-     * @param title   the title
+     * @param type der Typ
+     * @param message die Nachricht
+     * @param title der Titel
+     * @author M.Haschem
+     * @since Sprint 3
      */
     public void showAlert(Alert.AlertType type, String message, String title) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "");
@@ -107,9 +111,11 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Initialize.
+     * Initialisieren.
      *
-     * @throws IOException the io exception
+     * @throws IOException die io Ausnahme
+     * @author Fenja
+     * @since Sprint 3
      */
     @FXML
     public void initialize() throws IOException {
@@ -126,9 +132,11 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * On logout button pressed.
+     * Logout Button gedrückt Ereignis.
      *
-     * @param actionEvent the action event
+     * @param actionEvent das Ereignis der Aktion.
+     * @author Fenja
+     * @since Sprint 3
      */
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
@@ -138,9 +146,11 @@ public class GameViewPresenter extends AbstractPresenter {
 
 
     /**
-     * On GiveUp button pressed.
+     * Aufgeben Button gedrückt Ereignis.
      *
-     * @param actionEvent the action event
+     * @param actionEvent das Ereignis der Aktion.
+     * @author Haschem
+     * @since Sprint 3
      */
     @FXML
     public void onGiveUpButtonPressed(ActionEvent actionEvent) {
@@ -161,7 +171,7 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Sobald ein neuer User der Lobby beitritt, wird eine RetrieveAllLobbyUsersRequest gesendet.
      *
-     * @param userJoinedLobbyMessage the user joined lobby message
+     * @param userJoinedLobbyMessage Die Nachricht wenn ein User die Lobby beitritt
      * @author Marvin
      * @since Sprint3
      */
@@ -195,7 +205,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * Bei einer AllLobbyUsersResponse wird updateUsersList ausgeführt, wenn es diese Lobby betrifft.
      * Bis auf die Lobby-Überprüfung & Response-Typ quasi äquivalent zu MainMenuPresenter.userList.
      *
-     * @param allOnlineUsersInLobbyResponse the all lobby users response
+     * @param allOnlineUsersInLobbyResponse die Antwort aller Lobby-Benutzer
      * @author Marvin
      * @since Sprint3
      */

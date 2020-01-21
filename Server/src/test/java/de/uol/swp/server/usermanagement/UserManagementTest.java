@@ -11,6 +11,12 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test Klasse für den UserManagementTest
+ *
+ * @author Marco
+ * @since Start
+ */
 class UserManagementTest {
 
     private static final int NO_USERS = 10;
@@ -36,6 +42,12 @@ class UserManagementTest {
         return new UserManagement(store);
     }
 
+    /**
+     * Angemeldeter Benutzer
+     *
+     * @author Marco
+     * @since Start
+     */
     @Test
     void loginUser() {
         UserManagement management = getDefaultManagement();
@@ -46,6 +58,12 @@ class UserManagementTest {
         assertTrue(management.isLoggedIn(userToLogIn));
     }
 
+    /**
+     * Testet ob es keine Passwort eingabe des Benutzers gab
+     *
+     * @author Marco
+     * @since Start
+     */
     @Test
     void loginUserEmptyPassword() {
         UserManagement management = getDefaultManagement();
@@ -56,6 +74,12 @@ class UserManagementTest {
         assertFalse(management.isLoggedIn(userToLogIn));
     }
 
+    /**
+     * Testet ob es ein Falsches Passwort des Benutzers ist
+     *
+     * @author Marco
+     * @since Start
+     */
     @Test
     void loginUserWrongPassword() {
         UserManagement management = getDefaultManagement();
@@ -67,6 +91,12 @@ class UserManagementTest {
         assertFalse(management.isLoggedIn(userToLogIn));
     }
 
+    /**
+     * Benutzer Ausloggen
+     *
+     * @author Marco
+     * @since Start
+     */
     @Test
     void logoutUser() {
         UserManagement management = getDefaultManagement();
@@ -82,6 +112,12 @@ class UserManagementTest {
 
     }
 
+    /**
+     * Benutzer erstellen
+     *
+     * @author Marco
+     * @since Start
+     */
     @Test
     void createUser() {
         UserManagement management = getDefaultManagement();
@@ -97,6 +133,12 @@ class UserManagementTest {
         assertTrue(management.isLoggedIn(userNotInStore));
     }
 
+    /**
+     * Benutzer Löschen
+     *
+     * @author Marco
+     * @since Start
+     */
     @Test
     void dropUser() {
         UserManagement management = getDefaultManagement();
@@ -108,6 +150,12 @@ class UserManagementTest {
                 () -> management.login(userNotInStore.getUsername(), userNotInStore.getPassword()));
     }
 
+    /**
+     * nicht vorhandener Benutzer Löschen
+     *
+     * @author Marco
+     * @since Start
+     */
     @Test
     void dropUserNotExisting() {
         UserManagement management = getDefaultManagement();
@@ -115,6 +163,12 @@ class UserManagementTest {
                 () -> management.dropUser(userNotInStore));
     }
 
+    /**
+     * Benutzer erstellen, der bereits vorhanden ist
+     *
+     * @author Marco
+     * @since Start
+     */
     @Test
     void createUserAlreadyExisting() {
         UserManagement management = getDefaultManagement();
@@ -124,6 +178,13 @@ class UserManagementTest {
 
     }
 
+    /**
+     * Benutzer Passwort aktualisieren
+     * nicht Eingeloggt
+     *
+     * @author Marco
+     * @since Start
+     */
     @Test
     void updateUserPassword_NotLoggedIn() {
         UserManagement management = getDefaultManagement();
@@ -137,6 +198,12 @@ class UserManagementTest {
         assertTrue(management.isLoggedIn(updatedUser));
     }
 
+    /**
+     * Benutzer Mail aktualisieren
+     *
+     * @author Marco
+     * @since Start
+     */
     @Test
     void updateUser_Mail() {
         UserManagement management = getDefaultManagement();
@@ -150,6 +217,13 @@ class UserManagementTest {
         assertEquals(user.getEMail(), updatedUser.getEMail());
     }
 
+    /**
+     * Benutzer Passwort aktualisieren
+     * Eingeloggt
+     *
+     * @author Marco
+     * @since Start
+     */
     @Test
     void updateUserPassword_LoggedIn() {
         UserManagement management = getDefaultManagement();
@@ -170,12 +244,24 @@ class UserManagementTest {
 
     }
 
+    /**
+     * Unbekannter Benutzer aktualisieren
+     *
+     * @author Marco
+     * @since Start
+     */
     @Test
     void updateUnknownUser() {
         UserManagement management = getDefaultManagement();
         assertThrows(UserManagementException.class, () -> management.updateUser(userNotInStore, userNotInStore, "marco10"));
     }
 
+    /**
+     * Alle Benutzer abrufen
+     *
+     * @author Marco
+     * @since Start
+     */
     @Test
     void retrieveAllUsers() {
         UserManagement management = getDefaultManagement();
