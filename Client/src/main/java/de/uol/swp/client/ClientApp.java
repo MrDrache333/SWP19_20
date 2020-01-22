@@ -313,10 +313,9 @@ public class ClientApp extends Application implements ConnectionListener {
         if (message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showMainScreen(user);
             LOG.info("User " + message.getUser().getUsername() + " is kicked from the lobby successfully");
-            sceneManager.getGameManagement(message.getLobbyID()).close();
-            SceneManager.showAlert(Alert.AlertType.WARNING,"Sie wurden aus der Lobby entfernt","Lobby verlassen");
+            sceneManager.getGameManagement(message.getLobby().getLobbyID()).close();
+            SceneManager.showAlert(Alert.AlertType.WARNING, "Sie wurden aus der Lobby entfernt", "Lobby verlassen");
         }
-        lobbyService.retrieveAllLobbies();
     }
 
     // -----------------------------------------------------
@@ -328,7 +327,7 @@ public class ClientApp extends Application implements ConnectionListener {
      * Lobbys im Hauptmenü werden aktualisiert, alle Stages werden geschlossen und das Loginfenster wird geöffnet
      *
      * @param message UserLoggedOutMessage
-     * @author Julia, Paula
+     * @author Paula, Julia
      * @since Sprint3
      */
     @Subscribe
@@ -338,7 +337,6 @@ public class ClientApp extends Application implements ConnectionListener {
             sceneManager.closeAllStages();
             sceneManager.showLoginScreen();
         }
-        lobbyService.retrieveAllLobbies();
     }
 
 
@@ -356,7 +354,6 @@ public class ClientApp extends Application implements ConnectionListener {
     public void onSetMaxPlayerMessage(SetMaxPlayerMessage msg) {
         if (msg.isSetMaxPlayerSet()) {
             LOG.info("Max. Spieler der Lobby: " + msg.getLobbyID() + " erfolgreich auf " + msg.getMaxPlayer() + " gesetzt.");
-            lobbyService.retrieveAllLobbies();
         } else {
             LOG.info("Max. Spieler der Lobby: " + msg.getLobbyID() + " nicht gesetzt. User ist nicht der Lobbyowner!");
         }
@@ -375,7 +372,6 @@ public class ClientApp extends Application implements ConnectionListener {
             sceneManager.closeAllStages();
             sceneManager.showLoginScreen();
         }
-        lobbyService.retrieveAllLobbies();
     }
 
     /**

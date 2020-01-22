@@ -398,8 +398,8 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void onKickUserMessage(KickUserMessage message){
-        if (!message.getLobbyID().equals(lobbyID)) return;
-        LOG.debug("User " + message.getLobbyName() + " kicked out of the Lobby");
+        if (!message.getLobby().getLobbyID().equals(lobbyID)) return;
+        LOG.debug("User " + message.getLobby().getName() + " kicked out of the Lobby");
         userLeftLobby(message.getUser().getUsername(), true);
         chatViewPresenter.userKicked(message.getUser().getUsername());
     }

@@ -133,20 +133,24 @@ public class LobbyService extends AbstractService {
      * Lobbys, in denen User drinnen ist, werden verlassen
      *
      * @param msg the msg
-     * @author Julia, Paula
+     * @author Paula, Julia
      * @since Sprint3
      */
     @Subscribe
     public void onLeaveAllLobbiesOnLogoutRequest(LeaveAllLobbiesOnLogoutRequest msg) {
-        List<Lobby> toLeave = new ArrayList<>();
+        List<LobbyDTO> toLeave = new ArrayList<>();
         lobbyManagement.getLobbies().forEach(lobby -> {
             List<User> users = new ArrayList<>(lobby.getUsers());
             if (users.contains(msg.getUser())) {
-                toLeave.add(lobby);
+                toLeave.add((LobbyDTO) lobby);
             }
         });
         LOG.info("User " + msg.getUser().getUsername() + " is leaving all lobbies");
         toLeave.forEach(lobby -> lobbyManagement.leaveLobby(lobby.getName(), msg.getUser()));
+        toLeave.clear();
+        lobbyManagement.getLobbies().forEach(lobby -> toLeave.add((LobbyDTO) lobby));
+        ServerMessage returnMessage = new UserLeftAllLobbiesMessage(msg.getUser(), toLeave);
+        post(returnMessage);
     }
 
     /**
@@ -229,14 +233,30 @@ public class LobbyService extends AbstractService {
      * @author Darian
      */
     @Subscribe
-    public void onKickUserRequest(KickUserRequest msg){
+    public void onKickUserRequest(KickUserRequest msg) {
         if (lobbyManagement.kickUser(msg.getLobbyName(), msg.getUserToKick(), msg.getUser())) {
             LOG.info("User " + msg.getUser().getUsername() + " is kicked from lobby " + msg.getLobbyName());
-            ServerMessage returnMessage = new KickUserMessage(msg.getLobbyName(), msg.getUserToKick(), msg.getLobbyID());
+            ServerMessage returnMessage = new KickUserMessage(msg.getUserToKick(), (LobbyDTO) lobbyManagement.getLobby(msg.getLobbyName()).get());
             post(returnMessage);
         } else {
             LOG.error("Kicking " + msg.getUserToKick() + " from Lobby " + msg.getLobbyName() + " has failed");
         }
+    }
+
+    /**
+     * Definiert, was bei einem onSetMaxPlayerRequest passieren soll.
+     *
+     * @author Timo Rike
+     * @since Sprint 3
+     */
+    @Subscribe
+    public void onSetMaxPlayerRequest(SetMaxPlayerRequest msg) {
+        boolean setMaxPlayerSet = lobbyManagement.setMaxPlayer(msg.getMaxPlayerValue(), msg.getLobbyID(), msg.getLoggedInUser());
+        String lobbyname = lobbyManagement.getName(msg.getLobbyID()).get();
+        LobbyDTO lobby = (LobbyDTO) lobbyManagement.getLobby(lobbyname).get();
+        SetMaxPlayerMessage returnMessage = new SetMaxPlayerMessage(msg.getMaxPlayerValue(), msg.getLobbyID(), setMaxPlayerSet, lobbyManagement.getLobbyOwner(msg.getLobbyID()), lobby);
+        post(returnMessage);
+
     }
 
     //--------------------------------------
@@ -279,18 +299,5 @@ public class LobbyService extends AbstractService {
         LOG.debug("Game starts in Lobby: " + lobby.getName());
         StartGameMessage msg = new StartGameMessage(lobby.getName(), lobby.getLobbyID());
         sendToAll(lobby.getName(), msg);
-    }
-
-    /**
-     * Definiert, was bei einem onSetMaxPlayerRequest passieren soll.
-     * @author Timo Rike
-     * @since Sprint 3
-     */
-    @Subscribe
-    public void onSetMaxPlayerRequest(SetMaxPlayerRequest msg) {
-        boolean setMaxPlayerSet = lobbyManagement.setMaxPlayer(msg.getMaxPlayerValue(), msg.getLobbyID(), msg.getLoggedInUser());
-        SetMaxPlayerMessage returnMessage = new SetMaxPlayerMessage(msg.getMaxPlayerValue(), msg.getLobbyID(), setMaxPlayerSet, lobbyManagement.getLobbyOwner(msg.getLobbyID()));
-        post(returnMessage);
-
     }
 }

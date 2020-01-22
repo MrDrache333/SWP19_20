@@ -1,5 +1,6 @@
 package de.uol.swp.common.lobby.message;
 
+import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.user.User;
 
 import java.util.UUID;
@@ -17,6 +18,7 @@ public class SetMaxPlayerMessage extends AbstractLobbyMessage {
     private UUID lobbyID;
     private boolean setMaxPlayerSet;
     private User owner;
+    private LobbyDTO lobby;
 
     /**
      * Erstellt eine neue Set max player message.
@@ -32,12 +34,14 @@ public class SetMaxPlayerMessage extends AbstractLobbyMessage {
      * @param lobbyID         Die Lobby-ID
      * @param setMaxPlayerSet Ob die maximalen Spieler erfolgreich gesetzt wurden
      * @param owner           Der Besitzer der Lobby
+     * @param lobby           Die Lobby, deren max. Spielerzahl gesetzt wurde
      */
-    public SetMaxPlayerMessage(Integer maxPlayer, UUID lobbyID, boolean setMaxPlayerSet, User owner) {
+    public SetMaxPlayerMessage(Integer maxPlayer, UUID lobbyID, boolean setMaxPlayerSet, User owner, LobbyDTO lobby) {
         this.maxPlayer = maxPlayer;
         this.lobbyID = lobbyID;
         this.setMaxPlayerSet = setMaxPlayerSet;
         this.owner = owner;
+        this.lobby = lobby;
     }
 
     /**
@@ -70,6 +74,15 @@ public class SetMaxPlayerMessage extends AbstractLobbyMessage {
     @Override
     public UUID getLobbyID() {
         return lobbyID;
+    }
+
+    /**
+     * Gibt die Lobby zurück
+     *
+     * @return Die Lobby
+     */
+    public LobbyDTO getLobby() {
+        return lobby;
     }
 
     /**

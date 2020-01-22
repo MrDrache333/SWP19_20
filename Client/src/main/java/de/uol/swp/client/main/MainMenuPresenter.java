@@ -7,9 +7,7 @@ import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
-import de.uol.swp.common.lobby.message.CreateLobbyMessage;
-import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
-import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
+import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.request.CreateLobbyRequest;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.user.User;
@@ -343,7 +341,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     public void userJoinedLobby(UserJoinedLobbyMessage message) {
         LOG.debug("User " + message.getUser().getUsername() + " joined lobby " + message.getLobbyName());
         Platform.runLater(() -> {
-            lobbies.removeIf(lobby -> lobby.getName().equals(message.getLobbyName()));
+            lobbies.removeIf(lobby -> lobby.getLobbyID().equals(message.getLobbyID()));
             lobbies.add(0, message.getLobby());
         });
     }
@@ -359,11 +357,58 @@ public class MainMenuPresenter extends AbstractPresenter {
     public void userLeftLobby(UserLeftLobbyMessage message) {
         LOG.debug("User " + message.getUser().getUsername() + " left lobby " + message.getLobbyName());
         Platform.runLater(() -> {
-            lobbies.removeIf(lobby -> lobby.getName().equals(message.getLobbyName()));
+            lobbies.removeIf(lobby -> lobby.getLobbyID().equals(message.getLobbyID()));
             if (message.getLobby() != null) {
                 lobbies.add(0, message.getLobby());
             }
         });
+    }
+
+    /**
+     * Aktualisiert die Lobbytabelle, nachdem sich ein User ausgeloggt oder seinen Account gelöscht hat
+     *
+     * @param message die UserLeftAllLobbiesMessage
+     * @author Julia
+     * @since Sprint4
+     */
+    @Subscribe
+    public void userLeftAllLobbies(UserLeftAllLobbiesMessage message) {
+        Platform.runLater(() -> {
+            lobbies.clear();
+            lobbies.addAll(message.getLobbies());
+        });
+    }
+
+    /**
+     * Aktualisiert die Lobbytabelle, nachdem ein User aus einer Lobby gekickt wurde
+     *
+     * @param message die KickUserMessage
+     * @author Julia
+     * @since Sprint4
+     */
+    @Subscribe
+    public void userKicked(KickUserMessage message) {
+        Platform.runLater(() -> {
+            lobbies.removeIf(lobby -> lobby.getLobbyID().equals(message.getLobby().getLobbyID()));
+            lobbies.add(0, message.getLobby());
+        });
+    }
+
+    /**
+     * Aktualisiert die Lobbytabelle, nachdem die max. Spielerzahl einer Lobby gesetzt wurde
+     *
+     * @param message die SetMaxPlayerMessage
+     * @author Julia
+     * @since Sprint4
+     */
+    @Subscribe
+    public void maxPlayerSet(SetMaxPlayerMessage message) {
+        if (message.isSetMaxPlayerSet()) {
+            Platform.runLater(() -> {
+                lobbies.removeIf(lobby -> lobby.getLobbyID().equals(message.getLobby().getLobbyID()));
+                lobbies.add(0, message.getLobby());
+            });
+        }
     }
 
     /**

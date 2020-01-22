@@ -111,7 +111,7 @@ public class GameManagement {
      */
     @Subscribe
     private void onKickUserMessage(KickUserMessage msg) {
-        if (msg.getLobbyID().equals(id) && msg.getUser().getUsername().equals(loggedInUser.getUsername())) {
+        if (msg.getLobby().getLobbyID().equals(id) && msg.getUser().getUsername().equals(loggedInUser.getUsername())) {
             close();
         }
     }
