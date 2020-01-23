@@ -6,6 +6,7 @@ import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.GameManagement;
+import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.chat.ChatService;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
@@ -38,6 +39,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -75,6 +77,8 @@ public class LobbyPresenter extends AbstractPresenter {
     private Button readyButton;
     @FXML
     ChoiceBox<Integer> chooseMaxPlayer;
+    @FXML
+    private ImageView soundIcon;
 
     private ObservableList<HBox> userHBoxes;
 
@@ -164,6 +168,13 @@ public class LobbyPresenter extends AbstractPresenter {
         updateUsersList();
 
         chooseMaxPlayer.setValue(4);
+
+        soundIcon.setImage(new Image(new File(getClass().getResource(SoundMediaPlayer.isSoundEnabled() ? "/images/sound_on_icon.png" : "/images/sound_off_icon.png").toExternalForm().replace("file:", "")).toURI().toString()));
+        soundIcon.setOnMouseClicked(event -> {
+            SoundMediaPlayer.setSound(!SoundMediaPlayer.isSoundEnabled());
+            soundIcon.setImage(new Image(new File(getClass().getResource(SoundMediaPlayer.isSoundEnabled() ? "/images/sound_on_icon.png" : "/images/sound_off_icon.png").toExternalForm().replace("file:", "")).toURI().toString()));
+
+        });
     }
 
     /**

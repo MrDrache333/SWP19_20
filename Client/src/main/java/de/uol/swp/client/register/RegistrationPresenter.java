@@ -6,8 +6,8 @@ import com.google.inject.Inject;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.register.event.RegistrationCanceledEvent;
 import de.uol.swp.client.register.event.RegistrationErrorEvent;
-import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.client.sound.SoundMediaPlayer;
+import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -15,7 +15,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
+import java.io.File;
 import java.util.regex.Pattern;
 
 /**
@@ -45,6 +48,8 @@ public class RegistrationPresenter extends AbstractPresenter {
 
     @FXML
     private TextField mailField;
+    @FXML
+    private ImageView soundIcon;
 
     public RegistrationPresenter() {
     }
@@ -61,6 +66,13 @@ public class RegistrationPresenter extends AbstractPresenter {
         });
         cancelButton.setOnMouseEntered(event -> {
             new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play();
+        });
+
+        soundIcon.setImage(new Image(new File(getClass().getResource(SoundMediaPlayer.isSoundEnabled() ? "/images/sound_on_icon.png" : "/images/sound_off_icon.png").toExternalForm().replace("file:", "")).toURI().toString()));
+        soundIcon.setOnMouseClicked(event -> {
+            SoundMediaPlayer.setSound(!SoundMediaPlayer.isSoundEnabled());
+            soundIcon.setImage(new Image(new File(getClass().getResource(SoundMediaPlayer.isSoundEnabled() ? "/images/sound_on_icon.png" : "/images/sound_off_icon.png").toExternalForm().replace("file:", "")).toURI().toString()));
+
         });
     }
 

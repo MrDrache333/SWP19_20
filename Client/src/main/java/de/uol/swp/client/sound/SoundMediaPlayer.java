@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import javax.sound.sampled.*;
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.util.ArrayList;
 
 /**
  * Die Klasse SoundMediaPlayer.
@@ -14,11 +15,11 @@ import java.io.File;
  * @author Keno Oelrichs Garcia
  * @since Sprint3
  */
-
 public class SoundMediaPlayer implements MediaPlayer {
 
+    private static boolean soundEnabled = true;
+    private static ArrayList<SoundMediaPlayer> playingSounds = new ArrayList<>();
     private Logger LOG = LogManager.getLogger(getClass());
-
     private Sound sound;
     private boolean started;
     private Clip clip;
@@ -28,15 +29,39 @@ public class SoundMediaPlayer implements MediaPlayer {
      * Initialisiert einen neuen SoundMediaPlayer.
      *
      * @param sound Die Sound Art, die festgelegt werden soll.
-     * @param type Der Typ (entweder Sound oder Music).
+     * @param type  Der Typ (entweder Sound oder Music).
      * @author Keno Oelrichs Garcia
      * @since Sprint3
      */
-
     public SoundMediaPlayer(Sound sound, Type type) {
         this.sound = sound;
         this.type = type;
         this.started = false;
+        playingSounds.add(this);
+    }
+
+    /**
+     * Is sound enabled boolean.
+     *
+     * @return the boolean
+     */
+    public static boolean isSoundEnabled() {
+        return soundEnabled;
+    }
+
+    /**
+     * Stoppt alle Sounds, oder startet die Musik
+     *
+     * @param play Ob gestoppt oder gespielrt werden soll.
+     */
+    public static void setSound(boolean play) {
+        soundEnabled = play;
+        if (!play) {
+            playingSounds.forEach(e -> e.stop());
+            ArrayList<SoundMediaPlayer> temp = new ArrayList<>(playingSounds);
+            temp.stream().filter(e -> e.type.equals(Type.Sound)).forEach(e -> playingSounds.remove(e));
+        } else
+            playingSounds.stream().filter(e -> e.type.equals(Type.Music)).forEach(SoundMediaPlayer::play);
     }
 
     /**
@@ -48,36 +73,38 @@ public class SoundMediaPlayer implements MediaPlayer {
 
     @Override
     public void play() {
-        Platform.runLater(() -> {
-            try {
+        if (soundEnabled)
+            Platform.runLater(() -> {
+                try {
 
-                //Sound laden
-                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(getClass().getResource(sound.getPath()).toExternalForm().replace("file:", "")));  //Sound als Stream oeffnen
-                BufferedInputStream bufferedInputStream = new BufferedInputStream(audioInputStream);    //Stream Buffer erstellen
-                AudioFormat af = audioInputStream.getFormat();  //AudioFormat laden
-                int size = (int) (af.getFrameSize() * audioInputStream.getFrameLength());   //Sounddatenlaenge bestimmen
-                byte[] audio = new byte[size];  //Variable zum speichern der Sounddatei erstellen
-                DataLine.Info info = new DataLine.Info(Clip.class, af, size);   //Soundinformationen zwischenspeichern
-                bufferedInputStream.read(audio, 0, size);   //Sounddatei gebuffert einlesen
-                clip = (Clip) AudioSystem.getLine(info);    //Eingelesene Sounddatei als "Clip" speichern
-                clip.open(af, audio, 0, size);  //Clip oeffnen mit gegebenen Informationen
-                setVolume(type.equals(Type.Music) ? 0.1 : 0.5);
-                clip.addLineListener(event -> {
-                    if (event.getType().equals(LineEvent.Type.STOP)) {
-                        started = false;
-                    } else if (event.getType().equals(LineEvent.Type.START)) {
-                        started = true;
-                    }
-                });
+                    //Sound laden
+                    AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(getClass().getResource(sound.getPath()).toExternalForm().replace("file:", "")));  //Sound als Stream oeffnen
+                    BufferedInputStream bufferedInputStream = new BufferedInputStream(audioInputStream);    //Stream Buffer erstellen
+                    AudioFormat af = audioInputStream.getFormat();  //AudioFormat laden
+                    int size = (int) (af.getFrameSize() * audioInputStream.getFrameLength());   //Sounddatenlaenge bestimmen
+                    byte[] audio = new byte[size];  //Variable zum speichern der Sounddatei erstellen
+                    DataLine.Info info = new DataLine.Info(Clip.class, af, size);   //Soundinformationen zwischenspeichern
+                    bufferedInputStream.read(audio, 0, size);   //Sounddatei gebuffert einlesen
+                    clip = (Clip) AudioSystem.getLine(info);    //Eingelesene Sounddatei als "Clip" speichern
+                    clip.open(af, audio, 0, size);  //Clip oeffnen mit gegebenen Informationen
+                    setVolume(type.equals(Type.Music) ? 0.1 : 0.5);
+                    clip.addLineListener(event -> {
+                        if (event.getType().equals(LineEvent.Type.STOP)) {
+                            started = false;
+                            if (!type.equals(Type.Music)) playingSounds.remove(this);
+                        } else if (event.getType().equals(LineEvent.Type.START)) {
+                            started = true;
+                        }
+                    });
 
-                //Sounddatei abspielen
-                if (type.equals(Type.Music)) clip.loop(-1);    //Wenn Hintergrundmusic -> Unendlich Loopen
-                clip.start();
-            } catch (Exception e) {
-                e.printStackTrace();
-                LOG.debug("Fehler beim abspielen von " + sound.getPath());
-            }
-        });
+                    //Sounddatei abspielen
+                    if (type.equals(Type.Music)) clip.loop(-1);    //Wenn Hintergrundmusic -> Unendlich Loopen
+                    clip.start();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    LOG.debug("Fehler beim abspielen von " + sound.getPath());
+                }
+            });
     }
 
     /**
@@ -154,7 +181,7 @@ public class SoundMediaPlayer implements MediaPlayer {
 
     @Override
     public void stop() {
-        clip.stop();
+        if (clip != null) clip.stop();
         started = false;
     }
 
@@ -164,11 +191,16 @@ public class SoundMediaPlayer implements MediaPlayer {
      * @author Keno Oelrichs Garcia
      * @since Sprint3
      */
-
     public enum Type {
 
+        /**
+         * Music type.
+         */
         Music,
 
+        /**
+         * Sound type.
+         */
         Sound
     }
 
@@ -178,19 +210,36 @@ public class SoundMediaPlayer implements MediaPlayer {
      * @author Keno Oelrichs Garcia
      * @since Sprint3
      */
-
     public enum Sound {
 
+        /**
+         * Intro sound.
+         */
         Intro("/music/intro.wav"),
 
+        /**
+         * Button hover sound.
+         */
         Button_Hover("/sounds/button_mouseover.wav"),
 
+        /**
+         * Button pressed sound.
+         */
         Button_Pressed("/sounds/button_pressed.wav"),
 
+        /**
+         * Window opened sound.
+         */
         Window_Opened("/sounds/window_opened.wav"),
 
+        /**
+         * Message send sound.
+         */
         Message_Send("/sounds/message_send.wav"),
 
+        /**
+         * Message receive sound.
+         */
         Message_Receive("/sounds/message_receive.wav");
 
         private String path;
@@ -214,9 +263,9 @@ public class SoundMediaPlayer implements MediaPlayer {
          * @author Keno Oelrichs Garcia
          * @since Sprint3
          */
-
         public String getPath() {
             return this.path;
         }
+
     }
 }
