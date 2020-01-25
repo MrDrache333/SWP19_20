@@ -20,12 +20,15 @@ class ChatManagementTest {
     void getChat() {
         //Create a global Chat
         chatManagement.createChat("global");
-        assertNotNull(chatManagement.getChat("global"));
+        assertTrue(chatManagement.getChat("global").isPresent());
+        assertNotNull(chatManagement.getChat("global").get());
     }
 
     @Test
     void createChat() {
         String newChat = chatManagement.createChat();
+        assertTrue(chatManagement.getChat(newChat).isPresent());
+        assertNotNull(chatManagement.getChat(newChat).get());
         assertNotNull(chatManagement.getChat(newChat));
     }
 
@@ -33,7 +36,7 @@ class ChatManagementTest {
     void deleteChat() {
         String newChat = chatManagement.createChat();
         chatManagement.deleteChat(newChat);
-        assertNull(chatManagement.getChat(newChat));
+        assertTrue(chatManagement.getChat(newChat).isEmpty());
     }
 
     @Test
