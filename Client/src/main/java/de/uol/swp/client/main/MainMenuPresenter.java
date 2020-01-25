@@ -3,6 +3,8 @@ package de.uol.swp.client.main;
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.SceneManager;
+import de.uol.swp.client.ClientApp;
+import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.lobby.Lobby;
@@ -36,7 +38,6 @@ import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -596,6 +597,7 @@ public class MainMenuPresenter extends AbstractPresenter {
                 };
             }
         };
+
         joinLobby.setCellFactory(cellFactory);
     }
 
