@@ -31,13 +31,13 @@ class ChatServiceTest {
         //Test Global Chat
         NewChatMessageRequest request = new NewChatMessageRequest(new ChatMessage(chatMember, "Test"));
         bus.post(request);
-        assertEquals("Test", chatManagement.getChat("global").getMessages().get(0).getMessage());
+        assertEquals("Test", chatManagement.getChat("global").get().getMessages().get(0).getMessage());
 
         //Test Lobby Chat
         String newChatId = chatManagement.createChat();
         request = new NewChatMessageRequest(newChatId, new ChatMessage(chatMember, "Test"));
         bus.post(request);
-        assertEquals("Test", chatManagement.getChat(newChatId).getMessages().get(0).getMessage());
+        assertEquals("Test", chatManagement.getChat(newChatId).get().getMessages().get(0).getMessage());
 
     }
 }

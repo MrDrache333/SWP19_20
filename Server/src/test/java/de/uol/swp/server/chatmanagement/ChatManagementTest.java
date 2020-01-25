@@ -41,6 +41,6 @@ class ChatManagementTest {
         //Create a global Chat
         chatManagement.createChat("global");
         chatManagement.addMessage("global", new ChatMessage(chatMember, "Test"));
-        assertEquals("Test", chatManagement.getChat("global").getMessages().get(0).getMessage());
+        assertEquals("Test", chatManagement.getChat("global").get().getMessages().get(0).getMessage());
     }
 }

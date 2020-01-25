@@ -51,7 +51,7 @@ public class ChatManagement extends AbstractChatManagement {
      * @throws ChatException the chat exception
      */
     synchronized public void createChat(String ChatId) throws ChatException {
-        if (getChat(ChatId) != null) throw new ChatException("Chat with Id " + ChatId + " already exists!");
+        if (getChat(ChatId).isPresent()) throw new ChatException("Chat with Id " + ChatId + " already exists!");
         Chats.put(ChatId, new Chat(ChatId));
     }
 
@@ -62,7 +62,7 @@ public class ChatManagement extends AbstractChatManagement {
      */
     public void deleteChat(String ChatId) throws ChatException {
         if (Chats.size() > 0 && Chats.get(ChatId) != null) Chats.remove(ChatId);
-        if (getChat(ChatId) != null) throw new ChatException("Chat with Id " + ChatId + " failed to remove!");
+        if (getChat(ChatId).isPresent()) throw new ChatException("Chat with Id " + ChatId + " failed to remove!");
     }
 
     /**

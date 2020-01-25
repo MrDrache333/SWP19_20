@@ -59,7 +59,7 @@ public class ChatService extends AbstractService {
         }
         ResponseMessage returnMessage;
         try {
-            returnMessage = new ChatResponseMessage(chatManagement.getChat(request.getChatId()), request.getSender().getUsername());
+            returnMessage = new ChatResponseMessage(chatManagement.getChat(request.getChatId()).get(), request.getSender().getUsername());
         } catch (ChatException e) {
             returnMessage = new ChatExceptionMessage(request.getSender(), e);
             LOG.error(e);
