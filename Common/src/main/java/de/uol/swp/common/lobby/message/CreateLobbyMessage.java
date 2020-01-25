@@ -35,7 +35,6 @@ public class CreateLobbyMessage extends AbstractLobbyMessage {
         this.user = user;
         this.chatID = chatID;
         this.lobbyPassword = lobbyPassword;
-        this.chatID = chatID;
         this.lobby = lobby;
     }
 

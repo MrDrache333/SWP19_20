@@ -3,6 +3,8 @@ package de.uol.swp.client.main;
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.SceneManager;
+import de.uol.swp.client.ClientApp;
+import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.lobby.Lobby;
@@ -595,6 +597,7 @@ public class MainMenuPresenter extends AbstractPresenter {
                 };
             }
         };
+
         joinLobby.setCellFactory(cellFactory);
     }
 
