@@ -4,6 +4,7 @@ import de.uol.swp.common.chat.ChatMessage;
 import de.uol.swp.common.chat.exception.ChatException;
 import de.uol.swp.common.user.User;
 
+import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -13,9 +14,9 @@ import java.util.UUID;
  */
 public class ChatManagement extends AbstractChatManagement {
 
-    private final short CHATMESSAGEHISTORYSIZE = 20;
+    private static final short CHATMESSAGEHISTORYSIZE = 20;
 
-    private SortedMap<String, Chat> Chats = new TreeMap<>();
+    private static SortedMap<String, Chat> Chats = new TreeMap<>();
 
     /**
      * Get the Chat with chatId.
@@ -23,12 +24,12 @@ public class ChatManagement extends AbstractChatManagement {
      * @param chatId the chat id
      * @return the chat
      */
-    public Chat getChat(String chatId) {
+    public Optional<Chat> getChat(String chatId) {
         try {
             Chat chat = Chats.get(chatId);
-            return chat;
+            return Optional.of(chat);
         } catch (NullPointerException e) {
-            return null;
+            return Optional.empty();
         }
     }
 
@@ -71,12 +72,12 @@ public class ChatManagement extends AbstractChatManagement {
      * @param message the message
      */
     synchronized public void addMessage(String chatId, ChatMessage message) throws ChatException {
-        Chat chat = getChat(chatId);
+        Optional<Chat> chat = getChat(chatId);
         //CHeck if this is an existing chat
-        if (chat != null) {
-            chat.getMessages().add(message);
+        if (chat.isPresent()) {
+            chat.get().getMessages().add(message);
             //Keep only the newest Messages
-            if (chat.getMessages().size() > CHATMESSAGEHISTORYSIZE) chat.getMessages().remove(0);
+            if (chat.get().getMessages().size() > CHATMESSAGEHISTORYSIZE) chat.get().getMessages().remove(0);
         } else throw new ChatException("Chat with Id " + chatId + " does not exist!");
     }
 

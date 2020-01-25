@@ -12,7 +12,7 @@ import java.util.*;
 public class LobbyManagement {
     static final Logger LOG = LogManager.getLogger(LobbyManagement.class);
 
-    private final Map<String, Lobby> lobbies = new HashMap<>();
+    private static final Map<String, Lobby> lobbies = new HashMap<>();
 
     /**
      * Um UUID Map erweitert
@@ -20,7 +20,7 @@ public class LobbyManagement {
      * @author Marvin
      * @since Sprint3
      */
-    private Map<UUID, String> lobbyNames = new HashMap<>();
+    private static Map<UUID, String> lobbyNames = new HashMap<>();
 
     /**
      * @author Paula, Haschem, Ferit, Rike
