@@ -31,7 +31,7 @@ public class GameManagement {
         Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyID.toString());
         Optional<Chat> chat = chatManagement.getChat(lobbyID.toString());
         if (lobby.isPresent() && chat.isPresent()) {
-            Game game = new Game(lobbyID, lobby.get(), chat.get());
+            Game game = new Game(lobby.get(), chat.get());
             games.put(lobbyID, game);
         }
     }

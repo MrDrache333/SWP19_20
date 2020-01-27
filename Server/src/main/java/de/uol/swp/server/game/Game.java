@@ -5,15 +5,33 @@ import de.uol.swp.server.chat.Chat;
 
 import java.util.UUID;
 
+/**
+ * Objekt zum Verwalten eines Spiels
+ */
 public class Game {
 
-    private Lobby lobby;
     private Chat chat;
+    private Playground playground;
     private UUID gameID;
 
-    public Game(UUID lobbyID, Lobby lobby, Chat chat) {
+    /**
+     * Erstellt ein neues Spiel
+     *
+     * @param lobby Die Lobby, die das Spiel gestartet hat
+     * @param chat  the chat
+     */
+    public Game(Lobby lobby, Chat chat) {
         this.chat = chat;
-        this.lobby = lobby;
-        this.gameID = lobbyID;
+        this.gameID = lobby.getLobbyID();
+        playground = new Playground(lobby);
+    }
+
+    /**
+     * Gets game id.
+     *
+     * @return the game id
+     */
+    public UUID getGameID() {
+        return gameID;
     }
 }

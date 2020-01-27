@@ -26,4 +26,8 @@ public class GameService extends AbstractService {
         super(eventBus);
         this.gameManagement = gameManagement;
     }
+
+    //--------------------------------------
+    // EVENTBUS
+    //--------------------------------------
 }
