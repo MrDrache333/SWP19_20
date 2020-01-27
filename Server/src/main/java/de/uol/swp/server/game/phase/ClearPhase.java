@@ -1,7 +1,20 @@
 package de.uol.swp.server.game.phase;
 
+import de.uol.swp.server.game.player.Player;
+
 /**
  * Das Interface der Aufräumphase
  */
 interface ClearPhase extends Phase {
+
+    /**
+     * Führt die Phase auf einem Spieler aus
+     *
+     * @param player Der Spieler
+     * @author KenoO
+     * @Version 1.0
+     * @since Sprint 5
+     */
+    void executeClearPhase(Player player);
+
 }

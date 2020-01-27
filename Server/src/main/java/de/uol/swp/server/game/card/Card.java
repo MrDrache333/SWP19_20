@@ -15,8 +15,10 @@ public abstract class Card {
      * @param type Der Kartentyp
      * @param name Der Kartenname
      * @param id   Die KartenID
+     * @author KenoO
+     * @since Sprint 5
      */
-    public Card(Type type, String name, short id) {
+    Card(Type type, String name, short id) {
         this.type = type;
         this.name = name;
         this.id = id;
@@ -26,6 +28,8 @@ public abstract class Card {
      * Gibt den namen der Karte zurück
      *
      * @return Der name der Karte
+     * @author KenoO
+     * @since Sprint 5
      */
     public String getName() {
         return name;
@@ -35,6 +39,8 @@ public abstract class Card {
      * Gibt die ID der Karte zurück
      *
      * @return Die ID der Karte
+     * @author KenoO
+     * @since Sprint 5
      */
     public short getId() {
         return id;
@@ -44,11 +50,16 @@ public abstract class Card {
      * Gibt den Typ einer Karte zurück
      *
      * @return Der Kartentyp
+     * @author KenoO
+     * @since Sprint 5
      */
     public Type getType() {
         return type;
     }
 
+    /**
+     * The enum Type.
+     */
     public enum Type {
         /**
          * Der Typ Aktionskarte

@@ -10,8 +10,17 @@ import java.util.UUID;
  */
 public class Game {
 
+    /**
+     * The Chat.
+     */
     private Chat chat;
+    /**
+     * The Playground.
+     */
     private Playground playground;
+    /**
+     * The Game id.
+     */
     private UUID gameID;
 
     /**
@@ -19,8 +28,10 @@ public class Game {
      *
      * @param lobby Die Lobby, die das Spiel gestartet hat
      * @param chat  the chat
+     * @author KenoO
+     * @since Sprint 5
      */
-    public Game(Lobby lobby, Chat chat) {
+    Game(Lobby lobby, Chat chat) {
         this.chat = chat;
         this.gameID = lobby.getLobbyID();
         playground = new Playground(lobby);
@@ -30,6 +41,8 @@ public class Game {
      * Gets game id.
      *
      * @return the game id
+     * @author KenoO
+     * @since Sprint 5
      */
     public UUID getGameID() {
         return gameID;

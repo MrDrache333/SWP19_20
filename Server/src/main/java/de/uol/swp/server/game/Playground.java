@@ -8,16 +8,21 @@ import java.util.ArrayList;
 /**
  * Playground stellt das eigentliche Spielfeld dar
  */
-public class Playground {
+class Playground {
 
+    /**
+     * Die Spieler
+     */
     private ArrayList<Player> players;
 
     /**
      * Erstellt ein neues Spielfeld
      *
      * @param lobby Die zu nutzende Lobby
+     * @author KenoO
+     * @since Sprint 5
      */
-    public Playground(Lobby lobby) {
+    Playground(Lobby lobby) {
         //TODO User der Lobby in Player umwandeln
     }
 }

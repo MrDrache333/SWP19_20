@@ -20,6 +20,8 @@ public class GameService extends AbstractService {
      *
      * @param eventBus       Der zu nutzende EventBus
      * @param gameManagement Das GameManagement
+     * @author KenoO
+     * @since Sprint 5
      */
     @Inject
     public GameService(EventBus eventBus, GameManagement gameManagement) {

@@ -10,6 +10,8 @@ public class ActionCard extends Card {
      *
      * @param name Der name der Karte
      * @param id   Die ID der Karte
+     * @author KenoO
+     * @since Sprint 5
      */
     public ActionCard(String name, short id) {
         super(Type.ActionCard, name, id);

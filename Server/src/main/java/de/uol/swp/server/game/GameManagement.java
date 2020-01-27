@@ -26,6 +26,8 @@ public class GameManagement {
      * Erstellt ein neues Spiel, übergibt die zugehörige Lobby und den Chat und fügt dies dann der Map hinzu
      *
      * @param lobbyID Die Lobby-ID
+     * @author KenoO
+     * @since Sprint 5
      */
     public void createGame(UUID lobbyID) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyID.toString());
@@ -40,6 +42,8 @@ public class GameManagement {
      * Löscht ein Spiel aus der Liste
      *
      * @param id Die ID
+     * @author KenoO
+     * @since Sprint 5
      */
     public void deleteGame(UUID id) {
         games.remove(id);
@@ -50,6 +54,8 @@ public class GameManagement {
      *
      * @param id Die ID
      * @return Das Spiel
+     * @author KenoO
+     * @since Sprint 5
      */
     public Optional<Game> getGame(UUID id) {
         try {
