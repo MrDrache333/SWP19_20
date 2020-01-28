@@ -269,8 +269,9 @@ public class ChatViewPresenter extends AbstractPresenter {
                     chatMessageHistory.remove(0);
                 }
                 //Fuege neue ChatNachricht hinzu
-                chatMessageHistory.add(msg.getMessage());
                 chatMessages.add(chatMessagetoBox(msg.getMessage()));
+                chatMessageHistory.add(msg.getMessage());
+
             });
             lastMessage = msg.getMessage();
         }
@@ -427,7 +428,7 @@ public class ChatViewPresenter extends AbstractPresenter {
                 //Vorrangegangene Einträge ggf. bearbeiten
                 if (chatMessageHistory.size() > 1) {
                     String lastsender = chatMessageHistory.get(chatMessageHistory.size() - 1).getSender().getUsername();
-                    if (msg.getSender().getUsername().equals(lastsender) && !loggedInUser.getUsername().equals(msg.getSender().getUsername())) {
+                    if (msg.getSender().getUsername().equals(lastsender)) {
                         //Letzte Box abändern oder löschen?
                         if (chatMessages.size() >= 1) {
                             VBox tempVBox = chatMessages.get(chatMessages.size() - 1);
