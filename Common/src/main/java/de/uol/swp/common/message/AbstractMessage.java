@@ -6,13 +6,15 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Base class of all messages. Basic handling of session information
+ * Basis Klasse für alle Messages. Basis Handling Session Informationen.
  *
  * @author Marco Grawunder
+ * @since Start
  */
 @SuppressWarnings("serial")
 abstract public class AbstractMessage implements Message {
 
+    private static final long serialVersionUID = 3929743744148011068L;
     transient private MessageContext messageContext;
     transient private Session session = null;
 

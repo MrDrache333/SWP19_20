@@ -1,41 +1,62 @@
 package de.uol.swp.client.sound;
 
 /**
- * The interface Player.
+ * Das Media Player Interface.
+ *
+ * @author Keno O.
+ * @since Sprint 4
  */
 public interface MediaPlayer {
 
     /**
-     * Play the current Track.
+     * Spielt das aktuelle Lied ab.
+     *
+     * @author Keno O.
+     * @since Sprint 4
      */
     void play();
 
     /**
-     * Mute the current Track.
+     * Schaltet das aktuelle Lied stumm.
+     *
+     * @author Keno O.
+     * @since Sprint 4
      */
     void mute();
 
     /**
-     * Un mute the current Track.
+     * Hebt die Stummschaltung des Liedes auf.
+     *
+     * @author Keno O.
+     * @since Sprint 4
      */
     void unMute();
 
     /**
-     * Checks whether the current Track is playing.
+     * Prüft ob das aktuelle Lied abgespielt wird.
      *
-     * @return the boolean
+     * @author Keno O.
+     * @since Sprint 4
+     * @return boolean true oder false
+     *
      */
     boolean isStarted();
 
     /**
-     * Sets the volume of the current Track.
+     * Setzt die Lautstärke des Liedes.
      *
-     * @param Volume the volume
+     * @author Keno O.
+     * @since Sprint 4
+     * @param Volume Die Lautstärke
+     *
      */
     void setVolume(double Volume);
 
     /**
-     * Stops the current Track.
+     * Stoppt das aktuelle Lied.
+     *
+     * @author Keno O.
+     * @since Sprint 4
      */
     void stop();
 

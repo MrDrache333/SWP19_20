@@ -12,15 +12,14 @@ import de.uol.swp.common.user.UserDTO;
  */
 public class LobbyUser extends UserDTO {
 
-    //Currents Status
+    //Current Status
     private boolean Ready;
 
     /**
-     * Instantiates a new Lobby user.
+     * Ein neuer Lobby-User wird erstellt der den normalen User erweitert mit einem Bereit-Status.
      *
-     * @param user the user
+     * @param user Der Benutzer der erweitert werden soll
      * @author Keno Oelrichs Garcia
-     * @Version 1.0
      * @since Sprint3
      */
     public LobbyUser(User user) {
@@ -28,11 +27,10 @@ public class LobbyUser extends UserDTO {
     }
 
     /**
-     * Is ready boolean.
+     * Der Bereit-Stautus des Spielers wird zurückgegeben
      *
-     * @return the boolean
+     * @return Bereit-Status des Spielers
      * @author Keno Oelrichs Garcia
-     * @Version 1.0
      * @since Sprint3
      */
     public boolean isReady() {
@@ -40,11 +38,10 @@ public class LobbyUser extends UserDTO {
     }
 
     /**
-     * Sets ready.
+     * Der Bereit-Status von einem User in der Lobby wird geändert.
      *
-     * @param ready the Status
+     * @param ready der neue Bereit-Status
      * @author Keno Oelrichs Garcia
-     * @Version 1.0
      * @since Sprint3
      */
     public void setReady(boolean ready) {

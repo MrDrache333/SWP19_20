@@ -4,43 +4,50 @@ import de.uol.swp.common.chat.ChatMessage;
 import de.uol.swp.common.message.AbstractServerMessage;
 
 /**
- * The type New chat message.
+ * Die Klasse NewChatMessage.
  */
 public class NewChatMessage extends AbstractServerMessage {
 
-    private static final long serialVersionUID = -2561886836547126480L;
-    private String ChatId;
-    private ChatMessage Message;
+    private static final long serialVersionUID = -254449775979067706L;
+
+    private String chatId;
+    private ChatMessage message;
 
     public NewChatMessage() {
     }
 
     /**
-     * Instantiates a new New chat message.
+     * Initialisiert eine neue NewChatMessage.
      *
-     * @param chatId  the chatid
-     * @param message the message
+     * @param chatId  die Chat ID des aktuellen Chats.
+     * @param message Die aktuelle Nachricht.
+     * @author Keno Oelrichs Garcia, Darian Alves
+     * @since Sprint1
      */
     public NewChatMessage(String chatId, ChatMessage message) {
-        this.Message = message;
-        this.ChatId = chatId;
+        this.message = message;
+        this.chatId = chatId;
     }
 
     /**
-     * Gets chat id.
+     * Gibt die aktuelle Chat ID zurück.
      *
-     * @return the chat id
+     * @return Die Chat ID.
+     * @author Keno Oelrichs Garcia, Darian Alves
+     * @since Sprint3
      */
     public String getChatId() {
-        return ChatId;
+        return chatId;
     }
 
     /**
-     * Gets message.
+     * Gibt die Message zurück.
      *
-     * @return the message
+     * @return Die Message.
+     * @author Keno Oelrichs Garcia, Darian Alves
+     * @since Sprint3
      */
     public ChatMessage getMessage() {
-        return Message;
+        return message;
     }
 }

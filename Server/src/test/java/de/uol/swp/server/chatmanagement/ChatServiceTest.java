@@ -21,23 +21,30 @@ class ChatServiceTest {
     final ChatService userService = new ChatService(bus, chatManagement);
 
 
+    /**
+     * 1:
+     * Erstellt GlobalChat; überprüft Erstellung
+     * 2:
+     * Erstellt Chatnachricht und die entsprechende Request; postet die Request; überprüft ob sie ankommt
+     * 3:
+     * Erstellt LobbyChat, dann wie 2
+     *
+     * @author Keno O.
+     * @since Sprint 1
+     */
     @Test
     void onNewChatMessageRequest() {
-
-        //Create a global Chat
+        //1:
         chatManagement.createChat("global");
         assertNotNull(chatManagement.getChat("global"));
-
-        //Test Global Chat
+        //2:
         NewChatMessageRequest request = new NewChatMessageRequest(new ChatMessage(chatMember, "Test"));
         bus.post(request);
         assertEquals("Test", chatManagement.getChat("global").getMessages().get(0).getMessage());
-
-        //Test Lobby Chat
+        //3:
         String newChatId = chatManagement.createChat();
         request = new NewChatMessageRequest(newChatId, new ChatMessage(chatMember, "Test"));
         bus.post(request);
         assertEquals("Test", chatManagement.getChat(newChatId).getMessages().get(0).getMessage());
-
     }
 }

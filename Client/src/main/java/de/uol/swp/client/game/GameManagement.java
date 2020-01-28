@@ -28,22 +28,20 @@ import java.net.URL;
 import java.util.UUID;
 
 /**
- * The type Game management.
+ * Das GameManagement
+ *
+ * @author Keno O.
+ * @since Sprint3
  */
 public class GameManagement {
 
-    /**
-     * The Log.
-     */
     static final Logger LOG = LogManager.getLogger(GameManagement.class);
-    /**
-     * The Style sheet.
-     */
     static final String styleSheet = "css/swp.css";
+
     private LobbyPresenter lobbyPresenter;
     private GameViewPresenter gameViewPresenter;
     private ChatViewPresenter chatViewPresenter;
-    private UUID ID;    //Die Lobby, Chat and GameID
+    private UUID id;    //Die Lobby, Chat and GameID
     private User loggedInUser;  //Der aktuell angemeldete Benutzer
     private UserDTO gameOwner;
     private String lobbyName;
@@ -58,20 +56,22 @@ public class GameManagement {
 
 
     /**
-     * Instanziiere einen neuen GameManagement. Dafür werden nötige Controller initialisiert und Controller auf dem Eventbus registriert
+     * Instanziiert ein GameManagement. Dafür werden nötige Controller initialisiert und auf dem Eventbus registriert
      *
-     * @param eventBus     the event bus
-     * @param id           the id
-     * @param lobbyName    the lobby name
-     * @param loggedInUser the logged in user
-     * @param chatService  the chat service
-     * @param lobbyService the lobby service
-     * @param userService  the user service
-     * @param injector     the injector
-     * @author Keno, Darian
+     * @param eventBus     der Eventbus
+     * @param id           die ID der Lobby, des Spiels und des internen Chats
+     * @param lobbyName    der Lobbyname
+     * @param loggedInUser der aktuelle Benutzer
+     * @param chatService  der ChatService
+     * @param lobbyService der LobbyService
+     * @param userService  der UserService
+     * @param injector     der Injector
+     * @author Keno O., Darian
+     * @since Sprint3
+     *
      */
     public GameManagement(EventBus eventBus, UUID id, String lobbyName, User loggedInUser, ChatService chatService, LobbyService lobbyService, UserService userService, Injector injector, UserDTO gameOwner) {
-        this.ID = id;
+        this.id = id;
         this.loggedInUser = loggedInUser;
         this.injector = injector;
         this.primaryStage = new Stage();
@@ -89,14 +89,15 @@ public class GameManagement {
     }
 
     /**
-     * Schließe das Fenster, wenn es der aktuelle Benutzer in dieser Lobby ist, der die Lobby verlässt.
+     * Schließt das Fenster, wenn der aktuelle Benutzer diese Lobby verlassen hat
      *
-     * @param msg
-     * @author Keno
+     * @param msg die UserLeftLobbyMessage
+     * @author Keno O.
+     * @since Sprint3
      */
     @Subscribe
     private void userLeft(UserLeftLobbyMessage msg) {
-        if (msg.getLobbyID().equals(ID) && msg.getUser().getUsername().equals(loggedInUser.getUsername())) {
+        if (msg.getLobbyID().equals(id) && msg.getUser().getUsername().equals(loggedInUser.getUsername())) {
             close();
         }
     }
@@ -110,16 +111,17 @@ public class GameManagement {
      */
     @Subscribe
     private void onKickUserMessage(KickUserMessage msg) {
-        if (msg.getLobbyID().equals(ID) && msg.getUser().getUsername().equals(loggedInUser.getUsername())) {
+        if (msg.getLobby().getLobbyID().equals(id) && msg.getUser().getUsername().equals(loggedInUser.getUsername())) {
             close();
         }
     }
 
     /**
-     * Wenn es der aktuelle Benutzer in dieser Lobby ist, dann schließe das Fenster
+     * Schließt das Fenster, wenn sich der aktuelle Benutzer ausgeloggt hat
      *
-     * @param msg
-     * @author Keno
+     * @param msg die UserLoggedOutMessage
+     * @author Keno O.
+     * @since Sprint3
      */
     @Subscribe
     private void userLoggedOut(UserLoggedOutMessage msg) {
@@ -129,9 +131,9 @@ public class GameManagement {
     }
 
     /**
-     * Aktualisiert den loggedInUser
+     * Aktualisiert den loggedInUser, wenn dieser seine Daten geändert hat
      *
-     * @param message
+     * @param message die UpdatedUserMessage
      * @author Julia
      * @since Sprint4
      */
@@ -143,10 +145,53 @@ public class GameManagement {
     }
 
     /**
+     * Überprüft ob sich die aktuelle Stage im Vordergrund befindet
+     *
+     * @return true wenn sie im Vordergrund ist, sonst false
+     * @author Keno O.
+     * @since Sprint3
+     */
+    public boolean hasFocus() {
+        return primaryStage.isFocused();
+    }
+
+    /**
+     * Methode zum Anzeigen der LobbyView
+     *
+     * @author Keno O.
+     * @since Sprint3
+     */
+    public void showLobbyView() {
+        initLobbyView();
+        showScene(lobbyScene, lobbyName);
+    }
+
+    /**
+     * Methode zum Anzeigen der GameView
+     *
+     * @author Keno O.
+     * @since Sprint3
+     */
+    public void showGameView() {
+        initGameView();
+        showScene(gameScene, lobbyName);
+    }
+
+    /**
+     * Methode zum Schließen der aktuellen Stage
+     *
+     * @author Keno O.
+     * @since Sprint3
+     */
+    public void close() {
+        Platform.runLater(() -> primaryStage.close());
+    }
+
+    /**
      * Initialisieren der GameView
      *
-     * @param
-     * @author Keno
+     * @author Keno O.
+     * @since Sprint3
      */
     private void initGameView() {
         if (gameScene == null) {
@@ -160,7 +205,8 @@ public class GameManagement {
      * LobbyView wird initalisiert und deklariert.
      * Neue Szene für die neue Lobby wird erstellt und gespeichert
      *
-     * @Keno
+     * @author Keno O.
+     * @since Sprint3
      */
     private void initLobbyView() {
         if (lobbyScene == null) {
@@ -170,7 +216,15 @@ public class GameManagement {
         }
     }
 
-    //initPresenter für Lobbies, hier wird dann der jeweilige lobbyPresenter als Controller gesetzt.
+    /**
+     * initPresenter für Lobbies, setzt den jeweiligen lobbyPresenter als Controller
+     *
+     * @param presenter der Presenter
+     * @param fxml      die zum Presenter gehörige fxml
+     * @return die rootPane
+     * @author Keno O.
+     * @since Sprint3
+     */
     private Parent initPresenter(AbstractPresenter presenter, String fxml) {
         Parent rootPane;
         FXMLLoader loader = injector.getInstance(FXMLLoader.class);
@@ -178,7 +232,6 @@ public class GameManagement {
             URL url = getClass().getResource(fxml);
             LOG.debug("Loading " + url);
             loader.setLocation(url);
-            //Controller wird gesetzt (Instanz der LobbyPresenter Klasse)
             loader.setController(presenter);
             rootPane = loader.load();
         } catch (Exception e) {
@@ -188,6 +241,14 @@ public class GameManagement {
         return rootPane;
     }
 
+    /**
+     * Setzt die Szene der primaryStage auf die übergebene Szene und aktualisiert den Titel der Stage
+     *
+     * @param scene die Szene
+     * @param title der Titel der Stage
+     * @author Julia, Keno O.
+     * @since Sprint3
+     */
     private void showScene(final Scene scene, final String title) {
         Platform.runLater(() -> {
             primaryStage.setTitle(title);
@@ -196,38 +257,11 @@ public class GameManagement {
             //User wird aus der Lobby ausgeloggt, wenn er das Lobbyfenster schließt
             primaryStage.setOnCloseRequest(windowEvent -> {
                 if (primaryStage.getScene().equals(lobbyScene)) {
-                    lobbyPresenter.getLobbyService().leaveLobby(lobbyName, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), ID);
+                    lobbyPresenter.getLobbyService().leaveLobby(lobbyName, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), id);
                 }
             });
             primaryStage.show();
             new SoundMediaPlayer(SoundMediaPlayer.Sound.Window_Opened, SoundMediaPlayer.Type.Sound).play();
         });
-    }
-
-    public boolean hasFocus() {
-        return primaryStage.isFocused();
-    }
-
-    /**
-     * Methode zum Anzeigen der Lobby
-     */
-    public void showLobbyView() {
-        initLobbyView();
-        showScene(lobbyScene, lobbyName);
-    }
-
-    /**
-     * Methode zum Anzeigen des Spiels
-     */
-    public void showGameView() {
-        initGameView();
-        showScene(gameScene, lobbyName);
-    }
-
-    /**
-     * Methode zum Schließen der aktuellen Stage
-     */
-    public void close() {
-        Platform.runLater(() -> primaryStage.close());
     }
 }

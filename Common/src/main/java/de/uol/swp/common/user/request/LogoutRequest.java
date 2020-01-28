@@ -3,7 +3,7 @@ package de.uol.swp.common.user.request;
 import de.uol.swp.common.message.AbstractRequestMessage;
 
 /**
- * A request send from client to server to log out
+ * Eine Request, welcher vom Client zum Server geschickt wird, um auszuloggen.
  *
  * @author Marco Grawunder
  */

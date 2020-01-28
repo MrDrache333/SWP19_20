@@ -5,18 +5,22 @@ import de.uol.swp.common.message.AbstractRequestMessage;
 import java.util.UUID;
 
 /**
- * The type Retrieve all online users in lobby request.
+ * Die RetrieveAllOnlineUsersInLobbyRequest
+ *
+ * @author Marco
+ * @since Start
  */
 public class RetrieveAllOnlineUsersInLobbyRequest extends AbstractRequestMessage {
 
+    private static final long serialVersionUID = 1185727535831267049L;
     private UUID lobbyId;
 
     /**
-     * Instantiates a new Retrieve all online users in lobby request.
+     * Instanziiert ein neues Abrufen aller Online-Benutzer in der Lobby-Anfrage.
      * Alternative mit ID statt Name.
      *
-     * @param LobbyID the lobby id
-     * @TODO Auf lobbyID oder lobbyName als Standard einigen.
+     * @param LobbyID die LobbyID
+     *                TODO: Auf lobbyID oder lobbyName als Standard einigen.
      * @author Marvin
      */
     public RetrieveAllOnlineUsersInLobbyRequest(UUID LobbyID) {
@@ -24,9 +28,11 @@ public class RetrieveAllOnlineUsersInLobbyRequest extends AbstractRequestMessage
     }
 
     /**
-     * Gets lobby id.
+     * Gibt die LobbyID wieder.
      *
-     * @return the lobby id
+     * @return die LobbyID
+     * @author Marco
+     * @since Start
      */
     public UUID getLobbyId() {
         return lobbyId;

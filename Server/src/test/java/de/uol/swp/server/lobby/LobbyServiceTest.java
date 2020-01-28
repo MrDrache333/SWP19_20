@@ -29,6 +29,9 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Der Test um den LobbyService zu testen.
+ */
 class LobbyServiceTest {
 
     static final User lobbyOwner = new UserDTO("Marco", "Marco", "Marco@Grawunder.com");
@@ -96,7 +99,7 @@ class LobbyServiceTest {
 
     @Test
     void onLobbyLeaveUserRequestTest() throws InterruptedException {
-        final UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName,defaultLobbyPassword, lobbyOwner);
+        final UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
         lobbyManagement.getLobby(defaultLobbyName).get().joinUser(lobbyUser);
         lobbyService.onLobbyLeaveUserRequest(new LobbyLeaveUserRequest(defaultLobbyName, new UserDTO(lobbyOwner.getUsername(), lobbyOwner.getPassword(), lobbyOwner.getEMail()), lobbyID));
 
@@ -122,7 +125,7 @@ class LobbyServiceTest {
 
     @Test
     void onLeaveAllLobbiesOnLogoutRequestTest() {
-        lobbyManagement.createLobby(defaultLobbyName,defaultLobbyPassword, lobbyOwner);
+        lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
         lobbyManagement.createLobby("Lobby2", "", lobbyOwner);
         lobbyManagement.getLobby(defaultLobbyName).get().joinUser(lobbyUser);
         lobbyService.onLeaveAllLobbiesOnLogoutRequest(new LeaveAllLobbiesOnLogoutRequest(new UserDTO(lobbyOwner.getUsername(), lobbyOwner.getPassword(), lobbyOwner.getEMail())));

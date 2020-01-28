@@ -16,32 +16,55 @@ public class LoginRequest extends AbstractRequestMessage {
     private String username;
     private String password;
 
+    /**
+     * Eine Anfrage wird erstellt um den User einzuloggen.
+     *
+     * @param username Der eingegebene Username
+     * @param password Das eingegebene Passwort
+     * @author Marco
+     * @since Start
+     */
     public LoginRequest(String username, String password) {
         this.username = username;
         this.password = password;
     }
+
 
     @Override
     public boolean authorizationNeeded() {
         return false;
     }
 
+    /**
+     * Der eingebene Benutzername wird zurückgegeben
+     *
+     * @return Der eingebene Benutzername
+     * @author Marco
+     * @since Start
+     */
     public String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
+    /**
+     * Das eingegebene Passwort wird zurückgegeben
+     *
+     * @return Das eingegebene Passwort
+     * @author Marco
+     * @since Start
+     */
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
+    /**
+     * Es wird überprüft ob die zwei Objekte gleich sind
+     *
+     * @param o Das Objekt mit der verglichen werden soll
+     * @return True wenn die Objekte gleich sind
+     * @author Marco
+     * @since Start
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -51,6 +74,13 @@ public class LoginRequest extends AbstractRequestMessage {
                 Objects.equals(password, that.password);
     }
 
+    /**
+     * Es wird das Passwort und der Benutzer gehasht
+     *
+     * @return Der hashCode aus Username und dem Passwort
+     * @author Marco
+     * @since Start
+     */
     @Override
     public int hashCode() {
         return Objects.hash(username, password);

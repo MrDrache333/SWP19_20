@@ -26,7 +26,6 @@ public class ClientModule extends AbstractModule {
         bind(FXMLLoader.class).toProvider(FXMLLoaderProvider.class);
         bind(EventBus.class).toInstance(eventBus);
         bind(de.uol.swp.common.user.UserService.class).to(UserService.class);
-        bind(de.uol.swp.common.lobby.LobbyService.class).to(LobbyService.class);
         bind(de.uol.swp.common.chat.ChatService.class).to(ChatService.class);
 
     }

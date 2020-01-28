@@ -3,18 +3,22 @@ package de.uol.swp.common.lobby.request;
 import de.uol.swp.common.user.UserDTO;
 
 /**
- * The type Update lobby ready status request.
+ * Anfrage, um den Bereitstatus eines Benutzers in einer Lobby zu ändern.
+ *
+ * @author KenoO
+ * @since Sprint2
  */
 public class UpdateLobbyReadyStatusRequest extends AbstractLobbyRequest {
 
+    private static final long serialVersionUID = -2904997600691722894L;
     private boolean Ready;
 
     /**
-     * Instantiates a new Update lobby ready status request.
+     * Erstellt einen neuen Update lobby ready status request.
      *
-     * @param lobby the lobby
-     * @param user  the user
-     * @param ready the Status
+     * @param lobby Die Lobby-ID
+     * @param user  Der zu updatende Benutzer
+     * @param ready Der neue Bereit-Status
      */
     public UpdateLobbyReadyStatusRequest(String lobby, UserDTO user, boolean ready) {
         super(lobby, user);
@@ -22,9 +26,9 @@ public class UpdateLobbyReadyStatusRequest extends AbstractLobbyRequest {
     }
 
     /**
-     * Is status boolean.
+     * Gibt den Bereitstatus des Benutzers zurück
      *
-     * @return the boolean
+     * @return Ist der Benutzer bereit
      */
     public boolean isReady() {
         return Ready;

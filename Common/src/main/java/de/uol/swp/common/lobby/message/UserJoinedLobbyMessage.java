@@ -1,18 +1,29 @@
 package de.uol.swp.common.lobby.message;
 
 import de.uol.swp.common.lobby.dto.LobbyDTO;
-import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.user.UserDTO;
 
 import java.util.UUID;
 
+/**
+ * Die Klasse UserJoinedLobbyMessage.
+ */
 public class UserJoinedLobbyMessage extends AbstractLobbyMessage {
 
-    UserDTO gameOwner;
+    private UserDTO gameOwner;
+    private static final long serialVersionUID = -2228023228166981549L;
     private LobbyDTO lobby;
 
-    public UserJoinedLobbyMessage() {
-    }
+    /**
+     * Initialisiert eine neue UserJoinedLobbyMessage.
+     *
+     * @param lobbyName Der Lobbyname
+     * @param user      Der User
+     * @param lobbyID   Die Lobby ID
+     * @param lobby     Die Lobby
+     * @author Julia Debkowski
+     * @since Sprint1
+     */
 
     public UserJoinedLobbyMessage(String lobbyName, UserDTO user, UUID lobbyID, UserDTO gameOwner, LobbyDTO lobby) {
         super(lobbyName, user, lobbyID);
@@ -24,5 +35,12 @@ public class UserJoinedLobbyMessage extends AbstractLobbyMessage {
         return gameOwner;
     }
 
-    public LobbyDTO getLobby() { return lobby; }
+    /**
+     * Gibt die aktuelle Lobby zurück.
+     *
+     * @return Die Lobby
+     */
+    public LobbyDTO getLobby() {
+        return lobby;
+    }
 }

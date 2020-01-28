@@ -25,12 +25,16 @@ import java.util.regex.Pattern;
 
 
 /**
- * The type Settings presenter.
+ * Der Settings Presenter für den Typ.
+ * @author Anna
+ * @since Sprint4
  */
 public class SettingsPresenter extends AbstractPresenter {
 
     /**
-     * The constant fxml.
+     * Die FXML Konstante.
+     * @author Anna
+     * @since Sprint4
      */
     public static final String fxml = "/fxml/SettingsView.fxml";
     public static final String css = "css/SettingsPresenter.css";
@@ -51,6 +55,8 @@ public class SettingsPresenter extends AbstractPresenter {
     private PasswordField passwordField;
     @FXML
     private PasswordField password2Field;
+    @FXML
+    private PasswordField currentPasswordField;
 
     public SettingsPresenter(User loggedInUser, LobbyService lobbyService, UserService userService, EventBus eventBus) {
         this.loggedInUser = loggedInUser;
@@ -73,8 +79,10 @@ public class SettingsPresenter extends AbstractPresenter {
         String email = emailField.getText();
         String password = passwordField.getText();
         String password2 = password2Field.getText();
+        String currentPassword = currentPasswordField.getText();
 
         //keine Eingaben vom User -> Fenster schließen
+
         if (Strings.isNullOrEmpty(username) && Strings.isNullOrEmpty(email) && Strings.isNullOrEmpty(password) && Strings.isNullOrEmpty(password2)) {
             eventBus.post(new CloseSettingsEvent());
             clearAll();
@@ -88,12 +96,15 @@ public class SettingsPresenter extends AbstractPresenter {
             passwordField.clear();
             password2Field.clear();
             passwordField.requestFocus();
-        } else if(!Strings.isNullOrEmpty(email) && !Pattern.matches("(?:[a-z0-9!#$%&'+/=?^_`{|}~-]+(?:.[a-z0-9!#$%&'+/=?^_`{|}~-]+)|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])\")@(?:(?:[a-z0-9](?:[a-z0-9-][a-z0-9])?.)+[a-z0-9](?:[a-z0-9-][a-z0-9])?|[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+", email)) {
+        } else if (!Strings.isNullOrEmpty(email) && !Pattern.matches("(?:[a-z0-9!#$%&'+/=?^_`{|}~-]+(?:.[a-z0-9!#$%&'+/=?^_`{|}~-]+)|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])\")@(?:(?:[a-z0-9](?:[a-z0-9-][a-z0-9])?.)+[a-z0-9](?:[a-z0-9-][a-z0-9])?|[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+", email)) {
             SceneManager.showAlert(Alert.AlertType.ERROR, email + " ist keine gültige E-Mail-Adresse", "Fehler");
             emailField.clear();
             emailField.requestFocus();
-        }
-        else {
+        } else if (Strings.isNullOrEmpty(currentPassword)) {
+            SceneManager.showAlert(Alert.AlertType.ERROR, "Gib dein aktuelles Passwort ein", "Fehler");
+            currentPasswordField.clear();
+            currentPasswordField.requestFocus();
+        } else {
             //Wenn Felder leer sind, Daten vom loggedInUser übernehmen
             if (Strings.isNullOrEmpty(username)) {
                 username = loggedInUser.getUsername();
@@ -102,18 +113,32 @@ public class SettingsPresenter extends AbstractPresenter {
                 email = loggedInUser.getEMail();
             }
             if (Strings.isNullOrEmpty(password)) {
-                password = loggedInUser.getPassword();
+                password = currentPassword;
             }
-            userService.updateUser(new UserDTO(username, password, email), loggedInUser);
+            userService.updateUser(new UserDTO(username, password, email), loggedInUser, currentPassword);
             clearAll();
         }
     }
 
+    /**
+     * Postet auf den EventBus das Accountlöschung-Event
+     *
+     * @param actionEvent
+     * @author Julia
+     * @since Sprint4
+     */
     @FXML
     public void onDeleteAccountButtonPressed(ActionEvent actionEvent) {
         eventBus.post(new DeleteAccountEvent(loggedInUser));
     }
 
+    /**
+     * Postet auf den EventBus das Schließe-Settings-Event
+     *
+     * @param actionEvent
+     * @author Julia
+     * @since Sprint4
+     */
     @FXML
     public void onCancelButtonPressed(ActionEvent actionEvent) {
         eventBus.post(new CloseSettingsEvent());
@@ -134,11 +159,18 @@ public class SettingsPresenter extends AbstractPresenter {
         }
     }
 
+    /**
+     * Leert alle Felder (Benutzername, E-Mail und alle Passwortfelder)
+     *
+     * @author Julia
+     * @since Sprint4
+     */
     private void clearAll() {
         usernameField.clear();
         emailField.clear();
         passwordField.clear();
         password2Field.clear();
+        currentPasswordField.clear();
     }
 
 }
