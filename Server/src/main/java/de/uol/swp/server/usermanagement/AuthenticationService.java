@@ -128,7 +128,7 @@ public class AuthenticationService extends AbstractService {
     public void onLogoutRequest(LogoutRequest msg) {
         if (msg.getSession().isPresent()) {
             Session session = msg.getSession().get();
-            User userToLogOut = userSessions.get(session);
+            User userToLogOut = msg.getSession().get().getUser();
 
             // Could be already logged out
             if (userToLogOut != null) {
