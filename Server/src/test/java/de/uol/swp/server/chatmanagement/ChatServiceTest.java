@@ -25,7 +25,6 @@ class ChatServiceTest {
     void onNewChatMessageRequest() {
 
         //Create a global Chat
-        chatManagement.createChat("global");
         assertNotNull(chatManagement.getChat("global"));
 
         //Test Global Chat

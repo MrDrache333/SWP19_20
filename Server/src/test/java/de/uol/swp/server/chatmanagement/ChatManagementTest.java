@@ -5,6 +5,7 @@ import de.uol.swp.common.chat.ChatMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.chat.ChatManagement;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,10 +17,15 @@ class ChatManagementTest {
     final EventBus bus = new EventBus();
     final ChatManagement chatManagement = new ChatManagement();
 
+
+    @AfterEach
+    void afterEach() {
+
+    }
+
     @Test
     void getChat() {
         //Create a global Chat
-        chatManagement.createChat("global");
         assertTrue(chatManagement.getChat("global").isPresent());
         assertNotNull(chatManagement.getChat("global").get());
     }

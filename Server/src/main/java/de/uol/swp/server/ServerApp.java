@@ -43,7 +43,7 @@ class ServerApp {
     private static void createServices(Injector injector) {
         UserManagement userManagement = injector.getInstance(UserManagement.class);
         ChatManagement chatManagement = injector.getInstance(ChatManagement.class);
-        GameManagement gameManagement = injector.getInstance(GameManagement.class);
+
 
         // TODO: Remove after registration is implemented
         for (int i = 0; i < 5; i++) {
@@ -60,6 +60,7 @@ class ServerApp {
         injector.getInstance(GameService.class);
         injector.getInstance(AuthenticationService.class);
         injector.getInstance(LobbyService.class);
+        injector.getInstance(GameManagement.class);
     }
 
 }
