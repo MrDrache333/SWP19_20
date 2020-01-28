@@ -11,6 +11,13 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Klasse, die den MainMemoryBaseUserStore testet
+ *
+ * @author Marco
+ * @since Start
+ */
+
 class MainMemoryBasedUserStoreTest {
 
     private static final int NO_USERS = 10;
@@ -70,7 +77,7 @@ class MainMemoryBasedUserStoreTest {
 
         assertTrue(userFound.isPresent());
         assertEquals(userToCreate, userFound.get());
-        assertEquals(userFound.get().getPassword(), userToCreate.getPassword());
+        assertEquals(userFound.get().getPassword(), "");
     }
 
     @Test
@@ -114,7 +121,7 @@ class MainMemoryBasedUserStoreTest {
         MainMemoryBasedUserStore store = getDefaultStore();
         User userToUpdate = getDefaultUsers().get(2);
 
-        store.updateUser(userToUpdate.getUsername(), userToUpdate.getPassword(), userToUpdate.getEMail() + "@TESTING", userToUpdate.getUsername());
+        store.updateUser(userToUpdate.getUsername(), userToUpdate.getPassword(), userToUpdate.getEMail() + "@TESTING", userToUpdate.getUsername(), "marco2");
 
         Optional<User> userFound = store.findUser(userToUpdate.getUsername());
 
@@ -128,7 +135,7 @@ class MainMemoryBasedUserStoreTest {
         MainMemoryBasedUserStore store = getDefaultStore();
         User userToUpdate = getDefaultUsers().get(2);
 
-        store.updateUser(userToUpdate.getUsername(), userToUpdate.getPassword() + "_NEWPASS", userToUpdate.getEMail(), userToUpdate.getUsername());
+        store.updateUser(userToUpdate.getUsername(), userToUpdate.getPassword() + "_NEWPASS", userToUpdate.getEMail(), userToUpdate.getUsername(), "marco2");
 
         Optional<User> userFound = store.findUser(userToUpdate.getUsername(), userToUpdate.getPassword() + "_NEWPASS");
 

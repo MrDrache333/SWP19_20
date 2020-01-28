@@ -35,22 +35,22 @@ public class Server implements ServerHandlerDelegate {
     private static final Logger LOG = LogManager.getLogger(Server.class);
 
     /**
-     * Clients that are connected
+     * Clients die verbunden sind
      */
     final private List<ChannelHandlerContext> connectedClients = new CopyOnWriteArrayList<>();
 
     /**
-     * Client with logged in sessions
+     * Client mit einer eingelogten Session
      */
     final private Map<ChannelHandlerContext, Session> activeSessions = new HashMap<>();
 
     /**
-     * Event bus (injected)
+     * Der Event bus (injected)
      */
     final private EventBus eventBus;
 
     /**
-     * Creates a new Server Object
+     * Erstellt einen neuen Server(Objekt)
      */
     @Inject
     public Server(EventBus eventBus) {
@@ -59,7 +59,7 @@ public class Server implements ServerHandlerDelegate {
     }
 
     /**
-     * Start a new server on given port
+     * Starten einen neuen Server an einen gegebenen Port
      *
      * @throws Exception
      */
@@ -93,7 +93,7 @@ public class Server implements ServerHandlerDelegate {
         }
     }
 
-    // Called from ServerHandler
+    // Wird vom ServerHandler aufgerufen
     @Override
     public void process(ChannelHandlerContext ctx, RequestMessage msg) {
         LOG.debug("Received new message from client " + msg);
@@ -130,7 +130,7 @@ public class Server implements ServerHandlerDelegate {
 
 
     // -------------------------------------------------------------------------------
-    // Handling of connected clients (from netty)
+    // Behandlung der verbundenen clients (von netty)
     // -------------------------------------------------------------------------------
     @Override
     public void newClientConnected(ChannelHandlerContext ctx) {
@@ -152,7 +152,7 @@ public class Server implements ServerHandlerDelegate {
     }
 
     // -------------------------------------------------------------------------------
-    // User Management Events (from event bus)
+    // User-Management-Events (vom event bus)
     // -------------------------------------------------------------------------------
     @Subscribe
     private void onClientAuthorized(ClientAuthorizedMessage msg) {
@@ -174,7 +174,7 @@ public class Server implements ServerHandlerDelegate {
     }
 
     // -------------------------------------------------------------------------------
-    // ResponseEvents
+    // AntwortEvents
     // -------------------------------------------------------------------------------
 
     @Subscribe
@@ -189,7 +189,7 @@ public class Server implements ServerHandlerDelegate {
     }
 
     // -------------------------------------------------------------------------------
-    // ServerMessages
+    // ServerNachrichten
     // -------------------------------------------------------------------------------
 
     @Subscribe
@@ -252,7 +252,7 @@ public class Server implements ServerHandlerDelegate {
 
 
     // -------------------------------------------------------------------------------
-    // Help methods: Send only objects of type Message
+    // Hilfsmethoden: Senden nur Objekte des Types Message
     // -------------------------------------------------------------------------------
 
     private void sendToClient(ChannelHandlerContext ctx, ResponseMessage message) {

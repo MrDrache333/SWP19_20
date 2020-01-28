@@ -4,8 +4,16 @@ import de.uol.swp.common.message.AbstractResponseMessage;
 
 import java.util.Objects;
 
+/**
+ * Die RegistrationExceptionMessage
+ *
+ * @author Marco
+ * @since Start
+ */
+
 public class RegistrationExceptionMessage extends AbstractResponseMessage {
 
+    private static final long serialVersionUID = -8284082261158454944L;
     private final String message;
 
     public RegistrationExceptionMessage(String message) {

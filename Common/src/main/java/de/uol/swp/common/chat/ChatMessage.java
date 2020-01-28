@@ -6,50 +6,55 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * The type Chat message.
+ * Die ChatMessage
+ *
+ * @author Keno O.
+ * @since Sprint2
  */
 public class ChatMessage implements Serializable {
 
-    private User Sender;
-    private String Message;
-    private Date TimeStamp;
+    private static final long serialVersionUID = 9222541795987990407L;
+
+    private User sender;
+    private String message;
+    private Date timeStamp;
 
     /**
-     * Instantiates a new Chat message.
+     * Instanziiert eine ChatMessage
      *
-     * @param sender  the sender
-     * @param message the message
+     * @param sender  der Absender
+     * @param message die Nachricht
      */
     public ChatMessage(User sender, String message) {
-        this.Sender = sender;
-        this.Message = message;
-        this.TimeStamp = new Date();
+        this.sender = sender;
+        this.message = message;
+        this.timeStamp = new Date();
     }
 
     /**
-     * Gets message.
+     * Gibt die Nachricht zurück
      *
-     * @return the message
+     * @return die Nachricht
      */
     public String getMessage() {
-        return Message;
+        return message;
     }
 
     /**
-     * Gets sender.
+     * Gibt den Absender zurück
      *
-     * @return the sender
+     * @return der Absender
      */
     public User getSender() {
-        return Sender;
+        return sender;
     }
 
     /**
-     * Gets time stamp.
+     * Gibt den Zeitstempel zurück
      *
-     * @return the time stamp
+     * @return der Zeitstempel
      */
     public Date getTimeStamp() {
-        return TimeStamp;
+        return timeStamp;
     }
 }

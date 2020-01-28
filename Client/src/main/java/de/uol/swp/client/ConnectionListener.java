@@ -5,16 +5,21 @@ import io.netty.channel.Channel;
 public interface ConnectionListener {
 
     /**
-     * Is called when the connection to the server has been established
+     * Wird aufgerufen, wenn die Verbindung zum Server hergestellt wurde
      *
      * @param channel
+     * @author Marco
+     * @since Start
+     *
      */
     void connectionEstablished(Channel channel);
 
     /**
-     * If the server sends an exception, this method is called
+     * Wenn der Server eine Ausnahme sendet, wird diese Methode aufgerufen
      *
      * @param cause
+     * @author Marco
+     * @since Start
      */
     void exceptionOccurred(String cause);
 

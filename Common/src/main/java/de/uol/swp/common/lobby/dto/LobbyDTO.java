@@ -10,36 +10,33 @@ import java.util.TreeSet;
 import java.util.UUID;
 
 /**
- * The type Lobby dto.
+ * Die LobbyDTO
+ *
+ * @author Marco
+ * @since Start
  */
 public class LobbyDTO implements Lobby, Serializable {
 
+    private static final long serialVersionUID = 998701048176852816L;
     private final String name;
     private User owner;
     private TreeMap<String, Boolean> readyStatus = new TreeMap<>();
     private Set<User> users = new TreeSet<>();
     private int players;
     private String lobbyPassword;
-    /**
-     * Eindeutige UUID für die Lobby um Lobbys mit gleichen Namen unterscheiden zu können Serverseitig.
-     */
     private UUID lobbyID;
-
-    /**
-     * @author Timo, Rike
-     * @since Sprint 3
-     * @implNote Notewendige Variable zum Setzen des Max. Spielers
-     */
     private Integer maxPlayer;
 
 
     /**
-     * Instantiates a new Lobby dto.
+     * Insatnziiert eine neue LobbyDTO.
      *
-     * @param name    the name
-     * @param creator the creator
-     * @param lobbyID the lobby id
-     * @param lobbyPassword the lobbyPassword
+     * @param name          der Name
+     * @param creator       der Ersteller
+     * @param lobbyID       die LobbyID, um Lobbys mit gleichem Namen unterscheiden zu können - Serverseitig
+     * @param lobbyPassword das Lobbypasswort
+     * @author Marco, Paula, Julia, Timo, Rike
+     * @since Start
      */
     public LobbyDTO(String name, User creator, UUID lobbyID, String lobbyPassword) {
         this.name = name;
@@ -53,13 +50,16 @@ public class LobbyDTO implements Lobby, Serializable {
     }
 
     /**
-     * Instantiates a new Lobby dto for lobby table in main menu
+     * Insatnziiert eine LobbyDTO für die Lobbytable im MainmMenu
      *
-     * @param name    the name
-     * @param creator the creator
-     * @param lobbyID the lobby id
-     * @param players the players
-     * @param maxPlayer the maxPlayers
+     * @param name          der Name der Lobby
+     * @param creator       der Ersteller
+     * @param lobbyID       die LobbyId, um Lobbys mit gleichem Namen unterscheiden zu können - Serverseitig
+     * @param lobbyPassword das Lobbypasswort
+     * @param players       die Spieler
+     * @param maxPlayer     die maximale Spieleranzahl
+     * @author Marco, Julia, Rike, Timo
+     * @since Start
      */
     public LobbyDTO(String name, User creator, UUID lobbyID, String lobbyPassword, Set<User> users, int players, Integer maxPlayer) {
         this.name = name;
@@ -69,7 +69,7 @@ public class LobbyDTO implements Lobby, Serializable {
         this.lobbyID = lobbyID;
         this.players = players;
         this.lobbyPassword = lobbyPassword;
-        this.maxPlayer= maxPlayer;
+        this.maxPlayer = maxPlayer;
     }
 
     @Override
@@ -147,38 +147,37 @@ public class LobbyDTO implements Lobby, Serializable {
     }
 
     @Override
-    public String getLobbyPassword(){
+    public String getLobbyPassword() {
         return lobbyPassword;
     }
 
     /**
-     * Gets readyStatus.
+     * Gibt den readyStatus wieder
      *
-     * @return Value of readyStatus.
+     * @return der jeweilige readyStatus.
+     * @author Marco
+     * @sind Start
      */
     public TreeMap<String, Boolean> getEveryReadyStatus() {
         return readyStatus;
     }
 
-
-
-    /**
-     * @author Timo, Rike
-     * @since Sprint 3
-     * @implNote Setzt den Max Player Wert bzw. gibt ihn zurück.
-     */
     @Override
-    public void setMaxPlayer(Integer maxPlayer)
-    {
-        this.maxPlayer = maxPlayer;
-    }
-
-    @Override
-    public Integer getMaxPlayer()
-    {
+    public Integer getMaxPlayer() {
         return this.maxPlayer;
     }
 
+    /**
+     * Setzt den Max Player Wert bzw. gibt ihn zurück.
+     *
+     * @param maxPlayer die maximale Spieleranzahl die gesetzt werden soll
+     * @author Timo, Rike
+     * @since Sprint 3
+     */
+    @Override
+    public void setMaxPlayer(Integer maxPlayer) {
+        this.maxPlayer = maxPlayer;
+    }
 
 
 }

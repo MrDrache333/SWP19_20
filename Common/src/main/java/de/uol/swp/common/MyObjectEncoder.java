@@ -12,6 +12,16 @@ public class MyObjectEncoder extends ObjectEncoder {
 
     private static final Logger LOG = LogManager.getLogger(MyObjectEncoder.class);
 
+    /**
+     * Kodiert die Message in den ByteBuffer
+     *
+     * @param ctx Ein ChannelHandlerContext (Netty)
+     * @param msg Die serialisierbare Message
+     * @param out Eine Instanz des Netty-Buffers ByteBuf auf den die Message kodiert wird
+     * @throws Exception Wirft und loggt Exception e
+     * @author Marco Grawunder
+     * @since Start
+     */
     @Override
     protected void encode(ChannelHandlerContext ctx, Serializable msg, ByteBuf out) throws Exception {
         if (LOG.isTraceEnabled()) {

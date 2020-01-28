@@ -22,16 +22,42 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Der Lobby Service Test
+ *
+ * @author Julia
+ * @since Sprint3
+ */
 class LobbyServiceTest {
-
+    /**
+     * Standard Benutzer, Standard Owner und Standard Lobby zum Testen
+     *
+     * @author Julia
+     * @since Sprint3
+     */
     User defaultUser = new UserDTO("Marco", "test", "marco@test.de");
     User defaultOwner = new UserDTO("Owner", "test", "123@test.de");
     Lobby defaultLobby = new LobbyDTO("TestLobby", defaultOwner, UUID.randomUUID(), "test");
+
+    /**
+     * Der zu verwendete EventBus
+     *
+     * @author Julia
+     * @since Sprint3
+     */
 
     EventBus bus = new EventBus();
     CountDownLatch lock = new CountDownLatch(1);
     Object event;
 
+
+    /**
+     * Methode zum Behandeln von auf dem Bus aufgetretene Dead-Events.
+     *
+     * @param e Das aufgetretene Dead-Event
+     * @author Julia
+     * @since Sprint3
+     */
     @Subscribe
     void handle(DeadEvent e) {
         this.event = e.getEvent();
@@ -39,16 +65,36 @@ class LobbyServiceTest {
         lock.countDown();
     }
 
+    /**
+     * Eventbus initialisieren
+     *
+     * @author Julia
+     * @since Sprint3
+     */
     @BeforeEach
     void registerBus() {
         event = null;
         bus.register(this);
     }
 
+    /**
+     * Klasse vom EventBus deregistrieren
+     *
+     * @author Julia
+     * @since Sprint3
+     */
     @AfterEach
     void deregisterBus() {
         bus.unregister(this);
     }
+
+    /**
+     * Überprüfen, ob alle Lobbys angegeben werden
+     *
+     * @throws InterruptedException
+     * @author Julia
+     * @since Sprint3
+     */
 
     @Test
     void retrieveAllLobbiesTest() throws InterruptedException {
@@ -60,12 +106,26 @@ class LobbyServiceTest {
         assertTrue(event instanceof RetrieveAllOnlineLobbiesRequest);
     }
 
+    /**
+     * Hilfsmethode für Lobby beitreten
+     *
+     * @throws InterruptedException Die evtl. auftretene Fehlermeldung
+     * @author Julia
+     * @since Sprint3
+     */
     private void joinLobby() throws InterruptedException {
         LobbyService userService = new LobbyService(bus);
         userService.joinLobby(defaultLobby.getName(), new UserDTO(defaultUser.getUsername(), defaultUser.getPassword(), defaultUser.getEMail()), defaultLobby.getLobbyID());
         lock.await(1000, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     *  Versuch einer Lobby beizutreten
+     *
+     * @throws InterruptedException Die evtl. auftretene Fehlermeldung
+     * @author Julia
+     * @since Sprint3
+     */
     @Test
     void joinLobbyTest() throws InterruptedException {
         joinLobby();
@@ -78,6 +138,13 @@ class LobbyServiceTest {
         assertEquals(defaultUser, lobbyJoinUserRequest.getUser());
     }
 
+    /**
+     * Versuch Lobby zu verlassen
+     *
+     * @throws InterruptedException Die evtl. auftretene Fehlermeldung
+     * @author Julia
+     * @since Sprint3
+     */
     @Test
     void leaveLobbyTest() throws InterruptedException {
         joinLobby();
@@ -98,6 +165,12 @@ class LobbyServiceTest {
         assertEquals(defaultUser, lobbyLeaveUserRequest.getUser());
     }
 
+    /**
+     * Überprüfung, ob User beim Logout aus allen Lobbys entfernt wird
+     * @throws InterruptedException Die evtl. auftretene Fehlermeldung
+     * @author Julia
+     * @since Sprint3
+     */
     @Test
     void leaveAllLobbiesOnLogoutTest() throws InterruptedException {
         joinLobby();

@@ -6,14 +6,15 @@ import java.awt.*;
 /**
  * Java Implementation
  *
- * @author Keno Oelrichs Garcia
+ * @author Keno O.
+ * @since Sprint3
  */
 public class Notifyer {
 
     /**
-     * Is supported boolean.
+     * Überprüft ob Benachrichtigungen unterstützt werden.
      *
-     * @return if the Nofification is supported
+     * @return ob die Notification unterstützt wird.
      */
     public boolean isSupported() {
         try {
@@ -25,11 +26,11 @@ public class Notifyer {
     }
 
     /**
-     * Notify.
+     * Schickt eine Benachrichtigung.
      *
-     * @param messageType the message type
-     * @param title       the title
-     * @param message     the message
+     * @param messageType der MessageType
+     * @param title       der Titel
+     * @param message     die Nachricht
      */
     public void notify(MessageType messageType, String title, String message) {
         if (isSupported())
@@ -54,23 +55,23 @@ public class Notifyer {
     }
 
     /**
-     * The enum Message type.
+     * Der enum MessageType.
      */
     public enum MessageType {
         /**
-         * An error message
+         * Eine Fehler-Message
          */
         ERROR,
         /**
-         * A warning message
+         * Eine Warn-Message
          */
         WARNING,
         /**
-         * An information message
+         * Eine Informations-Message
          */
         INFO,
         /**
-         * Simple message
+         * eine einfache Message
          */
         NONE
 
@@ -78,12 +79,12 @@ public class Notifyer {
 }
 
 /**
- * The type Unable to notify exception.
+ * Der Typ Unable to notify exception.
  */
 class UnableToNotifyException extends RuntimeException {
 
     /**
-     * Instantiates a new Unable to notify exception.
+     * Instanziiert eine neue Unable to notify exception.
      *
      * @param message the message
      * @param cause   the cause

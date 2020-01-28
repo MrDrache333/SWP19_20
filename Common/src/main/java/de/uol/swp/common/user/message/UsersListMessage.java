@@ -16,10 +16,20 @@ public class UsersListMessage extends AbstractServerMessage {
     private static final long serialVersionUID = -7968574381977330152L;
     private final ArrayList<String> users;
 
+    /**
+     * Initialisiert eine neue UsersListMessage.
+     *
+     * @param users Liste von Nutzern
+     */
     public UsersListMessage(List<String> users) {
         this.users = new ArrayList<>(users);
     }
 
+    /**
+     * Gibt die Nutzer zurück
+     *
+     * @return Die Nutzer
+     */
     public ArrayList<String> getUsers() {
         return users;
     }
