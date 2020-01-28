@@ -26,7 +26,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * The type Lobby service.
+ * Die Klasse LobbyService, welche eine Lobby erstellt
+ *
+ * @author KenoO
+ * @since Sprint2
  */
 public class LobbyService extends AbstractService {
     private static final Logger LOG = LogManager.getLogger(LobbyService.class);
@@ -36,12 +39,14 @@ public class LobbyService extends AbstractService {
     private final AuthenticationService authenticationService;
 
     /**
-     * Instantiates a new Lobby service.
+     * Instanziiert einen neuen Lobby Service
      *
-     * @param lobbyManagement       the lobby management
-     * @param authenticationService the authentication service
-     * @param chatManagement        the chat management
-     * @param eventBus              the event bus
+     * @param lobbyManagement       das Lobby management
+     * @param authenticationService den Authetifizierenden Service
+     * @param chatManagement        den Chat Mannagement
+     * @param eventBus              den Eventbus
+     * @author KenoO
+     * @since Sprint 2
      */
     @Inject
     public LobbyService(LobbyManagement lobbyManagement, AuthenticationService authenticationService, ChatManagement chatManagement, EventBus eventBus) {
@@ -59,7 +64,7 @@ public class LobbyService extends AbstractService {
      * LobbyManagement auf dem Server wird aufgerufen und übergibt LobbyNamen, LobbyPassword und den Besitzer.
      * Wenn dies erfolgt ist, folgt eine returnMessage an den Client die LobbyView anzuzeigen.
      *
-     * @param msg enthält die Message vom Client mit den benötigten Daten um die Lobby zu erstellen.
+     * @param msg enthält die Message vom Client mit den benötigten Daten, um die Lobby zu erstellen.
      * @author Paula, Haschem, Ferit, Rike
      * @version 0.1
      * @since Sprint2
@@ -128,26 +133,30 @@ public class LobbyService extends AbstractService {
      * Lobbys, in denen User drinnen ist, werden verlassen
      *
      * @param msg the msg
-     * @author Julia, Paula
+     * @author Paula, Julia
      * @since Sprint3
      */
     @Subscribe
     public void onLeaveAllLobbiesOnLogoutRequest(LeaveAllLobbiesOnLogoutRequest msg) {
-        List<Lobby> toLeave = new ArrayList<>();
+        List<LobbyDTO> toLeave = new ArrayList<>();
         lobbyManagement.getLobbies().forEach(lobby -> {
             List<User> users = new ArrayList<>(lobby.getUsers());
             if (users.contains(msg.getUser())) {
-                toLeave.add(lobby);
+                toLeave.add((LobbyDTO) lobby);
             }
         });
         LOG.info("User " + msg.getUser().getUsername() + " is leaving all lobbies");
         toLeave.forEach(lobby -> lobbyManagement.leaveLobby(lobby.getName(), msg.getUser()));
+        toLeave.clear();
+        lobbyManagement.getLobbies().forEach(lobby -> toLeave.add((LobbyDTO) lobby));
+        ServerMessage returnMessage = new UserLeftAllLobbiesMessage(msg.getUser(), toLeave);
+        post(returnMessage);
     }
 
     /**
-     * On update lobby ready status reqest.
+     * Der Status eines Spielers wird abgefragt, ob der geupdatet wurde
      *
-     * @param request the request
+     * @param request den geupdateteten Status des Users
      * @author Keno Oelrichs Garcia
      * @since Sprint3
      */
@@ -166,9 +175,9 @@ public class LobbyService extends AbstractService {
     }
 
     /**
-     * Auf ID umgestellt
+     * Ruft alle Online User in der Lobby ab
      *
-     * @param request the request
+     * @param request die RetrieveAllOnlineUsersInLobbyRequest
      * @author Marvin
      * @since Sprint3
      */
@@ -224,14 +233,30 @@ public class LobbyService extends AbstractService {
      * @author Darian
      */
     @Subscribe
-    public void onKickUserRequest(KickUserRequest msg){
+    public void onKickUserRequest(KickUserRequest msg) {
         if (lobbyManagement.kickUser(msg.getLobbyName(), msg.getUserToKick(), msg.getUser())) {
             LOG.info("User " + msg.getUser().getUsername() + " is kicked from lobby " + msg.getLobbyName());
-            ServerMessage returnMessage = new KickUserMessage(msg.getLobbyName(), msg.getUserToKick(), msg.getLobbyID());
+            ServerMessage returnMessage = new KickUserMessage(msg.getUserToKick(), (LobbyDTO) lobbyManagement.getLobby(msg.getLobbyName()).get());
             post(returnMessage);
         } else {
             LOG.error("Kicking " + msg.getUserToKick() + " from Lobby " + msg.getLobbyName() + " has failed");
         }
+    }
+
+    /**
+     * Definiert, was bei einem onSetMaxPlayerRequest passieren soll.
+     *
+     * @author Timo Rike
+     * @since Sprint 3
+     */
+    @Subscribe
+    public void onSetMaxPlayerRequest(SetMaxPlayerRequest msg) {
+        boolean setMaxPlayerSet = lobbyManagement.setMaxPlayer(msg.getMaxPlayerValue(), msg.getLobbyID(), msg.getLoggedInUser());
+        String lobbyname = lobbyManagement.getName(msg.getLobbyID()).get();
+        LobbyDTO lobby = (LobbyDTO) lobbyManagement.getLobby(lobbyname).get();
+        SetMaxPlayerMessage returnMessage = new SetMaxPlayerMessage(msg.getMaxPlayerValue(), msg.getLobbyID(), setMaxPlayerSet, lobbyManagement.getLobbyOwner(msg.getLobbyID()), lobby);
+        post(returnMessage);
+
     }
 
     //--------------------------------------
@@ -239,10 +264,12 @@ public class LobbyService extends AbstractService {
     //--------------------------------------
 
     /**
-     * Send to all.
+     * Hilfsmethode, die die Nachricht an alle Spieler in der Lobby sendet
      *
-     * @param lobbyName the lobby name
-     * @param message   the message
+     * @param lobbyName den Lobbynamen
+     * @param message   die Nachricht
+     * @author KenoO, Paula
+     * @since Sprint 2
      */
     public void sendToAll(String lobbyName, ServerMessage message) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyName);
@@ -256,7 +283,7 @@ public class LobbyService extends AbstractService {
 
     /**
      * überprüft ob alle Spieler bereit sind
-     * Spiel startet wenn 4 Spieler Bereit sind
+     * Spiel startet wenn alle in der Lobby vorhandenen Spieler Bereit sind
      *
      * @param lobby the lobby
      * @author Darian, Keno
@@ -272,19 +299,5 @@ public class LobbyService extends AbstractService {
         LOG.debug("Game starts in Lobby: " + lobby.getName());
         StartGameMessage msg = new StartGameMessage(lobby.getName(), lobby.getLobbyID());
         sendToAll(lobby.getName(), msg);
-    }
-
-    /**
-     * @author Timo Rike
-     * @since Sprint 3
-     * @implNote Definiert, was bei einem onSetMaxPlayerRequest passieren soll.
-     */
-    @Subscribe
-    public void onSetMaxPlayerRequest(SetMaxPlayerRequest msg)
-    {
-        boolean setMaxPlayerSet = lobbyManagement.setMaxPlayer(msg.getMaxPlayerValue(), msg.getLobbyID(), msg.getLoggedInUser());
-        SetMaxPlayerMessage returnMessage = new SetMaxPlayerMessage(msg.getMaxPlayerValue(), msg.getLobbyID(), setMaxPlayerSet, lobbyManagement.getLobbyOwner(msg.getLobbyID()));
-        post(returnMessage);
-
     }
 }

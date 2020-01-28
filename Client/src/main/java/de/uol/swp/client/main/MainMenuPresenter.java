@@ -2,15 +2,14 @@ package de.uol.swp.client.main;
 
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.ClientApp;
 import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
-import de.uol.swp.common.lobby.message.CreateLobbyMessage;
-import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
-import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
+import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.request.CreateLobbyRequest;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.user.User;
@@ -23,7 +22,6 @@ import de.uol.swp.common.user.request.OpenSettingsRequest;
 import de.uol.swp.common.user.response.AllOnlineUsersResponse;
 import de.uol.swp.common.user.response.LoginSuccessfulResponse;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -31,6 +29,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 import org.apache.logging.log4j.LogManager;
@@ -38,6 +38,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,14 +46,10 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
-/**
- * The type Main menu presenter.
- */
+
 public class MainMenuPresenter extends AbstractPresenter {
 
-    /**
-     * The constant fxml.
-     */
+
     public static final String fxml = "/fxml/MainMenuView.fxml";
     public static final String css = "css/MainMenuPresenter.css";
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
@@ -78,25 +75,21 @@ public class MainMenuPresenter extends AbstractPresenter {
     private Pane chatView;
     @FXML
     private Button createLobbyButton, logoutButton;
-
-    /**
-     * Methode fängt ButtonKlick ab, User verlässt alle Lobbies, in denen er angemeldet ist und wird ausgeloggt
-     *
-     * @param actionEvent
-     * @author Julia, Paula
-     * @since Sprint3
-     */
     @FXML
-    public void onLogoutButtonPressed(ActionEvent actionEvent) {
-        new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Pressed, SoundMediaPlayer.Type.Sound).play();
-        lobbyService.leaveAllLobbiesOnLogout(new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
-        userService.logout(loggedInUser);
-    }
+    private ImageView soundIcon;
+
+
+
+    //--------------------------------------
+    // FXML METHODS
+    //--------------------------------------
 
     /**
-     * Initialize.
+     * Hauptmenü initialisiert
      *
-     * @throws IOException the io exception
+     * @throws IOException mögliche Fehlermeldung
+     * @author Marco, Julia, Keno O.
+     * @since Start
      */
     @FXML
     public void initialize() throws IOException {
@@ -135,16 +128,24 @@ public class MainMenuPresenter extends AbstractPresenter {
         createLobbyButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
         logoutButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
 
+        soundIcon.setOnMouseClicked(event -> {
+            SoundMediaPlayer.setSound(!SoundMediaPlayer.isSoundEnabled());
+            soundIcon.setImage(new Image(new File(getClass().getResource(SoundMediaPlayer.isSoundEnabled() ? "/images/sound_on_icon.png" : "/images/sound_off_icon.png").toExternalForm().replace("file:", "")).toURI().toString()));
+
+        });
+
     }
 
     /**
-     * Lobby erstellen Button: Sobald gedrückt, öffnet sich Dialog. Aufforderung Name und optional Passwort anzugeben.
+     * Sobald der Lobby erstellen Button gedrückt wird, öffnet sich ein Dialog. Hier wird man aufgefordert einen Namen für die Lobby anzugeben. Das Passwortfeld ist optional
+     * auszufüllen. Bleibt das Passwortfeld leer, wird die Lobby offen. Wird ein Passwort angegegben, wird dieses gespeicherrt und die Lobby wird privat
      *
+     * @param event das Event
      * @author Rike, Paula
      * @since Sprint4
      */
     @FXML
-    public void OnCreateLobbyButtonPressed(ActionEvent event) {
+    public void onCreateLobbyButtonPressed(ActionEvent event) {
         List<String> lobbyNames = new ArrayList<>();
         lobbies.forEach(lobby -> lobbyNames.add(lobby.getName()));
         if (lobbyNames.contains(lobbyName.getText())) {
@@ -229,17 +230,11 @@ public class MainMenuPresenter extends AbstractPresenter {
         createLobbyDialoge.setVisible(true);
     }
 
-    public boolean hasFocus(){
-        return ClientApp.getSceneManager().hasFocus();
-    }
-    //--------------------------------------
-    // EVENTBUS
-    //--------------------------------------
 
     /**
      * Die Methode postet ein Request auf den Bus, wenn der Einstellungen-Button gedrückt wird
      *
-     * @param actionEvent
+     * @param actionEvent das ActionEvent
      * @author Anna
      * @since Sprint4
      */
@@ -250,9 +245,32 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     /**
-     * Login successful.
+     * Drückt man auf den LogoutButton, wird der User aus allen Lobbys, in denen er angemeldet ist, entfernt
+     * Zudem wird der User ausgeloggt.
      *
-     * @param message the message
+     * @param actionEvent das ActionEvent
+     * @author Julia, Paula
+     * @since Sprint3
+     */
+    @FXML
+    public void onLogoutButtonPressed(ActionEvent actionEvent) {
+        new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Pressed, SoundMediaPlayer.Type.Sound).play();
+        lobbyService.leaveAllLobbiesOnLogout(new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
+        userService.logout(loggedInUser);
+    }
+
+
+    //--------------------------------------
+    // EVENTBUS
+    //--------------------------------------
+
+
+    /**
+     * Login war erfolgreich. Der User tritt dem globalen Chat bei. Lobbys werden aktualisiert
+     *
+     * @param message Die Nachricht
+     * @author Marco
+     * @since Start
      */
     @Subscribe
     public void loginSuccessful(LoginSuccessfulResponse message) {
@@ -265,9 +283,11 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     /**
-     * New user.
+     * Neuer User loggt sich sein
      *
-     * @param message the message
+     * @param message Die UserLoggedInMessage
+     * @author Marco
+     * @since Start
      */
     @Subscribe
     public void newUser(UserLoggedInMessage message) {
@@ -283,43 +303,35 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     /**
-     * User left.
+     * User wird aus der Liste entfernt, wenn er sich asuegloggt hat
      *
-     * @param message the message
+     * @param message die UserLoggedOutMessage
+     * @author Marco, Keno O., Julia
+     * @since Start
      */
     @Subscribe
-    public void userLeft(UserLoggedOutMessage message) {
+    public void userLoggedOut(UserLoggedOutMessage message) {
         LOG.debug("User " + message.getUsername() + " logged out");
-        Platform.runLater(() -> {
-            if (users.contains(message.getUsername())) {
-                users.remove(message.getUsername());
-                chatViewPresenter.userLeft(message.getUsername());
-            }
-        });
+        userLeft(message.getUsername());
     }
 
     /**
      * User wird aus der Liste entfernt, wenn er seinen Account gelöscht hat
      *
-     * @param message
+     * @param message die UserDroppedMessage
      * @author Julia
      * @since Sprint4
      */
     @Subscribe
     public void userDropped(UserDroppedMessage message) {
         LOG.debug("User " + message.getUser().getUsername() + " deleted his account");
-        Platform.runLater(() -> {
-            if (users.contains(message.getUser().getUsername())) {
-                users.remove(message.getUser().getUsername());
-                chatViewPresenter.userLeft(message.getUser().getUsername());
-            }
-        });
+        userLeft(message.getUser().getUsername());
     }
 
     /**
      * Fügt eine neu erstellte Lobby zur Tabelle hinzu
      *
-     * @param message
+     * @param message die CreateLobbyMessage
      * @author Julia
      * @since Sprint4
      */
@@ -332,9 +344,9 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     /**
-     * Aktualisiert die Lobbytabelle nachdem ein User einer Lobby beigetreten ist
+     * Aktualisiert die Lobbytabelle, nachdem ein User einer Lobby beigetreten ist
      *
-     * @param message
+     * @param message die UserJoinedLobbyMessage
      * @author Julia
      * @since Sprint4
      */
@@ -342,15 +354,15 @@ public class MainMenuPresenter extends AbstractPresenter {
     public void userJoinedLobby(UserJoinedLobbyMessage message) {
         LOG.debug("User " + message.getUser().getUsername() + " joined lobby " + message.getLobbyName());
         Platform.runLater(() -> {
-            lobbies.removeIf(lobby -> lobby.getName().equals(message.getLobbyName()));
+            lobbies.removeIf(lobby -> lobby.getLobbyID().equals(message.getLobbyID()));
             lobbies.add(0, message.getLobby());
         });
     }
 
     /**
-     * Aktualisiert die Lobbytabelle nachdem ein User eine Lobby verlassen hat
+     * Aktualisiert die Lobbytabelle, nachdem ein User eine Lobby verlassen hat
      *
-     * @param message
+     * @param message die UserLeftLobbyMessage
      * @author Julia
      * @since Sprint4
      */
@@ -358,7 +370,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     public void userLeftLobby(UserLeftLobbyMessage message) {
         LOG.debug("User " + message.getUser().getUsername() + " left lobby " + message.getLobbyName());
         Platform.runLater(() -> {
-            lobbies.removeIf(lobby -> lobby.getName().equals(message.getLobbyName()));
+            lobbies.removeIf(lobby -> lobby.getLobbyID().equals(message.getLobbyID()));
             if (message.getLobby() != null) {
                 lobbies.add(0, message.getLobby());
             }
@@ -366,9 +378,56 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     /**
+     * Aktualisiert die Lobbytabelle, nachdem sich ein User ausgeloggt oder seinen Account gelöscht hat
+     *
+     * @param message die UserLeftAllLobbiesMessage
+     * @author Julia
+     * @since Sprint4
+     */
+    @Subscribe
+    public void userLeftAllLobbies(UserLeftAllLobbiesMessage message) {
+        Platform.runLater(() -> {
+            lobbies.clear();
+            lobbies.addAll(message.getLobbies());
+        });
+    }
+
+    /**
+     * Aktualisiert die Lobbytabelle, nachdem ein User aus einer Lobby gekickt wurde
+     *
+     * @param message die KickUserMessage
+     * @author Julia
+     * @since Sprint4
+     */
+    @Subscribe
+    public void userKicked(KickUserMessage message) {
+        Platform.runLater(() -> {
+            lobbies.removeIf(lobby -> lobby.getLobbyID().equals(message.getLobby().getLobbyID()));
+            lobbies.add(0, message.getLobby());
+        });
+    }
+
+    /**
+     * Aktualisiert die Lobbytabelle, nachdem die max. Spielerzahl einer Lobby gesetzt wurde
+     *
+     * @param message die SetMaxPlayerMessage
+     * @author Julia
+     * @since Sprint4
+     */
+    @Subscribe
+    public void maxPlayerSet(SetMaxPlayerMessage message) {
+        if (message.isSetMaxPlayerSet()) {
+            Platform.runLater(() -> {
+                lobbies.removeIf(lobby -> lobby.getLobbyID().equals(message.getLobby().getLobbyID()));
+                lobbies.add(0, message.getLobby());
+            });
+        }
+    }
+
+    /**
      * Aktualisiert den loggedInUser und die Lobbytabelle sowie die Userliste, falls sich der Username geändert hat
      *
-     * @param message
+     * @param message die UpdatedUserMessage
      * @author Julia
      * @since Sprint4
      */
@@ -412,9 +471,11 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     /**
-     * User list.
+     * User Liste wird aktualisiert
      *
-     * @param allUsersResponse the all users response
+     * @param allUsersResponse die AllOnlineUsersResoinse
+     * @author Marco
+     * @since Start
      */
     @Subscribe
     public void userList(AllOnlineUsersResponse allUsersResponse) {
@@ -425,7 +486,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     /**
      * Erstes Erstellen der Lobbytabelle beim Login
      *
-     * @param allLobbiesResponse
+     * @param allLobbiesResponse Die AllOnlineLobbiesResponse
      * @author Julia
      * @since Sprint2
      */
@@ -442,6 +503,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     /**
      * Updatet die lobbytabelle
      *
+     * @param lobbyList die LobbyListe, die alle Lobbys enthält
      * @author Julia
      * @since Sprint2
      */
@@ -457,11 +519,10 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     /**
-     * @author Rike, Paula
      * Hilfsmethode zum Erstellen des Buttons zum Betreten einer Lobby
      * beim join wird ebenfalls überprüft ob die Lobby ein lobbyPassword besitzt und ggf. dieses abgefragt
      *
-     * @author Paula, Julia
+     * @author Rike, Julia, Paula
      * @since Sprint3
      */
     private void addJoinLobbyButton() {
@@ -536,9 +597,17 @@ public class MainMenuPresenter extends AbstractPresenter {
                 };
             }
         };
+
         joinLobby.setCellFactory(cellFactory);
     }
 
+    /**
+     * Updatet die Liste mit den angemeldeten Usern
+     *
+     * @param userList Die Liste, die, die eingeloggten User enthält
+     * @author Marco
+     * @since Start
+     */
     private void updateUsersList(List<UserDTO> userList) {
         // Attention: This must be done on the FX Thread!
         Platform.runLater(() -> {
@@ -548,6 +617,22 @@ public class MainMenuPresenter extends AbstractPresenter {
             }
             users.clear();
             userList.forEach(u -> users.add(u.getUsername()));
+        });
+    }
+
+    /**
+     * User wird aus der Userliste entfernt und im Chat wird angezeigt, dass er das Spiel verlassen hat
+     *
+     * @param username der Name des Users
+     * @author Julia
+     * @since Sprint4
+     */
+    private void userLeft(String username) {
+        Platform.runLater(() -> {
+            if (users.contains(username)) {
+                users.remove(username);
+                chatViewPresenter.userLeft(username);
+            }
         });
     }
 }
