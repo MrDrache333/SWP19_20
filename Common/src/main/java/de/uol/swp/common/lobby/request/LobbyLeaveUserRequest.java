@@ -24,11 +24,10 @@ public class LobbyLeaveUserRequest extends AbstractLobbyRequest {
      * Instanziiert ein LobbyLeaveUserRequest
      *
      * @param lobbyName der Lobby Name
-     * @param user der Benutzer
-     * @param lobbyID die Lobby ID
+     * @param user      der Benutzer
+     * @param lobbyID   die Lobby ID
      * @author Julia
      * @since Sprint 3
-     *
      */
     public LobbyLeaveUserRequest(String lobbyName, UserDTO user, UUID lobbyID) {
         super(lobbyName, user);

@@ -21,8 +21,8 @@ public class UpdateUserRequest extends AbstractRequestMessage {
     /**
      * Benutzeranfrage aktualisieren
      *
-     * @param user der User
-     * @param oldUser der alter User
+     * @param user            der User
+     * @param oldUser         der alter User
      * @param currentPassword Jetzige Passwort
      */
     public UpdateUserRequest(User user, User oldUser, String currentPassword) {

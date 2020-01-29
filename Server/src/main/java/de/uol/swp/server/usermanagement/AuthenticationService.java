@@ -47,7 +47,7 @@ public class AuthenticationService extends AbstractService {
     /**
      * AuthenticationService wird initialisiert
      *
-     * @param bus EventBus
+     * @param bus            EventBus
      * @param userManagement das UserManagement
      * @author Marco
      * @since Start

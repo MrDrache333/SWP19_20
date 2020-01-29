@@ -200,10 +200,9 @@ class AuthenticationServiceTest {
     /**
      * Testet die retrieveAllOnlineUsers() Methode bei null eingeloggten Usern
      *
+     * @throws InterruptedException
      * @author Marco
      * @since Start
-     *
-     * @throws InterruptedException
      */
     @Test
     void loggedInUsersEmpty() throws InterruptedException {
