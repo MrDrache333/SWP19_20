@@ -1,5 +1,7 @@
 package de.uol.swp.server.game;
 
+import com.google.inject.Inject;
+import de.uol.swp.common.game.exception.GameManagementException;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.server.chat.Chat;
 import de.uol.swp.server.chat.ChatManagement;
@@ -19,8 +21,20 @@ import java.util.UUID;
 public class GameManagement {
 
     private static Map<UUID, Game> games = new TreeMap<>();
-    private static LobbyManagement lobbyManagement = new LobbyManagement();
-    private static ChatManagement chatManagement = new ChatManagement();
+    private final LobbyManagement lobbyManagement;
+    private final ChatManagement chatManagement;
+
+    /**
+     * Erstellt ein neues gameManagement
+     *
+     * @param chatManagement  Das Chat Management
+     * @param lobbyManagement Das Lobby Management
+     */
+    @Inject
+    public GameManagement(ChatManagement chatManagement, LobbyManagement lobbyManagement) {
+        this.lobbyManagement = lobbyManagement;
+        this.chatManagement = chatManagement;
+    }
 
     /**
      * Erstellt ein neues Spiel, übergibt die zugehörige Lobby und den Chat und fügt dies dann der Map hinzu
@@ -29,13 +43,21 @@ public class GameManagement {
      * @author KenoO
      * @since Sprint 5
      */
-    public void createGame(UUID lobbyID) {
-        Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyID.toString());
-        Optional<Chat> chat = chatManagement.getChat(lobbyID.toString());
-        if (lobby.isPresent() && chat.isPresent()) {
-            Game game = new Game(lobby.get(), chat.get());
-            games.put(lobbyID, game);
-        }
+    void createGame(UUID lobbyID) {
+        if (games.containsKey(lobbyID))
+            throw new GameManagementException("Game with ID " + lobbyID.toString() + " allready exists!");
+        Optional<String> lobbyName = lobbyManagement.getName(lobbyID);
+        if (lobbyName.isPresent()) {
+            Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyName.get());
+            Optional<Chat> chat = chatManagement.getChat(lobbyID.toString());
+            if (lobby.isPresent() && chat.isPresent()) {
+                Game game = new Game(lobby.get(), chat.get());
+                games.put(lobbyID, game);
+            } else
+                throw new GameManagementException("Chat or Lobby not found!");
+
+        } else
+            throw new GameManagementException("Lobby-ID not found!");
     }
 
     /**
