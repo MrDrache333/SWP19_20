@@ -28,7 +28,7 @@ class ChatManagementTest {
     /**
      * Der Chat Management.
      */
-    final ChatManagement chatManagement = new ChatManagement();
+    private final ChatManagement chatManagement = new ChatManagement();
 
     /**
      * Erstellt den Chat "global" und prüft daraufhin, das der Chat "global" nicht null ist.
