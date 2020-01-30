@@ -16,7 +16,7 @@
       "name": "Silber",
       "Value": 2,
       "costs": 3,
-      "cardType": "MoneyCard"
+      "cardtype": "MoneyCard"
     }
   },
   {
@@ -26,7 +26,7 @@
       "name": "Gold",
       "Value": 3,
       "costs": 6,
-      "cardType": "MoneyCard"
+      "cardtype": "MoneyCard"
     }
   },
   {
@@ -36,7 +36,7 @@
       "name": "Anwesen",
       "Value": 1,
       "costs": 2,
-      "cardType": "ValueCard"
+      "cardtype": "ValueCard"
     }
   },
   {
@@ -46,7 +46,7 @@
       "name": "Herzogtum",
       "Value": 3,
       "costs": 5,
-      "cardType": "ValueCard"
+      "cardtype": "ValueCard"
     }
   },
   {
@@ -56,7 +56,7 @@
       "name": "Provinz",
       "Value": 6,
       "costs": 8,
-      "cardType": "ValueCard"
+      "cardtype": "ValueCard"
     }
   },
   {
@@ -65,7 +65,17 @@
       "id": "006",
       "name": "Burggraben",
       "costs": 2,
-      "cardType": "ReactionCard"
+      "cardtype": "ReactionCard"
+    }
+  }
+,
+  {
+    "class": "ReactionCard",
+    "properties": {
+      "id": "007",
+      "name": "Burggraben2",
+      "costs": 2,
+      "cardtype": "ReactionCard"
     }
   }
 ]
