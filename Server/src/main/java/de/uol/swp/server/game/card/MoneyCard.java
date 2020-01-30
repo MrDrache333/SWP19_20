@@ -7,6 +7,7 @@ public class MoneyCard extends Card {
 
     private short Value;
 
+
     /**
      * Erstellt eine neue Geldkarte
      *

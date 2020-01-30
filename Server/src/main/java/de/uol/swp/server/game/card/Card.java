@@ -7,19 +7,25 @@ public abstract class Card {
 
     private String name;
     private short id;
-    private Type type;
+    private Type cardtype;
+
+    public short getCosts() {
+        return costs;
+    }
+
+    private short costs;
 
     /**
      * Erstellt eine neue Spielkarte
      *
-     * @param type Der Kartentyp
+     * @param cardtype Der Kartentyp
      * @param name Der Kartenname
      * @param id   Die KartenID
      * @author KenoO
      * @since Sprint 5
      */
-    Card(Type type, String name, short id) {
-        this.type = type;
+    Card(Type cardtype, String name, short id) {
+        this.cardtype = cardtype;
         this.name = name;
         this.id = id;
     }
@@ -53,8 +59,8 @@ public abstract class Card {
      * @author KenoO
      * @since Sprint 5
      */
-    public Type getType() {
-        return type;
+    public Type getCardtype() {
+        return cardtype;
     }
 
     /**
