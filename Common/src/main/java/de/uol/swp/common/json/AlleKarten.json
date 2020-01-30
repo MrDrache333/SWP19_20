@@ -1,0 +1,266 @@
+{
+"Card0": {
+    "ID": "000",
+    "Name": "Kupfer",
+    "Punkte": "1",
+    "Kosten": "0",
+    "Kartentyp": "Geld"
+  },
+
+"Card1": {
+    "ID": "001",
+    "Name": "Silber",
+    "Punkte": "2",
+    "Kosten": "3",
+    "Kartentyp": "Geld"
+  },
+
+"Card2": {
+    "ID": "002",
+    "Name": "Gold",
+    "Punkte": "3",
+    "Kosten": "6",
+    "Kartentyp": "Geld"
+  },
+
+"Card3": {
+    "ID": "003",
+    "Name": "Anwesen",
+    "Punkte": "1",
+    "Kosten": "2",
+    "Kartentyp": "Punkte"
+  },
+
+"Card4": {
+    "ID": "004",
+    "Name": "Herzogtum",
+    "Punkte": "3",
+    "Kosten": "5",
+    "Kartentyp": "Punkte"
+  },
+
+"Card5": {
+    "ID": "005",
+    "Name": "Provinz",
+    "Punkte": "6",
+    "Kosten": "8",
+    "Kartentyp": "Punkte"
+  },
+
+"Card6": {
+    "ID": "006",
+    "Name": "Burggraben",
+    "Kosten": "2",
+    "Kartentyp": "Aktion-Reaktion"
+  },
+
+"Card7": {
+  "ID": "007",
+  "Name": "Dorf",
+  "Kosten": "3",
+  "Kartentyp": "Aktion"
+},
+
+"Card8": {
+  "ID": "008",
+  "Name": "Holzfäller",
+  "Kosten": "2",
+  "Kartentyp": "Aktion"
+},
+
+  "Card14": {
+    "ID": "009",
+    "Name": "Keller",
+    "Kosten": "2",
+    "Kartentyp": "Aktion"
+  },
+
+"Card10": {
+  "ID": "010",
+  "Name": "Markt",
+  "Kosten": "5",
+  "Kartentyp": "Aktion"
+},
+
+"Card11": {
+  "ID": "011",
+  "Name": "Militz",
+  "Kosten": "4",
+  "Kartentyp": "Aktion-Angriff"
+},
+
+"Card12": {
+  "ID": "012",
+  "Name": "Mine",
+  "Kosten": "5",
+  "Kartentyp": "Aktion"
+},
+
+"Card13": {
+  "ID": "013",
+  "Name": "Schmiede",
+  "Kosten": "4",
+  "Kartentyp": "Aktion"
+},
+
+"Card14": {
+  "ID": "014",
+  "Name": "Umbau",
+  "Kosten": "4",
+  "Kartentyp": "Aktion"
+},
+
+"Card15": {
+  "ID": "015",
+  "Name": "Werkstatt",
+  "Kosten": "3",
+  "Kartentyp": "Aktion"
+},
+
+"Card16": {
+  "ID": "016",
+  "Name": "Abenteuer",
+  "Kosten": "6",
+  "Kartentyp": "Aktion"
+},
+
+"Card17": {
+  "ID": "017",
+  "Name": "Bürokrat",
+  "Kosten": "4",
+  "Kartentyp": "Aktion-Angriff"
+},
+
+"Card18": {
+  "ID": "018",
+  "Name": "Festmahl",
+  "Kosten": "4",
+  "Kartentyp": "Aktion"
+},
+
+"Card19": {
+  "ID": "019",
+  "Name": "Geldverleiher",
+  "Kosten": "4",
+  "Kartentyp": "Aktion"
+},
+
+"Card20": {
+  "ID": "020",
+  "Name": "Kanzler",
+  "Kosten": "3",
+  "Kartentyp": "Aktion"
+},
+
+"Card21": {
+  "ID": "021",
+  "Name": "Kapelle",
+  "Kosten": "2",
+  "Kartentyp": "Aktion"
+},
+
+"Card22": {
+  "ID": "022",
+  "Name": "Laboratorium",
+  "Kosten": "5",
+  "Kartentyp": "Aktion"
+},
+
+"Card23": {
+  "ID": "023",
+  "Name": "Thronsaal",
+  "Kosten": "4",
+  "Kartentyp": "Aktion"
+},
+
+"Card24": {
+  "ID": "024",
+  "Name": "Bibliothek",
+  "Kosten": "5",
+  "Kartentyp": "Aktion"
+},
+
+"Card25": {
+  "ID": "025",
+  "Name": "Dieb",
+  "Kosten": "4",
+  "Kartentyp": "Aktion-Angriff"
+},
+
+"Card26": {
+  "ID": "026",
+  "Name": "Jahrmarkt",
+  "Kosten": "5",
+  "Kartentyp": "Aktion"
+},
+
+"Card27": {
+  "ID": "027",
+  "Name": "Ratsversammlung",
+  "Kosten": "5",
+  "Kartentyp": "Aktion"
+},
+
+"Card28": {
+  "ID": "028",
+  "Name": "Spion",
+  "Kosten": "4",
+  "Kartentyp": "Aktion-Angriff"
+},
+
+"Card29": {
+  "ID": "029",
+  "Name": "Gärten",
+  "Kosten": "4",
+  "Kartentyp": "Punkte"
+},
+
+"Card30": {
+  "ID": "030",
+  "Name": "Hexe",
+  "Kosten": "5",
+  "Kartentyp": "Aktion-Angriff"
+},
+
+"Card31": {
+  "ID": "031",
+  "Name": "Händlerin",
+  "Kosten": "3",
+  "Kartentyp": "Aktion"
+},
+
+"Card32": {
+  "ID": "032",
+  "Name": "Vorbotin",
+  "Kosten": "3",
+  "Kartentyp": "Aktion"
+},
+
+"Card33": {
+  "ID": "033",
+  "Name": "Vasall",
+  "Kosten": "3",
+  "Kartentyp": "Aktion"
+},
+
+"Card34": {
+  "ID": "034",
+  "Name": "Töpferei",
+  "Kosten": "6",
+  "Kartentyp": "Aktion"
+},
+
+"Card35": {
+  "ID": "035",
+  "Name": "Wilddiebin",
+  "Kosten": "4",
+  "Kartentyp": "Aktion"
+},
+
+"Card36": {
+  "ID": "036",
+  "Name": "Torwächterin",
+  "Kosten": "5",
+  "Kartentyp": "Aktion"
+  }
+}
