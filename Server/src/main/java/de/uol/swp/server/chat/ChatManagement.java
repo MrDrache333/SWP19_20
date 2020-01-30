@@ -10,19 +10,22 @@ import java.util.TreeMap;
 import java.util.UUID;
 
 /**
- * The type Chat management.
+ * Das serverseitige Chat-Management.
  */
 public class ChatManagement extends AbstractChatManagement {
 
-    private static final short CHATMESSAGEHISTORYSIZE = 20;
+    private final short CHATMESSAGEHISTORYSIZE = 20;
 
-    private static SortedMap<String, Chat> Chats = new TreeMap<>();
+    private SortedMap<String, Chat> Chats = new TreeMap<>();
 
     /**
-     * Get the Chat with chatId.
+     * Gibt den Chat mit Chat ID zurück.
      *
-     * @param chatId the chat id
-     * @return the chat
+     * @param chatId die Chat ID
+     * @return den Chat
+     * @author Keno O
+     * @since Sprint 1
+     * @throws NullPointerException
      */
     public Optional<Chat> getChat(String chatId) {
         try {
@@ -34,9 +37,11 @@ public class ChatManagement extends AbstractChatManagement {
     }
 
     /**
-     * Create a new Chat.
+     * Erstellt einen neuen Chat.
      *
-     * @return the ChatId
+     * @return die Chat ID
+     * @author Keno O
+     * @since Sprint 1
      */
     synchronized public String createChat() {
         String id = String.valueOf(UUID.randomUUID());
@@ -45,10 +50,12 @@ public class ChatManagement extends AbstractChatManagement {
     }
 
     /**
-     * Create chat.
+     * Chat wird erstellt.
      *
-     * @param ChatId the chat id
-     * @throws ChatException the chat exception
+     * @param ChatId die Chat ID
+     * @throws ChatException die Chat Fehlermeldung
+     * @author Keno O
+     * @since Sprint 1
      */
     synchronized public void createChat(String ChatId) throws ChatException {
         if (getChat(ChatId).isPresent()) throw new ChatException("Chat with Id " + ChatId + " already exists!");
@@ -56,9 +63,12 @@ public class ChatManagement extends AbstractChatManagement {
     }
 
     /**
-     * Delete chat by given ChatId.
+     * Chat nach Chat ID löschen.
      *
-     * @param ChatId the chat id
+     * @param ChatId die Chat ID
+     * @author Keno O
+     * @since Sprint 1
+     * @throws ChatException beim Fehler den Chat zu löschen.
      */
     public void deleteChat(String ChatId) throws ChatException {
         if (Chats.size() > 0 && Chats.get(ChatId) != null) Chats.remove(ChatId);
@@ -66,10 +76,13 @@ public class ChatManagement extends AbstractChatManagement {
     }
 
     /**
-     * Add message.
+     * Nachricht zu einem Chat hinzufügen.
      *
-     * @param chatId  the chat id
-     * @param message the message
+     * @param chatId die Chat ID
+     * @param message die Nachricht
+     * @throws ChatException wenn es den Chat mir der ID nicht gibt.
+     * @author Keno O
+     * @since Sprint 1
      */
     synchronized public void addMessage(String chatId, ChatMessage message) throws ChatException {
         Optional<Chat> chat = getChat(chatId);
@@ -81,21 +94,53 @@ public class ChatManagement extends AbstractChatManagement {
         } else throw new ChatException("Chat with Id " + chatId + " does not exist!");
     }
 
+    /**
+     * Sendet eine Nachricht an den globalen Chat.
+     *
+     * @param message the message
+     * @author Keno O
+     * @since Sprint 1
+     */
     @Override
     public void sendMessage(ChatMessage message) {
         addMessage("global", message);
     }
 
+    /**
+     * sendet eine Nachricht an Chat mit bestimmter ID.
+     *
+     * @param ChatId  the chat id
+     * @param message the message
+     * @author Keno O
+     * @since Sprint 1
+     */
     @Override
     public void sendMessage(String ChatId, ChatMessage message) {
         addMessage(ChatId, message);
     }
 
+    /**
+     * Gibt den Chatverlauf des globalen Chats zurück.
+     *
+     * @param sender der Benutzer
+     * @return der Chatverlauf
+     * @author Keno O
+     * @since Sprint 1
+     */
     @Override
     public Chat getChatHistory(User sender) {
         return getChatHistory(sender);
     }
 
+    /**
+     * Gibt den Chatverlauf eines bestimmten Chats zurück.
+     *
+     * @param ChatId the chat id
+     * @param sender der Benutzer
+     * @return der Chatverlauf
+     * @author Keno O
+     * @since Sprint 1
+     */
     @Override
     public Chat getChatHistory(String ChatId, User sender) {
         return getChatHistory(ChatId, sender);
