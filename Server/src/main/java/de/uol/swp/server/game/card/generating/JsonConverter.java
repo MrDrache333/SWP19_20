@@ -7,6 +7,7 @@ import de.uol.swp.server.game.card.*;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class JsonConverter {
     private static Card[] cardElemente;
@@ -31,6 +32,19 @@ public class JsonConverter {
     public static void main(String[] args) throws FileNotFoundException {
         JsonConverter abc = new JsonConverter();
         abc.generateAllCards();
+
+        ArrayList<Card> cards = new ArrayList<>();
+        cards.addAll(Arrays.asList(cardElemente));
+        for (Card c : cards) {
+            try {
+                if (c.getCardtype().equals(Card.Type.MoneyCard))
+                    moneyCardArray.add((MoneyCard) c);
+            } catch (NullPointerException ignored) {
+            }
+        }
+
+        moneyCardArray.stream().forEach(e -> System.out.println(e.getName() + " V: " + e.getValue()));
+
 
 
     }
