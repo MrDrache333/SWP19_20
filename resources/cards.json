@@ -1,0 +1,377 @@
+[
+  {
+    "class": "MoneyCard",
+    "properties": {
+        "id": "01",
+        "name": "Kupfer",
+        "value": 1,
+        "costs": 0,
+        "cardType": "MoneyCard"
+  }
+  },
+
+  {
+    "class": "MoneyCard",
+    "properties": {
+        "id": "02",
+        "name": "Silber",
+        "value": 2,
+        "costs": 3,
+        "cardType": "MoneyCard"
+  }
+  },
+
+  {
+    "class": "MoneyCard",
+    "properties": {
+        "id": "03",
+        "name": "Gold",
+        "value": 3,
+        "costs": 6,
+        "cardType": "MoneyCard"
+  }
+  },
+
+  {
+    "class": "ValueCard",
+    "properties": {
+        "id": "04",
+        "name": "Anwesen",
+        "value": 1,
+        "costs": 2,
+        "cardType": "ValueCard"
+  }
+  },
+
+  {
+    "class": "ValueCard",
+    "properties": {
+        "id": "05",
+        "name": "Herzogtum",
+        "value": 3,
+        "costs": 5,
+        "cardType": "ValueCard"
+  }
+  },
+
+  {
+    "class": "ValueCard",
+    "properties": {
+          "id": "06",
+          "name": "Provinz",
+          "value": 6,
+          "costs": 8,
+          "cardType": "ValueCard"
+  }
+  },
+
+  {
+    "class": "ReactionCard",
+    "properties": {
+        "id": "07",
+        "name": "Burggraben",
+        "costs": "2",
+        "cardType": "ReactionCard"
+  }
+  },
+
+  {
+    "class": "ActionCard",
+    "properties": {
+        "id": "08",
+        "name": "Dorf",
+        "costs": 3,
+        "cardtype": "ActionCard"
+}
+},
+
+{
+    "class": "ActionCard",
+    "properties": {
+        "id": "09",
+        "name": "Holzfäller",
+        "costs": 2,
+        "cardType": "ActionCard"
+}
+},
+
+{
+    "class": "ActionCard",
+    "properties": {
+        "id": "10",
+        "name": "Keller",
+        "costs": 2,
+        "cardType": "ActionCard"
+  }
+  },
+
+  {
+    "class": "ActionCard",
+    "properties": {
+        "id": "11",
+        "name": "Markt",
+        "costs": 5,
+        "cardType": "ActionCard"
+}
+},
+
+{
+    "class": "ActionCard",
+    "properties": {
+        "id": "12",
+        "name": "Militz",
+        "costs": 4,
+        "cardtype": "ActionCard"
+}
+},
+
+{
+    "class": "ActionCard",
+    "properties": {
+        "id": "13",
+        "name": "Mine",
+        "costs": 5,
+        "cardType": "ActionCard"
+}
+},
+
+{
+    "class": "ActionCard",
+    "properties": {
+        "id": "14",
+        "name": "Schmiede",
+        "costs": 4,
+        "cardType": "ActionCard"
+}
+},
+
+{
+    "class": "ActionCard",
+    "properties": {
+        "id": "15",
+        "name": "Umbau",
+        "costs": 4,
+        "cardType": "ActionCard"
+}
+},
+
+{
+    "class": "ActionCard",
+    "properties": {
+        "id": "16",
+        "name": "Werkstatt",
+        "costs": 3,
+        "cardType": "ActionCard"
+}
+},
+
+{
+    "class": "ActionCard",
+    "properties": {
+        "id": "17",
+        "name": "Abenteuer",
+        "costs": 6,
+        "cardType": "ActionCard"
+}
+},
+
+{
+    "class": "ActionCard",
+    "properties": {
+        "id": "18",
+        "name": "Bürokrat",
+        "costs": 4,
+        "cardType": "ActionCard"
+}
+},
+
+{
+    "class": "ActionCard",
+    "properties": {
+        "id": "19",
+        "name": "Festmahl",
+        "costs": 4,
+        "cardType": "ActionCard"
+      }
+},
+
+{
+    "class": "ActionCard",
+    "properties": {
+        "id": "20",
+        "name": "Geldverleiher",
+        "costs": 4,
+        "cardType": "ActionCard"
+}
+},
+
+{
+    "class": "ActionCard",
+    "properties": {
+        "id": "21",
+        "name": "Kanzler",
+        "costs": 3,
+        "cardType": "ActionCard"
+}
+},
+
+{
+    "class": "ActionCard",
+    "properties": {
+        "id": "22",
+        "name": "Kapelle",
+        "costs": 2,
+        "cardType": "ActionCard"
+}
+},
+
+{
+    "class": "ActionCard",
+    "properties": {
+        "id": "23",
+        "name": "Laboratorium",
+        "costs": 5,
+        "cardType": "ActionCard"
+}
+},
+
+{
+    "class": "ActionCard",
+    "properties": {
+        "id": "24",
+        "name": "Thronsaal",
+        "costs": 4,
+        "cardType": "ActionCard"
+}
+},
+
+{
+    "class": "ActionCard",
+    "properties": {
+        "id": "25",
+        "name": "Bibliothek",
+        "costs": 5,
+        "cardType": "ActionCard"
+}
+},
+
+{
+    "class": "ActionCard",
+    "properties": {
+        "id": "26",
+        "name": "Dieb",
+        "costs": 4,
+        "cardType": "ActionCard"
+}
+},
+
+{
+    "class": "ActionCard",
+    "properties": {
+        "id": "27",
+        "name": "Jahrmarkt",
+        "costs": 5,
+        "cardtype": "ActionCard"
+}
+},
+
+{
+    "class": "ActionCard",
+    "properties": {
+        "id": "28",
+        "name": "Ratsversammlung",
+        "costs": 5,
+        "cardType": "ActionCard"
+}
+},
+
+{
+    "class": "ActionCard",
+    "properties": {
+        "id": "29",
+        "name": "Spion",
+        "costs": 4,
+        "cardType": "ActionCard"
+}
+},
+
+{
+    "class": "ValueCard",
+    "properties": {
+        "id": "30",
+        "name": "Gärten",
+        "costs": 4,
+        "cardType": "ValueCard"
+}
+},
+
+{
+    "class": "ActionCard",
+    "properties": {
+        "id": "31",
+        "name": "Hexe",
+        "costs": 5,
+        "cardType": "ActionCard"
+}
+},
+
+{
+    "class": "ActionCard",
+    "properties": {
+        "id": "32",
+        "name": "Händlerin",
+        "costs": 3,
+        "cardType": "ActionCard"
+      }
+},
+
+{
+    "class": "ActionCard",
+    "properties": {
+        "id": "33",
+        "name": "Vorbotin",
+        "costs": 3,
+        "cardType": "ActionCard"
+}
+},
+
+{
+    "class": "ActionCard",
+    "properties": {
+        "id": "34",
+        "name": "Vasall",
+        "costs": 3,
+        "cardType": "ActionCard"
+      }
+},
+
+{
+    "class": "ActionCard",
+    "properties": {
+        "id": "35",
+        "name": "Töpferei",
+        "costs": 6,
+        "cardType": "ActionCard"
+      }
+},
+
+{
+    "class": "ActionCard",
+    "properties": {
+        "id": "36",
+        "name": "Wilddiebin",
+        "costs": 4,
+        "cardType": "ActionCard"
+      }
+},
+
+{
+    "class": "ActionCard",
+    "properties": {
+        "id": "37",
+        "name": "Torwächterin",
+        "costs": 5,
+        "cardType": "ActionCard"
+      }
+  }
+]
