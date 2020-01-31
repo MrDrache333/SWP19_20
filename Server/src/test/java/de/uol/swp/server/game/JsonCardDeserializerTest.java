@@ -10,13 +10,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class JsonCardDeserializerTest {
 
     ArrayList<Card> cards = new ArrayList<>();
     private Card[] newCardElementsArray;
-    private String jsonFilePath = "Common/src/main/java/de/uol/swp/common/json/AlleKarten.json";
+    private String jsonFilePath = "Server/src/test/java/de/uol/swp/server/game/JsonConvertTest.json";
     private ArrayList<MoneyCard> moneyCardArrayList = new ArrayList<>();
     private ArrayList<ActionCard> actionCardArrayList = new ArrayList<>();
     private ArrayList<ReactionCard> reactionCardArrayList = new ArrayList<>();

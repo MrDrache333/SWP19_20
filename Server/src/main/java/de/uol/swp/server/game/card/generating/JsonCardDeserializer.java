@@ -17,9 +17,9 @@ import java.util.Arrays;
  * @since Sprint 5
  */
 public class JsonCardDeserializer {
-    ArrayList<Card> cards = new ArrayList<>();
+    private ArrayList<Card> cards = new ArrayList<>();
     private Card[] newCardElementsArray;
-    private String jsonFilePath = "Common/src/main/java/de/uol/swp/common/json/AlleKarten.json";
+    private String jsonFilePath = "Common/src/main/resources/cards.json";
     private ArrayList<MoneyCard> moneyCardArrayList = new ArrayList<>();
     private ArrayList<ActionCard> actionCardArrayList = new ArrayList<>();
     private ArrayList<ReactionCard> reactionCardArrayList = new ArrayList<>();
@@ -44,11 +44,9 @@ public class JsonCardDeserializer {
      * @return MoneyCard-ArrayList
      */
     public ArrayList<MoneyCard> getMoneyCards() {
-        //ArrayList<Card> cards = new ArrayList<>();
-        // cards.addAll(Arrays.asList(cardElemente));
         for (Card c : cards) {
             try {
-                if (c.getCardtype().equals(Card.Type.MoneyCard))
+                if (c.getCardtype().equals(Card.Type.MoneyCard) && !moneyCardArrayList.contains(c))
                     moneyCardArrayList.add((MoneyCard) c);
             } catch (NullPointerException ignored) {
             }
@@ -62,7 +60,7 @@ public class JsonCardDeserializer {
     public ArrayList<ActionCard> getActionCards() {
         for (Card c : cards) {
             try {
-                if (c.getCardtype().equals(Card.Type.ActionCard))
+                if (c.getCardtype().equals(Card.Type.ActionCard) && !actionCardArrayList.contains(c))
                     actionCardArrayList.add((ActionCard) c);
             } catch (NullPointerException ignored) {
             }
@@ -76,7 +74,7 @@ public class JsonCardDeserializer {
     public ArrayList<ReactionCard> getReactionCards() {
         for (Card c : cards) {
             try {
-                if (c.getCardtype().equals(Card.Type.ReactionCard))
+                if (c.getCardtype().equals(Card.Type.ReactionCard) && !moneyCardArrayList.contains(c))
                     reactionCardArrayList.add((ReactionCard) c);
             } catch (NullPointerException ignored) {
             }
@@ -90,7 +88,7 @@ public class JsonCardDeserializer {
     public ArrayList<ValueCard> getValueCards() {
         for (Card c : cards) {
             try {
-                if (c.getCardtype().equals(Card.Type.ValueCard))
+                if (c.getCardtype().equals(Card.Type.ValueCard) && !valueCardArrayList.contains(c))
                     valueCardArrayList.add((ValueCard) c);
             } catch (NullPointerException ignored) {
             }
