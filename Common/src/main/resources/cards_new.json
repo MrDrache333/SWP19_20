@@ -1,0 +1,46 @@
+{
+  "packname": "Basispack",
+  "_description": "...",
+  "cards": {
+    "MoneyCard": [
+      {
+        "id": "001",
+        "name": "Kupfer",
+        "value": 1,
+        "cost": 0
+      },
+      {
+        "id": "002",
+        "name": "Silber",
+        "value": 2,
+        "cost": 3
+      },
+      {
+        "id": "003",
+        "name": "Gold",
+        "value": 3,
+        "cost": 6
+      }
+    ],
+    "ValueCard": [
+      {
+        "id": "004",
+        "name": "Anwesen",
+        "value": 1,
+        "cost": 2
+      },
+      {
+        "id": "005",
+        "name": "Herzogtum",
+        "value": 3,
+        "cost": 5
+      },
+      {
+        "id": "006",
+        "name": "Provinz",
+        "value": 6,
+        "cost": 8
+      }
+    ]
+  }
+}
