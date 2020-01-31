@@ -14,7 +14,6 @@ import java.nio.charset.StandardCharsets;
 public abstract class AbstractUserStore implements UserStore {
 
     /**
-     *
      * @param toHash
      * @return Hash
      * @author Marco

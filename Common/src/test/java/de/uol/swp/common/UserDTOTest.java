@@ -104,8 +104,6 @@ class UserDTOTest {
     }
 
     /**
-     *
-     *
      * @author Marco
      * @since Start
      */

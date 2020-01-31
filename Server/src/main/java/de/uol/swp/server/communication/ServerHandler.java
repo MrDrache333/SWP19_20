@@ -35,9 +35,9 @@ class ServerHandler implements ChannelInboundHandler {
     /**
      * Registriert einen neuen Channel.
      *
+     * @param channelHandlerContext Ermöglicht einem ChannelHandler die Interaktion mit seiner ChannelPipeline und anderen Handlern.
      * @author Marco Grawunder
      * @since Sprint 0
-     * @param channelHandlerContext Ermöglicht einem ChannelHandler die Interaktion mit seiner ChannelPipeline und anderen Handlern.
      */
     @Override
     public void channelRegistered(ChannelHandlerContext channelHandlerContext) {
@@ -47,9 +47,9 @@ class ServerHandler implements ChannelInboundHandler {
     /**
      * Verwirft die Registrierung eines Channels
      *
+     * @param channelHandlerContext Ermöglicht einem ChannelHandler die Interaktion mit seiner ChannelPipeline und anderen Handlern.
      * @author Marco Grawunder
      * @since Sprint 0
-     * @param channelHandlerContext Ermöglicht einem ChannelHandler die Interaktion mit seiner ChannelPipeline und anderen Handlern.
      */
     @Override
     public void channelUnregistered(ChannelHandlerContext channelHandlerContext) {
@@ -59,9 +59,9 @@ class ServerHandler implements ChannelInboundHandler {
     /**
      * Aktiviert einen Channel.
      *
+     * @param ctx Der ChannelHandlerContext
      * @author Marco Grawunder
      * @since Sprint 0
-     * @param ctx Der ChannelHandlerContext
      */
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
@@ -71,9 +71,9 @@ class ServerHandler implements ChannelInboundHandler {
     /**
      * Deaktiviert einen Channel.
      *
+     * @param channelHandlerContext Ermöglicht einem ChannelHandler die Interaktion mit seiner ChannelPipeline und anderen Handlern.
      * @author Marco Grawunder
      * @since Sprint 0
-     * @param channelHandlerContext Ermöglicht einem ChannelHandler die Interaktion mit seiner ChannelPipeline und anderen Handlern.
      */
     @Override
     public void channelInactive(ChannelHandlerContext channelHandlerContext) {
@@ -84,10 +84,10 @@ class ServerHandler implements ChannelInboundHandler {
      * Liest in einem Channel. Ist die übergebene Message eine Instanz der RequestMessage,
      * so wird der diese gecastet und der Prozess fortgesetzt.
      *
-     * @author Marco Grawunder
-     * @since Sprint 0
      * @param ctx Der ChannelHandlerContext
      * @param msg Die Message
+     * @author Marco Grawunder
+     * @since Sprint 0
      */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
@@ -102,9 +102,9 @@ class ServerHandler implements ChannelInboundHandler {
     /**
      * Wird am Ende des Lesevorgang von channelRead aufgerufen.
      *
+     * @param channelHandlerContext Ermöglicht einem ChannelHandler die Interaktion mit seiner ChannelPipeline und anderen Handlern.
      * @author Marco Grawunder
      * @since Sprint 0
-     * @param channelHandlerContext Ermöglicht einem ChannelHandler die Interaktion mit seiner ChannelPipeline und anderen Handlern.
      */
     @Override
     public void channelReadComplete(ChannelHandlerContext channelHandlerContext) {
@@ -114,9 +114,9 @@ class ServerHandler implements ChannelInboundHandler {
     /**
      * Wird aufgerufen, wenn ein User-Event ausgelöst wurde.
      *
+     * @param channelHandlerContext Ermöglicht einem ChannelHandler die Interaktion mit seiner ChannelPipeline und anderen Handlern.
      * @author Marco Grawunder
      * @since Sprint 0
-     * @param channelHandlerContext Ermöglicht einem ChannelHandler die Interaktion mit seiner ChannelPipeline und anderen Handlern.
      */
     @Override
     public void userEventTriggered(ChannelHandlerContext channelHandlerContext, Object o) {
@@ -126,9 +126,9 @@ class ServerHandler implements ChannelInboundHandler {
     /**
      * Wird aufgerufen, wenn sich die Schreibberechtigung eines Channels ändert.
      *
+     * @param channelHandlerContext Ermöglicht einem ChannelHandler die Interaktion mit seiner ChannelPipeline und anderen Handlern.
      * @author Marco Grawunder
      * @since Sprint 0
-     * @param channelHandlerContext Ermöglicht einem ChannelHandler die Interaktion mit seiner ChannelPipeline und anderen Handlern.
      */
     @Override
     public void channelWritabilityChanged(ChannelHandlerContext channelHandlerContext) {
@@ -138,9 +138,9 @@ class ServerHandler implements ChannelInboundHandler {
     /**
      * Wird beim Anlegen eines Handlers aufgerufen.
      *
+     * @param channelHandlerContext Ermöglicht einem ChannelHandler die Interaktion mit seiner ChannelPipeline und anderen Handlern.
      * @author Marco Grawunder
      * @since Sprint 0
-     * @param channelHandlerContext Ermöglicht einem ChannelHandler die Interaktion mit seiner ChannelPipeline und anderen Handlern.
      */
     @Override
     public void handlerAdded(ChannelHandlerContext channelHandlerContext) {
@@ -150,9 +150,9 @@ class ServerHandler implements ChannelInboundHandler {
     /**
      * Wird beim Löschen eines Handlers aufgerufen.
      *
+     * @param channelHandlerContext Ermöglicht einem ChannelHandler die Interaktion mit seiner ChannelPipeline und anderen Handlern.
      * @author Marco Grawunder
      * @since Sprint 0
-     * @param channelHandlerContext Ermöglicht einem ChannelHandler die Interaktion mit seiner ChannelPipeline und anderen Handlern.
      */
     @Override
     public void handlerRemoved(ChannelHandlerContext channelHandlerContext) {
@@ -160,13 +160,13 @@ class ServerHandler implements ChannelInboundHandler {
     }
 
     /**
-     *  Fängt eine Exception und gibt diese bei aktivem/geöffnetem Channel aus.
-     *  Andernfalls wird die Verbindung beendet.
+     * Fängt eine Exception und gibt diese bei aktivem/geöffnetem Channel aus.
+     * Andernfalls wird die Verbindung beendet.
      *
+     * @param ctx   Der ChannelHandlerContext
+     * @param cause Der Grund
      * @author Marco Grawunder
      * @since Sprint 0
-     * @param ctx Der ChannelHandlerContext
-     * @param cause Der Grund
      */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {

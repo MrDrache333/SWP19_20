@@ -29,7 +29,7 @@ public class MyObjectDecoder extends ObjectDecoder {
      * Mit viel Raten würde ich sagen, dass die Funktion einen Bytebuffer versucht zu dekodieren, um ihn dann an die Superklasse weiterzugeben. lul
      *
      * @param ctx Der ChannelHandlerContext
-     * @param in Der ByteBuffer
+     * @param in  Der ByteBuffer
      * @return Der dekodierte ByteBuffer
      * @throws Exception Wenn beim Dekodieren eine Fehlermeldung auftaucht, wird der Vorgang abgebrochen.
      */

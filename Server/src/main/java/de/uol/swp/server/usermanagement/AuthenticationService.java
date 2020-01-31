@@ -47,7 +47,7 @@ public class AuthenticationService extends AbstractService {
     /**
      * AuthenticationService wird initialisiert
      *
-     * @param bus EventBus
+     * @param bus            EventBus
      * @param userManagement das UserManagement
      * @author Marco
      * @since Start
@@ -128,7 +128,7 @@ public class AuthenticationService extends AbstractService {
     public void onLogoutRequest(LogoutRequest msg) {
         if (msg.getSession().isPresent()) {
             Session session = msg.getSession().get();
-            User userToLogOut = msg.getSession().get().getUser();
+            User userToLogOut = session.getUser();
 
             // Could be already logged out
             if (userToLogOut != null) {
