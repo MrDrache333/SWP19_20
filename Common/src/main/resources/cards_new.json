@@ -2,7 +2,7 @@
   "packname": "Basispack",
   "_description": "...",
   "cards": {
-    "MoneyCard": [
+    "MoneyCards": [
       {
         "id": "001",
         "name": "Kupfer",
@@ -22,7 +22,7 @@
         "cost": 6
       }
     ],
-    "ValueCard": [
+    "ValueCards": [
       {
         "id": "004",
         "name": "Anwesen",

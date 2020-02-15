@@ -1,5 +1,7 @@
 package de.uol.swp.server.game.card;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Die Spielkarte
  */
@@ -13,6 +15,7 @@ public abstract class Card {
         return costs;
     }
 
+    @SerializedName("cost")
     private short costs;
 
     /**
