@@ -24,18 +24,6 @@
                     <mainClass>de.uol.swp.client.Main</mainClass>
                 </configuration>
             </plugin>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.8.1</version>
-            <configuration>
-                <compilerArgs>
-                    <arg>--add-opens=java.base/java.lang=ALL-UNNAMED</arg>
-                    <arg>--add-opens=java.base/java.io=ALL-UNNAMED</arg>
-                    <arg>--add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED</arg>
-                </compilerArgs>
-            </configuration>
-        </plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.1.0</version>
