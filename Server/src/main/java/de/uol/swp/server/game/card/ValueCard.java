@@ -5,7 +5,7 @@ package de.uol.swp.server.game.card;
  */
 public class ValueCard extends Card {
 
-    private short Value;
+    private short value;
 
     /**
      * Erstellt eine neue Provinzkarte
@@ -27,7 +27,7 @@ public class ValueCard extends Card {
      * @since Sprint 5
      */
     public short getValue() {
-        return Value;
+        return value;
     }
 
     /**
@@ -38,6 +38,6 @@ public class ValueCard extends Card {
      * @since Sprint 5
      */
     public void setValue(short value) {
-        Value = value;
+        this.value = value;
     }
 }
