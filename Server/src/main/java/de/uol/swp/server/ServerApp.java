@@ -7,6 +7,7 @@ import de.uol.swp.server.chat.ChatManagement;
 import de.uol.swp.server.chat.ChatService;
 import de.uol.swp.server.communication.Server;
 import de.uol.swp.server.di.ServerModule;
+import de.uol.swp.server.game.GameManagement;
 import de.uol.swp.server.lobby.LobbyService;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import de.uol.swp.server.usermanagement.UserManagement;
@@ -29,10 +30,10 @@ class ServerApp {
      * Startet den Server in einem festgelegten Portbereich.
      * Bei Fehlern wird eine Exception geworfen.
      *
-     * @author Marco Grawunder
-     * @since Sprint 0
      * @param args
      * @throws Exception Die Exception
+     * @author Marco Grawunder
+     * @since Sprint 0
      */
     public static void main(String[] args) throws Exception {
         int port = -1;
@@ -57,10 +58,10 @@ class ServerApp {
     /**
      * Erstellt einen neuen Service inkl. eines Usermanagements und eines Chatmanagements.
      *
-     * @author Marco Grawunder, Keno O
-     * @since Sprint 0
      * @param injector Der Injector
      * @throws Exception Die Exception
+     * @author Marco Grawunder, Keno O
+     * @since Sprint 0
      */
     private static void createServices(Injector injector) {
         UserManagement userManagement = injector.getInstance(UserManagement.class);
@@ -78,6 +79,7 @@ class ServerApp {
         // müssen wir hier Instanzen erzeugen (und Abhängigkeiten injizieren).
         injector.getInstance(UserService.class);
         injector.getInstance(ChatService.class);
+        injector.getInstance(GameManagement.class);
         injector.getInstance(AuthenticationService.class);
         injector.getInstance(LobbyService.class);
     }

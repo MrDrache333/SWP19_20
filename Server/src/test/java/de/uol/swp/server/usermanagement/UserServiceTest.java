@@ -19,7 +19,7 @@ class UserServiceTest {
     final UserService userService = new UserService(bus, userManagement);
 
     /**
-     *Test, ob ein neuer Nutzer registriert werden kann.
+     * Test, ob ein neuer Nutzer registriert werden kann.
      *
      * @author Marco
      * @since Start

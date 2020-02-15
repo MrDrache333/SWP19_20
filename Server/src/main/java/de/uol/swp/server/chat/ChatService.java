@@ -87,7 +87,7 @@ public class ChatService extends AbstractService {
         ResponseMessage returnMessage;
         try {
             //Versuchen, die Chathistorie für den angeforderten Chat abzurufen
-            returnMessage = new ChatResponseMessage(chatManagement.getChat(request.getChatId()), request.getSender().getUsername());
+            returnMessage = new ChatResponseMessage(chatManagement.getChat(request.getChatId()).get(), request.getSender().getUsername());
         } catch (ChatException e) {
             //Bei fehlern eine Fehlernachricht an den Client zurück übermitteln
             returnMessage = new ChatExceptionMessage(request.getSender(), e);

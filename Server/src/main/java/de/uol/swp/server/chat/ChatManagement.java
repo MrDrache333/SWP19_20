@@ -4,6 +4,7 @@ import de.uol.swp.common.chat.ChatMessage;
 import de.uol.swp.common.chat.exception.ChatException;
 import de.uol.swp.common.user.User;
 
+import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -26,12 +27,12 @@ public class ChatManagement extends AbstractChatManagement {
      * @since Sprint 1
      * @throws NullPointerException
      */
-    public Chat getChat(String chatId) {
+    public Optional<Chat> getChat(String chatId) {
         try {
             Chat chat = Chats.get(chatId);
-            return chat;
+            return Optional.of(chat);
         } catch (NullPointerException e) {
-            return null;
+            return Optional.empty();
         }
     }
 
@@ -57,7 +58,7 @@ public class ChatManagement extends AbstractChatManagement {
      * @since Sprint 1
      */
     synchronized public void createChat(String ChatId) throws ChatException {
-        if (getChat(ChatId) != null) throw new ChatException("Chat with Id " + ChatId + " already exists!");
+        if (getChat(ChatId).isPresent()) throw new ChatException("Chat with Id " + ChatId + " already exists!");
         Chats.put(ChatId, new Chat(ChatId));
     }
 
@@ -71,7 +72,7 @@ public class ChatManagement extends AbstractChatManagement {
      */
     public void deleteChat(String ChatId) throws ChatException {
         if (Chats.size() > 0 && Chats.get(ChatId) != null) Chats.remove(ChatId);
-        if (getChat(ChatId) != null) throw new ChatException("Chat with Id " + ChatId + " failed to remove!");
+        if (getChat(ChatId).isPresent()) throw new ChatException("Chat with Id " + ChatId + " failed to remove!");
     }
 
     /**
@@ -84,12 +85,12 @@ public class ChatManagement extends AbstractChatManagement {
      * @since Sprint 1
      */
     synchronized public void addMessage(String chatId, ChatMessage message) throws ChatException {
-        Chat chat = getChat(chatId);
+        Optional<Chat> chat = getChat(chatId);
         //CHeck if this is an existing chat
-        if (chat != null) {
-            chat.getMessages().add(message);
+        if (chat.isPresent()) {
+            chat.get().getMessages().add(message);
             //Keep only the newest Messages
-            if (chat.getMessages().size() > CHATMESSAGEHISTORYSIZE) chat.getMessages().remove(0);
+            if (chat.get().getMessages().size() > CHATMESSAGEHISTORYSIZE) chat.get().getMessages().remove(0);
         } else throw new ChatException("Chat with Id " + chatId + " does not exist!");
     }
 
