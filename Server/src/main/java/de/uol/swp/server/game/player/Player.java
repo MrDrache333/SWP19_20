@@ -6,6 +6,7 @@ package de.uol.swp.server.game.player;
 public class Player {
 
     private String playerName;
+    private Deck playerDeck;
 
     /**
      * Erstellt einen neuen Spieler

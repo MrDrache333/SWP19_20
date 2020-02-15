@@ -10,7 +10,6 @@ import java.util.Collections;
  */
 public class Deck {
 
-    private Card Card;
 
     /**
      * Listen für Hand, Deck, TrayStack
@@ -29,6 +28,8 @@ public class Deck {
      * @since Sprint5
      */
     public Deck() {
+        initialiseStartDeck();
+        handInitalisiert();
     }
 
     /**
@@ -39,11 +40,11 @@ public class Deck {
      * @since Sprint5
      */
     private ArrayList<Card> initialiseStartDeck() {
-        for (int i = 0; i <= 3; i++) {
+        for (int i = 0; i < 3; i++) {
             Card card = new ValueCard("", (short) 10);
             cardsDeck.add(card);
         }
-        for (int i = 0; i <= 7; i++) {
+        for (int i = 0; i < 7; i++) {
             Card card = new MoneyCard("", (short) 10);
             cardsDeck.add(card);
         }
