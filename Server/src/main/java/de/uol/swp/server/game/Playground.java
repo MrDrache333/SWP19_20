@@ -5,6 +5,7 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.server.game.player.Player;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -18,7 +19,7 @@ class Playground {
     private List<Player> players = new ArrayList<>();
 
     /**
-     * Erstellt ein neues Spielfeld
+     * Erstellt ein neues Spielfeld und übergibt die Spieler. Die Reihenfolge der Spieler wird zufällig zusammengestellt.
      *
      * @param lobby Die zu nutzende Lobby
      * @author KenoO, Julia
@@ -29,5 +30,7 @@ class Playground {
             Player player = new Player(user.getUsername());
             players.add(player);
         }
+        Collections.shuffle(players);
     }
+
 }
