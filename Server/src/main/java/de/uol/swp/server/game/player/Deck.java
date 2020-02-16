@@ -29,7 +29,7 @@ public class Deck {
      */
     public Deck() {
         initialiseStartDeck();
-        handInitalisiert();
+        initialiseHand();
     }
 
     /**
@@ -58,9 +58,9 @@ public class Deck {
      * @author Paula
      * @since Sprint5
      */
-    private ArrayList<Card> handInitalisiert() {
+    private ArrayList<Card> initialiseHand() {
         Collections.shuffle(cardsDeck);
-        for (int i = 0; i <= 5; i++) {
+        for (int i = 0; i < 5; i++) {
             Card tmpCard = cardsDeck.get(i);
             hand.add(tmpCard);
         }
