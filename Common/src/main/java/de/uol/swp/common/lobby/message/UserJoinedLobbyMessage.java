@@ -17,16 +17,16 @@ public class UserJoinedLobbyMessage extends AbstractLobbyMessage {
     /**
      * Initialisiert eine neue UserJoinedLobbyMessage.
      *
-     * @param lobbyName Der Lobbyname
-     * @param user      Der User
      * @param lobbyID   Die Lobby ID
+     * @param user      Der User
+     * @param gameOwner Der Besitzer
      * @param lobby     Die Lobby
-     * @author Julia Debkowski
+     * @author Julia Debkowski, Marvin
      * @since Sprint1
      */
 
-    public UserJoinedLobbyMessage(String lobbyName, UserDTO user, UUID lobbyID, UserDTO gameOwner, LobbyDTO lobby) {
-        super(lobbyName, user, lobbyID);
+    public UserJoinedLobbyMessage(UUID lobbyID, UserDTO user, UserDTO gameOwner, LobbyDTO lobby) {
+        super(lobbyID, user);
         this.gameOwner = gameOwner;
         this.lobby = lobby;
     }

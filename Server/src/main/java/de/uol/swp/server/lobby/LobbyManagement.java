@@ -12,17 +12,12 @@ import java.util.*;
 public class LobbyManagement {
     static final Logger LOG = LogManager.getLogger(LobbyManagement.class);
     /**
-     * Mapping lobbys zum lobbynamen.
-     */
-    private final Map<String, Lobby> lobbies = new HashMap<>();
-
-    /**
-     * Mapping lobbynamen zur UUID.
+     * Map von UUID zu Lobby
      *
      * @author Marvin
-     * @since Sprint3
+     * @since Sprint5
      */
-    private Map<UUID, String> lobbyNames = new HashMap<>();
+    private final Map<UUID, Lobby> lobbies = new HashMap<>();
 
     /**
      * Erstellt eine Lobby mit den übergebenen Parametern. Überprüft, ob die Lobby mit dem Namen schon existiert.
@@ -39,32 +34,36 @@ public class LobbyManagement {
         // Erstellen der UUID für die Lobbys.
         UUID lobbyID = UUID.randomUUID();
         LOG.info("Die Lobby " + name + " hat folgende UUID erstellt bekommen: " + lobbyID);
-        lobbies.put(name, new LobbyDTO(name, owner, lobbyID, lobbyPassword));
-        lobbyNames.put(lobbyID, name);
+        lobbies.put(lobbyID, new LobbyDTO(name, owner, lobbyID, lobbyPassword));
         return lobbyID;
     }
 
     /**
-     * Löscht die Lobby und überprüft, ob der Lobbyname noch existiert.
+     * Löscht die Lobby, falls eine Lobby mit der ID existiert.
      *
-     * @param name der Lobbyname.
+     * @param id die LobbyID.
+     * @throws IllegalArgumentException wenn keine Lobby mit der ID gefunden werden konnte.
+     * @author Marvin
+     * @since Sprint5
      */
-    public void dropLobby(String name) {
-        if (!lobbies.containsKey(name)) {
-            throw new IllegalArgumentException("Lobby name " + name + " not found!");
+    public void dropLobby(UUID id) {
+        if (!lobbies.containsKey(id)) {
+            throw new IllegalArgumentException("LobbyID not found! ID: " + id);
         }
-        lobbies.remove(name);
-        LOG.info("Lobby " + name + "removed");
+        lobbies.remove(id);
+        LOG.info("Lobby " + getLobby(id) + "removed");
     }
 
     /**
-     * Getter um eine Lobby zurückzugeben.
+     * Getter für Lobby als Optional.
      *
-     * @param name der Lobbyname
-     * @return null
+     * @param id der Lobbyname
+     * @return Optional mit Lobby wenn vorhanden, sonst leere Optional
+     * @author Marvin
+     * @since Sprint5
      */
-    public Optional<Lobby> getLobby(String name) {
-        Lobby lobby = lobbies.get(name);
+    public Optional<Lobby> getLobby(UUID id) {
+        Lobby lobby = lobbies.get(id);
         if (lobby != null) {
             return Optional.of(lobby);
         }
@@ -74,19 +73,20 @@ public class LobbyManagement {
     /**
      * Handling das ein User die Lobby verlässt. Überprüft, ob die gegebene Lobby existiert.
      *
-     * @param name der Lobbyname
+     * @param id   die LobbyID
      * @param user der User, welches die Lobby verlässt.
      * @return Gibt wahr zurück, wenn der User aus der Lobby entfernt worden ist.
+     * @author Marvin
      */
-    public boolean leaveLobby(String name, User user) {
-        Optional<Lobby> lobby = this.getLobby(name);
+    public boolean leaveLobby(UUID id, User user) {
+        Optional<Lobby> lobby = this.getLobby(id);
         if (lobby.isPresent()) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("User " + user.getUsername() + " is leaving lobby " + name);
+                LOG.debug("User " + user.getUsername() + " is leaving lobby " + getLobby(id));
             }
             lobby.get().leaveUser(user);
             if (lobby.get().getPlayers() == 0) {
-                this.dropLobby(name);
+                this.dropLobby(id);
             }
             return true;
         }
@@ -98,11 +98,11 @@ public class LobbyManagement {
      *
      * @param updatedUser der aktualisierte User
      * @param oldUser     der alte User
-     * @author Julia
+     * @author Julia, Marvin
      * @since Sprint4
      */
     public void updateLobbies(UserDTO updatedUser, UserDTO oldUser) {
-        Map<String, Lobby> updatedLobbies = new HashMap<>();
+        Map<UUID, Lobby> updatedLobbies = new HashMap<>();
         for (Lobby lobby : lobbies.values()) {
             List<String> userNames = new ArrayList<>();
             List<User> users = new ArrayList<>(lobby.getUsers());
@@ -122,7 +122,7 @@ public class LobbyManagement {
                 updatedUsers.add(updatedUser);
                 Set<User> newUsers = new TreeSet<>(updatedUsers);
                 Lobby lobbyToUpdate = new LobbyDTO(lobby.getName(), updatedOwner, lobby.getLobbyID(), lobby.getLobbyPassword(), newUsers, lobby.getPlayers(), lobby.getMaxPlayer());
-                updatedLobbies.put(lobbyToUpdate.getName(), lobbyToUpdate);
+                updatedLobbies.put(lobbyToUpdate.getLobbyID(), lobbyToUpdate);
             }
         }
         updatedLobbies.entrySet().forEach(l -> lobbies.replace(l.getKey(), l.getValue()));
@@ -131,22 +131,22 @@ public class LobbyManagement {
     /**
      * Benutzer wird aus der Lobby-Liste entfernt wenn der Spielbesitzer ihn gekickt hat.
      *
-     * @param name
-     * @param userToKick
-     * @param owner
-     * @author Darian
-     * @since sprint4
+     * @param id         die LobbyID
+     * @param userToKick der zu entfernende Benutzer
+     * @param owner      der Lobbybesitzer
      * @return Boolean ob der Kick gerechtfertigt ist
+     * @author Darian, Marvin
+     * @since sprint4
      */
-    public boolean kickUser(String name, User userToKick, User owner) {
-        Optional<Lobby> lobby = this.getLobby(name);
+    public boolean kickUser(UUID id, User userToKick, User owner) {
+        Optional<Lobby> lobby = this.getLobby(id);
         if (lobby.isPresent() && lobby.get().getOwner().getUsername().equals(owner.getUsername())) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("User " + userToKick.getUsername() + " is kicked out of the lobby " + name);
+                LOG.debug("User " + userToKick.getUsername() + " is kicked out of the lobby " + getLobby(id));
             }
             lobby.get().leaveUser(userToKick);
             if (lobby.get().getPlayers() == 0) {
-                this.dropLobby(name);
+                this.dropLobby(id);
             }
             return true;
         }
@@ -155,9 +155,9 @@ public class LobbyManagement {
     }
 
     /**
-     * getter um alle Lobbys zurückzugeben.
+     * Getter um alle Lobbys zurückzugeben.
      *
-     * @return
+     * @return Collection mit allen Lobbies
      */
     public Collection<Lobby> getLobbies() {
         return lobbies.values();
@@ -171,22 +171,22 @@ public class LobbyManagement {
      * @since Sprint3
      */
     public Optional<String> getName(UUID lobbyID) {
-        return lobbyNames.get(lobbyID) != null ? Optional.of(lobbyNames.get(lobbyID)) : Optional.empty();
+        return lobbies.get(lobbyID) != null ? Optional.of(lobbies.get(lobbyID).getName()) : Optional.empty();
     }
 
     /**
      * Getter für den Lobby Besitzer.
      *
      * @param lobbyID Die ID der Lobby, von der der Besitzer zurückgegeben werden soll.
-     * @author Timo, Rike
+     * @author Timo, Rike, Marvin
      * @since Sprint 3
      */
     public User getLobbyOwner(UUID lobbyID) {
-        return lobbies.get(lobbyNames.get(lobbyID)).getOwner();
+        return lobbies.get(lobbyID).getOwner();
     }
 
     /**
-     * Setzt die Anzahl der Maximalen Spieler der Lobby und gibt, wenn es erfolgreich wahr ein true zurück.
+     * Setzt die Anzahl der maximalen Spieler der Lobby und gibt, wenn es erfolgreich war, true zurück.
      *
      * @param lobbyID        Die LobbyID, der Lobby wo die Max-Player geändert werden soll.
      * @param loggedInUser   Der User, welcher die setMaxPlayerRequest an den Server geschickt hat.
@@ -194,11 +194,10 @@ public class LobbyManagement {
      * @author Timo, Rike
      * @since Sprint 3
      */
-    public boolean setMaxPlayer(Integer maxPlayerValue, UUID lobbyID, User loggedInUser) {
-        String tmp = lobbyNames.get(lobbyID);
+    public boolean setMaxPlayer(UUID lobbyID, User loggedInUser, Integer maxPlayerValue) {
 
-        if (lobbies.get(tmp).getOwner().equals(loggedInUser)) {
-            lobbies.get(tmp).setMaxPlayer(maxPlayerValue);
+        if (lobbies.get(lobbyID).getOwner().equals(loggedInUser)) {
+            lobbies.get(lobbyID).setMaxPlayer(maxPlayerValue);
             return true;
         } else {
             return false;

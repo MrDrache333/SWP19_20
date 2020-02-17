@@ -15,8 +15,9 @@
     <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:mac:11" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-base:mac:11" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains:annotations:18.0.0" level="project" />
-    <orderEntry type="module" module-name="common" />
     <orderEntry type="library" name="Maven: org.jetbrains:annotations:18.0.0" level="project" />
+    <orderEntry type="module" module-name="common" />
+    <orderEntry type="library" name="Maven: org.jetbrains:annotations:19.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:11" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:win:11" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:11" level="project" />

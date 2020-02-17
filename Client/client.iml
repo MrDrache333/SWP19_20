@@ -27,8 +27,7 @@
     <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:mac:11" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:mac:11" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-base:mac:11" level="project" />
-    <orderEntry type="library" name="Maven: com.thizzer.jtouchbar:jtouchbar-javafx:1.0.0" level="project" />
-    <orderEntry type="library" name="Maven: com.thizzer.jtouchbar:jtouchbar:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains:annotations:18.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains:annotations:18.0.0" level="project" />
     <orderEntry type="library" name="Maven: com.thizzer.jtouchbar:jtouchbar-javafx:1.0.0" level="project" />
     <orderEntry type="library" name="Maven: com.thizzer.jtouchbar:jtouchbar:1.0.0" level="project" />
@@ -47,7 +46,7 @@
     <orderEntry type="library" name="Maven: com.gluonhq:ignite-guice:1.0.2" level="project" />
     <orderEntry type="library" name="Maven: com.gluonhq:ignite-common:1.0.2" level="project" />
     <orderEntry type="module" module-name="server" />
-    <orderEntry type="library" name="Maven: org.jetbrains:annotations:18.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains:annotations:19.0.0" level="project" />
     <orderEntry type="library" name="Maven: io.netty:netty-all:4.1.38.Final" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.junit.jupiter:junit-jupiter-api:5.5.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.apiguardian:apiguardian-api:1.1.0" level="project" />
