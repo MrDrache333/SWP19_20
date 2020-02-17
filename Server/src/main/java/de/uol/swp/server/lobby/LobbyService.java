@@ -112,10 +112,14 @@ public class LobbyService extends AbstractService {
      */
     @Subscribe
     public void onLobbyLeaveUserRequest(LobbyLeaveUserRequest msg) {
+        User oldOwner = lobbyManagement.getLobbyOwner(msg.getLobbyID());
+        //Falls der Besitzer der Lobby aus der Lobby geht wird dieser aktualisiert
         if (lobbyManagement.leaveLobby(msg.getLobbyName(), msg.getUser())) {
             LOG.info("User " + msg.getUser().getUsername() + " is leaving lobby " + msg.getLobbyName());
-            //Falls der Besitzer der Lobby aus der Lobby geht wird dieser aktualisiert
             Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getLobbyName());
+            if(!oldOwner.getUsername().equals(lobby.get().getOwner().getUsername())){
+                lobbyManagement.getLobby(msg.getLobbyName()).get().setReadyStatus(lobby.get().getOwner(), false);
+            }
             ServerMessage returnMessage;
             if (lobby.isPresent()) {
                 returnMessage = new UserLeftLobbyMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID(), (UserDTO) lobby.get().getOwner(), (LobbyDTO) lobby.get());
