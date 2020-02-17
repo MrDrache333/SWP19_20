@@ -116,7 +116,6 @@ public class LobbyService  {
         return null;
     }
 
-
     public void setLobbyUserStatus(String LobbyName, UserDTO user, boolean Status) {
         RequestMessage request = new UpdateLobbyReadyStatusRequest(LobbyName, user, Status);
         bus.post(request);
