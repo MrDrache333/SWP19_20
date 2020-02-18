@@ -5,7 +5,7 @@ package de.uol.swp.server.game.card;
  */
 public class MoneyCard extends Card {
 
-    private short Value;
+    private short value;
 
 
     /**
@@ -28,7 +28,7 @@ public class MoneyCard extends Card {
      * @since Sprint 5
      */
     public short getValue() {
-        return Value;
+        return value;
     }
 
     /**
@@ -39,6 +39,6 @@ public class MoneyCard extends Card {
      * @since Sprint 5
      */
     public void setValue(short value) {
-        Value = value;
+        this.value = value;
     }
 }

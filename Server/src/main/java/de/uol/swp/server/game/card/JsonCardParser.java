@@ -20,6 +20,29 @@ class CardStack {
     @SerializedName("ReactionCards")
     private ArrayList<ReactionCard> reactionCards = new ArrayList<>();
 
+    @Override
+    public String toString() {
+        StringBuilder string = new StringBuilder("Cards:\n");
+        string.append("\tMoneycards:\n");
+        for (MoneyCard card : moneyCards) {
+            string.append("\t\t").append(card.getId()).append(": ").append(card.getName()).append(", Value: ").append(card.getValue()).append(", Cost: ").append(card.getCosts()).append("\n");
+        }
+        string.append("\tValueCards:\n");
+        for (ValueCard card : valueCards) {
+            string.append("\t\t").append(card.getId()).append(": ").append(card.getName()).append(", Value: ").append(card.getValue()).append(", Cost: ").append(card.getCosts()).append("\n");
+        }
+        string.append("\tReactionCards:\n");
+        for (ReactionCard card : reactionCards) {
+            string.append("\t\t").append(card.getId()).append(": ").append(card.getName()).append(", Cost: ").append(card.getCosts()).append("\n");
+        }
+        string.append("\tActionCards:\n");
+        for (ActionCard card : actionCards) {
+            string.append("\t\t").append(card.getId()).append(": ").append(card.getName()).append(", Cost: ").append(card.getCosts()).append("\n");
+        }
+
+        return string.toString();
+    }
+
 }
 
 class CardPack {
@@ -31,6 +54,11 @@ class CardPack {
 
     @SerializedName("cards")
     private CardStack cards;
+
+    @Override
+    public String toString() {
+        return "Name: " + name + "\nDescription: " + description + "\n" + cards.toString();
+    }
 
 }
 
@@ -45,5 +73,8 @@ public class JsonCardParser {
         Gson gsonRealObj = gsonobj.create();
         pack = gsonRealObj.fromJson(new FileReader(jsonFilePath), CardPack.class);
         System.out.println("Done");
+
+        System.out.println(pack.toString());
+
     }
 }

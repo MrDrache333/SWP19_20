@@ -4,19 +4,19 @@
   "cards": {
     "MoneyCards": [
       {
-        "id": "001",
+        "id": 1,
         "name": "Kupfer",
         "value": 1,
         "cost": 0
       },
       {
-        "id": "002",
+        "id": 2,
         "name": "Silber",
         "value": 2,
         "cost": 3
       },
       {
-        "id": "003",
+        "id": 3,
         "name": "Gold",
         "value": 3,
         "cost": 6
@@ -24,22 +24,182 @@
     ],
     "ValueCards": [
       {
-        "id": "004",
+        "id": 4,
         "name": "Anwesen",
         "value": 1,
         "cost": 2
       },
       {
-        "id": "005",
+        "id": 5,
         "name": "Herzogtum",
         "value": 3,
         "cost": 5
       },
       {
-        "id": "006",
+        "id": 6,
         "name": "Provinz",
         "value": 6,
         "cost": 8
+      },
+      {
+        "id": 30,
+        "name": "Gärten",
+        "value": 6,
+        "cost": 8
+      }
+    ],
+    "ReactionCards": [
+      {
+        "id": 7,
+        "name": "Burggraben",
+        "cost": 2
+      }
+    ],
+    "ActionCards": [
+      {
+        "id": 8,
+        "name": "Dorf",
+        "cost": 3
+      },
+      {
+        "id": 9,
+        "name": "Holzfäller",
+        "cost": 2
+      },
+      {
+        "id": 10,
+        "name": "Keller",
+        "cost": 2
+      },
+      {
+        "id": 11,
+        "name": "Markt",
+        "cost": 5
+      },
+      {
+        "id": 12,
+        "name": "Militz",
+        "cost": 4
+      },
+      {
+        "id": 13,
+        "name": "Mine",
+        "cost": 5
+      },
+      {
+        "id": 14,
+        "name": "Schmiede",
+        "cost": 4
+      },
+      {
+        "id": 15,
+        "name": "Umbau",
+        "cost": 4
+      },
+      {
+        "id": 16,
+        "name": "Werkstatt",
+        "cost": 3
+      },
+      {
+        "id": 17,
+        "name": "Abenteuer",
+        "cost": 6
+      },
+      {
+        "id": 18,
+        "name": "Bürokrat",
+        "cost": 4
+      },
+      {
+        "id": 19,
+        "name": "Festmahl",
+        "cost": 4
+      },
+      {
+        "id": 20,
+        "name": "Geldverleiher",
+        "cost": 4
+      },
+      {
+        "id": 21,
+        "name": "Kanzler",
+        "cost": 3
+      },
+      {
+        "id": 22,
+        "name": "Kapelle",
+        "cost": 2
+      },
+      {
+        "id": 23,
+        "name": "Laboratorium",
+        "cost": 5
+      },
+      {
+        "id": 24,
+        "name": "Thronsaal",
+        "cost": 4
+      },
+      {
+        "id": 25,
+        "name": "Bibliothek",
+        "cost": 5
+      },
+      {
+        "id": 26,
+        "name": "Dieb",
+        "cost": 4
+      },
+      {
+        "id": 27,
+        "name": "Jahrmarkt",
+        "cost": 5
+      },
+      {
+        "id": 28,
+        "name": "Ratsversammlung",
+        "cost": 5
+      },
+      {
+        "id": 29,
+        "name": "Spion",
+        "cost": 4
+      },
+      {
+        "id": 31,
+        "name": "Hexe",
+        "cost": 5
+      },
+      {
+        "id": 32,
+        "name": "Händlerin",
+        "cost": 3
+      },
+      {
+        "id": 33,
+        "name": "Vorbotin",
+        "cost": 3
+      },
+      {
+        "id": 34,
+        "name": "Vasall",
+        "cost": 3
+      },
+      {
+        "id": 35,
+        "name": "Töpferei",
+        "cost": 6
+      },
+      {
+        "id": 36,
+        "name": "Wilddiebin",
+        "cost": 4
+      },
+      {
+        "id": 37,
+        "name": "Torwächterin",
+        "cost": 5
       }
     ]
   }
