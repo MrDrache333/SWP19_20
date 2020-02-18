@@ -9,6 +9,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 
+/**
+ * Der Cardstack representiert eine Sammlung der verschiedenen Kartentypen.
+ */
 class CardStack {
 
     @SerializedName("MoneyCards")
@@ -20,6 +23,11 @@ class CardStack {
     @SerializedName("ReactionCards")
     private ArrayList<ReactionCard> reactionCards = new ArrayList<>();
 
+    /**
+     * @return Objekt als String
+     * @author KenoO
+     * @since Sprint 5
+     */
     @Override
     public String toString() {
         StringBuilder string = new StringBuilder("Cards:\n");
@@ -43,8 +51,46 @@ class CardStack {
         return string.toString();
     }
 
+    /**
+     * Gibt die money cards zurück
+     *
+     * @return Die money cards
+     */
+    public ArrayList<MoneyCard> getMoneyCards() {
+        return moneyCards;
+    }
+
+    /**
+     * Gibt die value cards zurück
+     *
+     * @return Die value cards
+     */
+    public ArrayList<ValueCard> getValueCards() {
+        return valueCards;
+    }
+
+    /**
+     * Gibt die action cards zurück
+     *
+     * @return Die action cards
+     */
+    public ArrayList<ActionCard> getActionCards() {
+        return actionCards;
+    }
+
+    /**
+     * Gibt die reaction cards zurück
+     *
+     * @return Die reaction cards
+     */
+    public ArrayList<ReactionCard> getReactionCards() {
+        return reactionCards;
+    }
 }
 
+/**
+ * Das CardPack representiert ein Kartenpaket.
+ */
 class CardPack {
 
     @SerializedName("packname")
@@ -60,21 +106,68 @@ class CardPack {
         return "Name: " + name + "\nDescription: " + description + "\n" + cards.toString();
     }
 
+    /**
+     * Gibt den Paketnamen zurück
+     *
+     * @return Der Paketname
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Gibt die Paketbeschreibung zurück
+     *
+     * @return Die Beschreibung
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Gibt alle im Pack enthaltenen Karten zurück
+     *
+     * @return Die Karten
+     */
+    public CardStack getCards() {
+        return cards;
+    }
 }
 
+/**
+ * JSonCardParser representiert eine Möglichkeit, Karten aus einer JSon-Datei zu laden und als Objekt zurück zu geben.
+ */
 public class JsonCardParser {
+    ;
 
-    private static CardPack pack;
-    private static String jsonFilePath = "Common/src/main/resources/cards_new.json";
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     */
+    public static void main(String[] args) {
+        try {
+            CardPack pack = new JsonCardParser().loadPack("Basispack");
+            System.out.println(pack.toString());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
 
-    public static void main(String[] args) throws FileNotFoundException {
+    /**
+     * Methode, die versucht ein angegebenes Kartenpaket zu laden.
+     *
+     * @param packname Das zu ladene Kartenpack
+     * @return the card pack
+     * @throws FileNotFoundException Die Fehlermeldung
+     * @author KenoO
+     * @since Sprint 5
+     */
+    public CardPack loadPack(String packname) throws FileNotFoundException {
         GsonBuilder gsonobj = new GsonBuilder();
         gsonobj.registerTypeAdapter(Card.class, new AbstractElementAdapter());
         Gson gsonRealObj = gsonobj.create();
-        pack = gsonRealObj.fromJson(new FileReader(jsonFilePath), CardPack.class);
-        System.out.println("Done");
-
-        System.out.println(pack.toString());
-
+        CardPack pack = gsonRealObj.fromJson(new FileReader(this.getClass().getResource("/cards/packs/" + packname + "/" + packname + ".json").toExternalForm().replace("file:", "")), CardPack.class);
+        return pack;
     }
 }
