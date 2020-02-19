@@ -3,7 +3,6 @@ package de.uol.swp.server.game.card;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
-import de.uol.swp.server.game.card.generating.AbstractElementAdapter;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -160,7 +159,6 @@ public class JsonCardParser {
      */
     public CardPack loadPack(String packname) {
         GsonBuilder gsonobj = new GsonBuilder();
-        gsonobj.registerTypeAdapter(Card.class, new AbstractElementAdapter());
         Gson gsonRealObj = gsonobj.create();
         CardPack pack;
         try {
