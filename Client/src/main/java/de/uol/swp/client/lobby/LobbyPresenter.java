@@ -385,8 +385,8 @@ public class LobbyPresenter extends AbstractPresenter {
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
         if (!message.getLobbyID().equals(lobbyID)) return;
         LOG.debug("User " + message.getUser().getUsername() + " left the Lobby");
-        userLeftLobby(message.getUser().getUsername(), false);
         gameOwner = message.getGameOwner();
+        userLeftLobby(message.getUser().getUsername(), false);
     }
 
     /**
@@ -402,7 +402,6 @@ public class LobbyPresenter extends AbstractPresenter {
         if (!message.getLobby().getLobbyID().equals(lobbyID)) return;
         LOG.debug("User " + message.getLobby().getName() + " kicked out of the Lobby");
         userLeftLobby(message.getUser().getUsername(), true);
-        chatViewPresenter.userKicked(message.getUser().getUsername());
     }
 
     //--------------------------------------
@@ -422,6 +421,7 @@ public class LobbyPresenter extends AbstractPresenter {
         if (readyUserList.get(username) != null) {
             Platform.runLater(() -> {
                 readyUserList.remove(username);
+                readyUserList.replace(gameOwner.getUsername(),getHboxFromReadyUser(gameOwner,false));
                 updateUsersList();
                 //Je nachdem ob der Benutzer gekickt wurde oder freiwillig aus der Lobby gegangen ist wird es auch so angezeigt
                 if (kicked) {
