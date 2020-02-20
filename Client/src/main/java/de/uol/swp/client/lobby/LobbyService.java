@@ -10,6 +10,13 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import java.io.File;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,7 +116,6 @@ public class LobbyService  {
         return null;
     }
 
-
     public void setLobbyUserStatus(String LobbyName, UserDTO user, boolean Status) {
         RequestMessage request = new UpdateLobbyReadyStatusRequest(LobbyName, user, Status);
         bus.post(request);
@@ -142,5 +148,30 @@ public class LobbyService  {
     {
         SetMaxPlayerRequest cmd = new SetMaxPlayerRequest(maxPlayer, lobbyID, loggedInUser);
         bus.post(cmd);
+    }
+
+    /**
+     * Erstellt eine neue Stage und öffnet darin die Anleitung als WebView
+     *
+     * @author Timo
+     * @since Sprint 5
+     */
+    public void startWebView()
+    {
+        Stage primaryStage = new Stage();
+        File file = new File("Client/src/main/resources/html/anleitung/index.html");
+
+        WebView webView = new WebView();
+        WebEngine webEngine = webView.getEngine();
+        webEngine.load(file.toURI().toString());
+
+        StackPane root = new StackPane();
+        root.getChildren().add(webView);
+
+        Scene scene = new Scene(root, 500, 800);
+
+        primaryStage.setTitle("Dominion - Spieleanleitung");
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 }
