@@ -23,11 +23,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
@@ -52,6 +55,18 @@ public class GameViewPresenter extends AbstractPresenter {
     private Pane chatView;
     @FXML
     private ListView<String> usersView;
+
+    @FXML
+    private ImageView geldkarte_1, geldkarte_2, geldkarte_3;
+    @FXML
+    private ImageView siegpunkt_1, siegpunkt_2, siegpunkt_3;
+    @FXML
+    private ImageView fluchkarte;
+    @FXML
+    private ImageView aktionskarte_1, aktionskarte_2, aktionskarte_3, aktionskarte_4, aktionskarte_5, aktionskarte_6,
+            aktionskarte_7, aktionskarte_8, aktionskarte_9, aktionskarte_10;
+    @FXML
+    private ImageView hand_1, hand_2, hand_3, hand_4, hand_5;
 
     private ObservableList<String> users;
     private ChatViewPresenter chatViewPresenter;
@@ -114,7 +129,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * Initialisieren.
      *
      * @throws IOException die io Ausnahme
-     * @author Fenja
+     * @author Fenja, Rike
      * @since Sprint 3
      */
     @FXML
@@ -129,6 +144,23 @@ public class GameViewPresenter extends AbstractPresenter {
         ((Pane) chatView.getChildren().get(0)).setPrefHeight(chatView.getPrefHeight());
         ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getPrefWidth());
 
+        interactionBuyableCard(geldkarte_1);
+        interactionBuyableCard(geldkarte_2);
+        interactionBuyableCard(geldkarte_3);
+        interactionBuyableCard(siegpunkt_1);
+        interactionBuyableCard(siegpunkt_2);
+        interactionBuyableCard(siegpunkt_3);
+        interactionBuyableCard(fluchkarte);
+        interactionBuyableCard(aktionskarte_1);
+        interactionBuyableCard(aktionskarte_2);
+        interactionBuyableCard(aktionskarte_3);
+        interactionBuyableCard(aktionskarte_4);
+        interactionBuyableCard(aktionskarte_5);
+        interactionBuyableCard(aktionskarte_6);
+        interactionBuyableCard(aktionskarte_7);
+        interactionBuyableCard(aktionskarte_8);
+        interactionBuyableCard(aktionskarte_9);
+        interactionBuyableCard(aktionskarte_10);
     }
 
     /**
@@ -235,6 +267,33 @@ public class GameViewPresenter extends AbstractPresenter {
                 users.clear();
                 userList.forEach(u -> users.add(u.getUsername()));
             }
+        });
+    }
+
+
+    /**
+     * TODO:
+     * - Bewegung der Karten einpflegen -> Klasse dafür ist schon gemergt
+     * - Bilder durch Tmp-Bilder ersetzen (bei Handkarten über infos welche Karten gerade auf der Hand)
+     * - Bei Kauf der Karte: Überprüfung ob der Spieler genügend Geld hat
+     * - Überprüfung ob der Spieler am Zug und in der richtigen Phase (Aktions- (Hand) bzw. Kaufphase (Geldkarte, Aktionskarte, Fuchkarte)
+     */
+
+    /**
+     * Methode für die Interaktion mit Karten von den Kaufstapeln
+     *
+     * Definieren das Verhalten, wenn man eine Karte anklickt:
+     * - einmal Karte wird TODO: vergrößert
+     * - TODO: zweites mal, Karte wird gekauft und bewegt sich zu dem Ablagestapel (wenn Bedingungen erfüllt)
+     * - TODO: wo anders wird geklickt, Karte wird wieder klein
+     *
+     * @param cardImage
+     * @author Rike
+     * @since Sprint 5
+     */
+    private void interactionBuyableCard (ImageView cardImage){
+        cardImage.setOnMouseClicked(event -> {
+            cardImage.setImage(new Image(new File(getClass().getResource("/images/karte_gross.png").toExternalForm().replace("file:", "")).toURI().toString()));
         });
     }
 }
