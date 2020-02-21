@@ -35,16 +35,16 @@ class ChatServiceTest {
     @Test
     void onNewChatMessageRequest() {
         //1:
-        chatManagement.createChat("global");
+        if (chatManagement.getChat("global").isEmpty()) chatManagement.createChat("global");
         assertNotNull(chatManagement.getChat("global"));
         //2:
         NewChatMessageRequest request = new NewChatMessageRequest(new ChatMessage(chatMember, "Test"));
         bus.post(request);
-        assertEquals("Test", chatManagement.getChat("global").getMessages().get(0).getMessage());
+        assertEquals("Test", chatManagement.getChat("global").get().getMessages().get(0).getMessage());
         //3:
         String newChatId = chatManagement.createChat();
         request = new NewChatMessageRequest(newChatId, new ChatMessage(chatMember, "Test"));
         bus.post(request);
-        assertEquals("Test", chatManagement.getChat(newChatId).getMessages().get(0).getMessage());
+        assertEquals("Test", chatManagement.getChat(newChatId).get().getMessages().get(0).getMessage());
     }
 }

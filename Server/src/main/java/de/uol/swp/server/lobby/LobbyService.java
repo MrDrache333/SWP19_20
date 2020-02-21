@@ -117,11 +117,11 @@ public class LobbyService extends AbstractService {
         if (lobbyManagement.leaveLobby(msg.getLobbyName(), msg.getUser())) {
             LOG.info("User " + msg.getUser().getUsername() + " is leaving lobby " + msg.getLobbyName());
             Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getLobbyName());
-            if(lobby.isPresent() && !oldOwner.getUsername().equals(lobby.get().getOwner().getUsername())){
-                lobbyManagement.getLobby(msg.getLobbyName()).get().setReadyStatus(lobby.get().getOwner(), false);
-            }
             ServerMessage returnMessage;
             if (lobby.isPresent()) {
+                if (!oldOwner.getUsername().equals(lobby.get().getOwner().getUsername())) {
+                    lobbyManagement.getLobby(msg.getLobbyName()).get().setReadyStatus(lobby.get().getOwner(), false);
+                }
                 returnMessage = new UserLeftLobbyMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID(), (UserDTO) lobby.get().getOwner(), (LobbyDTO) lobby.get());
             } else {
                 returnMessage = new UserLeftLobbyMessage(msg.getLobbyName(), msg.getUser(), msg.getLobbyID(), null, null);

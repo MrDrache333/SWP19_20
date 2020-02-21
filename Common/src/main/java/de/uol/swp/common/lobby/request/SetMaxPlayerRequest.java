@@ -34,6 +34,7 @@ public class SetMaxPlayerRequest extends AbstractRequestMessage {
 
     /**
      * Gibt die maximale Spieleranzahl zurück
+     *
      * @return maximale Spieleranzahl
      * @author Timo
      * @since Sprint3

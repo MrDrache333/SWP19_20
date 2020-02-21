@@ -1,6 +1,7 @@
 package de.uol.swp.client.register.pattern;
 
 import org.junit.jupiter.api.Test;
+
 import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;

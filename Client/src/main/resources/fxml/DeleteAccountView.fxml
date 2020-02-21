@@ -9,31 +9,31 @@
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="150.0" prefWidth="300.0"
             xmlns="http://javafx.com/javafx/10.0.2-internal"
             fx:controller="de.uol.swp.client.settings.DeleteAccountPresenter">
-   <stylesheets>
-      <URL value="@../css/global.css"/>
-      <URL value="@../css/DeleteAccountPresenter.css"/>
-   </stylesheets>
-   <VBox alignment="CENTER" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0"
-         AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-      <Label alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" prefHeight="118.0" prefWidth="300.0"
-             text="Möchtest du deinen Account wirklich löschen? " textAlignment="CENTER" wrapText="true"
-             VBox.vgrow="ALWAYS">
-         <VBox.margin>
-            <Insets/>
-         </VBox.margin>
-         <font>
-            <Font size="28.0"/>
-         </font>
-      </Label>
-      <HBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="200.0" spacing="180.0"
-            VBox.vgrow="NEVER">
-         <children>
-            <Button defaultButton="true" mnemonicParsing="false" onAction="#onYesButtonPressed" text="Ja"/>
-            <Button cancelButton="true" mnemonicParsing="false" onAction="#onNoButtonPressed" text="Nein"/>
-         </children>
-         <VBox.margin>
-            <Insets bottom="5.0"/>
-         </VBox.margin>
-      </HBox>
-   </VBox>
+    <stylesheets>
+        <URL value="@../css/global.css"/>
+        <URL value="@../css/DeleteAccountPresenter.css"/>
+    </stylesheets>
+    <VBox alignment="CENTER" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0"
+          AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <Label alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" prefHeight="118.0" prefWidth="300.0"
+               text="Möchtest du deinen Account wirklich löschen? " textAlignment="CENTER" wrapText="true"
+               VBox.vgrow="ALWAYS">
+            <VBox.margin>
+                <Insets/>
+            </VBox.margin>
+            <font>
+                <Font size="28.0"/>
+            </font>
+        </Label>
+        <HBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="200.0" spacing="180.0"
+              VBox.vgrow="NEVER">
+            <children>
+                <Button defaultButton="true" mnemonicParsing="false" onAction="#onYesButtonPressed" text="Ja"/>
+                <Button cancelButton="true" mnemonicParsing="false" onAction="#onNoButtonPressed" text="Nein"/>
+            </children>
+            <VBox.margin>
+                <Insets bottom="5.0"/>
+            </VBox.margin>
+        </HBox>
+    </VBox>
 </AnchorPane>

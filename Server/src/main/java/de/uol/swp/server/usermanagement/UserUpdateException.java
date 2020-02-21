@@ -2,6 +2,7 @@ package de.uol.swp.server.usermanagement;
 
 /**
  * Eine Exception, die beim Updaten eines Nutzers benutzt wird.
+ *
  * @author Juli
  * @since Sprint2
  */
