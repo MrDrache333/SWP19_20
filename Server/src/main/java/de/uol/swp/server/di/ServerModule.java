@@ -29,7 +29,6 @@ public class ServerModule extends AbstractModule {
     @Override
     protected void configure() {
         // All usermanagements and eventbusses must be the same instance (!)
-        bind(ChatManagement.class).toInstance(new ChatManagement());
         bind(UserManagement.class).toInstance(userManagement);
         bind(ChatManagement.class).toInstance(chatManagement);
         bind(LobbyManagement.class).toInstance(lobbyManagement);
