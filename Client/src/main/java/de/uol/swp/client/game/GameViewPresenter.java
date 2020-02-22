@@ -30,6 +30,7 @@ import javafx.stage.Modality;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
@@ -283,7 +284,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * Methode für die Interaktion mit Karten von den Kaufstapeln
      *
      * Definieren das Verhalten, wenn man eine Karte anklickt:
-     * - einmal Karte wird TODO: vergrößert
+     * - einmal Karte wird vergrößert TODO: in Vordergrund
      * - TODO: zweites mal, Karte wird gekauft und bewegt sich zu dem Ablagestapel (wenn Bedingungen erfüllt)
      * - TODO: wo anders wird geklickt, Karte wird wieder klein
      *
@@ -294,6 +295,7 @@ public class GameViewPresenter extends AbstractPresenter {
     private void interactionBuyableCard (ImageView cardImage){
         cardImage.setOnMouseClicked(event -> {
             cardImage.setImage(new Image(new File(getClass().getResource("/images/karte_gross.png").toExternalForm().replace("file:", "")).toURI().toString()));
+            cardImage.setFitHeight(110.0);
         });
     }
 }

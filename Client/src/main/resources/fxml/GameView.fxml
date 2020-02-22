@@ -153,27 +153,27 @@
             <Image url="@../images/platzhalter_karte.jpg" />
          </image>
       </ImageView>
-      <ImageView fx:id="hand1" fitHeight="56.0" fitWidth="60.0" layoutX="298.0" layoutY="600.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="hand_1" fitHeight="56.0" fitWidth="60.0" layoutX="298.0" layoutY="600.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../images/platzhalter_karte.jpg" />
          </image>
       </ImageView>
-      <ImageView fx:id="hand2" fitHeight="56.0" fitWidth="60.0" layoutX="384.0" layoutY="600.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="hand_2" fitHeight="56.0" fitWidth="60.0" layoutX="384.0" layoutY="600.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../images/platzhalter_karte.jpg" />
          </image>
       </ImageView>
-      <ImageView fx:id="hand3" fitHeight="56.0" fitWidth="60.0" layoutX="460.0" layoutY="600.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="hand_3" fitHeight="56.0" fitWidth="60.0" layoutX="460.0" layoutY="600.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../images/platzhalter_karte.jpg" />
          </image>
       </ImageView>
-      <ImageView fx:id="hand4" fitHeight="56.0" fitWidth="60.0" layoutX="539.0" layoutY="600.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="hand_4" fitHeight="56.0" fitWidth="60.0" layoutX="539.0" layoutY="600.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../images/platzhalter_karte.jpg" />
          </image>
       </ImageView>
-      <ImageView fx:id="hand5" fitHeight="56.0" fitWidth="60.0" layoutX="622.0" layoutY="600.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="hand_5" fitHeight="56.0" fitWidth="60.0" layoutX="622.0" layoutY="600.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../images/platzhalter_karte.jpg" />
          </image>
