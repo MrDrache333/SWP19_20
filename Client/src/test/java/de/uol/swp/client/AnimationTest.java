@@ -24,73 +24,105 @@ public class AnimationTest extends Application {
         Image image = new javafx.scene.image.Image(input);
 
         //Karte die der Gegenspieler spielt
-        ImageView c1 = new ImageView();
-        c1.setImage(image);
-        c1.setFitHeight(59);
-        c1.setFitWidth(43);
-        /*Pane c1 = new Pane();
-        c1.setPrefSize(43, 59);
-        c1.setStyle("-fx-background-color: purple");*/
+        ImageView cardToPlayByOpponent = new ImageView();
+        cardToPlayByOpponent.setImage(image);
+        cardToPlayByOpponent.setFitHeight(110);
+        cardToPlayByOpponent.setFitWidth(60);
 
         //Fixpunkt, zeigt an wo die Hand des Spielers beginnt
-        Pane c2 = new Pane();
-        c2.setLayoutX(284);
-        c2.setLayoutY(541);
-        c2.setPrefSize(10, 10);
-        c2.setStyle("-fx-background-color: blue");
+        Pane hand = new Pane();
+        hand.setLayoutX(284);
+        hand.setLayoutY(541);
+        hand.setPrefSize(10, 10);
+        hand.setStyle("-fx-background-color: blue");
 
-        //Fixpunkt, zeigt an wo die AKtionszone des Spielers beginnt
-        Pane c3 = new Pane();
-        c3.setLayoutX(356);
-        c3.setLayoutY(415);
-        c3.setPrefSize(10, 10);
-        c3.setStyle("-fx-background-color: green");
+        //Fixpunkt, zeigt an wo die Aktionszone des Spielers beginnt
+        Pane actionZone = new Pane();
+        actionZone.setLayoutX(356);
+        actionZone.setLayoutY(415);
+        actionZone.setPrefSize(10, 10);
+        actionZone.setStyle("-fx-background-color: green");
 
         //Karte die der Spieler ausspielt
-        ImageView c4 = new ImageView();
-        c4.setImage(image);
-        c4.setFitHeight(59);
-        c4.setFitWidth(43);
-        c4.setX(284);
-        c4.setY(541);
-        /*Pane c4 = new Pane();
-        c4.setLayoutX(284);
-        c4.setLayoutY(541);
-        c4.setPrefSize(43, 59);
-        c4.setStyle("-fx-background-color: pink");*/
+        ImageView cardToPlay = new ImageView();
+        cardToPlay.setImage(image);
+        cardToPlay.setFitHeight(110);
+        cardToPlay.setFitWidth(60);
+        cardToPlay.setX(150);
+        cardToPlay.setY(538);
 
+        //Fixpunkt, zeigt an wo der Müll beginnt
+        Pane trash = new Pane();
+        trash.setLayoutX(100);
+        trash.setLayoutY(233);
+        trash.setPrefSize(10, 10);
+        trash.setStyle("-fx-background-color: purple");
 
         //Karte die der Spieler kauft
-        ImageView c6 = new ImageView();
-        c6.setImage(image);
-        c6.setFitHeight(59);
-        c6.setFitWidth(43);
-        c6.setX(500);
-        c6.setY(300);
-        /*Pane c5 = new Pane();
-        c5.setLayoutX(500);
-        c5.setLayoutY(300);
-        c5.setPrefSize(43, 59);
-        c5.setStyle("-fx-background-color: turquoise");*/
+        ImageView cardToBuy = new ImageView();
+        cardToBuy.setImage(image);
+        cardToBuy.setFitHeight(110);
+        cardToBuy.setFitWidth(60);
+        cardToBuy.setX(500);
+        cardToBuy.setY(300);
 
-        Pane bg = new Pane(c1, c2, c3, c4, c6);
+        //Karte die der Spieler auf den Müll legt
+        ImageView cardToDelete = new ImageView();
+        cardToDelete.setImage(image);
+        cardToDelete.setFitHeight(110);
+        cardToDelete.setFitWidth(60);
+        cardToDelete.setX(150);
+        cardToDelete.setY(538);
+
+        //Fixpunkt, zeigt an wo das Deck beginnt
+        Pane deck = new Pane();
+        deck.setLayoutX(150);
+        deck.setLayoutY(538);
+        deck.setPrefSize(10, 10);
+        deck.setStyle("-fx-background-color: black");
+
+        //Fixpunkt, zeigt an wo der Ablagestapel beginnt
+        Pane ablage = new Pane();
+        ablage.setLayoutX(733);
+        ablage.setLayoutY(538);
+        ablage.setPrefSize(10, 10);
+        ablage.setStyle("-fx-background-color: skyblue");
+
+        //Fixpunkt, zeigt an wo die zu kaufende Karte beginnt
+        Pane c = new Pane();
+        c.setLayoutX(500);
+        c.setLayoutY(300);
+        c.setPrefSize(10, 10);
+        c.setStyle("-fx-background-color: magenta");
+
+        Pane bg = new Pane(cardToPlayByOpponent, cardToPlay, cardToBuy, cardToDelete, hand, actionZone, trash, deck, ablage, c);
 
         primaryStage.setScene(new Scene(bg, 1280, 750));
         primaryStage.show();
 
-        //Wenn die Maus gedrückt wird, spielt der Spieler eine Karte
-        bg.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
-            AnimationManagement.playCard(c4, 0);
+        //Beim Start werden die Karten zur Hand hinzugefügt
+        AnimationManagement.addToHand(cardToPlay, 0, false);
+        AnimationManagement.addToHand(cardToDelete, 1, false);
+
+        //Wenn auf die Karte geklickt wird, spielt der Gegenspieler eine Karte aus
+        cardToPlayByOpponent.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+            AnimationManagement.opponentPlaysCard(cardToPlayByOpponent, 0);
         });
 
-        //Wenn sie wieder losgelassen wird, kauft der Spieler eine Karte
-        bg.addEventHandler(MouseEvent.MOUSE_RELEASED, e-> {
-            AnimationManagement.buyCard(c6);
+        //Wenn auf die Karte geklickt wird, spielt der Spieler sie aus
+        cardToPlay.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+            AnimationManagement.playCard(cardToPlay, 0);
         });
 
-        //beim Starten der Anwendung spielt der Gegenspieler eine Karte
-        AnimationManagement.opponentPlaysCard(c1, 0);
+        //Wenn auf die Karte geklickt wird, wird sie vom Spieler gekauft
+        cardToBuy.addEventHandler(MouseEvent.MOUSE_CLICKED, e-> {
+            AnimationManagement.buyCard(cardToBuy);
+        });
 
+        //Wenn auf die Karte geklickt wird, wird sie auf den Müll gelegt
+        cardToDelete.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+            AnimationManagement.deleteCard(cardToDelete);
+        });
     }
 
     public static void main(String[] args) {
