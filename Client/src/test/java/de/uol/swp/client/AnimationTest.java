@@ -9,6 +9,8 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.scene.input.MouseEvent;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Klasse zum Testen der Kartenanimationen.
@@ -95,7 +97,36 @@ public class AnimationTest extends Application {
         c.setPrefSize(10, 10);
         c.setStyle("-fx-background-color: magenta");
 
-        Pane bg = new Pane(cardToPlayByOpponent, cardToPlay, cardToBuy, cardToDelete, hand, actionZone, trash, deck, ablage, c);
+        //Karte die der Spieler ausspielt
+        ImageView c1 = new ImageView();
+        c1.setImage(image);
+        c1.setFitHeight(110);
+        c1.setFitWidth(60);
+        c1.setX(150);
+        c1.setY(538);
+        //Karte die der Spieler ausspielt
+        ImageView c2 = new ImageView();
+        c2.setImage(image);
+        c2.setFitHeight(110);
+        c2.setFitWidth(60);
+        c2.setX(150);
+        c2.setY(538);
+        //Karte die der Spieler ausspielt
+        ImageView c3 = new ImageView();
+        c3.setImage(image);
+        c3.setFitHeight(110);
+        c3.setFitWidth(60);
+        c3.setX(150);
+        c3.setY(538);
+        //Karte die der Spieler ausspielt
+        ImageView c4 = new ImageView();
+        c4.setImage(image);
+        c4.setFitHeight(110);
+        c4.setFitWidth(60);
+        c4.setX(150);
+        c4.setY(538);
+
+        Pane bg = new Pane(c1, c2, c3, c4, cardToPlayByOpponent, cardToPlay, cardToBuy, cardToDelete, hand, actionZone, trash, deck, ablage, c);
 
         primaryStage.setScene(new Scene(bg, 1280, 750));
         primaryStage.show();
@@ -103,6 +134,15 @@ public class AnimationTest extends Application {
         //Beim Start werden die Karten zur Hand hinzugefügt
         AnimationManagement.addToHand(cardToPlay, 0, false);
         AnimationManagement.addToHand(cardToDelete, 1, false);
+        AnimationManagement.addToHand(c1, 2, false);
+        AnimationManagement.addToHand(c2, 3, false);
+        AnimationManagement.addToHand(c3, 4, false);
+        List<ImageView> cards = new ArrayList<>();
+        cards.add(cardToPlay);
+        cards.add(cardToDelete);
+        cards.add(c1);
+        cards.add(c2);
+        cards.add(c3);
 
         //Wenn auf die Karte geklickt wird, spielt der Gegenspieler eine Karte aus
         cardToPlayByOpponent.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
@@ -122,6 +162,13 @@ public class AnimationTest extends Application {
         //Wenn auf die Karte geklickt wird, wird sie auf den Müll gelegt
         cardToDelete.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             AnimationManagement.deleteCard(cardToDelete);
+        });
+
+        //Abstände der Karten auf der Hand werden verringert und eine neue hinzugefügt
+        c1.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+            AnimationManagement.refactorHandToSmallerSpaces(cards);
+            AnimationManagement.addToHand(c4, 5, true);
+            cards.add(c4);
         });
     }
 
