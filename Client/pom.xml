@@ -4,7 +4,7 @@
     <parent>
         <groupId>de.uol.swp</groupId>
         <!-- rename to group -->
-        <artifactId>SWPBaseProject</artifactId>
+        <artifactId>SWP-B</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -24,7 +24,6 @@
                     <mainClass>de.uol.swp.client.Main</mainClass>
                 </configuration>
             </plugin>
-
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.1.0</version>
@@ -101,6 +100,18 @@
             <artifactId>javafx-graphics</artifactId>
             <version>11</version>
             <classifier>mac</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-web</artifactId>
+            <version>11</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-media</artifactId>
+            <version>11</version>
         </dependency>
 
         <dependency>

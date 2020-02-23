@@ -59,7 +59,7 @@ public class MainMemoryBasedUserStore extends AbstractUserStore implements UserS
      *
      * @param username der Username
      * @param password das Passwort
-     * @param eMail die e-Mail
+     * @param eMail    die e-Mail
      * @return den neuen Nutzer
      * @author Marco
      * @since Start

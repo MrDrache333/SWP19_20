@@ -29,7 +29,7 @@ public class Chat implements de.uol.swp.common.chat.Chat {
     /**
      * Übergibt die ChatID.
      *
-     * @return  Wert der ChatID
+     * @return Wert der ChatID
      * @author Keno
      * @since Sprint 2
      *

@@ -26,7 +26,7 @@ class UserMessageSerializableTest {
     }
 
     /**
-     *Test, ob die UserMessages Serializable sind.
+     * Test, ob die UserMessages Serializable sind.
      *
      * @author Keno S.
      * @since Sprint3

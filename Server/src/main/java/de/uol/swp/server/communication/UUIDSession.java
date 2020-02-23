@@ -51,6 +51,7 @@ public class UUIDSession implements Session {
 
     /**
      * Getter für Benutzer
+     *
      * @return Der Benutzer
      * @author Ferit
      * @since Sprint 3

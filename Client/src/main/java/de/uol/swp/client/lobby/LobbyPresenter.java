@@ -49,8 +49,6 @@ import java.util.UUID;
 public class LobbyPresenter extends AbstractPresenter {
 
     public static final String fxml = "/fxml/LobbyView.fxml";
-    private static final String url = "https://confluence.swl.informatik.uni-oldenburg.de/display/SWP2019B/Spielanleitung?preview=/126746667/126746668/Dominion%20-%20Anleitung%20-%20V1.pdf";
-
     private static final Logger LOG = LogManager.getLogger(ChatViewPresenter.class);
 
     private ChatViewPresenter chatViewPresenter;
@@ -184,14 +182,14 @@ public class LobbyPresenter extends AbstractPresenter {
      * Wird aufgerufen wenn der Spielanleitung-Button gedrückt wird.
      *
      * @param actionEvent
-     * @author Keno S, Keno O.
+     * @author Keno S, Keno O., Timo
      * @since Sprint3
      */
     @FXML
     public void onInstructionsButtonPressed(ActionEvent actionEvent) {
         try {
-            Desktop.getDesktop().browse(new URI(url));
-        } catch (IOException | URISyntaxException e1) {
+            this.lobbyService.startWebView();
+        } catch (Exception e1) {
             e1.printStackTrace();
         }
     }
@@ -385,8 +383,8 @@ public class LobbyPresenter extends AbstractPresenter {
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
         if (!message.getLobbyID().equals(lobbyID)) return;
         LOG.debug("User " + message.getUser().getUsername() + " left the Lobby");
-        userLeftLobby(message.getUser().getUsername(), false);
         gameOwner = message.getGameOwner();
+        userLeftLobby(message.getUser().getUsername(), false);
     }
 
     /**
@@ -402,7 +400,6 @@ public class LobbyPresenter extends AbstractPresenter {
         if (!message.getLobby().getLobbyID().equals(lobbyID)) return;
         LOG.debug("User " + message.getLobby().getName() + " kicked out of the Lobby");
         userLeftLobby(message.getUser().getUsername(), true);
-        chatViewPresenter.userKicked(message.getUser().getUsername());
     }
 
     //--------------------------------------
@@ -422,6 +419,7 @@ public class LobbyPresenter extends AbstractPresenter {
         if (readyUserList.get(username) != null) {
             Platform.runLater(() -> {
                 readyUserList.remove(username);
+                readyUserList.replace(gameOwner.getUsername(),getHboxFromReadyUser(gameOwner,false));
                 updateUsersList();
                 //Je nachdem ob der Benutzer gekickt wurde oder freiwillig aus der Lobby gegangen ist wird es auch so angezeigt
                 if (kicked) {
@@ -526,7 +524,7 @@ public class LobbyPresenter extends AbstractPresenter {
     //--------------------------------------
 
     /**
-     * Gibt die LobyID zurück.
+     * Gibt die LobbyID zurück.
      *
      * @return die LobbyID
      * @author Darian

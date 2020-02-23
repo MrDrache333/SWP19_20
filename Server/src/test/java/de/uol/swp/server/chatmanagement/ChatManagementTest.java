@@ -28,7 +28,7 @@ class ChatManagementTest {
     /**
      * Der Chat Management.
      */
-    final ChatManagement chatManagement = new ChatManagement();
+    private final ChatManagement chatManagement = new ChatManagement();
 
     /**
      * Erstellt den Chat "global" und prüft daraufhin, das der Chat "global" nicht null ist.
@@ -36,8 +36,8 @@ class ChatManagementTest {
     @Test
     void getChat() {
         //Create a global Chat
-        chatManagement.createChat("global");
-        assertNotNull(chatManagement.getChat("global"));
+        if (chatManagement.getChat("global").isEmpty()) chatManagement.createChat("global");
+        assertTrue(chatManagement.getChat("global").isPresent());
     }
 
     /**
@@ -56,7 +56,7 @@ class ChatManagementTest {
     void deleteChat() {
         String newChat = chatManagement.createChat();
         chatManagement.deleteChat(newChat);
-        assertNull(chatManagement.getChat(newChat));
+        assertFalse(chatManagement.getChat(newChat).isPresent());
     }
 
     /**
@@ -67,6 +67,6 @@ class ChatManagementTest {
         //Create a global Chat
         chatManagement.createChat("global");
         chatManagement.addMessage("global", new ChatMessage(chatMember, "Test"));
-        assertEquals("Test", chatManagement.getChat("global").getMessages().get(0).getMessage());
+        assertEquals("Test", chatManagement.getChat("global").get().getMessages().get(0).getMessage());
     }
 }
