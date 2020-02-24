@@ -1,4 +1,4 @@
-package de.uol.swp.client;
+package de.uol.swp.client.game;
 
 import de.uol.swp.client.game.AnimationManagement;
 import javafx.application.Application;
