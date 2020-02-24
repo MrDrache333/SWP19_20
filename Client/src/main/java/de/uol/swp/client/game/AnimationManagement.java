@@ -8,23 +8,20 @@ import java.util.List;
 
 public class AnimationManagement {
 
-    private static double handX = 284;
-    private static double handY = 541;
+    private static final double HAND_X = 284;
+    private static final double HAND_Y = 541;
 
-    private static double deckX = 150;
-    private static double deckY = 538;
+    private static final double ABLAGE_X = 733;
+    private static final double ABLAGE_Y = 538;
 
-    private static double ablageX = 733;
-    private static double ablageY = 538;
+    private static final double ACTION_ZONE_X = 356;
+    private static final double ACTION_ZONE_Y = 415;
 
-    private static double actionZoneX = 356;
-    private static double actionZoneY = 415;
+    private static final double ACTION_ZONE_OPPONENT_X = ACTION_ZONE_X;
+    private static final double ACTION_ZONE_OPPONENT_Y = 31;
 
-    private static double actionZoneOpponentX = actionZoneX;
-    private static double actionZoneOpponentY = 31;
-
-    private static double trashX = 100;
-    private static double trashY = 233;
+    private static final double TRASH_X = 100;
+    private static final double TRASH_Y = 233;
 
 
     /**
@@ -74,9 +71,7 @@ public class AnimationManagement {
             setNewCoordinates(card, pathTransition);
             return true;
         }
-        else {
-            return false;
-        }
+        return false;
     }
 
     /**
@@ -100,7 +95,7 @@ public class AnimationManagement {
         EndPointX = EndPointX+w+count*w;
         EndPointY = EndPointY+h;
         Path path = new Path();
-        if (moveTo.getX() != EndPointX+w+count*w && moveTo.getY() != EndPointY) {
+        if (moveTo.getX() != EndPointX && moveTo.getY() != EndPointY) {
             path.getElements().add(moveTo);
             path.getElements().add(new ArcTo(30, 30, 0, EndPointX, EndPointY, largeArc, !largeArc));
             PathTransition pathTransition = new PathTransition();
@@ -113,9 +108,7 @@ public class AnimationManagement {
             setNewCoordinates(card, pathTransition);
             return true;
         }
-        else {
-            return false;
-        }
+        return false;
     }
 
     /**
@@ -128,7 +121,7 @@ public class AnimationManagement {
      * @since Sprint5
      */
     public static Boolean playCard(ImageView card, int count){
-        return createArcToPath(card, keepPosition(card), actionZoneX, actionZoneY, count, true);
+        return createArcToPath(card, keepPosition(card), ACTION_ZONE_X, ACTION_ZONE_Y, count, true);
     }
 
     /**
@@ -141,7 +134,7 @@ public class AnimationManagement {
      * @since Sprint5
      */
     public static Boolean opponentPlaysCard(ImageView card, int count){
-        return createArcToPath(card, new MoveTo(500, 0), actionZoneOpponentX, actionZoneOpponentY, count, false);
+        return createArcToPath(card, new MoveTo(500, 0), ACTION_ZONE_OPPONENT_X, ACTION_ZONE_OPPONENT_Y, count, false);
     }
 
     /**
@@ -154,7 +147,7 @@ public class AnimationManagement {
      * @since Sprint5
      */
     public static Boolean buyCard(ImageView card){
-        return createLineToPath(card, ablageX, ablageY);
+        return createLineToPath(card, ABLAGE_X, ABLAGE_Y);
     }
 
     /**
@@ -178,7 +171,7 @@ public class AnimationManagement {
      * @since Sprint5
      */
     public static Boolean deleteCard(ImageView card){
-        return createArcToPath(card, keepPosition(card), trashX, trashY, 0, true);
+        return createArcToPath(card, keepPosition(card), TRASH_X, TRASH_Y, 0, true);
     }
 
     /**
@@ -189,59 +182,49 @@ public class AnimationManagement {
      *
      * @param card die Karte
      * @param count gibt an, die wievielte Karte hinzugefügt wird
-     * @param moreThan5 gibt an, ob schon 5 oder mehr Karten bereits auf der Hand liegen
+     * @param smallSpace gibt an, ob schon 5 oder mehr Karten bereits auf der Hand liegen
      * @author Anna
      * @since Sprint5
      */
-    public static void addToHand(ImageView card, int count, boolean moreThan5){
+    public static Boolean addToHand(ImageView card, int count, boolean smallSpace){
         double xValue = card.getX();
         double yValue = card.getY();
         double w = card.getFitWidth()/2;
         double h = card.getFitHeight()/2;
-        Path path = new Path();
-        path.getElements().add(new MoveTo(xValue + w, yValue + h));
-        if (moreThan5){
-            path.getElements().add(new LineTo(handX + w + count * w, handY + h));
+        if ((smallSpace && HAND_X + count * w != xValue) || (!smallSpace && HAND_X + count * w * 2 + 5 * count != xValue)) {
+            Path path = new Path();
+            path.getElements().add(new MoveTo(xValue + w, yValue + h));
+            if (smallSpace) {
+                path.getElements().add(new LineTo(HAND_X + w + count * w, HAND_Y + h));
+            } else {
+                path.getElements().add(new LineTo(HAND_X + w + count * w * 2 + 5 * count, HAND_Y + h));
+            }
+            PathTransition pathTransition = new PathTransition();
+            pathTransition.setDuration(Duration.millis(1000));
+            pathTransition.setNode(card);
+            pathTransition.setPath(path);
+            pathTransition.setCycleCount(1);
+            card.toFront();
+            pathTransition.play();
+            setNewCoordinates(card, pathTransition);
+            return true;
         }
-        else {
-            path.getElements().add(new LineTo(handX + w + count * w*2 + 5*count, handY + h));
-        }
-        PathTransition pathTransition = new PathTransition();
-        pathTransition.setDuration(Duration.millis(1000));
-        pathTransition.setNode(card);
-        pathTransition.setPath(path);
-        pathTransition.setCycleCount(1);
-        card.toFront();
-        pathTransition.play();
-        setNewCoordinates(card, pathTransition);
+        return false;
     }
 
     /**
-     * Die Abstände zwischen den Karten werden verrringert.
+     * Die Karten werden neu angeordnet.
      *
      * @param cards die Karten auf der Hand
+     * @param smallSpace gibt an, ob verkleinerte Abstäne benutzt werden sollen
      * @author Anna
      * @since Sprint5
      */
-    public static void refactorHandToSmallerSpaces(List<ImageView> cards){
-        for (int i = 1; i < cards.size(); i++){
-            addToHand(cards.get(i), i, true);
+    public static void refactorHand(List<ImageView> cards, boolean smallSpace){
+        for (int i = 0; i < cards.size(); i++){
+            addToHand(cards.get(i), i, smallSpace);
         }
     }
-
-    /**
-     * Die Abstände aller Karten werden wieder vergrößert.
-     *
-     * @param cards die Karten auf der Hand
-     * @author Anna
-     * @since Sprint5
-     */
-    public static void refactorHandToBiggerSpaces(List<ImageView> cards){
-        for (int i = 1; i < cards.size(); i++){
-            addToHand(cards.get(i), i, false);
-        }
-    }
-
     /**
      * Die Methode setzt die neuen Koordinaten der Karte, nachdem die Bewegung beendet wurde.
      *

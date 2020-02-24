@@ -137,12 +137,15 @@ public class AnimationTest extends Application {
         AnimationManagement.addToHand(c1, 2, false);
         AnimationManagement.addToHand(c2, 3, false);
         AnimationManagement.addToHand(c3, 4, false);
+        AnimationManagement.addToHand(c4, 5, false);
         List<ImageView> cards = new ArrayList<>();
         cards.add(cardToPlay);
         cards.add(cardToDelete);
         cards.add(c1);
         cards.add(c2);
         cards.add(c3);
+        cards.add(c4);
+
 
         //Wenn auf die Karte geklickt wird, spielt der Gegenspieler eine Karte aus
         cardToPlayByOpponent.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
@@ -152,6 +155,10 @@ public class AnimationTest extends Application {
         //Wenn auf die Karte geklickt wird, spielt der Spieler sie aus
         cardToPlay.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             AnimationManagement.playCard(cardToPlay, 0);
+            if (cards.contains(cardToPlay)){
+                cards.remove(cardToPlay);
+                AnimationManagement.refactorHand(cards, false);
+            }
         });
 
         //Wenn auf die Karte geklickt wird, wird sie vom Spieler gekauft
@@ -162,13 +169,20 @@ public class AnimationTest extends Application {
         //Wenn auf die Karte geklickt wird, wird sie auf den Müll gelegt
         cardToDelete.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             AnimationManagement.deleteCard(cardToDelete);
+            if (cards.contains(cardToDelete)) {
+                cards.remove(cardToDelete);
+                AnimationManagement.refactorHand(cards, false);
+            }
         });
 
-        //Abstände der Karten auf der Hand werden verringert und eine neue hinzugefügt
+        //Abstände der Karten auf der Hand werden verringert
         c1.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            AnimationManagement.refactorHandToSmallerSpaces(cards);
-            AnimationManagement.addToHand(c4, 5, true);
-            cards.add(c4);
+            AnimationManagement.refactorHand(cards, true);
+        });
+
+        //Abstände der Karten auf der Hand werden vergrößert
+        c2.addEventHandler(MouseEvent.MOUSE_CLICKED, e-> {
+            AnimationManagement.refactorHand(cards, false);
         });
     }
 
