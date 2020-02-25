@@ -2,10 +2,12 @@ package de.uol.swp.common.lobby.request;
 
 import de.uol.swp.common.user.UserDTO;
 
+import java.util.UUID;
+
 /**
  * Anfrage, um den Bereitstatus eines Benutzers in einer Lobby zu ändern.
  *
- * @author KenoO
+ * @author KenoO, Marvin
  * @since Sprint2
  */
 public class UpdateLobbyReadyStatusRequest extends AbstractLobbyRequest {
@@ -16,12 +18,12 @@ public class UpdateLobbyReadyStatusRequest extends AbstractLobbyRequest {
     /**
      * Erstellt einen neuen Update lobby ready status request.
      *
-     * @param lobby Die Lobby-ID
-     * @param user  Der zu updatende Benutzer
-     * @param ready Der neue Bereit-Status
+     * @param lobbyID Die Lobby-ID
+     * @param user    Der zu updatende Benutzer
+     * @param ready   Der neue Bereit-Status
      */
-    public UpdateLobbyReadyStatusRequest(String lobby, UserDTO user, boolean ready) {
-        super(lobby, user);
+    public UpdateLobbyReadyStatusRequest(UUID lobbyID, UserDTO user, boolean ready) {
+        super(lobbyID, user);
         this.Ready = ready;
     }
 
