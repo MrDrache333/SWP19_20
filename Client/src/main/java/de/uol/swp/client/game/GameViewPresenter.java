@@ -14,6 +14,7 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
+import javafx.animation.Animation;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -58,6 +59,10 @@ public class GameViewPresenter extends AbstractPresenter {
     private ListView<String> usersView;
 
     @FXML
+    private ImageView ablage, handkarten, shopTeppich, aktionszone, aktionszoneGegner, muell;
+
+    /**
+    @FXML
     private ImageView geldkarte_1, geldkarte_2, geldkarte_3;
     @FXML
     private ImageView siegpunkt_1, siegpunkt_2, siegpunkt_3;
@@ -68,11 +73,14 @@ public class GameViewPresenter extends AbstractPresenter {
             aktionskarte_7, aktionskarte_8, aktionskarte_9, aktionskarte_10;
     @FXML
     private ImageView hand_1, hand_2, hand_3, hand_4, hand_5;
+    **/
 
     private ObservableList<String> users;
     private ChatViewPresenter chatViewPresenter;
     private Injector injector;
     private GameManagement gameManagement;
+
+    private String choosenCard = "";
 
     /**
      * Instantiiert einen neuen GameView Presenter.
@@ -145,6 +153,7 @@ public class GameViewPresenter extends AbstractPresenter {
         ((Pane) chatView.getChildren().get(0)).setPrefHeight(chatView.getPrefHeight());
         ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getPrefWidth());
 
+        /**
         interactionBuyableCard(geldkarte_1);
         interactionBuyableCard(geldkarte_2);
         interactionBuyableCard(geldkarte_3);
@@ -162,6 +171,10 @@ public class GameViewPresenter extends AbstractPresenter {
         interactionBuyableCard(aktionskarte_8);
         interactionBuyableCard(aktionskarte_9);
         interactionBuyableCard(aktionskarte_10);
+        **/
+
+
+        interactionBackground(ablage, handkarten, shopTeppich, aktionszone, aktionszoneGegner, muell);
     }
 
     /**
@@ -188,6 +201,36 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     public void onGiveUpButtonPressed(ActionEvent actionEvent) {
         showAlert(Alert.AlertType.CONFIRMATION, " ", "Möchtest du wirklich aufgeben?");
+    }
+
+    @FXML
+    public void onBuyableCardClicked (MouseEvent mouseEvent){
+        ImageView cardImage = (ImageView) mouseEvent.getSource();
+        if (choosenCard.isEmpty()){
+            System.out.println("Karte vergrößert");
+            cardImage.setImage(new Image(new File(getClass().getResource("/images/karte_gross.png").toExternalForm().replace("file:", "")).toURI().toString()));
+            cardImage.setFitHeight(110.0);
+            choosenCard = cardImage.getId();
+        }
+        else if (choosenCard.equals(cardImage.getId())){
+            System.out.println("Karte gekauft");
+            cardImage.setImage(new Image(new File(getClass().getResource("/images/platzhalter_karte.png").toExternalForm().replace("file:", "")).toURI().toString()));
+            cardImage.setFitHeight(110.0);
+            AnimationManagement.buyCard(cardImage);
+            choosenCard = "";
+        }
+        else {
+            System.out.println("Karte vergrößert und andere muss verkleinert");
+            //TODO: Karte zu der die ID von choosenCard gehört muss sich verkleinern
+            cardImage.setImage(new Image(new File(getClass().getResource("/images/karte_gross.png").toExternalForm().replace("file:", "")).toURI().toString()));
+            cardImage.setFitHeight(110.0);
+            choosenCard = cardImage.getId();
+        }
+    }
+
+    @FXML
+    public void onHandCardClicked (MouseEvent mouseEvent){
+        // TODO: implementieren
     }
 
     /**
@@ -296,6 +339,46 @@ public class GameViewPresenter extends AbstractPresenter {
         cardImage.setOnMouseClicked(event -> {
             cardImage.setImage(new Image(new File(getClass().getResource("/images/karte_gross.png").toExternalForm().replace("file:", "")).toURI().toString()));
             cardImage.setFitHeight(110.0);
+        });
+    }
+
+    /**
+     * Implementiert, was passiert, wenn man den Hintergrund anklickt -> Karte die evtl. groß ist wird wieder verkleinert
+     *
+     * @param ablage
+     * @param handkarten
+     * @param shopTeppich
+     * @param aktionszone
+     * @param aktionszoneGegner
+     * @param muell
+     * @author Rike
+     * @since Sprint 5
+     */
+    private void interactionBackground (ImageView ablage, ImageView handkarten, ImageView shopTeppich, ImageView aktionszone, ImageView aktionszoneGegner, ImageView muell){
+        // TODO: wenn choosenCard nicht leer ist (eine Karte wird also groß angezeigt) soll diese sich verkleinern -> Anstelle von System.out.println
+        ablage.setOnMouseClicked(event -> {
+            System.out.println("Ablage wurde angeklickt");
+            choosenCard = "";
+        });
+        handkarten.setOnMouseClicked(event -> {
+            System.out.println("Handkarte wurde angeklickt");
+            choosenCard = "";
+        });
+        shopTeppich.setOnMouseClicked(event -> {
+            System.out.println("shopTeppich wurde angeklickt");
+            choosenCard = "";
+        });
+        aktionszone.setOnMouseClicked(event -> {
+            System.out.println("Aktionszone wurde angeklickt");
+            choosenCard = "";
+        });
+        aktionszoneGegner.setOnMouseClicked(event -> {
+            System.out.println("Aktionszone (Gegner) wurde angeklickt");
+            choosenCard = "";
+        });
+        muell.setOnMouseClicked(event -> {
+            System.out.println("Müll wurde angeklickt");
+            choosenCard = "";
         });
     }
 }
