@@ -152,7 +152,7 @@ class LobbyServiceTest {
         //Test lobby list
         List<Lobby> lobbies = new ArrayList<>(response.getLobbies());
         assertEquals(2, lobbies.size());
-        assertTrue(((lobbies.get(0).getName().equals(defaultLobbyName) && lobbies.get(1).getName().equals("Lobby2"))
-                || (lobbies.get(1).getName().equals(defaultLobbyName) && lobbies.get(0).getName().equals("Lobby2"))));
+        assertTrue((lobbies.get(0).getName().equals(defaultLobbyName) && lobbies.get(1).getName().equals("Lobby2"))
+                || (lobbies.get(1).getName().equals(defaultLobbyName) && lobbies.get(0).getName().equals("Lobby2")));
     }
 }
