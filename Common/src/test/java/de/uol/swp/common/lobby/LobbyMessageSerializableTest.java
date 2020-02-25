@@ -24,7 +24,7 @@ public class LobbyMessageSerializableTest {
 
     @Test
     void testLobbyMessagesSerializable() {
-        SerializationTestHelper.checkSerializableAndDeserializable(new CreateLobbyRequest("test", defaultUser),
+        SerializationTestHelper.checkSerializableAndDeserializable(new CreateLobbyRequest("test", defaultUser, ""),
                 CreateLobbyRequest.class);
         SerializationTestHelper.checkSerializableAndDeserializable(new LobbyJoinUserRequest(testUUID, defaultUser),
                 LobbyJoinUserRequest.class);

@@ -22,17 +22,6 @@ public class CreateLobbyRequest extends AbstractLobbyRequest {
     }
 
     /**
-     * Erstellt einen Request.
-     *
-     * @param lobbyName Der gewünschte Lobbyname
-     * @param owner     Der User, welcher die Lobby erstellen will.
-     * @author Marvin
-     */
-    public CreateLobbyRequest(String lobbyName, UserDTO owner) {
-        this(lobbyName, owner, "");
-    }
-
-    /**
      * Erstellt einen Request mit Passwort.
      *
      * @param lobbyName     Der gewünschte Lobbyname

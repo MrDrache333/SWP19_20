@@ -65,7 +65,7 @@ class LobbyServiceTest {
 
     @Test
     void onCreateLobbyRequestTest() throws InterruptedException {
-        lobbyService.onCreateLobbyRequest(new CreateLobbyRequest(defaultLobbyName, new UserDTO(lobbyOwner.getUsername(), lobbyOwner.getPassword(), lobbyOwner.getEMail())));
+        lobbyService.onCreateLobbyRequest(new CreateLobbyRequest(defaultLobbyName, new UserDTO(lobbyOwner.getUsername(), lobbyOwner.getPassword(), lobbyOwner.getEMail()), ""));
 
         lock.await(1000, TimeUnit.MILLISECONDS);
 
@@ -152,7 +152,7 @@ class LobbyServiceTest {
         //Test lobby list
         List<Lobby> lobbies = new ArrayList<>(response.getLobbies());
         assertEquals(2, lobbies.size());
-        assertEquals(defaultLobbyName, lobbies.get(0).getName());
-        assertEquals("Lobby2", lobbies.get(1).getName());
+        assertTrue(((lobbies.get(0).getName().equals(defaultLobbyName) && lobbies.get(1).getName().equals("Lobby2"))
+                || (lobbies.get(1).getName().equals(defaultLobbyName) && lobbies.get(0).getName().equals("Lobby2"))));
     }
 }
