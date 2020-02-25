@@ -7,28 +7,28 @@
 <?import javafx.scene.text.Font?>
 <AnchorPane prefHeight="255.0" prefWidth="400.0" stylesheets="@../css/SettingsPresenter.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <ImageView fitHeight="255.0" fitWidth="475.0" opacity="0.9" pickOnBounds="true" preserveRatio="true"
-                 AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                 AnchorPane.topAnchor="0.0">
+       <ImageView fitHeight="255.0" fitWidth="475.0" opacity="0.9" pickOnBounds="true" preserveRatio="true"
+                  AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                  AnchorPane.topAnchor="0.0">
          <image>
-            <Image url="@../images/settings_background.png"/>
+             <Image url="@../images/settings_background.png"/>
          </image>
       </ImageView>
-      <TextField fx:id="usernameField" layoutX="33.0" layoutY="74.0" promptText="Neuer Username"/>
-      <TextField fx:id="emailField" layoutX="33.0" layoutY="152.0" promptText="Neue E-Mail Adresse"/>
-      <PasswordField fx:id="currentPasswordField" layoutX="33.0" layoutY="212.0" promptText="Aktuelles Passwort"/>
-      <PasswordField fx:id="passwordField" layoutX="216.0" layoutY="74.0" promptText="Neues Passwort"/>
-      <PasswordField fx:id="password2Field" layoutX="216.0" layoutY="152.0" promptText="Passwort wiederholen"/>
-      <Button fx:id="cancelButton" layoutX="216.0" layoutY="214.0" mnemonicParsing="false"
-              onAction="#onCancelButtonPressed" text="Abbrechen"/>
-      <Button fx:id="saveButton" defaultButton="true" layoutX="300.0" layoutY="214.0" mnemonicParsing="false"
-              onAction="#onSaveButtonPressed" text="Speichern"/>
-      <Button fx:id="deleteAccount" layoutX="265.0" layoutY="20.0" mnemonicParsing="false"
-              onAction="#onDeleteAccountButtonPressed" text="Account löschen"/>
-      <Label layoutX="33.0" layoutY="10.0" prefHeight="46.0" prefWidth="183.0" text="Einstellungen">
+       <TextField fx:id="usernameField" layoutX="33.0" layoutY="74.0" promptText="Neuer Username"/>
+       <TextField fx:id="emailField" layoutX="33.0" layoutY="152.0" promptText="Neue E-Mail Adresse"/>
+       <PasswordField fx:id="currentPasswordField" layoutX="33.0" layoutY="212.0" promptText="Aktuelles Passwort"/>
+       <PasswordField fx:id="passwordField" layoutX="216.0" layoutY="74.0" promptText="Neues Passwort"/>
+       <PasswordField fx:id="password2Field" layoutX="216.0" layoutY="152.0" promptText="Passwort wiederholen"/>
+       <Button fx:id="cancelButton" layoutX="216.0" layoutY="214.0" mnemonicParsing="false"
+               onAction="#onCancelButtonPressed" text="Abbrechen"/>
+       <Button fx:id="saveButton" defaultButton="true" layoutX="300.0" layoutY="214.0" mnemonicParsing="false"
+               onAction="#onSaveButtonPressed" text="Speichern"/>
+       <Button fx:id="deleteAccount" layoutX="265.0" layoutY="20.0" mnemonicParsing="false"
+               onAction="#onDeleteAccountButtonPressed" text="Account löschen"/>
+       <Label layoutX="33.0" layoutY="10.0" prefHeight="46.0" prefWidth="183.0" text="Einstellungen">
          <font>
-            <Font size="30.0"/>
+             <Font size="30.0"/>
          </font>
-      </Label>
+       </Label>
    </children>
 </AnchorPane>

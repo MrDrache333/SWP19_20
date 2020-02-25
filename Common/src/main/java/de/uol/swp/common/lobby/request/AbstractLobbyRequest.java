@@ -38,10 +38,6 @@ public class AbstractLobbyRequest extends AbstractRequestMessage {
         return lobbyName;
     }
 
-    public void setUser(UserDTO user) {
-        this.user = user;
-    }
-
     /**
      * Benutzer wird zurückgegben der die Anfrage verschickt hat.
      *
@@ -51,6 +47,10 @@ public class AbstractLobbyRequest extends AbstractRequestMessage {
      */
     public UserDTO getUser() {
         return user;
+    }
+
+    public void setUser(UserDTO user) {
+        this.user = user;
     }
 
     /**
