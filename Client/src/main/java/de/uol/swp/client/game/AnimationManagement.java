@@ -182,7 +182,7 @@ public class AnimationManagement {
      *
      * @param card die Karte
      * @param count gibt an, die wievielte Karte hinzugefügt wird
-     * @param smallSpace gibt an, ob schon 5 oder mehr Karten bereits auf der Hand liegen
+     * @param smallSpace gibt an, ob ein kleinerer Abstand genommen werden soll
      * @author Anna
      * @since Sprint5
      */
