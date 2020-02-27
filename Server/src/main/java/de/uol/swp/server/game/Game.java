@@ -14,6 +14,11 @@ public class Game {
      * The Chat.
      */
     private Chat chat;
+
+    public Playground getPlayground() {
+        return playground;
+    }
+
     /**
      * The Playground.
      */

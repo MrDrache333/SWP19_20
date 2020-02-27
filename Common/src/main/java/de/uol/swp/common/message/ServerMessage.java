@@ -13,4 +13,5 @@ public interface ServerMessage extends Message {
     List<Session> getReceiver();
 
     void setReceiver(List<Session> receiver);
+
 }

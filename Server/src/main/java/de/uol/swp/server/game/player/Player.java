@@ -6,6 +6,11 @@ package de.uol.swp.server.game.player;
 public class Player {
 
     private String playerName;
+
+    public Deck getPlayerDeck() {
+        return playerDeck;
+    }
+
     private Deck playerDeck = new Deck();
 
     /**

@@ -16,6 +16,7 @@ import de.uol.swp.common.user.request.*;
 import de.uol.swp.common.user.response.AllOnlineUsersResponse;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.communication.UUIDSession;
+import de.uol.swp.server.game.player.Player;
 import de.uol.swp.server.message.ClientAuthorizedMessage;
 import de.uol.swp.server.message.ServerExceptionMessage;
 import de.uol.swp.server.message.ServerInternalMessage;
@@ -57,6 +58,7 @@ public class AuthenticationService extends AbstractService {
         super(bus);
         this.userManagement = userManagement;
     }
+
 
     /**
      * Session von einem User wird übergeben

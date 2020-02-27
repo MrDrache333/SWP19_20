@@ -1,7 +1,9 @@
 package de.uol.swp.server.game.player;
+
 import de.uol.swp.server.game.card.Card;
 import de.uol.swp.server.game.card.MoneyCard;
 import de.uol.swp.server.game.card.ValueCard;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -20,6 +22,10 @@ public class Deck {
     private ArrayList<Card> cardsDeck = new ArrayList<Card>();
     private ArrayList<Card> trayStack = new ArrayList<Card>();
     private ArrayList<Card> hand = new ArrayList<Card>();
+
+    public ArrayList<Card> getHand() {
+        return hand;
+    }
 
     /**
      * Konstruktor

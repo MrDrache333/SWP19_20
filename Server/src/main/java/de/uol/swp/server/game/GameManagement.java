@@ -1,8 +1,10 @@
 package de.uol.swp.server.game;
 
+import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import de.uol.swp.common.game.exception.GameManagementException;
 import de.uol.swp.common.lobby.Lobby;
+import de.uol.swp.common.lobby.message.StartGameMessage;
 import de.uol.swp.server.chat.Chat;
 import de.uol.swp.server.chat.ChatManagement;
 import de.uol.swp.server.lobby.LobbyManagement;
@@ -34,6 +36,14 @@ public class GameManagement {
     public GameManagement(ChatManagement chatManagement, LobbyManagement lobbyManagement) {
         this.lobbyManagement = lobbyManagement;
         this.chatManagement = chatManagement;
+    }
+
+
+    @Subscribe
+    void startGame(StartGameMessage msg) {
+        createGame(msg.getLobbyID());
+        games.get(0).getPlayground().sendPlayersHand();
+        System.out.println("Test1");
     }
 
     /**
