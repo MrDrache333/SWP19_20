@@ -232,7 +232,7 @@ public class ClientApp extends Application implements ConnectionListener {
             if (sceneManager.getGameManagement(message.getLobbyID()) != null) {
                 sceneManager.getGameManagement(message.getLobbyID()).showLobbyView();
             } else {
-                sceneManager.showLobbyScreen(message.getUser(), message.getLobby().getName(), message.getLobbyID(), message.getGameOwner());
+                sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getLobbyID(), message.getGameOwner());
             }
             LOG.info("User " + message.getUser().getUsername() + " joined lobby successfully");
         }
@@ -305,7 +305,7 @@ public class ClientApp extends Application implements ConnectionListener {
      * geschlossen und das MainMenu wird angezeigt
      *
      * @param message KickUserMessage
-     * @author Darian, Marvin
+     * @author Darian
      * @since Sprint 4
      */
     @Subscribe
@@ -313,7 +313,7 @@ public class ClientApp extends Application implements ConnectionListener {
         if (message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showMainScreen(user);
             LOG.info("User " + message.getUser().getUsername() + " is kicked from the lobby successfully");
-            sceneManager.getGameManagement(message.getLobbyID()).close();
+            sceneManager.getGameManagement(message.getLobby().getLobbyID()).close();
             SceneManager.showAlert(Alert.AlertType.WARNING, "Sie wurden aus der Lobby entfernt", "Lobby verlassen");
         }
     }

@@ -110,12 +110,12 @@ class LobbyServiceTest {
      * Hilfsmethode für Lobby beitreten
      *
      * @throws InterruptedException Die evtl. auftretene Fehlermeldung
-     * @author Julia, Marvin
+     * @author Julia
      * @since Sprint3
      */
     private void joinLobby() throws InterruptedException {
         LobbyService userService = new LobbyService(bus);
-        userService.joinLobby(defaultLobby.getLobbyID(), new UserDTO(defaultUser.getUsername(), defaultUser.getPassword(), defaultUser.getEMail()));
+        userService.joinLobby(defaultLobby.getName(), new UserDTO(defaultUser.getUsername(), defaultUser.getPassword(), defaultUser.getEMail()), defaultLobby.getLobbyID());
         lock.await(1000, TimeUnit.MILLISECONDS);
     }
 
@@ -134,6 +134,7 @@ class LobbyServiceTest {
 
         LobbyJoinUserRequest lobbyJoinUserRequest = (LobbyJoinUserRequest) event;
         assertEquals(defaultLobby.getLobbyID(), lobbyJoinUserRequest.getLobbyID());
+        assertEquals(defaultLobby.getName(), lobbyJoinUserRequest.getLobbyName());
         assertEquals(defaultUser, lobbyJoinUserRequest.getUser());
     }
 
@@ -151,7 +152,7 @@ class LobbyServiceTest {
         event = null;
 
         LobbyService lobbyService = new LobbyService(bus);
-        lobbyService.leaveLobby(defaultLobby.getLobbyID(), new UserDTO(defaultUser.getUsername(), defaultUser.getPassword(), defaultUser.getEMail()));
+        lobbyService.leaveLobby(defaultLobby.getName(), new UserDTO(defaultUser.getUsername(), defaultUser.getPassword(), defaultUser.getEMail()), defaultLobby.getLobbyID());
 
         lock.await(1000, TimeUnit.MILLISECONDS);
 
@@ -160,6 +161,7 @@ class LobbyServiceTest {
         LobbyLeaveUserRequest lobbyLeaveUserRequest = (LobbyLeaveUserRequest) event;
 
         assertEquals(defaultLobby.getLobbyID(), lobbyLeaveUserRequest.getLobbyID());
+        assertEquals(defaultLobby.getName(), lobbyLeaveUserRequest.getLobbyName());
         assertEquals(defaultUser, lobbyLeaveUserRequest.getUser());
     }
 

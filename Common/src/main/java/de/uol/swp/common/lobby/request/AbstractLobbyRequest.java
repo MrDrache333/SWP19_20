@@ -4,12 +4,11 @@ import de.uol.swp.common.message.AbstractRequestMessage;
 import de.uol.swp.common.user.UserDTO;
 
 import java.util.Objects;
-import java.util.UUID;
 
 public class AbstractLobbyRequest extends AbstractRequestMessage {
 
     private static final long serialVersionUID = -7532249321141216659L;
-    private UUID lobbyID;
+    private String lobbyName;
     private UserDTO user;
 
     public AbstractLobbyRequest() {
@@ -18,25 +17,25 @@ public class AbstractLobbyRequest extends AbstractRequestMessage {
     /**
      * Eine Anfrage wird erstellt die allgemein mit der Lobby zu tun hat.
      *
-     * @param lobbyID LobbyID der Lobby auf die sich die Anfrage bezieht
-     * @param user    User der die Anfrage verschickt
-     * @author Marco, Marvin
+     * @param lobbyName Lobbyname um die sich die Anfrage handelt
+     * @param user      User der die Anfrage verschickt
+     * @author Marco
      * @since Start
      */
-    public AbstractLobbyRequest(UUID lobbyID, UserDTO user) {
-        this.lobbyID = lobbyID;
+    public AbstractLobbyRequest(String lobbyName, UserDTO user) {
+        this.lobbyName = lobbyName;
         this.user = user;
     }
 
     /**
-     * LobbyID wird zurückgegeben um die sich Anfrage handelt.
+     * Lobbyname wird zurückgegeben um die sich Anfrage handelt.
      *
-     * @return Die LobbyID
-     * @author Marco, Marvin
+     * @return Der Lobbyname
+     * @author Marco
      * @since Start
      */
-    public UUID getLobbyID() {
-        return lobbyID;
+    public String getLobbyName() {
+        return lobbyName;
     }
 
     /**
@@ -58,8 +57,8 @@ public class AbstractLobbyRequest extends AbstractRequestMessage {
      * Es wird verglichen ob zwei Objekte gleich sind.
      *
      * @param o Objekt mit dem verglichen werden soll
-     * @return True wenn die IDs und Benutzer gleich sind
-     * @author Marco, Marvin
+     * @return True wenn die Benutzer gleich sind
+     * @author Marco
      * @since Start
      */
     @Override
@@ -67,19 +66,19 @@ public class AbstractLobbyRequest extends AbstractRequestMessage {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AbstractLobbyRequest that = (AbstractLobbyRequest) o;
-        return Objects.equals(lobbyID, that.lobbyID) &&
+        return Objects.equals(lobbyName, that.lobbyName) &&
                 Objects.equals(user, that.user);
     }
 
     /**
-     * Es wird die LobbyID und der Benutzer gehasht
+     * Es wird der Lobbyname und der Benutzer gehasht
      *
      * @return hashCode aus Lobbyname und User
-     * @author Marco, Marvin
+     * @author Marco
      * @since Start
      */
     @Override
     public int hashCode() {
-        return Objects.hash(lobbyID, user);
+        return Objects.hash(lobbyName, user);
     }
 }

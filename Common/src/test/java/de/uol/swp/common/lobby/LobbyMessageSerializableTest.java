@@ -24,15 +24,15 @@ public class LobbyMessageSerializableTest {
 
     @Test
     void testLobbyMessagesSerializable() {
-        SerializationTestHelper.checkSerializableAndDeserializable(new CreateLobbyRequest("test", defaultUser, ""),
+        SerializationTestHelper.checkSerializableAndDeserializable(new CreateLobbyRequest("test", defaultUser),
                 CreateLobbyRequest.class);
-        SerializationTestHelper.checkSerializableAndDeserializable(new LobbyJoinUserRequest(testUUID, defaultUser),
+        SerializationTestHelper.checkSerializableAndDeserializable(new LobbyJoinUserRequest("test", defaultUser, testUUID),
                 LobbyJoinUserRequest.class);
-        SerializationTestHelper.checkSerializableAndDeserializable(new LobbyLeaveUserRequest(testUUID, defaultUser),
+        SerializationTestHelper.checkSerializableAndDeserializable(new LobbyLeaveUserRequest("test", defaultUser, testUUID),
                 LobbyLeaveUserRequest.class);
-        SerializationTestHelper.checkSerializableAndDeserializable(new UserJoinedLobbyMessage(testUUID, defaultUser, defaultUser, defaultLobby),
+        SerializationTestHelper.checkSerializableAndDeserializable(new UserJoinedLobbyMessage("test", defaultUser, testUUID, defaultUser, defaultLobby),
                 UserJoinedLobbyMessage.class);
-        SerializationTestHelper.checkSerializableAndDeserializable(new UserLeftLobbyMessage(testUUID, defaultUser, defaultUser, defaultLobby),
+        SerializationTestHelper.checkSerializableAndDeserializable(new UserLeftLobbyMessage("test", defaultUser, testUUID, defaultUser, defaultLobby),
                 UserLeftLobbyMessage.class);
     }
 

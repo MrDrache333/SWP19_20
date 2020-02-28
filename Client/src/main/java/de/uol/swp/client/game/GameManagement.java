@@ -106,12 +106,12 @@ public class GameManagement {
      * Wenn die Nachricht abgefangen wird und man der gekickte Benutzer ist und in der Lobby ist wird das Lobbyfenster
      * geschlossen
      *
-     * @author Darian, Marvin
+     * @author Darian
      * @since sprint4
      */
     @Subscribe
     private void onKickUserMessage(KickUserMessage msg) {
-        if (msg.getLobbyID().equals(id) && msg.getUser().getUsername().equals(loggedInUser.getUsername())) {
+        if (msg.getLobby().equals(id) && msg.getUser().getUsername().equals(loggedInUser.getUsername())) {
             close();
         }
     }
@@ -246,7 +246,7 @@ public class GameManagement {
      *
      * @param scene die Szene
      * @param title der Titel der Stage
-     * @author Julia, Keno O., Marvin
+     * @author Julia, Keno O.
      * @since Sprint3
      */
     private void showScene(final Scene scene, final String title) {
@@ -257,7 +257,7 @@ public class GameManagement {
             //User wird aus der Lobby ausgeloggt, wenn er das Lobbyfenster schließt
             primaryStage.setOnCloseRequest(windowEvent -> {
                 if (primaryStage.getScene().equals(lobbyScene)) {
-                    lobbyPresenter.getLobbyService().leaveLobby(id, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
+                    lobbyPresenter.getLobbyService().leaveLobby(lobbyName, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), id);
                 }
             });
             primaryStage.show();

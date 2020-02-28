@@ -19,13 +19,13 @@ public class UserLeftLobbyMessage extends AbstractLobbyMessage {
      *
      * @param lobbyID   Die LobbyID
      * @param lobby     Die Lobby
-     * @param gameOwner Der Besitzer
+     * @param lobbyName Der Lobbyname
      * @param user      Der User
-     * @author Julia, Darian, Marvin
+     * @author Julia, Darian
      * @since Sprint 2
      */
-    public UserLeftLobbyMessage(UUID lobbyID, UserDTO user, UserDTO gameOwner, LobbyDTO lobby) {
-        super(lobbyID, user);
+    public UserLeftLobbyMessage(String lobbyName, UserDTO user, UUID lobbyID, UserDTO gameOwner, LobbyDTO lobby) {
+        super(lobbyName, user, lobbyID);
         this.lobby = lobby;
         this.gameOwner = gameOwner;
     }

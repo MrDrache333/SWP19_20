@@ -28,7 +28,7 @@ import java.util.UUID;
  * @author Marco
  * @since Start
  */
-public class LobbyService {
+public class LobbyService  {
 
     private static final Logger LOG = LogManager.getLogger(LobbyService.class);
     private final EventBus bus;
@@ -36,7 +36,7 @@ public class LobbyService {
     /**
      * Instanziiert einen neuen LobbyService.
      *
-     * @param bus der Bus
+     * @param bus   der Bus
      * @author Marco
      * @since Start
      */
@@ -49,35 +49,37 @@ public class LobbyService {
     /**
      * Erstellt ein LobbyJoinUserRequest und postet diese auf den Eventbus.
      *
-     * @param lobbyID die LobbyID der Lobby der beigetreten werden soll
-     * @param user    der User der der Lobby beitreten will
-     * @author Julia, Paula, Marvin
+     * @param lobbyName der Lobbyname der Lobby der beigetreten werden soll
+     * @param user      der User der der Lobby beitreten will
+     * @param lobbyID   die LobbyID der Lobby der beigetreten werden soll
+     * @author Julia, Paula
      * @since Sprint3
      */
 
-    public void joinLobby(UUID lobbyID, UserDTO user) {
-        LobbyJoinUserRequest request = new LobbyJoinUserRequest(lobbyID, user);
+    public void joinLobby(String lobbyName, UserDTO user, UUID lobbyID) {
+        LobbyJoinUserRequest request = new LobbyJoinUserRequest(lobbyName, user, lobbyID);
         bus.post(request);
     }
 
     /**
      * Erstellt eine LobbyLeaveUserRequest und postet diese auf den EventBus.
      *
-     * @param lobbyID die LobbyID zum Lobbynamen
-     * @param user    der User der die Lobby verlassen will
+     * @param lobbyName der Lobbyname der Lobby die verlassen werden soll
+     * @param user      der User der die Lobby verlassen will
+     * @param lobbyID   die LobbyID zum Lobbynamen
      * @author Julia, Paula
      * @since Sprint3
      */
 
-    public void leaveLobby(UUID lobbyID, UserDTO user) {
-        LobbyLeaveUserRequest request = new LobbyLeaveUserRequest(lobbyID, user);
+    public void leaveLobby(String lobbyName, UserDTO user, UUID lobbyID) {
+        LobbyLeaveUserRequest request = new LobbyLeaveUserRequest(lobbyName, user, lobbyID);
         bus.post(request);
     }
 
     /**
      * Erstellt eine LeaveAllLobbiesOnLogoutRequest und postet diese auf den EventBus.
      *
-     * @param user der User der alle Lobbys verlassen will
+     * @param user  der User der alle Lobbys verlassen will
      * @author Julia, Paula
      * @since Sprint3
      */
@@ -103,7 +105,7 @@ public class LobbyService {
     /**
      * Alternative Requesterstellung über lobbyID statt Name.
      *
-     * @param lobbyID LobbyID über die die Request gestellt wird
+     * @param lobbyID   LobbyID über die die Request gestellt wird
      * @author Marvin
      * @since Sprint3
      */
@@ -114,37 +116,37 @@ public class LobbyService {
         return null;
     }
 
-
-    public void setLobbyUserStatus(UUID lobbyID, UserDTO user, boolean status) {
-        RequestMessage request = new UpdateLobbyReadyStatusRequest(lobbyID, user, status);
+    public void setLobbyUserStatus(String LobbyName, UserDTO user, boolean Status) {
+        RequestMessage request = new UpdateLobbyReadyStatusRequest(LobbyName, user, Status);
         bus.post(request);
     }
 
     /**
      * Anfrage wird erstellt und abgeschickt um Spieler zu kicken.
      *
-     * @param lobbyID    Die LobbyID
-     * @param gameOwner  Der Besitzer
-     * @param userToKick Der zu entfernende Benutzer
-     * @author Darian, Marvin
+     * @param lobbyName
+     * @param lobbyID
+     * @param userToKick
      * @since sprint4
+     * @author Darian
      */
-    public void kickUser(UUID lobbyID, UserDTO gameOwner, UserDTO userToKick) {
-        RequestMessage request = new KickUserRequest(lobbyID, gameOwner, userToKick);
+    public void kickUser(String lobbyName, UserDTO gameOwner, UUID lobbyID, UserDTO userToKick){
+        RequestMessage request = new KickUserRequest(lobbyName, gameOwner, lobbyID, userToKick);
         bus.post(request);
     }
 
     /**
      * Erstellt einen SetMaxPlayerRequest.
      *
-     * @param maxPlayer    die maximale Spielerzahl die gesetzt werden soll
-     * @param lobbyID      die LobbyID der Lobby
-     * @param loggedInUser der eingeloggte User
-     * @author Timo, Rike, Marvin
+     * @param maxPlayer     die maximale Spielerzahl die gesetzt werden soll
+     * @param lobbyID       die LobbyID der Lobby
+     * @param loggedInUser  der eingeloggte User
+     * @author Timo, Rike
      * @since Sprint 3
      */
-    public void setMaxPlayer(UUID lobbyID, User loggedInUser, Integer maxPlayer) {
-        SetMaxPlayerRequest cmd = new SetMaxPlayerRequest(lobbyID, (UserDTO) loggedInUser, maxPlayer);
+    public void setMaxPlayer(Integer maxPlayer, UUID lobbyID, User loggedInUser)
+    {
+        SetMaxPlayerRequest cmd = new SetMaxPlayerRequest(maxPlayer, lobbyID, loggedInUser);
         bus.post(cmd);
     }
 

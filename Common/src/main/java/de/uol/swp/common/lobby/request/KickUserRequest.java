@@ -7,14 +7,19 @@ import java.util.UUID;
 public class KickUserRequest extends AbstractLobbyRequest {
 
     private UserDTO userToKick;
+    private UUID lobbyID;
 
-    public KickUserRequest(UUID lobbyID, UserDTO owner, UserDTO userToKick) {
-        super(lobbyID, owner);
+    public KickUserRequest(String lobbyName, UserDTO owner, UUID lobbyID, UserDTO userToKick){
+        super(lobbyName, owner);
+        this.lobbyID = lobbyID;
         this.userToKick = userToKick;
     }
 
-    public UserDTO getUserToKick() {
+    public UserDTO getUserToKick(){
         return userToKick;
     }
 
+    public UUID getLobbyID(){
+        return lobbyID;
+    }
 }

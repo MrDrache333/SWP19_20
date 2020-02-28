@@ -13,7 +13,6 @@ public class CreateLobbyRequest extends AbstractLobbyRequest {
 
     private static final long serialVersionUID = -1053476876954594887L;
     String lobbyPassword;
-    String lobbyName;
 
     /**
      * Erstellt einen Request.
@@ -22,16 +21,25 @@ public class CreateLobbyRequest extends AbstractLobbyRequest {
     }
 
     /**
+     * Erstellt einen Request.
+     *
+     * @param lobbyName Der gewünschte Lobbyname
+     * @param owner     Der User, welcher die Lobby erstellen will.
+     */
+    public CreateLobbyRequest(String lobbyName, UserDTO owner) {
+        super(lobbyName, owner);
+        this.lobbyPassword = "";
+    }
+
+    /**
      * Erstellt einen Request mit Passwort.
      *
      * @param lobbyName     Der gewünschte Lobbyname
      * @param lobbyPassword Das Passwort.
      * @param owner         Der User, welcher die Lobby erstellen will.
-     * @author Marvin
      */
-    public CreateLobbyRequest(String lobbyName, UserDTO owner, String lobbyPassword) {
-        super(null, owner);
-        this.lobbyName = lobbyName;
+    public CreateLobbyRequest(String lobbyName, String lobbyPassword, UserDTO owner) {
+        super(lobbyName, owner);
         this.lobbyPassword = lobbyPassword;
     }
 
@@ -60,15 +68,5 @@ public class CreateLobbyRequest extends AbstractLobbyRequest {
      */
     public String getLobbyPassword() {
         return lobbyPassword;
-    }
-
-    /**
-     * Getter für den Lobbynamen.
-     *
-     * @return den Lobbynamen.
-     * @author Marvin
-     */
-    public String getLobbyName() {
-        return lobbyName;
     }
 }

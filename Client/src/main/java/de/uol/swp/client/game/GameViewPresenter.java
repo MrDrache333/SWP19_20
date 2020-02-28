@@ -226,6 +226,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     chosenCard.setLayoutY(chosenCardLayoutY);
                     chosenCard.setId(chosenCardID);
                 }
+                //TODO: Der Pfad passt noch nicht -> AnimationManagement anpassen
                 AnimationManagement.buyCard(cardImage);
             });
             // Aktion hinter dem Zurück Button -> Kauf-/Zurück-Button und das große Bild werden entfernt

@@ -18,14 +18,14 @@ public class UpdatedLobbyReadyStatusMessage extends AbstractLobbyMessage {
     /**
      * Konstruktor der Updated lobby ready status message.
      *
-     * @param lobbyID Die LobbyID
-     * @param user    Der User
-     * @param ready   Der Lobbystatus
-     * @author Keno O., Keno S., Darian, Marvin
+     * @param lobbyName Die Lobby
+     * @param user      Der User
+     * @param ready     Der Lobbystatus
+     * @author Keno O., Keno S., Darian
      * @since Sprint 3
      */
-    public UpdatedLobbyReadyStatusMessage(UUID lobbyID, UserDTO user, boolean ready) {
-        super(lobbyID, user);
+    public UpdatedLobbyReadyStatusMessage(UUID LobbyID, String lobbyName, UserDTO user, boolean ready) {
+        super(lobbyName, user, LobbyID);
         this.Ready = ready;
     }
 

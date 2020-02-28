@@ -12,6 +12,7 @@ public class AbstractLobbyMessage extends AbstractServerMessage {
     private static final long serialVersionUID = 5623324582947276712L;
     private UserDTO user;
     private UUID lobbyID;
+    private String lobbyName;
 
     public AbstractLobbyMessage() {
     }
@@ -19,14 +20,27 @@ public class AbstractLobbyMessage extends AbstractServerMessage {
     /**
      * Initialisiert eine neue AbstractLobbyMessage
      *
-     * @param lobbyID Die LobbyID
-     * @param user    Der User
-     * @author Marco, Anna, Keno S, Marvin
+     * @param lobbyName Der Lobbyname
+     * @param user      Der User
+     * @param lobbyID   Die LobbyID
+     * @author Marco, Anna, Keno S
      * @since Start
      */
-    public AbstractLobbyMessage(UUID lobbyID, UserDTO user) {
-        this.lobbyID = lobbyID;
+    public AbstractLobbyMessage(String lobbyName, UserDTO user, UUID lobbyID) {
+        this.lobbyName = lobbyName;
         this.user = user;
+        this.lobbyID = lobbyID;
+    }
+
+    /**
+     * Gibt den Namen der Lobby zurück
+     *
+     * @return Name der Lobby
+     * @author Marco, Darian
+     * @since Start
+     */
+    public String getLobbyName() {
+        return lobbyName;
     }
 
     /**
@@ -52,10 +66,10 @@ public class AbstractLobbyMessage extends AbstractServerMessage {
     }
 
     /**
-     * Vergleicht zwei AbstractLobbyMessages
+     * ???
      *
-     * @return boolean ob die beiden Messages gleich sind
-     * @author Keno S, Marvin
+     * @return
+     * @author Keno S
      * @since Sprint3
      */
     @Override
@@ -63,19 +77,19 @@ public class AbstractLobbyMessage extends AbstractServerMessage {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AbstractLobbyMessage that = (AbstractLobbyMessage) o;
-        return Objects.equals(lobbyID, that.lobbyID) &&
+        return Objects.equals(lobbyName, that.lobbyName) &&
                 Objects.equals(user, that.user);
     }
 
     /**
-     * Generiert HashCode aus LobbyID und User
+     * Generiert HashCode aus Lobbynamen und User
      *
      * @return hash.Value
-     * @author Keno S, Marvin
+     * @author Keno S
      * @since Sprint4
      */
     @Override
     public int hashCode() {
-        return Objects.hash(lobbyID, user);
+        return Objects.hash(lobbyName, user);
     }
 }
