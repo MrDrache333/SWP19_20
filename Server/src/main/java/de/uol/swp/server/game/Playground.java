@@ -1,5 +1,6 @@
 package de.uol.swp.server.game;
 
+import com.google.inject.Inject;
 import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.user.User;
@@ -19,37 +20,44 @@ class Playground {
      * Die Spieler
      */
     private List<Player> players = new ArrayList<>();
-    private static Player actualPlayer;
-    private static Player nextPlayer;
-    private static ArrayList<Short> theIdsFromTheHand;
-    private static PlaygroundService playgroundService;
+    private Player actualPlayer;
+    private Player nextPlayer;
+    private ArrayList<Short> theIdsFromTheHand = new ArrayList<>(5);
+    private GameService gameService;
 
     /**
      * Erstellt ein neues Spielfeld und übergibt die Spieler. Die Reihenfolge der Spieler wird zufällig zusammengestellt.
-     * Es wird außerdem der erste Player gesetzt und der nächste Player.
+     * Es wird außerdem der erste Player gesetzt und der nächste Player und ein GameService gesetzt um dem aktuellen Spieler seine Karten zu schicken.
      *
      * @param lobby Die zu nutzende Lobby
      * @author KenoO, Julia, Ferit
      * @since Sprint 5
      */
-
-    Playground(Lobby lobby) {
+    @Inject
+    Playground(Lobby lobby, GameService gameService) {
         for (User user : lobby.getUsers()) {
             Player player = new Player(user.getUsername());
+            player.setTheUserInThePlayer(user);
             players.add(player);
         }
         Collections.shuffle(players);
         actualPlayer = players.get(0);
         nextPlayer = players.get(1);
-
+        this.gameService = gameService;
     }
 
+    /**
+     * Methode, welche vom aktuellen Player die Hand versendet. Holz sich von der aktuellen Hand des Spielers die Karten und speichert die IDs dieser in einer ArrayList.
+     *
+     * @author Ferit
+     * @version 1
+     * @since Sprint5
+     */
     public void sendPlayersHand() {
-        ArrayList<Card> zwischenspeicherung = actualPlayer.getPlayerDeck().getHand();
-        for (Card card : zwischenspeicherung) {
+        for (Card card : actualPlayer.getPlayerDeck().getHand()) {
             theIdsFromTheHand.add(card.getId());
         }
         DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand);
-        playgroundService.sendToSpecificPlayer(actualPlayer, theHandMessage);
+        gameService.sendToSpecificPlayer(actualPlayer, theHandMessage);
     }
 }

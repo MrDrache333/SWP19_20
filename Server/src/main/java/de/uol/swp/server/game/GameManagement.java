@@ -25,6 +25,7 @@ public class GameManagement {
     private static Map<UUID, Game> games = new TreeMap<>();
     private final LobbyManagement lobbyManagement;
     private final ChatManagement chatManagement;
+    private final GameService gameService;
 
     /**
      * Erstellt ein neues gameManagement
@@ -33,9 +34,10 @@ public class GameManagement {
      * @param lobbyManagement Das Lobby Management
      */
     @Inject
-    public GameManagement(ChatManagement chatManagement, LobbyManagement lobbyManagement) {
+    public GameManagement(ChatManagement chatManagement, LobbyManagement lobbyManagement, GameService gameService) {
         this.lobbyManagement = lobbyManagement;
         this.chatManagement = chatManagement;
+        this.gameService = gameService;
     }
 
 

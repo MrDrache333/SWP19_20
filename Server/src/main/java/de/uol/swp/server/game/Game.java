@@ -1,5 +1,6 @@
 package de.uol.swp.server.game;
 
+import com.google.inject.Inject;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.server.chat.Chat;
 
@@ -10,6 +11,7 @@ import java.util.UUID;
  */
 public class Game {
 
+    private GameService gameService;
     /**
      * The Chat.
      */
@@ -36,10 +38,18 @@ public class Game {
      * @author KenoO
      * @since Sprint 5
      */
-    Game(Lobby lobby, Chat chat) {
+    @Inject
+    Game(Lobby lobby, Chat chat, GameService gameService) {
         this.chat = chat;
         this.gameID = lobby.getLobbyID();
-        playground = new Playground(lobby);
+        this.gameService = gameService;
+        playground = new Playground(lobby, gameService);
+    }
+
+    @Inject
+    Game(Lobby lobby, GameService gameService) {
+        this.gameService = gameService;
+        playground = new Playground(lobby, gameService);
     }
 
     /**

@@ -16,7 +16,6 @@ import de.uol.swp.common.user.request.*;
 import de.uol.swp.common.user.response.AllOnlineUsersResponse;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.communication.UUIDSession;
-import de.uol.swp.server.game.player.Player;
 import de.uol.swp.server.message.ClientAuthorizedMessage;
 import de.uol.swp.server.message.ServerExceptionMessage;
 import de.uol.swp.server.message.ServerInternalMessage;
@@ -198,20 +197,20 @@ public class AuthenticationService extends AbstractService {
      * @since Sprint4
      */
     @Subscribe
-    public void onDropUserRequest(DropUserRequest msg){
-            User userToDrop = msg.getUser();
+    public void onDropUserRequest(DropUserRequest msg) {
+        User userToDrop = msg.getUser();
 
-            // Could be already logged out/removed
-            if (userToDrop != null) {
+        // Could be already logged out/removed
+        if (userToDrop != null) {
 
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Dropping user " + userToDrop.getUsername());
-                }
-                userSessions.remove(msg.getSession().get());
-                userManagement.dropUser(userToDrop);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Dropping user " + userToDrop.getUsername());
+            }
+            userSessions.remove(msg.getSession().get());
+            userManagement.dropUser(userToDrop);
 
-                ServerMessage returnMessage = new UserDroppedMessage(userToDrop);
-                post(returnMessage);
+            ServerMessage returnMessage = new UserDroppedMessage(userToDrop);
+            post(returnMessage);
         }
     }
 

@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.AbstractModule;
 import de.uol.swp.server.chat.ChatManagement;
 import de.uol.swp.server.game.GameManagement;
+import de.uol.swp.server.game.GameService;
 import de.uol.swp.server.lobby.LobbyManagement;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import de.uol.swp.server.usermanagement.UserManagement;
@@ -19,6 +20,7 @@ public class ServerModule extends AbstractModule {
     private final ChatManagement chatManagement = new ChatManagement();
     private final LobbyManagement lobbyManagement = new LobbyManagement();
     private final GameManagement gameManagement = new GameManagement(chatManagement, lobbyManagement);
+    private final GameService gameService = new GameService(bus, gameManagement, new AuthenticationService(bus, userManagement));
 
     /**
      * Alle Usermanagements und Eventbusse bekommen die gleichen Instanzen
@@ -35,7 +37,7 @@ public class ServerModule extends AbstractModule {
         bind(UserStore.class).toInstance(store);
         bind(EventBus.class).toInstance(bus);
         bind(AuthenticationService.class).toInstance(new AuthenticationService(bus, userManagement));
-
+        bind(GameService.class).toInstance(gameService);
     }
 }
 
