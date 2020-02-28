@@ -9,6 +9,8 @@ import de.uol.swp.client.auth.LoginPresenter;
 import de.uol.swp.client.auth.events.ShowLoginViewEvent;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.game.GameManagement;
+import de.uol.swp.client.game.ShowCardPresenter;
+import de.uol.swp.client.game.event.CloseShowCardEvent;
 import de.uol.swp.client.game.event.GameQuitEvent;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
@@ -58,13 +60,16 @@ public class SceneManager {
     final private ChatService chatService;
     private final Injector injector;
     private SettingsPresenter settingsPresenter;
+    private ShowCardPresenter showCardPresenter;
     private Stage settingsStage;
     private Stage deleteAccountStage;
+    private Stage showCardStage;
     private Scene loginScene;
     private String lastTitle;
     private Scene registrationScene;
     private Scene mainScene;
     private Scene settingsScene;
+    private Scene showCardScene;
     private Scene deleteAccountScene;
     private Scene gameScene;
     private Scene lastScene = null;
@@ -130,6 +135,9 @@ public class SceneManager {
 
     @Subscribe
     public void onCloseSettingsEvent(CloseSettingsEvent event) { closeSettings(); }
+
+    @Subscribe
+    public void onCloseShowCardEvent(CloseShowCardEvent event) { closeShowCard(); }
 
     @Subscribe
     public void onCloseDeleteAccountEvent(CloseDeleteAccountEvent event) {closeDeleteAccount();}
@@ -262,6 +270,27 @@ public class SceneManager {
     }
 
     /**
+     * Öffnet das Ansichtsfenster für die Karte, indem eine neue Stage mit der showCardScene erstellt wird.
+     *
+     * @param loggedInUser  der eingeloggte User
+     * @param cardID    die ausgewählte Karte
+     * @author Rike
+     * @since Sprint5
+     */
+    public void showShowCardScreen(User loggedInUser, String cardID) {
+        Platform.runLater(() -> {
+            showCardPresenter = new ShowCardPresenter(loggedInUser, cardID, lobbyService, userService, eventBus);
+            initShowCardView(showCardPresenter);
+            showCardStage = new Stage();
+            showCardStage.setTitle(cardID);
+            showCardStage.setScene(showCardScene);
+            showCardStage.setResizable(false);
+            showCardStage.show();
+            eventBus.register(showCardPresenter);
+        });
+    }
+
+    /**
      * Gibt die übergebenen lobbyID zurück, die zum jeweiligen GameManagement gehört.
      *
      * @param lobbyID   die übergebene LobbyID
@@ -293,6 +322,10 @@ public class SceneManager {
 
     public void closeSettings() {
         Platform.runLater(() -> settingsStage.close());
+    }
+
+    public void closeShowCard() {
+        Platform.runLater(() -> showCardStage.close());
     }
 
     //-----------------
@@ -327,6 +360,21 @@ public class SceneManager {
             LOG.debug("Loading " + url);
             loader.setLocation(url);
             loader.setController(settingsPresenter);
+            rootPane = loader.load();
+        } catch (Exception e) {
+            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
+        }
+        return rootPane;
+    }
+
+    private Parent initShowCardPresenter(ShowCardPresenter showCardPresenter) {
+        Parent rootPane;
+        FXMLLoader loader = injector.getInstance(FXMLLoader.class);
+        try {
+            URL url = getClass().getResource(SettingsPresenter.fxml);
+            LOG.debug("Loading " + url);
+            loader.setLocation(url);
+            loader.setController(showCardPresenter);
             rootPane = loader.load();
         } catch (Exception e) {
             throw new RuntimeException("Could not load View!" + e.getMessage(), e);
@@ -381,6 +429,14 @@ public class SceneManager {
             Parent rootPane = initSettingsPresenter(settingsPresenter);
             settingsScene = new Scene(rootPane, 400, 255);
             settingsScene.getStylesheets().add(SettingsPresenter.css);
+        }
+    }
+
+    private void initShowCardView(ShowCardPresenter showCardPresenter) {
+        if (showCardScene == null) {
+            Parent rootPane = initShowCardPresenter(showCardPresenter);
+            showCardScene = new Scene(rootPane, 400, 221);
+            showCardScene.getStylesheets().add(ShowCardPresenter.css);
         }
     }
 

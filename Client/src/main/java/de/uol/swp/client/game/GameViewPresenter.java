@@ -8,6 +8,7 @@ import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.event.GameQuitEvent;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
+import de.uol.swp.common.game.ShowCardRequest;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
@@ -30,11 +31,12 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import javax.swing.*;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Der Presenter für die Spielansicht.
@@ -55,26 +57,18 @@ public class GameViewPresenter extends AbstractPresenter {
     private Pane chatView;
     @FXML
     private ListView<String> usersView;
-    /**
-    @FXML
-    private ImageView geldkarte_1, geldkarte_2, geldkarte_3;
-    @FXML
-    private ImageView siegpunkt_1, siegpunkt_2, siegpunkt_3;
-    @FXML
-    private ImageView fluchkarte;
-    @FXML
-    private ImageView aktionskarte_1, aktionskarte_2, aktionskarte_3, aktionskarte_4, aktionskarte_5, aktionskarte_6,
-            aktionskarte_7, aktionskarte_8, aktionskarte_9, aktionskarte_10;
-    @FXML
-    private ImageView hand_1, hand_2, hand_3, hand_4, hand_5;
-    **/
 
     private ObservableList<String> users;
     private ChatViewPresenter chatViewPresenter;
     private Injector injector;
     private GameManagement gameManagement;
 
-    private String chosenCard = "";
+    /**
+    //TODO: Nach Anpassung Abfragen (Zeile 196 - 215) entfernen -> Zeile 67-69
+    private boolean istDran = true;
+    private boolean inKaufphase = true;
+    private boolean genuegendGeld = true;
+     */
 
     /**
      * Instantiiert einen neuen GameView Presenter.
@@ -132,7 +126,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * Initialisieren.
      *
      * @throws IOException die io Ausnahme
-     * @author Fenja, Rike
+     * @author Fenja
      * @since Sprint 3
      */
     @FXML
@@ -147,25 +141,6 @@ public class GameViewPresenter extends AbstractPresenter {
         ((Pane) chatView.getChildren().get(0)).setPrefHeight(chatView.getPrefHeight());
         ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getPrefWidth());
 
-        /**
-        interactionBuyableCard(geldkarte_1);
-        interactionBuyableCard(geldkarte_2);
-        interactionBuyableCard(geldkarte_3);
-        interactionBuyableCard(siegpunkt_1);
-        interactionBuyableCard(siegpunkt_2);
-        interactionBuyableCard(siegpunkt_3);
-        interactionBuyableCard(fluchkarte);
-        interactionBuyableCard(aktionskarte_1);
-        interactionBuyableCard(aktionskarte_2);
-        interactionBuyableCard(aktionskarte_3);
-        interactionBuyableCard(aktionskarte_4);
-        interactionBuyableCard(aktionskarte_5);
-        interactionBuyableCard(aktionskarte_6);
-        interactionBuyableCard(aktionskarte_7);
-        interactionBuyableCard(aktionskarte_8);
-        interactionBuyableCard(aktionskarte_9);
-        interactionBuyableCard(aktionskarte_10);
-         **/
     }
 
     /**
@@ -194,42 +169,82 @@ public class GameViewPresenter extends AbstractPresenter {
         showAlert(Alert.AlertType.CONFIRMATION, " ", "Möchtest du wirklich aufgeben?");
     }
 
+    /**
+     * Ereignis das ausgeführt wird, wenn auf eine Karte im Shop klickt (Karte die man kaufen kann
+     *
+     * @param mouseEvent
+     * @author Rike
+     * @since Sprint 5
+     */
     @FXML
-    public void onBuyableCardClicked (MouseEvent mouseEvent){
+    public void onBuyableCardClicked (MouseEvent mouseEvent) {
         ImageView cardImage = (ImageView) mouseEvent.getSource();
-        if (chosenCard.isEmpty()){
-            System.out.println("Karte vergrößert");
-            cardImage.setImage(new Image(new File(getClass().getResource("/images/karte_gross.png").toExternalForm().replace("file:", "")).toURI().toString()));
-            cardImage.setFitHeight(110.0);
-            chosenCard = cardImage.getId();
-        }
-        else if (chosenCard.equals(cardImage.getId())){
-            System.out.println("Karte gekauft");
-            cardImage.setImage(new Image(new File(getClass().getResource("/images/platzhalter_karte.png").toExternalForm().replace("file:", "")).toURI().toString()));
-            cardImage.setFitHeight(110.0);
-            AnimationManagement.buyCard(cardImage);
-            chosenCard = "";
-        }
-        else {
-            System.out.println("Karte vergrößert und andere muss verkleinert");
-            //TODO: Karte zu der die ID von choosenCard gehört muss sich verkleinern
-            cardImage.setImage(new Image(new File(getClass().getResource("/images/karte_gross.png").toExternalForm().replace("file:", "")).toURI().toString()));
-            cardImage.setFitHeight(110.0);
-            chosenCard = cardImage.getId();
-        }
-    }
+        String cardName = cardImage.getId();
 
-    @FXML
-    public void onHandCardClicked (MouseEvent mouseEvent){
-        // TODO: implementieren
-    }
+        ShowCardRequest request = new ShowCardRequest(loggedInUser, cardName);
+        eventBus.post(request);
+        /**
+        ImageView cardImage = (ImageView) mouseEvent.getSource();
+        String cardName = cardImage.getId();
 
-    @FXML
-    public void onBackgroundClicked (MouseEvent mouseEvent){
-        // TODO: wenn choosenCard nicht leer ist (eine Karte wird also groß angezeigt) soll diese sich verkleinern -> Anstelle von System.out.println
-        ImageView background = (ImageView) mouseEvent.getSource();
-        System.out.println(background.getId() + "Hintergrund wurde angeklickt");
-        chosenCard = "";
+        //Erzeuge Dialog mit Namen der Karte
+        JDialog buyCardDialog = new JDialog();
+        buyCardDialog.setResizable(false);
+        buyCardDialog.setTitle(cardName);
+        buyCardDialog.setSize(400,400);
+        JPanel panel = new JPanel();
+
+        //TODO: Bild der Karte wird angezeigt -> Groß-Ansicht
+
+        //Karte kaufen + Action
+        JButton buyCard = new JButton("kaufen");
+        ActionListener onBuyCardButtonPressed = new ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                if (istDran && inKaufphase && genuegendGeld){
+                    //TODO: Karte muss übergeben werden; Bewegung ausführen: AnimationManagement.buyCard(cardImage);
+                    System.out.println("Karte wurde gekauft");
+                }
+                else if (!istDran){
+                    //TODO: Durch Abfrage ob Spieler dran ist ersetzen
+                    Platform.runLater(()->{
+                        SceneManager.showAlert(Alert.AlertType.WARNING, "Du bist nicht dran!", "Fehler");
+                        buyCardDialog.requestFocus();
+                    });
+                }
+                else if (istDran && !inKaufphase){
+                    //TODO: Durch Abfrage ob Spieler in Kaufphase ersetzen
+                    Platform.runLater(()->{
+                        SceneManager.showAlert(Alert.AlertType.WARNING, "Du bist nicht in der Kaufphase!", "Fehler");
+                        buyCardDialog.requestFocus();
+                    });
+                }
+                else if (istDran && inKaufphase && !genuegendGeld){
+                    //TODO: Durch Abfrage ob Spieler genügend Geld auf der Hand hat ersetzen
+                    Platform.runLater(()->{
+                        SceneManager.showAlert(Alert.AlertType.WARNING, "Du hast nicht genügend Geld!", "Fehler");
+                        buyCardDialog.requestFocus();
+                    });
+                }
+            }
+        };
+        buyCard.addActionListener(onBuyCardButtonPressed);
+        panel.add(buyCard);
+
+        //Fenster verlassen + Action
+        JButton leaveBuyCard = new JButton("zurück");
+        ActionListener onLeaveBuyCardButtonPressed = new ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                buyCardDialog.setVisible(false);
+            }
+        };
+        leaveBuyCard.addActionListener(onLeaveBuyCardButtonPressed);
+        panel.add(leaveBuyCard);
+
+        buyCardDialog.add(panel);
+        buyCardDialog.setVisible(true);
+         **/
     }
 
     /**
@@ -310,34 +325,6 @@ public class GameViewPresenter extends AbstractPresenter {
                 users.clear();
                 userList.forEach(u -> users.add(u.getUsername()));
             }
-        });
-    }
-
-
-    /**
-     * TODO:
-     * - Bewegung der Karten einpflegen -> Klasse dafür ist schon gemergt
-     * - Bilder durch Tmp-Bilder ersetzen (bei Handkarten über infos welche Karten gerade auf der Hand)
-     * - Bei Kauf der Karte: Überprüfung ob der Spieler genügend Geld hat
-     * - Überprüfung ob der Spieler am Zug und in der richtigen Phase (Aktions- (Hand) bzw. Kaufphase (Geldkarte, Aktionskarte, Fuchkarte)
-     */
-
-    /**
-     * Methode für die Interaktion mit Karten von den Kaufstapeln
-     *
-     * Definieren das Verhalten, wenn man eine Karte anklickt:
-     * - einmal Karte wird vergrößert TODO: in Vordergrund
-     * - TODO: zweites mal, Karte wird gekauft und bewegt sich zu dem Ablagestapel (wenn Bedingungen erfüllt)
-     * - TODO: wo anders wird geklickt, Karte wird wieder klein
-     *
-     * @param cardImage
-     * @author Rike
-     * @since Sprint 5
-     */
-    private void interactionBuyableCard (ImageView cardImage){
-        cardImage.setOnMouseClicked(event -> {
-            cardImage.setImage(new Image(new File(getClass().getResource("/images/karte_gross.png").toExternalForm().replace("file:", "")).toURI().toString()));
-            cardImage.setFitHeight(110.0);
         });
     }
 }
