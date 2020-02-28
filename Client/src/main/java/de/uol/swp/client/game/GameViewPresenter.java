@@ -8,7 +8,6 @@ import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.event.GameQuitEvent;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
-import de.uol.swp.common.game.ShowCardRequest;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
@@ -22,6 +21,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
@@ -31,9 +31,6 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import javax.swing.*;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -56,6 +53,8 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     private Pane chatView;
     @FXML
+    private Pane gameView;
+    @FXML
     private ListView<String> usersView;
 
     private ObservableList<String> users;
@@ -63,12 +62,12 @@ public class GameViewPresenter extends AbstractPresenter {
     private Injector injector;
     private GameManagement gameManagement;
 
-    /**
-    //TODO: Nach Anpassung Abfragen (Zeile 196 - 215) entfernen -> Zeile 67-69
+
+    //TODO: Nach Anpassung Abfragen (Zeile 194 - 215) entfernen -> Zeile 70-74
     private boolean istDran = true;
     private boolean inKaufphase = true;
     private boolean genuegendGeld = true;
-     */
+    private int anzahlKarte = 2;
 
     /**
      * Instantiiert einen neuen GameView Presenter.
@@ -170,7 +169,11 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Ereignis das ausgeführt wird, wenn auf eine Karte im Shop klickt (Karte die man kaufen kann
+     * Ereignis das ausgeführt wird, wenn auf eine Karte im Shop angeklickt wird.
+     *
+     * Großes Bild der Karte wird angezeigt.
+     * Es wird ein Button ("zurück"), wenn der Spieler die Karte nicht kaufen kann bzw. zwei Buttons("kaufen"/"zurück"), wenn er es kann hinzugefügt.
+     *
      *
      * @param mouseEvent
      * @author Rike
@@ -179,72 +182,72 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     public void onBuyableCardClicked (MouseEvent mouseEvent) {
         ImageView cardImage = (ImageView) mouseEvent.getSource();
-        String cardName = cardImage.getId();
+        //Speichert Informationen zur ausgewählten Karte zwischen
+        Image chosenCardImage = cardImage.getImage();
+        double chosenCardFitHeight = cardImage.getFitHeight();
+        double chosenCardLayoutX = cardImage.getLayoutX();
+        double chosenCardLayoutY = cardImage.getLayoutY();
+        String chosenCardID = cardImage.getId();
 
-        ShowCardRequest request = new ShowCardRequest(loggedInUser, cardName);
-        eventBus.post(request);
-        /**
-        ImageView cardImage = (ImageView) mouseEvent.getSource();
-        String cardName = cardImage.getId();
+        // ein großes Bild der Karte wird hinzugefügt
+        // TODO: das große Bild muss zur ausgewählten Karte passen -> wie sind die Bilder gespeichert
+        ImageView newCardImage = new ImageView(new Image(new File(getClass().getResource("/images/karte_gross.png").toExternalForm().replace("file:", "")).toURI().toString()));
+        // setzt die Größe und die Position des Bildes. Das Bild ist im Vordergrund. Bild wird hinzugefügt
+        newCardImage.setFitHeight(150.0);
+        newCardImage.toFront();
+        newCardImage.setLayoutX(458.0);
+        newCardImage.setLayoutY(207.0);
+        gameView.getChildren().add(newCardImage);
 
-        //Erzeuge Dialog mit Namen der Karte
-        JDialog buyCardDialog = new JDialog();
-        buyCardDialog.setResizable(false);
-        buyCardDialog.setTitle(cardName);
-        buyCardDialog.setSize(400,400);
-        JPanel panel = new JPanel();
-
-        //TODO: Bild der Karte wird angezeigt -> Groß-Ansicht
-
-        //Karte kaufen + Action
-        JButton buyCard = new JButton("kaufen");
-        ActionListener onBuyCardButtonPressed = new ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent e) {
-                if (istDran && inKaufphase && genuegendGeld){
-                    //TODO: Karte muss übergeben werden; Bewegung ausführen: AnimationManagement.buyCard(cardImage);
-                    System.out.println("Karte wurde gekauft");
+        //TODO: temporäre Lösung zur Abfragung (istDran, inKaufphase, genuegendGeld) -> anpassen
+        if (istDran && inKaufphase && genuegendGeld){
+            // wenn der Spieler eine Karte kaufen kann, werden zwei Buttons eingefügt (über den Handkarten)
+            Button buy = new Button ("kaufen");
+            Button back1 = new Button ("zurück");
+            gameView.getChildren().add(buy);
+            gameView.getChildren().add(back1);
+            // Position der Buttons wird gesetzt
+            buy.setLayoutX(432.0);
+            buy.setLayoutY(375.0);
+            back1.setLayoutX(516.0);
+            back1.setLayoutY(375.0);
+            back1.setMinWidth(52.0);
+            // Aktion hinter dem Kauf-Button
+            buy.setOnAction(event -> {
+                System.out.println("Karte wurde gekauft.");
+                buy.setVisible(false);
+                back1.setVisible(false);
+                newCardImage.setVisible(false);
+                anzahlKarte--;
+                if(anzahlKarte > 0){
+                    ImageView chosenCard = new ImageView(chosenCardImage);
+                    chosenCard.setFitHeight(chosenCardFitHeight);
+                    chosenCard.setLayoutX(chosenCardLayoutX);
+                    chosenCard.setLayoutY(chosenCardLayoutY);
+                    chosenCard.setId(chosenCardID);
                 }
-                else if (!istDran){
-                    //TODO: Durch Abfrage ob Spieler dran ist ersetzen
-                    Platform.runLater(()->{
-                        SceneManager.showAlert(Alert.AlertType.WARNING, "Du bist nicht dran!", "Fehler");
-                        buyCardDialog.requestFocus();
-                    });
-                }
-                else if (istDran && !inKaufphase){
-                    //TODO: Durch Abfrage ob Spieler in Kaufphase ersetzen
-                    Platform.runLater(()->{
-                        SceneManager.showAlert(Alert.AlertType.WARNING, "Du bist nicht in der Kaufphase!", "Fehler");
-                        buyCardDialog.requestFocus();
-                    });
-                }
-                else if (istDran && inKaufphase && !genuegendGeld){
-                    //TODO: Durch Abfrage ob Spieler genügend Geld auf der Hand hat ersetzen
-                    Platform.runLater(()->{
-                        SceneManager.showAlert(Alert.AlertType.WARNING, "Du hast nicht genügend Geld!", "Fehler");
-                        buyCardDialog.requestFocus();
-                    });
-                }
-            }
-        };
-        buyCard.addActionListener(onBuyCardButtonPressed);
-        panel.add(buyCard);
-
-        //Fenster verlassen + Action
-        JButton leaveBuyCard = new JButton("zurück");
-        ActionListener onLeaveBuyCardButtonPressed = new ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent e) {
-                buyCardDialog.setVisible(false);
-            }
-        };
-        leaveBuyCard.addActionListener(onLeaveBuyCardButtonPressed);
-        panel.add(leaveBuyCard);
-
-        buyCardDialog.add(panel);
-        buyCardDialog.setVisible(true);
-         **/
+                AnimationManagement.buyCard(cardImage);
+            });
+            // Aktion hinter dem Zurück Button -> Kauf-/Zurück-Button und das große Bild werden entfernt
+            back1.setOnAction(event -> {
+                buy.setVisible(false);
+                back1.setVisible(false);
+                newCardImage.setVisible(false);
+            });
+        }
+        else{
+            // kann der Spieler keine Karte kaufen, wird nur ein Button hinzugefügt (über den Handkarten)
+            Button back2 = new Button ("zurück");
+            gameView.getChildren().add(back2);
+            // Position des Buttons
+            back2.setLayoutX(472.0);
+            back2.setLayoutY(375.0);
+            // Aktion hinter dem Zurück Button -> Zurück-Button und das große Bild werden entfernt
+            back2.setOnAction(event -> {
+                back2.setVisible(false);
+                newCardImage.setVisible(false);
+            });
+        }
     }
 
     /**

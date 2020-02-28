@@ -37,6 +37,13 @@
     <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:mac:11" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-base:mac:11" level="project" />
     <orderEntry type="module" module-name="server" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-web:11" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-web:win:11" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-media:11" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-media:win:11" level="project" />
+    <orderEntry type="module" module-name="server" />
+    <orderEntry type="library" name="Maven: org.jetbrains:annotations:18.0.0" level="project" />
+    <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.8.6" level="project" />
     <orderEntry type="library" name="Maven: com.thizzer.jtouchbar:jtouchbar-javafx:1.0.0" level="project" />
     <orderEntry type="library" name="Maven: com.thizzer.jtouchbar:jtouchbar:1.0.0" level="project" />
     <orderEntry type="module" module-name="common" />

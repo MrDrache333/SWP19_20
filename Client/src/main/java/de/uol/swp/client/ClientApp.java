@@ -8,7 +8,6 @@ import com.google.inject.Injector;
 import de.uol.swp.client.di.ClientModule;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.sound.SoundMediaPlayer;
-import de.uol.swp.common.game.ShowCardRequest;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
@@ -316,21 +315,6 @@ public class ClientApp extends Application implements ConnectionListener {
             LOG.info("User " + message.getUser().getUsername() + " is kicked from the lobby successfully");
             sceneManager.getGameManagement(message.getLobby().getLobbyID()).close();
             SceneManager.showAlert(Alert.AlertType.WARNING, "Sie wurden aus der Lobby entfernt", "Lobby verlassen");
-        }
-    }
-
-    /**
-     * Empfängt die Nachricht (vom GameViewPresenter), dass das eine Karte angeklickt wurde
-     * Öffnet das ShowCard-Fenster, indem die Karte in groß dargestellt wird
-     *
-     * @param message Die Anfrage zum öffnen des Fensters
-     * @author Rike
-     * @since Sprint5
-     */
-    @Subscribe
-    public void onShowCardRequest(ShowCardRequest message) {
-        if (message.getUser().getUsername().equals(user.getUsername())) {
-            sceneManager.showShowCardScreen(message.getUser(), message.getCardID());
         }
     }
 
