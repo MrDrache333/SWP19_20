@@ -25,7 +25,6 @@ public class GameManagement {
     private static Map<UUID, Game> games = new TreeMap<>();
     private final LobbyManagement lobbyManagement;
     private final ChatManagement chatManagement;
-    private final GameService gameService;
 
     /**
      * Erstellt ein neues gameManagement
@@ -34,10 +33,9 @@ public class GameManagement {
      * @param lobbyManagement Das Lobby Management
      */
     @Inject
-    public GameManagement(ChatManagement chatManagement, LobbyManagement lobbyManagement, GameService gameService) {
+    public GameManagement(ChatManagement chatManagement, LobbyManagement lobbyManagement) {
         this.lobbyManagement = lobbyManagement;
         this.chatManagement = chatManagement;
-        this.gameService = gameService;
     }
 
 
@@ -60,7 +58,7 @@ public class GameManagement {
             throw new GameManagementException("Game with ID " + lobbyID.toString() + " allready exists!");
         Optional<String> lobbyName = lobbyManagement.getName(lobbyID);
         if (lobbyName.isPresent()) {
-            Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyName.get());
+            Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyID);
             Optional<Chat> chat = chatManagement.getChat(lobbyID.toString());
             if (lobby.isPresent() && chat.isPresent()) {
                 Game game = new Game(lobby.get(), chat.get());

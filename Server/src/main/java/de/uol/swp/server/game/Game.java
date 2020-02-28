@@ -10,7 +10,7 @@ import java.util.UUID;
  * Objekt zum Verwalten eines Spiels
  */
 public class Game {
-
+    @Inject
     private GameService gameService;
     /**
      * The Chat.
@@ -39,18 +39,13 @@ public class Game {
      * @since Sprint 5
      */
     @Inject
-    Game(Lobby lobby, Chat chat, GameService gameService) {
+    Game(Lobby lobby, Chat chat) {
         this.chat = chat;
         this.gameID = lobby.getLobbyID();
         this.gameService = gameService;
         playground = new Playground(lobby, gameService);
     }
 
-    @Inject
-    Game(Lobby lobby, GameService gameService) {
-        this.gameService = gameService;
-        playground = new Playground(lobby, gameService);
-    }
 
     /**
      * Gets game id.
