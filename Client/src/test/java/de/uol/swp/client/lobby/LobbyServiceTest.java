@@ -120,7 +120,7 @@ class LobbyServiceTest {
     }
 
     /**
-     *  Versuch einer Lobby beizutreten
+     * Versuch einer Lobby beizutreten
      *
      * @throws InterruptedException Die evtl. auftretene Fehlermeldung
      * @author Julia
@@ -165,6 +165,7 @@ class LobbyServiceTest {
 
     /**
      * Überprüfung, ob User beim Logout aus allen Lobbys entfernt wird
+     *
      * @throws InterruptedException Die evtl. auftretene Fehlermeldung
      * @author Julia
      * @since Sprint3

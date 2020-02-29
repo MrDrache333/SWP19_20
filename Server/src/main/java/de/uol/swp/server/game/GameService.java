@@ -66,13 +66,16 @@ public class GameService extends AbstractService {
     /**
      * Startet das Spiel wenn die StartGameInternalMessage ankommt.
      *
-     * @param msg
+     * @param msg InterneMessage mit der LobbyId um das Game zu starten.
+     * @author Ferit
+     * @since Sprint5
      */
     @Subscribe
     void startGame(StartGameInternalMessage msg) {
         gameManagement.createGame(msg.getLobbyID());
+        // Manueller Test, wird beim Mergen entfernt.
         gameManagement.getGame(msg.getLobbyID()).get().getPlayground().sendPlayersHand();
-        LOG.debug("startGame Methode funktioniert! --------------->>>>>>----------");
+        LOG.debug("StartGame Methode funktioniert ------------------------------->");
     }
 
 }

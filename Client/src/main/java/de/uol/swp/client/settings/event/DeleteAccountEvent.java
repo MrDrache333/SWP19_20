@@ -6,11 +6,11 @@ public class DeleteAccountEvent {
 
     private User user;
 
-    public DeleteAccountEvent(User user){
+    public DeleteAccountEvent(User user) {
         this.user = user;
     }
 
-    public User getUser(){
+    public User getUser() {
         return user;
     }
 }

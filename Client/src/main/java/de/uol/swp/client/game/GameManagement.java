@@ -68,7 +68,6 @@ public class GameManagement {
      * @param injector     der Injector
      * @author Keno O., Darian
      * @since Sprint3
-     *
      */
     public GameManagement(EventBus eventBus, UUID id, String lobbyName, User loggedInUser, ChatService chatService, LobbyService lobbyService, UserService userService, Injector injector, UserDTO gameOwner) {
         this.id = id;

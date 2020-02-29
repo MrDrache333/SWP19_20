@@ -4,7 +4,6 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.AbstractModule;
 import de.uol.swp.server.chat.ChatManagement;
 import de.uol.swp.server.game.GameManagement;
-import de.uol.swp.server.game.GameService;
 import de.uol.swp.server.lobby.LobbyManagement;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import de.uol.swp.server.usermanagement.UserManagement;

@@ -65,6 +65,10 @@ public class CreateLobbyMessage extends AbstractLobbyMessage {
         return chatID;
     }
 
+    public void setChatID(UUID chatID) {
+        chatID = chatID;
+    }
+
     /**
      * Gibt die Lobby zurück.
      *
@@ -81,9 +85,5 @@ public class CreateLobbyMessage extends AbstractLobbyMessage {
      */
     public String getLobbyPassword() {
         return lobbyPassword;
-    }
-
-    public void setChatID(UUID chatID) {
-        chatID = chatID;
     }
 }

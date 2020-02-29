@@ -8,16 +8,15 @@ import de.uol.swp.common.lobby.request.*;
 import de.uol.swp.common.message.RequestMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import java.io.File;
-import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -154,8 +153,7 @@ public class LobbyService {
      * @author Timo
      * @since Sprint 5
      */
-    public void startWebView()
-    {
+    public void startWebView() {
         Stage primaryStage = new Stage();
         File file = new File("Client/src/main/resources/html/anleitung/index.html");
 

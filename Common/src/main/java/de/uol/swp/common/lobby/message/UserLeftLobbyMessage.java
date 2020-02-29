@@ -7,8 +7,8 @@ import java.util.UUID;
 
 public class UserLeftLobbyMessage extends AbstractLobbyMessage {
 
-    private UserDTO gameOwner;
     private static final long serialVersionUID = -5546005208705943803L;
+    private UserDTO gameOwner;
     private LobbyDTO lobby;
 
     public UserLeftLobbyMessage() {
@@ -30,7 +30,7 @@ public class UserLeftLobbyMessage extends AbstractLobbyMessage {
         this.gameOwner = gameOwner;
     }
 
-    public UserDTO getGameOwner(){
+    public UserDTO getGameOwner() {
         return gameOwner;
     }
 

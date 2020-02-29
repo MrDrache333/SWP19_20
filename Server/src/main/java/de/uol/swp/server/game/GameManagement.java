@@ -1,6 +1,5 @@
 package de.uol.swp.server.game;
 
-import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import de.uol.swp.common.game.exception.GameManagementException;
 import de.uol.swp.common.lobby.Lobby;
@@ -26,11 +25,6 @@ public class GameManagement {
     private static Map<UUID, Game> games = new TreeMap<>();
     private final LobbyManagement lobbyManagement;
     private final ChatManagement chatManagement;
-
-    public void setGameService(GameService gameService) {
-        this.gameService = gameService;
-    }
-
     private GameService gameService;
 
     /**
@@ -44,6 +38,10 @@ public class GameManagement {
         this.lobbyManagement = lobbyManagement;
         this.chatManagement = chatManagement;
 
+    }
+
+    public void setGameService(GameService gameService) {
+        this.gameService = gameService;
     }
 
     /**

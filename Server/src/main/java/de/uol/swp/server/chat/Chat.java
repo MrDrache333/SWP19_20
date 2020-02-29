@@ -32,7 +32,6 @@ public class Chat implements de.uol.swp.common.chat.Chat {
      * @return Wert der ChatID
      * @author Keno
      * @since Sprint 2
-     *
      */
     public String getChatId() {
         return ChatId;
@@ -44,7 +43,6 @@ public class Chat implements de.uol.swp.common.chat.Chat {
      * @param ChatId Neuer Wert der ChatID.
      * @author KenoS
      * @since Sprint3
-     *
      */
     public void setChatId(String ChatId) {
         this.ChatId = ChatId;
@@ -62,7 +60,7 @@ public class Chat implements de.uol.swp.common.chat.Chat {
     }
 
     /**
-     *Setzt die Nachrichten
+     * Setzt die Nachrichten
      *
      * @param Messages Neuen Wert der Nachricht.
      * @author KenoO

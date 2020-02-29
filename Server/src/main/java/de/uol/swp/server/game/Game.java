@@ -15,11 +15,6 @@ public class Game {
      * The Chat.
      */
     private Chat chat;
-
-    public Playground getPlayground() {
-        return playground;
-    }
-
     /**
      * The Playground.
      */
@@ -28,8 +23,6 @@ public class Game {
      * The Game id.
      */
     private UUID gameID;
-
-
     /**
      * Erstellt ein neues Spiel
      *
@@ -45,6 +38,9 @@ public class Game {
         playground = new Playground(lobby, gameService);
     }
 
+    public Playground getPlayground() {
+        return playground;
+    }
 
     /**
      * Gets game id.

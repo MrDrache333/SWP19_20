@@ -23,10 +23,6 @@ public class Deck {
     private ArrayList<Card> trayStack = new ArrayList<Card>();
     private ArrayList<Card> hand = new ArrayList<Card>();
 
-    public ArrayList<Card> getHand() {
-        return hand;
-    }
-
     /**
      * Konstruktor
      *
@@ -36,6 +32,10 @@ public class Deck {
     public Deck() {
         initialiseStartDeck();
         initialiseHand();
+    }
+
+    public ArrayList<Card> getHand() {
+        return hand;
     }
 
     /**
