@@ -27,6 +27,12 @@ public class GameManagement {
     private final LobbyManagement lobbyManagement;
     private final ChatManagement chatManagement;
 
+    public void setGameService(GameService gameService) {
+        this.gameService = gameService;
+    }
+
+    private GameService gameService;
+
     /**
      * Erstellt ein neues gameManagement
      *
@@ -61,7 +67,7 @@ public class GameManagement {
                 LOG.debug("Lobby is Present!");
                 if (chat.isPresent()) {
                     LOG.debug("Chat is Present!");
-                    Game game = new Game(lobby.get(), chat.get());
+                    Game game = new Game(lobby.get(), chat.get(), gameService);
                     games.put(lobbyID, game);
                 }
             } else

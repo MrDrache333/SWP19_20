@@ -39,6 +39,7 @@ public class GameService extends AbstractService {
         super(eventBus);
         this.gameManagement = gameManagement;
         this.authenticationService = authenticationService;
+        gameManagement.setGameService(this);
     }
 
     //--------------------------------------
@@ -70,7 +71,6 @@ public class GameService extends AbstractService {
     @Subscribe
     void startGame(StartGameInternalMessage msg) {
         gameManagement.createGame(msg.getLobbyID());
-
         gameManagement.getGame(msg.getLobbyID()).get().getPlayground().sendPlayersHand();
         LOG.debug("startGame Methode funktioniert! --------------->>>>>>----------");
     }

@@ -21,7 +21,7 @@ public class ServerModule extends AbstractModule {
     private final ChatManagement chatManagement = new ChatManagement();
     private final LobbyManagement lobbyManagement = new LobbyManagement();
     private final GameManagement gameManagement = new GameManagement(chatManagement, lobbyManagement);
-    private final GameService gameService = new GameService(bus, gameManagement, authenticationService);
+
 
     /**
      * Alle Usermanagements und Eventbusse bekommen die gleichen Instanzen
@@ -38,7 +38,6 @@ public class ServerModule extends AbstractModule {
         bind(UserStore.class).toInstance(store);
         bind(EventBus.class).toInstance(bus);
         bind(AuthenticationService.class).toInstance(authenticationService);
-        bind(GameService.class).toInstance(gameService);
     }
 }
 
