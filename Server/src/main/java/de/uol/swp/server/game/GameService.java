@@ -1,11 +1,13 @@
 package de.uol.swp.server.game;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.game.player.Player;
+import de.uol.swp.server.message.StartGameInternalMessage;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -59,4 +61,18 @@ public class GameService extends AbstractService {
         message.setReceiver(authenticationService.getSessions(playerToUserSet));
         post(message);
     }
+
+    /**
+     * Startet das Spiel wenn die StartGameInternalMessage ankommt.
+     *
+     * @param msg
+     */
+    @Subscribe
+    void startGame(StartGameInternalMessage msg) {
+        gameManagement.createGame(msg.getLobbyID());
+
+        gameManagement.getGame(msg.getLobbyID()).get().getPlayground().sendPlayersHand();
+        LOG.debug("startGame Methode funktioniert! --------------->>>>>>----------");
+    }
+
 }

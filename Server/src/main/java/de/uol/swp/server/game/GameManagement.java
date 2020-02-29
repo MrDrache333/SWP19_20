@@ -1,13 +1,14 @@
 package de.uol.swp.server.game;
 
-import com.google.common.eventbus.Subscribe;
+import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import de.uol.swp.common.game.exception.GameManagementException;
 import de.uol.swp.common.lobby.Lobby;
-import de.uol.swp.common.lobby.message.StartGameMessage;
 import de.uol.swp.server.chat.Chat;
 import de.uol.swp.server.chat.ChatManagement;
 import de.uol.swp.server.lobby.LobbyManagement;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
 import java.util.Optional;
@@ -21,7 +22,7 @@ import java.util.UUID;
  * @since Sprint 4
  */
 public class GameManagement {
-
+    private static final Logger LOG = LogManager.getLogger(GameManagement.class);
     private static Map<UUID, Game> games = new TreeMap<>();
     private final LobbyManagement lobbyManagement;
     private final ChatManagement chatManagement;
@@ -36,14 +37,7 @@ public class GameManagement {
     public GameManagement(ChatManagement chatManagement, LobbyManagement lobbyManagement) {
         this.lobbyManagement = lobbyManagement;
         this.chatManagement = chatManagement;
-    }
 
-    // TODO: Spiel erstellen hier mit Nachricht aus LobbyService StartGameMessage durch andere Message mit id ersetzen.
-    @Subscribe
-    void startGame(StartGameMessage msg) {
-        createGame(msg.getLobbyID());
-        games.get(0).getPlayground().sendPlayersHand();
-        System.out.println("Test1");
     }
 
     /**
@@ -59,10 +53,17 @@ public class GameManagement {
         Optional<String> lobbyName = lobbyManagement.getName(lobbyID);
         if (lobbyName.isPresent()) {
             Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyID);
+            chatManagement.createChat(lobbyID.toString());
             Optional<Chat> chat = chatManagement.getChat(lobbyID.toString());
-            if (lobby.isPresent() && chat.isPresent()) {
-                Game game = new Game(lobby.get(), chat.get());
-                games.put(lobbyID, game);
+
+
+            if (lobby.isPresent()) {
+                LOG.debug("Lobby is Present!");
+                if (chat.isPresent()) {
+                    LOG.debug("Chat is Present!");
+                    Game game = new Game(lobby.get(), chat.get());
+                    games.put(lobbyID, game);
+                }
             } else
                 throw new GameManagementException("Chat or Lobby not found!");
 

@@ -16,6 +16,7 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.chat.ChatManagement;
+import de.uol.swp.server.message.StartGameInternalMessage;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -72,7 +73,6 @@ public class LobbyService extends AbstractService {
     @Subscribe
     public void onCreateLobbyRequest(CreateLobbyRequest msg) {
         UUID chatID = lobbyManagement.createLobby(msg.getLobbyName(), msg.getLobbyPassword(), new LobbyUser(msg.getOwner()));
-
         chatManagement.createChat(chatID.toString());
         LOG.info("Der Chat mir der UUID " + chatID + " wurde erfolgreich erstellt");
         Optional<Lobby> lobby = lobbyManagement.getLobby(chatID);
@@ -296,6 +296,8 @@ public class LobbyService extends AbstractService {
         LOG.debug("Game starts in Lobby: " + lobby.getName());
         StartGameMessage msg = new StartGameMessage(lobby.getLobbyID());
         sendToAll(lobby.getLobbyID(), msg);
-        // TODO: Create Game Message hier mit lobbyID
+        // Sendet eine interne-Nachricht, welche die Erstellung des Games initiiert.
+        StartGameInternalMessage internalMessage = new StartGameInternalMessage(lobby.getLobbyID());
+        post(internalMessage);
     }
 }

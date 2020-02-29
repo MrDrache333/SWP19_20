@@ -42,7 +42,6 @@ public class Game {
     Game(Lobby lobby, Chat chat) {
         this.chat = chat;
         this.gameID = lobby.getLobbyID();
-        this.gameService = gameService;
         playground = new Playground(lobby, gameService);
     }
 
