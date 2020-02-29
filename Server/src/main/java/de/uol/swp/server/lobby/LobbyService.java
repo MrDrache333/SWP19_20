@@ -296,5 +296,6 @@ public class LobbyService extends AbstractService {
         LOG.debug("Game starts in Lobby: " + lobby.getName());
         StartGameMessage msg = new StartGameMessage(lobby.getLobbyID());
         sendToAll(lobby.getLobbyID(), msg);
+        // TODO: Create Game Message hier mit lobbyID
     }
 }

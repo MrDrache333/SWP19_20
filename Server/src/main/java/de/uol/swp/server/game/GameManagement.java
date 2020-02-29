@@ -38,7 +38,7 @@ public class GameManagement {
         this.chatManagement = chatManagement;
     }
 
-
+    // TODO: Spiel erstellen hier mit Nachricht aus LobbyService StartGameMessage durch andere Message mit id ersetzen.
     @Subscribe
     void startGame(StartGameMessage msg) {
         createGame(msg.getLobbyID());
