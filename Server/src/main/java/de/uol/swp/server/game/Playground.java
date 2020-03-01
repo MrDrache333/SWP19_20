@@ -10,6 +10,7 @@ import de.uol.swp.server.game.player.Player;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Playground stellt das eigentliche Spielfeld dar
@@ -24,6 +25,7 @@ class Playground {
     private Player nextPlayer;
     private ArrayList<Short> theIdsFromTheHand = new ArrayList<>(5);
     private GameService gameService;
+    private UUID theSpecificLobbyID;
 
     /**
      * Erstellt ein neues Spielfeld und übergibt die Spieler. Die Reihenfolge der Spieler wird zufällig zusammengestellt.
@@ -41,9 +43,10 @@ class Playground {
             players.add(player);
         }
         Collections.shuffle(players);
-        actualPlayer = players.get(0);
-        nextPlayer = players.get(1);
+        this.actualPlayer = players.get(0);
+        this.nextPlayer = players.get(1);
         this.gameService = gameService;
+        this.theSpecificLobbyID = lobby.getLobbyID();
     }
 
     /**
@@ -57,7 +60,7 @@ class Playground {
         for (Card card : actualPlayer.getPlayerDeck().getHand()) {
             theIdsFromTheHand.add(card.getId());
         }
-        DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand);
+        DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID);
         gameService.sendToSpecificPlayer(actualPlayer, theHandMessage);
     }
 }

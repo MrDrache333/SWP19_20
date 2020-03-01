@@ -34,10 +34,6 @@ public class Deck {
         initialiseHand();
     }
 
-    public ArrayList<Card> getHand() {
-        return hand;
-    }
-
     /**
      * Startdeck wird initialisiert (7x Money, 3x Anwesen)
      *
@@ -84,5 +80,9 @@ public class Deck {
         cardsDeck.remove(card);
         hand.remove(card);
         trayStack.remove(card);
+    }
+
+    public ArrayList<Card> getHand() {
+        return hand;
     }
 }

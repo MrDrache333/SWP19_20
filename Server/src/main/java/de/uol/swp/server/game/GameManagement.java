@@ -40,10 +40,6 @@ public class GameManagement {
 
     }
 
-    public void setGameService(GameService gameService) {
-        this.gameService = gameService;
-    }
-
     /**
      * Erstellt ein neues Spiel, übergibt die zugehörige Lobby und den Chat und fügt dies dann der Map hinzu
      *
@@ -101,5 +97,9 @@ public class GameManagement {
         } catch (NullPointerException e) {
             return Optional.empty();
         }
+    }
+
+    public void setGameService(GameService gameService) {
+        this.gameService = gameService;
     }
 }

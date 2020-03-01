@@ -3,6 +3,7 @@ package de.uol.swp.server.game;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import de.uol.swp.common.game.exception.GameManagementException;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.server.AbstractService;
@@ -71,11 +72,16 @@ public class GameService extends AbstractService {
      * @since Sprint5
      */
     @Subscribe
-    void startGame(StartGameInternalMessage msg) {
-        gameManagement.createGame(msg.getLobbyID());
-        // Manueller Test, wird beim Mergen entfernt.
-        gameManagement.getGame(msg.getLobbyID()).get().getPlayground().sendPlayersHand();
-        LOG.debug("StartGame Methode funktioniert ------------------------------->");
+    void startGame(StartGameInternalMessage msg) throws GameManagementException {
+        try {
+            gameManagement.createGame(msg.getLobbyID());
+            // Manueller Test, wird beim Mergen entfernt.
+            gameManagement.getGame(msg.getLobbyID()).get().getPlayground().sendPlayersHand();
+            LOG.debug("StartGame Methode funktioniert ------------------------------->");
+        } catch (GameManagementException e) {
+            LOG.error("Es wurde eine GameManagementException geworfen: " + e.getMessage());
+            // TODO: In späteren Sprints hier ggf. weiteres Handling?
+        }
     }
 
 }
