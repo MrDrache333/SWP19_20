@@ -1,13 +1,13 @@
 package de.uol.swp.client.game;
 
-import de.uol.swp.client.game.AnimationManagement;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import javafx.scene.input.MouseEvent;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +17,10 @@ import java.util.List;
  */
 
 public class AnimationTest extends Application {
+
+    public static void main(String[] args) {
+        launch(args);
+    }
 
     @Override
     public void start(Stage primaryStage) {
@@ -155,14 +159,14 @@ public class AnimationTest extends Application {
         //Wenn auf die Karte geklickt wird, spielt der Spieler sie aus
         cardToPlay.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             AnimationManagement.playCard(cardToPlay, 0);
-            if (cards.contains(cardToPlay)){
+            if (cards.contains(cardToPlay)) {
                 cards.remove(cardToPlay);
                 AnimationManagement.refactorHand(cards, false);
             }
         });
 
         //Wenn auf die Karte geklickt wird, wird sie vom Spieler gekauft
-        cardToBuy.addEventHandler(MouseEvent.MOUSE_CLICKED, e-> {
+        cardToBuy.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             AnimationManagement.buyCard(cardToBuy);
         });
 
@@ -181,12 +185,8 @@ public class AnimationTest extends Application {
         });
 
         //Abstände der Karten auf der Hand werden vergrößert
-        c2.addEventHandler(MouseEvent.MOUSE_CLICKED, e-> {
+        c2.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             AnimationManagement.refactorHand(cards, false);
         });
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }

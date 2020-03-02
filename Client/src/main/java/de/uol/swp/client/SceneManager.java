@@ -88,26 +88,6 @@ public class SceneManager {
         initViews();
     }
 
-    @Subscribe
-    public void onShowRegistrationViewEvent(ShowRegistrationViewEvent event) {
-        showRegistrationScreen();
-    }
-
-    @Subscribe
-    public void onShowLoginViewEvent(ShowLoginViewEvent event) {
-        showLoginScreen();
-    }
-
-    @Subscribe
-    public void onRegistrationCanceledEvent(RegistrationCanceledEvent event) {
-        showScene(lastScene, lastTitle);
-    }
-
-    @Subscribe
-    public void onRegistrationErrorEvent(RegistrationErrorEvent event) {
-        showError(event.getMessage());
-    }
-
     /**
      * Alert wird erstellt
      *
@@ -129,10 +109,34 @@ public class SceneManager {
     }
 
     @Subscribe
-    public void onCloseSettingsEvent(CloseSettingsEvent event) { closeSettings(); }
+    public void onShowRegistrationViewEvent(ShowRegistrationViewEvent event) {
+        showRegistrationScreen();
+    }
 
     @Subscribe
-    public void onCloseDeleteAccountEvent(CloseDeleteAccountEvent event) {closeDeleteAccount();}
+    public void onShowLoginViewEvent(ShowLoginViewEvent event) {
+        showLoginScreen();
+    }
+
+    @Subscribe
+    public void onRegistrationCanceledEvent(RegistrationCanceledEvent event) {
+        showScene(lastScene, lastTitle);
+    }
+
+    @Subscribe
+    public void onRegistrationErrorEvent(RegistrationErrorEvent event) {
+        showError(event.getMessage());
+    }
+
+    @Subscribe
+    public void onCloseSettingsEvent(CloseSettingsEvent event) {
+        closeSettings();
+    }
+
+    @Subscribe
+    public void onCloseDeleteAccountEvent(CloseDeleteAccountEvent event) {
+        closeDeleteAccount();
+    }
 
 
     /**
@@ -244,7 +248,7 @@ public class SceneManager {
     /**
      * Öffnet das Einstellungsfenster, indem eine neue Stage mit der settingsScene erstellt wird.
      *
-     * @param loggedInUser  der eingeloggte User
+     * @param loggedInUser der eingeloggte User
      * @author Anna, Julia
      * @since Sprint4
      */
@@ -264,7 +268,7 @@ public class SceneManager {
     /**
      * Gibt die übergebenen lobbyID zurück, die zum jeweiligen GameManagement gehört.
      *
-     * @param lobbyID   die übergebene LobbyID
+     * @param lobbyID die übergebene LobbyID
      * @return GameManagement
      * @author Julia, Paula
      * @since Sprint3
@@ -282,10 +286,10 @@ public class SceneManager {
     public void closeAllStages() {
         Platform.runLater(() -> {
             games.values().forEach(GameManagement::close);
-            if(settingsStage != null) {
+            if (settingsStage != null) {
                 settingsStage.close();
             }
-            if(deleteAccountStage != null) {
+            if (deleteAccountStage != null) {
                 deleteAccountStage.close();
             }
         });

@@ -77,21 +77,21 @@ public class SetMaxPlayerMessage extends AbstractLobbyMessage {
     }
 
     /**
-     * Gibt die Lobby zurück
-     *
-     * @return Die Lobby
-     */
-    public LobbyDTO getLobby() {
-        return lobby;
-    }
-
-    /**
      * Legt die Lobby-ID fest
      *
      * @param lobbyID Die Lobby-ID
      */
     public void setLobbyID(UUID lobbyID) {
         this.lobbyID = lobbyID;
+    }
+
+    /**
+     * Gibt die Lobby zurück
+     *
+     * @return Die Lobby
+     */
+    public LobbyDTO getLobby() {
+        return lobby;
     }
 
 

@@ -24,24 +24,22 @@ public interface LobbyService {
     /**
      * Lobby beitreten
      *
-     * @param lobbyName Der Name der Lobby
-     * @param user      Der beitretende User
-     * @param lobbyID   Die ID der Lobby
-     * @author Keno S.
+     * @param lobbyID Die ID der Lobby
+     * @param user    Der beitretende User
+     * @author Keno S., Marvin
      * @since Sprint 3
      */
-    void joinLobby(String lobbyName, UserDTO user, UUID lobbyID);
+    void joinLobby(UUID lobbyID, UserDTO user);
 
     /**
      * Lobby verlassen
      *
-     * @param lobbyName Der Name der Lobby
-     * @param user      Der verlassende User
-     * @param lobbyID   Die ID der Lobby
-     * @author Keno S.
+     * @param lobbyID Die ID der Lobby
+     * @param user    Der verlassende User
+     * @author Keno S., Marvin
      * @since Sprint 3
      */
-    void leaveLobby(String lobbyName, UserDTO user, UUID lobbyID);
+    void leaveLobby(UUID lobbyID, UserDTO user);
 
     /**
      * Verlassen aller beigetretenen Lobbies beim Logout
@@ -65,24 +63,32 @@ public interface LobbyService {
     /**
      * Setter für Status eines Lobbymitglieds
      *
-     * @param LobbyName Der Name der Lobby
-     * @param user      Der Benutzer
-     * @param Status    Der Status als boolean
+     * @param lobbyID Die ID der Lobby
+     * @param user    Der Benutzer
+     * @param Status  Der Status als boolean
      * @author Keno O.
      * @since Sprint 3
      */
-    void setLobbyUserStatus(String LobbyName, UserDTO user, boolean Status);
+    void setLobbyUserStatus(UUID lobbyID, UserDTO user, boolean Status);
 
     /**
      * Setzt die maximale Spieleranzahl
      *
-     * @param maxPlayer Die maximale Spieleranzahl
-     * @param lobbyID Die LobbyID
+     * @param maxPlayer    Die maximale Spieleranzahl
+     * @param lobbyID      Die LobbyID
      * @param loggedInUser Der User
      * @author Timo, Rike
      * @since Sprint 3
      */
-    void setMaxPlayer(Integer maxPlayer, UUID lobbyID, User loggedInUser);
+    void setMaxPlayer(UUID lobbyID, User loggedInUser, Integer maxPlayer);
 
-    void kickUser(String lobbyName, UserDTO gameOwner, UUID lobbyID, UserDTO userToKick);
+    /**
+     * Entfernt einen Nutzer aus einer Lobby
+     *
+     * @param lobbyID    Die ID der Lobby
+     * @param gameOwner  Der Besitzer der Lobby
+     * @param userToKick Der zu entfernende Nutzer
+     * @author Marvin
+     */
+    void kickUser(UUID lobbyID, UserDTO gameOwner, UserDTO userToKick);
 }
