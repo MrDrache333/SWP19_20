@@ -8,6 +8,7 @@ import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.event.GameQuitEvent;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
+import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
@@ -23,12 +24,15 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -48,6 +52,14 @@ public class GameViewPresenter extends AbstractPresenter {
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
     private UUID lobbyID;
     private User loggedInUser;
+
+    @FXML
+    private ImageView HandCardOne;
+    private ImageView HandCardTwo;
+    private ImageView HandCardThree;
+    private ImageView HandCardFour;
+    private ImageView HandCardFive;
+
     @FXML
     private Pane chatView;
     @FXML
@@ -236,4 +248,21 @@ public class GameViewPresenter extends AbstractPresenter {
             }
         });
     }
+
+    /**
+     * Zeigt die Karten auf der Hand an
+     *
+     * @author Devin S.
+     * @since Sprint5
+     */
+    @FXML
+    public void currentHand(ActionEvent actionEvent)  {
+        ArrayList<Short> HandCardID = DrawHandMessage.getCardsOnHand();
+        Image eins = new Image("file: Denied.png");
+        HandCardOne.setImage(eins);
+        // das obige ist nur Kram, den ich zum ausprobieren und testen benutzt habe.
+        // die entsprechenden Bilder müssen erst noch hinzugefügt werden, bevore ich weitermache
+    }
+
+
 }
