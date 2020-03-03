@@ -10,11 +10,6 @@ public abstract class Card {
     private String name;
     private short id;
     private Type cardtype;
-
-    public short getCosts() {
-        return costs;
-    }
-
     @SerializedName("cost")
     private short costs;
 
@@ -22,8 +17,8 @@ public abstract class Card {
      * Erstellt eine neue Spielkarte
      *
      * @param cardtype Der Kartentyp
-     * @param name Der Kartenname
-     * @param id   Die KartenID
+     * @param name     Der Kartenname
+     * @param id       Die KartenID
      * @author KenoO
      * @since Sprint 5
      */
@@ -31,6 +26,10 @@ public abstract class Card {
         this.cardtype = cardtype;
         this.name = name;
         this.id = id;
+    }
+
+    public short getCosts() {
+        return costs;
     }
 
     /**

@@ -1,7 +1,9 @@
 package de.uol.swp.server.game.player;
+
 import de.uol.swp.server.game.card.Card;
 import de.uol.swp.server.game.card.MoneyCard;
 import de.uol.swp.server.game.card.ValueCard;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -78,5 +80,9 @@ public class Deck {
         cardsDeck.remove(card);
         hand.remove(card);
         trayStack.remove(card);
+    }
+
+    public ArrayList<Card> getHand() {
+        return hand;
     }
 }

@@ -7,8 +7,8 @@ import java.util.UUID;
 
 public class UserLeftLobbyMessage extends AbstractLobbyMessage {
 
-    private UserDTO gameOwner;
     private static final long serialVersionUID = -5546005208705943803L;
+    private UserDTO gameOwner;
     private LobbyDTO lobby;
 
     public UserLeftLobbyMessage() {
@@ -19,18 +19,18 @@ public class UserLeftLobbyMessage extends AbstractLobbyMessage {
      *
      * @param lobbyID   Die LobbyID
      * @param lobby     Die Lobby
-     * @param lobbyName Der Lobbyname
+     * @param gameOwner Der Besitzer
      * @param user      Der User
-     * @author Julia, Darian
+     * @author Julia, Darian, Marvin
      * @since Sprint 2
      */
-    public UserLeftLobbyMessage(String lobbyName, UserDTO user, UUID lobbyID, UserDTO gameOwner, LobbyDTO lobby) {
-        super(lobbyName, user, lobbyID);
+    public UserLeftLobbyMessage(UUID lobbyID, UserDTO user, UserDTO gameOwner, LobbyDTO lobby) {
+        super(lobbyID, user);
         this.lobby = lobby;
         this.gameOwner = gameOwner;
     }
 
-    public UserDTO getGameOwner(){
+    public UserDTO getGameOwner() {
         return gameOwner;
     }
 
