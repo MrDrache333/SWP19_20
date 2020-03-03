@@ -75,9 +75,6 @@ public class GameService extends AbstractService {
     void startGame(StartGameInternalMessage msg) throws GameManagementException {
         try {
             gameManagement.createGame(msg.getLobbyID());
-            // Manueller Test, wird beim Mergen entfernt.
-            gameManagement.getGame(msg.getLobbyID()).get().getPlayground().sendPlayersHand();
-            LOG.debug("StartGame Methode funktioniert ------------------------------->");
         } catch (GameManagementException e) {
             LOG.error("Es wurde eine GameManagementException geworfen: " + e.getMessage());
             // TODO: In späteren Sprints hier ggf. weiteres Handling?
