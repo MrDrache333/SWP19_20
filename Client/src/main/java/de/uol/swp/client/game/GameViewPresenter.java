@@ -22,6 +22,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
@@ -31,6 +32,7 @@ import javafx.stage.Modality;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -249,6 +251,10 @@ public class GameViewPresenter extends AbstractPresenter {
         });
     }
 
+    @FXML
+    private Button CurrentHand;
+
+
     /**
      * Zeigt die Karten auf der Hand an
      *
@@ -256,9 +262,9 @@ public class GameViewPresenter extends AbstractPresenter {
      * @since Sprint5
      */
     @FXML
-    public void currentHand(ActionEvent actionEvent)  {
+    void currentHand(ActionEvent event)  {
         ArrayList<Short> HandCardID = DrawHandMessage.getCardsOnHand();
-        Image eins = new Image("file: Denied.png");
+        Image eins = new Image("file:Client/src/main/resources/images/Denied.png");
         HandCardOne.setImage(eins);
         // das obige ist nur Kram, den ich zum ausprobieren und testen benutzt habe.
         // die entsprechenden Bilder müssen erst noch hinzugefügt werden, bevore ich weitermache
