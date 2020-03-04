@@ -57,9 +57,13 @@ public class GameViewPresenter extends AbstractPresenter {
 
     @FXML
     private ImageView HandCardOne;
+    @FXML
     private ImageView HandCardTwo;
+    @FXML
     private ImageView HandCardThree;
+    @FXML
     private ImageView HandCardFour;
+    @FXML
     private ImageView HandCardFive;
 
     @FXML
@@ -256,7 +260,7 @@ public class GameViewPresenter extends AbstractPresenter {
 
 
     /**
-     * Zeigt die Karten auf der Hand an
+     * Zeigt die Karten auf der Hand in der GameView an
      *
      * @author Devin S.
      * @since Sprint5
@@ -264,10 +268,21 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     void currentHand(ActionEvent event)  {
         ArrayList<Short> HandCardID = DrawHandMessage.getCardsOnHand();
-        Image eins = new Image("file:Client/src/main/resources/images/Denied.png");
+        String pfad1 = new String ("file:Client/src/main/resources/cards/images/"+HandCardID.get(0)+".png");
+        String pfad2 = new String ("file:Client/src/main/resources/cards/images/"+HandCardID.get(1)+".png");
+        String pfad3 = new String ("file:Client/src/main/resources/cards/images/"+HandCardID.get(2)+".png");
+        String pfad4 = new String ("file:Client/src/main/resources/cards/images/"+HandCardID.get(3)+".png");
+        String pfad5 = new String ("file:Client/src/main/resources/cards/images/"+HandCardID.get(4)+".png");
+        Image eins = new Image(pfad1);
+        Image zwei = new Image(pfad2);
+        Image drei = new Image(pfad3);
+        Image vier = new Image(pfad4);
+        Image fünf = new Image(pfad5);
         HandCardOne.setImage(eins);
-        // das obige ist nur Kram, den ich zum ausprobieren und testen benutzt habe.
-        // die entsprechenden Bilder müssen erst noch hinzugefügt werden, bevore ich weitermache
+        HandCardTwo.setImage(zwei);
+        HandCardThree.setImage(drei);
+        HandCardFour.setImage(vier);
+        HandCardFive.setImage(fünf);
     }
 
 
