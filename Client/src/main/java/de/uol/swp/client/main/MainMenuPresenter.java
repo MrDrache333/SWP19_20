@@ -3,8 +3,6 @@ package de.uol.swp.client.main;
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.SceneManager;
-import de.uol.swp.client.ClientApp;
-import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.lobby.Lobby;
@@ -151,7 +149,7 @@ public class MainMenuPresenter extends AbstractPresenter {
             SceneManager.showAlert(Alert.AlertType.WARNING, "Dieser Name ist bereits vergeben", "Fehler");
             lobbyName.requestFocus();
         } else if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName.getText())) {
-            CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
+            CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), "");
             eventBus.post(msg);
             LOG.info("Request wurde gesendet.");
         } else {
@@ -208,7 +206,7 @@ public class MainMenuPresenter extends AbstractPresenter {
                 }
                 // Wenn Name noch nicht vorhanden: Erstellen neuer Lobby
                 else if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName)) {
-                    CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName, lobbyPassword, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
+                    CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), lobbyPassword);
                     eventBus.post(msg);
                     LOG.info("Request wurde gesendet.");
 
@@ -351,7 +349,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void userJoinedLobby(UserJoinedLobbyMessage message) {
-        LOG.debug("User " + message.getUser().getUsername() + " joined lobby " + message.getLobbyName());
+        LOG.debug("User " + message.getUser().getUsername() + " joined lobby " + message.getLobby().getName());
         Platform.runLater(() -> {
             lobbies.removeIf(lobby -> lobby.getLobbyID().equals(message.getLobbyID()));
             lobbies.add(0, message.getLobby());
@@ -367,7 +365,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void userLeftLobby(UserLeftLobbyMessage message) {
-        LOG.debug("User " + message.getUser().getUsername() + " left lobby " + message.getLobbyName());
+        LOG.debug("User " + message.getUser().getUsername() + " left lobby " + message.getLobby().getName());
         Platform.runLater(() -> {
             lobbies.removeIf(lobby -> lobby.getLobbyID().equals(message.getLobbyID()));
             if (message.getLobby() != null) {
@@ -395,13 +393,13 @@ public class MainMenuPresenter extends AbstractPresenter {
      * Aktualisiert die Lobbytabelle, nachdem ein User aus einer Lobby gekickt wurde
      *
      * @param message die KickUserMessage
-     * @author Julia
+     * @author Julia, Marvin
      * @since Sprint4
      */
     @Subscribe
     public void userKicked(KickUserMessage message) {
         Platform.runLater(() -> {
-            lobbies.removeIf(lobby -> lobby.getLobbyID().equals(message.getLobby().getLobbyID()));
+            lobbies.removeIf(lobby -> lobby.getLobbyID().equals(message.getLobbyID()));
             lobbies.add(0, message.getLobby());
         });
     }
@@ -521,7 +519,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      * Hilfsmethode zum Erstellen des Buttons zum Betreten einer Lobby
      * beim join wird ebenfalls überprüft ob die Lobby ein lobbyPassword besitzt und ggf. dieses abgefragt
      *
-     * @author Rike, Julia, Paula
+     * @author Rike, Julia, Paula, Marvin
      * @since Sprint3
      */
     private void addJoinLobbyButton() {
@@ -540,7 +538,7 @@ public class MainMenuPresenter extends AbstractPresenter {
                                 SceneManager.showAlert(Alert.AlertType.WARNING, "Du bist dieser Lobby schon beigetreten!", "Fehler");
                             } else {
                                 if (lobby.getLobbyPassword().isEmpty()) {
-                                    lobbyService.joinLobby(lobby.getName(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), lobby.getLobbyID());
+                                    lobbyService.joinLobby(lobby.getLobbyID(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
                                 } else if (!lobby.getLobbyPassword().isEmpty()) {
                                     // Es soll ein Dialogfenster geöffnet werden, wenn für die Lobby ein lobbyPassword existiert
                                     JDialog joinLobbyDialog = new JDialog();
@@ -569,7 +567,7 @@ public class MainMenuPresenter extends AbstractPresenter {
                                             }
                                             // Passwort ist gleich, man wird zur Lobby hinzugefügt
                                             else if (lobby.getLobbyPassword().equals(String.valueOf(ePassword.getPassword()))) {
-                                                lobbyService.joinLobby(lobby.getName(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), lobby.getLobbyID());
+                                                lobbyService.joinLobby(lobby.getLobbyID(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
                                                 // Dialog wird nicht mehr angezeigt
                                                 joinLobbyDialog.setVisible(false);
                                             }

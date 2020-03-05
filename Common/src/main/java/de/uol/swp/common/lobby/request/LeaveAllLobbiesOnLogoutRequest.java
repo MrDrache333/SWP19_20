@@ -11,7 +11,6 @@ import de.uol.swp.common.user.UserDTO;
 public class LeaveAllLobbiesOnLogoutRequest extends AbstractLobbyRequest {
 
     private static final long serialVersionUID = -6775833613653810675L;
-    private UserDTO user;
 
     public LeaveAllLobbiesOnLogoutRequest() {
     }
@@ -20,14 +19,11 @@ public class LeaveAllLobbiesOnLogoutRequest extends AbstractLobbyRequest {
      * Übergibt den User, der die Lobbys verlässt
      *
      * @param user der ausgeloggt wird
-     * @author Paula, Keno S, Julia
+     * @author Paula, Keno S, Julia, Marvin
      * @since Sprint 2
      */
     public LeaveAllLobbiesOnLogoutRequest(UserDTO user) {
-        this.user = user;
+        super.setUser(user);
     }
 
-    public UserDTO getUser() {
-        return user;
-    }
 }

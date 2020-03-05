@@ -64,9 +64,6 @@ public class GameViewPresenter extends AbstractPresenter {
 
 
     //TODO: Nach Anpassung Abfragen (Zeile 194 - 215) entfernen -> Zeile 70-74
-    private boolean istDran = true;
-    private boolean inKaufphase = true;
-    private boolean genuegendGeld = true;
     private int anzahlKarte = 2;
 
     /**
@@ -181,6 +178,7 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     public void onBuyableCardClicked (MouseEvent mouseEvent) {
         ImageView cardImage = (ImageView) mouseEvent.getSource();
+
         //Speichert Informationen zur ausgewählten Karte zwischen
         Image chosenCardImage = cardImage.getImage();
         double chosenCardFitHeight = cardImage.getFitHeight();
@@ -199,55 +197,41 @@ public class GameViewPresenter extends AbstractPresenter {
         gameView.getChildren().add(newCardImage);
 
         //TODO: temporäre Lösung zur Abfragung (istDran, inKaufphase, genuegendGeld) -> anpassen
-        if (istDran && inKaufphase && genuegendGeld){
-            // wenn der Spieler eine Karte kaufen kann, werden zwei Buttons eingefügt (über den Handkarten)
-            Button buy = new Button ("kaufen");
-            Button back1 = new Button ("zurück");
-            gameView.getChildren().add(buy);
-            gameView.getChildren().add(back1);
-            // Position der Buttons wird gesetzt
-            buy.setLayoutX(432.0);
-            buy.setLayoutY(375.0);
-            back1.setLayoutX(516.0);
-            back1.setLayoutY(375.0);
-            back1.setMinWidth(52.0);
-            // Aktion hinter dem Kauf-Button
-            buy.setOnAction(event -> {
-                System.out.println("Karte wurde gekauft.");
-                buy.setVisible(false);
-                back1.setVisible(false);
-                newCardImage.setVisible(false);
-                anzahlKarte--;
-                if(anzahlKarte > 0){
-                    ImageView chosenCard = new ImageView(chosenCardImage);
-                    chosenCard.setFitHeight(chosenCardFitHeight);
-                    chosenCard.setLayoutX(chosenCardLayoutX);
-                    chosenCard.setLayoutY(chosenCardLayoutY);
-                    chosenCard.setId(chosenCardID);
-                }
-                //TODO: Der Pfad passt noch nicht -> AnimationManagement anpassen
-                AnimationManagement.buyCard(cardImage);
-            });
-            // Aktion hinter dem Zurück Button -> Kauf-/Zurück-Button und das große Bild werden entfernt
-            back1.setOnAction(event -> {
-                buy.setVisible(false);
-                back1.setVisible(false);
-                newCardImage.setVisible(false);
-            });
-        }
-        else{
-            // kann der Spieler keine Karte kaufen, wird nur ein Button hinzugefügt (über den Handkarten)
-            Button back2 = new Button ("zurück");
-            gameView.getChildren().add(back2);
-            // Position des Buttons
-            back2.setLayoutX(472.0);
-            back2.setLayoutY(375.0);
-            // Aktion hinter dem Zurück Button -> Zurück-Button und das große Bild werden entfernt
-            back2.setOnAction(event -> {
-                back2.setVisible(false);
-                newCardImage.setVisible(false);
-            });
-        }
+        // wenn der Spieler eine Karte kaufen kann, werden zwei Buttons eingefügt (über den Handkarten)
+        Button buy = new Button ("kaufen");
+        Button back = new Button ("zurück");
+        gameView.getChildren().add(buy);
+        gameView.getChildren().add(back);
+        // Position der Buttons wird gesetzt
+        buy.setLayoutX(432.0);
+        buy.setLayoutY(375.0);
+        back.setLayoutX(516.0);
+        back.setLayoutY(375.0);
+        back.setMinWidth(52.0);
+        // Aktion hinter dem Kauf-Button
+        buy.setOnAction(event -> {
+            //TODO: Request stellen
+            System.out.println("Karte wurde gekauft");
+            buy.setVisible(false);
+            back.setVisible(false);
+            newCardImage.setVisible(false);
+            //TODO: In Message auslagern (
+            anzahlKarte--;
+            if(anzahlKarte > 0){
+                ImageView chosenCard = new ImageView(chosenCardImage);
+                chosenCard.setFitHeight(chosenCardFitHeight);
+                chosenCard.setLayoutX(chosenCardLayoutX);
+                chosenCard.setLayoutY(chosenCardLayoutY);
+                chosenCard.setId(chosenCardID);
+            }
+            AnimationManagement.buyCard(cardImage); //TODO: Der Pfad passt noch nicht -> AnimationManagement anpassen
+        });
+        // Aktion hinter dem Zurück Button -> Kauf-/Zurück-Button und das große Bild werden entfernt
+        back.setOnAction(event -> {
+            buy.setVisible(false);
+            back.setVisible(false);
+            newCardImage.setVisible(false);
+        });
     }
 
     /**
