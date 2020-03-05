@@ -1,11 +1,15 @@
 package de.uol.swp.server.game.player;
 
+import de.uol.swp.common.user.User;
+
 /**
  * Der InGame Spieler
  */
 public class Player {
 
     private String playerName;
+    private User theUserInThePlayer;
+    private Deck playerDeck = new Deck();
 
     /**
      * Erstellt einen neuen Spieler
@@ -14,6 +18,28 @@ public class Player {
      */
     public Player(String playerName) {
         this.playerName = playerName;
+    }
+
+    /*
+    Nachfolgende Methoden speichern den zugehörigen User zum Player im Player, da bei der Konvertierung User->Player ein Späterer vergleich
+    bzgl. der SessionId verloren geht.
+    TODO: Nach der nächsten Absprache mit der Gruppe evtl. restrukturierung?
+     */
+    public User getTheUserInThePlayer() {
+        return theUserInThePlayer;
+    }
+
+    public void setTheUserInThePlayer(User theUserInThePlayer) {
+        this.theUserInThePlayer = theUserInThePlayer;
+    }
+
+    /**
+     * Macht das PlayerDeck des Spielers zugreifbar.
+     *
+     * @return Das Deck mit der Hand.
+     */
+    public Deck getPlayerDeck() {
+        return playerDeck;
     }
 
     /**

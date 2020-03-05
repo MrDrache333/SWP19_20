@@ -13,49 +13,49 @@ public interface UserService {
     /**
      * Login-Methode mit dem Username und dem Passwort als Übergabeparameter
      *
-     * @author Marco Grawunder
-     * @since Sprint 0
      * @param username Der Username des Users
      * @param password Das Password des Users
      * @return Userobjekt Der User
+     * @author Marco Grawunder
+     * @since Sprint 0
      */
     User login(String username, String password);
 
     /**
      * Prüft, ob der User eingeloggt ist.
      *
-     * @author Marco Grawunder
-     * @since Sprint 0
      * @param user Userobjekt
      * @return boolean Ob eingeloggt (true) oder nicht (false)
+     * @author Marco Grawunder
+     * @since Sprint 0
      */
     boolean isLoggedIn(User user);
 
     /**
      * Loggt den User aus.
      *
+     * @param user Userobjekt
      * @author Marco Grawunder
      * @since Sprint 0
-     * @param user Userobjekt
      */
     void logout(User user);
 
     /**
      * Legt einen neuen User an.
      *
-     * @author Marco Grawunder
-     * @since Sprint 0
      * @param user User, welcher angelegt werden soll
      * @return Userobjekt Der erstellte User
+     * @author Marco Grawunder
+     * @since Sprint 0
      */
     User createUser(User user);
 
     /**
      * Löscht einen User.
      *
+     * @param user User, welcher gelöscht werden soll
      * @author Marco Grawunder
      * @since Sprint 0
-     * @param user User, welcher gelöscht werden soll
      */
     void dropUser(User user);
 
@@ -74,9 +74,9 @@ public interface UserService {
     /**
      * Gibt alle eingeloggten User als Liste zurück.
      *
+     * @return List<User> Eine List mit allen eingeloggten Usern.
      * @author Marco Grawunder
      * @since Sprint 0
-     * @return List<User> Eine List mit allen eingeloggten Usern.
      */
     List<User> retrieveAllUsers();
 

@@ -8,6 +8,7 @@ import java.util.UUID;
 
 /**
  * Das Interface Lobby.
+ *
  * @author Marco Grawunder
  * @since Sprint0
  */

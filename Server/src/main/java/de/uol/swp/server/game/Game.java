@@ -1,5 +1,6 @@
 package de.uol.swp.server.game;
 
+import com.google.inject.Inject;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.server.chat.Chat;
 
@@ -22,7 +23,6 @@ public class Game {
      * The Game id.
      */
     private UUID gameID;
-
     /**
      * Erstellt ein neues Spiel
      *
@@ -31,10 +31,15 @@ public class Game {
      * @author KenoO
      * @since Sprint 5
      */
-    Game(Lobby lobby, Chat chat) {
+    @Inject
+    Game(Lobby lobby, Chat chat, GameService gameService) {
         this.chat = chat;
         this.gameID = lobby.getLobbyID();
-        playground = new Playground(lobby);
+        playground = new Playground(lobby, gameService);
+    }
+
+    public Playground getPlayground() {
+        return playground;
     }
 
     /**

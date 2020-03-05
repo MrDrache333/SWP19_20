@@ -58,6 +58,7 @@ public class AuthenticationService extends AbstractService {
         this.userManagement = userManagement;
     }
 
+
     /**
      * Session von einem User wird übergeben
      *
@@ -196,20 +197,20 @@ public class AuthenticationService extends AbstractService {
      * @since Sprint4
      */
     @Subscribe
-    public void onDropUserRequest(DropUserRequest msg){
-            User userToDrop = msg.getUser();
+    public void onDropUserRequest(DropUserRequest msg) {
+        User userToDrop = msg.getUser();
 
-            // Could be already logged out/removed
-            if (userToDrop != null) {
+        // Could be already logged out/removed
+        if (userToDrop != null) {
 
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Dropping user " + userToDrop.getUsername());
-                }
-                userSessions.remove(msg.getSession().get());
-                userManagement.dropUser(userToDrop);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Dropping user " + userToDrop.getUsername());
+            }
+            userSessions.remove(msg.getSession().get());
+            userManagement.dropUser(userToDrop);
 
-                ServerMessage returnMessage = new UserDroppedMessage(userToDrop);
-                post(returnMessage);
+            ServerMessage returnMessage = new UserDroppedMessage(userToDrop);
+            post(returnMessage);
         }
     }
 

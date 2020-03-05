@@ -35,20 +35,18 @@ public interface MediaPlayer {
     /**
      * Prüft ob das aktuelle Lied abgespielt wird.
      *
+     * @return boolean true oder false
      * @author Keno O.
      * @since Sprint 4
-     * @return boolean true oder false
-     *
      */
     boolean isStarted();
 
     /**
      * Setzt die Lautstärke des Liedes.
      *
+     * @param Volume Die Lautstärke
      * @author Keno O.
      * @since Sprint 4
-     * @param Volume Die Lautstärke
-     *
      */
     void setVolume(double Volume);
 

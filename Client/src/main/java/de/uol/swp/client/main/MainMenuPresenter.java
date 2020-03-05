@@ -79,7 +79,6 @@ public class MainMenuPresenter extends AbstractPresenter {
     private ImageView soundIcon;
 
 
-
     //--------------------------------------
     // FXML METHODS
     //--------------------------------------
@@ -531,6 +530,7 @@ public class MainMenuPresenter extends AbstractPresenter {
             public TableCell<Lobby, Void> call(final TableColumn<Lobby, Void> param) {
                 return new TableCell<>() {
                     final Button joinLobbyButton = new Button("Beitreten");
+
                     {
                         joinLobbyButton.setOnAction((ActionEvent event) -> {
                             Lobby lobby = getTableView().getItems().get(getIndex());
@@ -585,6 +585,7 @@ public class MainMenuPresenter extends AbstractPresenter {
                             }
                         });
                     }
+
                     @Override
                     public void updateItem(Void item, boolean empty) {
                         super.updateItem(item, empty);

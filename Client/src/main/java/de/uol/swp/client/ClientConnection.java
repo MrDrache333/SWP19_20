@@ -26,6 +26,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Die ClientConnection Klasse
+ *
  * @author Marco Grawunder
  * @since Start
  */

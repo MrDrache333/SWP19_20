@@ -10,7 +10,6 @@ public interface ConnectionListener {
      * @param channel
      * @author Marco
      * @since Start
-     *
      */
     void connectionEstablished(Channel channel);
 

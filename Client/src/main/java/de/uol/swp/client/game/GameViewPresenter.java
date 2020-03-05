@@ -98,13 +98,12 @@ public class GameViewPresenter extends AbstractPresenter {
          */
 
 
-
     /**
      * Show Alert für den Aufgeben Button
      *
-     * @param type der Typ
+     * @param type    der Typ
      * @param message die Nachricht
-     * @param title der Titel
+     * @param title   der Titel
      * @author M.Haschem
      * @since Sprint 3
      */
@@ -288,7 +287,7 @@ public class GameViewPresenter extends AbstractPresenter {
         if (loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
             loggedInUser = message.getUser();
         }
-        if (users.contains(message.getOldUser().getUsername())){
+        if (users.contains(message.getOldUser().getUsername())) {
             users.remove(message.getOldUser().getUsername());
             users.add(message.getUser().getUsername());
         }
