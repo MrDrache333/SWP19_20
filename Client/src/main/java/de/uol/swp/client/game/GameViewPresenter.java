@@ -56,15 +56,8 @@ public class GameViewPresenter extends AbstractPresenter {
     private User loggedInUser;
 
     @FXML
-    private ImageView HandCardOne;
-    @FXML
-    private ImageView HandCardTwo;
-    @FXML
-    private ImageView HandCardThree;
-    @FXML
-    private ImageView HandCardFour;
-    @FXML
-    private ImageView HandCardFive;
+    private Pane CardPane;
+
 
     @FXML
     private Pane chatView;
@@ -265,8 +258,10 @@ public class GameViewPresenter extends AbstractPresenter {
      * @author Devin S.
      * @since Sprint5
      */
-    @FXML
-    void currentHand(ActionEvent event)  {
+
+    @FXML @Subscribe
+    public void currentHand(DrawHandMessage message)  {
+        /*
         ArrayList<Short> HandCardID = DrawHandMessage.getCardsOnHand();
         String pfad1 = new String ("file:Client/src/main/resources/cards/images/"+HandCardID.get(0)+".png");
         String pfad2 = new String ("file:Client/src/main/resources/cards/images/"+HandCardID.get(1)+".png");
@@ -283,6 +278,35 @@ public class GameViewPresenter extends AbstractPresenter {
         HandCardThree.setImage(drei);
         HandCardFour.setImage(vier);
         HandCardFive.setImage(fünf);
+        */
+
+        ArrayList<Short> HandCardID = message.getCardsOnHand();
+
+        HandCardID.forEach((n) -> {
+
+            int counter = 0;
+            while (true) {
+                if (CardPane.getChildren().get(counter) == null) {
+                    String pfad = new String ("file:Client/src/main/resources/cards/images/"+n+".png");
+                    Image picture = new Image(pfad);
+                    ImageView card = new ImageView(picture);
+                    card.setFitWidth(77);
+                    card.setFitHeight(116);
+                    card.setX(0+card.getFitWidth()*counter);
+                    card.setY(0);
+                    CardPane.getChildren().add(counter, card);
+                    break;
+                } else {
+                    counter++;
+                }
+            }
+        });
+
+
+
+
+
+
     }
 
 

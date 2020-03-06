@@ -24,11 +24,11 @@ public class DrawHandMessage extends AbstractServerMessage {
     }
 
     // Getter
-    public static ArrayList<Short> getCardsOnHand() {
+    public ArrayList<Short> getCardsOnHand() {
         return cardsOnHand;
     }
 
-    public static UUID getTheLobbyID() {
+    public UUID getTheLobbyID() {
         return theLobbyID;
     }
 }
