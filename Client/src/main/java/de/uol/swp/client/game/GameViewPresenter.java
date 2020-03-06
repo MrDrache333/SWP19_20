@@ -1,5 +1,6 @@
 package de.uol.swp.client.game;
 
+import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
@@ -54,6 +55,7 @@ public class GameViewPresenter extends AbstractPresenter {
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
     private UUID lobbyID;
     private User loggedInUser;
+    private EventBus eventBus;
 
     @FXML
     private Pane CardPane;
@@ -81,7 +83,8 @@ public class GameViewPresenter extends AbstractPresenter {
      * @param injector          der Injector
      * @param gameManagement    das Game Management
      */
-    public GameViewPresenter(User loggedInUser, UUID lobbyID, ChatService chatService, ChatViewPresenter chatViewPresenter, LobbyService lobbyService, UserService userService, Injector injector, GameManagement gameManagement) {
+    public GameViewPresenter(EventBus eventBus, User loggedInUser, UUID lobbyID, ChatService chatService, ChatViewPresenter chatViewPresenter, LobbyService lobbyService, UserService userService, Injector injector, GameManagement gameManagement) {
+        this.eventBus = eventBus;
         this.loggedInUser = loggedInUser;
         this.lobbyID = lobbyID;
         this.chatService = chatService;
@@ -91,6 +94,8 @@ public class GameViewPresenter extends AbstractPresenter {
         this.injector = injector;
         this.gameManagement = gameManagement;
         initializeUserList();
+
+        eventBus.register(CardPane);
     }
 
     /*
@@ -260,7 +265,7 @@ public class GameViewPresenter extends AbstractPresenter {
      */
 
     @FXML @Subscribe
-    public void currentHand(DrawHandMessage message)  {
+    public void addToHand(DrawHandMessage message)  {
         ArrayList<Short> HandCardID = message.getCardsOnHand();
 
         HandCardID.forEach((n) -> {
