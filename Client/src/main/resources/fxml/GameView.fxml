@@ -34,7 +34,7 @@
                 <Rectangle2D height="600.0" width="400.0" />
             </viewport>
         </ImageView>
-        <ImageView fitHeight="180.0" fitWidth="433.0" layoutX="284.0" layoutY="541.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="183.0" fitWidth="433.0" layoutX="284.0" layoutY="541.0" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@../images/Handkarten.png" />
             </image>

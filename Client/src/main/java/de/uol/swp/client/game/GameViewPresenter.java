@@ -261,39 +261,15 @@ public class GameViewPresenter extends AbstractPresenter {
 
     @FXML @Subscribe
     public void currentHand(DrawHandMessage message)  {
-        /*
-        ArrayList<Short> HandCardID = DrawHandMessage.getCardsOnHand();
-        String pfad1 = new String ("file:Client/src/main/resources/cards/images/"+HandCardID.get(0)+".png");
-        String pfad2 = new String ("file:Client/src/main/resources/cards/images/"+HandCardID.get(1)+".png");
-        String pfad3 = new String ("file:Client/src/main/resources/cards/images/"+HandCardID.get(2)+".png");
-        String pfad4 = new String ("file:Client/src/main/resources/cards/images/"+HandCardID.get(3)+".png");
-        String pfad5 = new String ("file:Client/src/main/resources/cards/images/"+HandCardID.get(4)+".png");
-        Image eins = new Image(pfad1);
-        Image zwei = new Image(pfad2);
-        Image drei = new Image(pfad3);
-        Image vier = new Image(pfad4);
-        Image fünf = new Image(pfad5);
-        HandCardOne.setImage(eins);
-        HandCardTwo.setImage(zwei);
-        HandCardThree.setImage(drei);
-        HandCardFour.setImage(vier);
-        HandCardFive.setImage(fünf);
-        */
-
         ArrayList<Short> HandCardID = message.getCardsOnHand();
 
         HandCardID.forEach((n) -> {
-
             int counter = 0;
             while (true) {
                 if (CardPane.getChildren().get(counter) == null) {
                     String pfad = new String ("file:Client/src/main/resources/cards/images/"+n+".png");
                     Image picture = new Image(pfad);
                     ImageView card = new ImageView(picture);
-                    card.setFitWidth(77);
-                    card.setFitHeight(116);
-                    card.setX(0+card.getFitWidth()*counter);
-                    card.setY(0);
                     CardPane.getChildren().add(counter, card);
                     break;
                 } else {
@@ -302,12 +278,27 @@ public class GameViewPresenter extends AbstractPresenter {
             }
         });
 
+        double paneWidth = CardPane.getWidth();
+        double paneHeight = CardPane.getHeight();
+        int numberOfCards = CardPane.getChildren().size();
 
+        while (true) {
+            int counter = 0;
+            if (CardPane.getChildren().get(counter) != null) {
 
-
-
-
+                if (counter<7) {
+                    CardPane.getChildren().get(counter).resize(paneHeight/2, (paneWidth/numberOfCards)*counter+1);
+                    CardPane.getChildren().get(counter).relocate(0+(paneWidth/numberOfCards)*counter, 0);
+                    counter++;
+                } else {
+                    CardPane.getChildren().get(counter).resize(paneHeight/2, (paneWidth/numberOfCards)*counter+1);
+                    CardPane.getChildren().get(counter).relocate(0+(paneWidth/numberOfCards)*counter-7, paneHeight/2);
+                    counter++;
+                }
+            } else {
+                break;
+            }
+        }
     }
-
 
 }
