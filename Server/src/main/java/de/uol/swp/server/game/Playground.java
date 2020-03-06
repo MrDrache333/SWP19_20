@@ -2,8 +2,11 @@ package de.uol.swp.server.game;
 
 import com.google.inject.Inject;
 import de.uol.swp.common.game.messages.DrawHandMessage;
+import de.uol.swp.common.game.messages.StartActionPhaseMessage;
+import de.uol.swp.common.game.messages.StartBuyPhaseMessage;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.user.User;
+import de.uol.swp.server.game.card.ActionCard;
 import de.uol.swp.server.game.card.Card;
 import de.uol.swp.server.game.player.Player;
 
@@ -25,11 +28,11 @@ class Playground {
     private Player nextPlayer;
     private ArrayList<Short> theIdsFromTheHand = new ArrayList<>(5);
     private GameService gameService;
-    private UUID theSpecificLobbyID;
+    private UUID gameID;
 
     /**
      * Erstellt ein neues Spielfeld und übergibt die Spieler. Die Reihenfolge der Spieler wird zufällig zusammengestellt.
-     * Es wird außerdem der erste Player gesetzt und der nächste Player und ein GameService gesetzt um dem aktuellen Spieler seine Karten zu schicken.
+     * Es wird außerdem ein GameService gesetzt um dem aktuellen Spieler seine Karten zu schicken.
      *
      * @param lobby Die zu nutzende Lobby
      * @author KenoO, Julia, Ferit
@@ -43,10 +46,41 @@ class Playground {
             players.add(player);
         }
         Collections.shuffle(players);
-        this.actualPlayer = players.get(0);
-        this.nextPlayer = players.get(1);
         this.gameService = gameService;
-        this.theSpecificLobbyID = lobby.getLobbyID();
+        this.gameID = lobby.getLobbyID();
+    }
+
+
+    /**
+     * Initialisiert actual- und nextPlayer und aktualisiert diese, wenn ein Spieler alle Phasen durchlaufen hat.
+     * Dem neuen aktuellen Spieler wird seine Hand gesendet sowie eine StartActionPhaseMessage,
+     * wenn er eine Aktionskarte auf der Hand hat bzw. eine StartBuyPhaseMessage wenn nicht.
+     *
+     * @author Julia
+     * @since Sprint5
+     */
+    public void newTurn() {
+        if (actualPlayer == null && nextPlayer == null) {
+            actualPlayer = players.get(0);
+            nextPlayer = players.get(1);
+        } else {
+            //if: User befindet sich in Action/Buyphase: return
+            actualPlayer = nextPlayer;
+            if (players.indexOf(nextPlayer) == players.size() - 1) {
+                nextPlayer = players.get(0);
+            } else {
+                int index = players.indexOf(actualPlayer);
+                nextPlayer = players.get(++index);
+            }
+        }
+        sendPlayersHand();
+        if (checkForActionCard()) {
+            //aktuelle Phase = Aktionsphase
+            gameService.sendToAllPlayers(gameID, new StartActionPhaseMessage(actualPlayer.getTheUserInThePlayer(), gameID));
+        } else {
+            //aktuelle Phase = Buyphase
+            gameService.sendToAllPlayers(gameID, new StartBuyPhaseMessage(actualPlayer.getTheUserInThePlayer(), gameID));
+        }
     }
 
     /**
@@ -60,7 +94,37 @@ class Playground {
         for (Card card : actualPlayer.getPlayerDeck().getHand()) {
             theIdsFromTheHand.add(card.getId());
         }
-        DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID);
+        DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, gameID);
         gameService.sendToSpecificPlayer(actualPlayer, theHandMessage);
     }
+
+    /**
+     * Überprüft, ob der aktuelle Spieler eine Aktionskarte auf der Hand hat, die er spielen könnte.
+     * Falls nicht, wird direkt in die Buyphase gewechselt.
+     *
+     * @return true, wenn er eine Aktionskarte auf der Hand hat, sonst false
+     * @author Julia
+     * @since Sprint5
+     */
+    public boolean checkForActionCard() {
+        for (Card card : actualPlayer.getPlayerDeck().getHand()) {
+            if (card instanceof ActionCard) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public Player getActualPlayer() {
+        return actualPlayer;
+    }
+
+    public Player getNextPlayer() {
+        return nextPlayer;
+    }
+
 }
