@@ -285,15 +285,20 @@ public class GameViewPresenter extends AbstractPresenter {
         while (true) {
             int counter = 0;
             if (CardPane.getChildren().get(counter) != null) {
-
-                if (counter<7) {
-                    CardPane.getChildren().get(counter).resize(paneHeight/2, (paneWidth/numberOfCards)*counter+1);
+                if (numberOfCards<7) {
+                    CardPane.getChildren().get(counter).resize(paneHeight, (paneWidth/numberOfCards)*counter+1);
                     CardPane.getChildren().get(counter).relocate(0+(paneWidth/numberOfCards)*counter, 0);
                     counter++;
                 } else {
-                    CardPane.getChildren().get(counter).resize(paneHeight/2, (paneWidth/numberOfCards)*counter+1);
-                    CardPane.getChildren().get(counter).relocate(0+(paneWidth/numberOfCards)*counter-7, paneHeight/2);
-                    counter++;
+                    if (counter<7) {
+                        CardPane.getChildren().get(counter).resize(paneHeight/2, (paneWidth/numberOfCards)*counter+1);
+                        CardPane.getChildren().get(counter).relocate(0+(paneWidth/numberOfCards)*counter, 0);
+                        counter++;
+                    } else {
+                        CardPane.getChildren().get(counter).resize(paneHeight/2, (paneWidth/numberOfCards)*counter+1);
+                        CardPane.getChildren().get(counter).relocate(0+(paneWidth/numberOfCards)*counter-7, paneHeight/2);
+                        counter++;
+                    }
                 }
             } else {
                 break;
