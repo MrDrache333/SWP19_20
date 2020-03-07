@@ -50,10 +50,9 @@ class Playground {
         this.gameID = lobby.getLobbyID();
     }
 
-
     /**
      * Initialisiert actual- und nextPlayer und aktualisiert diese, wenn ein Spieler alle Phasen durchlaufen hat.
-     * Dem neuen aktuellen Spieler wird seine Hand gesendet sowie eine StartActionPhaseMessage,
+     * Dem neuen aktuellen Spieler wird eine StartActionPhaseMessage gesendet,
      * wenn er eine Aktionskarte auf der Hand hat bzw. eine StartBuyPhaseMessage wenn nicht.
      *
      * @author Julia
@@ -64,16 +63,11 @@ class Playground {
             actualPlayer = players.get(0);
             nextPlayer = players.get(1);
         } else {
-            //if: User befindet sich in Action/Buyphase: return
+            //if: User befindet sich nicht in Clearphase: return
             int index = players.indexOf(nextPlayer);
             actualPlayer = nextPlayer;
-            if (index == players.size() - 1) {
-                nextPlayer = players.get(0);
-            } else {
-                nextPlayer = players.get(++index);
-            }
+            nextPlayer = players.get(++index % players.size());
         }
-        sendPlayersHand();
         if (checkForActionCard()) {
             //aktuelle Phase = Aktionsphase
             gameService.sendToAllPlayers(gameID, new StartActionPhaseMessage(actualPlayer.getTheUserInThePlayer(), gameID));

@@ -46,26 +46,23 @@ public class PlaygroundTest {
     @Test
     void testNewTurn() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
-        int index = playground.getPlayers().indexOf(playground.getActualPlayer());
-        int index2 = playground.getPlayers().indexOf(playground.getNextPlayer());
+        int actual = playground.getPlayers().indexOf(playground.getActualPlayer());
+        int next = playground.getPlayers().indexOf(playground.getNextPlayer());
         //Player an erster Position der Liste beginnt
-        assertEquals(0, index);
-        assertEquals(1, index2);
+        assertEquals(0, actual);
+        assertEquals(1, next);
 
         playground.newTurn();
-        int newIndex = playground.getPlayers().indexOf(playground.getActualPlayer());
-        int newIndex2 = playground.getPlayers().indexOf(playground.getNextPlayer());
-        if (index == playground.getPlayers().size() - 1) {
-            assertEquals(0, newIndex);
-        } else {
-            assertEquals(++index, newIndex);
-        }
-        if (index2 == playground.getPlayers().size() - 1) {
-            assertEquals(0, newIndex2);
-        } else {
-            assertEquals(++index2, newIndex2);
-        }
+        actual = playground.getPlayers().indexOf(playground.getActualPlayer());
+        next = playground.getPlayers().indexOf(playground.getNextPlayer());
+        assertEquals(1, actual);
+        assertEquals(2, next);
 
+        playground.newTurn();
+        actual = playground.getPlayers().indexOf(playground.getActualPlayer());
+        next = playground.getPlayers().indexOf(playground.getNextPlayer());
+        assertEquals(2, actual);
+        assertEquals(0, next);
     }
 
     /**
