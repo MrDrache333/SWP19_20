@@ -3,73 +3,64 @@
 <?import javafx.geometry.Rectangle2D?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<AnchorPane fx:id="gameView" xmlns:fx="http://javafx.com/fxml/1" prefHeight="750.0" prefWidth="1280.0"
-            xmlns="http://javafx.com/javafx/11.0.1">
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+
+<AnchorPane fx:id="gameView" prefHeight="750.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <ImageView fitHeight="750.0" fitWidth="1280.0" pickOnBounds="true">
             <image>
-                <Image url="@../images/wood_texture_background.jpg"/>
+                <Image url="@../images/wood_texture_background.jpg" />
             </image>
             <viewport>
-                <Rectangle2D height="1000.0" width="1000.0"/>
+                <Rectangle2D height="1000.0" width="1000.0" />
             </viewport>
         </ImageView>
-        <Button fx:id="logoutButton" layoutX="1222.0" layoutY="28.0" mnemonicParsing="false"
-                onAction="#onLogoutButtonPressed" text="Logout" translateX="-10.0" translateY="-10.0"
-                GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1"
-                GridPane.valignment="BOTTOM"/>
-        <Button fx:id="giveUpButton" layoutX="1132.0" layoutY="18.0" mnemonicParsing="false"
-                onAction="#onGiveUpButtonPressed" text="Aufgeben"/>
-        <ListView fx:id="usersView" layoutX="1032.0" layoutY="87.0" minWidth="100.0" prefHeight="220.0"
-                  prefWidth="200.0" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"/>
-        <ImageView fitHeight="180.0" fitWidth="120.0" layoutX="150.0" layoutY="538.0" pickOnBounds="true"
-                   preserveRatio="true">
+        <Button fx:id="logoutButton" layoutX="1222.0" layoutY="28.0" mnemonicParsing="false" onAction="#onLogoutButtonPressed" text="Logout" translateX="-10.0" translateY="-10.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" />
+        <Button fx:id="giveUpButton" layoutX="1132.0" layoutY="18.0" mnemonicParsing="false" onAction="#onGiveUpButtonPressed" text="Aufgeben" />
+        <ListView fx:id="usersView" layoutX="1032.0" layoutY="87.0" minWidth="100.0" prefHeight="220.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" />
+        <ImageView fitHeight="180.0" fitWidth="120.0" layoutX="150.0" layoutY="538.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../images/Deck.png"/>
+                <Image url="@../images/Deck.png" />
             </image>
             <viewport>
-                <Rectangle2D height="600.0" width="400.0"/>
+                <Rectangle2D height="600.0" width="400.0" />
             </viewport>
         </ImageView>
-        <ImageView fitHeight="180.0" fitWidth="120.0" layoutX="733.0" layoutY="538.0" pickOnBounds="true"
-                   preserveRatio="true">
+        <ImageView fitHeight="180.0" fitWidth="120.0" layoutX="733.0" layoutY="538.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../images/Ablage.png"/>
+                <Image url="@../images/Ablage.png" />
             </image>
             <viewport>
-                <Rectangle2D height="600.0" width="400.0"/>
+                <Rectangle2D height="600.0" width="400.0" />
             </viewport>
         </ImageView>
-        <ImageView fitHeight="180.0" fitWidth="433.0" layoutX="284.0" layoutY="541.0" pickOnBounds="true"
-                   preserveRatio="true">
+        <ImageView fitHeight="180.0" fitWidth="433.0" layoutX="284.0" layoutY="541.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../images/Handkarten.png"/>
+                <Image url="@../images/Handkarten.png" />
             </image>
         </ImageView>
-        <ImageView fitHeight="363.0" fitWidth="562.0" layoutX="222.0" layoutY="126.0" pickOnBounds="true"
-                   preserveRatio="true">
+        <ImageView fitHeight="363.0" fitWidth="562.0" layoutX="222.0" layoutY="126.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../images/ShopTeppich.jpg"/>
+                <Image url="@../images/ShopTeppich.jpg" />
             </image>
         </ImageView>
-        <ImageView fitHeight="116.0" fitWidth="290.0" layoutX="356.0" layoutY="415.0" pickOnBounds="true"
-                   preserveRatio="true">
+        <ImageView fitHeight="116.0" fitWidth="290.0" layoutX="356.0" layoutY="415.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../images/Aktionszone.png"/>
+                <Image url="@../images/Aktionszone.png" />
             </image>
         </ImageView>
-        <ImageView fitHeight="148.0" fitWidth="290.0" layoutX="356.0" layoutY="31.0" pickOnBounds="true"
-                   preserveRatio="true">
+        <ImageView fitHeight="148.0" fitWidth="290.0" layoutX="356.0" layoutY="31.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../images/AktionszoneGegner.png"/>
+                <Image url="@../images/AktionszoneGegner.png" />
             </image>
         </ImageView>
-        <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="100.0" layoutY="233.0" pickOnBounds="true"
-                   preserveRatio="true">
+        <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="100.0" layoutY="233.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../images/Müll.png"/>
+                <Image url="@../images/Müll.png" />
             </image>
         </ImageView>
         <Pane fx:id="chatView" layoutX="949.0" layoutY="415.0" prefHeight="290.0" prefWidth="290.0" />
@@ -77,89 +68,84 @@
 
 
     <!-- Die IDs durch die Namen der einzelnen Karten ersetzen und erster Buchstabe groß -->
-      <ImageView fx:id="geldkarte_1" fitWidth="60.0" layoutX="238.0" layoutY="179.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="1" fitWidth="60.0" layoutX="246.0" layoutY="173.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/platzhalter_karte.jpg" />
+            <Image url="@../cards/images/1_sm.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="geldkarte_2" fitWidth="60.0" layoutX="238.0" layoutY="239.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true" AnchorPane.topAnchor="239.0">
+      <ImageView fx:id="2" fitWidth="60.0" layoutX="242.0" layoutY="244.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true" AnchorPane.topAnchor="244.0">
          <image>
-            <Image url="@../images/platzhalter_karte.jpg" />
+            <Image url="@../cards/images/2_sm.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="geldkarte_3" fitWidth="60.0" layoutX="238.0" layoutY="299.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="3" fitWidth="60.0" layoutX="242.0" layoutY="318.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/platzhalter_karte.jpg" />
+            <Image url="@../cards/images/3_sm.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="siegpunkt_1" fitWidth="60.0" layoutX="306.0" layoutY="179.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="11" fitWidth="60.0" layoutX="314.0" layoutY="173.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/platzhalter_karte.jpg" />
+            <Image url="@../cards/images/11_sm.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="siegpunkt_2" fitWidth="60.0" layoutX="306.0" layoutY="239.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="12" fitWidth="60.0" layoutX="310.0" layoutY="244.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/platzhalter_karte.jpg" />
+            <Image url="@../cards/images/12_sm.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="siegpunkt_3" fitWidth="60.0" layoutX="306.0" layoutY="299.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="13" fitWidth="60.0" layoutX="310.0" layoutY="318.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/platzhalter_karte.jpg" />
+            <Image url="@../cards/images/13_sm.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="fluchkarte" fitWidth="60.0" layoutX="272.0" layoutY="359.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
-            <image>
-                <Image url="@../images/platzhalter_karte.jpg" />
-            </image>
-      </ImageView>
-      <ImageView fx:id="aktionskarte_1" fitWidth="60.0" layoutX="389.0" layoutY="179.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="21" fitWidth="60.0" layoutX="390.0" layoutY="208.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/platzhalter_karte.jpg" />
+            <Image url="@../cards/images/21_sm.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="aktionskarte_2" fitWidth="60.0" layoutX="391.0" layoutY="249.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="31" fitWidth="60.0" layoutX="392.0" layoutY="291.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/platzhalter_karte.jpg" />
+            <Image url="@../cards/images/31_sm.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="aktionskarte_3" fitWidth="60.0" layoutX="468.0" layoutY="179.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="32" fitWidth="60.0" layoutX="469.0" layoutY="208.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/platzhalter_karte.jpg" />
+            <Image url="@../cards/images/32_sm.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="aktionskarte_4" fitWidth="60.0" layoutX="468.0" layoutY="250.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="33" fitWidth="60.0" layoutX="469.0" layoutY="292.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/platzhalter_karte.jpg" />
+            <Image url="@../cards/images/33_sm.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="aktionskarte_5" fitWidth="60.0" layoutX="545.0" layoutY="179.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="34" fitWidth="60.0" layoutX="546.0" layoutY="208.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/platzhalter_karte.jpg" />
+            <Image url="@../cards/images/34_sm.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="aktionskarte_6" fitWidth="60.0" layoutX="545.0" layoutY="250.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="35" fitWidth="60.0" layoutX="546.0" layoutY="292.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/platzhalter_karte.jpg" />
+            <Image url="@../cards/images/35_sm.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="aktionskarte_7" fitWidth="60.0" layoutX="622.0" layoutY="179.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="36" fitWidth="60.0" layoutX="623.0" layoutY="208.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/platzhalter_karte.jpg" />
+            <Image url="@../cards/images/36_sm.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="aktionskarte_8" fitWidth="60.0" layoutX="622.0" layoutY="250.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="37" fitWidth="60.0" layoutX="623.0" layoutY="292.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/platzhalter_karte.jpg" />
+            <Image url="@../cards/images/37_sm.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="aktionskarte_9" fitWidth="60.0" layoutX="699.0" layoutY="179.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="38" fitWidth="60.0" layoutX="700.0" layoutY="208.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/platzhalter_karte.jpg" />
+            <Image url="@../cards/images/38_sm.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="aktionskarte_10" fitWidth="60.0" layoutX="699.0" layoutY="250.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="39" fitWidth="60.0" layoutX="700.0" layoutY="292.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/platzhalter_karte.jpg" />
+            <Image url="@../cards/images/39_sm.png" />
          </image>
       </ImageView>
     </children>

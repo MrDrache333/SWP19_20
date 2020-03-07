@@ -175,17 +175,17 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     public void onBuyableCardClicked (MouseEvent mouseEvent) {
         ImageView cardImage = (ImageView) mouseEvent.getSource();
-
+        String cardID = cardImage.getId();
+        String PathCardLargeView = "/cards/images/" + cardID  + ".png";
         // ein großes Bild der Karte wird hinzugefügt
-        // TODO: das große Bild muss zur ausgewählten Karte passen -> wie sind die Bilder gespeichert
-        ImageView newCardImage = new ImageView(new Image(new File(getClass().getResource("/images/karte_gross.png").toExternalForm().replace("file:", "")).toURI().toString()));
+        ImageView newCardImage = new ImageView(new Image(new File(getClass().getResource(PathCardLargeView).toExternalForm().replace("file:", "")).toURI().toString()));
         // setzt die Größe und die Position des Bildes. Das Bild ist im Vordergrund. Bild wird hinzugefügt
-        newCardImage.setFitHeight(150.0);
+        newCardImage.setFitHeight(170.0);
+        newCardImage.setFitWidth(160.0);
         newCardImage.toFront();
-        newCardImage.setLayoutX(458.0);
-        newCardImage.setLayoutY(207.0);
+        newCardImage.setLayoutX(420.0);
+        newCardImage.setLayoutY(190.0);
         gameView.getChildren().add(newCardImage);
-
         // es werden zwei Buttons hinzugefügt (zurück und kaufen)
         Button buy = new Button ("kaufen");
         Button back = new Button ("zurück");
@@ -199,29 +199,12 @@ public class GameViewPresenter extends AbstractPresenter {
         back.setMinWidth(52.0);
         // Aktion hinter dem Kauf-Button
         buy.setOnAction(event -> {
-            //TODO: Request stellen: Infos zur Karte, Spieler und Lobby
-            //TODO: In Message auslagern
-            // Wenn kauf erfolgreich: Zeile 220 ausführen
-            // wenn kauf fehlgeschlagen (nicht dran/Kaufphase; zu wenig Geld) -> Fehlermeldung
-            // wenn nach Kauf noch Karten da sind (counter nach Kauf != 0) ->
-            /**
-             *
-             * Speichert Informationen zur ausgewählten Karte zwischen
-             * Image chosenCardImage = cardImage.getImage();
-             * double chosenCardFitHeight = cardImage.getFitHeight();
-             * double chosenCardLayoutX = cardImage.getLayoutX();
-             * double chosenCardLayoutY = cardImage.getLayoutY();
-             * String chosenCardID = cardImage.getId();
-             *
-             * anzahlKarte--;
-             * if(anzahlKarte > 0){
-             *      ImageView chosenCard = new ImageView(chosenCardImage);
-             *      chosenCard.setFitHeight(chosenCardFitHeight);
-             *      chosenCard.setLayoutX(chosenCardLayoutX);
-             *      chosenCard.setLayoutY(chosenCardLayoutY);
-             *      chosenCard.setId(chosenCardID);
-             * }
-             */
+            //TODO: Request stellen: mit lobbyID, loggedInUser, cardID (ist hier ein String!) -> überprüfen ob der loggedInUser die Karte kaufen kann
+            //TODO: Message (Antowrt): boolean buyCard, lobbyId, loggedInUser
+            // wenn buyCard true -> AnimationManagement.buyCard(ImageView)
+            // wenn buyCard false -> Fehlermeldung
+            // wenn counter der Karten (von jeder Karte gibt es nur begrenzt Karten) größer Null
+            // -> kleines Bild der Karte an der Position einfügen, an der die Karte zuvor war
             AnimationManagement.buyCard(cardImage); //TODO: Der Pfad passt noch nicht -> AnimationManagement anpassen
             System.out.println("Karte wurde gekauft");
             buy.setVisible(false);
