@@ -65,11 +65,11 @@ class Playground {
             nextPlayer = players.get(1);
         } else {
             //if: User befindet sich in Action/Buyphase: return
+            int index = players.indexOf(nextPlayer);
             actualPlayer = nextPlayer;
-            if (players.indexOf(nextPlayer) == players.size() - 1) {
+            if (index == players.size() - 1) {
                 nextPlayer = players.get(0);
             } else {
-                int index = players.indexOf(actualPlayer);
                 nextPlayer = players.get(++index);
             }
         }
@@ -100,7 +100,6 @@ class Playground {
 
     /**
      * Überprüft, ob der aktuelle Spieler eine Aktionskarte auf der Hand hat, die er spielen könnte.
-     * Falls nicht, wird direkt in die Buyphase gewechselt.
      *
      * @return true, wenn er eine Aktionskarte auf der Hand hat, sonst false
      * @author Julia
