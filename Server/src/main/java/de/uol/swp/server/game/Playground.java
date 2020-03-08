@@ -6,6 +6,7 @@ import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.user.User;
 import de.uol.swp.server.game.card.Card;
 import de.uol.swp.server.game.phase.CompositePhase;
+import de.uol.swp.server.game.phase.Phase;
 import de.uol.swp.server.game.player.Player;
 
 import java.util.*;
@@ -21,7 +22,7 @@ class Playground {
     private List<Player> players = new ArrayList<>();
     private Player actualPlayer;
     private Player nextPlayer;
-    private CompositePhase actualPhase;
+    private Phase.Type actualPhase;
     private ArrayList<Short> theIdsFromTheHand = new ArrayList<>(5);
     private GameService gameService;
     private UUID theSpecificLobbyID;
@@ -72,11 +73,11 @@ class Playground {
      * @return aktuelle Phase
      * @since Sprint5
      */
-    public CompositePhase getActualPhase() {
+    public Phase.Type getActualPhase() {
         return actualPhase;
     }
 
-    public void setActualPhase(CompositePhase actualPhase) {
+    public void setActualPhase(Phase.Type actualPhase) {
         this.actualPhase = actualPhase;
     }
 
