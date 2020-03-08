@@ -8,6 +8,8 @@ import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.event.GameQuitEvent;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
+import de.uol.swp.common.game.messages.BuyCardMessage;
+import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
@@ -167,7 +169,7 @@ public class GameViewPresenter extends AbstractPresenter {
      *
      * Großes Bild der Karte wird angezeigt.
      * Es werden zwei Buttons("kaufen"/"zurück") hinzugefügt.
-     * kauf-Button -> TODO: Request wird gestellt
+     * kauf-Button -> BuyCardRequest wird gestellt
      * zurück-Button -> Buttons und große Ansicht der Karte werden entfernt
      *
      * @param mouseEvent
@@ -212,14 +214,8 @@ public class GameViewPresenter extends AbstractPresenter {
             back.setMinWidth(52.0);
             // Aktion hinter dem Kauf-Button
             buy.setOnAction(event -> {
-                //TODO: Request stellen: mit lobbyID, loggedInUser, cardID (ist hier ein String!) -> überprüfen ob der loggedInUser die Karte kaufen kann
-                //TODO: Message (Antwort): boolean buyCard, lobbyId, loggedInUser
-                // wenn buyCard true -> AnimationManagement.buyCard(ImageView)
-                // wenn buyCard false -> Fehlermeldung
-                // wenn counter der Karten (von jeder Karte gibt es nur begrenzt Karten) größer Null
-                // -> kleines Bild der Karte an der Position einfügen, an der die Karte zuvor war
-                AnimationManagement.buyCard(cardImage);
-                System.out.println("Karte wurde gekauft");
+                BuyCardRequest request = new BuyCardRequest(lobbyID, loggedInUser, cardID, cardImage);
+                eventBus.post(request);
                 buy.setVisible(false);
                 back.setVisible(false);
                 newCardImage.setVisible(false);
@@ -289,6 +285,37 @@ public class GameViewPresenter extends AbstractPresenter {
         if (allOnlineUsersInLobbyResponse.getLobbyID().equals(this.lobbyID)) {
             LOG.debug("Update of user list with" + allOnlineUsersInLobbyResponse.getUsers());
             updateUsersList(allOnlineUsersInLobbyResponse.getUsers());
+        }
+    }
+
+    /**
+     * Die Nachricht die angibt, ob der Kauf einer Karte erfolgreich war oder nicht.
+     * War der Kauf erfolgreich wandert die Karte auf den Ablagestapel (Animation)
+     * Überprüft ob die Spieler noch Karten der gekauften Art kaufen jkönnen und fügt ggf. das ImageView (kleines Bild) wieder hinzu
+     *
+     * @param msg   die Nachricht
+     * @author Rike
+     * @since Sprint 5
+     */
+    @Subscribe
+    public void onBuyCardMessage (BuyCardMessage msg){
+        if (msg.getLobbyID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)){
+            if (msg.isBuyCard()){
+                AnimationManagement.buyCard(msg.getCardImage());
+                LOG.debug("Der Spieler " + msg.getCurrentUser() + " hat die Karte " + msg.getCardID() + " gekauft.");
+                if (msg.getCounterCard() > 0){
+                    // fügt ein "neues" Bild an der Stelle des alten Bildes im Shop hinzu
+                    ImageView newCardImage = msg.getCardImage();
+                    newCardImage.setFitWidth(msg.getCardImage().getFitWidth());
+                    newCardImage.setLayoutY(msg.getCardImage().getLayoutY());
+                    newCardImage.setLayoutX(msg.getCardImage().getLayoutX());
+                    newCardImage.setId(msg.getCardID());
+                }
+            }
+            else{
+                showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht kaufen!", "Fehler");
+                LOG.debug("Der Kauf der Karte " + msg.getCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
+            }
         }
     }
 
