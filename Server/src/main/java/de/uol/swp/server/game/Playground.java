@@ -5,12 +5,11 @@ import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.user.User;
 import de.uol.swp.server.game.card.Card;
+import de.uol.swp.server.game.phase.CompositePhase;
+import de.uol.swp.server.game.phase.Phase;
 import de.uol.swp.server.game.player.Player;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Playground stellt das eigentliche Spielfeld dar
@@ -23,6 +22,7 @@ class Playground {
     private List<Player> players = new ArrayList<>();
     private Player actualPlayer;
     private Player nextPlayer;
+    private Phase.Type actualPhase;
     private ArrayList<Short> theIdsFromTheHand = new ArrayList<>(5);
     private GameService gameService;
     private UUID theSpecificLobbyID;
@@ -63,4 +63,22 @@ class Playground {
         DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID);
         gameService.sendToSpecificPlayer(actualPlayer, theHandMessage);
     }
+
+
+    /**
+     * Getter und Setter um an die aktuelle Phase zu kommen
+     *
+     * @author Paula
+     * @version 1
+     * @return aktuelle Phase
+     * @since Sprint5
+     */
+    public Phase.Type getActualPhase() {
+        return actualPhase;
+    }
+
+    public void setActualPhase(Phase.Type actualPhase) {
+        this.actualPhase = actualPhase;
+    }
+
 }
