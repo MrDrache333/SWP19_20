@@ -95,7 +95,6 @@ public class GameViewPresenter extends AbstractPresenter {
         this.gameManagement = gameManagement;
         initializeUserList();
 
-        eventBus.register(CardPane);
     }
 
     /*
