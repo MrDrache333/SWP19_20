@@ -218,7 +218,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 // wenn buyCard false -> Fehlermeldung
                 // wenn counter der Karten (von jeder Karte gibt es nur begrenzt Karten) größer Null
                 // -> kleines Bild der Karte an der Position einfügen, an der die Karte zuvor war
-                AnimationManagement.buyCard(cardImage); //TODO: Der Pfad passt noch nicht -> AnimationManagement anpassen
+                AnimationManagement.buyCard(cardImage);
                 System.out.println("Karte wurde gekauft");
                 buy.setVisible(false);
                 back.setVisible(false);

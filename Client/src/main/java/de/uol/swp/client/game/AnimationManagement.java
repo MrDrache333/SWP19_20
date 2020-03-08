@@ -63,7 +63,7 @@ public class AnimationManagement {
         double h = card.getFitHeight() / 2;
         if (x != EndPointX && y != EndPointY) {
             Path path = new Path();
-            path.getElements().add(new MoveTo(x + w, y + h));
+            path.getElements().add(new MoveTo(w, h));
             path.getElements().add(new LineTo(EndPointX - x + w, EndPointY - y + h));
             PathTransition pathTransition = new PathTransition();
             pathTransition.setDuration(Duration.millis(1000));
