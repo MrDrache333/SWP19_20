@@ -55,6 +55,8 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     private Pane gameView;
     @FXML
+    private ImageView shopTeppich;
+    @FXML
     private ListView<String> usersView;
 
     private ObservableList<String> users;
@@ -175,48 +177,60 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     public void onBuyableCardClicked (MouseEvent mouseEvent) {
         ImageView cardImage = (ImageView) mouseEvent.getSource();
-        String cardID = cardImage.getId();
-        String PathCardLargeView = "/cards/images/" + cardID  + ".png";
-        // ein großes Bild der Karte wird hinzugefügt
-        ImageView newCardImage = new ImageView(new Image(new File(getClass().getResource(PathCardLargeView).toExternalForm().replace("file:", "")).toURI().toString()));
-        // setzt die Größe und die Position des Bildes. Das Bild ist im Vordergrund. Bild wird hinzugefügt
-        newCardImage.setFitHeight(170.0);
-        newCardImage.setFitWidth(160.0);
-        newCardImage.toFront();
-        newCardImage.setLayoutX(420.0);
-        newCardImage.setLayoutY(190.0);
-        gameView.getChildren().add(newCardImage);
-        // es werden zwei Buttons hinzugefügt (zurück und kaufen)
-        Button buy = new Button ("kaufen");
-        Button back = new Button ("zurück");
-        gameView.getChildren().add(buy);
-        gameView.getChildren().add(back);
-        // Position der Buttons wird gesetzt
-        buy.setLayoutX(432.0);
-        buy.setLayoutY(375.0);
-        back.setLayoutX(516.0);
-        back.setLayoutY(375.0);
-        back.setMinWidth(52.0);
-        // Aktion hinter dem Kauf-Button
-        buy.setOnAction(event -> {
-            //TODO: Request stellen: mit lobbyID, loggedInUser, cardID (ist hier ein String!) -> überprüfen ob der loggedInUser die Karte kaufen kann
-            //TODO: Message (Antowrt): boolean buyCard, lobbyId, loggedInUser
-            // wenn buyCard true -> AnimationManagement.buyCard(ImageView)
-            // wenn buyCard false -> Fehlermeldung
-            // wenn counter der Karten (von jeder Karte gibt es nur begrenzt Karten) größer Null
-            // -> kleines Bild der Karte an der Position einfügen, an der die Karte zuvor war
-            AnimationManagement.buyCard(cardImage); //TODO: Der Pfad passt noch nicht -> AnimationManagement anpassen
-            System.out.println("Karte wurde gekauft");
-            buy.setVisible(false);
-            back.setVisible(false);
-            newCardImage.setVisible(false);
-        });
-        // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt
-        back.setOnAction(event -> {
-            buy.setVisible(false);
-            back.setVisible(false);
-            newCardImage.setVisible(false);
-        });
+        // Überprüfung ob die angeklickte Karte sich (komplett) im Shop befindet
+        // TODO: funktioniert so nicht, da Koordinaten cardImage nach Bewegung identisch sind mit denen vor der Bewegung
+        double shopTeppichBeginX = shopTeppich.getLayoutX();
+        double shopTeppichBeginY = shopTeppich.getLayoutY();
+        double shopTeppichEndX = shopTeppich.getLayoutX() + shopTeppich.getFitWidth() - cardImage.getFitWidth();
+        double shopTeppichEndY = shopTeppich.getLayoutY() + shopTeppich.getFitHeight() - cardImage.getFitHeight();
+        if ((shopTeppichBeginX < cardImage.getLayoutX())
+                && (cardImage.getLayoutX() < shopTeppichEndX)
+                && (shopTeppichBeginY < cardImage.getLayoutY())
+                && (cardImage.getLayoutY() < shopTeppichEndY)){
+            //Die Karte liegt im Bereich des Shops
+            String cardID = cardImage.getId();
+            String PathCardLargeView = "/cards/images/" + cardID  + ".png";
+            // ein großes Bild der Karte wird hinzugefügt
+            ImageView newCardImage = new ImageView(new Image(new File(getClass().getResource(PathCardLargeView).toExternalForm().replace("file:", "")).toURI().toString()));
+            // setzt die Größe und die Position des Bildes. Das Bild ist im Vordergrund. Bild wird hinzugefügt
+            newCardImage.setFitHeight(170.0);
+            newCardImage.setFitWidth(160.0);
+            newCardImage.toFront();
+            newCardImage.setLayoutX(420.0);
+            newCardImage.setLayoutY(190.0);
+            gameView.getChildren().add(newCardImage);
+            // es werden zwei Buttons hinzugefügt (zurück und kaufen)
+            Button buy = new Button ("kaufen");
+            Button back = new Button ("zurück");
+            gameView.getChildren().add(buy);
+            gameView.getChildren().add(back);
+            // Position der Buttons wird gesetzt
+            buy.setLayoutX(432.0);
+            buy.setLayoutY(375.0);
+            back.setLayoutX(516.0);
+            back.setLayoutY(375.0);
+            back.setMinWidth(52.0);
+            // Aktion hinter dem Kauf-Button
+            buy.setOnAction(event -> {
+                //TODO: Request stellen: mit lobbyID, loggedInUser, cardID (ist hier ein String!) -> überprüfen ob der loggedInUser die Karte kaufen kann
+                //TODO: Message (Antwort): boolean buyCard, lobbyId, loggedInUser
+                // wenn buyCard true -> AnimationManagement.buyCard(ImageView)
+                // wenn buyCard false -> Fehlermeldung
+                // wenn counter der Karten (von jeder Karte gibt es nur begrenzt Karten) größer Null
+                // -> kleines Bild der Karte an der Position einfügen, an der die Karte zuvor war
+                AnimationManagement.buyCard(cardImage); //TODO: Der Pfad passt noch nicht -> AnimationManagement anpassen
+                System.out.println("Karte wurde gekauft");
+                buy.setVisible(false);
+                back.setVisible(false);
+                newCardImage.setVisible(false);
+            });
+            // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt
+            back.setOnAction(event -> {
+                buy.setVisible(false);
+                back.setVisible(false);
+                newCardImage.setVisible(false);
+            });
+        }
     }
 
     /**

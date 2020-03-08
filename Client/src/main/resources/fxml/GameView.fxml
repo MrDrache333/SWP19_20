@@ -43,7 +43,7 @@
                 <Image url="@../images/Handkarten.png" />
             </image>
         </ImageView>
-        <ImageView fitHeight="363.0" fitWidth="562.0" layoutX="222.0" layoutY="126.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView  fx:id="shopTeppich" fitHeight="363.0" fitWidth="562.0" layoutX="222.0" layoutY="126.0" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@../images/ShopTeppich.jpg" />
             </image>

@@ -15,8 +15,8 @@ public class AnimationManagement {
     private static final double HAND_X = 284;
     private static final double HAND_Y = 541;
 
-    private static final double ABLAGE_X = 733;
-    private static final double ABLAGE_Y = 538;
+    private static final double ABLAGE_X = 733 + 30;
+    private static final double ABLAGE_Y = 538 + 92;
 
     private static final double ACTION_ZONE_X = 356;
     private static final double ACTION_ZONE_Y = 415;
@@ -57,14 +57,14 @@ public class AnimationManagement {
      * @since Sprint5
      */
     public static Boolean createLineToPath(ImageView card, double EndPointX, double EndPointY) {
-        double x = card.getX();
-        double y = card.getY();
+        double x = card.getLayoutX();
+        double y = card.getLayoutY();
         double w = card.getFitWidth() / 2;
         double h = card.getFitHeight() / 2;
         if (x != EndPointX && y != EndPointY) {
             Path path = new Path();
             path.getElements().add(new MoveTo(x + w, y + h));
-            path.getElements().add(new LineTo(EndPointX + w, EndPointY + h));
+            path.getElements().add(new LineTo(EndPointX - x + w, EndPointY - y + h));
             PathTransition pathTransition = new PathTransition();
             pathTransition.setDuration(Duration.millis(1000));
             pathTransition.setNode(card);
