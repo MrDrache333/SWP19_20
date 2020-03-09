@@ -8,11 +8,13 @@ import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.user.User;
 import de.uol.swp.server.game.card.ActionCard;
 import de.uol.swp.server.game.card.Card;
-import de.uol.swp.server.game.phase.CompositePhase;
 import de.uol.swp.server.game.phase.Phase;
 import de.uol.swp.server.game.player.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Playground stellt das eigentliche Spielfeld dar
@@ -52,7 +54,7 @@ class Playground {
 
     /**
      * Initialisiert actual- und nextPlayer und aktualisiert diese, wenn ein Spieler alle Phasen durchlaufen hat.
-     * Dem neuen aktuellen Spieler wird eine StartActionPhaseMessage gesendet,
+     * Dem neuen aktuellen Spieler wird seine Hand gesendet sowie eine StartActionPhaseMessage,
      * wenn er eine Aktionskarte auf der Hand hat bzw. eine StartBuyPhaseMessage wenn nicht.
      *
      * @author Julia
@@ -63,16 +65,19 @@ class Playground {
             actualPlayer = players.get(0);
             nextPlayer = players.get(1);
         } else {
-            //if: User befindet sich nicht in Clearphase: return
+            //Spieler muss Clearphase durchlaufen haben
+            if(actualPhase != Phase.Type.Clearphase) return;
             int index = players.indexOf(nextPlayer);
             actualPlayer = nextPlayer;
             nextPlayer = players.get(++index % players.size());
         }
+
+        sendPlayersHand();
         if (checkForActionCard()) {
-            //aktuelle Phase = Aktionsphase
+            actualPhase = Phase.Type.ActionPhase;
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartActionPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
         } else {
-            //aktuelle Phase = Buyphase
+            actualPhase = Phase.Type.Buyphase;
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartBuyPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
         }
     }

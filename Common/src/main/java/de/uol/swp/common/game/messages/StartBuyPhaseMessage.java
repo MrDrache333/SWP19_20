@@ -6,7 +6,7 @@ import de.uol.swp.common.user.User;
 import java.util.UUID;
 
 /**
- * Message die signalisiert, dass der Player mit der BuyPhase starten kann
+ * Message die signalisiert, dass der User mit der BuyPhase starten kann
  *
  * @author Julia
  * @since Sprint5

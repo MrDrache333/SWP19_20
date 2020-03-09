@@ -6,7 +6,7 @@ import de.uol.swp.common.user.User;
 import java.util.UUID;
 
 /**
- * Message die signalisiert, dass der Player mit der Aktionsphase starten kann
+ * Message die signalisiert, dass der User mit der Aktionsphase starten kann
  *
  * @author Julia
  * @since Sprint5

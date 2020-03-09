@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.chat.ChatManagement;
+import de.uol.swp.server.game.phase.Phase;
 import de.uol.swp.server.lobby.LobbyManagement;
 import de.uol.swp.server.message.StartGameInternalMessage;
 import de.uol.swp.server.usermanagement.AuthenticationService;
@@ -52,12 +53,14 @@ public class PlaygroundTest {
         assertEquals(0, actual);
         assertEquals(1, next);
 
+        playground.setActualPhase(Phase.Type.Clearphase);
         playground.newTurn();
         actual = playground.getPlayers().indexOf(playground.getActualPlayer());
         next = playground.getPlayers().indexOf(playground.getNextPlayer());
         assertEquals(1, actual);
         assertEquals(2, next);
 
+        playground.setActualPhase(Phase.Type.Clearphase);
         playground.newTurn();
         actual = playground.getPlayers().indexOf(playground.getActualPlayer());
         next = playground.getPlayers().indexOf(playground.getNextPlayer());
