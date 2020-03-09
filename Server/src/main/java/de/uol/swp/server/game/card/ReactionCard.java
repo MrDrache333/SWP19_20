@@ -1,4 +1,4 @@
-package de.uol.swp.common.game.card;
+package de.uol.swp.server.game.card;
 
 /**
  * Die Reaktionkarte

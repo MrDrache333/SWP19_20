@@ -1,29 +1,28 @@
-package de.uol.swp.common.game.card;
+package de.uol.swp.server.game.card;
 
 /**
- * Die Geldkarte
+ * Die Provinzkarte
  */
-public class MoneyCard extends Card {
+public class ValueCard extends Card {
 
     private short value;
 
-
     /**
-     * Erstellt eine neue Geldkarte
+     * Erstellt eine neue Provinzkarte
      *
      * @param name Der name der Karte
      * @param id   Die ID der Karte
      * @author KenoO
      * @since Sprint 5
      */
-    public MoneyCard(String name, short id) {
-        super(Type.MoneyCard, name, id);
+    public ValueCard(String name, short id) {
+        super(Type.ValueCard, name, id);
     }
 
     /**
-     * Gibt die Kaufkraft der Karte zurück
+     * Gibt den Anwesenheitswert der Karte zurück
      *
-     * @return Der Kaufkraft
+     * @return Der Anwesenheitswert
      * @author KenoO
      * @since Sprint 5
      */
@@ -32,9 +31,9 @@ public class MoneyCard extends Card {
     }
 
     /**
-     * Setzt die Kaufkraft der Karte
+     * Setzt den Anwesenheitswert der Karte
      *
-     * @param value Die Kaufkraft
+     * @param value Der Anwesenheitswert
      * @author KenoO
      * @since Sprint 5
      */
