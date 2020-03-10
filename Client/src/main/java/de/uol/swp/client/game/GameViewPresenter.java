@@ -274,6 +274,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     String pfad = new String ("file:Client/src/main/resources/cards/images/"+n+".png");
                     Image picture = new Image(pfad);
                     ImageView card = new ImageView(picture);
+                    AnimationManagement.addToHand (card, counter, true);
                     CardPane.getChildren().add(counter, card);
                     break;
                 } else {
