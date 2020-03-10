@@ -1,10 +1,10 @@
 package de.uol.swp.common.game.request;
 
-import de.uol.swp.common.game.response.GameMessage;
+import de.uol.swp.common.game.response.AbstractGameMessage;
 
 
 public class SelectCardRequest {
-    private GameMessage Message;
+    private AbstractGameMessage message;
 
     /**
      * Erstellt neue SelectCardRequest
@@ -13,8 +13,8 @@ public class SelectCardRequest {
      * @version 1
      * @since Sprint5
      */
-    public SelectCardRequest(GameMessage message) {
-        this.Message = message;
+    public SelectCardRequest(AbstractGameMessage message) {
+        this.message = message;
 
     }
 }

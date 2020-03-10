@@ -4,7 +4,7 @@ import de.uol.swp.common.user.User;
 
 import java.util.UUID;
 
-abstract public class GameMessage {
+abstract public class AbstractGameMessage {
 
     private User player;
     private UUID gameID;
@@ -20,7 +20,7 @@ abstract public class GameMessage {
      * @version 1
      * @since Sprint5
      */
-    public GameMessage(UUID gameID, User player, short cardID) {
+    public AbstractGameMessage(UUID gameID, User player, short cardID) {
         this.gameID = gameID;
         this.player = player;
         this.cardID = cardID;
