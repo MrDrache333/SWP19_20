@@ -13,8 +13,7 @@ import de.uol.swp.server.usermanagement.AuthenticationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Der GameService. Verarbeitet alle Anfragen, die über den Bus gesendet werden.
@@ -65,16 +64,38 @@ public class GameService extends AbstractService {
     }
 
     /**
+     * Sendet eine Nachricht an alle Player eines Games
+     *
+     * @param gameID  die ID des Games
+     * @param message die Nachricht
+     * @author Julia
+     * @since Sprint5
+     */
+    public void sendToAllPlayers(UUID gameID, ServerMessage message) {
+        Optional<Game> game = gameManagement.getGame(gameID);
+        if (game.isPresent()) {
+            List<Player> players = game.get().getPlayground().getPlayers();
+            Set<User> users = new HashSet<>();
+            players.forEach(player -> users.add(player.getTheUserInThePlayer()));
+            message.setReceiver(authenticationService.getSessions(users));
+            post(message);
+        } else {
+            LOG.error("Es existiert kein Spiel mit der ID " + gameID);
+        }
+    }
+
+    /**
      * Startet das Spiel wenn die StartGameInternalMessage ankommt.
      *
      * @param msg InterneMessage mit der LobbyId um das Game zu starten.
-     * @author Ferit
+     * @author Ferit, Julia
      * @since Sprint5
      */
     @Subscribe
-    void startGame(StartGameInternalMessage msg) throws GameManagementException {
+    void startGame(StartGameInternalMessage msg) {
         try {
             gameManagement.createGame(msg.getLobbyID());
+            gameManagement.getGame(msg.getLobbyID()).get().getPlayground().newTurn();
         } catch (GameManagementException e) {
             LOG.error("Es wurde eine GameManagementException geworfen: " + e.getMessage());
             // TODO: In späteren Sprints hier ggf. weiteres Handling?
