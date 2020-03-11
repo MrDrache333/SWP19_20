@@ -60,7 +60,6 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     private Pane CardPane;
 
-
     @FXML
     private Pane chatView;
     @FXML
@@ -94,7 +93,6 @@ public class GameViewPresenter extends AbstractPresenter {
         this.injector = injector;
         this.gameManagement = gameManagement;
         initializeUserList();
-
     }
 
     /*
@@ -291,17 +289,24 @@ public class GameViewPresenter extends AbstractPresenter {
             int counter = 0;
             if (CardPane.getChildren().get(counter) != null) {
                 if (numberOfCards<7) {
-                    CardPane.getChildren().get(counter).resize(paneHeight, (paneWidth/numberOfCards)*counter+1);
-                    CardPane.getChildren().get(counter).relocate(0+(paneWidth/numberOfCards)*counter, 0);
+                    CardPane.getChildren().get(counter).setLayoutX(0+(paneWidth/numberOfCards)*counter);
+                    CardPane.getChildren().get(counter).setLayoutY(0);
+                    CardPane.getChildren().get(counter).prefHeight(paneHeight);
+                    CardPane.getChildren().get(counter).prefWidth((paneWidth/numberOfCards)*counter+1);
                     counter++;
                 } else {
                     if (counter<7) {
-                        CardPane.getChildren().get(counter).resize(paneHeight/2, (paneWidth/numberOfCards)*counter+1);
-                        CardPane.getChildren().get(counter).relocate(0+(paneWidth/numberOfCards)*counter, 0);
+                        CardPane.getChildren().get(counter).setLayoutX(0+(paneWidth/numberOfCards)*counter);
+                        CardPane.getChildren().get(counter).setLayoutY(0);
+                        CardPane.getChildren().get(counter).prefHeight(paneHeight/2);
+                        CardPane.getChildren().get(counter).prefWidth((paneWidth/numberOfCards)*counter+1);
+
                         counter++;
                     } else {
-                        CardPane.getChildren().get(counter).resize(paneHeight/2, (paneWidth/numberOfCards)*counter+1);
-                        CardPane.getChildren().get(counter).relocate(0+(paneWidth/numberOfCards)*counter-7, paneHeight/2);
+                        CardPane.getChildren().get(counter).setLayoutX(0+(paneWidth/numberOfCards)*counter-7);
+                        CardPane.getChildren().get(counter).setLayoutY(paneHeight/2);
+                        CardPane.getChildren().get(counter).prefHeight(paneHeight/2);
+                        CardPane.getChildren().get(counter).prefWidth((paneWidth/numberOfCards)*counter+1);
                         counter++;
                     }
                 }
@@ -310,5 +315,6 @@ public class GameViewPresenter extends AbstractPresenter {
             }
         }
     }
+
 
 }
