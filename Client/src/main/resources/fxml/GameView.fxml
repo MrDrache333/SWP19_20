@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
+<?import javafx.geometry.Rectangle2D?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-
 <AnchorPane prefHeight="750.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <ImageView fitHeight="750.0" fitWidth="1280.0" pickOnBounds="true">
@@ -34,32 +34,39 @@
                 <Rectangle2D height="600.0" width="400.0" />
             </viewport>
         </ImageView>
-        <ImageView fitHeight="183.0" fitWidth="433.0" layoutX="284.0" layoutY="541.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="183.0" fitWidth="433.0" layoutX="284.0" layoutY="541.0" pickOnBounds="true"
+                   preserveRatio="true">
             <image>
-                <Image url="@../images/Handkarten.png" />
+                <Image url="@../images/Handkarten.png"/>
             </image>
         </ImageView>
-        <ImageView fitHeight="363.0" fitWidth="562.0" layoutX="222.0" layoutY="126.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="363.0" fitWidth="562.0" layoutX="222.0" layoutY="126.0" pickOnBounds="true"
+                   preserveRatio="true">
             <image>
-                <Image url="@../images/ShopTeppich.jpg" />
+                <Image url="@../images/ShopTeppich.jpg"/>
             </image>
         </ImageView>
-        <ImageView fitHeight="116.0" fitWidth="290.0" layoutX="356.0" layoutY="415.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="116.0" fitWidth="290.0" layoutX="356.0" layoutY="415.0" pickOnBounds="true"
+                   preserveRatio="true">
             <image>
-                <Image url="@../images/Aktionszone.png" />
+                <Image url="@../images/Aktionszone.png"/>
             </image>
         </ImageView>
-        <ImageView fitHeight="148.0" fitWidth="290.0" layoutX="356.0" layoutY="31.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="148.0" fitWidth="290.0" layoutX="356.0" layoutY="31.0" pickOnBounds="true"
+                   preserveRatio="true">
             <image>
-                <Image url="@../images/AktionszoneGegner.png" />
+                <Image url="@../images/AktionszoneGegner.png"/>
             </image>
         </ImageView>
-        <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="100.0" layoutY="233.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="100.0" layoutY="233.0" pickOnBounds="true"
+                   preserveRatio="true">
             <image>
-                <Image url="@../images/Müll.png" />
+                <Image url="@../images/Müll.png"/>
             </image>
         </ImageView>
-        <Pane fx:id="chatView" layoutX="949.0" layoutY="415.0" prefHeight="290.0" prefWidth="290.0" />
-      <Pane fx:id="CardPane" layoutX="284.0" layoutY="598.0" prefHeight="116.0" prefWidth="433.0" />
+        <Pane fx:id="chatView" layoutX="949.0" layoutY="415.0" prefHeight="290.0" prefWidth="290.0"/>
+        <Pane fx:id="cardPane" layoutX="284.0" layoutY="598.0" prefHeight="116.0" prefWidth="433.0"/>
+        <ImageView fitHeight="107.0" fitWidth="79.0" layoutX="171.0" layoutY="603.0" pickOnBounds="true"
+                   preserveRatio="true"/>
     </children>
 </AnchorPane>

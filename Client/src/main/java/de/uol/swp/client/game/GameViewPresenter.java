@@ -23,7 +23,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
@@ -33,7 +32,6 @@ import javafx.stage.Modality;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -58,7 +56,7 @@ public class GameViewPresenter extends AbstractPresenter {
     private EventBus eventBus;
 
     @FXML
-    private Pane CardPane;
+    private Pane cardPane;
 
     @FXML
     private Pane chatView;
@@ -167,6 +165,7 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     public void onGiveUpButtonPressed(ActionEvent actionEvent) {
         showAlert(Alert.AlertType.CONFIRMATION, " ", "Möchtest du wirklich aufgeben?");
+
     }
 
     /**
@@ -250,9 +249,6 @@ public class GameViewPresenter extends AbstractPresenter {
         });
     }
 
-    @FXML
-    private Button CurrentHand;
-
 
     /**
      * Zeigt die Karten auf der Hand in der GameView an
@@ -261,60 +257,30 @@ public class GameViewPresenter extends AbstractPresenter {
      * @since Sprint5
      */
 
-    @FXML @Subscribe
-    public void addToHand(DrawHandMessage message)  {
+    @FXML
+    @Subscribe
+    public void ShowNewHand(DrawHandMessage message) {
         ArrayList<Short> HandCardID = message.getCardsOnHand();
 
         HandCardID.forEach((n) -> {
             int counter = 0;
             while (true) {
-                if (CardPane.getChildren().get(counter) == null) {
-                    String pfad = new String ("file:Client/src/main/resources/cards/images/"+n+".png");
+                if (cardPane.getChildren().get(counter) == null) {
+                    String pfad = "file:Client/src/main/resources/cards/images/" + n + ".png";
                     Image picture = new Image(pfad);
                     ImageView card = new ImageView(picture);
-                    AnimationManagement.addToHand (card, counter, true);
-                    CardPane.getChildren().add(counter, card);
+                    card.setFitHeight(107);
+                    card.setFitWidth(79);
+                    card.setY(603);
+                    card.setX(171);
+                    AnimationManagement.addToHand(card, counter, false);
+                    cardPane.getChildren().add(counter, card);
                     break;
                 } else {
                     counter++;
                 }
             }
         });
-
-        double paneWidth = CardPane.getWidth();
-        double paneHeight = CardPane.getHeight();
-        int numberOfCards = CardPane.getChildren().size();
-
-        while (true) {
-            int counter = 0;
-            if (CardPane.getChildren().get(counter) != null) {
-                if (numberOfCards<7) {
-                    CardPane.getChildren().get(counter).setLayoutX(0+(paneWidth/numberOfCards)*counter);
-                    CardPane.getChildren().get(counter).setLayoutY(0);
-                    CardPane.getChildren().get(counter).prefHeight(paneHeight);
-                    CardPane.getChildren().get(counter).prefWidth((paneWidth/numberOfCards)*counter+1);
-                    counter++;
-                } else {
-                    if (counter<7) {
-                        CardPane.getChildren().get(counter).setLayoutX(0+(paneWidth/numberOfCards)*counter);
-                        CardPane.getChildren().get(counter).setLayoutY(0);
-                        CardPane.getChildren().get(counter).prefHeight(paneHeight/2);
-                        CardPane.getChildren().get(counter).prefWidth((paneWidth/numberOfCards)*counter+1);
-
-                        counter++;
-                    } else {
-                        CardPane.getChildren().get(counter).setLayoutX(0+(paneWidth/numberOfCards)*counter-7);
-                        CardPane.getChildren().get(counter).setLayoutY(paneHeight/2);
-                        CardPane.getChildren().get(counter).prefHeight(paneHeight/2);
-                        CardPane.getChildren().get(counter).prefWidth((paneWidth/numberOfCards)*counter+1);
-                        counter++;
-                    }
-                }
-            } else {
-                break;
-            }
-        }
     }
-
 
 }
