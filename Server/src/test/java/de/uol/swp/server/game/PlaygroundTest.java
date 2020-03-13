@@ -2,11 +2,13 @@ package de.uol.swp.server.game;
 
 import com.google.common.eventbus.EventBus;
 import de.uol.swp.common.game.exception.GamePhaseException;
+import de.uol.swp.common.lobby.request.CreateLobbyRequest;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.chat.ChatManagement;
 import de.uol.swp.server.game.phase.Phase;
 import de.uol.swp.server.lobby.LobbyManagement;
+import de.uol.swp.server.lobby.LobbyService;
 import de.uol.swp.server.message.StartGameInternalMessage;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import de.uol.swp.server.usermanagement.UserManagement;
@@ -23,16 +25,24 @@ public class PlaygroundTest {
     static final User defaultOwner = new UserDTO("test1", "test1", "test1@test.de");
     static final User secondPlayer = new UserDTO("test2", "test2", "test2@test2.de");
     static final User thirdPlayer = new UserDTO("test3", "test3", "test3@test3.de");
-    static final LobbyManagement lobbyManagement = new LobbyManagement();
-    static final GameManagement gameManagement = new GameManagement(new ChatManagement(), lobbyManagement);
     static final EventBus bus = new EventBus();
-    static final GameService gameService = new GameService(bus, gameManagement, new AuthenticationService(bus, new UserManagement(new MainMemoryBasedUserStore())));
+    static final ChatManagement chatManagement = new ChatManagement();
+    static final LobbyManagement lobbyManagement = new LobbyManagement();
+    static final GameManagement gameManagement = new GameManagement(chatManagement, lobbyManagement);
+    static final AuthenticationService authenticationService = new AuthenticationService(bus, new UserManagement(new MainMemoryBasedUserStore()));
+    static final LobbyService lobbyService = new LobbyService(lobbyManagement, authenticationService, chatManagement, bus);
+    static final GameService gameService = new GameService(bus, gameManagement, authenticationService);
 
     static UUID gameID;
 
     @BeforeAll
     static void init() {
-        gameID = lobbyManagement.createLobby("Test", "", defaultOwner);
+        bus.post(new CreateLobbyRequest("Test", (UserDTO) defaultOwner, ""));
+        lobbyManagement.getLobbies().forEach(lobby -> {
+            if (lobby.getName().equals("Test")) {
+                gameID = lobby.getLobbyID();
+            }
+        });
         lobbyManagement.getLobby(gameID).get().joinUser(secondPlayer);
         lobbyManagement.getLobby(gameID).get().joinUser(thirdPlayer);
         bus.post(new StartGameInternalMessage(gameID));
