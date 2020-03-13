@@ -2,13 +2,11 @@ package de.uol.swp.server.game;
 
 import com.google.common.eventbus.EventBus;
 import de.uol.swp.common.game.exception.GamePhaseException;
-import de.uol.swp.common.lobby.request.CreateLobbyRequest;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.chat.ChatManagement;
 import de.uol.swp.server.game.phase.Phase;
 import de.uol.swp.server.lobby.LobbyManagement;
-import de.uol.swp.server.lobby.LobbyService;
 import de.uol.swp.server.message.StartGameInternalMessage;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import de.uol.swp.server.usermanagement.UserManagement;
@@ -30,19 +28,14 @@ public class PlaygroundTest {
     static final LobbyManagement lobbyManagement = new LobbyManagement();
     static final GameManagement gameManagement = new GameManagement(chatManagement, lobbyManagement);
     static final AuthenticationService authenticationService = new AuthenticationService(bus, new UserManagement(new MainMemoryBasedUserStore()));
-    static final LobbyService lobbyService = new LobbyService(lobbyManagement, authenticationService, chatManagement, bus);
     static final GameService gameService = new GameService(bus, gameManagement, authenticationService);
 
     static UUID gameID;
 
     @BeforeAll
     static void init() {
-        bus.post(new CreateLobbyRequest("Test", (UserDTO) defaultOwner, ""));
-        lobbyManagement.getLobbies().forEach(lobby -> {
-            if (lobby.getName().equals("Test")) {
-                gameID = lobby.getLobbyID();
-            }
-        });
+        gameID = lobbyManagement.createLobby("Test", "", defaultOwner);
+        chatManagement.createChat(gameID.toString());
         lobbyManagement.getLobby(gameID).get().joinUser(secondPlayer);
         lobbyManagement.getLobby(gameID).get().joinUser(thirdPlayer);
         bus.post(new StartGameInternalMessage(gameID));
