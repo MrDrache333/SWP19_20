@@ -270,9 +270,10 @@ public class GameViewPresenter extends AbstractPresenter {
                     Image picture = new Image(pfad);
                     ImageView card = new ImageView(picture);
                     card.setFitHeight(107);
-                    card.setFitWidth(79);
                     card.setY(603);
                     card.setX(171);
+                    card.setPreserveRatio(true);
+                    card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
                     AnimationManagement.addToHand(card, counter, false);
                     cardPane.getChildren().add(counter, card);
                     break;
