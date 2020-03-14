@@ -1,13 +1,16 @@
 package de.uol.swp.server.game;
 
 import com.google.inject.Inject;
+import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.game.messages.StartActionPhaseMessage;
 import de.uol.swp.common.game.messages.StartBuyPhaseMessage;
+import de.uol.swp.common.game.messages.StartClearPhaseMessage;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.user.User;
 import de.uol.swp.server.game.card.ActionCard;
 import de.uol.swp.server.game.card.Card;
+import de.uol.swp.server.game.phase.CompositePhase;
 import de.uol.swp.server.game.phase.Phase;
 import de.uol.swp.server.game.player.Player;
 import org.apache.logging.log4j.LogManager;
@@ -35,6 +38,7 @@ class Playground {
     private ArrayList<Short> theIdsFromTheHand = new ArrayList<>(5);
     private GameService gameService;
     private UUID theSpecificLobbyID;
+    private CompositePhase compositePhase;
 
     /**
      * Erstellt ein neues Spielfeld und übergibt die Spieler. Die Reihenfolge der Spieler wird zufällig zusammengestellt.
@@ -54,6 +58,7 @@ class Playground {
         Collections.shuffle(players);
         this.gameService = gameService;
         this.theSpecificLobbyID = lobby.getLobbyID();
+        this.compositePhase = new CompositePhase();
     }
 
     /**
@@ -77,12 +82,33 @@ class Playground {
         }
 
         sendPlayersHand();
+        actualPhase = Phase.Type.ActionPhase;
         if (checkForActionCard()) {
-            actualPhase = Phase.Type.ActionPhase;
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartActionPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
         } else {
+            skipCurrentPhase();
+        }
+    }
+
+    /**
+     * Überspringt die aktuelle Phase und startet die nächste, falls der Spieler sich gerade in der Aktions- oder Kaufphase befindet.
+     * Befindet er sich in der Clearphase, wird eine GamePhaseException geworfen.
+     *
+     * @author Julia
+     * @since Sprint5
+     */
+    public void skipCurrentPhase() {
+        if (actualPhase == Phase.Type.Clearphase) {
+            throw new GamePhaseException("Du kannst die Clearphase nicht überspringen!");
+        }
+
+        if (actualPhase == Phase.Type.ActionPhase) {
             actualPhase = Phase.Type.Buyphase;
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartBuyPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
+        } else {
+            gameService.sendToAllPlayers(theSpecificLobbyID, new StartClearPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
+            compositePhase.executeClearPhase(actualPlayer);
+            actualPhase = Phase.Type.Clearphase;
         }
     }
 
