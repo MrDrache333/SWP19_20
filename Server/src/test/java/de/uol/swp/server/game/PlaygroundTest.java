@@ -1,6 +1,7 @@
 package de.uol.swp.server.game;
 
 import com.google.common.eventbus.EventBus;
+import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.chat.ChatManagement;
@@ -15,24 +16,26 @@ import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PlaygroundTest {
 
     static final User defaultOwner = new UserDTO("test1", "test1", "test1@test.de");
     static final User secondPlayer = new UserDTO("test2", "test2", "test2@test2.de");
     static final User thirdPlayer = new UserDTO("test3", "test3", "test3@test3.de");
-    static final LobbyManagement lobbyManagement = new LobbyManagement();
-    static final GameManagement gameManagement = new GameManagement(new ChatManagement(), lobbyManagement);
     static final EventBus bus = new EventBus();
-    static final GameService gameService = new GameService(bus, gameManagement, new AuthenticationService(bus, new UserManagement(new MainMemoryBasedUserStore())));
+    static final ChatManagement chatManagement = new ChatManagement();
+    static final LobbyManagement lobbyManagement = new LobbyManagement();
+    static final GameManagement gameManagement = new GameManagement(chatManagement, lobbyManagement);
+    static final AuthenticationService authenticationService = new AuthenticationService(bus, new UserManagement(new MainMemoryBasedUserStore()));
+    static final GameService gameService = new GameService(bus, gameManagement, authenticationService);
 
     static UUID gameID;
 
     @BeforeAll
     static void init() {
         gameID = lobbyManagement.createLobby("Test", "", defaultOwner);
+        chatManagement.createChat(gameID.toString());
         lobbyManagement.getLobby(gameID).get().joinUser(secondPlayer);
         lobbyManagement.getLobby(gameID).get().joinUser(thirdPlayer);
         bus.post(new StartGameInternalMessage(gameID));
@@ -80,5 +83,24 @@ public class PlaygroundTest {
         assertFalse(gameManagement.getGame(gameID).get().getPlayground().checkForActionCard());
 
         //TODO: weitere Fälle testen, wenn weitere Funktion (Kauf von Aktionskarten) implementiert wurde
+    }
+
+    /**
+     * Testet ob Aktions- und Kaufphase übersprungen werden können
+     *
+     * @author Julia
+     * @since Sprint5
+     */
+    @Test
+    void testSkipCurrentPhase() {
+        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
+        playground.setActualPhase(Phase.Type.ActionPhase);
+
+        playground.skipCurrentPhase();
+        assertEquals(Phase.Type.Buyphase, playground.getActualPhase());
+
+        playground.skipCurrentPhase();
+        assertEquals(Phase.Type.Clearphase, playground.getActualPhase());
+        assertThrows(GamePhaseException.class, () -> playground.skipCurrentPhase());
     }
 }
