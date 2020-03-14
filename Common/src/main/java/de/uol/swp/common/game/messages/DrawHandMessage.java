@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 public class DrawHandMessage extends AbstractServerMessage {
-    private static ArrayList<Short> cardsOnHand;
-    private static UUID theLobbyID;
+    private ArrayList<Short> cardsOnHand;
+    private UUID theLobbyID;
 
     /**
      * Konstruktor, welcher die ArrayList mit den IDs der Hand übergeben bekommt. Entweder die Standart-Hand mit Größe 5 oder wenn er Karten
@@ -24,11 +24,11 @@ public class DrawHandMessage extends AbstractServerMessage {
     }
 
     // Getter
-    public static ArrayList<Short> getCardsOnHand() {
+    public ArrayList<Short> getCardsOnHand() {
         return cardsOnHand;
     }
 
-    public static UUID getTheLobbyID() {
+    public UUID getTheLobbyID() {
         return theLobbyID;
     }
 }

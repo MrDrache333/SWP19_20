@@ -10,6 +10,8 @@ import de.uol.swp.server.game.card.ActionCard;
 import de.uol.swp.server.game.card.Card;
 import de.uol.swp.server.game.phase.Phase;
 import de.uol.swp.server.game.player.Player;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,6 +22,8 @@ import java.util.UUID;
  * Playground stellt das eigentliche Spielfeld dar
  */
 class Playground {
+
+    private static final Logger LOG = LogManager.getLogger(Playground.class);
 
     /**
      * Die Spieler
@@ -66,7 +70,7 @@ class Playground {
             nextPlayer = players.get(1);
         } else {
             //Spieler muss Clearphase durchlaufen haben
-            if(actualPhase != Phase.Type.Clearphase) return;
+            if (actualPhase != Phase.Type.Clearphase) return;
             int index = players.indexOf(nextPlayer);
             actualPlayer = nextPlayer;
             nextPlayer = players.get(++index % players.size());
@@ -83,7 +87,7 @@ class Playground {
     }
 
     /**
-     * Methode, welche vom aktuellen Player die Hand versendet. Holz sich von der aktuellen Hand des Spielers die Karten und speichert die IDs dieser in einer ArrayList.
+     * Methode, welche vom aktuellen Player die Hand versendet. Holt sich von der aktuellen Hand des Spielers die Karten und speichert die IDs dieser in einer ArrayList.
      *
      * @author Ferit
      * @version 1
@@ -96,6 +100,26 @@ class Playground {
         DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID);
         gameService.sendToSpecificPlayer(actualPlayer, theHandMessage);
     }
+
+    /**
+     * Sendet die Initiale Hand an jeden Spieler spezifisch. Überprüfung via SessionID.
+     *
+     * @author Ferit
+     * @since Sprint6
+     */
+    public void sendInitialHands() {
+        for (Player playerhand : players) {
+            ArrayList<Short> theIdsFromInitalPlayerDeck = new ArrayList<>(5);
+            for (Card card : playerhand.getPlayerDeck().getHand()) {
+                theIdsFromInitalPlayerDeck.add(card.getId());
+            }
+            DrawHandMessage initialHandFromPlayer = new DrawHandMessage(theIdsFromInitalPlayerDeck, theSpecificLobbyID);
+            gameService.sendToSpecificPlayer(playerhand, initialHandFromPlayer);
+            // TODO: Bessere Logging Message irgendwann später implementieren..
+            LOG.debug("All OK with sending initial Hands...");
+        }
+    }
+
 
     /**
      * Überprüft, ob der aktuelle Spieler eine Aktionskarte auf der Hand hat, die er spielen könnte.
@@ -128,9 +152,9 @@ class Playground {
     /**
      * Getter und Setter um an die aktuelle Phase zu kommen
      *
+     * @return aktuelle Phase
      * @author Paula
      * @version 1
-     * @return aktuelle Phase
      * @since Sprint5
      */
     public Phase.Type getActualPhase() {
