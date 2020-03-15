@@ -22,10 +22,11 @@ public abstract class Card {
      * @author KenoO
      * @since Sprint 5
      */
-    Card(Type cardtype, String name, short id) {
+    Card(Type cardtype, String name, short id, short costs) {
         this.cardtype = cardtype;
         this.name = name;
         this.id = id;
+        this.costs = costs;
     }
 
     public short getCosts() {

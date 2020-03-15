@@ -13,7 +13,7 @@ public class ActionCard extends Card {
      * @author KenoO
      * @since Sprint 5
      */
-    public ActionCard(String name, short id) {
-        super(Type.ActionCard, name, id);
+    public ActionCard(String name, short id, short costs) {
+        super(Type.ActionCard, name, id, costs);
     }
 }

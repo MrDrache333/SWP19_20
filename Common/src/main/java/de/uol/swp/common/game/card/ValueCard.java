@@ -15,8 +15,9 @@ public class ValueCard extends Card {
      * @author KenoO
      * @since Sprint 5
      */
-    public ValueCard(String name, short id) {
-        super(Type.ValueCard, name, id);
+    public ValueCard(String name, short id, short costs, short value) {
+        super(Type.ValueCard, name, id, costs);
+        this.value = value;
     }
 
     /**
