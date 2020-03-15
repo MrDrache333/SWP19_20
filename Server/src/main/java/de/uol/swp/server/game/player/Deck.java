@@ -1,8 +1,8 @@
 package de.uol.swp.server.game.player;
 
-import de.uol.swp.server.game.card.Card;
-import de.uol.swp.server.game.card.MoneyCard;
-import de.uol.swp.server.game.card.ValueCard;
+import de.uol.swp.common.game.card.Card;
+import de.uol.swp.common.game.card.MoneyCard;
+import de.uol.swp.common.game.card.ValueCard;
 
 import java.util.ArrayList;
 import java.util.Collections;

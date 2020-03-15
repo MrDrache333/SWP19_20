@@ -1,6 +1,8 @@
 package de.uol.swp.server.game;
 
 import com.google.inject.Inject;
+import de.uol.swp.common.game.card.ActionCard;
+import de.uol.swp.common.game.card.Card;
 import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.game.messages.StartActionPhaseMessage;
@@ -8,8 +10,6 @@ import de.uol.swp.common.game.messages.StartBuyPhaseMessage;
 import de.uol.swp.common.game.messages.StartClearPhaseMessage;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.user.User;
-import de.uol.swp.server.game.card.ActionCard;
-import de.uol.swp.server.game.card.Card;
 import de.uol.swp.server.game.phase.CompositePhase;
 import de.uol.swp.server.game.phase.Phase;
 import de.uol.swp.server.game.player.Player;
