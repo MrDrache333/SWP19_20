@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.user.User;
+import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.game.card.Card;
 import de.uol.swp.server.game.player.Player;
 
@@ -23,9 +24,11 @@ class Playground {
     private List<Player> players = new ArrayList<>();
     private Player actualPlayer;
     private Player nextPlayer;
+    private Player latestGivedUpPlayer;
     private ArrayList<Short> theIdsFromTheHand = new ArrayList<>(5);
     private GameService gameService;
     private UUID theSpecificLobbyID;
+    int thePositionInList;
 
     /**
      * Erstellt ein neues Spielfeld und übergibt die Spieler. Die Reihenfolge der Spieler wird zufällig zusammengestellt.
@@ -62,5 +65,47 @@ class Playground {
         }
         DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID);
         gameService.sendToSpecificPlayer(actualPlayer, theHandMessage);
+    }
+
+    /**
+     * Die Methode kümmert sich um das Aufgeben des Spielers in dem spezifizierten Game/Playground.
+     *
+     * @param lobbyID
+     * @param theGivingUpUser
+     * @param wantsToGiveUp
+     * @return Ob der Spieler erfolgreich entfernt worden ist oder nicht.
+     */
+    public Boolean playerGivedUp(UUID lobbyID, UserDTO theGivingUpUser, Boolean wantsToGiveUp) {
+        Boolean success;
+        for (int i = 0; i < players.size(); i++) {
+            if (players.get(i).getPlayerName().equals(theGivingUpUser.getUsername())) {
+                thePositionInList = i;
+                break;
+            } else {
+                i++;
+            }
+
+        }
+        if (this.players.get(thePositionInList).getPlayerName().equals(theGivingUpUser.getUsername()) && wantsToGiveUp && lobbyID.equals(this.theSpecificLobbyID)) {
+            latestGivedUpPlayer = this.players.get(thePositionInList);
+            this.players.remove(thePositionInList);
+            success = true;
+            return true;
+        } // TODO: Wenn Spielelogik weiter implementiert wird und ein Spieler aufgibt, Handling implementieren wie mit aufgegeben Spielern weiter umgegangen wird.
+        else {
+            success = false;
+            return success;
+        }
+    }
+
+    /**
+     * Gibt den Spieler zurück der als letztes Aufgegeben hat.
+     *
+     * @return s.o
+     * @author Haschem, Ferit
+     * @since Sprint5
+     */
+    public Player getLatestGivedUpPlayer() {
+        return latestGivedUpPlayer;
     }
 }

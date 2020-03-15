@@ -5,7 +5,6 @@ import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
-import de.uol.swp.client.game.event.GameQuitEvent;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
@@ -82,11 +81,6 @@ public class GameViewPresenter extends AbstractPresenter {
         initializeUserList();
     }
 
-    /*
-        showAlert Methode, um Alert Box zu erstellen
-         */
-
-
     /**
      * Show Alert für den Aufgeben Button
      *
@@ -105,8 +99,8 @@ public class GameViewPresenter extends AbstractPresenter {
         alert.getDialogPane().setHeaderText(title);
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
-            eventBus.post(new GameQuitEvent());
-        }//so funktioniert das nicht
+            gameManagement.getGameService().giveUp(lobbyID, (UserDTO) loggedInUser);
+        }
     }
 
     /**

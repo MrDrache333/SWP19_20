@@ -4,6 +4,8 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import de.uol.swp.common.game.exception.GameManagementException;
+import de.uol.swp.common.game.messages.UserGivedUpMessage;
+import de.uol.swp.common.game.request.GameGiveUpRequest;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.server.AbstractService;
@@ -75,10 +77,31 @@ public class GameService extends AbstractService {
     void startGame(StartGameInternalMessage msg) throws GameManagementException {
         try {
             gameManagement.createGame(msg.getLobbyID());
+            // Manueller Test, wird beim Mergen entfernt.
+            gameManagement.getGame(msg.getLobbyID()).get().getPlayground().sendPlayersHand();
+            LOG.debug("StartGame Methode funktioniert ------------------------------->");
         } catch (GameManagementException e) {
             LOG.error("Es wurde eine GameManagementException geworfen: " + e.getMessage());
             // TODO: In späteren Sprints hier ggf. weiteres Handling?
         }
     }
 
+    /**
+     * Handling das der User aufgegeben hat und aus dem Playgrpund entfernt wird. Ggf später auf null gesetzt wird o.ä.
+     *
+     * @param msg Request zum Aufgeben
+     * @author Haschem, Ferit
+     * @since Sprint5
+     */
+    @Subscribe
+    void userGivesUp(GameGiveUpRequest msg) {
+        Boolean userRemovedSuccesfully = gameManagement.getGame(msg.getTheSpecificLobbyID()).get().getPlayground().playerGivedUp(msg.getTheSpecificLobbyID(), msg.getGivingUpUSer(), msg.getWantsToGiveUP());
+        if (userRemovedSuccesfully) {
+            UserGivedUpMessage givedUp = new UserGivedUpMessage(msg.getTheSpecificLobbyID(), msg.getGivingUpUSer(), true);
+            Player givedUpPlayer = gameManagement.getGame(msg.getTheSpecificLobbyID()).get().getPlayground().getLatestGivedUpPlayer();
+            sendToSpecificPlayer(givedUpPlayer, givedUp);
+        } else {
+            // TODO: Implementierung: Was passiert wenn der User nicht entfernt werden kann? Welche Fälle gibt es?
+        }
+    }
 }

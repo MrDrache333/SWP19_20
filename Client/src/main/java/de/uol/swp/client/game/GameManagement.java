@@ -9,6 +9,7 @@ import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.LobbyPresenter;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.sound.SoundMediaPlayer;
+import de.uol.swp.common.game.messages.UserGivedUpMessage;
 import de.uol.swp.common.lobby.message.KickUserMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.user.User;
@@ -54,6 +55,8 @@ public class GameManagement {
 
     private Stage primaryStage;
 
+    private GameService gameService;
+
 
     /**
      * Instanziiert ein GameManagement. Dafür werden nötige Controller initialisiert und auf dem Eventbus registriert
@@ -69,7 +72,7 @@ public class GameManagement {
      * @author Keno O., Darian
      * @since Sprint3
      */
-    public GameManagement(EventBus eventBus, UUID id, String lobbyName, User loggedInUser, ChatService chatService, LobbyService lobbyService, UserService userService, Injector injector, UserDTO gameOwner) {
+    public GameManagement(EventBus eventBus, UUID id, String lobbyName, User loggedInUser, ChatService chatService, LobbyService lobbyService, UserService userService, Injector injector, UserDTO gameOwner, GameService gameService) {
         this.id = id;
         this.loggedInUser = loggedInUser;
         this.injector = injector;
@@ -77,6 +80,7 @@ public class GameManagement {
         this.lobbyName = lobbyName;
         this.eventBus = eventBus;
         this.gameOwner = gameOwner;
+        this.gameService = gameService;
 
         this.chatViewPresenter = new ChatViewPresenter(lobbyName, id, loggedInUser, ChatViewPresenter.THEME.Light, chatService, injector, this);
         this.gameViewPresenter = new GameViewPresenter(loggedInUser, id, chatService, chatViewPresenter, lobbyService, userService, injector, this);
@@ -98,6 +102,24 @@ public class GameManagement {
     private void userLeft(UserLeftLobbyMessage msg) {
         if (msg.getLobbyID().equals(id) && msg.getUser().getUsername().equals(loggedInUser.getUsername())) {
             close();
+        }
+    }
+
+    /**
+     * Methode fängt Servernachricht ab und sofern, die Anfrage des Users erfolgreich war, wird das Gamefenster geschlossen.
+     *
+     * @param msg enthält die Informationen die benötigt werden um das Gamefenster zu schließen.
+     * @author Haschem, Ferit
+     * @since Sprint5
+     */
+    @Subscribe
+    private void userGivedUp(UserGivedUpMessage msg) {
+        if (msg.getLobbyID().equals(id) && msg.getUserGivedUp()) {
+            close();
+            LOG.debug("Game mit folgender ID geschlossen: " + id);
+        } else {
+            // TODO: Fehlerbehandlung später implementieren.
+
         }
     }
 
@@ -263,4 +285,9 @@ public class GameManagement {
             new SoundMediaPlayer(SoundMediaPlayer.Sound.Window_Opened, SoundMediaPlayer.Type.Sound).play();
         });
     }
+
+    public GameService getGameService() {
+        return gameService;
+    }
+
 }
