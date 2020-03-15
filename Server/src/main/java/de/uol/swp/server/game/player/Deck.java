@@ -1,11 +1,12 @@
 package de.uol.swp.server.game.player;
 
 import de.uol.swp.common.game.card.Card;
-import de.uol.swp.common.game.card.MoneyCard;
-import de.uol.swp.common.game.card.ValueCard;
+import de.uol.swp.common.game.card.parser.CardPack;
+import de.uol.swp.common.game.card.parser.JsonCardParser;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Kartendeck eines Spielers
@@ -42,12 +43,15 @@ public class Deck {
      * @since Sprint5
      */
     private ArrayList<Card> initialiseStartDeck() {
+        CardPack cardsPack = new JsonCardParser().loadPack("Basispack");
         for (int i = 0; i < 3; i++) {
-            Card card = new ValueCard("", (short) 10);
+            int d = ThreadLocalRandom.current().nextInt(3);
+            Card card = cardsPack.getCards().getValueCards().get(d);
             cardsDeck.add(card);
         }
         for (int i = 0; i < 7; i++) {
-            Card card = new MoneyCard("", (short) 10);
+            int d = ThreadLocalRandom.current().nextInt(3);
+            Card card = cardsPack.getCards().getMoneyCards().get(d);
             cardsDeck.add(card);
         }
         return cardsDeck;
