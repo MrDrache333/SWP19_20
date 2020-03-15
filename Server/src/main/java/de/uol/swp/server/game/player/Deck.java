@@ -6,7 +6,6 @@ import de.uol.swp.common.game.card.parser.JsonCardParser;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Kartendeck eines Spielers
@@ -45,13 +44,11 @@ public class Deck {
     private ArrayList<Card> initialiseStartDeck() {
         CardPack cardsPack = new JsonCardParser().loadPack("Basispack");
         for (int i = 0; i < 3; i++) {
-            int d = ThreadLocalRandom.current().nextInt(3);
-            Card card = cardsPack.getCards().getValueCards().get(d);
+            Card card = cardsPack.getCards().getValueCards().get(0);
             cardsDeck.add(card);
         }
         for (int i = 0; i < 7; i++) {
-            int d = ThreadLocalRandom.current().nextInt(3);
-            Card card = cardsPack.getCards().getMoneyCards().get(d);
+            Card card = cardsPack.getCards().getMoneyCards().get(0);
             cardsDeck.add(card);
         }
         return cardsDeck;
