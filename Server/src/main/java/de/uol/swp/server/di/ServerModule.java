@@ -16,9 +16,11 @@ public class ServerModule extends AbstractModule {
     private final EventBus bus = new EventBus();
     private final UserStore store = new MainMemoryBasedUserStore();
     private final UserManagement userManagement = new UserManagement(store);
+    private final AuthenticationService authenticationService = new AuthenticationService(bus, userManagement);
     private final ChatManagement chatManagement = new ChatManagement();
     private final LobbyManagement lobbyManagement = new LobbyManagement();
     private final GameManagement gameManagement = new GameManagement(chatManagement, lobbyManagement);
+
 
     /**
      * Alle Usermanagements und Eventbusse bekommen die gleichen Instanzen
@@ -30,12 +32,12 @@ public class ServerModule extends AbstractModule {
     protected void configure() {
         // All usermanagements and eventbusses must be the same instance (!)
         bind(UserManagement.class).toInstance(userManagement);
+        bind(ChatManagement.class).toInstance(chatManagement);
         bind(LobbyManagement.class).toInstance(lobbyManagement);
         bind(GameManagement.class).toInstance(gameManagement);
         bind(UserStore.class).toInstance(store);
         bind(EventBus.class).toInstance(bus);
-        bind(AuthenticationService.class).toInstance(new AuthenticationService(bus, userManagement));
-
+        bind(AuthenticationService.class).toInstance(authenticationService);
     }
 }
 

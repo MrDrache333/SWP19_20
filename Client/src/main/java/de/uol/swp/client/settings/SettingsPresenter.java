@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 
 /**
  * Der Settings Presenter für den Typ.
+ *
  * @author Anna
  * @since Sprint4
  */
@@ -33,6 +34,7 @@ public class SettingsPresenter extends AbstractPresenter {
 
     /**
      * Die FXML Konstante.
+     *
      * @author Anna
      * @since Sprint4
      */
@@ -91,7 +93,7 @@ public class SettingsPresenter extends AbstractPresenter {
             passwordField.clear();
             password2Field.clear();
             passwordField.requestFocus();
-        } else if(!Strings.isNullOrEmpty(password) && password.contains(" ")) {
+        } else if (!Strings.isNullOrEmpty(password) && password.contains(" ")) {
             SceneManager.showAlert(Alert.AlertType.ERROR, "Das Passwort darf keine Leerzeichen enthalten", "Fehler");
             passwordField.clear();
             password2Field.clear();
@@ -154,7 +156,7 @@ public class SettingsPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void updatedUser(UpdatedUserMessage message) {
-        if(loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
+        if (loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
             loggedInUser = message.getUser();
         }
     }

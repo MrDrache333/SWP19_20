@@ -37,10 +37,7 @@ import javafx.scene.shape.Circle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.awt.*;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
@@ -50,11 +47,10 @@ public class LobbyPresenter extends AbstractPresenter {
 
     public static final String fxml = "/fxml/LobbyView.fxml";
     private static final Logger LOG = LogManager.getLogger(ChatViewPresenter.class);
-
+    @FXML
+    ChoiceBox<Integer> chooseMaxPlayer;
     private ChatViewPresenter chatViewPresenter;
-
     private Map<String, HBox> readyUserList = new TreeMap<>();
-
     private UUID lobbyID;
     private String lobbyName;
     private User loggedInUser;
@@ -62,18 +58,13 @@ public class LobbyPresenter extends AbstractPresenter {
     private UserDTO gameOwner;
     private EventBus eventBus;
     private Injector injector;
-
     private boolean ownReadyStatus = false;
-
     @FXML
     private ListView<HBox> usersView;
     @FXML
     private Pane chatView;
     @FXML
     private Button readyButton;
-    @FXML
-    ChoiceBox<Integer> chooseMaxPlayer;
-
     private ObservableList<HBox> userHBoxes;
 
     private GameManagement gameManagement;
@@ -90,7 +81,6 @@ public class LobbyPresenter extends AbstractPresenter {
      * @param userService       der UserService
      * @param injector          der Injector
      * @param gameManagement    das GameManagement
-     *
      * @author Julia, Keno O, Anna, Darian, Keno S.
      * @since Sprint2
      */
@@ -112,16 +102,17 @@ public class LobbyPresenter extends AbstractPresenter {
     //--------------------------------------
     // FXML METHODS
     //--------------------------------------
+
     /**
      * Wird aufgerufen wenn der Lobby verlassen Button gedrückt wird.
      *
      * @param event
-     * @author Julia, Keno S.
+     * @author Julia, Keno S., Marvin
      * @since Sprint3
      */
     @FXML
     public void onLeaveLobbyButtonPressed(ActionEvent event) {
-        lobbyService.leaveLobby(lobbyName, loggedInUserDTO, lobbyID);
+        lobbyService.leaveLobby(lobbyID, loggedInUserDTO);
     }
 
     /**
@@ -212,7 +203,7 @@ public class LobbyPresenter extends AbstractPresenter {
             ownReadyStatus = true;
         }
         LOG.debug("Set own ReadyStauts in Lobby " + lobbyID + " to " + (ownReadyStatus ? "Ready" : "Not Ready"));
-        lobbyService.setLobbyUserStatus(lobbyName, loggedInUserDTO, ownReadyStatus);
+        lobbyService.setLobbyUserStatus(lobbyID, loggedInUserDTO, ownReadyStatus);
     }
 
     /**
@@ -223,9 +214,8 @@ public class LobbyPresenter extends AbstractPresenter {
      * @since Sprint 3
      */
     @FXML
-    public void onMaxPlayerSelected(ActionEvent actionEvent)
-    {
-        lobbyService.setMaxPlayer(chooseMaxPlayer.getValue(), this.getLobbyID(), this.loggedInUser);
+    public void onMaxPlayerSelected(ActionEvent actionEvent) {
+        lobbyService.setMaxPlayer(this.getLobbyID(), this.loggedInUser, chooseMaxPlayer.getValue());
     }
 
     //--------------------------------------
@@ -283,7 +273,7 @@ public class LobbyPresenter extends AbstractPresenter {
             LOG.debug("User " + message.getOldUser().getUsername() + " changed his name to " + message.getUser().getUsername());
         }
         Platform.runLater(() -> {
-            if (readyUserList.containsKey(message.getOldUser().getUsername())){
+            if (readyUserList.containsKey(message.getOldUser().getUsername())) {
                 userLeftLobby(message.getOldUser().getUsername(), false);
                 readyUserList.put(message.getUser().getUsername(), getHboxFromReadyUser(message.getUser(), false));
                 updateUsersList();
@@ -302,7 +292,7 @@ public class LobbyPresenter extends AbstractPresenter {
     @Subscribe
     public void onSetMaxPlayerMessage(SetMaxPlayerMessage msg) {
         Platform.runLater(() -> {
-            if (!chooseMaxPlayer.getValue().equals(msg.getMaxPlayer())){
+            if (!chooseMaxPlayer.getValue().equals(msg.getMaxPlayer())) {
                 chooseMaxPlayer.setValue(msg.getMaxPlayer());
             }
             if (!msg.getOwner().equals(loggedInUser)) {
@@ -323,7 +313,7 @@ public class LobbyPresenter extends AbstractPresenter {
     @Subscribe
     public void onGameStartMessage(StartGameMessage message) {
         if (!message.getLobbyID().equals(lobbyID)) return;
-        LOG.debug("Game in lobby " + message.getLobbyName() + " starts.");
+        LOG.debug("Game in lobby with ID" + message.getLobbyID() + " starts.");
         gameManagement.showGameView();
     }
 
@@ -355,7 +345,7 @@ public class LobbyPresenter extends AbstractPresenter {
      * Ein neuer Nutzer tritt der Lobby bei, die Userliste der Lobby wird aktualisiert und eine Nachricht im Chat angezeigt.
      *
      * @param message die UserJoinedLobbyMessage
-     * @author Darian, Keno O.
+     * @author Darian, Keno O., Marvin
      * @since Sprint3
      */
     @Subscribe
@@ -363,7 +353,10 @@ public class LobbyPresenter extends AbstractPresenter {
         if (!message.getLobbyID().equals(lobbyID)) return;
         LOG.debug("New user " + message.getUser() + " logged in");
         Platform.runLater(() -> {
-            if (readyUserList != null && loggedInUser != null && !loggedInUser.toString().equals(message.getLobbyName())) {
+            if (readyUserList != null && loggedInUser != null && !loggedInUser.toString().equals(message.getLobby().getName())) {
+                // TODO: ??? Username wird mit Lobbynamen verglichen, vor Refactoring war es:
+                // !loggedInUser.toString().equals(message.getLobbyName()) jetzt also funktionsgleich, aber immer noch nicht sinnvoll
+                // ~ Marvin
                 gameOwner = message.getGameOwner();
                 readyUserList.put(message.getUser().getUsername(), getHboxFromReadyUser(message.getUser(), false));
                 updateUsersList();
@@ -392,12 +385,12 @@ public class LobbyPresenter extends AbstractPresenter {
      * Ebenfalls im Chat angezeigt.
      *
      * @param message die eingehende Nachricht vom Server
-     * @author Darian
+     * @author Darian, Marvin
      * @since sprint4
      */
     @Subscribe
-    public void onKickUserMessage(KickUserMessage message){
-        if (!message.getLobby().getLobbyID().equals(lobbyID)) return;
+    public void onKickUserMessage(KickUserMessage message) {
+        if (!message.getLobbyID().equals(lobbyID)) return;
         LOG.debug("User " + message.getLobby().getName() + " kicked out of the Lobby");
         userLeftLobby(message.getUser().getUsername(), true);
     }
@@ -411,7 +404,7 @@ public class LobbyPresenter extends AbstractPresenter {
      * entfernt.
      *
      * @param username Benutzername des Benutzers der gegangen ist
-     * @param kicked True wenn der Benutzer aus der Lobby gekickt wurde
+     * @param kicked   True wenn der Benutzer aus der Lobby gekickt wurde
      * @author Darian
      * @since sprint4
      */
@@ -419,7 +412,7 @@ public class LobbyPresenter extends AbstractPresenter {
         if (readyUserList.get(username) != null) {
             Platform.runLater(() -> {
                 readyUserList.remove(username);
-                readyUserList.replace(gameOwner.getUsername(),getHboxFromReadyUser(gameOwner,false));
+                readyUserList.replace(gameOwner.getUsername(), getHboxFromReadyUser(gameOwner, false));
                 updateUsersList();
                 //Je nachdem ob der Benutzer gekickt wurde oder freiwillig aus der Lobby gegangen ist wird es auch so angezeigt
                 if (kicked) {
@@ -438,8 +431,8 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Geänderte Userliste wird angezeigt.
      *
-     *@author Darian, Keno O.
-     *@since Sprint3
+     * @author Darian, Keno O.
+     * @since Sprint3
      */
 
     private void updateUsersList() {
@@ -457,8 +450,8 @@ public class LobbyPresenter extends AbstractPresenter {
      * Es wird eine HBox erstellt in der man den Benutzernamen sieht und den Bereit-Status. Wenn man der Besitzer der
      * Lobby ist kann man mit einem Button daneben die Spieler aus der Lobby entfernen
      *
-     * @param user The User
-     * @param status   The actual Status
+     * @param user   The User
+     * @param status The actual Status
      * @return The generated HBox
      * @author Darian
      * @since Sprint 3
@@ -472,17 +465,18 @@ public class LobbyPresenter extends AbstractPresenter {
         box.getChildren().add(circle);
         box.getChildren().add(usernameLabel);
         //Es wird geprüft ob man der Besitzer der Lobby ist und ob der Button neben einem selber auftaucht
-        if(loggedInUser.getUsername().equals(gameOwner.getUsername()) && !user.getUsername().equals(gameOwner.getUsername())){
+        if (loggedInUser.getUsername().equals(gameOwner.getUsername()) && !user.getUsername().equals(gameOwner.getUsername())) {
             Button button = new Button("Spieler entfernen");
             box.getChildren().add(button);
             //Wenn der Button gedrückt wird der Spieler entfernt.
             button.setOnAction(new EventHandler<ActionEvent>() {
-                @Override public void handle(ActionEvent e) {
-                    lobbyService.kickUser(lobbyName, (UserDTO) loggedInUser, lobbyID, (UserDTO) user);
+                @Override
+                public void handle(ActionEvent e) {
+                    lobbyService.kickUser(lobbyID, (UserDTO) loggedInUser, (UserDTO) user);
                 }
             });
         }
-        if(user.getUsername().equals(gameOwner.getUsername())){
+        if (user.getUsername().equals(gameOwner.getUsername())) {
             Image crown = new Image("images/crown.png");
             ImageView crownView = new ImageView(crown);
             crownView.setFitHeight(15);
@@ -495,7 +489,7 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Nutzer wird erst aus der Userliste gelöscht und dann mit seinem neuen Status wieder hinzugefügt.
      *
-     * @param user der User
+     * @param user   der User
      * @param status der aktuelle Bereit-Status
      * @author Darian
      * @since Sprint3

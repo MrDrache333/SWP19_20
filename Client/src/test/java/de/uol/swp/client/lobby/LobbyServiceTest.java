@@ -110,17 +110,17 @@ class LobbyServiceTest {
      * Hilfsmethode für Lobby beitreten
      *
      * @throws InterruptedException Die evtl. auftretene Fehlermeldung
-     * @author Julia
+     * @author Julia, Marvin
      * @since Sprint3
      */
     private void joinLobby() throws InterruptedException {
         LobbyService userService = new LobbyService(bus);
-        userService.joinLobby(defaultLobby.getName(), new UserDTO(defaultUser.getUsername(), defaultUser.getPassword(), defaultUser.getEMail()), defaultLobby.getLobbyID());
+        userService.joinLobby(defaultLobby.getLobbyID(), new UserDTO(defaultUser.getUsername(), defaultUser.getPassword(), defaultUser.getEMail()));
         lock.await(1000, TimeUnit.MILLISECONDS);
     }
 
     /**
-     *  Versuch einer Lobby beizutreten
+     * Versuch einer Lobby beizutreten
      *
      * @throws InterruptedException Die evtl. auftretene Fehlermeldung
      * @author Julia
@@ -134,7 +134,6 @@ class LobbyServiceTest {
 
         LobbyJoinUserRequest lobbyJoinUserRequest = (LobbyJoinUserRequest) event;
         assertEquals(defaultLobby.getLobbyID(), lobbyJoinUserRequest.getLobbyID());
-        assertEquals(defaultLobby.getName(), lobbyJoinUserRequest.getLobbyName());
         assertEquals(defaultUser, lobbyJoinUserRequest.getUser());
     }
 
@@ -152,7 +151,7 @@ class LobbyServiceTest {
         event = null;
 
         LobbyService lobbyService = new LobbyService(bus);
-        lobbyService.leaveLobby(defaultLobby.getName(), new UserDTO(defaultUser.getUsername(), defaultUser.getPassword(), defaultUser.getEMail()), defaultLobby.getLobbyID());
+        lobbyService.leaveLobby(defaultLobby.getLobbyID(), new UserDTO(defaultUser.getUsername(), defaultUser.getPassword(), defaultUser.getEMail()));
 
         lock.await(1000, TimeUnit.MILLISECONDS);
 
@@ -161,12 +160,12 @@ class LobbyServiceTest {
         LobbyLeaveUserRequest lobbyLeaveUserRequest = (LobbyLeaveUserRequest) event;
 
         assertEquals(defaultLobby.getLobbyID(), lobbyLeaveUserRequest.getLobbyID());
-        assertEquals(defaultLobby.getName(), lobbyLeaveUserRequest.getLobbyName());
         assertEquals(defaultUser, lobbyLeaveUserRequest.getUser());
     }
 
     /**
      * Überprüfung, ob User beim Logout aus allen Lobbys entfernt wird
+     *
      * @throws InterruptedException Die evtl. auftretene Fehlermeldung
      * @author Julia
      * @since Sprint3

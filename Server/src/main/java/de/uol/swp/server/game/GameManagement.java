@@ -6,6 +6,8 @@ import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.server.chat.Chat;
 import de.uol.swp.server.chat.ChatManagement;
 import de.uol.swp.server.lobby.LobbyManagement;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
 import java.util.Optional;
@@ -19,10 +21,11 @@ import java.util.UUID;
  * @since Sprint 4
  */
 public class GameManagement {
-
+    private static final Logger LOG = LogManager.getLogger(GameManagement.class);
     private static Map<UUID, Game> games = new TreeMap<>();
     private final LobbyManagement lobbyManagement;
     private final ChatManagement chatManagement;
+    private GameService gameService;
 
     /**
      * Erstellt ein neues gameManagement
@@ -34,6 +37,7 @@ public class GameManagement {
     public GameManagement(ChatManagement chatManagement, LobbyManagement lobbyManagement) {
         this.lobbyManagement = lobbyManagement;
         this.chatManagement = chatManagement;
+
     }
 
     /**
@@ -48,11 +52,16 @@ public class GameManagement {
             throw new GameManagementException("Game with ID " + lobbyID.toString() + " allready exists!");
         Optional<String> lobbyName = lobbyManagement.getName(lobbyID);
         if (lobbyName.isPresent()) {
-            Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyName.get());
+            Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyID);
             Optional<Chat> chat = chatManagement.getChat(lobbyID.toString());
-            if (lobby.isPresent() && chat.isPresent()) {
-                Game game = new Game(lobby.get(), chat.get());
-                games.put(lobbyID, game);
+
+            if (lobby.isPresent()) {
+                LOG.debug("Lobby is Present!");
+                if (chat.isPresent()) {
+                    LOG.debug("Chat is Present!");
+                    Game game = new Game(lobby.get(), chat.get(), gameService);
+                    games.put(lobbyID, game);
+                }
             } else
                 throw new GameManagementException("Chat or Lobby not found!");
 
@@ -86,5 +95,9 @@ public class GameManagement {
         } catch (NullPointerException e) {
             return Optional.empty();
         }
+    }
+
+    public void setGameService(GameService gameService) {
+        this.gameService = gameService;
     }
 }

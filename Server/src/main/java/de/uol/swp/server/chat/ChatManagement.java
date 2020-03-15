@@ -23,9 +23,9 @@ public class ChatManagement extends AbstractChatManagement {
      *
      * @param chatId die Chat ID
      * @return den Chat
+     * @throws NullPointerException
      * @author Keno O
      * @since Sprint 1
-     * @throws NullPointerException
      */
     public Optional<Chat> getChat(String chatId) {
         try {
@@ -66,9 +66,9 @@ public class ChatManagement extends AbstractChatManagement {
      * Chat nach Chat ID löschen.
      *
      * @param ChatId die Chat ID
+     * @throws ChatException beim Fehler den Chat zu löschen.
      * @author Keno O
      * @since Sprint 1
-     * @throws ChatException beim Fehler den Chat zu löschen.
      */
     public void deleteChat(String ChatId) throws ChatException {
         if (Chats.size() > 0 && Chats.get(ChatId) != null) Chats.remove(ChatId);
@@ -78,7 +78,7 @@ public class ChatManagement extends AbstractChatManagement {
     /**
      * Nachricht zu einem Chat hinzufügen.
      *
-     * @param chatId die Chat ID
+     * @param chatId  die Chat ID
      * @param message die Nachricht
      * @throws ChatException wenn es den Chat mir der ID nicht gibt.
      * @author Keno O

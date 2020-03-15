@@ -8,6 +8,7 @@ import de.uol.swp.server.chat.ChatService;
 import de.uol.swp.server.communication.Server;
 import de.uol.swp.server.di.ServerModule;
 import de.uol.swp.server.game.GameManagement;
+import de.uol.swp.server.game.GameService;
 import de.uol.swp.server.lobby.LobbyService;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import de.uol.swp.server.usermanagement.UserManagement;
@@ -66,6 +67,7 @@ class ServerApp {
     private static void createServices(Injector injector) {
         UserManagement userManagement = injector.getInstance(UserManagement.class);
         ChatManagement chatManagement = injector.getInstance(ChatManagement.class);
+        GameManagement gameManagement = injector.getInstance(GameManagement.class);
 
         // TODO: Nach der Registrierung entfernen (Von Marco --> Nur übersetzt)
         for (int i = 0; i < 5; i++) {
@@ -82,6 +84,7 @@ class ServerApp {
         injector.getInstance(GameManagement.class);
         injector.getInstance(AuthenticationService.class);
         injector.getInstance(LobbyService.class);
+        injector.getInstance(GameService.class);
     }
 
 }
