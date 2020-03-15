@@ -43,11 +43,11 @@ public class Deck {
      */
     private ArrayList<Card> initialiseStartDeck() {
         for (int i = 0; i < 3; i++) {
-            Card card = new ValueCard("", (short) 10);
+            Card card = new ValueCard("Anwesen", (short) 10, (short) 2, (short) 1);
             cardsDeck.add(card);
         }
         for (int i = 0; i < 7; i++) {
-            Card card = new MoneyCard("", (short) 10);
+            Card card = new MoneyCard("Kupfer", (short) 10, (short) 0, (short) 1);
             cardsDeck.add(card);
         }
         return cardsDeck;
