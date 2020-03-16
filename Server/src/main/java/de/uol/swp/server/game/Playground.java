@@ -79,9 +79,8 @@ class Playground {
             int index = players.indexOf(nextPlayer);
             actualPlayer = nextPlayer;
             nextPlayer = players.get(++index % players.size());
+            sendPlayersHand();
         }
-
-        sendPlayersHand();
         actualPhase = Phase.Type.ActionPhase;
         if (checkForActionCard()) {
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartActionPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
@@ -106,9 +105,9 @@ class Playground {
             actualPhase = Phase.Type.Buyphase;
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartBuyPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
         } else {
+            actualPhase = Phase.Type.Clearphase;
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartClearPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
             compositePhase.executeClearPhase(actualPlayer);
-            actualPhase = Phase.Type.Clearphase;
         }
     }
 

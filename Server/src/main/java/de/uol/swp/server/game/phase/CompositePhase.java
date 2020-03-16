@@ -1,5 +1,6 @@
 package de.uol.swp.server.game.phase;
 
+import de.uol.swp.server.game.player.Deck;
 import de.uol.swp.server.game.player.Player;
 
 /**
@@ -18,12 +19,19 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
          */
     }
 
+    /**
+     * Alle Karten auf der Hand des Spielers werden auf den Ablagestapel verschoben und eine neue Hand gezogen
+     *
+     * @param player Der aktuelle Spieler
+     * @author Julia
+     * @since Sprint6
+     */
     @Override
     public void executeClearPhase(Player player) {
-        /*
-        Verschiebe auf der Hand befindliche Karten auf den Ablagestapel
-         */
-
+        Deck deck = player.getPlayerDeck();
+        deck.getDiscardPile().addAll(deck.getHand());
+        deck.getHand().clear();
+        deck.newHand();
     }
 
     @Override

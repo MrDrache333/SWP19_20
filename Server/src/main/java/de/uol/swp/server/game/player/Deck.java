@@ -14,14 +14,14 @@ public class Deck {
 
 
     /**
-     * Listen für Hand, Deck, TrayStack
+     * Listen für Hand, Deck, Ablagestapel
      *
      * @author Paula
      * @since Sprint5
      */
-    private ArrayList<Card> cardsDeck = new ArrayList<Card>();
-    private ArrayList<Card> trayStack = new ArrayList<Card>();
-    private ArrayList<Card> hand = new ArrayList<Card>();
+    private ArrayList<Card> cardsDeck = new ArrayList<>();
+    private ArrayList<Card> discardPile = new ArrayList<>();
+    private ArrayList<Card> hand = new ArrayList<>();
 
     /**
      * Konstruktor
@@ -32,6 +32,33 @@ public class Deck {
     public Deck() {
         initialiseStartDeck();
         initialiseHand();
+    }
+
+    /**
+     * Zieht eine neue Hand. Sind auf dem Nachziehstapel nicht mehr genügend Karten vorhanden,
+     * wird der Ablagestapel zum neuen Nachziehstapel und die restlichen Karten werden gezogen.
+     *
+     * @author Julia
+     * @since Sprint6
+     */
+    public void newHand() {
+        if (cardsDeck.size() < 5) {
+            hand.addAll(cardsDeck);
+            cardsDeck.clear();
+            cardsDeck.addAll(discardPile);
+            discardPile.clear();
+
+            Collections.shuffle(cardsDeck);
+            ArrayList<Card> tmp = new ArrayList<>();
+            for (int i = 0; i < 5 - hand.size(); i++) {
+                Card tmpCard = cardsDeck.get(i);
+                tmp.add(tmpCard);
+            }
+            hand.addAll(tmp);
+            tmp.forEach(card -> cardsDeck.remove(card));
+        } else {
+            initialiseHand();
+        }
     }
 
     /**
@@ -67,6 +94,7 @@ public class Deck {
             Card tmpCard = cardsDeck.get(i);
             hand.add(tmpCard);
         }
+        hand.forEach(card -> cardsDeck.remove(card));
         return hand;
     }
 
@@ -80,10 +108,14 @@ public class Deck {
     private void deleteCard(Card card) {
         cardsDeck.remove(card);
         hand.remove(card);
-        trayStack.remove(card);
+        discardPile.remove(card);
     }
 
     public ArrayList<Card> getHand() {
         return hand;
+    }
+
+    public ArrayList<Card> getDiscardPile() {
+        return discardPile;
     }
 }
