@@ -265,13 +265,13 @@ public class GameViewPresenter extends AbstractPresenter {
         HandCardID.forEach((n) -> {
             int counter = 0;
             while (true) {
-                if (cardPane.getChildren().get(counter) == null) {
+                if (cardPane.getChildren().size() == counter) {
                     String pfad = "file:Client/src/main/resources/cards/images/" + n + ".png";
                     Image picture = new Image(pfad);
                     ImageView card = new ImageView(picture);
                     card.setFitHeight(107);
-                    card.setY(603);
-                    card.setX(171);
+                    card.setLayoutY(603);
+                    card.setLayoutX(171);
                     card.setPreserveRatio(true);
                     card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
                     AnimationManagement.addToHand(card, counter, false);
