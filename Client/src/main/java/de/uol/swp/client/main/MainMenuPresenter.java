@@ -128,9 +128,7 @@ public class MainMenuPresenter extends AbstractPresenter {
         soundIcon.setOnMouseClicked(event -> {
             SoundMediaPlayer.setSound(!SoundMediaPlayer.isSoundEnabled());
             soundIcon.setImage(new Image(new File(getClass().getResource(SoundMediaPlayer.isSoundEnabled() ? "/images/sound_on_icon.png" : "/images/sound_off_icon.png").toExternalForm().replace("file:", "")).toURI().toString()));
-
         });
-
     }
 
     /**
@@ -360,18 +358,20 @@ public class MainMenuPresenter extends AbstractPresenter {
      * Aktualisiert die Lobbytabelle, nachdem ein User eine Lobby verlassen hat
      *
      * @param message die UserLeftLobbyMessage
-     * @author Julia
+     * @author Julia, Darian
      * @since Sprint4
      */
     @Subscribe
     public void userLeftLobby(UserLeftLobbyMessage message) {
-        LOG.debug("User " + message.getUser().getUsername() + " left lobby " + message.getLobby().getName());
-        Platform.runLater(() -> {
-            lobbies.removeIf(lobby -> lobby.getLobbyID().equals(message.getLobbyID()));
-            if (message.getLobby() != null) {
+        if (message.getLobby() != null) {
+            LOG.debug("User " + message.getUser().getUsername() + " left lobby " + message.getLobby().getName());
+            Platform.runLater(() -> {
+                lobbies.removeIf(lobby -> lobby.getLobbyID().equals(message.getLobbyID()));
                 lobbies.add(0, message.getLobby());
-            }
-        });
+            });
+        } else {
+            lobbies.removeIf(lobby -> lobby.getLobbyID().equals(message.getLobbyID()));
+        }
     }
 
     /**
@@ -393,11 +393,12 @@ public class MainMenuPresenter extends AbstractPresenter {
      * Aktualisiert die Lobbytabelle, nachdem ein User aus einer Lobby gekickt wurde
      *
      * @param message die KickUserMessage
-     * @author Julia, Marvin
+     * @author Julia, Marvin, Darian
      * @since Sprint4
      */
     @Subscribe
     public void userKicked(KickUserMessage message) {
+        LOG.debug("User " + message.getUser().getUsername() + " kicked from lobby " + message.getLobby().getName());
         Platform.runLater(() -> {
             lobbies.removeIf(lobby -> lobby.getLobbyID().equals(message.getLobbyID()));
             lobbies.add(0, message.getLobby());

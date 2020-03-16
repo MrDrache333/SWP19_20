@@ -376,8 +376,10 @@ public class LobbyPresenter extends AbstractPresenter {
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
         if (!message.getLobbyID().equals(lobbyID)) return;
         LOG.debug("User " + message.getUser().getUsername() + " left the Lobby");
-        gameOwner = message.getGameOwner();
-        userLeftLobby(message.getUser().getUsername(), false);
+        if (message.getLobby() != null) {
+            gameOwner = message.getGameOwner();
+            userLeftLobby(message.getUser().getUsername(), false);
+        }
     }
 
     /**
