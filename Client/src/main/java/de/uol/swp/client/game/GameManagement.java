@@ -152,7 +152,7 @@ public class GameManagement {
      * @since Sprint6
      */
     @Subscribe
-    public void test(DrawHandMessage message) {
+    public void drawHand(DrawHandMessage message) {
         gameViewPresenter.ShowNewHand(message);
     }
 

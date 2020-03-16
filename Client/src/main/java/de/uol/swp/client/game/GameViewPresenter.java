@@ -256,21 +256,22 @@ public class GameViewPresenter extends AbstractPresenter {
 
     @FXML
     public void ShowNewHand(DrawHandMessage message) {
-
-        ArrayList<Short> HandCardID = message.getCardsOnHand();
-
-        HandCardID.forEach((n) -> {
-
-            String pfad = "file:Client/src/main/resources/cards/images/" + n + ".png";
-            Image picture = new Image(pfad);
-            ImageView card = new ImageView(picture);
-            card.setFitHeight(107);
-            card.setLayoutY(603);
-            card.setLayoutX(171);
-            card.setPreserveRatio(true);
-            card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
-            cardPane.getChildren().add(card);
-            AnimationManagement.addToHand(card, cardPane.getChildren().size(), false);
+        Platform.runLater(() -> {
+            if (lobbyID == message.getTheLobbyID()) {
+                ArrayList<Short> HandCardID = message.getCardsOnHand();
+                HandCardID.forEach((n) -> {
+                    String pfad = "file:Client/src/main/resources/cards/images/" + n + ".png";
+                    Image picture = new Image(pfad);
+                    ImageView card = new ImageView(picture);
+                    card.setFitHeight(107);
+                    card.setLayoutY(603);
+                    card.setLayoutX(171);
+                    card.setPreserveRatio(true);
+                    card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
+                    cardPane.getChildren().add(card);
+                    AnimationManagement.addToHand(card, cardPane.getChildren().size(), false);
+                });
+            }
         });
     }
 
