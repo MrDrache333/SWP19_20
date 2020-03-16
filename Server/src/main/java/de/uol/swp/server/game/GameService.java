@@ -4,6 +4,9 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import de.uol.swp.common.game.exception.GameManagementException;
+import de.uol.swp.common.game.exception.GamePhaseException;
+import de.uol.swp.common.game.messages.GameExceptionMessage;
+import de.uol.swp.common.game.request.SkipPhaseRequest;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.server.AbstractService;
@@ -95,10 +98,37 @@ public class GameService extends AbstractService {
     void startGame(StartGameInternalMessage msg) {
         try {
             gameManagement.createGame(msg.getLobbyID());
+            // TODO: GGf. Auslagern in createGame Method später?
+            gameManagement.getGame(msg.getLobbyID()).get().getPlayground().sendInitialHands();
             gameManagement.getGame(msg.getLobbyID()).get().getPlayground().newTurn();
         } catch (GameManagementException e) {
             LOG.error("Es wurde eine GameManagementException geworfen: " + e.getMessage());
             // TODO: In späteren Sprints hier ggf. weiteres Handling?
+        }
+    }
+
+    /**
+     * Versucht die aktuelle Phase zu überspringen; falls dies fehlschlägt, wird eine Nachricht
+     * mit entsprechender Fehlermeldung gesendet
+     *
+     * @param msg SkipPhaseRequest
+     * @author Julia
+     * @since Sprint5
+     */
+    @Subscribe
+    public void onSkipPhaseRequest(SkipPhaseRequest msg) {
+        Optional<Game> game = gameManagement.getGame(msg.getGameID());
+        if (game.isPresent()) {
+            Playground playground = game.get().getPlayground();
+            if (playground.getActualPlayer().getTheUserInThePlayer().equals(msg.getUser())) {
+                try {
+                    playground.skipCurrentPhase();
+                } catch (GamePhaseException e) {
+                    sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(msg.getGameID(), e.getMessage()));
+                }
+            }
+        } else {
+            LOG.error("Es existiert kein Spiel mit der ID " + msg.getGameID());
         }
     }
 
