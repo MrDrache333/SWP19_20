@@ -9,6 +9,7 @@ import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.LobbyPresenter;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.sound.SoundMediaPlayer;
+import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.lobby.message.KickUserMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.user.User;
@@ -79,7 +80,7 @@ public class GameManagement {
         this.gameOwner = gameOwner;
 
         this.chatViewPresenter = new ChatViewPresenter(lobbyName, id, loggedInUser, ChatViewPresenter.THEME.Light, chatService, injector, this);
-        this.gameViewPresenter = new GameViewPresenter(eventBus,loggedInUser, id, chatService, chatViewPresenter, lobbyService, userService, injector, this);
+        this.gameViewPresenter = new GameViewPresenter(loggedInUser, id, chatService, chatViewPresenter, lobbyService, userService, injector, this);
         this.lobbyPresenter = new LobbyPresenter(loggedInUser, lobbyName, id, chatService, chatViewPresenter, lobbyService, userService, injector, gameOwner, this, eventBus);
 
         eventBus.register(chatViewPresenter);
@@ -142,6 +143,19 @@ public class GameManagement {
             loggedInUser = message.getUser();
         }
     }
+
+    /**
+     * Führt die ShowNewHand Methode im gameViewPresenter aus und übergibt die DrawHandMessage
+     *
+     * @param message die DrawHandMessage
+     * @author Devin
+     * @since Sprint6
+     */
+    @Subscribe
+    public void test(DrawHandMessage message) {
+        gameViewPresenter.ShowNewHand(message);
+    }
+
 
     /**
      * Überprüft ob sich die aktuelle Stage im Vordergrund befindet
