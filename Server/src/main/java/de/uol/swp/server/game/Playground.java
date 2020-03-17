@@ -76,10 +76,10 @@ class Playground {
         } else {
             //Spieler muss Clearphase durchlaufen haben
             if (actualPhase != Phase.Type.Clearphase) return;
+            sendPlayersHand();
             int index = players.indexOf(nextPlayer);
             actualPlayer = nextPlayer;
             nextPlayer = players.get(++index % players.size());
-            sendPlayersHand();
         }
         actualPhase = Phase.Type.ActionPhase;
         if (checkForActionCard()) {
