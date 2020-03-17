@@ -153,7 +153,6 @@ public class LobbyPresenter extends AbstractPresenter {
         updateUsersList();
 
         chooseMaxPlayer.setValue(4);
-
     }
 
     /**
@@ -246,7 +245,6 @@ public class LobbyPresenter extends AbstractPresenter {
      * @author Keno O.
      * @since Sprint3
      */
-
     @Subscribe
     private void onReceiveAllUsersInLobby(AllOnlineUsersInLobbyResponse response) {
         if (response.getLobbyID().equals(lobbyID)) {
