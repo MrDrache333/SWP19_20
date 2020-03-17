@@ -41,7 +41,7 @@ public class Deck {
      * @author Julia
      * @since Sprint6
      */
-    public void newHand() {
+    public void drawHand() {
         if (cardsDeck.size() < 5) {
             hand.addAll(cardsDeck);
             cardsDeck.clear();
@@ -51,8 +51,7 @@ public class Deck {
             Collections.shuffle(cardsDeck);
             ArrayList<Card> tmp = new ArrayList<>();
             for (int i = 0; i < 5 - hand.size(); i++) {
-                Card tmpCard = cardsDeck.get(i);
-                tmp.add(tmpCard);
+                tmp.add(cardsDeck.get(i));
             }
             hand.addAll(tmp);
             tmp.forEach(card -> cardsDeck.remove(card));

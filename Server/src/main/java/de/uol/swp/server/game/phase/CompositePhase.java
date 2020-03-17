@@ -31,7 +31,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         Deck deck = player.getPlayerDeck();
         deck.getDiscardPile().addAll(deck.getHand());
         deck.getHand().clear();
-        deck.newHand();
+        deck.drawHand();
     }
 
     @Override
