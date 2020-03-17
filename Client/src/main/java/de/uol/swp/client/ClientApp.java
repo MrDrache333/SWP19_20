@@ -381,6 +381,7 @@ public class ClientApp extends Application implements ConnectionListener {
      * @since Sprint3
      */
     public void closeAllWindows() {
+        SoundMediaPlayer.setSound(false);
         Platform.exit();
     }
 }

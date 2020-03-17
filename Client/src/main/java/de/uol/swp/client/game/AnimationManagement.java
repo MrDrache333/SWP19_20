@@ -13,7 +13,7 @@ import java.util.List;
 public class AnimationManagement {
 
     private static final double HAND_X = 284;
-    private static final double HAND_Y = 541;
+    private static final double HAND_Y = 598;
 
     private static final double ABLAGE_X = 733 + 30;
     private static final double ABLAGE_Y = 538 + 92;
@@ -37,11 +37,9 @@ public class AnimationManagement {
      * @since Sprint5
      */
     public static MoveTo keepPosition(ImageView card) {
-        double x = card.getX();
-        double y = card.getY();
         double w = card.getFitWidth() / 2;
         double h = card.getFitHeight() / 2;
-        return new MoveTo(x + w, y + h);
+        return new MoveTo(w, h);
     }
 
     /**
@@ -61,7 +59,7 @@ public class AnimationManagement {
         double y = card.getLayoutY();
         double w = card.getFitWidth() / 2;
         double h = card.getFitHeight() / 2;
-        if (x != EndPointX && y != EndPointY) {
+        if (x != EndPointX || y != EndPointY) {
             Path path = new Path();
             path.getElements().add(new MoveTo(w, h));
             path.getElements().add(new LineTo(EndPointX - x + w, EndPointY - y + h));
@@ -94,14 +92,16 @@ public class AnimationManagement {
      * @since Sprint5
      */
     public static Boolean createArcToPath(ImageView card, MoveTo moveTo, double EndPointX, double EndPointY, int count, boolean largeArc) {
+        double x = card.getLayoutX();
+        double y = card.getLayoutY();
         double w = card.getFitWidth() / 2;
         double h = card.getFitHeight() / 2;
         EndPointX = EndPointX + w + count * w;
         EndPointY = EndPointY + h;
         Path path = new Path();
-        if (moveTo.getX() != EndPointX && moveTo.getY() != EndPointY) {
+        if (moveTo.getX() != EndPointX || moveTo.getY() != EndPointY) {
             path.getElements().add(moveTo);
-            path.getElements().add(new ArcTo(30, 30, 0, EndPointX, EndPointY, largeArc, !largeArc));
+            path.getElements().add(new ArcTo(30, 30, 0, EndPointX - x, EndPointY - y, largeArc, !largeArc));
             PathTransition pathTransition = new PathTransition();
             pathTransition.setDuration(Duration.millis(1000));
             pathTransition.setNode(card);
@@ -138,7 +138,7 @@ public class AnimationManagement {
      * @since Sprint5
      */
     public static Boolean opponentPlaysCard(ImageView card, int count) {
-        return createArcToPath(card, new MoveTo(500, 0), ACTION_ZONE_OPPONENT_X, ACTION_ZONE_OPPONENT_Y, count, false);
+        return createArcToPath(card, new MoveTo(500 - card.getLayoutX(), -70 - card.getLayoutY()), ACTION_ZONE_OPPONENT_X, ACTION_ZONE_OPPONENT_Y, count, false);
     }
 
     /**
@@ -191,20 +191,20 @@ public class AnimationManagement {
      * @since Sprint5
      */
     public static Boolean addToHand(ImageView card, int count, boolean smallSpace) {
-        double xValue = card.getX();
-        double yValue = card.getY();
+        double xValue = card.getLayoutX();
+        double yValue = card.getLayoutY();
         double w = card.getFitWidth() / 2;
         double h = card.getFitHeight() / 2;
         if ((smallSpace && HAND_X + count * w != xValue) || (!smallSpace && HAND_X + count * w * 2 + 5 * count != xValue)) {
             Path path = new Path();
-            path.getElements().add(new MoveTo(xValue + w, yValue + h));
+            path.getElements().add(new MoveTo(w, h));
             if (smallSpace) {
-                path.getElements().add(new LineTo(HAND_X + w + count * w, HAND_Y + h));
+                path.getElements().add(new LineTo(HAND_X - xValue + w + count * w, HAND_Y - yValue + h));
             } else {
-                path.getElements().add(new LineTo(HAND_X + w + count * w * 2 + 5 * count, HAND_Y + h));
+                path.getElements().add(new LineTo(HAND_X - xValue + w + count * w * 2 + 5 * count, HAND_Y - yValue + h));
             }
             PathTransition pathTransition = new PathTransition();
-            pathTransition.setDuration(Duration.millis(1000));
+            pathTransition.setDuration(Duration.millis(600));
             pathTransition.setNode(card);
             pathTransition.setPath(path);
             pathTransition.setCycleCount(1);
@@ -240,8 +240,8 @@ public class AnimationManagement {
      */
     public static void setNewCoordinates(ImageView card, PathTransition pathTransition) {
         pathTransition.setOnFinished(actionEvent -> {
-            card.setX(card.getX() + card.getTranslateX());
-            card.setY(card.getY() + card.getTranslateY());
+            card.setLayoutX(Math.round(card.getLayoutX() + card.getTranslateX()));
+            card.setLayoutY(Math.round(card.getLayoutY() + card.getTranslateY()));
             card.setTranslateX(0);
             card.setTranslateY(0);
         });

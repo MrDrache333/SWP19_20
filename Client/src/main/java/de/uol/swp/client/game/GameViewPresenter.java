@@ -1,5 +1,6 @@
 package de.uol.swp.client.game;
 
+import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
@@ -8,6 +9,7 @@ import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.event.GameQuitEvent;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
+import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.game.messages.BuyCardMessage;
 import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
@@ -35,6 +37,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.*;
 
 /**
@@ -52,6 +58,11 @@ public class GameViewPresenter extends AbstractPresenter {
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
     private UUID lobbyID;
     private User loggedInUser;
+    private EventBus eventBus;
+
+    @FXML
+    private Pane cardPane;
+
     @FXML
     private Pane chatView;
     @FXML
@@ -78,7 +89,8 @@ public class GameViewPresenter extends AbstractPresenter {
      * @param injector          der Injector
      * @param gameManagement    das Game Management
      */
-    public GameViewPresenter(User loggedInUser, UUID lobbyID, ChatService chatService, ChatViewPresenter chatViewPresenter, LobbyService lobbyService, UserService userService, Injector injector, GameManagement gameManagement) {
+    public GameViewPresenter(EventBus eventBus, User loggedInUser, UUID lobbyID, ChatService chatService, ChatViewPresenter chatViewPresenter, LobbyService lobbyService, UserService userService, Injector injector, GameManagement gameManagement) {
+        this.eventBus = eventBus;
         this.loggedInUser = loggedInUser;
         this.lobbyID = lobbyID;
         this.chatService = chatService;
@@ -340,4 +352,40 @@ public class GameViewPresenter extends AbstractPresenter {
             }
         });
     }
+
+
+    /**
+     * Zeigt die Karten auf der Hand in der GameView an
+     *
+     * @author Devin S.
+     * @since Sprint5
+     */
+
+    @FXML
+    @Subscribe
+    public void ShowNewHand(DrawHandMessage message) {
+        ArrayList<Short> HandCardID = message.getCardsOnHand();
+
+        HandCardID.forEach((n) -> {
+            int counter = 0;
+            while (true) {
+                if (cardPane.getChildren().size() == counter) {
+                    String pfad = "file:Client/src/main/resources/cards/images/" + n + ".png";
+                    Image picture = new Image(pfad);
+                    ImageView card = new ImageView(picture);
+                    card.setFitHeight(107);
+                    card.setLayoutY(603);
+                    card.setLayoutX(171);
+                    card.setPreserveRatio(true);
+                    card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
+                    AnimationManagement.addToHand(card, counter, false);
+                    cardPane.getChildren().add(counter, card);
+                    break;
+                } else {
+                    counter++;
+                }
+            }
+        });
+    }
+
 }

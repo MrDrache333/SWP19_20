@@ -4,6 +4,9 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import de.uol.swp.common.game.exception.GameManagementException;
+import de.uol.swp.common.game.exception.GamePhaseException;
+import de.uol.swp.common.game.messages.GameExceptionMessage;
+import de.uol.swp.common.game.request.SkipPhaseRequest;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.server.AbstractService;
@@ -13,8 +16,7 @@ import de.uol.swp.server.usermanagement.AuthenticationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Der GameService. Verarbeitet alle Anfragen, die über den Bus gesendet werden.
@@ -65,19 +67,68 @@ public class GameService extends AbstractService {
     }
 
     /**
+     * Sendet eine Nachricht an alle Player eines Games
+     *
+     * @param gameID  die ID des Games
+     * @param message die Nachricht
+     * @author Julia
+     * @since Sprint5
+     */
+    public void sendToAllPlayers(UUID gameID, ServerMessage message) {
+        Optional<Game> game = gameManagement.getGame(gameID);
+        if (game.isPresent()) {
+            List<Player> players = game.get().getPlayground().getPlayers();
+            Set<User> users = new HashSet<>();
+            players.forEach(player -> users.add(player.getTheUserInThePlayer()));
+            message.setReceiver(authenticationService.getSessions(users));
+            post(message);
+        } else {
+            LOG.error("Es existiert kein Spiel mit der ID " + gameID);
+        }
+    }
+
+    /**
      * Startet das Spiel wenn die StartGameInternalMessage ankommt.
      *
      * @param msg InterneMessage mit der LobbyId um das Game zu starten.
-     * @author Ferit
+     * @author Ferit, Julia
      * @since Sprint5
      */
     @Subscribe
-    void startGame(StartGameInternalMessage msg) throws GameManagementException {
+    void startGame(StartGameInternalMessage msg) {
         try {
             gameManagement.createGame(msg.getLobbyID());
+            // TODO: GGf. Auslagern in createGame Method später?
+            gameManagement.getGame(msg.getLobbyID()).get().getPlayground().sendInitialHands();
+            gameManagement.getGame(msg.getLobbyID()).get().getPlayground().newTurn();
         } catch (GameManagementException e) {
             LOG.error("Es wurde eine GameManagementException geworfen: " + e.getMessage());
             // TODO: In späteren Sprints hier ggf. weiteres Handling?
+        }
+    }
+
+    /**
+     * Versucht die aktuelle Phase zu überspringen; falls dies fehlschlägt, wird eine Nachricht
+     * mit entsprechender Fehlermeldung gesendet
+     *
+     * @param msg SkipPhaseRequest
+     * @author Julia
+     * @since Sprint5
+     */
+    @Subscribe
+    public void onSkipPhaseRequest(SkipPhaseRequest msg) {
+        Optional<Game> game = gameManagement.getGame(msg.getGameID());
+        if (game.isPresent()) {
+            Playground playground = game.get().getPlayground();
+            if (playground.getActualPlayer().getTheUserInThePlayer().equals(msg.getUser())) {
+                try {
+                    playground.skipCurrentPhase();
+                } catch (GamePhaseException e) {
+                    sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(msg.getGameID(), e.getMessage()));
+                }
+            }
+        } else {
+            LOG.error("Es existiert kein Spiel mit der ID " + msg.getGameID());
         }
     }
 

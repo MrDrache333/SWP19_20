@@ -127,7 +127,6 @@ public class LobbyService extends AbstractService {
                 returnMessage = new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), null, null);
             }
             post(returnMessage);
-
         } else {
             LOG.error("Leaving lobby with ID" + msg.getLobbyID() + " failed");
         }

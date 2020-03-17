@@ -1,8 +1,8 @@
 package de.uol.swp.server.game.player;
 
-import de.uol.swp.server.game.card.Card;
-import de.uol.swp.server.game.card.MoneyCard;
-import de.uol.swp.server.game.card.ValueCard;
+import de.uol.swp.common.game.card.Card;
+import de.uol.swp.common.game.card.parser.CardPack;
+import de.uol.swp.common.game.card.parser.JsonCardParser;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,12 +42,13 @@ public class Deck {
      * @since Sprint5
      */
     private ArrayList<Card> initialiseStartDeck() {
+        CardPack cardsPack = new JsonCardParser().loadPack("Basispack");
         for (int i = 0; i < 3; i++) {
-            Card card = new ValueCard("", (short) 10);
+            Card card = cardsPack.getCards().getValueCards().get(0);
             cardsDeck.add(card);
         }
         for (int i = 0; i < 7; i++) {
-            Card card = new MoneyCard("", (short) 10);
+            Card card = cardsPack.getCards().getMoneyCards().get(0);
             cardsDeck.add(card);
         }
         return cardsDeck;
