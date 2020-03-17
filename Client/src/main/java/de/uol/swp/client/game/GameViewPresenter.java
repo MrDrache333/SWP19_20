@@ -55,7 +55,6 @@ public class GameViewPresenter extends AbstractPresenter {
 
     @FXML
     private Pane cardPane;
-
     @FXML
     private Pane chatView;
     @FXML
@@ -255,21 +254,22 @@ public class GameViewPresenter extends AbstractPresenter {
      */
 
     @FXML
+    @Subscribe
     public void ShowNewHand(DrawHandMessage message) {
         Platform.runLater(() -> {
-            if (lobbyID == message.getTheLobbyID()) {
+            if (lobbyID.equals(message.getTheLobbyID())) {
                 ArrayList<Short> HandCardID = message.getCardsOnHand();
                 HandCardID.forEach((n) -> {
                     String pfad = "file:Client/src/main/resources/cards/images/" + n + ".png";
                     Image picture = new Image(pfad);
                     ImageView card = new ImageView(picture);
                     card.setFitHeight(107);
-                    card.setLayoutY(603);
-                    card.setLayoutX(171);
+                    card.setLayoutY(0);
+                    card.setLayoutX(0);
                     card.setPreserveRatio(true);
                     card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
                     cardPane.getChildren().add(card);
-                    AnimationManagement.addToHand(card, cardPane.getChildren().size(), false);
+                    AnimationManagement.addToHand(card, cardPane.getChildren().size() - 1, false);
                 });
             }
         });

@@ -9,7 +9,6 @@ import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.LobbyPresenter;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.sound.SoundMediaPlayer;
-import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.lobby.message.KickUserMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.user.User;
@@ -143,19 +142,6 @@ public class GameManagement {
             loggedInUser = message.getUser();
         }
     }
-
-    /**
-     * Führt die ShowNewHand Methode im gameViewPresenter aus und übergibt die DrawHandMessage
-     *
-     * @param message die DrawHandMessage
-     * @author Devin
-     * @since Sprint6
-     */
-    @Subscribe
-    public void drawHand(DrawHandMessage message) {
-        gameViewPresenter.ShowNewHand(message);
-    }
-
 
     /**
      * Überprüft ob sich die aktuelle Stage im Vordergrund befindet
