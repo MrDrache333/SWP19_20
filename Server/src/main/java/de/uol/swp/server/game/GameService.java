@@ -98,8 +98,6 @@ public class GameService extends AbstractService {
     void startGame(StartGameInternalMessage msg) {
         try {
             gameManagement.createGame(msg.getLobbyID());
-            // TODO: GGf. Auslagern in createGame Method später?
-            gameManagement.getGame(msg.getLobbyID()).get().getPlayground().sendInitialHands();
             gameManagement.getGame(msg.getLobbyID()).get().getPlayground().newTurn();
         } catch (GameManagementException e) {
             LOG.error("Es wurde eine GameManagementException geworfen: " + e.getMessage());

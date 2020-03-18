@@ -73,6 +73,7 @@ class Playground {
         if (actualPlayer == null && nextPlayer == null) {
             actualPlayer = players.get(0);
             nextPlayer = players.get(1);
+            sendInitialHands();
         } else {
             //Spieler muss Clearphase durchlaufen haben
             if (actualPhase != Phase.Type.Clearphase) return;
