@@ -200,11 +200,11 @@ public class GameViewPresenter extends AbstractPresenter {
             // ein großes Bild der Karte wird hinzugefügt
             ImageView newCardImage = new ImageView(new Image(new File(getClass().getResource(PathCardLargeView).toExternalForm().replace("file:", "")).toURI().toString()));
             // setzt die Größe und die Position des Bildes. Das Bild ist im Vordergrund. Bild wird hinzugefügt
-            newCardImage.setFitHeight(170.0);
-            newCardImage.setFitWidth(160.0);
+            newCardImage.setFitHeight(225.0);
+            newCardImage.setFitWidth(150.0);
             newCardImage.toFront();
-            newCardImage.setLayoutX(420.0);
-            newCardImage.setLayoutY(190.0);
+            newCardImage.setLayoutX(425.0);
+            newCardImage.setLayoutY(155.0);
             gameView.getChildren().add(newCardImage);
             // es werden zwei Buttons hinzugefügt (zurück und kaufen)
             Button buy = new Button ("kaufen");
@@ -213,9 +213,9 @@ public class GameViewPresenter extends AbstractPresenter {
             gameView.getChildren().add(back);
             // Position der Buttons wird gesetzt
             buy.setLayoutX(432.0);
-            buy.setLayoutY(375.0);
+            buy.setLayoutY(385.0);
             back.setLayoutX(516.0);
-            back.setLayoutY(375.0);
+            back.setLayoutY(385.0);
             back.setMinWidth(52.0);
             // Aktion hinter dem Kauf-Button
             buy.setOnAction(event -> {
