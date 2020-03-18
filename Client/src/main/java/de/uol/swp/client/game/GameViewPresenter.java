@@ -8,8 +8,8 @@ import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.event.GameQuitEvent;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
-import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.game.messages.BuyCardMessage;
+import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
@@ -34,12 +34,9 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
 import java.util.*;
 
 /**
@@ -374,6 +371,15 @@ public class GameViewPresenter extends AbstractPresenter {
                     card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
                     cardPane.getChildren().add(card);
                     AnimationManagement.addToHand(card, cardPane.getChildren().size() - 1, false);
+                    List<ImageView> cards = new ArrayList<>();
+                    cards.add(card);
+                    card.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+                        AnimationManagement.playCard(card, 0);
+                        if (cards.contains(card)) {
+                            cards.remove(card);
+                            AnimationManagement.refactorHand(cards, false);
+                        }
+                    });
                 });
             }
         });

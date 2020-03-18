@@ -82,7 +82,8 @@
                 <Image url="@../cards/images/3_sm.png" />
             </image>
         </ImageView>
-        <ImageView fx:id="11" fitWidth="60.0" layoutX="314.0" layoutY="173.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="4" fitWidth="60.0" layoutX="314.0" layoutY="173.0" onMouseClicked="#onBuyableCardClicked"
+                   pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@../cards/images/4_sm.png" />
             </image>
