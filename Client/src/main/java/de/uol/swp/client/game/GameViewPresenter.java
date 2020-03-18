@@ -1,6 +1,5 @@
 package de.uol.swp.client.game;
 
-import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
@@ -58,11 +57,9 @@ public class GameViewPresenter extends AbstractPresenter {
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
     private UUID lobbyID;
     private User loggedInUser;
-    private EventBus eventBus;
 
     @FXML
     private Pane cardPane;
-
     @FXML
     private Pane chatView;
     @FXML
@@ -89,8 +86,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * @param injector          der Injector
      * @param gameManagement    das Game Management
      */
-    public GameViewPresenter(EventBus eventBus, User loggedInUser, UUID lobbyID, ChatService chatService, ChatViewPresenter chatViewPresenter, LobbyService lobbyService, UserService userService, Injector injector, GameManagement gameManagement) {
-        this.eventBus = eventBus;
+    public GameViewPresenter(User loggedInUser, UUID lobbyID, ChatService chatService, ChatViewPresenter chatViewPresenter, LobbyService lobbyService, UserService userService, Injector injector, GameManagement gameManagement) {
         this.loggedInUser = loggedInUser;
         this.lobbyID = lobbyID;
         this.chatService = chatService;
@@ -364,26 +360,21 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     @Subscribe
     public void ShowNewHand(DrawHandMessage message) {
-        ArrayList<Short> HandCardID = message.getCardsOnHand();
-
-        HandCardID.forEach((n) -> {
-            int counter = 0;
-            while (true) {
-                if (cardPane.getChildren().size() == counter) {
+        Platform.runLater(() -> {
+            if (lobbyID.equals(message.getTheLobbyID())) {
+                ArrayList<Short> HandCardID = message.getCardsOnHand();
+                HandCardID.forEach((n) -> {
                     String pfad = "file:Client/src/main/resources/cards/images/" + n + ".png";
                     Image picture = new Image(pfad);
                     ImageView card = new ImageView(picture);
                     card.setFitHeight(107);
-                    card.setLayoutY(603);
-                    card.setLayoutX(171);
+                    card.setLayoutY(0);
+                    card.setLayoutX(0);
                     card.setPreserveRatio(true);
                     card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
-                    AnimationManagement.addToHand(card, counter, false);
-                    cardPane.getChildren().add(counter, card);
-                    break;
-                } else {
-                    counter++;
-                }
+                    cardPane.getChildren().add(card);
+                    AnimationManagement.addToHand(card, cardPane.getChildren().size() - 1, false);
+                });
             }
         });
     }
