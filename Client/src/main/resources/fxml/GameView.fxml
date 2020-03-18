@@ -67,7 +67,6 @@
         <Pane fx:id="cardPane" layoutX="284.0" layoutY="598.0" prefHeight="116.0" prefWidth="433.0"/>
         <ImageView fitHeight="107.0" fitWidth="79.0" layoutX="171.0" layoutY="603.0" pickOnBounds="true"
                    preserveRatio="true"/>
-        <Pane fx:id="chatView" layoutX="949.0" layoutY="415.0" prefHeight="290.0" prefWidth="290.0" />
         <ImageView fx:id="1" fitWidth="60.0" layoutX="246.0" layoutY="173.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@../cards/images/1_sm.png" />
@@ -85,7 +84,7 @@
         </ImageView>
         <ImageView fx:id="11" fitWidth="60.0" layoutX="314.0" layoutY="173.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../cards/images/11_sm.png" />
+                <Image url="@../cards/images/4_sm.png" />
             </image>
         </ImageView>
         <ImageView fx:id="12" fitWidth="60.0" layoutX="310.0" layoutY="244.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
