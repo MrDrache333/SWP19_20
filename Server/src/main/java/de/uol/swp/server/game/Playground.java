@@ -1,6 +1,7 @@
 package de.uol.swp.server.game;
 
 import com.google.inject.Inject;
+import de.uol.swp.common.game.AbstractPlayground;
 import de.uol.swp.common.game.card.ActionCard;
 import de.uol.swp.common.game.card.Card;
 import de.uol.swp.common.game.exception.GamePhaseException;
@@ -24,7 +25,7 @@ import java.util.UUID;
 /**
  * Playground stellt das eigentliche Spielfeld dar
  */
-class Playground {
+class Playground extends AbstractPlayground {
 
     private static final Logger LOG = LogManager.getLogger(Playground.class);
 

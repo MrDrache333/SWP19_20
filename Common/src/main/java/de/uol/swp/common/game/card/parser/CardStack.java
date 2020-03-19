@@ -3,7 +3,6 @@ package de.uol.swp.common.game.card.parser;
 import com.google.gson.annotations.SerializedName;
 import de.uol.swp.common.game.card.ActionCard;
 import de.uol.swp.common.game.card.MoneyCard;
-import de.uol.swp.common.game.card.ReactionCard;
 import de.uol.swp.common.game.card.ValueCard;
 
 import java.util.ArrayList;
@@ -19,8 +18,6 @@ public class CardStack {
     private ArrayList<ValueCard> valueCards = new ArrayList<>();
     @SerializedName("ActionCards")
     private ArrayList<ActionCard> actionCards = new ArrayList<>();
-    @SerializedName("ReactionCards")
-    private ArrayList<ReactionCard> reactionCards = new ArrayList<>();
 
     /**
      * @return Objekt als String
@@ -37,10 +34,6 @@ public class CardStack {
         string.append("\tValueCards:\n");
         for (ValueCard card : valueCards) {
             string.append("\t\t").append(card.getId()).append(": ").append(card.getName()).append(", Value: ").append(card.getValue()).append(", Cost: ").append(card.getCosts()).append("\n");
-        }
-        string.append("\tReactionCards:\n");
-        for (ReactionCard card : reactionCards) {
-            string.append("\t\t").append(card.getId()).append(": ").append(card.getName()).append(", Cost: ").append(card.getCosts()).append("\n");
         }
         string.append("\tActionCards:\n");
         for (ActionCard card : actionCards) {
@@ -75,14 +68,5 @@ public class CardStack {
      */
     public ArrayList<ActionCard> getActionCards() {
         return actionCards;
-    }
-
-    /**
-     * Gibt die reaction cards zurück
-     *
-     * @return Die reaction cards
-     */
-    public ArrayList<ReactionCard> getReactionCards() {
-        return reactionCards;
     }
 }

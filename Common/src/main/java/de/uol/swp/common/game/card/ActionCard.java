@@ -16,4 +16,22 @@ public class ActionCard extends Card {
     public ActionCard(String name, short id, short costs) {
         super(Type.ActionCard, name, id, costs);
     }
+
+    /**
+     * Bestimmt den Aktionstyp einer Karte.
+     */
+    public enum ActionType {
+        /**
+         * Reaktionskarte.
+         */
+        Reaction,
+        /**
+         * Angriffskarte.
+         */
+        Attack,
+        /**
+         * Normale Aktionskarte.
+         */
+        Action
+    }
 }

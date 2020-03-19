@@ -48,14 +48,12 @@
         "cost": 8
       }
     ],
-    "ReactionCards": [
+    "ActionCards": [
       {
         "id": 7,
         "name": "Burggraben",
         "cost": 2
-      }
-    ],
-    "ActionCards": [
+      },
       {
         "id": 8,
         "name": "Dorf",

@@ -3,7 +3,6 @@ package de.uol.swp.common.game.card.parser;
 import com.google.gson.*;
 import de.uol.swp.common.game.card.ActionCard;
 import de.uol.swp.common.game.card.MoneyCard;
-import de.uol.swp.common.game.card.ReactionCard;
 import de.uol.swp.common.game.card.ValueCard;
 
 import java.io.FileNotFoundException;
@@ -36,7 +35,6 @@ public class JsonCardParser {
     public CardPack loadPack(String packname) {
         GsonBuilder gsonobj = new GsonBuilder().
                 registerTypeAdapter(ActionCard.class, new ActionCardDeSerializer()).
-                registerTypeAdapter(ReactionCard.class, new ReactionCardDeSerializer()).
                 registerTypeAdapter(ValueCard.class, new ValueCardDeSerializer()).
                 registerTypeAdapter(MoneyCard.class, new MoneyCardDeSerializer());
 
@@ -57,15 +55,6 @@ class ActionCardDeSerializer implements JsonDeserializer<ActionCard> {
     public ActionCard deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject obj = json.getAsJsonObject();
         return new ActionCard(obj.getAsJsonPrimitive("name").getAsString(), obj.getAsJsonPrimitive("id").getAsShort(), obj.getAsJsonPrimitive("cost").getAsShort());
-    }
-}
-
-class ReactionCardDeSerializer implements JsonDeserializer<ReactionCard> {
-
-    @Override
-    public ReactionCard deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        JsonObject obj = json.getAsJsonObject();
-        return new ReactionCard(obj.getAsJsonPrimitive("name").getAsString(), obj.getAsJsonPrimitive("id").getAsShort(), obj.getAsJsonPrimitive("cost").getAsShort());
     }
 }
 
