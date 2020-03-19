@@ -259,6 +259,7 @@ public class GameViewPresenter extends AbstractPresenter {
         Platform.runLater(() -> {
             if (lobbyID.equals(message.getTheLobbyID())) {
                 ArrayList<Short> HandCardID = message.getCardsOnHand();
+                ArrayList<Short> HandCards = new ArrayList<>();
                 HandCardID.forEach((n) -> {
                     String pfad = "file:Client/src/main/resources/cards/images/" + n + ".png";
                     Image picture = new Image(pfad);
@@ -269,7 +270,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     card.setPreserveRatio(true);
                     card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
                     gameView.getChildren().add(card);
-                    AnimationManagement.addToHand(card, gameView.getChildren().size() - 1, false);
+                    AnimationManagement.addToHand(card, message.getCardsOnHand().size() - 1, false);
                 });
             }
         });
