@@ -124,4 +124,19 @@ public interface Lobby {
      * @author Rike Hochheiden
      */
     String getLobbyPassword();
+
+    /**
+     * Gibt an ob in der Lobby gerade ein Spiel läuft
+     *
+     * @return true wenn ein Spiel aktiv ist, sonst false
+     */
+    boolean getInGame();
+
+    /**
+     * Setzt ob in der Lobby gerade ein Spiel läuft
+     *
+     * @param inGame true wenn ein Spiel aktiv ist, sonst false
+     */
+    void setInGame(boolean inGame);
+
 }
