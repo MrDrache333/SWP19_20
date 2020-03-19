@@ -259,18 +259,19 @@ public class GameViewPresenter extends AbstractPresenter {
         Platform.runLater(() -> {
             if (lobbyID.equals(message.getTheLobbyID())) {
                 ArrayList<Short> HandCardID = message.getCardsOnHand();
-                ArrayList<Short> HandCards = new ArrayList<>();
+                ArrayList<ImageView> HandCards = new ArrayList<>();
                 HandCardID.forEach((n) -> {
                     String pfad = "file:Client/src/main/resources/cards/images/" + n + ".png";
                     Image picture = new Image(pfad);
                     ImageView card = new ImageView(picture);
                     card.setFitHeight(107);
-                    card.setLayoutY(598.0);
-                    card.setLayoutX(284.0);
+                    card.setLayoutY(603);
+                    card.setLayoutX(171);
                     card.setPreserveRatio(true);
                     card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
                     gameView.getChildren().add(card);
-                    AnimationManagement.addToHand(card, message.getCardsOnHand().size() - 1, false);
+                    HandCards.add(card);
+                    AnimationManagement.addToHand(card, HandCards.size(), false);
                 });
             }
         });
