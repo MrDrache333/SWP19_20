@@ -52,7 +52,7 @@
                 <Image url="@../images/ShopTeppich.jpg"/>
             </image>
         </ImageView>
-        <ImageView fitHeight="116.0" fitWidth="290.0" layoutX="356.0" layoutY="415.0" pickOnBounds="true"
+        <ImageView fitHeight="116.0" fitWidth="290.0" layoutX="356.0" layoutY="383.0" pickOnBounds="true"
                    preserveRatio="true">
             <image>
                 <Image url="@../images/Aktionszone.png"/>

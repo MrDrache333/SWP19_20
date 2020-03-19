@@ -60,8 +60,6 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     private Pane chatView;
     @FXML
-    private Pane gameView;
-    @FXML
     private ImageView shopTeppich;
     @FXML
     private ListView<String> usersView;
@@ -167,6 +165,7 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     public void onGiveUpButtonPressed(ActionEvent actionEvent) {
         showAlert(Alert.AlertType.CONFIRMATION, " ", "Möchtest du wirklich aufgeben?");
+    }
 
     /**
      * Ereignis das ausgeführt wird, wenn auf eine Karte im Shop angeklickt wird.
@@ -368,8 +367,8 @@ public class GameViewPresenter extends AbstractPresenter {
                     card.setLayoutX(284.0);
                     card.setPreserveRatio(true);
                     card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
-                    cardPane.getChildren().add(card);
-                    AnimationManagement.addToHand(card, cardPane.getChildren().size() - 1, false);
+                    gameView.getChildren().add(card);
+                    AnimationManagement.addToHand(card, message.getCardsOnHand().size() - 1, false);
                     List<ImageView> cards = new ArrayList<>();
                     cards.add(card);
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {

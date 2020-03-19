@@ -12,14 +12,14 @@ import java.util.List;
 
 public class AnimationManagement {
 
-    private static final double HAND_X = -700;
-    private static final double HAND_Y = 600;
+    private static final double HAND_X = 284;
+    private static final double HAND_Y = 598;
 
     private static final double ABLAGE_X = 733 + 30;
     private static final double ABLAGE_Y = 538 + 92;
 
-    private static final double ACTION_ZONE_X = 356;
-    private static final double ACTION_ZONE_Y = 415;
+    private static final double ACTION_ZONE_X = 370;
+    private static final double ACTION_ZONE_Y = 421;
 
     private static final double ACTION_ZONE_OPPONENT_X = ACTION_ZONE_X;
     private static final double ACTION_ZONE_OPPONENT_Y = 31;
