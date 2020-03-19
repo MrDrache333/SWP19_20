@@ -13,7 +13,7 @@ public class ReactionCard extends Card {
      * @author KenoO
      * @since Sprint 5
      */
-    public ReactionCard(String name, short id) {
-        super(Type.ReactionCard, name, id);
+    public ReactionCard(String name, short id, short costs) {
+        super(Type.ReactionCard, name, id, costs);
     }
 }
