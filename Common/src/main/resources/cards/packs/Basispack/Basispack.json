@@ -97,7 +97,24 @@
       {
         "id": 16,
         "name": "Werkstatt",
-        "cost": 3
+        "cost": 3,
+        "actions": [
+          {
+            "ChooseCard": {
+              "hasWorth": {
+                "min": 0,
+                "max": 4
+              },
+              "cardSource": "Buy",
+              "nextAction": {
+                "MoveCard": {
+                  "cardSource": "Buy",
+                  "cardDestination": "Discard"
+                }
+              }
+            }
+          }
+        ]
       },
       {
         "id": 17,
@@ -162,7 +179,52 @@
       {
         "id": 29,
         "name": "Spion",
-        "cost": 4
+        "cost": 4,
+        "actions": [
+          {
+            "AddCapablePlayerActivity": {
+              "count": 1,
+              "activity": "Buy"
+            }
+          },
+          {
+            "AddCapablePlayerActivity": {
+              "count": 1,
+              "activity": "Action"
+            }
+          },
+          {
+            "GetCard": {
+              "executeType": "All",
+              "count": 1,
+              "CardSource": "Draw",
+              "hideCardDuringAction": false,
+              "nextAction": {
+                "ForEach": {
+                  "actions": [
+                    {
+                      "ShowCard": {}
+                    },
+                    {
+                      "ChooseNextAction": [
+                        {
+                          "Move": {
+                            "CardDestination": "Discard"
+                          }
+                        },
+                        {
+                          "Move": {
+                            "CardDestination": "Draw"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
       },
       {
         "id": 31,

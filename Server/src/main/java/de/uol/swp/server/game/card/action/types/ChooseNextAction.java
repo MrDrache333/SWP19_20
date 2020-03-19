@@ -11,6 +11,7 @@ import java.util.ArrayList;
 public class ChooseNextAction extends SimpleCardAction {
 
     private ArrayList<CardAction> nextActions;
+    private CardAction choosenAction;   //Ausgewählte Aktion
 
     /**
      * Erstellt eine neue ChooseNextAction-Aktion
@@ -23,21 +24,13 @@ public class ChooseNextAction extends SimpleCardAction {
         this.nextActions = nextActions;
     }
 
-    /**
-     * Erstellt eine neue ChooseNextAction-Aktion
-     *
-     * @param nextAction Die nächste Aktion
-     * @author KenoO
-     * @since Sprint 6
-     */
-    public ChooseNextAction(CardAction nextAction) {
-        nextActions = new ArrayList<>();
-        nextActions.add(nextAction);
-    }
-
     @Override
     public boolean execute() {
         //TODO
         return false;
+    }
+
+    public CardAction getChoosenAction() {
+        return choosenAction;
     }
 }
