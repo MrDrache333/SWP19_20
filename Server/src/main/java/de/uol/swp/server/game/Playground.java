@@ -79,9 +79,9 @@ class Playground {
             int index = players.indexOf(nextPlayer);
             actualPlayer = nextPlayer;
             nextPlayer = players.get(++index % players.size());
+            sendPlayersHand();
         }
 
-        sendPlayersHand();
         actualPhase = Phase.Type.ActionPhase;
         if (checkForActionCard()) {
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartActionPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
