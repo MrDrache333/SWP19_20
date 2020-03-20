@@ -12,6 +12,7 @@ import de.uol.swp.common.game.messages.BuyCardMessage;
 import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.game.messages.PlayCardMessage;
 import de.uol.swp.common.game.request.BuyCardRequest;
+import de.uol.swp.common.game.request.PlayCardRequest;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
@@ -286,7 +287,7 @@ public class GameViewPresenter extends AbstractPresenter {
         if (msg.getLobbyID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
             if (msg.isPlayCard()) {
                 if (msg.isSmallSpace()) {
-                    AnimationManagement.refactorHand(msg.getHandCards(), !msg.isSmallSpace());
+                    AnimationManagement.refactorHand(msg.getHandCards(), false);
                 } else {
                     AnimationManagement.playCard(msg.getCardImage(), msg.getCount());
                     if (msg.getHandCards().contains(msg.getCardImage())) {
@@ -351,13 +352,8 @@ public class GameViewPresenter extends AbstractPresenter {
                     HandCards.add(card);
                     AnimationManagement.addToHand(card, HandCards.size() - 1, false);
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-                        //TODO: Zeile 407 Auskommentierung rückgängig machen; Zeile 408-411 entfernen - wenn Problem bei der Animation behoben
-                        //PlayCardRequest request = new PlayCardRequest(lobbyID, loggedInUser, HandCardID.get(n), card, HandCards, false);
-                        AnimationManagement.playCard(card, 0);
-                        if (HandCards.contains(card)) {
-                            HandCards.remove(card);
-                            AnimationManagement.refactorHand(HandCards, false);
-                        }
+                        PlayCardRequest request = new PlayCardRequest(lobbyID, loggedInUser, HandCardID.get(n), card, HandCards, false);
+                        eventBus.post(request);
                     });
                 });
             }
