@@ -349,7 +349,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
                     gameView.getChildren().add(card);
                     HandCards.add(card);
-                    AnimationManagement.addToHand(card, HandCards.size(), false);
+                    AnimationManagement.addToHand(card, HandCards.size() - 1, false);
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
                         //TODO: Zeile 407 Auskommentierung rückgängig machen; Zeile 408-411 entfernen - wenn Problem bei der Animation behoben
                         //PlayCardRequest request = new PlayCardRequest(lobbyID, loggedInUser, HandCardID.get(n), card, HandCards, false);
