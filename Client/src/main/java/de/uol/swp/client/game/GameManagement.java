@@ -48,11 +48,13 @@ public class GameManagement {
 
     private Scene gameScene;
     private Scene lobbyScene;
+    private Scene gameOverScene;
 
     private Injector injector;
     private EventBus eventBus;
 
     private Stage primaryStage;
+    private Stage gameOverStage;
 
 
     /**
@@ -143,6 +145,23 @@ public class GameManagement {
         }
     }
 
+    //TODO: Subscribe Methode für Gewinner des Spiels
+
+    public void showGameOverView(User loggedInUser, String winner) {
+        if (loggedInUser.getUsername().equals(this.loggedInUser.getUsername())) {
+            initGameOverView(this.loggedInUser, winner);
+            showScene(gameOverScene, "Spielergebnis");
+            Platform.runLater(() -> {
+                gameOverStage.setScene(gameOverScene);
+                gameOverStage.setTitle("Spielergebnis");
+                gameOverStage.setResizable(false);
+                gameOverStage.show();
+                gameOverStage.toFront();
+                gameOverStage.setOnCloseRequest(windowEvent -> gameOverStage.close());
+            });
+        }
+    }
+
     /**
      * Überprüft ob sich die aktuelle Stage im Vordergrund befindet
      *
@@ -212,6 +231,13 @@ public class GameManagement {
             Parent rootPane = initPresenter(lobbyPresenter, LobbyPresenter.fxml);
             lobbyScene = new Scene(rootPane, 900, 750);
             lobbyScene.getStylesheets().add(styleSheet);
+        }
+    }
+
+    private void initGameOverView(User user, String winner) {
+        if (gameOverScene == null) {
+            Parent rootPane = initPresenter(new GameOverViewPresenter(user, winner), GameOverViewPresenter.fxml);
+            gameOverScene = new Scene(rootPane, 420, 280);
         }
     }
 
