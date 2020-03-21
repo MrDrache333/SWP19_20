@@ -32,7 +32,9 @@ public class ServerModule extends AbstractModule {
     protected void configure() {
         // All usermanagements and eventbusses must be the same instance (!)
         bind(UserManagement.class).toInstance(userManagement);
+        bind(ChatManagement.class).toInstance(chatManagement);
         bind(LobbyManagement.class).toInstance(lobbyManagement);
+        bind(ChatManagement.class).toInstance(chatManagement);
         bind(GameManagement.class).toInstance(gameManagement);
         bind(UserStore.class).toInstance(store);
         bind(EventBus.class).toInstance(bus);

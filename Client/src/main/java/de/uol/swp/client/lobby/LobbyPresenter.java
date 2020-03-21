@@ -153,7 +153,6 @@ public class LobbyPresenter extends AbstractPresenter {
         updateUsersList();
 
         chooseMaxPlayer.setValue(4);
-
     }
 
     /**
@@ -246,7 +245,6 @@ public class LobbyPresenter extends AbstractPresenter {
      * @author Keno O.
      * @since Sprint3
      */
-
     @Subscribe
     private void onReceiveAllUsersInLobby(AllOnlineUsersInLobbyResponse response) {
         if (response.getLobbyID().equals(lobbyID)) {
@@ -376,8 +374,10 @@ public class LobbyPresenter extends AbstractPresenter {
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
         if (!message.getLobbyID().equals(lobbyID)) return;
         LOG.debug("User " + message.getUser().getUsername() + " left the Lobby");
-        gameOwner = message.getGameOwner();
-        userLeftLobby(message.getUser().getUsername(), false);
+        if (message.getLobby() != null) {
+            gameOwner = message.getGameOwner();
+            userLeftLobby(message.getUser().getUsername(), false);
+        }
     }
 
     /**

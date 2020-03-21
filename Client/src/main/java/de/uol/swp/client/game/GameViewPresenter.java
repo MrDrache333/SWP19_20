@@ -7,6 +7,7 @@ import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
+import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
@@ -22,12 +23,15 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -47,6 +51,9 @@ public class GameViewPresenter extends AbstractPresenter {
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
     private UUID lobbyID;
     private User loggedInUser;
+
+    @FXML
+    private Pane gameView;
     @FXML
     private Pane chatView;
     @FXML
@@ -148,6 +155,7 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     public void onGiveUpButtonPressed(ActionEvent actionEvent) {
         showAlert(Alert.AlertType.CONFIRMATION, " ", "Möchtest du wirklich aufgeben?");
+
     }
 
     /**
@@ -230,4 +238,37 @@ public class GameViewPresenter extends AbstractPresenter {
             }
         });
     }
+
+
+    /**
+     * Zeigt die Karten auf der Hand in der GameView an
+     *
+     * @author Devin S.
+     * @since Sprint5
+     */
+
+    @FXML
+    @Subscribe
+    public void ShowNewHand(DrawHandMessage message) {
+        Platform.runLater(() -> {
+            if (lobbyID.equals(message.getTheLobbyID())) {
+                ArrayList<Short> HandCardID = message.getCardsOnHand();
+                ArrayList<ImageView> HandCards = new ArrayList<>();
+                HandCardID.forEach((n) -> {
+                    String pfad = "file:Client/src/main/resources/cards/images/" + n + ".png";
+                    Image picture = new Image(pfad);
+                    ImageView card = new ImageView(picture);
+                    card.setFitHeight(107);
+                    card.setLayoutY(603);
+                    card.setLayoutX(171);
+                    card.setPreserveRatio(true);
+                    card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
+                    gameView.getChildren().add(card);
+                    HandCards.add(card);
+                    AnimationManagement.addToHand(card, HandCards.size(), false);
+                });
+            }
+        });
+    }
+
 }
