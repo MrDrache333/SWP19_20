@@ -8,10 +8,8 @@ import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.event.GameQuitEvent;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
-import de.uol.swp.common.game.messages.DrawHandMessage;
-import de.uol.swp.common.game.messages.StartActionPhaseMessage;
-import de.uol.swp.common.game.messages.StartBuyPhaseMessage;
-import de.uol.swp.common.game.messages.StartClearPhaseMessage;
+import de.uol.swp.common.game.exception.GamePhaseException;
+import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.request.SkipPhaseRequest;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
@@ -78,9 +76,14 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @FXML
     public void onSkipPhaseButtonPressed(ActionEvent actionEvent) {
-        String currentPhase = phase.toString();
-        SkipPhaseRequest request = new SkipPhaseRequest(loggedInUser, lobbyID, currentPhase);
-        eventBus.post(request);
+        try {
+            SkipPhaseRequest request = new SkipPhaseRequest(loggedInUser, lobbyID);
+            eventBus.post(request);
+        } catch (GamePhaseException exception) {
+            GameExceptionMessage message = new GameExceptionMessage(lobbyID, exception.getMessage());
+            eventBus.post(message);
+        }
+
     }
 
     /**
@@ -205,6 +208,7 @@ public class GameViewPresenter extends AbstractPresenter {
             lobbyService.retrieveAllUsersInLobby(lobbyID);
             LOG.debug("New user in Lobby, LobbyService is retrieving users");
         }
+
     }
 
     /**
