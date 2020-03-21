@@ -212,6 +212,7 @@ public class GameManagement {
                 gameOverStage.show();
                 gameOverStage.toFront();
                 gameOverStage.setOnCloseRequest(windowEvent -> gameOverStage.close());
+                primaryStage.close();
             });
         }
     }

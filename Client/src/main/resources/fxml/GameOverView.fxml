@@ -24,7 +24,7 @@
     <ImageView fx:id="trophy" fitWidth="35.0" layoutX="233.0" layoutY="175.0" preserveRatio="true">
         <Image url="@../images/trophy.png"/>
     </ImageView>
-    <HBox alignment="BASELINE_RIGHT" layoutX="270.0" layoutY="250.0" prefHeight="20" prefWidth="150" spacing="7.0">
+    <HBox alignment="BASELINE_RIGHT" layoutX="265.0" layoutY="245.0" prefHeight="20" prefWidth="150" spacing="7.0">
         <children>
             <Button layoutX="280.0" layoutY="250.0" mnemonicParsing="false" onAction="#onAgainButtonPressed"
                     text="nochmal"/>
