@@ -152,7 +152,6 @@ class Playground {
         if (this.players.get(thePositionInList).getPlayerName().equals(theGivingUpUser.getUsername()) && wantsToGiveUp && lobbyID.equals(this.theSpecificLobbyID)) {
             latestGivedUpPlayer = this.players.get(thePositionInList);
             this.players.remove(thePositionInList);
-            success = true;
             return true;
         } // TODO: Wenn Spielelogik weiter implementiert wird und ein Spieler aufgibt, Handling implementieren wie mit aufgegeben Spielern weiter umgegangen wird.
         else {
