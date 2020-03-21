@@ -156,7 +156,6 @@ class Playground {
             return true;
         } // TODO: Wenn Spielelogik weiter implementiert wird und ein Spieler aufgibt, Handling implementieren wie mit aufgegeben Spielern weiter umgegangen wird.
         else {
-            success = false;
             return success;
         }
     }
