@@ -165,6 +165,22 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
+     * Button zum Testen der Anzeige, dass man verloren hat.
+     */
+    @FXML
+    public void onLoserButtonPressed(ActionEvent actionEvent) {
+        gameManagement.showGameOverView(loggedInUser, "test5");
+    }
+
+    /**
+     * Button zum Testen der Anzeige, dass man gewonnen hat.
+     */
+    @FXML
+    public void onWinnerButtonPressed(ActionEvent actionEvent) {
+        gameManagement.showGameOverView(loggedInUser, loggedInUser.getUsername());
+    }
+
+    /**
      * Wird bei Erstellung aufgerufen und initialisiert UserList.
      *
      * @author Marvin
@@ -280,14 +296,6 @@ public class GameViewPresenter extends AbstractPresenter {
         });
     }
 */
-    @FXML
-    public void onLoserButtonPressed(ActionEvent actionEvent) {
-        gameManagement.showGameOverView(loggedInUser, "test5");
-    }
 
-    @FXML
-    public void onWinnerButtonPressed(ActionEvent actionEvent) {
-        gameManagement.showGameOverView(loggedInUser, loggedInUser.getUsername());
-    }
 
 }

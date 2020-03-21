@@ -9,6 +9,7 @@ import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.LobbyPresenter;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.sound.SoundMediaPlayer;
+import de.uol.swp.common.game.messages.GameOverMessage;
 import de.uol.swp.common.lobby.message.KickUserMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.user.User;
@@ -76,12 +77,13 @@ public class GameManagement {
         this.loggedInUser = loggedInUser;
         this.injector = injector;
         this.primaryStage = new Stage();
+        this.gameOverStage = new Stage();
         this.lobbyName = lobbyName;
         this.eventBus = eventBus;
         this.gameOwner = gameOwner;
 
         this.chatViewPresenter = new ChatViewPresenter(lobbyName, id, loggedInUser, ChatViewPresenter.THEME.Light, chatService, injector, this);
-        this.gameViewPresenter = new GameViewPresenter(eventBus,loggedInUser, id, chatService, chatViewPresenter, lobbyService, userService, injector, this);
+        this.gameViewPresenter = new GameViewPresenter(eventBus, loggedInUser, id, chatService, chatViewPresenter, lobbyService, userService, injector, this);
         this.lobbyPresenter = new LobbyPresenter(loggedInUser, lobbyName, id, chatService, chatViewPresenter, lobbyService, userService, injector, gameOwner, this, eventBus);
 
         eventBus.register(chatViewPresenter);
@@ -145,20 +147,17 @@ public class GameManagement {
         }
     }
 
-    //TODO: Subscribe Methode für Gewinner des Spiels
-
-    public void showGameOverView(User loggedInUser, String winner) {
-        if (loggedInUser.getUsername().equals(this.loggedInUser.getUsername())) {
-            initGameOverView(this.loggedInUser, winner);
-            showScene(gameOverScene, "Spielergebnis");
-            Platform.runLater(() -> {
-                gameOverStage.setScene(gameOverScene);
-                gameOverStage.setTitle("Spielergebnis");
-                gameOverStage.setResizable(false);
-                gameOverStage.show();
-                gameOverStage.toFront();
-                gameOverStage.setOnCloseRequest(windowEvent -> gameOverStage.close());
-            });
+    /**
+     * Ruft die showGameOverView-Methode auf, wenn das Spiel vorbei ist.
+     *
+     * @param message die GameOverMessage
+     * @author Anna
+     * @since Sprint6
+     */
+    @Subscribe
+    public void onGameOverMessage(GameOverMessage message) {
+        if (message.getGameID().equals(id)) {
+            showGameOverView(loggedInUser, message.getWinner());
         }
     }
 
@@ -196,6 +195,28 @@ public class GameManagement {
     }
 
     /**
+     * Methode zum Anzeigen der GameOverView.
+     *
+     * @param loggedInUser der aktuelle Nutzer
+     * @param winner       der Gewinner des Spiels
+     * @author Anna
+     * @since Sprint6
+     */
+    public void showGameOverView(User loggedInUser, String winner) {
+        if (loggedInUser.getUsername().equals(this.loggedInUser.getUsername())) {
+            initGameOverView(this.loggedInUser, winner);
+            Platform.runLater(() -> {
+                gameOverStage.setScene(gameOverScene);
+                gameOverStage.setTitle("Spielergebnis");
+                gameOverStage.setResizable(false);
+                gameOverStage.show();
+                gameOverStage.toFront();
+                gameOverStage.setOnCloseRequest(windowEvent -> gameOverStage.close());
+            });
+        }
+    }
+
+    /**
      * Methode zum Schließen der aktuellen Stage
      *
      * @author Keno O.
@@ -203,6 +224,16 @@ public class GameManagement {
      */
     public void close() {
         Platform.runLater(() -> primaryStage.close());
+    }
+
+    /**
+     * Methode zum Schließen der GameOverStage.
+     *
+     * @author Anna
+     * @since Sprint6
+     */
+    public void closeGameOverView() {
+        Platform.runLater(() -> gameOverStage.close());
     }
 
     /**
@@ -234,10 +265,20 @@ public class GameManagement {
         }
     }
 
+    /**
+     * GameOverView wird initalisiert und deklariert.
+     * Neue Szene für das Fenster mit dem Spielergebnis wird erstellt und gespeichert
+     *
+     * @param user   der User, dem das Fenster angezeigt wird
+     * @param winner der Gewinner des Spiels
+     * @author Anna
+     * @since Sprint6
+     */
     private void initGameOverView(User user, String winner) {
         if (gameOverScene == null) {
-            Parent rootPane = initPresenter(new GameOverViewPresenter(user, winner), GameOverViewPresenter.fxml);
+            Parent rootPane = initPresenter(new GameOverViewPresenter(this, user, winner), GameOverViewPresenter.fxml);
             gameOverScene = new Scene(rootPane, 420, 280);
+            lobbyScene.getStylesheets().add(styleSheet);
         }
     }
 
@@ -288,5 +329,27 @@ public class GameManagement {
             primaryStage.show();
             new SoundMediaPlayer(SoundMediaPlayer.Sound.Window_Opened, SoundMediaPlayer.Type.Sound).play();
         });
+    }
+
+    /**
+     * Getter für die ID des Spiels bzw. der Lobby.
+     *
+     * @return die ID
+     * @author Anna
+     * @aince Sprint6
+     */
+    public UUID getID() {
+        return this.id;
+    }
+
+    /**
+     * Getter für den LobbyService.
+     *
+     * @return der LobbyService
+     * @author Anna
+     * @aince Sprint6
+     */
+    public LobbyService getLobbyService() {
+        return this.lobbyPresenter.getLobbyService();
     }
 }
