@@ -53,9 +53,7 @@ public class GameManagement {
         Optional<String> lobbyName = lobbyManagement.getName(lobbyID);
         if (lobbyName.isPresent()) {
             Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyID);
-            chatManagement.createChat(lobbyID.toString());
             Optional<Chat> chat = chatManagement.getChat(lobbyID.toString());
-
 
             if (lobby.isPresent()) {
                 LOG.debug("Lobby is Present!");

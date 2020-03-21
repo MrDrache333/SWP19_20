@@ -27,7 +27,7 @@ public class AnimationTest extends Application {
 
         Class<?> clazz = this.getClass();
         InputStream input = clazz.getResourceAsStream("/images/karte_gross.png");
-        Image image = new javafx.scene.image.Image(input);
+        Image image = new Image(input);
 
         //Karte die der Gegenspieler spielt
         ImageView cardToPlayByOpponent = new ImageView();
@@ -38,7 +38,7 @@ public class AnimationTest extends Application {
         //Fixpunkt, zeigt an wo die Hand des Spielers beginnt
         Pane hand = new Pane();
         hand.setLayoutX(284);
-        hand.setLayoutY(541);
+        hand.setLayoutY(598);
         hand.setPrefSize(10, 10);
         hand.setStyle("-fx-background-color: blue");
 
@@ -54,8 +54,8 @@ public class AnimationTest extends Application {
         cardToPlay.setImage(image);
         cardToPlay.setFitHeight(110);
         cardToPlay.setFitWidth(60);
-        cardToPlay.setX(150);
-        cardToPlay.setY(538);
+        cardToPlay.setLayoutX(150);
+        cardToPlay.setLayoutY(538);
 
         //Fixpunkt, zeigt an wo der Müll beginnt
         Pane trash = new Pane();
@@ -69,16 +69,16 @@ public class AnimationTest extends Application {
         cardToBuy.setImage(image);
         cardToBuy.setFitHeight(110);
         cardToBuy.setFitWidth(60);
-        cardToBuy.setX(500);
-        cardToBuy.setY(300);
+        cardToBuy.setLayoutX(500);
+        cardToBuy.setLayoutY(300);
 
         //Karte die der Spieler auf den Müll legt
         ImageView cardToDelete = new ImageView();
         cardToDelete.setImage(image);
         cardToDelete.setFitHeight(110);
         cardToDelete.setFitWidth(60);
-        cardToDelete.setX(150);
-        cardToDelete.setY(538);
+        cardToDelete.setLayoutX(150);
+        cardToDelete.setLayoutY(538);
 
         //Fixpunkt, zeigt an wo das Deck beginnt
         Pane deck = new Pane();
@@ -101,34 +101,34 @@ public class AnimationTest extends Application {
         c.setPrefSize(10, 10);
         c.setStyle("-fx-background-color: magenta");
 
-        //Karte die der Spieler ausspielt
+        //Karte die der Spieler auf der Hand hat
         ImageView c1 = new ImageView();
         c1.setImage(image);
         c1.setFitHeight(110);
         c1.setFitWidth(60);
-        c1.setX(150);
-        c1.setY(538);
-        //Karte die der Spieler ausspielt
+        c1.setLayoutX(150);
+        c1.setLayoutY(538);
+        //Karte die der Spieler auf der Hand hat
         ImageView c2 = new ImageView();
         c2.setImage(image);
         c2.setFitHeight(110);
         c2.setFitWidth(60);
-        c2.setX(150);
-        c2.setY(538);
-        //Karte die der Spieler ausspielt
+        c2.setLayoutX(150);
+        c2.setLayoutY(538);
+        //Karte die der Spieler auf der Hand hat
         ImageView c3 = new ImageView();
         c3.setImage(image);
         c3.setFitHeight(110);
         c3.setFitWidth(60);
-        c3.setX(150);
-        c3.setY(538);
-        //Karte die der Spieler ausspielt
+        c3.setLayoutX(150);
+        c3.setLayoutY(538);
+        //Karte die der Spieler auf der Hand hat
         ImageView c4 = new ImageView();
         c4.setImage(image);
         c4.setFitHeight(110);
         c4.setFitWidth(60);
-        c4.setX(150);
-        c4.setY(538);
+        c4.setLayoutX(150);
+        c4.setLayoutY(538);
 
         Pane bg = new Pane(c1, c2, c3, c4, cardToPlayByOpponent, cardToPlay, cardToBuy, cardToDelete, hand, actionZone, trash, deck, ablage, c);
 
