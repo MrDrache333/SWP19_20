@@ -9,6 +9,10 @@ import de.uol.swp.client.game.event.GameQuitEvent;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.common.game.messages.DrawHandMessage;
+import de.uol.swp.common.game.messages.StartActionPhaseMessage;
+import de.uol.swp.common.game.messages.StartBuyPhaseMessage;
+import de.uol.swp.common.game.messages.StartClearPhaseMessage;
+import de.uol.swp.common.game.request.SkipPhaseRequest;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
@@ -64,6 +68,20 @@ public class GameViewPresenter extends AbstractPresenter {
     private ChatViewPresenter chatViewPresenter;
     private Injector injector;
     private GameManagement gameManagement;
+    private Phases phase;
+
+    /**
+     * Skips die aktuelle Phase des Spielers zur nächsten.
+     *
+     * @author Devin S.
+     * @since Sprint6
+     */
+    @FXML
+    public void onSkipPhaseButtonPressed(ActionEvent actionEvent) {
+        String currentPhase = phase.toString();
+        SkipPhaseRequest request = new SkipPhaseRequest(loggedInUser, lobbyID, currentPhase);
+        eventBus.post(request);
+    }
 
     /**
      * Instantiiert einen neuen GameView Presenter.
@@ -244,6 +262,35 @@ public class GameViewPresenter extends AbstractPresenter {
             }
         });
     }
+
+    /**
+     * Skips die aktuelle Phase des Spielers zur nächsten.
+     *
+     * @author Devin S.
+     * @since Sprint6
+     */
+    @Subscribe
+    public void currentPhase(StartActionPhaseMessage message) {
+        if (lobbyID.equals(message.getGameID()) && loggedInUser.equals(message.getUser())) {
+            phase = Phases.ActionPhase;
+        }
+    }
+
+    @Subscribe
+    public void currentPhase(StartBuyPhaseMessage message) {
+        if (lobbyID.equals(message.getGameID()) && loggedInUser.equals(message.getUser())) {
+            phase = Phases.BuyPhase;
+        }
+    }
+
+    @Subscribe
+    public void currentPhase(StartClearPhaseMessage message) {
+        if (lobbyID.equals(message.getGameID()) && loggedInUser.equals(message.getUser())) {
+            phase = Phases.ClearPhase;
+        }
+    }
+
+    private enum Phases {ActionPhase, BuyPhase, ClearPhase}
 
 
     /**

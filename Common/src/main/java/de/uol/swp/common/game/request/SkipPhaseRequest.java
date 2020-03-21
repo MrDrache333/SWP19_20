@@ -16,10 +16,12 @@ public class SkipPhaseRequest extends AbstractRequestMessage {
     private static final long serialVersionUID = -1742210033562469726L;
     private User user;
     private UUID gameID;
+    private String phase;
 
-    public SkipPhaseRequest(User user, UUID gameID) {
+    public SkipPhaseRequest(User user, UUID gameID, String phase) {
         this.user = user;
         this.gameID = gameID;
+        this.phase = phase;
     }
 
     public User getUser() {

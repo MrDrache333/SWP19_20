@@ -33,9 +33,10 @@
                 <Rectangle2D height="600.0" width="400.0"/>
             </viewport>
         </ImageView>
-        <ImageView fitHeight="180.0" fitWidth="120.0" layoutX="733.0" layoutY="538.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="180.0" fitWidth="120.0" layoutX="733.0" layoutY="538.0" pickOnBounds="true"
+                   preserveRatio="true">
             <image>
-                <Image url="@../images/Ablage.png" />
+                <Image url="@../images/Ablage.png"/>
             </image>
             <viewport>
                 <Rectangle2D height="600.0" width="400.0" />
@@ -72,8 +73,7 @@
             </image>
         </ImageView>
         <Pane fx:id="chatView" layoutX="949.0" layoutY="415.0" prefHeight="290.0" prefWidth="290.0"/>
-        <Pane fx:id="cardPane" layoutX="284.0" layoutY="598.0" prefHeight="116.0" prefWidth="386.0"/>
-        <ImageView fitHeight="107.0" fitWidth="79.0" layoutX="171.0" layoutY="603.0" pickOnBounds="true"
-                   preserveRatio="true"/>
+        <Button fx:id="skipPhaseButton" layoutX="1042.0" layoutY="19.0" mnemonicParsing="false"
+                onAction="#onSkipPhaseButtonPressed" text="Skip  Phase"/>
     </children>
 </AnchorPane>
