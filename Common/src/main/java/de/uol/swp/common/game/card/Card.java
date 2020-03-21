@@ -12,6 +12,7 @@ public abstract class Card {
     private Type cardtype;
     @SerializedName("cost")
     private short costs;
+    private short cardsOnField;
 
     /**
      * Erstellt eine neue Spielkarte
@@ -85,5 +86,13 @@ public abstract class Card {
          * Der Typ Geldkarte
          */
         MoneyCard
+    }
+
+    public short getCardsOnField() {
+        return cardsOnField;
+    }
+
+    public void setCardsOnField(short cardsOnField) {
+        this.cardsOnField = cardsOnField;
     }
 }
