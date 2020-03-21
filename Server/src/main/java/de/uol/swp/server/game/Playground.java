@@ -16,10 +16,8 @@ import de.uol.swp.server.game.player.Player;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.sql.Timestamp;
+import java.util.*;
 
 /**
  * Playground stellt das eigentliche Spielfeld dar
@@ -39,6 +37,7 @@ class Playground {
     private GameService gameService;
     private UUID theSpecificLobbyID;
     private CompositePhase compositePhase;
+    private Timer timer = new Timer();
 
     /**
      * Erstellt ein neues Spielfeld und übergibt die Spieler. Die Reihenfolge der Spieler wird zufällig zusammengestellt.
@@ -65,8 +64,9 @@ class Playground {
      * Initialisiert actual- und nextPlayer und aktualisiert diese, wenn ein Spieler alle Phasen durchlaufen hat.
      * Dem neuen aktuellen Spieler wird seine Hand gesendet sowie eine StartActionPhaseMessage,
      * wenn er eine Aktionskarte auf der Hand hat bzw. eine StartBuyPhaseMessage wenn nicht.
+     * Es wird zusätzlich der Timestamp (vom Server) mitgeschickt
      *
-     * @author Julia
+     * @author Julia, Ferit
      * @since Sprint5
      */
     public void newTurn() {
@@ -74,6 +74,7 @@ class Playground {
             actualPlayer = players.get(0);
             nextPlayer = players.get(1);
             sendInitialHands();
+
         } else {
             //Spieler muss Clearphase durchlaufen haben
             if (actualPhase != Phase.Type.Clearphase) return;
@@ -84,10 +85,36 @@ class Playground {
         }
         actualPhase = Phase.Type.ActionPhase;
         if (checkForActionCard()) {
-            gameService.sendToAllPlayers(theSpecificLobbyID, new StartActionPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            gameService.sendToAllPlayers(theSpecificLobbyID, new StartActionPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID, timestamp));
+            phaseTimer();
         } else {
             skipCurrentPhase();
         }
+    }
+
+    /**
+     * Stellt die AktionsPhase dar.
+     *
+     * @author Ferit
+     * @since Sprint 6
+     */
+    public void actionPhase(short cardID) {
+        //TODO: Weitere Implementierung der actionPhase hier, wenn JSON Logik steht.
+
+    }
+
+    /**
+     * Ein Timer skippt nach 35 Sekunden die aktuelle Phase, sofern der Timer vorher nicht gecancelt worden ist. Hilfmethode endTimer ganz unten in der Klasse. Timer wird im GameService gecancelt, wenn eine Karte innerhalb der Zeit ausgewählt worden ist.
+     */
+    public void phaseTimer() {
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                skipCurrentPhase();
+                timer.cancel();
+            }
+        }, 35000);
     }
 
     /**
@@ -191,4 +218,14 @@ class Playground {
         this.actualPhase = actualPhase;
     }
 
+    /**
+     * Beendet den Timer, sofern inerhalb der 35 Sekunden eine ActionKarte Ausgewählt worden ist.
+     */
+    public void endTimer() {
+        timer.cancel();
+    }
+
+    public Timer getTimer() {
+        return timer;
+    }
 }
