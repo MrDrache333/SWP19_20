@@ -142,11 +142,11 @@ public class GameService extends AbstractService {
         if (game.isPresent()) {
             Playground playground = game.get().getPlayground();
             // TODO: Timestamp Handling wenn die SelectCardRequest Clientseitig implementiert worden ist.
-            if (playground.getActualPlayer().getTheUserInThePlayer().equals(request.getMessage().getPlayer())) {
+            if (playground.getActualPlayer().getTheUserInThePlayer().getUsername().equals(request.getMessage().getPlayer().getUsername())) {
                 try {
                     playground.endTimer();
                     // Karte wird an die ActionPhase zum Handling übergeben. TODO: Weitere Implementierung in der ActionPhase.
-                    playground.actionPhase(request.getMessage().getCardID());
+                    playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), request.getMessage().getCardID());
                 } catch (GamePhaseException e) {
                     sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(request.getMessage().getGameID(), e.getMessage()));
                 }

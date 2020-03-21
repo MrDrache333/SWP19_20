@@ -94,17 +94,6 @@ class Playground {
     }
 
     /**
-     * Stellt die AktionsPhase dar.
-     *
-     * @author Ferit
-     * @since Sprint 6
-     */
-    public void actionPhase(short cardID) {
-        //TODO: Weitere Implementierung der actionPhase hier, wenn JSON Logik steht.
-
-    }
-
-    /**
      * Ein Timer skippt nach 35 Sekunden die aktuelle Phase, sofern der Timer vorher nicht gecancelt worden ist. Hilfmethode endTimer ganz unten in der Klasse. Timer wird im GameService gecancelt, wenn eine Karte innerhalb der Zeit ausgewählt worden ist.
      */
     public void phaseTimer() {
@@ -132,6 +121,7 @@ class Playground {
         if (actualPhase == Phase.Type.ActionPhase) {
             actualPhase = Phase.Type.Buyphase;
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartBuyPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
+            endTimer();
         } else {
             actualPhase = Phase.Type.Clearphase;
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartClearPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
@@ -225,7 +215,7 @@ class Playground {
         timer.cancel();
     }
 
-    public Timer getTimer() {
-        return timer;
+    public CompositePhase getCompositePhase() {
+        return compositePhase;
     }
 }
