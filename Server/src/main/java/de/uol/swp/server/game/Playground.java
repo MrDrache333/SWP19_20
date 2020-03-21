@@ -80,8 +80,7 @@ class Playground {
             int index = players.indexOf(nextPlayer);
             actualPlayer = nextPlayer;
             nextPlayer = players.get(++index % players.size());
-            sendPlayersHand();
-        }
+                    }
 
         actualPhase = Phase.Type.ActionPhase;
         if (checkForActionCard()) {
