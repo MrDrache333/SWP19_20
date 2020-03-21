@@ -219,7 +219,7 @@ class Playground {
     }
 
     /**
-     * Beendet den Timer, sofern inerhalb der 35 Sekunden eine ActionKarte Ausgewählt worden ist.
+     * Beendet den Timer, sofern innerhalb der 35 Sekunden eine ActionKarte Ausgewählt worden ist.
      */
     public void endTimer() {
         timer.cancel();
