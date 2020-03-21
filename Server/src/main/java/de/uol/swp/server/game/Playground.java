@@ -139,7 +139,6 @@ class Playground {
      * @return Ob der Spieler erfolgreich entfernt worden ist oder nicht.
      */
     public Boolean playerGivedUp(UUID lobbyID, UserDTO theGivingUpUser, Boolean wantsToGiveUp) {
-        Boolean success;
         for (int i = 0; i < players.size(); i++) {
             if (players.get(i).getPlayerName().equals(theGivingUpUser.getUsername())) {
                 thePositionInList = i;
