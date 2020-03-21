@@ -1,5 +1,5 @@
 {
-  "packname": "Basispack",
+  "packname": "TestBasispack",
   "_description": "...",
   "cards": {
     "MoneyCards": [
@@ -114,26 +114,24 @@
               "cardSource": "Hand",
               "executionOptional": true,
               "nextAction": {
-                "ForEach": {
-                  "actions": [
-                    {
-                      "Move": {
-                        "CardDestination": "Discard"
-                      }
-                    },
-                    {
-                      "GetCard": {
-                        "count": 1,
-                        "cardSource": "Draw",
-                        "nextAction": {
-                          "Move": {
-                            "cardDestination": "Hand"
-                          }
+                "ForEach": [
+                  {
+                    "Move": {
+                      "CardDestination": "Discard"
+                    }
+                  },
+                  {
+                    "GetCard": {
+                      "count": 1,
+                      "cardSource": "Draw",
+                      "nextAction": {
+                        "Move": {
+                          "cardDestination": "Hand"
                         }
                       }
                     }
-                  ]
-                }
+                  }
+                ]
               }
             }
           }
@@ -424,20 +422,18 @@
                       "ShowCard": {}
                     },
                     {
-                      "ChooseNextAction": {
-                        "nextActions": [
-                          {
-                            "Move": {
-                              "CardDestination": "Discard"
-                            }
-                          },
-                          {
-                            "Move": {
-                              "CardDestination": "Draw"
-                            }
+                      "ChooseNextAction": [
+                        {
+                          "Move": {
+                            "CardDestination": "Discard"
                           }
-                        ]
-                      }
+                        },
+                        {
+                          "Move": {
+                            "CardDestination": "Draw"
+                          }
+                        }
+                      ]
                     }
                   ]
                 }

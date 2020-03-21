@@ -1,6 +1,6 @@
 package de.uol.swp.common.game.card.parser.action.types;
 
-import de.uol.swp.common.game.card.parser.action.CardAction;
+import de.uol.swp.common.game.card.parser.action.CompositeCardAction;
 import de.uol.swp.common.game.card.parser.action.SimpleCardAction;
 
 import java.util.ArrayList;
@@ -10,8 +10,8 @@ import java.util.ArrayList;
  */
 public class ChooseNextAction extends SimpleCardAction {
 
-    private ArrayList<CardAction> nextActions;
-    private CardAction choosenAction;   //Ausgewählte Aktion
+    private ArrayList<CompositeCardAction> nextActions;
+    private CompositeCardAction choosenAction;   //Ausgewählte Aktion
 
     /**
      * Erstellt eine neue ChooseNextAction-Aktion
@@ -20,7 +20,7 @@ public class ChooseNextAction extends SimpleCardAction {
      * @author KenoO
      * @since Sprint 6
      */
-    public ChooseNextAction(ArrayList<CardAction> nextActions) {
+    public ChooseNextAction(ArrayList<CompositeCardAction> nextActions) {
         this.nextActions = nextActions;
     }
 
@@ -30,7 +30,7 @@ public class ChooseNextAction extends SimpleCardAction {
         return false;
     }
 
-    public CardAction getChoosenAction() {
+    public CompositeCardAction getChoosenAction() {
         return choosenAction;
     }
 }

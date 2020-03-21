@@ -1,6 +1,6 @@
 package de.uol.swp.common.game.card.parser.action.types;
 
-import de.uol.swp.common.game.card.parser.action.CardAction;
+import de.uol.swp.common.game.card.parser.action.CompositeCardAction;
 import de.uol.swp.common.game.card.parser.action.SimpleCardAction;
 
 /**
@@ -8,9 +8,9 @@ import de.uol.swp.common.game.card.parser.action.SimpleCardAction;
  */
 public class If extends SimpleCardAction {
 
-    private CardAction condition;   //Die Aktion, deren ergebnis ausgewertet wird
+    private CompositeCardAction condition;   //Die Aktion, deren ergebnis ausgewertet wird
     private boolean expectedResult = true;  //Gewünschtes Ergebnis der vorherigen Aktion
-    private CardAction conditionedAction;   //Die Aktion, deren Ausführung von dem Ergebnis der vorhergegangen Aktion abhängt
+    private CompositeCardAction conditionedAction;   //Die Aktion, deren Ausführung von dem Ergebnis der vorhergegangen Aktion abhängt
 
     /**
      * Erstellt eine neue If-Aktion
@@ -21,7 +21,7 @@ public class If extends SimpleCardAction {
      * @author KenoO
      * @since Sprint 6
      */
-    public If(CardAction condition, boolean expectedResult, CardAction conditionedAction) {
+    public If(CompositeCardAction condition, boolean expectedResult, CompositeCardAction conditionedAction) {
         this.condition = condition;
         this.expectedResult = expectedResult;
         this.conditionedAction = conditionedAction;

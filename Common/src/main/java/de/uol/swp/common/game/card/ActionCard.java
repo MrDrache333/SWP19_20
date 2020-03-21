@@ -1,6 +1,6 @@
 package de.uol.swp.common.game.card;
 
-import de.uol.swp.common.game.card.parser.action.CardAction;
+import de.uol.swp.common.game.card.parser.action.CompositeCardAction;
 
 import java.util.ArrayList;
 
@@ -9,7 +9,7 @@ import java.util.ArrayList;
  */
 public class ActionCard extends Card {
 
-    private ArrayList<CardAction> actions;
+    private ArrayList<CompositeCardAction> actions;
 
     /**
      * Erstellt eine neue Aktionskarte
@@ -19,7 +19,7 @@ public class ActionCard extends Card {
      * @author KenoO
      * @since Sprint 5
      */
-    public ActionCard(String name, short id, short costs, ArrayList<CardAction> actions) {
+    public ActionCard(String name, short id, short costs, ArrayList<CompositeCardAction> actions) {
         super(Type.ActionCard, name, id, costs);
         this.actions = actions;
     }
@@ -42,7 +42,7 @@ public class ActionCard extends Card {
         Action
     }
 
-    public ArrayList<CardAction> getActions() {
+    public ArrayList<CompositeCardAction> getActions() {
         return actions;
     }
 }
