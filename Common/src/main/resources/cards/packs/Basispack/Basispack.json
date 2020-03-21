@@ -57,22 +57,121 @@
       {
         "id": 8,
         "name": "Dorf",
-        "cost": 3
+        "cost": 3,
+        "actions": [
+          {
+            "GetCard": {
+              "count": 1,
+              "cardSource": "Draw",
+              "nextAction": {
+                "Move": {
+                  "CardDestination": "Hand"
+                }
+              }
+            }
+          },
+          {
+            "AddCapablePlayerActivity": {
+              "count": 2,
+              "activity": "Action"
+            }
+          }
+        ]
       },
       {
         "id": 9,
         "name": "Holzfäller",
-        "cost": 2
+        "cost": 2,
+        "actions": [
+          {
+            "AddCapablePlayerActivity": {
+              "count": 1,
+              "activity": "Buy"
+            }
+          },
+          {
+            "AddCapablePlayerActivity": {
+              "count": 2,
+              "activity": "Money"
+            }
+          }
+        ]
       },
       {
         "id": 10,
         "name": "Keller",
-        "cost": 2
+        "cost": 2,
+        "actions": [
+          {
+            "AddCapablePlayerActivity": {
+              "count": 1,
+              "activity": "Action"
+            }
+          },
+          {
+            "ChooseCard": {
+              "count": 255,
+              "cardSource": "Hand",
+              "executionOptional": true,
+              "nextAction": {
+                "ForEach": [
+                  {
+                    "Move": {
+                      "CardDestination": "Discard"
+                    }
+                  },
+                  {
+                    "GetCard": {
+                      "count": 1,
+                      "cardSource": "Draw",
+                      "nextAction": {
+                        "Move": {
+                          "cardDestination": "Hand"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ]
       },
       {
         "id": 11,
         "name": "Markt",
-        "cost": 5
+        "cost": 5,
+        "actions": [
+          {
+            "GetCard": {
+              "count": 1,
+              "cardSource": "Draw",
+              "nextAction": {
+                "Move": {
+                  "CardDestination": "Hand"
+                }
+              }
+            }
+          },
+          {
+            "AddCapablePlayerActivity": {
+              "count": 1,
+              "activity": "Action"
+            }
+          },
+          {
+            "AddCapablePlayerActivity": {
+              "count": 1,
+              "activity": "Buy"
+            }
+          },
+          {
+            "AddCapablePlayerActivity": {
+              "count": 1,
+              "activity": "Money"
+            }
+          }
+        ]
       },
       {
         "id": 12,
@@ -87,7 +186,20 @@
       {
         "id": 14,
         "name": "Schmiede",
-        "cost": 4
+        "cost": 4,
+        "actions": [
+          {
+            "GetCard": {
+              "count": 3,
+              "cardSource": "Draw",
+              "nextAction": {
+                "Move": {
+                  "CardDestination": "Hand"
+                }
+              }
+            }
+          }
+        ]
       },
       {
         "id": 15,
@@ -139,7 +251,27 @@
       {
         "id": 21,
         "name": "Kanzler",
-        "cost": 3
+        "cost": 3,
+        "actions": [
+          {
+            "AddCapablePlayerActivity": {
+              "count": 2,
+              "activity": "Money"
+            }
+          },
+          {
+            "GetCard": {
+              "count": 254,
+              "executionOptional": true,
+              "cardSource": "Draw",
+              "nextAction": {
+                "Move": {
+                  "cardDestination": "Discard"
+                }
+              }
+            }
+          }
+        ]
       },
       {
         "id": 22,
@@ -149,12 +281,45 @@
       {
         "id": 23,
         "name": "Laboratorium",
-        "cost": 5
+        "cost": 5,
+        "actions": [
+          {
+            "GetCard": {
+              "count": 2,
+              "cardSource": "Draw",
+              "nextAction": {
+                "Move": {
+                  "CardDestination": "Hand"
+                }
+              }
+            }
+          },
+          {
+            "AddCapablePlayerActivity": {
+              "count": 1,
+              "activity": "Action"
+            }
+          }
+        ]
       },
       {
         "id": 24,
         "name": "Thronsaal",
-        "cost": 4
+        "cost": 4,
+        "actions": [
+          {
+            "GetCard": {
+              "count": 1,
+              "cardSource": "Hand",
+              "allowedCardType": "Action",
+              "nextAction": {
+                "UseCard": {
+                  "count": 2
+                }
+              }
+            }
+          }
+        ]
       },
       {
         "id": 25,
@@ -169,12 +334,63 @@
       {
         "id": 27,
         "name": "Jahrmarkt",
-        "cost": 5
+        "cost": 5,
+        "actions": [
+          {
+            "AddCapablePlayerActivity": {
+              "count": 2,
+              "activity": "Action"
+            }
+          },
+          {
+            "AddCapablePlayerActivity": {
+              "count": 1,
+              "activity": "Buy"
+            }
+          },
+          {
+            "AddCapablePlayerActivity": {
+              "count": 2,
+              "activity": "Money"
+            }
+          }
+        ]
       },
       {
         "id": 28,
         "name": "Ratsversammlung",
-        "cost": 5
+        "cost": 5,
+        "actions": [
+          {
+            "GetCard": {
+              "count": 4,
+              "cardSource": "Draw",
+              "nextAction": {
+                "Move": {
+                  "CardDestination": "Hand"
+                }
+              }
+            }
+          },
+          {
+            "AddCapablePlayerActivity": {
+              "count": 1,
+              "activity": "Buy"
+            }
+          },
+          {
+            "GetCard": {
+              "count": 1,
+              "executeType": "Others",
+              "cardSource": "Draw",
+              "nextAction": {
+                "Move": {
+                  "CardDestination": "Hand"
+                }
+              }
+            }
+          }
+        ]
       },
       {
         "id": 29,
@@ -197,7 +413,7 @@
             "GetCard": {
               "executeType": "All",
               "count": 1,
-              "CardSource": "Draw",
+              "cardSource": "Draw",
               "hideCardDuringAction": false,
               "nextAction": {
                 "ForEach": {

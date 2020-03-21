@@ -5,6 +5,9 @@ package de.uol.swp.common.game.card.parser.action;
  */
 public abstract class CardAction implements Action {
 
+    public CardAction() {
+
+    }
 
     /**
      * Sagt aus, auf wen eine bestimmte Aktion ausgeführt wird.

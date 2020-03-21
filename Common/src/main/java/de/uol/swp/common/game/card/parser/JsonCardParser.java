@@ -1,13 +1,16 @@
 package de.uol.swp.common.game.card.parser;
 
 import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
 import de.uol.swp.common.game.card.ActionCard;
 import de.uol.swp.common.game.card.MoneyCard;
 import de.uol.swp.common.game.card.ValueCard;
+import de.uol.swp.common.game.card.parser.action.CardAction;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 /**
  * JSonCardParser representiert eine Möglichkeit, Karten aus einer JSon-Datei zu laden und als Objekt zurück zu geben.
@@ -54,7 +57,15 @@ class ActionCardDeSerializer implements JsonDeserializer<ActionCard> {
     @Override
     public ActionCard deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject obj = json.getAsJsonObject();
-        return new ActionCard(obj.getAsJsonPrimitive("name").getAsString(), obj.getAsJsonPrimitive("id").getAsShort(), obj.getAsJsonPrimitive("cost").getAsShort());
+
+        Type cardAction = new TypeToken<ArrayList<CardAction>>() {
+        }.getType();
+
+        return new ActionCard(obj.getAsJsonPrimitive("name").getAsString(),
+                obj.getAsJsonPrimitive("id").getAsShort(),
+                obj.getAsJsonPrimitive("cost").getAsShort(),
+                obj.has("actions") ? new Gson().fromJson(obj.getAsJsonArray("actions").toString(), cardAction) : null
+        );
     }
 }
 

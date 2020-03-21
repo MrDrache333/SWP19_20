@@ -1,4 +1,4 @@
-package de.uol.swp.server.game.card.action.types;
+package de.uol.swp.common.game.card.parser.action.types;
 
 import de.uol.swp.common.game.AbstractPlayground;
 import de.uol.swp.common.game.card.Card;
