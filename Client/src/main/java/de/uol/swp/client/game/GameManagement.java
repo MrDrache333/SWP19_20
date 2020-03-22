@@ -26,6 +26,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -157,7 +158,7 @@ public class GameManagement {
     @Subscribe
     public void onGameOverMessage(GameOverMessage message) {
         if (message.getGameID().equals(id)) {
-            showGameOverView(loggedInUser, message.getWinner());
+            showGameOverView(loggedInUser, message.getWinner(), message.getResults());
         }
     }
 
@@ -202,16 +203,16 @@ public class GameManagement {
      * @author Anna
      * @since Sprint6
      */
-    public void showGameOverView(User loggedInUser, String winner) {
+    public void showGameOverView(User loggedInUser, String winner, Map<String, Integer> res) {
         if (loggedInUser.getUsername().equals(this.loggedInUser.getUsername())) {
-            initGameOverView(this.loggedInUser, winner);
+            initGameOverView(this.loggedInUser, winner, res);
             Platform.runLater(() -> {
                 gameOverStage.setScene(gameOverScene);
                 gameOverStage.setTitle("Spielergebnis");
                 gameOverStage.setResizable(false);
                 gameOverStage.show();
                 gameOverStage.toFront();
-                gameOverStage.setOnCloseRequest(windowEvent -> gameOverStage.close());
+                gameOverStage.setOnCloseRequest(windowEvent -> closeGameOverViewAndLeaveLobby());
                 primaryStage.close();
             });
         }
@@ -235,6 +236,17 @@ public class GameManagement {
      */
     public void closeGameOverView() {
         Platform.runLater(() -> gameOverStage.close());
+    }
+
+    /**
+     * Methode zum Schließen der GameOverStage und verlassen der Lobby
+     *
+     * @author Anna
+     * @since Sprint6
+     */
+    public void closeGameOverViewAndLeaveLobby() {
+        Platform.runLater(() -> gameOverStage.close());
+        lobbyPresenter.getLobbyService().leaveLobby(id, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
     }
 
     /**
@@ -275,9 +287,9 @@ public class GameManagement {
      * @author Anna
      * @since Sprint6
      */
-    private void initGameOverView(User user, String winner) {
+    private void initGameOverView(User user, String winner, Map<String, Integer> res) {
         if (gameOverScene == null) {
-            Parent rootPane = initPresenter(new GameOverViewPresenter(this, user, winner), GameOverViewPresenter.fxml);
+            Parent rootPane = initPresenter(new GameOverViewPresenter(this, user, winner, res), GameOverViewPresenter.fxml);
             gameOverScene = new Scene(rootPane, 420, 280);
             lobbyScene.getStylesheets().add(styleSheet);
         }

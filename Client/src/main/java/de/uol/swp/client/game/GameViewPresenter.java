@@ -9,6 +9,7 @@ import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.event.GameQuitEvent;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
+import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
@@ -24,15 +25,15 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Der Presenter für die Spielansicht.
@@ -169,7 +170,11 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @FXML
     public void onLoserButtonPressed(ActionEvent actionEvent) {
-        gameManagement.showGameOverView(loggedInUser, "test5");
+        Map<String, Integer> res = new HashMap<String, Integer>();
+        res.put("Spieler1", 45);
+        res.put("Spieler2", 30);
+        res.put("Spieler3", 12);
+        gameManagement.showGameOverView(loggedInUser, "Spieler1", res);
     }
 
     /**
@@ -177,7 +182,12 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @FXML
     public void onWinnerButtonPressed(ActionEvent actionEvent) {
-        gameManagement.showGameOverView(loggedInUser, loggedInUser.getUsername());
+        Map<String, Integer> res = new HashMap<String, Integer>();
+        res.put("Spieler12345678", 45);
+        res.put("Spieler2", 30);
+        res.put("Spieler3", 12);
+        res.put("Spieler4", 37);
+        gameManagement.showGameOverView(loggedInUser, loggedInUser.getUsername(), res);
     }
 
     /**
@@ -269,7 +279,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * @since Sprint5
      */
 
-   /* @FXML
+    @FXML
     @Subscribe
     public void ShowNewHand(DrawHandMessage message) {
         ArrayList<Short> HandCardID = message.getCardsOnHand();
@@ -295,7 +305,6 @@ public class GameViewPresenter extends AbstractPresenter {
             }
         });
     }
-*/
 
 
 }

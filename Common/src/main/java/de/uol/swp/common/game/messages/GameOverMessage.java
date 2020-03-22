@@ -3,6 +3,7 @@ package de.uol.swp.common.game.messages;
 import de.uol.swp.common.message.AbstractMessage;
 import de.uol.swp.common.user.User;
 
+import java.util.Map;
 import java.util.UUID;
 
 public class GameOverMessage extends AbstractMessage {
@@ -11,6 +12,7 @@ public class GameOverMessage extends AbstractMessage {
     private UUID gameID;
     private User player;
     private String winner;
+    private Map<String, Integer> results;
 
     /**
      * Instanziiert GameOverMessage
@@ -21,10 +23,11 @@ public class GameOverMessage extends AbstractMessage {
      * @author Anna
      * @since Sprint6
      */
-    public GameOverMessage(UUID gameID, User player, String winner) {
+    public GameOverMessage(UUID gameID, User player, String winner, Map<String, Integer> results) {
         this.gameID = gameID;
         this.player = player;
         this.winner = winner;
+        this.results = results;
     }
 
     /**
@@ -58,5 +61,16 @@ public class GameOverMessage extends AbstractMessage {
      */
     public String getWinner() {
         return winner;
+    }
+
+    /**
+     * Gibt die Punkteanzahl aller Spieler zurück.
+     *
+     * @return die Map mit dem Namen des Spieler und seiner Punkte
+     * @author Anna
+     * @since Sprint6
+     */
+    public Map<String, Integer> getResults() {
+        return results;
     }
 }
