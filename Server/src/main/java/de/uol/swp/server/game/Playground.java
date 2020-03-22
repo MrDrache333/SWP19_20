@@ -222,7 +222,28 @@ class Playground {
         this.actualPhase = actualPhase;
     }
 
-    public static Map<Short, Integer> getCardField() {
-        return cardField;
+    /**
+     * Gibt die Anzahl der restlichen Karten einer bestimmten Karte auf dem Kartenfeld wieder.
+     * Die Karte wird über die ID (short) identifiziert.
+     *
+     * @param cardID KartenID
+     * @return Anzahl der restlichen Karten auf dem Feld.
+     * @author Ferit
+     * @since Sprint 6
+     */
+    public Integer getNumberOfAvailableCardsOnField(short cardID) {
+        int numberOfCardsLeft = cardField.get(cardID);
+        return numberOfCardsLeft;
+    }
+
+    /**
+     * Verringert den Stapelwert einer übergebenen Karte (ID) um eins.
+     *
+     * @param cardID Die KartenID der Karte welcher um eins verringert wird.
+     * @author Ferit
+     * @since Sprint 6
+     */
+    public void setNumberOfAvailableCardsOnFieldMinusOne(short cardID) {
+        cardField.replace(cardID, cardField.get(cardID), cardField.get(cardID) - 1);
     }
 }
