@@ -2,6 +2,12 @@ package de.uol.swp.server.message;
 
 import java.util.UUID;
 
+/**
+ * Eine ServerinterneMessage die den benötigten Komponenenten mitteilt, dass ein Spiel gestartet worden ist.
+ *
+ * @author Ferit
+ * @since Sprint5
+ */
 public class StartGameInternalMessage extends AbstractServerInternalMessage {
 
     private UUID lobbyID;

@@ -133,7 +133,7 @@ public class GameService extends AbstractService {
     }
 
     /**
-     * Handling das der User aufgegeben hat und aus dem Playgrpund entfernt wird. Ggf später auf null gesetzt wird o.ä.
+     * Handling das der User aufgegeben hat und aus dem Playground entfernt wird. Ggf später auf null gesetzt wird o.ä.
      *
      * @param msg Request zum Aufgeben
      * @author Haschem, Ferit

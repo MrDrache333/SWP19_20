@@ -6,10 +6,10 @@ import de.uol.swp.common.user.UserDTO;
 import java.util.UUID;
 
 /**
- * Erstellt GameGiveUpRequest
+ * Erstellt GameGiveUpRequest, welche eine Anfrage vom Client an den Server schickt das ein bestimmter Spieler in dem spezifischen Game aufgeben möchte.
  *
- * @uthor Haschem, Ferit
  * @version 1
+ * @uthor Haschem, Ferit
  * @since Sprint6
  */
 

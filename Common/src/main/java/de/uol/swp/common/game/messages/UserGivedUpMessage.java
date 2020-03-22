@@ -6,10 +6,10 @@ import de.uol.swp.common.user.UserDTO;
 import java.util.UUID;
 
 /**
- * Erstellt UserGivedUpMessage
+ * Erstellt UserGivedUpMessage, welche vom Server an den Client verschickt wird um zu Signalisieren das der User erfolgreich im Spiel aufgegeben hat.
  *
- * @uthor Haschem, Ferit
  * @version 1
+ * @uthor Haschem, Ferit
  * @since Sprint6
  */
 
