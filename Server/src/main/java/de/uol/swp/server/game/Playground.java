@@ -40,7 +40,6 @@ class Playground {
     private ArrayList<Short> theIdsFromTheHand = new ArrayList<>(5);
     private GameService gameService;
     private UUID theSpecificLobbyID;
-    int thePositionInList;
     private CompositePhase compositePhase;
 
     /**
@@ -139,14 +138,12 @@ class Playground {
      * @return Ob der Spieler erfolgreich entfernt worden ist oder nicht.
      */
     public Boolean playerGivedUp(UUID lobbyID, UserDTO theGivingUpUser, Boolean wantsToGiveUp) {
+        int thePositionInList = -1;
         for (int i = 0; i < players.size(); i++) {
             if (players.get(i).getPlayerName().equals(theGivingUpUser.getUsername())) {
                 thePositionInList = i;
                 break;
-            } else {
-                i++;
             }
-
         }
         if (this.players.get(thePositionInList).getPlayerName().equals(theGivingUpUser.getUsername()) && wantsToGiveUp && lobbyID.equals(this.theSpecificLobbyID)) {
             latestGivedUpPlayer = this.players.get(thePositionInList);
