@@ -31,7 +31,7 @@ class Playground {
      * Die Spieler
      */
     private List<Player> players = new ArrayList<>();
-    private static Map<Short, Card> cardField = new TreeMap<>();
+    private static Map<Short, Integer> cardField = new TreeMap<>();
     private Player actualPlayer;
     private Player nextPlayer;
     private Phase.Type actualPhase;
@@ -72,40 +72,23 @@ class Playground {
         for (int i = 0; i < cardsPackField.getCards().getValueCards().size(); i++) {
             Card card = cardsPackField.getCards().getValueCards().get(i);
             if (lobbySizeOnStart < 3) {
-                short onFieldValue = 8;
-                card.setCardsOnField(onFieldValue);
-            } else if (lobbySizeOnStart > 2) {
-                short onFieldValue = 12;
-                card.setCardsOnField(onFieldValue);
-            }
-            cardField.put(card.getId(), card);
+                cardField.put(card.getId(), 8);
+            } else cardField.put(card.getId(), 12);
         }
         for (int i = 0; i < cardsPackField.getCards().getActionCards().size(); i++) {
             Card card = cardsPackField.getCards().getActionCards().get(i);
-            short onFieldValue = 10;
-            card.setCardsOnField(onFieldValue);
-            cardField.put(card.getId(), card);
+            cardField.put(card.getId(), 10);
         }
         for (int i = 0; i < cardsPackField.getCards().getReactionCards().size(); i++) {
             Card card = cardsPackField.getCards().getReactionCards().get(i);
-            short onFieldValue = 10;
-            card.setCardsOnField(onFieldValue);
-            cardField.put(card.getId(), card);
+            cardField.put(card.getId(), 10);
         }
         for (int i = 0; i < cardsPackField.getCards().getMoneyCards().size(); i++) {
             Card card = cardsPackField.getCards().getMoneyCards().get(i);
-            if (i == 0) {
-                short onFieldValue = 60;
-                onFieldValue = (short) (onFieldValue - lobbySizeOnStart * 7);
-                card.setCardsOnField(onFieldValue);
-            } else if (i == 1) {
-                short onFieldValue = 40;
-                card.setCardsOnField(onFieldValue);
-            } else if (i == 2) {
-                short onFieldValue = 30;
-                card.setCardsOnField(onFieldValue);
-            }
-            cardField.put(card.getId(), card);
+            if (i == 0) cardField.put(card.getId(), 60);
+            else if (i == 1) cardField.put(card.getId(), 40);
+            else if (i == 2) cardField.put(card.getId(), 30);
+            else LOG.debug("Komisch: @ initializeCardField- Else Methode in 104 ausgeschlagen.... @ @ @");
         }
     }
 
@@ -239,7 +222,7 @@ class Playground {
         this.actualPhase = actualPhase;
     }
 
-    public static Map<Short, Card> getCardField() {
+    public static Map<Short, Integer> getCardField() {
         return cardField;
     }
 }
