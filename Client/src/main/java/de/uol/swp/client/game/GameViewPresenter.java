@@ -10,6 +10,7 @@ import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.*;
+import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.game.request.SkipPhaseRequest;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
@@ -66,7 +67,7 @@ public class GameViewPresenter extends AbstractPresenter {
     private ChatViewPresenter chatViewPresenter;
     private Injector injector;
     private GameManagement gameManagement;
-    private Phases phase;
+    private Phase.Type phase;
 
     /**
      * Skips die aktuelle Phase des Spielers zur nächsten.
@@ -276,26 +277,23 @@ public class GameViewPresenter extends AbstractPresenter {
     @Subscribe
     public void currentPhase(StartActionPhaseMessage message) {
         if (lobbyID.equals(message.getGameID()) && loggedInUser.equals(message.getUser())) {
-            phase = Phases.ActionPhase;
+            phase = Phase.Type.ActionPhase;
         }
     }
 
     @Subscribe
     public void currentPhase(StartBuyPhaseMessage message) {
         if (lobbyID.equals(message.getGameID()) && loggedInUser.equals(message.getUser())) {
-            phase = Phases.BuyPhase;
+            phase = Phase.Type.Buyphase;
         }
     }
 
     @Subscribe
     public void currentPhase(StartClearPhaseMessage message) {
         if (lobbyID.equals(message.getGameID()) && loggedInUser.equals(message.getUser())) {
-            phase = Phases.ClearPhase;
+            phase = Phase.Type.Clearphase;
         }
     }
-
-    private enum Phases {ActionPhase, BuyPhase, ClearPhase}
-
 
     /**
      * Zeigt die Karten auf der Hand in der GameView an
