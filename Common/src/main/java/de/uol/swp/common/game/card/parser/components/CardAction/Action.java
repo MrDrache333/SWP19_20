@@ -1,4 +1,4 @@
-package de.uol.swp.common.game.card.parser.action;
+package de.uol.swp.common.game.card.parser.components.CardAction;
 
 /**
  * Interface einer Kartenaktion

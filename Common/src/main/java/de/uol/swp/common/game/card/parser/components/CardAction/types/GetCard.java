@@ -1,8 +1,8 @@
-package de.uol.swp.common.game.card.parser.action.types;
+package de.uol.swp.common.game.card.parser.components.CardAction.types;
 
 import de.uol.swp.common.game.AbstractPlayground;
 import de.uol.swp.common.game.card.Card;
-import de.uol.swp.common.game.card.parser.action.ComplexCardAction;
+import de.uol.swp.common.game.card.parser.components.CardAction.ComplexCardAction;
 
 import java.util.ArrayList;
 
@@ -12,15 +12,19 @@ import java.util.ArrayList;
 public class GetCard extends ComplexCardAction {
 
     /**
-     * The Count.
+     * Die Anzahl der Karten (default=1)
      */
-    private short count;    //Anzahl der Karten
-    private ArrayList<Card> cards;  //Geholte karten
+    private short count = 1;
+    /**
+     * Die "geholten" Karten aus der angegebenen Quelle
+     */
+    private ArrayList<Card> cards;
 
     /**
-     * Instantiates a new Get card.
+     * Erstellt eine neue Aktion
      *
-     * @param count the count
+     * @param count  Die Anzahl an Karten
+     * @param source Die Quelle
      * @author KenoO
      * @since Sprint 6
      */
@@ -34,6 +38,13 @@ public class GetCard extends ComplexCardAction {
         return false;
     }
 
+    /**
+     * Gibt die "geholten" Karten zurück
+     *
+     * @return Die "geholten" Karten
+     * @author KenoO
+     * @since Sprint 6
+     */
     public ArrayList<Card> getCards() {
         return cards;
     }

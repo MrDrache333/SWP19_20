@@ -1,13 +1,17 @@
-package de.uol.swp.common.game.card.parser.deserializer;
+package de.uol.swp.common.game.card.parser.components.deserializer;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import de.uol.swp.common.game.card.ActionCard;
-import de.uol.swp.common.game.card.parser.action.CompositeCardAction;
+import de.uol.swp.common.game.card.parser.components.CardAction.CompositeCardAction;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
+/**
+ * Deserialisierer von ActionKarten
+ * Die Karte benötigt einen eigenen Deserialisierer, da die Aktionen der Karte nicht ohne weiteres übernommen werden können
+ */
 public class ActionCardDeSerializer implements JsonDeserializer<ActionCard> {
 
     @Override

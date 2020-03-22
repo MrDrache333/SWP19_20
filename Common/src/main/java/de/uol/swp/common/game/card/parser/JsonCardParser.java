@@ -5,9 +5,10 @@ import com.google.gson.GsonBuilder;
 import de.uol.swp.common.game.card.ActionCard;
 import de.uol.swp.common.game.card.MoneyCard;
 import de.uol.swp.common.game.card.ValueCard;
-import de.uol.swp.common.game.card.parser.deserializer.ActionCardDeSerializer;
-import de.uol.swp.common.game.card.parser.deserializer.MoneyCardDeSerializer;
-import de.uol.swp.common.game.card.parser.deserializer.ValueCardDeSerializer;
+import de.uol.swp.common.game.card.parser.components.CardPack;
+import de.uol.swp.common.game.card.parser.components.deserializer.ActionCardDeSerializer;
+import de.uol.swp.common.game.card.parser.components.deserializer.MoneyCardDeSerializer;
+import de.uol.swp.common.game.card.parser.components.deserializer.ValueCardDeSerializer;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -16,16 +17,6 @@ import java.io.FileReader;
  * JSonCardParser representiert eine Möglichkeit, Karten aus einer JSon-Datei zu laden und als Objekt zurück zu geben.
  */
 public class JsonCardParser {
-
-    /**
-     * The entry point of application.
-     *
-     * @param args the input arguments
-     */
-    public static void main(String[] args) {
-        CardPack pack = new JsonCardParser().loadPack("Basispack");
-        System.out.println(pack.toString());
-    }
 
     /**
      * Methode, die versucht ein angegebenes Kartenpaket zu laden.
@@ -51,4 +42,3 @@ public class JsonCardParser {
         return pack;
     }
 }
-

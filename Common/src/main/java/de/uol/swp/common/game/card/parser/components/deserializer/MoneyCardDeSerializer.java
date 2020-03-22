@@ -1,10 +1,15 @@
-package de.uol.swp.common.game.card.parser.deserializer;
+package de.uol.swp.common.game.card.parser.components.deserializer;
 
 import com.google.gson.*;
 import de.uol.swp.common.game.card.MoneyCard;
 
 import java.lang.reflect.Type;
 
+/**
+ * Deserialisierer von Geldkarten
+ * Die Karte benötigt einen eigenen Deserialisierer, da der Kartentyp festgelegt werden muss, dies aber im Kostruktor
+ * passieren würde, welcher beim DeSerialisieren nicht aufgerufen werden würde
+ */
 public class MoneyCardDeSerializer implements JsonDeserializer<MoneyCard> {
 
     @Override

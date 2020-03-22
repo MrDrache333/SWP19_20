@@ -18,7 +18,7 @@ public abstract class Card {
     /**
      * The Cardtype.
      */
-    private Type cardtype;
+    private Type cardType;
     /**
      * The Costs.
      */
@@ -35,7 +35,7 @@ public abstract class Card {
      * @since Sprint 5
      */
     Card(Type cardtype, String name, short id, short costs) {
-        this.cardtype = cardtype;
+        this.cardType = cardtype;
         this.name = name;
         this.id = id;
         this.costs = costs;
@@ -81,8 +81,8 @@ public abstract class Card {
      * @author KenoO
      * @since Sprint 5
      */
-    public Type getCardtype() {
-        return cardtype;
+    public Type getCardType() {
+        return cardType;
     }
 
     /**

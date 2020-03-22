@@ -1,6 +1,6 @@
-package de.uol.swp.common.game.card.parser.action.types;
+package de.uol.swp.common.game.card.parser.components.CardAction.types;
 
-import de.uol.swp.common.game.card.parser.action.SimpleCardAction;
+import de.uol.swp.common.game.card.parser.components.CardAction.SimpleCardAction;
 
 /**
  * Benutzt eine Aktionskarte beliebig oft hintereinander.

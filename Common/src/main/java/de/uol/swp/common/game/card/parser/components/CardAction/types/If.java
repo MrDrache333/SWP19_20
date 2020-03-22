@@ -1,16 +1,25 @@
-package de.uol.swp.common.game.card.parser.action.types;
+package de.uol.swp.common.game.card.parser.components.CardAction.types;
 
-import de.uol.swp.common.game.card.parser.action.CompositeCardAction;
-import de.uol.swp.common.game.card.parser.action.SimpleCardAction;
+import de.uol.swp.common.game.card.parser.components.CardAction.CompositeCardAction;
+import de.uol.swp.common.game.card.parser.components.CardAction.SimpleCardAction;
 
 /**
  * Die IF-Aktion (Bedingte ausführung einer weiteren Aktion).
  */
 public class If extends SimpleCardAction {
 
-    private CompositeCardAction condition;   //Die Aktion, deren ergebnis ausgewertet wird
-    private boolean expectedResult = true;  //Gewünschtes Ergebnis der vorherigen Aktion
-    private CompositeCardAction conditionedAction;   //Die Aktion, deren Ausführung von dem Ergebnis der vorhergegangen Aktion abhängt
+    /**
+     * Die Aktion, deren ergebnis ausgewertet wird
+     */
+    private CompositeCardAction condition;
+    /**
+     * Gewünschtes Ergebnis der vorherigen Aktion
+     */
+    private boolean expectedResult = true;
+    /**
+     * Die Aktion, deren Ausführung von dem Ergebnis der vorhergegangen Aktion abhängt
+     */
+    private CompositeCardAction conditionedAction;
 
     /**
      * Erstellt eine neue If-Aktion

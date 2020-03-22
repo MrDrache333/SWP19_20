@@ -1,7 +1,7 @@
-package de.uol.swp.common.game.card.parser.action.types;
+package de.uol.swp.common.game.card.parser.components.CardAction.types;
 
 import de.uol.swp.common.game.AbstractPlayground;
-import de.uol.swp.common.game.card.parser.action.SimpleCardAction;
+import de.uol.swp.common.game.card.parser.components.CardAction.SimpleCardAction;
 
 /**
  * Fügt mögliche Aktivitäten des Spielers hinzu bzw. zieht welche ab.
@@ -14,7 +14,8 @@ public class AddCapablePlayerActivity extends SimpleCardAction {
     /**
      * Erstellt eine neue AddCapablePlayerActivity-Aktion.
      *
-     * @param count Anzahl
+     * @param count    Anzahl
+     * @param activity Die neue Aktivität
      * @author KenoO
      * @since Sprint 6
      */

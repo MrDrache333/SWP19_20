@@ -1,8 +1,8 @@
 package de.uol.swp.server.game.player;
 
 import de.uol.swp.common.game.card.Card;
-import de.uol.swp.common.game.card.parser.CardPack;
 import de.uol.swp.common.game.card.parser.JsonCardParser;
+import de.uol.swp.common.game.card.parser.components.CardPack;
 
 import java.util.ArrayList;
 import java.util.Collections;

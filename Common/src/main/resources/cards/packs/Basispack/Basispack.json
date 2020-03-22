@@ -63,11 +63,7 @@
             "GetCard": {
               "count": 1,
               "cardSource": "Draw",
-              "nextAction": {
-                "Move": {
-                  "CardDestination": "Hand"
-                }
-              }
+              "directHand": true
             }
           },
           {
@@ -110,7 +106,10 @@
           },
           {
             "ChooseCard": {
-              "count": 255,
+              "count": {
+                "min": 0,
+                "max": 255
+              },
               "cardSource": "Hand",
               "executionOptional": true,
               "nextAction": {
@@ -125,11 +124,7 @@
                       "GetCard": {
                         "count": 1,
                         "cardSource": "Draw",
-                        "nextAction": {
-                          "Move": {
-                            "cardDestination": "Hand"
-                          }
-                        }
+                        "directHand": true
                       }
                     }
                   ]
@@ -148,11 +143,7 @@
             "GetCard": {
               "count": 1,
               "cardSource": "Draw",
-              "nextAction": {
-                "Move": {
-                  "CardDestination": "Hand"
-                }
-              }
+              "directHand": true
             }
           },
           {
@@ -194,11 +185,7 @@
             "GetCard": {
               "count": 3,
               "cardSource": "Draw",
-              "nextAction": {
-                "Move": {
-                  "CardDestination": "Hand"
-                }
-              }
+              "directHand": true
             }
           }
         ]
@@ -222,7 +209,6 @@
               "cardSource": "Buy",
               "nextAction": {
                 "MoveCard": {
-                  "cardSource": "Buy",
                   "cardDestination": "Discard"
                 }
               }
@@ -243,7 +229,27 @@
       {
         "id": 19,
         "name": "Festmahl",
-        "cost": 4
+        "cost": 4,
+        "actions": [
+          {
+            "ChooseCard": {
+              "count": {
+                "min": 1
+              },
+              "hasCost": {
+                "min": 0,
+                "max": 5
+              },
+              "cardSource": "Buy",
+              "removeCardAfter": true,
+              "nextAction": {
+                "Move": {
+                  "cardDestination": "Discard"
+                }
+              }
+            }
+          }
+        ]
       },
       {
         "id": 20,
@@ -278,7 +284,23 @@
       {
         "id": 22,
         "name": "Kapelle",
-        "cost": 2
+        "cost": 2,
+        "actions": [
+          {
+            "ChooseCard": {
+              "cardSource": "Hand",
+              "count": {
+                "min": 0,
+                "max": 4
+              },
+              "nextAction": {
+                "Move": {
+                  "cardDestination": "Trash"
+                }
+              }
+            }
+          }
+        ]
       },
       {
         "id": 23,
@@ -289,11 +311,7 @@
             "GetCard": {
               "count": 2,
               "cardSource": "Draw",
-              "nextAction": {
-                "Move": {
-                  "CardDestination": "Hand"
-                }
-              }
+              "directHand": true
             }
           },
           {
@@ -367,11 +385,7 @@
             "GetCard": {
               "count": 4,
               "cardSource": "Draw",
-              "nextAction": {
-                "Move": {
-                  "CardDestination": "Hand"
-                }
-              }
+              "directHand": true
             }
           },
           {
@@ -385,11 +399,7 @@
               "count": 1,
               "executeType": "Others",
               "cardSource": "Draw",
-              "nextAction": {
-                "Move": {
-                  "CardDestination": "Hand"
-                }
-              }
+              "directHand": true
             }
           }
         ]

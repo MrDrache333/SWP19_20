@@ -1,4 +1,4 @@
-package de.uol.swp.common.game.card.parser.action;
+package de.uol.swp.common.game.card.parser.components.CardAction;
 
 import de.uol.swp.common.game.AbstractPlayground;
 import de.uol.swp.common.game.card.Card;
@@ -251,62 +251,3 @@ public abstract class ComplexCardAction extends CardAction {
     }
 }
 
-class Value {
-
-    private boolean set;    //Gibt an, ob ein Wert gesetzt wurde
-    private short min;  //Minimal Value
-    private short max;  //Maximal Value
-
-    Value(short min) {
-        this.min = min;
-        this.max = min;
-        this.set = min != 0;
-    }
-
-    /**
-     * Gets min.
-     *
-     * @return Value of min.
-     */
-    public short getMin() {
-        return min;
-    }
-
-    /**
-     * Sets new min.
-     *
-     * @param min New value of min.
-     */
-    public void setMin(short min) {
-        this.set = min != 0 && max != 0;
-        this.min = min;
-    }
-
-    /**
-     * Gets max.
-     *
-     * @return Value of max.
-     */
-    public short getMax() {
-        return max;
-    }
-
-    /**
-     * Sets new max.
-     *
-     * @param max New value of max.
-     */
-    public void setMax(short max) {
-        this.set = max != 0 && min != 0;
-        this.max = max;
-    }
-
-    /**
-     * Gets set.
-     *
-     * @return Value of set.
-     */
-    public boolean isSet() {
-        return set;
-    }
-}
