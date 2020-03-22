@@ -3,6 +3,8 @@ package de.uol.swp.server.game;
 import com.google.inject.Inject;
 import de.uol.swp.common.game.card.ActionCard;
 import de.uol.swp.common.game.card.Card;
+import de.uol.swp.common.game.card.parser.CardPack;
+import de.uol.swp.common.game.card.parser.JsonCardParser;
 import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.game.messages.StartActionPhaseMessage;
@@ -16,10 +18,7 @@ import de.uol.swp.server.game.player.Player;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Playground stellt das eigentliche Spielfeld dar
@@ -32,6 +31,7 @@ class Playground {
      * Die Spieler
      */
     private List<Player> players = new ArrayList<>();
+    private static Map<Short, Integer> cardField = new TreeMap<>();
     private Player actualPlayer;
     private Player nextPlayer;
     private Phase.Type actualPhase;
@@ -39,6 +39,7 @@ class Playground {
     private GameService gameService;
     private UUID theSpecificLobbyID;
     private CompositePhase compositePhase;
+    private short lobbySizeOnStart;
 
     /**
      * Erstellt ein neues Spielfeld und übergibt die Spieler. Die Reihenfolge der Spieler wird zufällig zusammengestellt.
@@ -59,6 +60,36 @@ class Playground {
         this.gameService = gameService;
         this.theSpecificLobbyID = lobby.getLobbyID();
         this.compositePhase = new CompositePhase();
+        this.lobbySizeOnStart = (short) lobby.getUsers().size();
+        initializeCardField();
+    }
+
+    /**
+     * Methode initalisiert das Kartenfeld mit der richtigen Anzahl an Karten auf dem Feld.
+     */
+    private void initializeCardField() {
+        CardPack cardsPackField = new JsonCardParser().loadPack("Basispack");
+        for (int i = 0; i < cardsPackField.getCards().getValueCards().size(); i++) {
+            Card card = cardsPackField.getCards().getValueCards().get(i);
+            if (lobbySizeOnStart < 3) {
+                cardField.put(card.getId(), 8);
+            } else cardField.put(card.getId(), 12);
+        }
+        for (int i = 0; i < cardsPackField.getCards().getActionCards().size(); i++) {
+            Card card = cardsPackField.getCards().getActionCards().get(i);
+            cardField.put(card.getId(), 10);
+        }
+        for (int i = 0; i < cardsPackField.getCards().getReactionCards().size(); i++) {
+            Card card = cardsPackField.getCards().getReactionCards().get(i);
+            cardField.put(card.getId(), 10);
+        }
+        for (int i = 0; i < cardsPackField.getCards().getMoneyCards().size(); i++) {
+            Card card = cardsPackField.getCards().getMoneyCards().get(i);
+            if (i == 0) cardField.put(card.getId(), 60);
+            else if (i == 1) cardField.put(card.getId(), 40);
+            else if (i == 2) cardField.put(card.getId(), 30);
+            else LOG.debug("Komisch: @ initializeCardField- Else Methode in 104 ausgeschlagen.... @ @ @");
+        }
     }
 
     /**
@@ -191,4 +222,7 @@ class Playground {
         this.actualPhase = actualPhase;
     }
 
+    public static Map<Short, Integer> getCardField() {
+        return cardField;
+    }
 }
