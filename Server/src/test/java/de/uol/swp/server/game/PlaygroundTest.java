@@ -5,7 +5,6 @@ import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.chat.ChatManagement;
-import de.uol.swp.server.game.phase.Phase;
 import de.uol.swp.server.lobby.LobbyManagement;
 import de.uol.swp.server.message.StartGameInternalMessage;
 import de.uol.swp.server.usermanagement.AuthenticationService;
