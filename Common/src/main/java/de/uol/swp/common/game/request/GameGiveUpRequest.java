@@ -5,6 +5,14 @@ import de.uol.swp.common.user.UserDTO;
 
 import java.util.UUID;
 
+/**
+ * Erstellt GameGiveUpRequest
+ *
+ * @uthor Haschem, Ferit
+ * @version 1
+ * @since Sprint6
+ */
+
 public class GameGiveUpRequest extends AbstractLobbyRequest {
 
     private static final long serialVersionUID = 7986167787009372236L;
