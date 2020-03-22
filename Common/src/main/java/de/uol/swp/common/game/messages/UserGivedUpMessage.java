@@ -5,6 +5,15 @@ import de.uol.swp.common.user.UserDTO;
 
 import java.util.UUID;
 
+/**
+ * Erstellt UserGivedUpMessage
+ *
+ * @uthor Haschem, Ferit
+ * @version 1
+ * @since Sprint6
+ */
+
+
 public class UserGivedUpMessage extends AbstractServerMessage {
     private static final long serialVersionUID = -6145124538556130864L;
     private UUID lobbyID;
