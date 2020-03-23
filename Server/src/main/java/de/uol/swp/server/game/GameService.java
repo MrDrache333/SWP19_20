@@ -6,6 +6,7 @@ import com.google.inject.Inject;
 import de.uol.swp.common.game.exception.GameManagementException;
 import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.GameExceptionMessage;
+import de.uol.swp.common.game.request.SelectCardRequest;
 import de.uol.swp.common.game.request.SkipPhaseRequest;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
@@ -130,4 +131,28 @@ public class GameService extends AbstractService {
         }
     }
 
+    /**
+     * Die Methode cancelt aktuell den Timer der AktionPhase.
+     *
+     * @param request SelectCardRequest vom Client an Server wird hier empfangen.
+     */
+    @Subscribe
+    public void onSelectCardRequest(SelectCardRequest request) {
+        Optional<Game> game = gameManagement.getGame(request.getMessage().getGameID());
+        if (game.isPresent()) {
+            Playground playground = game.get().getPlayground();
+            // TODO: Timestamp Handling wenn die SelectCardRequest Clientseitig implementiert worden ist.
+            if (playground.getActualPlayer().getTheUserInThePlayer().getUsername().equals(request.getMessage().getPlayer().getUsername())) {
+                try {
+                    playground.endTimer();
+                    // Karte wird an die ActionPhase zum Handling übergeben. TODO: Weitere Implementierung in der ActionPhase.
+                    playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), request.getMessage().getCardID());
+                } catch (GamePhaseException e) {
+                    sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(request.getMessage().getGameID(), e.getMessage()));
+                }
+            }
+        } else {
+            LOG.error("Irgendwas ist bei der onSelectCardRequest im GameService falsch gelaufen..Folgende ID: " + request.getMessage().getGameID());
+        }
+    }
 }
