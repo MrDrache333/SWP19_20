@@ -549,4 +549,18 @@ public class LobbyPresenter extends AbstractPresenter {
     public LobbyService getLobbyService() {
         return lobbyService;
     }
+
+    /**
+     * Ändert den Text des Buttons auf Bereit und den Status auf false.
+     *
+     * @param loggedInUser der aktuelle User
+     * @author Anna
+     * @since Sprint6
+     */
+    public void setButtonReady(UserDTO loggedInUser) {
+        if (loggedInUser.equals(this.loggedInUserDTO)) {
+            readyButton.setText("Bereit");
+            ownReadyStatus = false;
+        }
+    }
 }

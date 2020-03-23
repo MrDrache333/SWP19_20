@@ -155,5 +155,9 @@
                 <Image url="@../cards/images/39_sm.png" />
              </image>
         </ImageView>
+        <Button layoutX="14.0" layoutY="683.0" mnemonicParsing="false" onAction="#onWinnerButtonPressed"
+                text="gewonnen"/>
+        <Button layoutX="14.0" layoutY="640.0" mnemonicParsing="false" onAction="#onLoserButtonPressed"
+                text="verloren"/>
     </children>
 </AnchorPane>

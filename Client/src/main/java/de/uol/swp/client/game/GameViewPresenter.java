@@ -39,10 +39,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Der Presenter für die Spielansicht.
@@ -183,6 +180,31 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     public void onBuyableCardClicked (MouseEvent mouseEvent) {
         chosenBuyableCard(mouseEvent);
+    }
+
+    /**
+     * Button zum Testen der Anzeige, dass man verloren hat.
+     */
+    @FXML
+    public void onLoserButtonPressed(ActionEvent actionEvent) {
+        Map<String, Integer> res = new HashMap<String, Integer>();
+        res.put("Spieler1", 45);
+        res.put("Spieler2", 30);
+        res.put("Spieler3", 12);
+        gameManagement.showGameOverView(loggedInUser, "Spieler1", res);
+    }
+
+    /**
+     * Button zum Testen der Anzeige, dass man gewonnen hat.
+     */
+    @FXML
+    public void onWinnerButtonPressed(ActionEvent actionEvent) {
+        Map<String, Integer> res = new HashMap<String, Integer>();
+        res.put("Spieler12345678", 45);
+        res.put("Spieler2", 30);
+        res.put("Spieler3", 12);
+        res.put("Spieler4", 37);
+        gameManagement.showGameOverView(loggedInUser, loggedInUser.getUsername(), res);
     }
 
     /**
