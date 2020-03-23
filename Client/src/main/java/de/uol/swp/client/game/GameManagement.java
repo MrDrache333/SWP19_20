@@ -292,11 +292,9 @@ public class GameManagement {
      * @since Sprint6
      */
     private void initGameOverView(User user, String winner, Map<String, Integer> res) {
-        if (gameOverScene == null) {
-            Parent rootPane = initPresenter(new GameOverViewPresenter(this, user, winner, res), GameOverViewPresenter.fxml);
-            gameOverScene = new Scene(rootPane, 420, 280);
-            lobbyScene.getStylesheets().add(styleSheet);
-        }
+        Parent rootPane = initPresenter(new GameOverViewPresenter(this, user, winner, res), GameOverViewPresenter.fxml);
+        gameOverScene = new Scene(rootPane, 420, 280);
+        lobbyScene.getStylesheets().add(styleSheet);
     }
 
     /**
