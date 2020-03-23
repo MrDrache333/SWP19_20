@@ -14,6 +14,7 @@ import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.game.phase.CompositePhase;
 import de.uol.swp.server.game.phase.Phase;
 import de.uol.swp.server.game.player.Player;
+import de.uol.swp.server.lobby.LobbyManagement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -147,7 +148,14 @@ class Playground {
         }
         if (this.players.get(thePositionInList).getPlayerName().equals(theGivingUpUser.getUsername()) && wantsToGiveUp && lobbyID.equals(this.theSpecificLobbyID)) {
             latestGivedUpPlayer = this.players.get(thePositionInList);
+            if (actualPlayer.equals(this.players.get(thePositionInList)) && players.size() >= 3){
+                actualPhase = Phase.Type.Clearphase;
+                newTurn();
+            }
+
             this.players.remove(thePositionInList);
+            gameService.userGivedUpLeavesLobby(lobbyID, theGivingUpUser);
+
             return true;
         } // TODO: Wenn Spielelogik weiter implementiert wird und ein Spieler aufgibt, Handling implementieren wie mit aufgegeben Spielern weiter umgegangen wird.
         else {
@@ -155,16 +163,7 @@ class Playground {
         }
     }
 
-    /**
-     * Gibt den Spieler zurück der als letztes Aufgegeben hat.
-     *
-     * @return s.o
-     * @author Haschem, Ferit
-     * @since Sprint5
-     */
-    public Player getLatestGivedUpPlayer() {
-        return latestGivedUpPlayer;
-    }
+
 
     /**
      * Sendet die Initiale Hand an jeden Spieler spezifisch. Überprüfung via SessionID.
@@ -224,6 +223,17 @@ class Playground {
      */
     public Phase.Type getActualPhase() {
         return actualPhase;
+    }
+
+    /**
+     * Gibt den Spieler zurück der als letztes Aufgegeben hat.
+     *
+     * @return s.o
+     * @author Haschem, Ferit
+     * @since Sprint5
+     */
+    public Player getLatestGivedUpPlayer() {
+        return latestGivedUpPlayer;
     }
 
     public void setActualPhase(Phase.Type actualPhase) {

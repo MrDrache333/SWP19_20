@@ -9,8 +9,10 @@ import de.uol.swp.common.game.messages.GameExceptionMessage;
 import de.uol.swp.common.game.request.SkipPhaseRequest;
 import de.uol.swp.common.game.messages.UserGivedUpMessage;
 import de.uol.swp.common.game.request.GameGiveUpRequest;
+import de.uol.swp.common.lobby.request.LobbyLeaveUserRequest;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
+import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.game.player.Player;
 import de.uol.swp.server.message.StartGameInternalMessage;
@@ -149,5 +151,12 @@ public class GameService extends AbstractService {
         } else {
             // TODO: Implementierung: Was passiert wenn der User nicht entfernt werden kann? Welche Fälle gibt es?
         }
+    }
+
+
+    public void userGivedUpLeavesLobby(UUID gameID, UserDTO user) {
+        LobbyLeaveUserRequest leaveUserRequest = new LobbyLeaveUserRequest(gameID,  user);
+        post(leaveUserRequest);
+
     }
 }
