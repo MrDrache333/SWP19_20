@@ -260,6 +260,7 @@ public class Playground {
     public CompositePhase getCompositePhase() {
         return compositePhase;
     }
+
     /**
      * Beendet den Timer, sofern innerhalb der 35 Sekunden eine ActionKarte Ausgewählt worden ist.
      */
@@ -267,7 +268,4 @@ public class Playground {
         timer.cancel();
     }
 
-    public CompositePhase getCompositePhase() {
-        return compositePhase;
-    }
 }
