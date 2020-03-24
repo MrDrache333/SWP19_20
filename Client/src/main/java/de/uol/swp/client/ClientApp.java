@@ -305,7 +305,7 @@ public class ClientApp extends Application implements ConnectionListener {
      * geschlossen und das MainMenu wird angezeigt
      *
      * @param message KickUserMessage
-     * @author Darian, Marvin
+     * @author Darian. Marvin
      * @since Sprint 4
      */
     @Subscribe

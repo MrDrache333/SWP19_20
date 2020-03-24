@@ -26,7 +26,7 @@ public class LobbyDTO implements Lobby, Serializable {
     private String lobbyPassword;
     private UUID lobbyID;
     private Integer maxPlayer;
-
+    private boolean inGame;
 
     /**
      * Insatnziiert eine neue LobbyDTO.
@@ -47,10 +47,11 @@ public class LobbyDTO implements Lobby, Serializable {
         this.players = 1;
         this.lobbyPassword = lobbyPassword;
         this.maxPlayer = 4;
+        this.inGame = false;
     }
 
     /**
-     * Insatnziiert eine LobbyDTO für die Lobbytable im MainmMenu
+     * Insatnziiert eine LobbyDTO für die Lobbytable im MainMenu
      *
      * @param name          der Name der Lobby
      * @param creator       der Ersteller
@@ -58,10 +59,11 @@ public class LobbyDTO implements Lobby, Serializable {
      * @param lobbyPassword das Lobbypasswort
      * @param players       die Spieler
      * @param maxPlayer     die maximale Spieleranzahl
+     * @param inGame        ob gerade ein Spiel in der Lobby gespielt wird
      * @author Marco, Julia, Rike, Timo
      * @since Start
      */
-    public LobbyDTO(String name, User creator, UUID lobbyID, String lobbyPassword, Set<User> users, int players, Integer maxPlayer) {
+    public LobbyDTO(String name, User creator, UUID lobbyID, String lobbyPassword, Set<User> users, int players, Integer maxPlayer, boolean inGame) {
         this.name = name;
         this.owner = creator;
         this.readyStatus.put(creator.getUsername(), false);
@@ -70,6 +72,7 @@ public class LobbyDTO implements Lobby, Serializable {
         this.players = players;
         this.lobbyPassword = lobbyPassword;
         this.maxPlayer = maxPlayer;
+        this.inGame = inGame;
     }
 
     @Override
@@ -179,5 +182,13 @@ public class LobbyDTO implements Lobby, Serializable {
         this.maxPlayer = maxPlayer;
     }
 
+    @Override
+    public boolean getInGame() {
+        return inGame;
+    }
 
+    @Override
+    public void setInGame(boolean inGame) {
+        this.inGame = inGame;
+    }
 }

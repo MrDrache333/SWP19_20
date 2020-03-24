@@ -92,7 +92,7 @@ public class LobbyService extends AbstractService {
     @Subscribe
     public void onLobbyJoinUserRequest(LobbyJoinUserRequest msg) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getLobbyID());
-        if (lobby.isPresent() && !lobby.get().getUsers().contains(msg.getUser()) && lobby.get().getPlayers() < 4) {
+        if (lobby.isPresent() && !lobby.get().getUsers().contains(msg.getUser()) && lobby.get().getPlayers() < lobby.get().getMaxPlayer() && !lobby.get().getInGame()) {
             LOG.info("User " + msg.getUser().getUsername() + " is joining lobby " + lobby.get().getName());
             lobby.get().joinUser(new LobbyUser(msg.getUser()));
             ServerMessage returnMessage = new UserJoinedLobbyMessage(msg.getLobbyID(), msg.getUser(), (UserDTO) lobby.get().getOwner(), (LobbyDTO) lobby.get());
@@ -293,8 +293,9 @@ public class LobbyService extends AbstractService {
         }
         //Lobby starten
         LOG.debug("Game starts in Lobby: " + lobby.getName());
+        lobby.setInGame(true);
         StartGameMessage msg = new StartGameMessage(lobby.getLobbyID());
-        sendToAll(lobby.getLobbyID(), msg);
+        post(msg);
         // Sendet eine interne-Nachricht, welche die Erstellung des Games initiiert.
         StartGameInternalMessage internalMessage = new StartGameInternalMessage(lobby.getLobbyID());
         post(internalMessage);
