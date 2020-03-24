@@ -121,7 +121,7 @@ public class LobbyManagement {
                 updatedUsers.remove(oldUser);
                 updatedUsers.add(updatedUser);
                 Set<User> newUsers = new TreeSet<>(updatedUsers);
-                Lobby lobbyToUpdate = new LobbyDTO(lobby.getName(), updatedOwner, lobby.getLobbyID(), lobby.getLobbyPassword(), newUsers, lobby.getPlayers(), lobby.getMaxPlayer());
+                Lobby lobbyToUpdate = new LobbyDTO(lobby.getName(), updatedOwner, lobby.getLobbyID(), lobby.getLobbyPassword(), newUsers, lobby.getPlayers(), lobby.getMaxPlayer(), lobby.getInGame());
                 updatedLobbies.put(lobbyToUpdate.getLobbyID(), lobbyToUpdate);
             }
         }
