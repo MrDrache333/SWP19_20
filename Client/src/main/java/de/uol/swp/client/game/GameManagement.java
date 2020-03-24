@@ -197,6 +197,7 @@ public class GameManagement {
 
     /**
      * Methode zum Anzeigen der GameOverView.
+     * Status der Spieler wird auf "nicht bereit" gesetzt.
      *
      * @param loggedInUser der aktuelle Nutzer
      * @param winner       der Gewinner des Spiels
@@ -205,6 +206,9 @@ public class GameManagement {
      */
     public void showGameOverView(User loggedInUser, String winner, Map<String, Integer> res) {
         if (loggedInUser.getUsername().equals(this.loggedInUser.getUsername())) {
+            UserDTO loggedInUserDTO = new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail());
+            lobbyPresenter.getLobbyService().setLobbyUserStatus(id, loggedInUserDTO, false);
+            lobbyPresenter.setButtonReady(loggedInUserDTO);
             initGameOverView(this.loggedInUser, winner, res);
             Platform.runLater(() -> {
                 gameOverStage.setScene(gameOverScene);
@@ -288,11 +292,9 @@ public class GameManagement {
      * @since Sprint6
      */
     private void initGameOverView(User user, String winner, Map<String, Integer> res) {
-        if (gameOverScene == null) {
-            Parent rootPane = initPresenter(new GameOverViewPresenter(this, user, winner, res), GameOverViewPresenter.fxml);
-            gameOverScene = new Scene(rootPane, 420, 280);
-            lobbyScene.getStylesheets().add(styleSheet);
-        }
+        Parent rootPane = initPresenter(new GameOverViewPresenter(this, user, winner, res), GameOverViewPresenter.fxml);
+        gameOverScene = new Scene(rootPane, 420, 280);
+        lobbyScene.getStylesheets().add(styleSheet);
     }
 
     /**

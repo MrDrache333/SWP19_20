@@ -18,6 +18,7 @@ import de.uol.swp.server.game.player.Player;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.sql.Timestamp;
 import java.util.*;
 
 /**
@@ -39,6 +40,7 @@ public class Playground {
     private GameService gameService;
     private UUID theSpecificLobbyID;
     private CompositePhase compositePhase;
+    private Timer timer = new Timer();
     private short lobbySizeOnStart;
     private CardPack cardsPackField;
 
@@ -98,8 +100,9 @@ public class Playground {
      * Initialisiert actual- und nextPlayer und aktualisiert diese, wenn ein Spieler alle Phasen durchlaufen hat.
      * Dem neuen aktuellen Spieler wird seine Hand gesendet sowie eine StartActionPhaseMessage,
      * wenn er eine Aktionskarte auf der Hand hat bzw. eine StartBuyPhaseMessage wenn nicht.
+     * Es wird zusätzlich der Timestamp (vom Server) mitgeschickt
      *
-     * @author Julia
+     * @author Julia, Ferit
      * @since Sprint5
      */
     public void newTurn() {
@@ -117,10 +120,25 @@ public class Playground {
         }
         actualPhase = Phase.Type.ActionPhase;
         if (checkForActionCard()) {
-            gameService.sendToAllPlayers(theSpecificLobbyID, new StartActionPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            gameService.sendToAllPlayers(theSpecificLobbyID, new StartActionPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID, timestamp));
+            phaseTimer();
         } else {
             skipCurrentPhase();
         }
+    }
+
+    /**
+     * Ein Timer skippt nach 35 Sekunden die aktuelle Phase, sofern der Timer vorher nicht gecancelt worden ist. Hilfmethode endTimer ganz unten in der Klasse. Timer wird im GameService gecancelt, wenn eine Karte innerhalb der Zeit ausgewählt worden ist.
+     */
+    public void phaseTimer() {
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                skipCurrentPhase();
+                timer.cancel();
+            }
+        }, 35000);
     }
 
     /**
@@ -138,6 +156,7 @@ public class Playground {
         if (actualPhase == Phase.Type.ActionPhase) {
             actualPhase = Phase.Type.Buyphase;
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartBuyPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
+            endTimer();
         } else {
             actualPhase = Phase.Type.Clearphase;
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartClearPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
@@ -196,7 +215,6 @@ public class Playground {
         return false;
     }
 
-
     public List<Player> getPlayers() {
         return players;
     }
@@ -225,12 +243,28 @@ public class Playground {
         this.actualPhase = actualPhase;
     }
 
+
+    /**
+     * Es wird das Kartenfeld übergeben.
+     *
+     * @return Das Kartenfeld, also alle Karten die auf dem Playground initalisiert sind.
+     */
     public Map<Short, Integer> getCardField() {
         return cardField;
     }
 
     public CardPack getCardsPackField() {
         return cardsPackField;
+    }
+
+    public CompositePhase getCompositePhase() {
+        return compositePhase;
+    }
+    /**
+     * Beendet den Timer, sofern innerhalb der 35 Sekunden eine ActionKarte Ausgewählt worden ist.
+     */
+    public void endTimer() {
+        timer.cancel();
     }
 
     public CompositePhase getCompositePhase() {

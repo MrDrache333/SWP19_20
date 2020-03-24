@@ -117,7 +117,17 @@ public class GameOverViewPresenter extends AbstractPresenter {
             LOG.debug(bannerText.getBoundsInLocal().getWidth());
             if (scale < 1) {
                 double fontSize = 18 * scale;
-                bannerText.setStyle("-fx-font-size: " + fontSize);
+                if (fontSize < 12) {
+                    TextFlow flow = new TextFlow();
+                    flow.setMaxWidth(220);
+                    flow.setTextAlignment(TextAlignment.CENTER);
+                    bannerTextBox.getChildren().add(flow);
+                    bannerTextBox.getChildren().remove(bannerText);
+                    flow.getChildren().add(bannerText);
+                    bannerText.setStyle("-fx-font-size: 12");
+                } else {
+                    bannerText.setStyle("-fx-font-size: " + fontSize);
+                }
             }
             bannerTextSmall.setText("Vielleicht klappt's beim nächsten Mal.");
             bannerTextSmall.setLayoutX(80);
