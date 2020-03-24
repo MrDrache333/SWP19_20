@@ -9,7 +9,7 @@ import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.LobbyPresenter;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.sound.SoundMediaPlayer;
-import de.uol.swp.common.game.messages.UserGivedUpMessage;
+import de.uol.swp.common.game.messages.UserGaveUpMessage;
 import de.uol.swp.common.lobby.message.KickUserMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.user.User;
@@ -113,7 +113,7 @@ public class GameManagement {
      * @since Sprint5
      */
     @Subscribe
-    private void userGivedUp(UserGivedUpMessage msg) {
+    private void userGivedUp(UserGaveUpMessage msg) {
         if (msg.getLobbyID().equals(id) && msg.getUserGivedUp()) {
             close();
             LOG.debug("Game mit folgender ID geschlossen: " + id);

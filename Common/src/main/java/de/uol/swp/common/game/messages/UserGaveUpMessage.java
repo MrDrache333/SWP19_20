@@ -14,13 +14,13 @@ import java.util.UUID;
  */
 
 
-public class UserGivedUpMessage extends AbstractServerMessage {
+public class UserGaveUpMessage extends AbstractServerMessage {
     private static final long serialVersionUID = -6145124538556130864L;
     private UUID lobbyID;
     private UserDTO theUser;
     private Boolean userGivedUp;
 
-    public UserGivedUpMessage(UUID lobbyID, UserDTO theUser, Boolean userGivedUp) {
+    public UserGaveUpMessage(UUID lobbyID, UserDTO theUser, Boolean userGivedUp) {
         this.lobbyID = lobbyID;
         this.theUser = theUser;
         this.userGivedUp = userGivedUp;

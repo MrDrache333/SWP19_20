@@ -139,7 +139,7 @@ class Playground {
      * @return Ob der Spieler erfolgreich entfernt worden ist oder nicht.
      * @author Haschem, Ferit
      */
-    public Boolean playerGivedUp(UUID lobbyID, UserDTO theGivingUpUser, Boolean wantsToGiveUp) {
+    public Boolean playerGaveUp(UUID lobbyID, UserDTO theGivingUpUser, Boolean wantsToGiveUp) {
         int thePositionInList = -1;
         for (int i = 0; i < players.size(); i++) {
             if (players.get(i).getPlayerName().equals(theGivingUpUser.getUsername())) {
@@ -153,11 +153,11 @@ class Playground {
                 actualPhase = Phase.Type.Clearphase;
                 newTurn();
             }
-            if (this.players.size() == 2) {
-                this.players.remove(thePositionInList);
-                gameService.userGivedUpLeavesLobby(lobbyID, theGivingUpUser);
-                // TODO: Handling, dass das Spiel dann beendet wird, wenn das implementiert ist und Gewinner Benachrichtigen.
-            }
+            //   if (this.players.size() == 2) { // Auskommentiert, weil das später implementiert wird. 
+            this.players.remove(thePositionInList);
+            gameService.userGavesUpLeavesLobby(lobbyID, theGivingUpUser);
+            // TODO: Handling, dass das Spiel dann beendet wird, wenn das implementiert ist und Gewinner Benachrichtigen.
+            // }
             return true;
         } // TODO: Wenn Spielelogik weiter implementiert wird und ein Spieler aufgibt, Handling implementieren wie mit aufgegeben Spielern weiter umgegangen wird.
         else {
@@ -233,7 +233,7 @@ class Playground {
      * @author Haschem, Ferit
      * @since Sprint5
      */
-    public Player getLatestGivedUpPlayer() {
+    public Player getLatestGavedUpPlayer() {
         return latestGivedUpPlayer;
     }
 

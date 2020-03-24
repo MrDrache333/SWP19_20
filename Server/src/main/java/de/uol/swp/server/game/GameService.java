@@ -7,7 +7,7 @@ import de.uol.swp.common.game.exception.GameManagementException;
 import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.GameExceptionMessage;
 import de.uol.swp.common.game.request.SkipPhaseRequest;
-import de.uol.swp.common.game.messages.UserGivedUpMessage;
+import de.uol.swp.common.game.messages.UserGaveUpMessage;
 import de.uol.swp.common.game.request.GameGiveUpRequest;
 import de.uol.swp.common.lobby.request.LobbyLeaveUserRequest;
 import de.uol.swp.common.message.ServerMessage;
@@ -143,18 +143,18 @@ public class GameService extends AbstractService {
      */
     @Subscribe
     void userGivesUp(GameGiveUpRequest msg) {
-        Boolean userRemovedSuccesfully = gameManagement.getGame(msg.getTheSpecificLobbyID()).get().getPlayground().playerGivedUp(msg.getTheSpecificLobbyID(), msg.getGivingUpUSer(), msg.getWantsToGiveUP());
+        Boolean userRemovedSuccesfully = gameManagement.getGame(msg.getTheSpecificLobbyID()).get().getPlayground().playerGaveUp(msg.getTheSpecificLobbyID(), msg.getGivingUpUSer(), msg.getWantsToGiveUP());
         if (userRemovedSuccesfully) {
-            UserGivedUpMessage givedUp = new UserGivedUpMessage(msg.getTheSpecificLobbyID(), msg.getGivingUpUSer(), true);
-            Player givedUpPlayer = gameManagement.getGame(msg.getTheSpecificLobbyID()).get().getPlayground().getLatestGivedUpPlayer();
-            sendToSpecificPlayer(givedUpPlayer, givedUp);
+            UserGaveUpMessage gaveUp = new UserGaveUpMessage(msg.getTheSpecificLobbyID(), msg.getGivingUpUSer(), true);
+            Player gaveUpPlayer = gameManagement.getGame(msg.getTheSpecificLobbyID()).get().getPlayground().getLatestGavedUpPlayer();
+            sendToSpecificPlayer(gaveUpPlayer, gaveUp);
         } else {
             // TODO: Implementierung: Was passiert wenn der User nicht entfernt werden kann? Welche Fälle gibt es?
         }
     }
 
 
-    public void userGivedUpLeavesLobby(UUID gameID, UserDTO user) {
+    public void userGavesUpLeavesLobby(UUID gameID, UserDTO user) {
         LobbyLeaveUserRequest leaveUserRequest = new LobbyLeaveUserRequest(gameID,  user);
         post(leaveUserRequest);
 

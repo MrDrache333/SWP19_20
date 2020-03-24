@@ -46,7 +46,7 @@ public class GiveUpTest {
     @Test
     void testGiveUp() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
-        Boolean successTest = playground.playerGivedUp(gameID, (UserDTO) secondPlayer, true);
+        Boolean successTest = playground.playerGaveUp(gameID, (UserDTO) secondPlayer, true);
         assertEquals(true, successTest);
     }
 }
