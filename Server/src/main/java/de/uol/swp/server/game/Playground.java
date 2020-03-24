@@ -35,7 +35,7 @@ class Playground {
     private Map<String, Integer> resultsGame = new TreeMap<>();
     private Player actualPlayer;
     private Player nextPlayer;
-    private Player latestGivedUpPlayer;
+    private Player latestGavedUpPlayer;
     private Phase.Type actualPhase;
     private ArrayList<Short> theIdsFromTheHand = new ArrayList<>(5);
     private GameService gameService;
@@ -113,7 +113,7 @@ class Playground {
         } else {
             //Spieler muss Clearphase durchlaufen haben
             if (actualPhase != Phase.Type.Clearphase) return;
-            sendPlayersHand();
+            if (actualPlayer != latestGavedUpPlayer) sendPlayersHand();
             int index = players.indexOf(nextPlayer);
             actualPlayer = nextPlayer;
             nextPlayer = players.get(++index % players.size());
@@ -208,25 +208,24 @@ class Playground {
             }
         }
         if (this.players.get(thePositionInList).getPlayerName().equals(theGivingUpUser.getUsername()) && wantsToGiveUp && lobbyID.equals(this.theSpecificLobbyID)) {
-            latestGivedUpPlayer = this.players.get(thePositionInList);
-            if (actualPlayer.equals(this.players.get(thePositionInList)) && players.size() >= 3) {
+            latestGavedUpPlayer = this.players.get(thePositionInList);
+            gameService.userGavesUpLeavesLobby(lobbyID, theGivingUpUser);
+
+            if (actualPlayer.equals(latestGavedUpPlayer) && players.size() >= 3) {
                 this.players.remove(thePositionInList);
-                gameService.userGavesUpLeavesLobby(lobbyID, theGivingUpUser);
                 actualPhase = Phase.Type.Clearphase;
                 newTurn();
             } else if (this.players.size() == 2) {
                 this.players.remove(thePositionInList);
-                gameService.userGavesUpLeavesLobby(lobbyID, theGivingUpUser);
                 GameOverMessage gameOverByGaveUp = new GameOverMessage(lobbyID, this.players.get(0).getTheUserInThePlayer(), this.players.get(0).getPlayerName(), resultsGame);
                 endGame(lobbyID, gameOverByGaveUp);
-            } else if (this.players.size() >= 3) {
-                if (nextPlayer.equals(this.players.get(thePositionInList)) && thePositionInList < this.players.size()) {
-                    nextPlayer = this.players.get(thePositionInList++);
+            } else if (this.players.size() >= 3 && nextPlayer.equals(latestGavedUpPlayer)) {
+                if (thePositionInList < this.players.size()) {
+                    nextPlayer = this.players.get(++thePositionInList);
                     this.players.remove(thePositionInList);
-                    gameService.userGavesUpLeavesLobby(lobbyID, theGivingUpUser);
                 } else {
                     this.players.remove(thePositionInList);
-                    gameService.userGavesUpLeavesLobby(lobbyID, theGivingUpUser);
+                    nextPlayer = this.players.get(0);
                 }
             }
             return true;
@@ -305,7 +304,7 @@ class Playground {
      * @since Sprint5
      */
     public Player getLatestGavedUpPlayer() {
-        return latestGivedUpPlayer;
+        return latestGavedUpPlayer;
     }
 
     public void setActualPhase(Phase.Type actualPhase) {
