@@ -67,15 +67,6 @@ class Playground {
     }
 
     /**
-     * Es wird das Kartenfeld übergeben.
-     *
-     * @return Das Kartenfeld, also alle Karten die auf dem Playground initalisiert sind.
-     */
-    public static Map<Short, Integer> getCardField() {
-        return cardField;
-    }
-
-    /**
      * Methode initalisiert das Kartenfeld mit der richtigen Anzahl an Karten auf dem Feld.
      */
     private void initializeCardField() {
@@ -228,7 +219,7 @@ class Playground {
                 GameOverMessage gameOverByGaveUp = new GameOverMessage(lobbyID, this.players.get(0).getTheUserInThePlayer(), this.players.get(0).getPlayerName(), resultsGame);
                 endGame(lobbyID, gameOverByGaveUp);
             } else if (this.players.size() >= 3 && nextPlayer.equals(latestGavedUpPlayer)) {
-                if (thePositionInList < this.players.size()) {
+                if (thePositionInList < this.players.size() - 1) {
                     nextPlayer = this.players.get(++thePositionInList);
                     this.players.remove(thePositionInList);
                 } else {
@@ -326,5 +317,14 @@ class Playground {
 
     public CompositePhase getCompositePhase() {
         return compositePhase;
+    }
+
+    /**
+     * Es wird das Kartenfeld übergeben.
+     *
+     * @return Das Kartenfeld, also alle Karten die auf dem Playground initalisiert sind.
+     */
+    public static Map<Short, Integer> getCardField() {
+        return cardField;
     }
 }

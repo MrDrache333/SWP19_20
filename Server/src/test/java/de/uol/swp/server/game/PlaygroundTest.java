@@ -1,7 +1,10 @@
 package de.uol.swp.server.game;
 
+import com.google.common.eventbus.DeadEvent;
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import de.uol.swp.common.game.exception.GamePhaseException;
+import de.uol.swp.common.game.request.GameGiveUpRequest;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.chat.ChatManagement;
@@ -11,10 +14,12 @@ import de.uol.swp.server.message.StartGameInternalMessage;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import de.uol.swp.server.usermanagement.UserManagement;
 import de.uol.swp.server.usermanagement.store.MainMemoryBasedUserStore;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,14 +36,53 @@ public class PlaygroundTest {
     static final GameService gameService = new GameService(bus, gameManagement, authenticationService);
 
     static UUID gameID;
+    private final CountDownLatch lock = new CountDownLatch(1);
+    private Object event;
 
-    @BeforeAll
     static void init() {
         gameID = lobbyManagement.createLobby("Test", "", defaultOwner);
         chatManagement.createChat(gameID.toString());
         lobbyManagement.getLobby(gameID).get().joinUser(secondPlayer);
         lobbyManagement.getLobby(gameID).get().joinUser(thirdPlayer);
         bus.post(new StartGameInternalMessage(gameID));
+    }
+
+    /**
+     * Bei Auftreten eines DeadEvents wird dieses ausgegeben und der CountDownLatch wird um eins verringert
+     *
+     * @param e das DeadEvent
+     * @author Marco
+     * @since Start
+     */
+    @Subscribe
+    void handle(DeadEvent e) {
+        this.event = e.getEvent();
+        System.out.print(e.getEvent());
+        lock.countDown();
+    }
+
+    /**
+     * Setzt vor jedem Test das aktuelle Event auf null und registriert diese Testklasse auf dem Eventbus
+     *
+     * @author Marco
+     * @since Start
+     */
+    @BeforeEach
+    void registerBus() {
+        init();
+        event = null;
+        bus.register(this);
+    }
+
+    /**
+     * Meldet diese Testklasse nach jedem Test vom Eventbus ab
+     *
+     * @author Marco
+     * @since Start
+     */
+    @AfterEach
+    void deregisterBus() {
+        bus.unregister(this);
     }
 
     /**
@@ -102,5 +146,33 @@ public class PlaygroundTest {
         playground.skipCurrentPhase();
         assertEquals(Phase.Type.Clearphase, playground.getActualPhase());
         assertThrows(GamePhaseException.class, () -> playground.skipCurrentPhase());
+    }
+
+    /**
+     * Testet, ob Requests ankommen und alles richtig durchlaufen wird und ein Spieler entfernt worden ist.
+     *
+     * @author Ferit
+     * @since Sprint6
+     */
+    @Test
+    void playerGaveUpTest() {
+        UUID spielID = gameID;
+        GameGiveUpRequest testRequest = new GameGiveUpRequest((UserDTO) secondPlayer, spielID);
+        bus.post(testRequest);
+        assertEquals(2, gameManagement.getGame(gameID).get().getPlayground().getPlayers().size());
+    }
+
+    /**
+     * Testet, ob der spezifizierte Spieler der Aufgeben will, nach Aufgabe noch im Game befindet.
+     *
+     * @author Ferit
+     * @since Sprint6
+     */
+    @Test
+    void specificPlayerGaveUpTest() {
+        UUID spielID = gameID;
+        GameGiveUpRequest testRequest = new GameGiveUpRequest((UserDTO) secondPlayer, spielID);
+        bus.post(testRequest);
+        assertTrue(!gameManagement.getGame(gameID).get().getPlayground().getPlayers().contains(secondPlayer.getUsername()));
     }
 }
