@@ -214,15 +214,15 @@ class Playground {
                 gameService.userGavesUpLeavesLobby(lobbyID, theGivingUpUser);
                 actualPhase = Phase.Type.Clearphase;
                 newTurn();
-            } else if (this.players.size() >= 3) {
-                this.players.remove(thePositionInList);
-                gameService.userGavesUpLeavesLobby(lobbyID, theGivingUpUser);
             }
             if (this.players.size() == 2) {
                 this.players.remove(thePositionInList);
                 gameService.userGavesUpLeavesLobby(lobbyID, theGivingUpUser);
                 GameOverMessage gameOverByGaveUp = new GameOverMessage(lobbyID, this.players.get(0).getTheUserInThePlayer(), this.players.get(0).getPlayerName(), resultsGame);
                 endGame(lobbyID, gameOverByGaveUp);
+            } else if (this.players.size() >= 3) {
+                this.players.remove(thePositionInList);
+                gameService.userGavesUpLeavesLobby(lobbyID, theGivingUpUser);
             }
             return true;
         } // TODO: Wenn Spielelogik weiter implementiert wird und ein Spieler aufgibt, Handling implementieren wie mit aufgegeben Spielern weiter umgegangen wird.
