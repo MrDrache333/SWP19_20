@@ -172,7 +172,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * @since Sprint 5
      */
     @FXML
-    public void onBuyableCardClicked (MouseEvent mouseEvent) {
+    public void onBuyableCardClicked(MouseEvent mouseEvent) {
         chosenBuyableCard(mouseEvent);
     }
 
@@ -265,17 +265,17 @@ public class GameViewPresenter extends AbstractPresenter {
      * War der Kauf erfolgreich wandert die Karte auf den Ablagestapel (Animation)
      * Überprüft ob die Spieler noch Karten der gekauften Art kaufen können und fügt ggf. das ImageView (kleines Bild) wieder hinzu
      *
-     * @param msg   die Nachricht
+     * @param msg die Nachricht
      * @author Rike
      * @since Sprint 5
      */
     @Subscribe
-    public void onBuyCardMessage (BuyCardMessage msg){
-        if (msg.getLobbyID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)){
-            if (msg.isBuyCard()){
+    public void onBuyCardMessage(BuyCardMessage msg) {
+        if (msg.getLobbyID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
+            if (msg.isBuyCard()) {
                 AnimationManagement.buyCard(msg.getCardImage());
                 LOG.debug("Der Spieler " + msg.getCurrentUser() + " hat die Karte " + msg.getCardID() + " gekauft.");
-                if (msg.getCounterCard() > 0){
+                if (msg.getCounterCard() > 0) {
                     // fügt ein "neues" Bild an der Stelle des alten Bildes im Shop hinzu
                     ImageView newCardImage = msg.getCardImage();
                     newCardImage.setFitWidth(msg.getCardImage().getFitWidth());
@@ -284,7 +284,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     newCardImage.setId(msg.getCardID());
                     newCardImage.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> chosenBuyableCard(mouseEvent));
                 }
-            } else{
+            } else {
                 showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht kaufen!", "Fehler");
                 LOG.debug("Der Kauf der Karte " + msg.getCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
             }

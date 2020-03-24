@@ -26,12 +26,11 @@ import java.util.*;
 class Playground {
 
     private static final Logger LOG = LogManager.getLogger(Playground.class);
-
+    private static Map<Short, Integer> cardField = new TreeMap<>();
     /**
      * Die Spieler
      */
     private List<Player> players = new ArrayList<>();
-    private static Map<Short, Integer> cardField = new TreeMap<>();
     private Map<String, Integer> resultsGame = new TreeMap<>();
     private Player actualPlayer;
     private Player nextPlayer;
@@ -65,6 +64,15 @@ class Playground {
         this.compositePhase = new CompositePhase();
         this.lobbySizeOnStart = (short) lobby.getUsers().size();
         initializeCardField();
+    }
+
+    /**
+     * Es wird das Kartenfeld übergeben.
+     *
+     * @return Das Kartenfeld, also alle Karten die auf dem Playground initalisiert sind.
+     */
+    public static Map<Short, Integer> getCardField() {
+        return cardField;
     }
 
     /**
@@ -235,7 +243,6 @@ class Playground {
         }
     }
 
-
     /**
      * Sendet die Initiale Hand an jeden Spieler spezifisch. Überprüfung via SessionID.
      *
@@ -254,7 +261,6 @@ class Playground {
             LOG.debug("All OK with sending initial Hands...");
         }
     }
-
 
     /**
      * Überprüft, ob der aktuelle Spieler eine Aktionskarte auf der Hand hat, die er spielen könnte.
@@ -296,6 +302,10 @@ class Playground {
         return actualPhase;
     }
 
+    public void setActualPhase(Phase.Type actualPhase) {
+        this.actualPhase = actualPhase;
+    }
+
     /**
      * Gibt den Spieler zurück der als letztes Aufgegeben hat.
      *
@@ -305,19 +315,6 @@ class Playground {
      */
     public Player getLatestGavedUpPlayer() {
         return latestGavedUpPlayer;
-    }
-
-    public void setActualPhase(Phase.Type actualPhase) {
-        this.actualPhase = actualPhase;
-    }
-
-    /**
-     * Es wird das Kartenfeld übergeben.
-     *
-     * @return Das Kartenfeld, also alle Karten die auf dem Playground initalisiert sind.
-     */
-    public static Map<Short, Integer> getCardField() {
-        return cardField;
     }
 
     /**

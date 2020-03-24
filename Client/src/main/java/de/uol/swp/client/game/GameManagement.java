@@ -119,7 +119,7 @@ public class GameManagement {
      */
     @Subscribe
     private void userGivedUp(UserGaveUpMessage msg) {
-        if (msg.getLobbyID().equals(id) && msg.getUserGivedUp()  && msg.getTheUser().equals(loggedInUser)) {
+        if (msg.getLobbyID().equals(id) && msg.getUserGivedUp() && msg.getTheUser().equals(loggedInUser)) {
             close();
             LOG.debug("Game mit folgender ID geschlossen: " + id);
         } else {

@@ -7,7 +7,8 @@
 <?import javafx.scene.text.*?>
 <?import java.net.URL?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="750.0" prefWidth="1280.0"
-            xmlns="http://javafx.com/javafx/10.0.2-internal" fx:controller="de.uol.swp.client.register.RegistrationPresenter">
+            xmlns="http://javafx.com/javafx/10.0.2-internal"
+            fx:controller="de.uol.swp.client.register.RegistrationPresenter">
     <stylesheets>
         <URL value="@../css/RegistrationView.css"/>
         <URL value="@../css/global.css"/>
