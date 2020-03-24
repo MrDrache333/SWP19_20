@@ -226,14 +226,7 @@ public class Playground {
         return nextPlayer;
     }
 
-    /**
-     * Getter und Setter um an die aktuelle Phase zu kommen
-     *
-     * @return aktuelle Phase
-     * @author Paula
-     * @version 1
-     * @since Sprint5
-     */
+
     public Phase.Type getActualPhase() {
         return actualPhase;
     }

@@ -158,15 +158,18 @@ public class GameService extends AbstractService {
     }
 
     /**
+     * Versuch eine Karte zu kaufen
      *
-     * @param request
+     * @param request BuyCardRequest wird hier vom Client empfangen
+     * @author Paula
+     * @since Sprint6
      */
     @Subscribe
     public void onBuyCardRequest(BuyCardRequest request) {
         Optional<Game> game = gameManagement.getGame(request.getLobbyID());
         if (game.isPresent()) {
             Playground playground = game.get().getPlayground();
-           playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(),request.getCardID());
+            playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), request.getCardID());
         } else {
             LOG.error("Es existiert kein Spiel mit der ID " + request.getCardID());
         }

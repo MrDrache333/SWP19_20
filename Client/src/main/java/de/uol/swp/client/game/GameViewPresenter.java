@@ -401,7 +401,6 @@ public class GameViewPresenter extends AbstractPresenter {
                 mouseY > shopTeppich.getLayoutY() && mouseY < (shopTeppich.getLayoutY() + shopTeppich.getFitHeight())) {
             // Karte befindet sich im Shop
             ImageView cardImage = (ImageView) mouseEvent.getSource();
-            //TODO String auf UUID umstellen?
             String cardID = cardImage.getId();
             String PathCardLargeView = "/cards/images/" + cardID + ".png";
             // ein großes Bild der Karte wird hinzugefügt

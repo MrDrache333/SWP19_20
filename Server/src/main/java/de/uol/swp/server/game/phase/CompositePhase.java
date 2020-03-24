@@ -1,6 +1,5 @@
 package de.uol.swp.server.game.phase;
 
-import com.google.inject.internal.cglib.reflect.$FastMethod;
 import de.uol.swp.common.game.card.Card;
 import de.uol.swp.common.game.card.parser.CardPack;
 import de.uol.swp.common.game.card.parser.CardStack;
@@ -9,18 +8,13 @@ import de.uol.swp.common.game.exception.NotEnoughMoneyException;
 import de.uol.swp.server.game.Playground;
 import de.uol.swp.server.game.player.Deck;
 import de.uol.swp.server.game.player.Player;
-import io.netty.util.internal.logging.AbstractInternalLogger;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 /**
  * Die Funktionsklasse aller Phasen
  */
 public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
+
 
     private Playground playGround;
 
@@ -28,37 +22,37 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         this.playGround = playGround;
     }
 
+    /**
+     * Methode um eine Karte zu kaufen. Diese wird dem Ablagestapel des Spielers hinzugefügt, wenn er genug Geld hat
+     *
+     * @param player Der Spieler
+     * @param cardId Die Karten-ID
+     * @author Paula
+     * @since Sprint6
+     */
     @Override
-    public void executeBuyPhase(Player player, short cardId){
+    public void executeBuyPhase(Player player, short cardId) {
         CardPack cardsPackField = new JsonCardParser().loadPack("Basispack");
         Card currentCard = getCardFromId(cardsPackField.getCards(), cardId);
-        if (currentCard == null) {
-            throw new IllegalArgumentException("CardID wurde nicht gefunden");
-        }
+        // Karten und deren Anzahl werden aus dem Spielfeld geladen.
         int count = Playground.getCardField().get(cardId);
-
-        //Falls gefunden: Geldwert des Spielers wird berechnet
-        int moneyValuePlayer = player.getPlayerDeck().actualMoneyFromPlayer();
-        if (moneyValuePlayer < currentCard.getCosts()) {
-            throw new NotEnoughMoneyException("Kein Geld");
-        }
-        // Kauf gelungen: Karte dem Ablagstapel hinzufügen, aus der Mitte entfernen und Geld abziehen
-        player.getPlayerDeck().addCardToDiscardPile(currentCard);
-        // Geld abziehen
-        moneyValuePlayer -= currentCard.getCosts();
-        player.getPlayerDeck().discardMoneyCardsForValue(currentCard.getCosts());
-        // Karte aus der Mitte entfernen
         if (count > 0) {
+            // Falls die ID der Karte nicht vorhanden ist, wird eine Exception geworfen
+            if (currentCard == null) {
+                throw new IllegalArgumentException("CardID wurde nicht gefunden");
+            }
+            //Falls die ID vorhanden ist wird der Geldwert des Spielers wird berechnet, hat er
+            // genug Geld, wird die Karte seinem Ablagestapel hinzugefügt, das Geld wird ihm entzogen
+            // und die Anzahl der Karte auf dem Spielfeld verringert sich um eins
+            int moneyValuePlayer = player.getPlayerDeck().actualMoneyFromPlayer();
+            if (moneyValuePlayer < currentCard.getCosts()) {
+                throw new NotEnoughMoneyException("Nicht genug Geld vorhanden");
+            }
+            player.getPlayerDeck().addCardToDiscardPile(currentCard);
+            moneyValuePlayer -= currentCard.getCosts();
+            player.getPlayerDeck().discardMoneyCardsForValue(currentCard.getCosts());
             Playground.getCardField().put(cardId, --count);
         }
-
-        /*
-        1. Verifiziere, dass Karte existiert
-        2. Überprüfe, ob Karte, durch auf der Hand befindliche Geldkarten, gekauft werden kann
-        3. Führe Kauf aus
-
-        Werfe bei fehlern eine Exception, sodass aufrufender den Kauf abbrechen kann
-         */
     }
 
     /**
@@ -87,11 +81,13 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
 
 
     /**
-     * Hilfsmethode um von der ID an die Karte zu kommen
+     * Hilfsmethode um an die Daten über die ID zu kommen
      *
-     * @param hand
+     * @param cardStack
      * @param cardId
      * @return
+     * @author Paula
+     * @since Sprint6
      */
 
     private Card getCardFromId(CardStack cardStack, short cardId) {

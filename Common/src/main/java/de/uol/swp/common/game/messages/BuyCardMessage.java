@@ -23,14 +23,14 @@ public class BuyCardMessage extends AbstractServerMessage {
 
     private UUID lobbyID;
     private User currentUser;
-    private String cardID;
+    private Short cardID;
     private ImageView cardImage;
     private boolean buyCard;
     private int counterCard;
 
     public BuyCardMessage(){}
 
-    public BuyCardMessage (UUID lobbyID, User currentUser, String cardID, ImageView cardImage, boolean buyCard, int counterCard){
+    public BuyCardMessage (UUID lobbyID, User currentUser, Short cardID, ImageView cardImage, boolean buyCard, int counterCard){
         this.lobbyID = lobbyID;
         this.currentUser = currentUser;
         this.cardID = cardID;
@@ -47,7 +47,7 @@ public class BuyCardMessage extends AbstractServerMessage {
         return currentUser;
     }
 
-    public String getCardID() {
+    public Short getCardID() {
         return cardID;
     }
 

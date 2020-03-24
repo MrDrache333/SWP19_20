@@ -1,6 +1,8 @@
 package de.uol.swp.server.game;
 
 import com.google.common.eventbus.EventBus;
+import de.uol.swp.common.game.card.Card;
+import de.uol.swp.common.game.card.parser.CardPack;
 import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
@@ -29,6 +31,7 @@ public class PlaygroundTest {
     static final GameManagement gameManagement = new GameManagement(chatManagement, lobbyManagement);
     static final AuthenticationService authenticationService = new AuthenticationService(bus, new UserManagement(new MainMemoryBasedUserStore()));
     static final GameService gameService = new GameService(bus, gameManagement, authenticationService);
+
 
     static UUID gameID;
 
@@ -102,5 +105,21 @@ public class PlaygroundTest {
         playground.skipCurrentPhase();
         assertEquals(Phase.Type.Clearphase, playground.getActualPhase());
         assertThrows(GamePhaseException.class, () -> playground.skipCurrentPhase());
+    }
+
+    /**
+     * Testet ob Karte gekauft werden kann
+     *
+     * @author Paula
+     * @since Sprint6
+     */
+    @Test
+    void testExecuteBuyPhase() {
+        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
+        playground.setActualPhase(Phase.Type.Buyphase);
+
+        //TODO: Test schreiben nachholen dies das
+
+
     }
 }

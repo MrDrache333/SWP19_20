@@ -110,29 +110,39 @@ public class Deck {
         hand.remove(card);
         discardPile.remove(card);
     }
+
     /**
-     * gibt den aktuellen Wert des Geldes eines Spielers zurück
+     * Methode, die den Geldwert eines Spielers berechnet und zurückgibt
      *
      * @return Geldwert der Karten eines Spielers
      * @author Paula
      * @since Sprint6
      */
     public int actualMoneyFromPlayer() {
-        int money=0;
+        int money = 0;
         for (Card card : hand) {
             if (card instanceof MoneyCard) {
                 money += ((MoneyCard) card).getValue();
             }
-        } return money;
+        }
+        return money;
     }
 
-    public void discardMoneyCardsForValue(int value){
+    /**
+     * Hilfsmethode, um bei einem Kauf Geldkarten für den Kauf abzuziehen
+     *
+     * @param value Wert einer Geldkarte
+     * @author Paula
+     * @since Sprint6
+     */
+
+    public void discardMoneyCardsForValue(int value) {
         int money = 0;
-        for (Card card :hand){
-            if (card instanceof MoneyCard){
+        for (Card card : hand) {
+            if (card instanceof MoneyCard) {
                 money += ((MoneyCard) card).getValue();
                 addCardToDiscardPile(card);
-                if (money >= value){
+                if (money >= value) {
                     break;
                 }
             }
@@ -141,6 +151,7 @@ public class Deck {
 
     /**
      * Hilfsmethode um eine Karte zum Ablagestapel hinzuzufügen
+     *
      * @param card
      * @author Paula
      * @since Sprint6
@@ -149,7 +160,6 @@ public class Deck {
         discardPile.add(card);
 
     }
-
 
     public ArrayList<Card> getHand() {
         return hand;
