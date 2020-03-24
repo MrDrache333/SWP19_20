@@ -103,4 +103,5 @@ public class PlaygroundTest {
         assertEquals(Phase.Type.Clearphase, playground.getActualPhase());
         assertThrows(GamePhaseException.class, () -> playground.skipCurrentPhase());
     }
+
 }
