@@ -21,12 +21,12 @@ public class BuyCardRequest {
 
     private UUID lobbyID;
     private User currentUser;
-    private String cardID;
+    private Short cardID;
     private ImageView cardImage;
 
     public BuyCardRequest (){}
 
-    public BuyCardRequest (UUID lobbyID, User currentUser, String cardID, ImageView cardImage){
+    public BuyCardRequest (UUID lobbyID, User currentUser, Short cardID, ImageView cardImage){
         this.lobbyID = lobbyID;
         this.currentUser = currentUser;
         this.cardID = cardID;
@@ -41,7 +41,7 @@ public class BuyCardRequest {
         return currentUser;
     }
 
-    public String getCardID() {
+    public Short getCardID() {
         return cardID;
     }
 

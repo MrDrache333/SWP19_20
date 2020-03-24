@@ -6,6 +6,7 @@ import com.google.inject.Inject;
 import de.uol.swp.common.game.exception.GameManagementException;
 import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.GameExceptionMessage;
+import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.game.request.SelectCardRequest;
 import de.uol.swp.common.game.request.SkipPhaseRequest;
 import de.uol.swp.common.message.ServerMessage;
@@ -153,6 +154,21 @@ public class GameService extends AbstractService {
             }
         } else {
             LOG.error("Irgendwas ist bei der onSelectCardRequest im GameService falsch gelaufen..Folgende ID: " + request.getMessage().getGameID());
+        }
+    }
+
+    /**
+     *
+     * @param request
+     */
+    @Subscribe
+    public void onBuyCardRequest(BuyCardRequest request) {
+        Optional<Game> game = gameManagement.getGame(request.getLobbyID());
+        if (game.isPresent()) {
+            Playground playground = game.get().getPlayground();
+           playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(),request.getCardID());
+        } else {
+            LOG.error("Es existiert kein Spiel mit der ID " + request.getCardID());
         }
     }
 }

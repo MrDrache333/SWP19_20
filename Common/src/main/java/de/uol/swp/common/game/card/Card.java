@@ -22,7 +22,7 @@ public abstract class Card {
      * @author KenoO
      * @since Sprint 5
      */
-    Card(Type cardtype, String name, short id) {
+    public Card(Type cardtype, String name, short id) {
         this.cardtype = cardtype;
         this.name = name;
         this.id = id;

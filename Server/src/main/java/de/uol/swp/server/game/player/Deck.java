@@ -1,6 +1,7 @@
 package de.uol.swp.server.game.player;
 
 import de.uol.swp.common.game.card.Card;
+import de.uol.swp.common.game.card.MoneyCard;
 import de.uol.swp.common.game.card.parser.CardPack;
 import de.uol.swp.common.game.card.parser.JsonCardParser;
 
@@ -109,6 +110,46 @@ public class Deck {
         hand.remove(card);
         discardPile.remove(card);
     }
+    /**
+     * gibt den aktuellen Wert des Geldes eines Spielers zurück
+     *
+     * @return Geldwert der Karten eines Spielers
+     * @author Paula
+     * @since Sprint6
+     */
+    public int actualMoneyFromPlayer() {
+        int money=0;
+        for (Card card : hand) {
+            if (card instanceof MoneyCard) {
+                money += ((MoneyCard) card).getValue();
+            }
+        } return money;
+    }
+
+    public void discardMoneyCardsForValue(int value){
+        int money = 0;
+        for (Card card :hand){
+            if (card instanceof MoneyCard){
+                money += ((MoneyCard) card).getValue();
+                addCardToDiscardPile(card);
+                if (money >= value){
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Hilfsmethode um eine Karte zum Ablagestapel hinzuzufügen
+     * @param card
+     * @author Paula
+     * @since Sprint6
+     */
+    public void addCardToDiscardPile(Card card) {
+        discardPile.add(card);
+
+    }
+
 
     public ArrayList<Card> getHand() {
         return hand;

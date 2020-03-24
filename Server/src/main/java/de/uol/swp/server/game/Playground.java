@@ -24,7 +24,7 @@ import java.util.*;
 /**
  * Playground stellt das eigentliche Spielfeld dar
  */
-class Playground {
+public class Playground {
 
     private static final Logger LOG = LogManager.getLogger(Playground.class);
 
@@ -61,7 +61,7 @@ class Playground {
         Collections.shuffle(players);
         this.gameService = gameService;
         this.theSpecificLobbyID = lobby.getLobbyID();
-        this.compositePhase = new CompositePhase();
+        this.compositePhase = new CompositePhase(this);
         this.lobbySizeOnStart = (short) lobby.getUsers().size();
         initializeCardField();
     }
@@ -260,4 +260,5 @@ class Playground {
     public CompositePhase getCompositePhase() {
         return compositePhase;
     }
+
 }
