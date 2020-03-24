@@ -6,17 +6,14 @@ import de.uol.swp.common.game.card.Card;
 import de.uol.swp.common.game.card.parser.CardPack;
 import de.uol.swp.common.game.card.parser.JsonCardParser;
 import de.uol.swp.common.game.exception.GamePhaseException;
-import de.uol.swp.common.game.messages.DrawHandMessage;
-import de.uol.swp.common.game.messages.StartActionPhaseMessage;
-import de.uol.swp.common.game.messages.StartBuyPhaseMessage;
-import de.uol.swp.common.game.messages.StartClearPhaseMessage;
+import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.lobby.Lobby;
+import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.game.phase.CompositePhase;
 import de.uol.swp.server.game.phase.Phase;
 import de.uol.swp.server.game.player.Player;
-import de.uol.swp.server.lobby.LobbyManagement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -35,6 +32,7 @@ class Playground {
      */
     private List<Player> players = new ArrayList<>();
     private static Map<Short, Integer> cardField = new TreeMap<>();
+    private Map<String, Integer> resultsGame = new TreeMap<>();
     private Player actualPlayer;
     private Player nextPlayer;
     private Player latestGivedUpPlayer;
@@ -131,6 +129,17 @@ class Playground {
     }
 
     /**
+     * Beendet das Spiel, versendet die gameOverMessage und löscht das Spiel im GameManagement.
+     *
+     * @param lobbyID Die Lobby in der das Spiel beendet ist.
+     * @param gameEnd Die GameOverMessage
+     */
+    public void endGame(UUID lobbyID, ServerMessage gameEnd) {
+        gameService.sendToAllPlayers(lobbyID, gameEnd);
+        gameService.dropFinishedGame(lobbyID);
+    }
+
+    /**
      * Ein Timer skippt nach 35 Sekunden die aktuelle Phase, sofern der Timer vorher nicht gecancelt worden ist. Hilfmethode endTimer ganz unten in der Klasse. Timer wird im GameService gecancelt, wenn eine Karte innerhalb der Zeit ausgewählt worden ist.
      */
     public void phaseTimer() {
@@ -204,11 +213,12 @@ class Playground {
                 actualPhase = Phase.Type.Clearphase;
                 newTurn();
             }
-            //   if (this.players.size() == 2) { // Auskommentiert, weil das später implementiert wird. 
-            this.players.remove(thePositionInList);
-            gameService.userGavesUpLeavesLobby(lobbyID, theGivingUpUser);
-            // TODO: Handling, dass das Spiel dann beendet wird, wenn das implementiert ist und Gewinner Benachrichtigen.
-            // }
+            if (this.players.size() == 2) {
+                this.players.remove(thePositionInList);
+                gameService.userGivedUpLeavesLobby(lobbyID, theGivingUpUser);
+                GameOverMessage gameOverByGaveUp = new GameOverMessage(lobbyID, this.players.get(0).getTheUserInThePlayer(), this.players.get(0).getPlayerName(), resultsGame);
+                endGame(lobbyID, gameOverByGaveUp);
+            }
             return true;
         } // TODO: Wenn Spielelogik weiter implementiert wird und ein Spieler aufgibt, Handling implementieren wie mit aufgegeben Spielern weiter umgegangen wird.
         else {
@@ -300,6 +310,7 @@ class Playground {
     public static Map<Short, Integer> getCardField() {
         return cardField;
     }
+
     /**
      * Beendet den Timer, sofern innerhalb der 35 Sekunden eine ActionKarte Ausgewählt worden ist.
      */

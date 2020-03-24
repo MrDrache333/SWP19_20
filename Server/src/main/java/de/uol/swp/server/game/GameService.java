@@ -6,6 +6,8 @@ import com.google.inject.Inject;
 import de.uol.swp.common.game.exception.GameManagementException;
 import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.GameExceptionMessage;
+import de.uol.swp.common.game.messages.UserGivedUpMessage;
+import de.uol.swp.common.game.request.GameGiveUpRequest;
 import de.uol.swp.common.game.request.SelectCardRequest;
 import de.uol.swp.common.game.request.SkipPhaseRequest;
 import de.uol.swp.common.game.messages.UserGaveUpMessage;
@@ -92,6 +94,10 @@ public class GameService extends AbstractService {
         }
     }
 
+    public void dropFinishedGame(UUID lobbyID) {
+        gameManagement.deleteGame(lobbyID);
+    }
+
     /**
      * Startet das Spiel wenn die StartGameInternalMessage ankommt.
      *
@@ -147,8 +153,7 @@ public class GameService extends AbstractService {
         Boolean userRemovedSuccesfully = gameManagement.getGame(msg.getTheSpecificLobbyID()).get().getPlayground().playerGaveUp(msg.getTheSpecificLobbyID(), msg.getGivingUpUSer(), msg.getWantsToGiveUP());
         if (userRemovedSuccesfully) {
             UserGaveUpMessage gaveUp = new UserGaveUpMessage(msg.getTheSpecificLobbyID(), msg.getGivingUpUSer(), true);
-            Player gaveUpPlayer = gameManagement.getGame(msg.getTheSpecificLobbyID()).get().getPlayground().getLatestGavedUpPlayer();
-            sendToSpecificPlayer(gaveUpPlayer, gaveUp);
+            sendToAllPlayers(msg.getTheSpecificLobbyID(), givedUp);
         } else {
             // TODO: Implementierung: Was passiert wenn der User nicht entfernt werden kann? Welche Fälle gibt es?
         }
@@ -160,6 +165,7 @@ public class GameService extends AbstractService {
         post(leaveUserRequest);
 
     }
+
     /**
      * Die Methode cancelt aktuell den Timer der AktionPhase.
      *
