@@ -214,8 +214,7 @@ class Playground {
                 gameService.userGavesUpLeavesLobby(lobbyID, theGivingUpUser);
                 actualPhase = Phase.Type.Clearphase;
                 newTurn();
-            }
-            if (this.players.size() == 2) {
+            } else if (this.players.size() == 2) {
                 this.players.remove(thePositionInList);
                 gameService.userGavesUpLeavesLobby(lobbyID, theGivingUpUser);
                 GameOverMessage gameOverByGaveUp = new GameOverMessage(lobbyID, this.players.get(0).getTheUserInThePlayer(), this.players.get(0).getPlayerName(), resultsGame);
