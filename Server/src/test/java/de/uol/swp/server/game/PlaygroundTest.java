@@ -170,8 +170,7 @@ public class PlaygroundTest {
      */
     @Test
     void specificPlayerGaveUpTest() {
-        UUID spielID = gameID;
-        GameGiveUpRequest testRequest = new GameGiveUpRequest((UserDTO) secondPlayer, spielID);
+        GameGiveUpRequest testRequest = new GameGiveUpRequest((UserDTO) secondPlayer, gameID);
         bus.post(testRequest);
         assertTrue(!gameManagement.getGame(gameID).get().getPlayground().getPlayers().contains(secondPlayer.getUsername()));
     }

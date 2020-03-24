@@ -226,6 +226,8 @@ class Playground {
                     this.players.remove(thePositionInList);
                     nextPlayer = this.players.get(0);
                 }
+            } else if (this.players.size() >= 3) {
+                this.players.remove(thePositionInList);
             }
             return true;
         } // TODO: Wenn Spielelogik weiter implementiert wird und ein Spieler aufgibt, Handling implementieren wie mit aufgegeben Spielern weiter umgegangen wird.
