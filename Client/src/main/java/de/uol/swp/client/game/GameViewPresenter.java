@@ -8,7 +8,6 @@ import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.event.GameQuitEvent;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
-import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.game.request.SkipPhaseRequest;
@@ -77,14 +76,13 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @FXML
     public void onSkipPhaseButtonPressed(ActionEvent actionEvent) {
-        try {
-            SkipPhaseRequest request = new SkipPhaseRequest(loggedInUser, lobbyID);
-            eventBus.post(request);
-        } catch (GamePhaseException exception) {
-            GameExceptionMessage message = new GameExceptionMessage(lobbyID, exception.getMessage());
-            eventBus.post(message);
-        }
+        SkipPhaseRequest request = new SkipPhaseRequest(loggedInUser, lobbyID);
+        eventBus.post(request);
+    }
 
+    @Subscribe
+    public void onGameException(GameExceptionMessage message) {
+        showAlert(Alert.AlertType.ERROR, message.getMessage(), "GameException");
     }
 
     /**
