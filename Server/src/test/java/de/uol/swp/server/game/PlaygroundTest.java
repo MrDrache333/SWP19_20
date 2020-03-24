@@ -2,6 +2,7 @@ package de.uol.swp.server.game;
 
 import com.google.common.eventbus.EventBus;
 import de.uol.swp.common.game.exception.GamePhaseException;
+import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.chat.ChatManagement;
