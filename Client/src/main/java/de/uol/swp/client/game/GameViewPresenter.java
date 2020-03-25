@@ -269,6 +269,8 @@ public class GameViewPresenter extends AbstractPresenter {
      * @author Rike
      * @since Sprint 5
      */
+
+    //TODO so geht das nicht....
     @Subscribe
     public void onBuyCardMessage(BuyCardMessage msg) {
         if (msg.getLobbyID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {

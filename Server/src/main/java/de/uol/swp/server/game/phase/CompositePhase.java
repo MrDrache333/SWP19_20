@@ -31,7 +31,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      * @since Sprint6
      */
     @Override
-    public void executeBuyPhase(Player player, short cardId) {
+    public int executeBuyPhase(Player player, short cardId) {
         CardPack cardsPackField = new JsonCardParser().loadPack("Basispack");
         Card currentCard = getCardFromId(cardsPackField.getCards(), cardId);
         // Karten und deren Anzahl werden aus dem Spielfeld geladen.
@@ -52,7 +52,10 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
             moneyValuePlayer -= currentCard.getCosts();
             player.getPlayerDeck().discardMoneyCardsForValue(currentCard.getCosts());
             Playground.getCardField().put(cardId, --count);
+            count =- 1;
+
         }
+        return count;
     }
 
     /**

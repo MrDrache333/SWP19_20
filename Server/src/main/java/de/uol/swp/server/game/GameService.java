@@ -5,6 +5,7 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import de.uol.swp.common.game.exception.GameManagementException;
 import de.uol.swp.common.game.exception.GamePhaseException;
+import de.uol.swp.common.game.messages.BuyCardMessage;
 import de.uol.swp.common.game.messages.GameExceptionMessage;
 import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.game.messages.UserGaveUpMessage;
@@ -202,9 +203,15 @@ public class GameService extends AbstractService {
         Optional<Game> game = gameManagement.getGame(request.getLobbyID());
         if (game.isPresent()) {
             Playground playground = game.get().getPlayground();
-            playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), request.getCardID());
+            int count = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), request.getCardID());
+            buyCardMessage(request.getLobbyID(), request.getCurrentUser(), request.getCardID(), true, count);
         } else {
             LOG.error("Es existiert kein Spiel mit der ID " + request.getCardID());
         }
+    }
+    public void buyCardMessage(UUID lobbyID, User currentUser, Short cardID, boolean buyCard, int counterCard) {
+      BuyCardMessage buyCardMessage = new BuyCardMessage(lobbyID, currentUser, cardID, buyCard, counterCard);
+        post(buyCardMessage);
+
     }
 }

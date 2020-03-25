@@ -17,6 +17,6 @@ interface BuyPhase extends Phase {
      * @Version 1.0
      * @since Sprint 5
      */
-    void executeBuyPhase(Player player, short cardId) throws IllegalArgumentException, NotEnoughMoneyException;
+    int executeBuyPhase(Player player, short cardId) throws IllegalArgumentException, NotEnoughMoneyException;
 
 }
