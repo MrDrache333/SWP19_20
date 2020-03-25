@@ -287,7 +287,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     newCardImage.setFitWidth(msg.getCardImage().getFitWidth());
                     newCardImage.setLayoutY(msg.getCardImage().getLayoutY());
                     newCardImage.setLayoutX(msg.getCardImage().getLayoutX());
-                    newCardImage.setId(msg.getCardID());
+                    newCardImage.setId(String.valueOf(msg.getCardID()));
                     newCardImage.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> chosenBuyableCard(mouseEvent));
                 }
             } else{
@@ -428,7 +428,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 buy.setVisible(false);
                 back.setVisible(false);
                 bigCardImage.setVisible(false);
-                BuyCardRequest request = new BuyCardRequest(lobbyID, loggedInUser, cardID, cardImage);
+                BuyCardRequest request = new BuyCardRequest(lobbyID, loggedInUser, Short.valueOf(cardID), cardImage);
                 eventBus.post(request);
             });
             // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt

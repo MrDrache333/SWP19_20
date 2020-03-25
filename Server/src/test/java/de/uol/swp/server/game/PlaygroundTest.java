@@ -107,19 +107,4 @@ public class PlaygroundTest {
         assertThrows(GamePhaseException.class, () -> playground.skipCurrentPhase());
     }
 
-    /**
-     * Testet ob Karte gekauft werden kann
-     *
-     * @author Paula
-     * @since Sprint6
-     */
-    @Test
-    void testExecuteBuyPhase() {
-        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
-        playground.setActualPhase(Phase.Type.Buyphase);
-
-        //TODO: Test schreiben nachholen dies das
-
-
-    }
 }
