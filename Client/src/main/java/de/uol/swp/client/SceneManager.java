@@ -58,7 +58,6 @@ public class SceneManager {
     final private LobbyService lobbyService;
     final private GameService gameService;
     final private ChatService chatService;
-    final private GameService gameService;
     private final Injector injector;
     private SettingsPresenter settingsPresenter;
     private Stage settingsStage;

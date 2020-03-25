@@ -2,11 +2,16 @@ package de.uol.swp.client.game;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
+import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.game.request.GameGiveUpRequest;
+import de.uol.swp.common.game.request.PlayCardRequest;
+import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
+import javafx.scene.image.ImageView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class GameService {
@@ -38,7 +43,6 @@ public class GameService {
         GameGiveUpRequest request = new GameGiveUpRequest(theUserWhoGivedUp, lobbyID);
         bus.post(request);
     }
-}
 
     public void sendPlayCardRequest(UUID lobbyID, User loggedInUser, Short aShort, ImageView card, ArrayList<ImageView> handCards, boolean b) {
         PlayCardRequest request = new PlayCardRequest(lobbyID, loggedInUser, aShort, card, handCards, b);

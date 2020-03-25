@@ -27,7 +27,6 @@ public class ClientModule extends AbstractModule {
         bind(EventBus.class).toInstance(eventBus);
         bind(de.uol.swp.common.user.UserService.class).to(UserService.class);
         bind(de.uol.swp.common.chat.ChatService.class).to(ChatService.class);
-        bind(de.uol.swp.common.game.GameService.class).to(GameService.class);
 
     }
 }
