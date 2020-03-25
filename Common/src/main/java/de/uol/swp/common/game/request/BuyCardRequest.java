@@ -1,12 +1,12 @@
 package de.uol.swp.common.game.request;
 
 
+import de.uol.swp.common.message.AbstractRequestMessage;
 import de.uol.swp.common.user.User;
-import javafx.scene.image.ImageView;
 
 import java.util.UUID;
 
-public class BuyCardRequest {
+public class BuyCardRequest extends AbstractRequestMessage {
 
     /**
      * Die Request die gestellt wird, wenn ein User eine Karte kaufen möchte
@@ -18,20 +18,16 @@ public class BuyCardRequest {
      * @author Rike
      * @since Sprint 5
      */
-
+    private static final long serialVersionUID = -2002420509720238588L;
     private UUID lobbyID;
     private User currentUser;
     private Short cardID;
-    private ImageView cardImage;
 
-    public BuyCardRequest() {
-    }
 
-    public BuyCardRequest (UUID lobbyID, User currentUser, Short cardID, ImageView cardImage){
+    public BuyCardRequest(UUID lobbyID, User currentUser, Short cardID) {
         this.lobbyID = lobbyID;
         this.currentUser = currentUser;
         this.cardID = cardID;
-        this.cardImage = cardImage;
     }
 
     public UUID getLobbyID() {
@@ -44,9 +40,5 @@ public class BuyCardRequest {
 
     public Short getCardID() {
         return cardID;
-    }
-
-    public ImageView getCardImage() {
-        return cardImage;
     }
 }

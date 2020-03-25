@@ -48,8 +48,8 @@ public class GameService {
         PlayCardRequest request = new PlayCardRequest(lobbyID, loggedInUser, aShort, card, handCards, b);
         bus.post(request);
     }
-    public void sendBuyCardRequest(UUID lobbyID, User loggedInUser, Short valueOf, ImageView cardImage) {
-        BuyCardRequest buyCardRequest = new BuyCardRequest(lobbyID, loggedInUser, valueOf, cardImage);
+    public void sendBuyCardRequest(UUID lobbyID, User loggedInUser, Short valueOf) {
+        BuyCardRequest buyCardRequest = new BuyCardRequest(lobbyID, loggedInUser, valueOf);
         bus.post(buyCardRequest);
     }
 }

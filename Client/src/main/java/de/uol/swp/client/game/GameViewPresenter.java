@@ -422,7 +422,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 buy.setVisible(false);
                 back.setVisible(false);
                 bigCardImage.setVisible(false);
-                gameService.sendBuyCardRequest(lobbyID, loggedInUser, Short.valueOf(cardID), cardImage);
+                gameService.sendBuyCardRequest(lobbyID, loggedInUser, Short.valueOf(cardID));
             });
             // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt
             back.setOnAction(event -> {
