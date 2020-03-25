@@ -56,6 +56,7 @@ public class SceneManager {
     final private EventBus eventBus;
     final private UserService userService;
     final private LobbyService lobbyService;
+    final private GameService gameService;
     final private ChatService chatService;
     final private GameService gameService;
     private final Injector injector;
@@ -87,7 +88,6 @@ public class SceneManager {
         this.chatService = chatService;
         this.lobbyService = lobbyService;
         this.gameService = gameService;
-
         initViews();
     }
 

@@ -28,7 +28,8 @@ public class BuyCardMessage extends AbstractServerMessage {
     private boolean buyCard;
     private int counterCard;
 
-    public BuyCardMessage(){}
+    public BuyCardMessage() {
+    }
 
     public BuyCardMessage (UUID lobbyID, User currentUser, Short cardID, ImageView cardImage, boolean buyCard, int counterCard){
         this.lobbyID = lobbyID;

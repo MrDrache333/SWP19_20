@@ -2,8 +2,8 @@ package de.uol.swp.common.game.request;
 
 
 import de.uol.swp.common.user.User;
-
 import javafx.scene.image.ImageView;
+
 import java.util.UUID;
 
 public class BuyCardRequest {
@@ -24,7 +24,8 @@ public class BuyCardRequest {
     private Short cardID;
     private ImageView cardImage;
 
-    public BuyCardRequest (){}
+    public BuyCardRequest() {
+    }
 
     public BuyCardRequest (UUID lobbyID, User currentUser, Short cardID, ImageView cardImage){
         this.lobbyID = lobbyID;
