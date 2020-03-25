@@ -2,6 +2,7 @@ package de.uol.swp.client.game;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
+import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.game.request.PlayCardRequest;
 import de.uol.swp.common.user.User;
 import javafx.scene.image.ImageView;
@@ -32,5 +33,10 @@ public class GameService implements de.uol.swp.common.game.GameService {
     public void sendPlayCardRequest(UUID lobbyID, User loggedInUser, Short aShort, ImageView card, ArrayList<ImageView> handCards, boolean b) {
         PlayCardRequest request = new PlayCardRequest(lobbyID, loggedInUser, aShort, card, handCards, b);
         bus.post(request);
+    }
+
+    public void sendBuyCardRequest(UUID lobbyID, User loggedInUser, Short valueOf, ImageView cardImage) {
+        BuyCardRequest buyCardRequest = new BuyCardRequest(lobbyID, loggedInUser, valueOf, cardImage);
+        bus.post(buyCardRequest);
     }
 }

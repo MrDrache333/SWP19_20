@@ -24,4 +24,16 @@ public interface GameService {
      * @since
      */
     void sendPlayCardRequest(UUID lobbyID, User loggedInUser, Short aShort, ImageView card, ArrayList<ImageView> handCards, boolean b);
+
+    /**
+     * Send buy card request.
+     *
+     * @param lobbyID      the lobby id
+     * @param loggedInUser the logged in user
+     * @param valueOf      the value of
+     * @param cardImage    the card image
+     * @author KenoO
+     * @since
+     */
+    void sendBuyCardRequest(UUID lobbyID, User loggedInUser, Short valueOf, ImageView cardImage);
 }

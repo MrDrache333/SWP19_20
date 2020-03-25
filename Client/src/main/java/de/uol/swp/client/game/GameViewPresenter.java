@@ -11,7 +11,6 @@ import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.common.game.messages.BuyCardMessage;
 import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.game.messages.PlayCardMessage;
-import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
@@ -429,8 +428,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 buy.setVisible(false);
                 back.setVisible(false);
                 bigCardImage.setVisible(false);
-                BuyCardRequest request = new BuyCardRequest(lobbyID, loggedInUser, Short.valueOf(cardID), cardImage);
-                eventBus.post(request);
+                gameService.sendBuyCardRequest(lobbyID, loggedInUser, Short.valueOf(cardID), cardImage);
             });
             // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt
             back.setOnAction(event -> {
