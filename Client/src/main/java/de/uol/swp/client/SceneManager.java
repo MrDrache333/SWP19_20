@@ -9,6 +9,7 @@ import de.uol.swp.client.auth.LoginPresenter;
 import de.uol.swp.client.auth.events.ShowLoginViewEvent;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.game.GameManagement;
+import de.uol.swp.client.game.GameService;
 import de.uol.swp.client.game.event.GameQuitEvent;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
@@ -56,6 +57,7 @@ public class SceneManager {
     final private UserService userService;
     final private LobbyService lobbyService;
     final private ChatService chatService;
+    final private GameService gameService;
     private final Injector injector;
     private SettingsPresenter settingsPresenter;
     private Stage settingsStage;
@@ -76,7 +78,7 @@ public class SceneManager {
 
 
     @Inject
-    public SceneManager(EventBus eventBus, UserService userService, LobbyService lobbyService, Injector injected, @Assisted Stage primaryStage, ChatService chatService) {
+    public SceneManager(EventBus eventBus, UserService userService, LobbyService lobbyService, Injector injected, @Assisted Stage primaryStage, ChatService chatService, GameService gameService) {
         this.eventBus = eventBus;
         this.eventBus.register(this);
         this.userService = userService;
@@ -84,6 +86,7 @@ public class SceneManager {
         this.injector = injected;
         this.chatService = chatService;
         this.lobbyService = lobbyService;
+        this.gameService = gameService;
 
         initViews();
     }
@@ -231,7 +234,7 @@ public class SceneManager {
     public void showLobbyScreen(User currentUser, String title, UUID lobbyID, UserDTO gameOwner) {
         Platform.runLater(() -> {
             //neue Instanz des LobbyPresenter mit (name, id) wird erstellt
-            GameManagement gameManagement = new GameManagement(eventBus, lobbyID, title, currentUser, chatService, lobbyService, userService, injector, gameOwner);
+            GameManagement gameManagement = new GameManagement(eventBus, lobbyID, title, currentUser, chatService, lobbyService, userService, injector, gameOwner, gameService);
 
             eventBus.register(gameManagement);
 
