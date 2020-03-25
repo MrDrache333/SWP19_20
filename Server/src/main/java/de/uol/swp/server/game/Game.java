@@ -23,6 +23,7 @@ public class Game {
      * The Game id.
      */
     private UUID gameID;
+
     /**
      * Erstellt ein neues Spiel
      *
