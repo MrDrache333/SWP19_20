@@ -12,7 +12,6 @@ import de.uol.swp.common.game.messages.BuyCardMessage;
 import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.game.messages.PlayCardMessage;
 import de.uol.swp.common.game.request.BuyCardRequest;
-import de.uol.swp.common.game.request.PlayCardRequest;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
@@ -70,6 +69,7 @@ public class GameViewPresenter extends AbstractPresenter {
     private ChatViewPresenter chatViewPresenter;
     private Injector injector;
     private GameManagement gameManagement;
+    private GameService gameService;
 
     /**
      * Instantiiert einen neuen GameView Presenter.
@@ -83,7 +83,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * @param injector          der Injector
      * @param gameManagement    das Game Management
      */
-    public GameViewPresenter(User loggedInUser, UUID lobbyID, ChatService chatService, ChatViewPresenter chatViewPresenter, LobbyService lobbyService, UserService userService, Injector injector, GameManagement gameManagement) {
+    public GameViewPresenter(User loggedInUser, UUID lobbyID, ChatService chatService, ChatViewPresenter chatViewPresenter, LobbyService lobbyService, UserService userService, Injector injector, GameManagement gameManagement, GameService gameService) {
         this.loggedInUser = loggedInUser;
         this.lobbyID = lobbyID;
         this.chatService = chatService;
@@ -92,6 +92,7 @@ public class GameViewPresenter extends AbstractPresenter {
         this.chatViewPresenter = chatViewPresenter;
         this.injector = injector;
         this.gameManagement = gameManagement;
+        this.gameService = gameService;
         initializeUserList();
     }
 
@@ -374,8 +375,8 @@ public class GameViewPresenter extends AbstractPresenter {
                     HandCards.add(card);
                     AnimationManagement.addToHand(card, HandCards.size() - 1, false);
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-                        PlayCardRequest request = new PlayCardRequest(lobbyID, loggedInUser, HandCardID.get(n), card, HandCards, false);
-                        eventBus.post(request);
+                        gameService.sendPlayCardRequest(lobbyID, loggedInUser, HandCardID.get(n), card, HandCards, false);
+
                     });
                 });
             }
