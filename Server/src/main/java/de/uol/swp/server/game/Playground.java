@@ -209,16 +209,15 @@ class Playground {
         if (this.players.get(thePositionInList).getPlayerName().equals(theGivingUpUser.getUsername()) && wantsToGiveUp && lobbyID.equals(this.theSpecificLobbyID)) {
             latestGavedUpPlayer = this.players.get(thePositionInList);
             gameService.userGavesUpLeavesLobby(lobbyID, theGivingUpUser);
-
-            if (actualPlayer.equals(latestGavedUpPlayer) && players.size() >= 3) {
-                this.players.remove(thePositionInList);
-                actualPhase = Phase.Type.Clearphase;
-                newTurn();
-            } else if (this.players.size() == 2) {
+            if (this.players.size() == 2) {
                 this.players.remove(thePositionInList);
                 GameOverMessage gameOverByGaveUp = new GameOverMessage(lobbyID, this.players.get(0).getTheUserInThePlayer(), this.players.get(0).getPlayerName(), resultsGame);
                 endGame(lobbyID, gameOverByGaveUp);
-            } else if (this.players.size() >= 3 && nextPlayer.equals(latestGavedUpPlayer)) {
+            } else if (actualPlayer.equals(latestGavedUpPlayer)) {
+                this.players.remove(thePositionInList);
+                actualPhase = Phase.Type.Clearphase;
+                newTurn();
+            } else if (nextPlayer.equals(latestGavedUpPlayer)) {
                 if (thePositionInList < this.players.size() - 1) {
                     nextPlayer = this.players.get(++thePositionInList);
                     this.players.remove(thePositionInList);
@@ -226,7 +225,7 @@ class Playground {
                     this.players.remove(thePositionInList);
                     nextPlayer = this.players.get(0);
                 }
-            } else if (this.players.size() >= 3) {
+            } else {
                 this.players.remove(thePositionInList);
             }
             return true;
