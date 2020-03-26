@@ -8,14 +8,15 @@ import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.game.messages.StartActionPhaseMessage;
 import de.uol.swp.common.game.messages.StartBuyPhaseMessage;
 import de.uol.swp.common.game.messages.StartClearPhaseMessage;
+import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.user.User;
 import de.uol.swp.server.game.phase.CompositePhase;
-import de.uol.swp.server.game.phase.Phase;
 import de.uol.swp.server.game.player.Player;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,6 +40,7 @@ class Playground {
     private GameService gameService;
     private UUID theSpecificLobbyID;
     private CompositePhase compositePhase;
+    private Timestamp timestamp;
 
     /**
      * Erstellt ein neues Spielfeld und übergibt die Spieler. Die Reihenfolge der Spieler wird zufällig zusammengestellt.
@@ -59,6 +61,7 @@ class Playground {
         this.gameService = gameService;
         this.theSpecificLobbyID = lobby.getLobbyID();
         this.compositePhase = new CompositePhase();
+        timestamp.setTime(0);
     }
 
     /**
@@ -84,7 +87,7 @@ class Playground {
 
         actualPhase = Phase.Type.ActionPhase;
         if (checkForActionCard()) {
-            gameService.sendToAllPlayers(theSpecificLobbyID, new StartActionPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
+            gameService.sendToAllPlayers(theSpecificLobbyID, new StartActionPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID, timestamp));
         } else {
             skipCurrentPhase();
         }
