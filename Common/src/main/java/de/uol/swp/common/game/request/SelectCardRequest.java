@@ -17,4 +17,8 @@ public class SelectCardRequest {
         this.message = message;
 
     }
+
+    public AbstractGameMessage getMessage() {
+        return message;
+    }
 }

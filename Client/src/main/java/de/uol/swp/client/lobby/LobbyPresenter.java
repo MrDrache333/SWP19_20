@@ -153,7 +153,6 @@ public class LobbyPresenter extends AbstractPresenter {
         updateUsersList();
 
         chooseMaxPlayer.setValue(4);
-
     }
 
     /**
@@ -246,7 +245,6 @@ public class LobbyPresenter extends AbstractPresenter {
      * @author Keno O.
      * @since Sprint3
      */
-
     @Subscribe
     private void onReceiveAllUsersInLobby(AllOnlineUsersInLobbyResponse response) {
         if (response.getLobbyID().equals(lobbyID)) {
@@ -550,5 +548,19 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     public LobbyService getLobbyService() {
         return lobbyService;
+    }
+
+    /**
+     * Ändert den Text des Buttons auf Bereit und den Status auf false.
+     *
+     * @param loggedInUser der aktuelle User
+     * @author Anna
+     * @since Sprint6
+     */
+    public void setButtonReady(UserDTO loggedInUser) {
+        if (loggedInUser.equals(this.loggedInUserDTO)) {
+            readyButton.setText("Bereit");
+            ownReadyStatus = false;
+        }
     }
 }

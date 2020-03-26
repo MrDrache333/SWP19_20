@@ -8,9 +8,7 @@ import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.event.GameQuitEvent;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
-import de.uol.swp.common.game.messages.*;
-import de.uol.swp.common.game.phase.Phase;
-import de.uol.swp.common.game.request.SkipPhaseRequest;
+import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
@@ -66,24 +64,6 @@ public class GameViewPresenter extends AbstractPresenter {
     private ChatViewPresenter chatViewPresenter;
     private Injector injector;
     private GameManagement gameManagement;
-    private Phase.Type phase;
-
-    /**
-     * Skips die aktuelle Phase des Spielers zur nächsten.
-     *
-     * @author Devin S.
-     * @since Sprint6
-     */
-    @FXML
-    public void onSkipPhaseButtonPressed(ActionEvent actionEvent) {
-        SkipPhaseRequest request = new SkipPhaseRequest(loggedInUser, lobbyID);
-        eventBus.post(request);
-    }
-
-    @Subscribe
-    public void onGameException(GameExceptionMessage message) {
-        showAlert(Alert.AlertType.ERROR, message.getMessage(), "GameException");
-    }
 
     /**
      * Instantiiert einen neuen GameView Presenter.
@@ -207,7 +187,6 @@ public class GameViewPresenter extends AbstractPresenter {
             lobbyService.retrieveAllUsersInLobby(lobbyID);
             LOG.debug("New user in Lobby, LobbyService is retrieving users");
         }
-
     }
 
     /**
@@ -266,32 +245,6 @@ public class GameViewPresenter extends AbstractPresenter {
         });
     }
 
-    /**
-     * Skips die aktuelle Phase des Spielers zur nächsten.
-     *
-     * @author Devin S.
-     * @since Sprint6
-     */
-    @Subscribe
-    public void currentPhase(StartActionPhaseMessage message) {
-        if (lobbyID.equals(message.getGameID()) && loggedInUser.equals(message.getUser())) {
-            phase = Phase.Type.ActionPhase;
-        }
-    }
-
-    @Subscribe
-    public void currentPhase(StartBuyPhaseMessage message) {
-        if (lobbyID.equals(message.getGameID()) && loggedInUser.equals(message.getUser())) {
-            phase = Phase.Type.Buyphase;
-        }
-    }
-
-    @Subscribe
-    public void currentPhase(StartClearPhaseMessage message) {
-        if (lobbyID.equals(message.getGameID()) && loggedInUser.equals(message.getUser())) {
-            phase = Phase.Type.Clearphase;
-        }
-    }
 
     /**
      * Zeigt die Karten auf der Hand in der GameView an

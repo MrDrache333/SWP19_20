@@ -6,9 +6,14 @@ import com.google.inject.Inject;
 import de.uol.swp.common.game.exception.GameManagementException;
 import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.GameExceptionMessage;
+import de.uol.swp.common.game.messages.UserGaveUpMessage;
+import de.uol.swp.common.game.request.GameGiveUpRequest;
+import de.uol.swp.common.game.request.SelectCardRequest;
 import de.uol.swp.common.game.request.SkipPhaseRequest;
+import de.uol.swp.common.lobby.request.LobbyLeaveUserRequest;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
+import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.game.player.Player;
 import de.uol.swp.server.message.StartGameInternalMessage;
@@ -87,6 +92,10 @@ public class GameService extends AbstractService {
         }
     }
 
+    public void dropFinishedGame(UUID lobbyID) {
+        gameManagement.deleteGame(lobbyID);
+    }
+
     /**
      * Startet das Spiel wenn die StartGameInternalMessage ankommt.
      *
@@ -98,8 +107,6 @@ public class GameService extends AbstractService {
     void startGame(StartGameInternalMessage msg) {
         try {
             gameManagement.createGame(msg.getLobbyID());
-            // TODO: GGf. Auslagern in createGame Method später?
-            gameManagement.getGame(msg.getLobbyID()).get().getPlayground().sendInitialHands();
             gameManagement.getGame(msg.getLobbyID()).get().getPlayground().newTurn();
         } catch (GameManagementException e) {
             LOG.error("Es wurde eine GameManagementException geworfen: " + e.getMessage());
@@ -132,4 +139,53 @@ public class GameService extends AbstractService {
         }
     }
 
+    /**
+     * Handling das der User aufgegeben hat und aus dem Playground entfernt wird. Ggf später auf null gesetzt wird o.ä.
+     *
+     * @param msg Request zum Aufgeben
+     * @author Haschem, Ferit
+     * @since Sprint5
+     */
+    @Subscribe
+    void userGivesUp(GameGiveUpRequest msg) {
+        Boolean userRemovedSuccesfully = gameManagement.getGame(msg.getTheSpecificLobbyID()).get().getPlayground().playerGaveUp(msg.getTheSpecificLobbyID(), msg.getGivingUpUSer(), msg.getWantsToGiveUP());
+        if (userRemovedSuccesfully) {
+            UserGaveUpMessage gaveUp = new UserGaveUpMessage(msg.getTheSpecificLobbyID(), msg.getGivingUpUSer(), true);
+            sendToAllPlayers(msg.getTheSpecificLobbyID(), gaveUp);
+        } else {
+            // TODO: Implementierung: Was passiert wenn der User nicht entfernt werden kann? Welche Fälle gibt es?
+        }
+    }
+
+
+    public void userGavesUpLeavesLobby(UUID gameID, UserDTO user) {
+        LobbyLeaveUserRequest leaveUserRequest = new LobbyLeaveUserRequest(gameID, user);
+        post(leaveUserRequest);
+
+    }
+
+    /**
+     * Die Methode cancelt aktuell den Timer der AktionPhase.
+     *
+     * @param request SelectCardRequest vom Client an Server wird hier empfangen.
+     */
+    @Subscribe
+    public void onSelectCardRequest(SelectCardRequest request) {
+        Optional<Game> game = gameManagement.getGame(request.getMessage().getGameID());
+        if (game.isPresent()) {
+            Playground playground = game.get().getPlayground();
+            // TODO: Timestamp Handling wenn die SelectCardRequest Clientseitig implementiert worden ist.
+            if (playground.getActualPlayer().getTheUserInThePlayer().getUsername().equals(request.getMessage().getPlayer().getUsername())) {
+                try {
+                    playground.endTimer();
+                    // Karte wird an die ActionPhase zum Handling übergeben. TODO: Weitere Implementierung in der ActionPhase.
+                    playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), request.getMessage().getCardID());
+                } catch (GamePhaseException e) {
+                    sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(request.getMessage().getGameID(), e.getMessage()));
+                }
+            }
+        } else {
+            LOG.error("Irgendwas ist bei der onSelectCardRequest im GameService falsch gelaufen..Folgende ID: " + request.getMessage().getGameID());
+        }
+    }
 }

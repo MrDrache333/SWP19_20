@@ -24,9 +24,9 @@ class ServerHandler implements ChannelInboundHandler {
     /**
      * Erstellt einen neuen ServerHandler
      *
+     * @param delegate Soll Informationen über die Verbindung erhalten.
      * @author Marco Grawunder
      * @since Sprint 0
-     * @param delegate Soll Informationen über die Verbindung erhalten.
      */
     public ServerHandler(ServerHandlerDelegate delegate) {
         this.delegate = delegate;
