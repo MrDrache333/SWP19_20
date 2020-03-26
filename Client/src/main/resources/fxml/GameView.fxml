@@ -32,12 +32,13 @@
                 <Rectangle2D height="600.0" width="400.0"/>
             </viewport>
         </ImageView>
-        <ImageView fitHeight="180.0" fitWidth="120.0" layoutX="733.0" layoutY="538.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="180.0" fitWidth="120.0" layoutX="733.0" layoutY="538.0" pickOnBounds="true"
+                   preserveRatio="true">
             <image>
-                <Image url="@../images/Ablage.png" />
+                <Image url="@../images/Ablage.png"/>
             </image>
             <viewport>
-                <Rectangle2D height="600.0" width="400.0" />
+                <Rectangle2D height="600.0" width="400.0"/>
             </viewport>
         </ImageView>
         <ImageView fitHeight="183.0" fitWidth="433.0" layoutX="284.0" layoutY="541.0" pickOnBounds="true"
@@ -46,7 +47,8 @@
                 <Image url="@../images/Handkarten.png"/>
             </image>
         </ImageView>
-        <ImageView  fx:id="shopTeppich" fitHeight="363.0" fitWidth="562.0" layoutX="222.0" layoutY="126.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="shopTeppich" fitHeight="363.0" fitWidth="562.0" layoutX="222.0" layoutY="126.0"
+                   pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@../images/ShopTeppich.jpg"/>
             </image>
@@ -73,25 +75,28 @@
         <Pane fx:id="cardPane" layoutX="284.0" layoutY="598.0" prefHeight="116.0" prefWidth="386.0"/>
         <ImageView fitHeight="107.0" fitWidth="79.0" layoutX="171.0" layoutY="603.0" pickOnBounds="true"
                    preserveRatio="true"/>
-        <ImageView fx:id="1" fitWidth="60.0" layoutX="246.0" layoutY="173.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="1" fitWidth="60.0" layoutX="246.0" layoutY="173.0" onMouseClicked="#onBuyableCardClicked"
+                   pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../cards/images/1_sm.png" />
+                <Image url="@../cards/images/1_sm.png"/>
             </image>
         </ImageView>
-        <ImageView fx:id="2" fitWidth="60.0" layoutX="242.0" layoutY="244.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="2" fitWidth="60.0" layoutX="242.0" layoutY="244.0" onMouseClicked="#onBuyableCardClicked"
+                   pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../cards/images/2_sm.png" />
+                <Image url="@../cards/images/2_sm.png"/>
             </image>
         </ImageView>
-        <ImageView fx:id="3" fitWidth="60.0" layoutX="242.0" layoutY="318.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="3" fitWidth="60.0" layoutX="242.0" layoutY="318.0" onMouseClicked="#onBuyableCardClicked"
+                   pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../cards/images/3_sm.png" />
+                <Image url="@../cards/images/3_sm.png"/>
             </image>
         </ImageView>
         <ImageView fx:id="4" fitWidth="60.0" layoutX="314.0" layoutY="173.0" onMouseClicked="#onBuyableCardClicked"
                    pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../cards/images/4_sm.png" />
+                <Image url="@../cards/images/4_sm.png"/>
             </image>
         </ImageView>
         <ImageView fx:id="5" fitWidth="60.0" layoutX="310.0" layoutY="244.0" onMouseClicked="#onBuyableCardClicked"
