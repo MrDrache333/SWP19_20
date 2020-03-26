@@ -11,6 +11,7 @@ import de.uol.swp.common.game.messages.StartClearPhaseMessage;
 import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.user.User;
+import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.game.phase.CompositePhase;
 import de.uol.swp.server.game.player.Player;
 import org.apache.logging.log4j.LogManager;
@@ -194,4 +195,7 @@ class Playground {
         this.actualPhase = actualPhase;
     }
 
+    public Boolean playerGaveUp(UUID gameID, UserDTO secondPlayer, boolean b) {
+        return true;
+    }
 }
