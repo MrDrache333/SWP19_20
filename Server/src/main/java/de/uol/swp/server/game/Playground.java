@@ -198,4 +198,12 @@ class Playground {
     public Boolean playerGaveUp(UUID gameID, UserDTO secondPlayer, boolean b) {
         return true;
     }
+
+    public CompositePhase getCompositePhase() {
+        return compositePhase;
+    }
+
+    public void endTimer() {
+        timestamp.setTime(0);
+    }
 }
