@@ -9,6 +9,10 @@ import de.uol.swp.client.game.event.GameQuitEvent;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.common.game.messages.DrawHandMessage;
+import de.uol.swp.common.game.messages.StartActionPhaseMessage;
+import de.uol.swp.common.game.messages.StartBuyPhaseMessage;
+import de.uol.swp.common.game.messages.StartClearPhaseMessage;
+import de.uol.swp.common.game.request.SkipPhaseRequest;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
@@ -247,11 +251,47 @@ public class GameViewPresenter extends AbstractPresenter {
 
 
     /**
+     * Skips die aktuelle Phase des Spielers zur nächsten.
+     *
+     * @author Devin S.
+     * @since Sprint6
+     */
+    @FXML
+    public void onSkipPhaseButtonPressed(ActionEvent actionEvent) {
+        SkipPhaseRequest request = new SkipPhaseRequest(loggedInUser, lobbyID);
+        eventBus.post(request);
+    }
+
+    /**
      * Zeigt die Karten auf der Hand in der GameView an
      *
      * @author Devin S.
      * @since Sprint5
      */
+
+    /**
+     * Skips die aktuelle Phase des Spielers zur nächsten.
+     *
+     * @author Devin S.
+     * @since Sprint6
+     */
+    @Subscribe
+    public void currentPhase(StartActionPhaseMessage message) {
+        if (lobbyID.equals(message.getGameID()) && loggedInUser.equals(message.getUser())) {
+        }
+    }
+
+    @Subscribe
+    public void currentPhase(StartBuyPhaseMessage message) {
+        if (lobbyID.equals(message.getGameID()) && loggedInUser.equals(message.getUser())) {
+        }
+    }
+
+    @Subscribe
+    public void currentPhase(StartClearPhaseMessage message) {
+        if (lobbyID.equals(message.getGameID()) && loggedInUser.equals(message.getUser())) {
+        }
+    }
 
     @FXML
     @Subscribe

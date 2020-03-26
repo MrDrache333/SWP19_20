@@ -22,6 +22,8 @@
                 GridPane.valignment="BOTTOM"/>
         <Button fx:id="giveUpButton" layoutX="1132.0" layoutY="18.0" mnemonicParsing="false"
                 onAction="#onGiveUpButtonPressed" text="Aufgeben"/>
+        <Button fx:id="skipPhaseButton" layoutX="1042.0" layoutY="19.0" mnemonicParsing="false"
+                onAction="#onSkipPhaseButtonPressed" text="Skip  Phase"/>
         <ListView fx:id="usersView" layoutX="1032.0" layoutY="87.0" minWidth="100.0" prefHeight="220.0"
                   prefWidth="200.0" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"/>
         <ImageView fitHeight="180.0" fitWidth="120.0" layoutX="150.0" layoutY="538.0" pickOnBounds="true"
