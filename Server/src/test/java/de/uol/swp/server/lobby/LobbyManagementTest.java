@@ -16,8 +16,8 @@ class LobbyManagementTest {
     static final User defaultLobbyOwner = new UserDTO("Owner", "Test", "123@test.de");
     static final String defaultLobbyName = "Lobby";
     static final String defaultLobbyPassword = "Lobby";
-    private UUID lobbyID;
     final LobbyManagement lobbyManagement = new LobbyManagement();
+    private UUID lobbyID;
 
     /**
      * Vor jedem Test wird eine Lobby erstellt.
