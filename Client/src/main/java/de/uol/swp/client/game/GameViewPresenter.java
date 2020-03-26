@@ -33,6 +33,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -65,6 +66,10 @@ public class GameViewPresenter extends AbstractPresenter {
     private ImageView shopTeppich;
     @FXML
     private ListView<String> usersView;
+    @FXML
+    private StackPane deckPane;
+
+    private HandcardsLayoutContainer handcards;
 
     private ObservableList<String> users;
     private ChatViewPresenter chatViewPresenter;
@@ -92,6 +97,7 @@ public class GameViewPresenter extends AbstractPresenter {
         this.chatViewPresenter = chatViewPresenter;
         this.injector = injector;
         this.gameManagement = gameManagement;
+        handcards = new HandcardsLayoutContainer(284, 598, 119, 430);
         initializeUserList();
     }
 
@@ -140,7 +146,7 @@ public class GameViewPresenter extends AbstractPresenter {
         chatView.getChildren().add(loader.load());
         ((Pane) chatView.getChildren().get(0)).setPrefHeight(chatView.getPrefHeight());
         ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getPrefWidth());
-
+        gameView.getChildren().add(handcards);
     }
 
     /**
@@ -308,14 +314,10 @@ public class GameViewPresenter extends AbstractPresenter {
     public void onPlayCardMessage(PlayCardMessage msg) {
         if (msg.getLobbyID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
             if (msg.isPlayCard()) {
-                if (msg.isSmallSpace()) {
-                    AnimationManagement.refactorHand(msg.getHandCards(), false);
-                } else {
-                    AnimationManagement.playCard(msg.getCardImage(), msg.getCount());
-                    if (msg.getHandCards().contains(msg.getCardImage())) {
-                        msg.getHandCards().remove(msg.getCardImage());
-                        AnimationManagement.refactorHand(msg.getHandCards(), msg.isSmallSpace());
-                    }
+                AnimationManagement.playCard(msg.getCardImage(), msg.getCount());
+                if (handcards.getChildren().contains(msg.getCardImage())) {
+                    handcards.getChildren().remove(msg.getCardImage());
+                    gameView.getChildren().add(msg.getCardImage());
                 }
             } else {
                 showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht spielen!", "Fehler");
@@ -360,21 +362,19 @@ public class GameViewPresenter extends AbstractPresenter {
         Platform.runLater(() -> {
             if (lobbyID.equals(message.getTheLobbyID())) {
                 ArrayList<Short> HandCardID = message.getCardsOnHand();
-                ArrayList<ImageView> HandCards = new ArrayList<>();
                 HandCardID.forEach((n) -> {
                     String pfad = "file:Client/src/main/resources/cards/images/" + n + ".png";
                     Image picture = new Image(pfad);
                     ImageView card = new ImageView(picture);
                     card.setFitHeight(107);
-                    card.setLayoutY(603);
-                    card.setLayoutX(171);
                     card.setPreserveRatio(true);
                     card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
-                    gameView.getChildren().add(card);
-                    HandCards.add(card);
-                    AnimationManagement.addToHand(card, HandCards.size() - 1, false);
+                    System.out.println(card.getFitWidth());
+                    deckPane.getChildren().add(card);
+                    AnimationManagement.addToHand(card, handcards.getChildren().size());
+                    handcards.getChildren().add(card);
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-                        PlayCardRequest request = new PlayCardRequest(lobbyID, loggedInUser, HandCardID.get(n), card, HandCards, false);
+                        PlayCardRequest request = new PlayCardRequest(lobbyID, loggedInUser, HandCardID.get(n), card);
                         eventBus.post(request);
                     });
                 });

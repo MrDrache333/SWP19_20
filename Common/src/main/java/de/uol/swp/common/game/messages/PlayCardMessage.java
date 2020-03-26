@@ -28,7 +28,6 @@ public class PlayCardMessage {
     private Short handCardID;
     private ImageView cardImage;
     private ArrayList<ImageView> handCards;
-    private boolean smallSpace;
     private int count;
     private boolean playCard;
 
@@ -36,13 +35,12 @@ public class PlayCardMessage {
     }
 
     public PlayCardMessage(UUID lobbyID, User currentUser, Short handCardID, ImageView cardImage,
-                           ArrayList<ImageView> handCards, boolean smallSpace, int count, boolean playCard) {
+                           ArrayList<ImageView> handCards, int count, boolean playCard) {
         this.lobbyID = lobbyID;
         this.currentUser = currentUser;
         this.handCardID = handCardID;
         this.cardImage = cardImage;
         this.handCards = handCards;
-        this.smallSpace = smallSpace;
         this.count = count;
         this.playCard = playCard;
     }
@@ -65,10 +63,6 @@ public class PlayCardMessage {
 
     public ArrayList<ImageView> getHandCards() {
         return handCards;
-    }
-
-    public boolean isSmallSpace() {
-        return smallSpace;
     }
 
     public int getCount() {

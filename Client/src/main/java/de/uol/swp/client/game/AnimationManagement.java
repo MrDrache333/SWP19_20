@@ -1,6 +1,7 @@
 package de.uol.swp.client.game;
 
 import javafx.animation.PathTransition;
+import javafx.scene.Parent;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.ArcTo;
 import javafx.scene.shape.LineTo;
@@ -8,12 +9,10 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.util.Duration;
 
-import java.util.List;
 
 public class AnimationManagement {
 
-    private static final double HAND_X = 294;
-    private static final double HAND_Y = 598;
+    private static final double HAND_X = 284;
 
     private static final double ABLAGE_X = 733 + 30;
     private static final double ABLAGE_Y = 538 + 92;
@@ -31,14 +30,18 @@ public class AnimationManagement {
     /**
      * Erstellt ein neues MoveTo Objekt für den Pfad, wobei die aktuellen Kooridnaten der Karte übernommen werden.
      *
-     * @param card die Kare
+     * @param card         die Kare
+     * @param hasOwnParent gibt an, ob die Karte zu einem anderen Conatiner als der AnchorPane gehört
      * @return MoveTo
      * @author Anna
      * @since Sprint5
      */
-    public static MoveTo keepPosition(ImageView card) {
+    public static MoveTo keepPosition(ImageView card, boolean hasOwnParent) {
         double w = card.getFitWidth() / 2;
         double h = card.getFitHeight() / 2;
+        if (hasOwnParent) {
+            return new MoveTo(w + card.getParent().getLayoutX(), h + card.getParent().getLayoutY());
+        }
         return new MoveTo(w, h);
     }
 
@@ -48,20 +51,21 @@ public class AnimationManagement {
      * Die neuen Koordinaten werden am Ende übernommen.
      *
      * @param card      die zu bewegende Karte
+     * @param moveTo    der Startpunkt
      * @param EndPointX die X-Koordinate des Endpunktes
      * @param EndPointY die Y-Koordinate des Endpunktes
      * @return boolean ob die Bewegung durchgeführt wurde
      * @author Anna
      * @since Sprint5
      */
-    public static Boolean createLineToPath(ImageView card, double EndPointX, double EndPointY) {
+    public static Boolean createLineToPath(ImageView card, MoveTo moveTo, double EndPointX, double EndPointY) {
         double x = card.getLayoutX();
         double y = card.getLayoutY();
         double w = card.getFitWidth() / 2;
         double h = card.getFitHeight() / 2;
         if (x != EndPointX || y != EndPointY) {
             Path path = new Path();
-            path.getElements().add(new MoveTo(w, h));
+            path.getElements().add(moveTo);
             path.getElements().add(new LineTo(EndPointX - x + w, EndPointY - y + h));
             PathTransition pathTransition = new PathTransition();
             pathTransition.setDuration(Duration.millis(1000));
@@ -92,8 +96,8 @@ public class AnimationManagement {
      * @since Sprint5
      */
     public static Boolean createArcToPath(ImageView card, MoveTo moveTo, double EndPointX, double EndPointY, int count, boolean largeArc) {
-        double x = card.getLayoutX();
-        double y = card.getLayoutY();
+        double x = card.getBoundsInParent().getMinX();
+        double y = card.getBoundsInParent().getMinY();
         double w = card.getFitWidth() / 2;
         double h = card.getFitHeight() / 2;
         EndPointX = EndPointX + w + count * w;
@@ -125,7 +129,7 @@ public class AnimationManagement {
      * @since Sprint5
      */
     public static Boolean playCard(ImageView card, int count) {
-        return createArcToPath(card, keepPosition(card), ACTION_ZONE_X, ACTION_ZONE_Y, count, true);
+        return createArcToPath(card, keepPosition(card, true), ACTION_ZONE_X, ACTION_ZONE_Y, count, true);
     }
 
     /**
@@ -151,7 +155,7 @@ public class AnimationManagement {
      * @since Sprint5
      */
     public static Boolean buyCard(ImageView card) {
-        return createLineToPath(card, ABLAGE_X, ABLAGE_Y);
+        return createLineToPath(card, keepPosition(card, false), ABLAGE_X, ABLAGE_Y);
     }
 
     /**
@@ -163,7 +167,7 @@ public class AnimationManagement {
      * @since Sprint5
      */
     public static Boolean opponentBuysCard(ImageView card) {
-        return createLineToPath(card, 334, -300);
+        return createLineToPath(card, keepPosition(card, false), 334, -300);
     }
 
     /**
@@ -175,59 +179,40 @@ public class AnimationManagement {
      * @since Sprint5
      */
     public static Boolean deleteCard(ImageView card) {
-        return createArcToPath(card, keepPosition(card), TRASH_X, TRASH_Y, 0, true);
+        return createArcToPath(card, keepPosition(card, true), TRASH_X, TRASH_Y, 0, true);
     }
 
     /**
      * Die übergebene Karte wird zur Hand des Spieler hinzugefügt.
-     * Wenn mehr als 5 Karten auf der Hand liegen, werden die Abstände verringert.
      * Die bewegte Karte wird dabei in den Vordergrund gerückt.
      * Die neuen Koordinaten werden übernommen.
      *
-     * @param card       die Karte
-     * @param count      gibt an, die wievielte Karte hinzugefügt wird
-     * @param smallSpace gibt an, ob ein kleinerer Abstand genommen werden soll
+     * @param card  die Karte
+     * @param count gibt an, die wievielte Karte hinzugefügt wird
      * @author Anna
      * @since Sprint5
      */
-    public static Boolean addToHand(ImageView card, int count, boolean smallSpace) {
-        double xValue = card.getLayoutX();
-        double yValue = card.getLayoutY();
+    public static Boolean addToHand(ImageView card, int count) {
+        Parent parent = card.getParent();
         double w = card.getFitWidth() / 2;
         double h = card.getFitHeight() / 2;
-        if ((smallSpace && HAND_X + count * w != xValue) || (!smallSpace && HAND_X + count * w * 2 + 5 * count != xValue)) {
+        double endPointX = parent.getLayoutX() + parent.getBoundsInLocal().getWidth() / 2 - w - HAND_X - w * 2 * count;
+        parent.toBack();
+        if (HAND_X + count * w != endPointX) {
             Path path = new Path();
-            path.getElements().add(new MoveTo(w, h));
-            if (smallSpace) {
-                path.getElements().add(new LineTo(HAND_X - xValue + w + count * w, HAND_Y - yValue + h));
-            } else {
-                path.getElements().add(new LineTo(HAND_X - xValue + w + count * w * 2 + 5 * count, HAND_Y - yValue + h));
-            }
+            path.getElements().add(new MoveTo(endPointX, h));
+            card.toFront();
+            path.getElements().add(new LineTo(w, h));
             PathTransition pathTransition = new PathTransition();
             pathTransition.setDuration(Duration.millis(600));
             pathTransition.setNode(card);
             pathTransition.setPath(path);
             pathTransition.setCycleCount(1);
-            card.toFront();
             pathTransition.play();
             setNewCoordinates(card, pathTransition);
             return true;
         }
         return false;
-    }
-
-    /**
-     * Die Karten werden neu angeordnet.
-     *
-     * @param cards      die Karten auf der Hand
-     * @param smallSpace gibt an, ob verkleinerte Abstäne benutzt werden sollen
-     * @author Anna
-     * @since Sprint5
-     */
-    public static void refactorHand(List<ImageView> cards, boolean smallSpace) {
-        for (int i = 0; i < cards.size(); i++) {
-            addToHand(cards.get(i), i, smallSpace);
-        }
     }
 
     /**

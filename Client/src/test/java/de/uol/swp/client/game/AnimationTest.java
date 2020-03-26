@@ -1,11 +1,13 @@
 package de.uol.swp.client.game;
 
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.io.InputStream;
@@ -44,8 +46,8 @@ public class AnimationTest extends Application {
 
         //Fixpunkt, zeigt an wo die Aktionszone des Spielers beginnt
         Pane actionZone = new Pane();
-        actionZone.setLayoutX(356);
-        actionZone.setLayoutY(415);
+        actionZone.setLayoutX(370);
+        actionZone.setLayoutY(421);
         actionZone.setPrefSize(10, 10);
         actionZone.setStyle("-fx-background-color: green");
 
@@ -54,8 +56,6 @@ public class AnimationTest extends Application {
         cardToPlay.setImage(image);
         cardToPlay.setFitHeight(110);
         cardToPlay.setFitWidth(60);
-        cardToPlay.setLayoutX(150);
-        cardToPlay.setLayoutY(538);
 
         //Fixpunkt, zeigt an wo der Müll beginnt
         Pane trash = new Pane();
@@ -77,8 +77,6 @@ public class AnimationTest extends Application {
         cardToDelete.setImage(image);
         cardToDelete.setFitHeight(110);
         cardToDelete.setFitWidth(60);
-        cardToDelete.setLayoutX(150);
-        cardToDelete.setLayoutY(538);
 
         //Fixpunkt, zeigt an wo das Deck beginnt
         Pane deck = new Pane();
@@ -106,42 +104,48 @@ public class AnimationTest extends Application {
         c1.setImage(image);
         c1.setFitHeight(110);
         c1.setFitWidth(60);
-        c1.setLayoutX(150);
-        c1.setLayoutY(538);
+
         //Karte die der Spieler auf der Hand hat
         ImageView c2 = new ImageView();
         c2.setImage(image);
         c2.setFitHeight(110);
         c2.setFitWidth(60);
-        c2.setLayoutX(150);
-        c2.setLayoutY(538);
+
         //Karte die der Spieler auf der Hand hat
         ImageView c3 = new ImageView();
         c3.setImage(image);
         c3.setFitHeight(110);
         c3.setFitWidth(60);
-        c3.setLayoutX(150);
-        c3.setLayoutY(538);
+
         //Karte die der Spieler auf der Hand hat
         ImageView c4 = new ImageView();
         c4.setImage(image);
         c4.setFitHeight(110);
         c4.setFitWidth(60);
-        c4.setLayoutX(150);
-        c4.setLayoutY(538);
 
-        Pane bg = new Pane(c1, c2, c3, c4, cardToPlayByOpponent, cardToPlay, cardToBuy, cardToDelete, hand, actionZone, trash, deck, ablage, c);
+        StackPane deckPane = new StackPane();
+        deckPane.setLayoutX(160);
+        deckPane.setLayoutY(598);
+        deckPane.setPrefWidth(120);
+        deckPane.setPrefHeight(130);
+        deckPane.setAlignment(Pos.CENTER);
+        deckPane.setStyle("-fx-background-color: lightblue");
+
+        Pane bg = new Pane(cardToPlayByOpponent, cardToBuy, deckPane, hand, actionZone, trash, deck, ablage, c);
 
         primaryStage.setScene(new Scene(bg, 1280, 750));
         primaryStage.show();
 
-        //Beim Start werden die Karten zur Hand hinzugefügt
-        AnimationManagement.addToHand(cardToPlay, 0, false);
-        AnimationManagement.addToHand(cardToDelete, 1, false);
-        AnimationManagement.addToHand(c1, 2, false);
-        AnimationManagement.addToHand(c2, 3, false);
-        AnimationManagement.addToHand(c3, 4, false);
-        AnimationManagement.addToHand(c4, 5, false);
+        HandcardsLayoutContainer handcards = new HandcardsLayoutContainer();
+        handcards.setLayoutX(284);
+        handcards.setLayoutY(598);
+        handcards.setPrefHeight(130);
+        handcards.setPrefWidth(430);
+        handcards.setStyle("-fx-background-color: pink");
+
+        bg.getChildren().add(handcards);
+        handcards.toBack();
+
         List<ImageView> cards = new ArrayList<>();
         cards.add(cardToPlay);
         cards.add(cardToDelete);
@@ -149,6 +153,16 @@ public class AnimationTest extends Application {
         cards.add(c2);
         cards.add(c3);
         cards.add(c4);
+
+        for (ImageView card : cards) {
+            deckPane.getChildren().add(card);
+        }
+
+        for (int i = 0; i < cards.size(); i++) {
+            AnimationManagement.addToHand(cards.get(i), i);
+            deckPane.getChildren().remove(cards.get(i));
+            handcards.getChildren().add(cards.get(i));
+        }
 
 
         //Wenn auf die Karte geklickt wird, spielt der Gegenspieler eine Karte aus
@@ -161,7 +175,8 @@ public class AnimationTest extends Application {
             AnimationManagement.playCard(cardToPlay, 0);
             if (cards.contains(cardToPlay)) {
                 cards.remove(cardToPlay);
-                AnimationManagement.refactorHand(cards, false);
+                handcards.getChildren().remove(cardToPlay);
+                bg.getChildren().add(cardToPlay);
             }
         });
 
@@ -175,18 +190,9 @@ public class AnimationTest extends Application {
             AnimationManagement.deleteCard(cardToDelete);
             if (cards.contains(cardToDelete)) {
                 cards.remove(cardToDelete);
-                AnimationManagement.refactorHand(cards, false);
+                handcards.getChildren().remove(cardToDelete);
+                bg.getChildren().add(cardToDelete);
             }
-        });
-
-        //Abstände der Karten auf der Hand werden verringert
-        c1.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            AnimationManagement.refactorHand(cards, true);
-        });
-
-        //Abstände der Karten auf der Hand werden vergrößert
-        c2.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            AnimationManagement.refactorHand(cards, false);
         });
     }
 }
