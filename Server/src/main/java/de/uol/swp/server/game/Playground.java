@@ -71,7 +71,7 @@ class Playground {
     /**
      * Es wird das Kartenfeld übergeben.
      *
-     * @return Das Kartenfeld, also alle Karten die auf dem Playground initalisiert sind.
+     * @return Das Kartenfeld, also alle Karten, die auf dem Playground initialisiert sind.
      */
     public static Map<Short, Integer> getCardField() {
         return cardField;
@@ -93,7 +93,7 @@ class Playground {
             cardField.put(card.getId(), 10);
         }
         for (int i = 0; i < cardsPackField.getCards().getReactionCards().size(); i++) {
-            Card card = cardsPackField.getCards().getActionCards().get(i);
+            Card card = cardsPackField.getCards().getReactionCards().get(i);
             cardField.put(card.getId(), 10);
         }
         for (int i = 0; i < cardsPackField.getCards().getMoneyCards().size(); i++) {
@@ -106,10 +106,21 @@ class Playground {
     }
 
     /**
+     * Beendet das Spiel, versendet die gameOverMessage und löscht das Spiel im GameManagement.
+     *
+     * @param lobbyID Die Lobby in der das Spiel beendet ist.
+     * @param gameEnd Die GameOverMessage
+     */
+    public void endGame(UUID lobbyID, ServerMessage gameEnd) {
+        gameService.sendToAllPlayers(lobbyID, gameEnd);
+        gameService.dropFinishedGame(lobbyID);
+    }
+
+    /**
      * Initialisiert actual- und nextPlayer und aktualisiert diese, wenn ein Spieler alle Phasen durchlaufen hat.
      * Dem neuen aktuellen Spieler wird seine Hand gesendet sowie eine StartActionPhaseMessage,
      * wenn er eine Aktionskarte auf der Hand hat bzw. eine StartBuyPhaseMessage wenn nicht.
-     * Es wird zusätzlich der Timestam (vom Server) mitgeschickt
+     * Es wird zusätzlich der Timestamp (vom Server) mitgeschickt
      *
      * @author Julia, Ferit
      * @since Sprint5
@@ -128,7 +139,6 @@ class Playground {
             actualPlayer = nextPlayer;
             nextPlayer = players.get(++index % players.size());
         }
-
         actualPhase = Phase.Type.ActionPhase;
         if (checkForActionCard()) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -140,18 +150,30 @@ class Playground {
     }
 
     /**
-     * Beendet das Spiel, versendet die gameOverMessage und löscht das Spiel im GameManagement.
+     * Überspringt die aktuelle Phase und startet die nächste, falls der Spieler sich gerade in der Aktions- oder Kaufphase befindet.
+     * Befindet er sich in der Clearphase, wird eine GamePhaseException geworfen.
      *
-     * @param lobbyID Die Lobby in der das Spiel beendet ist.
-     * @param gameEnd Die GameOverMessage
+     * @author Julia
+     * @since Sprint5
      */
-    public void endGame(UUID lobbyID, ServerMessage gameEnd) {
-        gameService.sendToAllPlayers(lobbyID, gameEnd);
-        gameService.dropFinishedGame(lobbyID);
+    public void skipCurrentPhase() {
+        if (actualPhase == Phase.Type.Clearphase) {
+            throw new GamePhaseException("Du kannst die Clearphase nicht überspringen!");
+        }
+
+        if (actualPhase == Phase.Type.ActionPhase) {
+            actualPhase = Phase.Type.Buyphase;
+            gameService.sendToAllPlayers(theSpecificLobbyID, new StartBuyPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
+            endTimer();
+        } else {
+            actualPhase = Phase.Type.Clearphase;
+            gameService.sendToAllPlayers(theSpecificLobbyID, new StartClearPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
+            compositePhase.executeClearPhase(actualPlayer);
+        }
     }
 
     /**
-     * Ein Timer skippt nach 35 Sekunden die aktuelle Phase sofern der Timer vorher nicht gecancelt worden ist. Hilfmethode endTimer ganz unten in der Kalsse. Timer wird im GameService gecancelt, wenn eine Karte innerhalb der Zeit ausgewählt worden ist.
+     * Ein Timer skippt nach 35 Sekunden die aktuelle Phase sofern der Timer vorher nicht gecancelt worden ist. Hilfmethode endTimer ganz unten in der Klasse. Timer wird im GameService gecancelt, wenn eine Karte innerhalb der Zeit ausgewählt worden ist.
      */
     public void phaseTimer() {
         timer.schedule(new TimerTask() {
@@ -179,29 +201,6 @@ class Playground {
     }
 
     /**
-     * Überspringt die aktuelle Phase und startet die nächste, falls der Spieler sich gerade in der Aktions- oder Kaufphase befindet.
-     * Befindet er sich in der Clearphase, wird eine GamePhaseException geworfen.
-     *
-     * @author Julia
-     * @since Sprint5
-     */
-    public void skipCurrentPhase() {
-        if (actualPhase == Phase.Type.Clearphase) {
-            throw new GamePhaseException("Du kannst die Clearphase nicht überspringen!");
-        }
-
-        if (actualPhase == Phase.Type.ActionPhase) {
-            actualPhase = Phase.Type.Buyphase;
-            gameService.sendToAllPlayers(theSpecificLobbyID, new StartBuyPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
-            endTimer();
-        } else {
-            actualPhase = Phase.Type.Clearphase;
-            gameService.sendToAllPlayers(theSpecificLobbyID, new StartClearPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
-            compositePhase.executeClearPhase(actualPlayer);
-        }
-    }
-
-    /**
      * Sendet die Initiale Hand an jeden Spieler spezifisch. Überprüfung via SessionID.
      *
      * @author Ferit
@@ -219,7 +218,6 @@ class Playground {
             LOG.debug("All OK with sending initial Hands...");
         }
     }
-
 
     /**
      * Überprüft, ob der aktuelle Spieler eine Aktionskarte auf der Hand hat, die er spielen könnte.
@@ -271,6 +269,17 @@ class Playground {
     }
 
     /**
+     * Gibt den Spieler zurück der als letztes Aufgegeben hat.
+     *
+     * @return s.o
+     * @author Haschem, Ferit
+     * @since Sprint5
+     */
+    public Player getLatestGavedUpPlayer() {
+        return latestGavedUpPlayer;
+    }
+
+    /**
      * Die Methode kümmert sich um das Aufgeben des Spielers in dem spezifizierten Game/Playground.
      *
      * @param lobbyID
@@ -314,17 +323,6 @@ class Playground {
         else {
             return false;
         }
-    }
-
-    /**
-     * Gibt den Spieler zurück der als letztes Aufgegeben hat.
-     *
-     * @return s.o
-     * @author Haschem, Ferit
-     * @since Sprint5
-     */
-    public Player getLatestGavedUpPlayer() {
-        return latestGavedUpPlayer;
     }
 
     public CompositePhase getCompositePhase() {

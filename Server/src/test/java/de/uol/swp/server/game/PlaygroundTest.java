@@ -29,6 +29,7 @@ public class PlaygroundTest {
 
     static final User defaultOwner = new UserDTO("test1", "test1", "test1@test.de");
     static final User secondPlayer = new UserDTO("test2", "test2", "test2@test2.de");
+    static final User thirdPlayer = new UserDTO("test3", "test3", "test3@test3.de");
     static final String lobbyName = "DrawHandMessageLobyTest";
     static final String lobbyPassword = "";
     static final ChatManagement chatManagement = new ChatManagement();
@@ -50,6 +51,7 @@ public class PlaygroundTest {
         gameID = lobbyManagement.createLobby("Test", "", defaultOwner);
         chatManagement.createChat(gameID.toString());
         lobbyManagement.getLobby(gameID).get().joinUser(secondPlayer);
+        lobbyManagement.getLobby(gameID).get().joinUser(thirdPlayer);
         bus.post(new StartGameInternalMessage(gameID));
     }
 
@@ -58,7 +60,7 @@ public class PlaygroundTest {
      *
      * @param e das DeadEvent
      * @author Marco
-     * @since start
+     * @since Start
      */
     @Subscribe
     void handle(DeadEvent e) {
@@ -83,7 +85,7 @@ public class PlaygroundTest {
     /**
      * Meldet diese Testklasse nach jedem Test vom Eventbus ab
      *
-     * @author MArco
+     * @author Marco
      * @since Start
      */
     @AfterEach
@@ -143,7 +145,7 @@ public class PlaygroundTest {
      */
     @Test
     void testSkipCurrentPhase() {
-        Playground playground = gameManagement.getGame(id).get().getPlayground();
+        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         playground.setActualPhase(Phase.Type.ActionPhase);
 
         playground.skipCurrentPhase();
@@ -161,7 +163,7 @@ public class PlaygroundTest {
      * @since Sprint6
      */
     @Test
-    void playyerGaveUpTest() {
+    void playerGaveUpTest() {
         UUID spielID = gameID;
         GameGiveUpRequest testRequest = new GameGiveUpRequest((UserDTO) secondPlayer, spielID);
         bus.post(testRequest);
@@ -172,7 +174,7 @@ public class PlaygroundTest {
      * Testet, ob der spezifizierte Spieler der Aufgeben will, nach Aufgabe noch im Game befindet.
      *
      * @author Ferit
-     * @since Sprint 6
+     * @since Sprint6
      */
     @Test
     void specificPlayerGaveUpTest() {
