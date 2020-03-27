@@ -179,7 +179,9 @@
         "actions": [
           {
             "ChooseCard": {
-              "count": 1,
+              "count": {
+                "min": 1
+              },
               "allowedCardType": "MoneyCard",
               "cardSource": "Hand",
               "nextAction": {
@@ -192,7 +194,9 @@
                     },
                     {
                       "ChooseCard": {
-                        "count": 1,
+                        "count": {
+                          "min": 1
+                        },
                         "cardSource": "Buy",
                         "allowedCardType": "MoneyCard",
                         "hasMoreWorthThenInput": {
@@ -230,7 +234,9 @@
         "actions": [
           {
             "ChooseCard": {
-              "count": 1,
+              "count": {
+                "min": 1
+              },
               "cardSource": "Hand",
               "nextAction": {
                 "ForEach": {
@@ -242,7 +248,9 @@
                     },
                     {
                       "ChooseCard": {
-                        "count": 1,
+                        "count": {
+                          "min": 1
+                        },
                         "cardSource": "Buy",
                         "hasMoreWorthThenInput": {
                           "min": 0,
