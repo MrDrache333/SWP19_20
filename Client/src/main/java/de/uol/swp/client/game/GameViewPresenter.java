@@ -185,7 +185,9 @@ public class GameViewPresenter extends AbstractPresenter {
         res.put("Spieler1", 45);
         res.put("Spieler2", 30);
         res.put("Spieler3", 12);
-        gameManagement.showGameOverView(loggedInUser, "Spieler1", res);
+        List<String> winners = new ArrayList<>();
+        winners.add("Spieler1");
+        gameManagement.showGameOverView(loggedInUser, winners, res);
     }
 
     /**
@@ -198,7 +200,9 @@ public class GameViewPresenter extends AbstractPresenter {
         res.put("Spieler2", 30);
         res.put("Spieler3", 12);
         res.put("Spieler4", 37);
-        gameManagement.showGameOverView(loggedInUser, loggedInUser.getUsername(), res);
+        List<String> winners = new ArrayList<>();
+        winners.add(loggedInUser.getUsername());
+        gameManagement.showGameOverView(loggedInUser, winners, res);
     }
 
     /**

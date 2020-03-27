@@ -3,6 +3,9 @@ package de.uol.swp.server.game;
 import com.google.common.eventbus.DeadEvent;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import de.uol.swp.common.game.card.Card;
+import de.uol.swp.common.game.card.parser.CardPack;
+import de.uol.swp.common.game.card.parser.JsonCardParser;
 import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.request.GameGiveUpRequest;
 import de.uol.swp.common.user.User;
@@ -18,6 +21,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
@@ -99,6 +103,7 @@ public class PlaygroundTest {
         //Player an erster Position der Liste beginnt
         assertEquals(0, actual);
         assertEquals(1, next);
+        assertEquals(1, playground.getPlayerTurns().get(playground.getActualPlayer()));
 
         playground.setActualPhase(Phase.Type.Clearphase);
         playground.newTurn();
@@ -106,6 +111,7 @@ public class PlaygroundTest {
         next = playground.getPlayers().indexOf(playground.getNextPlayer());
         assertEquals(1, actual);
         assertEquals(2, next);
+        assertEquals(1, playground.getPlayerTurns().get(playground.getActualPlayer()));
 
         playground.setActualPhase(Phase.Type.Clearphase);
         playground.newTurn();
@@ -113,6 +119,11 @@ public class PlaygroundTest {
         next = playground.getPlayers().indexOf(playground.getNextPlayer());
         assertEquals(2, actual);
         assertEquals(0, next);
+        assertEquals(1, playground.getPlayerTurns().get(playground.getActualPlayer()));
+
+        playground.setActualPhase(Phase.Type.Clearphase);
+        playground.newTurn();
+        assertEquals(2, playground.getPlayerTurns().get(playground.getActualPlayer()));
     }
 
     /**
@@ -174,4 +185,42 @@ public class PlaygroundTest {
         bus.post(testRequest);
         assertTrue(!gameManagement.getGame(gameID).get().getPlayground().getPlayers().contains(secondPlayer.getUsername()));
     }
+
+    /**
+     * Testet, ob der mit den meisten Punkten gewinnt
+     *
+     * @author Julia
+     * @since Sprint6
+     */
+    @Test
+    void calculateWinnerHighestScoreTest() {
+        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
+        CardPack cardsPackField = new JsonCardParser().loadPack("Basispack");
+        Card card = cardsPackField.getCards().getValueCards().get(2);
+        playground.getActualPlayer().getPlayerDeck().getCardsDeck().add(card);
+        List<String> winners = playground.calculateWinners();
+        assertEquals(1, winners.size());
+        assertTrue(winners.contains(playground.getActualPlayer().getPlayerName()));
+    }
+
+    /**
+     * Testet, ob bei Punktegleichstand der mit den wenigsten Zügen gewinnt
+     *
+     * @author Julia
+     * @since Sprint6
+     */
+    @Test
+    void calculateWinnerFewestTurnsTest() {
+        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
+        List<String> winners = playground.calculateWinners();
+        assertEquals(2, winners.size());
+        assertFalse(winners.contains(playground.getActualPlayer().getPlayerName()));
+
+        playground.setActualPhase(Phase.Type.Clearphase);
+        playground.newTurn();
+        winners = playground.calculateWinners();
+        assertEquals(1, winners.size());
+        assertTrue(winners.contains(playground.getNextPlayer().getPlayerName()));
+    }
+
 }
