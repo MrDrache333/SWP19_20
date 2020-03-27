@@ -2,13 +2,14 @@ package de.uol.swp.common.game.card.parser.components.CardAction.types;
 
 import de.uol.swp.common.game.card.Card;
 import de.uol.swp.common.game.card.parser.components.CardAction.CardAction;
+import de.uol.swp.common.game.card.parser.components.CardAction.SimpleCardAction;
 
 import java.util.ArrayList;
 
 /**
  * Aktion, welche bestimmte Aktionen auf mehrere Karten anwenden kann
  */
-public class ForEach extends CardAction {
+public class ForEach extends SimpleCardAction {
 
     /**
      * Die Karten, auf die die Aktionen angewendet werden sollen

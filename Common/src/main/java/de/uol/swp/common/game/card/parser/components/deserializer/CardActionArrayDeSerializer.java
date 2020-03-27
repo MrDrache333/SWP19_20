@@ -4,6 +4,7 @@ import com.google.gson.*;
 import de.uol.swp.common.game.card.parser.components.CardAction.CardAction;
 import de.uol.swp.common.game.card.parser.components.CardAction.Value;
 import de.uol.swp.common.game.card.parser.components.CardAction.types.*;
+import de.uol.swp.common.game.card.parser.components.CardAction.types.subtypes.Condition;
 
 import java.lang.reflect.Type;
 
@@ -19,7 +20,7 @@ public class CardActionArrayDeSerializer implements JsonDeserializer<CardAction>
     public CardAction deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         JsonObject obj = jsonElement.getAsJsonObject();
 
-        GsonBuilder builder = new GsonBuilder().registerTypeAdapter(Value.class, new ValueDeSerializer()).registerTypeAdapter(CardAction.class, new CardActionArrayDeSerializer());
+        GsonBuilder builder = new GsonBuilder().registerTypeAdapter(Value.class, new ValueDeSerializer()).registerTypeAdapter(CardAction.class, new CardActionArrayDeSerializer()).registerTypeAdapter(Condition.class, new ConditionDeSerializer());
         Gson gson = builder.create();
 
         //Je nach enthaltener Aktion die entsprechende Aktion in das zusammengesetzte Aktionsobjekt laden
@@ -29,6 +30,8 @@ public class CardActionArrayDeSerializer implements JsonDeserializer<CardAction>
             return (gson.fromJson(obj.get("ChooseCard").toString(), ChooseCard.class));
         if (obj.has("ChooseNextAction"))
             return (gson.fromJson(obj.get("ChooseNextAction").toString(), ChooseNextAction.class));
+        if (obj.has("Count"))
+            return (gson.fromJson(obj.get("Count").toString(), Count.class));
         if (obj.has("ForEach"))
             return (gson.fromJson(obj.get("ForEach").toString(), ForEach.class));
         if (obj.has("GetCard"))
@@ -43,6 +46,8 @@ public class CardActionArrayDeSerializer implements JsonDeserializer<CardAction>
             return (gson.fromJson(obj.get("Until").toString(), While.class));
         if (obj.has("UseCard"))
             return (gson.fromJson(obj.get("UseCard").toString(), UseCard.class));
+        if (obj.has("While"))
+            return (gson.fromJson(obj.get("While").toString(), While.class));
 
         return null;
     }

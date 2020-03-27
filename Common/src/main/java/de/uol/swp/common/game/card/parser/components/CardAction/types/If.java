@@ -2,6 +2,7 @@ package de.uol.swp.common.game.card.parser.components.CardAction.types;
 
 import de.uol.swp.common.game.card.parser.components.CardAction.CardAction;
 import de.uol.swp.common.game.card.parser.components.CardAction.SimpleCardAction;
+import de.uol.swp.common.game.card.parser.components.CardAction.types.subtypes.Condition;
 
 /**
  * Die IF-Aktion (Bedingte ausführung einer weiteren Aktion).
@@ -11,7 +12,7 @@ public class If extends SimpleCardAction {
     /**
      * Die Aktion, deren ergebnis ausgewertet wird
      */
-    private CardAction condition;
+    private Condition condition;
     /**
      * Gewünschtes Ergebnis der vorherigen Aktion
      */
@@ -30,7 +31,7 @@ public class If extends SimpleCardAction {
      * @author KenoO
      * @since Sprint 6
      */
-    public If(CardAction condition, boolean expectedResult, CardAction conditionedAction) {
+    public If(Condition condition, boolean expectedResult, CardAction conditionedAction) {
         this.condition = condition;
         this.expectedResult = expectedResult;
         this.conditionedAction = conditionedAction;
