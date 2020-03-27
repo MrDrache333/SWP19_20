@@ -28,7 +28,7 @@ public class ActionCardDeSerializer implements JsonDeserializer<ActionCard> {
         return new ActionCard(obj.getAsJsonPrimitive("name").getAsString(),
                 obj.getAsJsonPrimitive("id").getAsShort(),
                 obj.getAsJsonPrimitive("cost").getAsShort(),
-                actions
+                actions, obj.has("type") ? ActionCard.ActionType.valueOf(obj.get("type").getAsString()) : null
         );
     }
 }
