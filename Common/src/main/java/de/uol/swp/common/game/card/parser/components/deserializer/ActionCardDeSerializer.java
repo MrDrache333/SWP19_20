@@ -3,7 +3,7 @@ package de.uol.swp.common.game.card.parser.components.deserializer;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import de.uol.swp.common.game.card.ActionCard;
-import de.uol.swp.common.game.card.parser.components.CardAction.CompositeCardAction;
+import de.uol.swp.common.game.card.parser.components.CardAction.CardAction;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -18,17 +18,18 @@ public class ActionCardDeSerializer implements JsonDeserializer<ActionCard> {
     public ActionCard deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject obj = json.getAsJsonObject();
 
-        Type cardAction = new TypeToken<ArrayList<CompositeCardAction>>() {
+        Type cardAction = new TypeToken<ArrayList<CardAction>>() {
         }.getType();
-        GsonBuilder builder = new GsonBuilder().registerTypeAdapter(CompositeCardAction.class, new CompositeCardActionDeSerializer());
+        GsonBuilder builder = new GsonBuilder().registerTypeAdapter(CardAction.class, new CardActionArrayDeSerializer());
         Gson gson = builder.create();
 
-        ArrayList<CompositeCardAction> actions = obj.has("actions") ? gson.fromJson(obj.get("actions").toString(), cardAction) : null;
+        ArrayList<CardAction> actions = obj.has("actions") ? gson.fromJson(obj.get("actions").toString(), cardAction) : null;
 
         return new ActionCard(obj.getAsJsonPrimitive("name").getAsString(),
                 obj.getAsJsonPrimitive("id").getAsShort(),
                 obj.getAsJsonPrimitive("cost").getAsShort(),
-                actions, obj.has("type") ? ActionCard.ActionType.valueOf(obj.get("type").getAsString()) : null
+                actions,
+                obj.has("type") ? ActionCard.ActionType.valueOf(obj.get("type").getAsString()) : null
         );
     }
 }

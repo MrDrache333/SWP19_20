@@ -2,7 +2,6 @@ package de.uol.swp.common.game.card.parser.components.CardAction.types;
 
 import de.uol.swp.common.game.card.Card;
 import de.uol.swp.common.game.card.parser.components.CardAction.CardAction;
-import de.uol.swp.common.game.card.parser.components.CardAction.CompositeCardAction;
 
 import java.util.ArrayList;
 
@@ -18,7 +17,7 @@ public class ForEach extends CardAction {
     /**
      * Die Aktionen, welche auf die Karten angewendet werden sollen
      */
-    private ArrayList<CompositeCardAction> actions;
+    private ArrayList<CardAction> actions;
 
     /**
      * Erstellt eine neue Aktion
@@ -28,7 +27,7 @@ public class ForEach extends CardAction {
      * @author KenoO
      * @since Sprint 6
      */
-    public ForEach(ArrayList<Card> cards, ArrayList<CompositeCardAction> actions) {
+    public ForEach(ArrayList<Card> cards, ArrayList<CardAction> actions) {
         this.cards = cards;
         this.actions = actions;
     }

@@ -28,7 +28,7 @@ public abstract class ComplexCardAction extends CardAction {
     //Gibt an, ob Karten, die durch diese Aktion abgelegt/ gezogen wurden, den anderen Spielern sichtbar sind. 
     private boolean hideCardDuringAction = true;
     //Aktion, die das ergebnis der vorrangegangenen Aktion als Eingabe erhält. 
-    private CompositeCardAction nextAction = null;
+    private CardAction nextAction = null;
 
     public ComplexCardAction() {
 
@@ -57,7 +57,7 @@ public abstract class ComplexCardAction extends CardAction {
      *
      * @return Value of nextAction.
      */
-    public CompositeCardAction getNextAction() {
+    public CardAction getNextAction() {
         return nextAction;
     }
 
@@ -66,7 +66,7 @@ public abstract class ComplexCardAction extends CardAction {
      *
      * @param nextAction New value of nextAction.
      */
-    public void setNextAction(CompositeCardAction nextAction) {
+    public void setNextAction(CardAction nextAction) {
         this.nextAction = nextAction;
     }
 

@@ -1,7 +1,7 @@
 package de.uol.swp.common.game.card.parser.components.CardAction.types;
 
+import de.uol.swp.common.game.card.parser.components.CardAction.CardAction;
 import de.uol.swp.common.game.card.parser.components.CardAction.ComplexCardAction;
-import de.uol.swp.common.game.card.parser.components.CardAction.CompositeCardAction;
 import de.uol.swp.common.game.card.parser.components.CardAction.types.subtypes.Condition;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ public class While extends ComplexCardAction {
     /**
      * Die auszuführenden Aktionen
      */
-    private ArrayList<CompositeCardAction> actions;
+    private ArrayList<CardAction> actions;
 
     /**
      * Erstellt eine neue Aktion
@@ -28,7 +28,7 @@ public class While extends ComplexCardAction {
      * @author KenoO
      * @since Sprint 6
      */
-    public While(Condition condition, ArrayList<CompositeCardAction> actions) {
+    public While(Condition condition, ArrayList<CardAction> actions) {
         this.condition = condition;
         this.actions = actions;
     }
@@ -51,7 +51,7 @@ public class While extends ComplexCardAction {
      * @author KenoO
      * @since Sprint 6
      */
-    public ArrayList<CompositeCardAction> getActions() {
+    public ArrayList<CardAction> getActions() {
         return actions;
     }
 
