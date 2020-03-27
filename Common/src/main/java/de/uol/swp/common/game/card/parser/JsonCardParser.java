@@ -3,10 +3,12 @@ package de.uol.swp.common.game.card.parser;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import de.uol.swp.common.game.card.ActionCard;
+import de.uol.swp.common.game.card.CurseCard;
 import de.uol.swp.common.game.card.MoneyCard;
 import de.uol.swp.common.game.card.ValueCard;
 import de.uol.swp.common.game.card.parser.components.CardPack;
 import de.uol.swp.common.game.card.parser.components.deserializer.ActionCardDeSerializer;
+import de.uol.swp.common.game.card.parser.components.deserializer.CurseCardDeSerializer;
 import de.uol.swp.common.game.card.parser.components.deserializer.MoneyCardDeSerializer;
 import de.uol.swp.common.game.card.parser.components.deserializer.ValueCardDeSerializer;
 
@@ -30,7 +32,8 @@ public class JsonCardParser {
         GsonBuilder gsonobj = new GsonBuilder().
                 registerTypeAdapter(ActionCard.class, new ActionCardDeSerializer()).
                 registerTypeAdapter(ValueCard.class, new ValueCardDeSerializer()).
-                registerTypeAdapter(MoneyCard.class, new MoneyCardDeSerializer());
+                registerTypeAdapter(MoneyCard.class, new MoneyCardDeSerializer()).
+                registerTypeAdapter(CurseCard.class, new CurseCardDeSerializer());
 
         Gson gsonRealObj = gsonobj.create();
         CardPack pack;

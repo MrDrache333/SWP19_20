@@ -2,6 +2,7 @@ package de.uol.swp.common.game.card.parser.components;
 
 import com.google.gson.annotations.SerializedName;
 import de.uol.swp.common.game.card.ActionCard;
+import de.uol.swp.common.game.card.CurseCard;
 import de.uol.swp.common.game.card.MoneyCard;
 import de.uol.swp.common.game.card.ValueCard;
 
@@ -18,6 +19,8 @@ public class CardStack {
     private ArrayList<ValueCard> valueCards = new ArrayList<>();
     @SerializedName("ActionCards")
     private ArrayList<ActionCard> actionCards = new ArrayList<>();
+    @SerializedName("CurseCards")
+    private ArrayList<CurseCard> curseCards = new ArrayList<>();
 
     /**
      * @return Objekt als String
@@ -39,6 +42,10 @@ public class CardStack {
         for (ActionCard card : actionCards) {
             string.append("\t\t").append(card.getId()).append(": ").append(card.getName()).append(", Cost: ").append(card.getCosts()).append("\n");
         }
+        string.append("\tCurseCards:\n");
+        for (CurseCard card : curseCards) {
+            string.append("\t\t").append(card.getId()).append(": ").append(card.getName()).append(", Value: ").append(card.getValue()).append("\n");
+        }
 
         return string.toString();
     }
@@ -46,7 +53,7 @@ public class CardStack {
     /**
      * Gibt die money cards zurück
      *
-     * @return Die money cards
+     * @return Die Geldkarten
      */
     public ArrayList<MoneyCard> getMoneyCards() {
         return moneyCards;
@@ -55,7 +62,7 @@ public class CardStack {
     /**
      * Gibt die value cards zurück
      *
-     * @return Die value cards
+     * @return Die Anwesenkarten
      */
     public ArrayList<ValueCard> getValueCards() {
         return valueCards;
@@ -64,9 +71,18 @@ public class CardStack {
     /**
      * Gibt die action cards zurück
      *
-     * @return Die action cards
+     * @return Die Aktionskarten
      */
     public ArrayList<ActionCard> getActionCards() {
         return actionCards;
+    }
+
+    /**
+     * Gibt die curse cards zurück
+     *
+     * @return Die Fuchkarten
+     */
+    public ArrayList<CurseCard> getCurseCards() {
+        return curseCards;
     }
 }
