@@ -148,18 +148,6 @@ public class LobbyService {
     }
 
     /**
-     * UpdateInGameRequest wird erstellt und auf den Eventbus gepostet
-     *
-     * @param lobbyID die ID der Lobby, in der das Spiel zu Ende ist
-     * @author Julia
-     * @since Sprint6
-     */
-    public void endGame(UUID lobbyID) {
-        UpdateInGameRequest request = new UpdateInGameRequest(lobbyID);
-        bus.post(request);
-    }
-
-    /**
      * Erstellt eine neue Stage und öffnet darin die Anleitung als WebView
      *
      * @author Timo
