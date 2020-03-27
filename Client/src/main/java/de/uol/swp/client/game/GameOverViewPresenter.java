@@ -155,6 +155,7 @@ public class GameOverViewPresenter extends AbstractPresenter {
     @FXML
     public void onAgainButtonPressed(ActionEvent actionEvent) {
         LOG.debug("Player " + loggedInUser.getUsername() + " wants to play again.");
+        gameManagement.getLobbyService().endGame(gameManagement.getID());
         gameManagement.showLobbyView();
         gameManagement.closeGameOverView();
     }
