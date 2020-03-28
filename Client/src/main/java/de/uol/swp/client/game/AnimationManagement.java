@@ -12,7 +12,7 @@ import java.util.List;
 
 public class AnimationManagement {
 
-    private static final double HAND_X = 294;
+    private static final double HAND_X = 254;
     private static final double HAND_Y = 598;
 
     private static final double ABLAGE_X = 733 + 30;
