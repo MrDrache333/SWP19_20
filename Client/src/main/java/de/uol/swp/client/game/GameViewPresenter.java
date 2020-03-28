@@ -355,9 +355,13 @@ public class GameViewPresenter extends AbstractPresenter {
      * @since Sprint6
      */
     @FXML
+    @Subscribe
     public void onSkipPhaseButtonPressed(ActionEvent actionEvent) {
-        SkipPhaseRequest request = new SkipPhaseRequest(loggedInUser, lobbyID);
-        eventBus.post(request);
+        Platform.runLater((() -> {
+            System.out.println("1");
+            SkipPhaseRequest req = new SkipPhaseRequest(loggedInUser, lobbyID);
+            eventBus.post(req);
+        }));
     }
 
     /**
@@ -385,7 +389,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
                     gameView.getChildren().add(card);
                     HandCards.add(card);
-                    AnimationManagement.addToHand(card, HandCards.size(), false);
+                    AnimationManagement.addToHand(card, HandCards.size() - 1, false);
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
                         PlayCardRequest request = new PlayCardRequest(lobbyID, loggedInUser, HandCardID.get(n), card, HandCards, false);
                         eventBus.post(request);
