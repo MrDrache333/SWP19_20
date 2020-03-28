@@ -11,6 +11,7 @@ import de.uol.swp.common.game.request.GameGiveUpRequest;
 import de.uol.swp.common.game.request.SelectCardRequest;
 import de.uol.swp.common.game.request.SkipPhaseRequest;
 import de.uol.swp.common.lobby.request.LobbyLeaveUserRequest;
+import de.uol.swp.common.lobby.request.UpdateInGameRequest;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
@@ -94,6 +95,7 @@ public class GameService extends AbstractService {
 
     public void dropFinishedGame(UUID lobbyID) {
         gameManagement.deleteGame(lobbyID);
+        post(new UpdateInGameRequest(lobbyID));
     }
 
     /**

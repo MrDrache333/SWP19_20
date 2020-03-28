@@ -178,6 +178,25 @@ public class LobbyService extends AbstractService {
     }
 
     /**
+     * Setzt den inGame-Status der Lobby bei Spielende wieder auf false
+     *
+     * @param request das UpdateInGameRequest
+     * @author Julia
+     * @since Sprint6
+     */
+    @Subscribe
+    public void onGameEnd(UpdateInGameRequest request) {
+        Optional<Lobby> lobby = lobbyManagement.getLobby(request.getLobbyID());
+        if (lobby.isPresent()) {
+            LOG.info("Game finished in lobby " + request.getLobbyID());
+            lobby.get().setInGame(false);
+            ServerMessage msg = new UpdatedInGameMessage(request.getLobbyID());
+            post(msg);
+        } else
+            LOG.debug("LOBBY NOT FOUND! ID: " + request.getLobbyID());
+    }
+
+    /**
      * Ruft alle Online User in der Lobby ab
      *
      * @param request die RetrieveAllOnlineUsersInLobbyRequest
