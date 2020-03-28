@@ -2,11 +2,17 @@ package de.uol.swp.client.game;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
+import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.game.request.GameGiveUpRequest;
+import de.uol.swp.common.game.request.PlayCardRequest;
+import de.uol.swp.common.game.request.SkipPhaseRequest;
+import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
+import javafx.scene.image.ImageView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class GameService {
@@ -38,4 +44,28 @@ public class GameService {
         GameGiveUpRequest request = new GameGiveUpRequest(theUserWhoGivedUp, lobbyID);
         bus.post(request);
     }
+
+    /**
+     * Erstellt skipPhaseRequest und postet diese auf den EventBus.
+     *
+     * @param gameID die LobbyID zum Lobbynamen
+     * @param user   der User der seine Phase skippen möchte
+     * @author Devin
+     * @since Sprint5
+     */
+    public void skipPhase(User user, UUID gameID) {
+        SkipPhaseRequest req = new SkipPhaseRequest(user, gameID);
+        bus.post(req);
+    }
+
+    public void playCard(UUID lobbyID, User loggedInUser, Short handCardID, ImageView card, ArrayList<ImageView> HandCards, Boolean smallSpace) {
+        PlayCardRequest request = new PlayCardRequest(lobbyID, loggedInUser, handCardID, card, HandCards, smallSpace);
+        bus.post(request);
+    }
+
+    public void buyCard(UUID lobbyID, User loggedInUser, String cardID, ImageView cardImage) {
+        BuyCardRequest request = new BuyCardRequest(lobbyID, loggedInUser, cardID, cardImage);
+        bus.post(request);
+    }
+
 }
