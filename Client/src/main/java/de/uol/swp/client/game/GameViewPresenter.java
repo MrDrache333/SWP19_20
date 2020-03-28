@@ -10,6 +10,8 @@ import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.common.game.messages.BuyCardMessage;
 import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.game.messages.PlayCardMessage;
+import de.uol.swp.common.game.request.BuyCardRequest;
+import de.uol.swp.common.game.request.PlayCardRequest;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
@@ -383,7 +385,8 @@ public class GameViewPresenter extends AbstractPresenter {
                     HandCards.add(card);
                     AnimationManagement.addToHand(card, HandCards.size() - 1, false);
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-                        gameManagement.getGameService().playCard(lobbyID, loggedInUser, HandCardID.get(n), card, HandCards, false);
+                        PlayCardRequest request = new PlayCardRequest(lobbyID, loggedInUser, n, card, HandCards, false);
+                        eventBus.post(request);
                     });
                 });
             }
@@ -436,7 +439,8 @@ public class GameViewPresenter extends AbstractPresenter {
                 buy.setVisible(false);
                 back.setVisible(false);
                 bigCardImage.setVisible(false);
-                gameManagement.getGameService().buyCard(lobbyID, loggedInUser, cardID, cardImage);
+                BuyCardRequest request = new BuyCardRequest(lobbyID, loggedInUser, cardID, cardImage);
+                eventBus.post(request);
             });
             // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt
             back.setOnAction(event -> {
