@@ -358,7 +358,6 @@ public class GameViewPresenter extends AbstractPresenter {
     @Subscribe
     public void onSkipPhaseButtonPressed(ActionEvent actionEvent) {
         Platform.runLater((() -> {
-            System.out.println("1");
             SkipPhaseRequest req = new SkipPhaseRequest(loggedInUser, lobbyID);
             eventBus.post(req);
         }));
