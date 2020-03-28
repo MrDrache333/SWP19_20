@@ -328,7 +328,47 @@
       {
         "id": 17,
         "name": "Abenteuer",
-        "cost": 6
+        "cost": 6,
+        "actions": [
+          {
+            "While": {
+              "executeType": "NONE",
+              "condition": {
+                "left": {
+                  "Count": {
+                    "GetCard": {
+                      "count": 255,
+                      "allowedCardType": "MoneyCard",
+                      "cardSource": "DRAW"
+                    }
+                  }
+                },
+                "operator": "LOWER",
+                "right": 2
+              },
+              "actions": [
+                {
+                  "GetCard": {
+                    "count": 1,
+                    "cardSource": "DRAW"
+                  }
+                }
+              ]
+            },
+            "nextAction": {
+              "Move": {
+                "allowedCardType": "MoneyCard",
+                "executeType": "NONE",
+                "cardDestination": "HAND"
+              }
+            },
+            "nextAction": {
+              "Move": {
+                "cardDestination": "DISCARD"
+              }
+            }
+          }
+        ]
       },
       {
         "id": 18,
