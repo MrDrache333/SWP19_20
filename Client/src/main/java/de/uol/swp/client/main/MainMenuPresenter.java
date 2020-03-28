@@ -20,6 +20,7 @@ import de.uol.swp.common.user.request.OpenSettingsRequest;
 import de.uol.swp.common.user.response.AllOnlineUsersResponse;
 import de.uol.swp.common.user.response.LoginSuccessfulResponse;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -30,6 +31,8 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Circle;
 import javafx.util.Callback;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,7 +49,6 @@ import java.util.regex.Pattern;
 
 
 public class MainMenuPresenter extends AbstractPresenter {
-
 
     public static final String fxml = "/fxml/MainMenuView.fxml";
     public static final String css = "css/MainMenuPresenter.css";
@@ -68,6 +70,8 @@ public class MainMenuPresenter extends AbstractPresenter {
     @FXML
     private TableColumn<Lobby, String> players = new TableColumn<>("Spieler");
     @FXML
+    private TableColumn<Lobby, Circle> inGame = new TableColumn<>("im Spiel");
+    @FXML
     private TableColumn<Lobby, Void> joinLobby = new TableColumn<>();
     @FXML
     private Pane chatView;
@@ -85,7 +89,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      * Hauptmenü initialisiert
      *
      * @throws IOException mögliche Fehlermeldung
-     * @author Marco, Julia, Keno O.
+     * @author Marco, Keno O., Julia
      * @since Start
      */
     @FXML
@@ -107,20 +111,26 @@ public class MainMenuPresenter extends AbstractPresenter {
         //Initialisieren der Lobbytabelle
         name.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getName() + (c.getValue().getLobbyPassword().equals("") ? " (offen)" : " (privat)")));
         host.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getOwner().getUsername()));
-        addJoinLobbyButton();
-        lobbiesView.getColumns().addAll(name, host, players, joinLobby);
-        lobbiesView.setPlaceholder(new Label("Keine Lobbies vorhanden"));
         players.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getPlayers() + " / " + c.getValue().getMaxPlayer()));
+        inGame.setCellValueFactory(c -> new SimpleObjectProperty<>(new Circle(6.0f, c.getValue().getInGame() ? Paint.valueOf("green") : Paint.valueOf("red"))));
+        addJoinLobbyButton();
+        lobbiesView.getColumns().addAll(name, host, players, inGame, joinLobby);
+        lobbiesView.setPlaceholder(new Label("Keine Lobbies vorhanden"));
         name.setResizable(false);
         host.setResizable(false);
         players.setResizable(false);
+        inGame.setResizable(false);
         joinLobby.setResizable(false);
         name.setStyle("-fx-alignment: CENTER-LEFT;");
         host.setStyle("-fx-alignment: CENTER-LEFT;");
         players.setStyle("-fx-alignment: CENTER-LEFT;");
-        name.setPrefWidth(235);
-        host.setPrefWidth(135);
-        joinLobby.setPrefWidth(90);
+        inGame.setStyle("-fx-alignment: CENTER;");
+        joinLobby.setStyle("-fx-alignment: CENTER;");
+        name.setPrefWidth(208);
+        host.setPrefWidth(122);
+        players.setPrefWidth(66);
+        inGame.setPrefWidth(60);
+        joinLobby.setPrefWidth(85);
 
         createLobbyButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
         logoutButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
@@ -423,6 +433,54 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     /**
+     * Aktualisiert den Status einer Lobby in der Tabelle, wenn ein Spiel in ihr begonnen hat
+     *
+     * @param message die StartGameMessage
+     * @author Julia
+     * @since Sprint6
+     */
+    @Subscribe
+    public void onGameStart(StartGameMessage message) {
+        Platform.runLater(() -> {
+            Lobby updatedLobby = null;
+            for (Lobby lobby : lobbies) {
+                if (lobby.getLobbyID().equals(message.getLobbyID())) {
+                    updatedLobby = lobby;
+                    break;
+                }
+            }
+            lobbies.remove(updatedLobby);
+            updatedLobby.setInGame(true);
+            lobbies.add(0, updatedLobby);
+            lobbiesView.refresh();
+        });
+    }
+
+    /**
+     * Aktualisiert den Status einer Lobby in der Tabelle, wenn das Spiel in ihr zu Ende ist
+     *
+     * @param message die UpdatedInGameMessage
+     * @author Julia
+     * @since Sprint6
+     */
+    @Subscribe
+    public void onGameEnd(UpdatedInGameMessage message) {
+        Platform.runLater(() -> {
+            Lobby updatedLobby = null;
+            for (Lobby lobby : lobbies) {
+                if (lobby.getLobbyID().equals(message.getLobbyID())) {
+                    updatedLobby = lobby;
+                    break;
+                }
+            }
+            lobbies.remove(updatedLobby);
+            updatedLobby.setInGame(false);
+            lobbies.add(0, updatedLobby);
+            lobbiesView.refresh();
+        });
+    }
+
+    /**
      * Aktualisiert den loggedInUser und die Lobbytabelle sowie die Userliste, falls sich der Username geändert hat
      *
      * @param message die UpdatedUserMessage
@@ -450,7 +508,7 @@ public class MainMenuPresenter extends AbstractPresenter {
                     updatedUsers.remove(message.getOldUser());
                     updatedUsers.add(message.getUser());
                     Set<User> newUsers = new TreeSet<>(updatedUsers);
-                    Lobby lobbyToUpdate = new LobbyDTO(lobby.getName(), updatedOwner, lobby.getLobbyID(), lobby.getLobbyPassword(), newUsers, lobby.getPlayers(), lobby.getMaxPlayer());
+                    Lobby lobbyToUpdate = new LobbyDTO(lobby.getName(), updatedOwner, lobby.getLobbyID(), lobby.getLobbyPassword(), newUsers, lobby.getPlayers(), lobby.getMaxPlayer(), lobby.getInGame());
                     toRemove.add(lobby);
                     toAdd.add(lobbyToUpdate);
                 }
@@ -537,6 +595,8 @@ public class MainMenuPresenter extends AbstractPresenter {
                                 SceneManager.showAlert(Alert.AlertType.WARNING, "Diese Lobby ist voll!", "Fehler");
                             } else if (lobby.getUsers().contains(loggedInUser)) {
                                 SceneManager.showAlert(Alert.AlertType.WARNING, "Du bist dieser Lobby schon beigetreten!", "Fehler");
+                            } else if (lobby.getInGame()) {
+                                SceneManager.showAlert(Alert.AlertType.WARNING, "Du kannst einer Lobby nicht beitreten,\nwenn in ihr ein Spiel läuft!", "Fehler");
                             } else {
                                 if (lobby.getLobbyPassword().isEmpty()) {
                                     lobbyService.joinLobby(lobby.getLobbyID(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));

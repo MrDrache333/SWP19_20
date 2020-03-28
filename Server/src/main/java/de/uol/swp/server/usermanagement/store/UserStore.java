@@ -17,8 +17,8 @@ public interface UserStore {
     /**
      * Findet den User mit dem Username und dem Passwort
      *
-     * @param username  der Username
-     * @param password  das Passwort des Users
+     * @param username der Username
+     * @param password das Passwort des Users
      * @return Der User ohne Passwortinformationen, wenn er gefunden wurde
      * @author Marco
      * @since Start
@@ -28,7 +28,7 @@ public interface UserStore {
     /**
      * Findet einen User nur mit dem Namen
      *
-     * @param username  der Username
+     * @param username der Username
      * @return der User ohne Passwortinformationen, wenn er gefunden wurde
      * @author Marco
      * @since Start
@@ -38,9 +38,9 @@ public interface UserStore {
     /**
      * Erstellt einen neuen User
      *
-     * @param username  der gewählte Username
-     * @param password  das gewählte Passwort
-     * @param eMail     die angegebene E-Mail-Adresse
+     * @param username der gewählte Username
+     * @param password das gewählte Passwort
+     * @param eMail    die angegebene E-Mail-Adresse
      * @return der User ohne Passwortinformationen
      * @author Marco
      * @since Start
@@ -64,7 +64,7 @@ public interface UserStore {
     /**
      * Löscht einen User aus der Liste
      *
-     * @param username  der zu löschende User
+     * @param username der zu löschende User
      * @author Marco
      * @since Start
      */
