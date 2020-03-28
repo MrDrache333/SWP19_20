@@ -266,25 +266,30 @@ public class GameViewPresenter extends AbstractPresenter {
      * Überprüft ob die Spieler noch Karten der gekauften Art kaufen können und fügt ggf. das ImageView (kleines Bild) wieder hinzu
      *
      * @param msg die Nachricht
-     * @author Rike
+     * @author Rike, Devin
      * @since Sprint 5
      */
 
     //TODO so geht das nicht....
+    @FXML
     @Subscribe
     public void onBuyCardMessage(BuyCardMessage msg) {
         if (msg.getLobbyID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
             if (msg.isBuyCard()) {
-                AnimationManagement.buyCard(msg.getCardImage());
+                String pfad = "file:Client/scr/main/resources/cards/images/" + msg.getCardID().toString() + ".png";
+                Image picture = new Image(pfad);
+                ImageView card = new ImageView(picture);
+                AnimationManagement.buyCard(card);
                 LOG.debug("Der Spieler " + msg.getCurrentUser() + " hat die Karte " + msg.getCardID() + " gekauft.");
                 if (msg.getCounterCard() > 0) {
                     // fügt ein "neues" Bild an der Stelle des alten Bildes im Shop hinzu
-                    ImageView newCardImage = msg.getCardImage();
-                    newCardImage.setFitWidth(msg.getCardImage().getFitWidth());
-                    newCardImage.setLayoutY(msg.getCardImage().getLayoutY());
-                    newCardImage.setLayoutX(msg.getCardImage().getLayoutX());
+                    ImageView newCardImage = card;
+                    newCardImage.setFitWidth(card.getFitWidth());
+                    newCardImage.setLayoutY(card.getLayoutY());
+                    newCardImage.setLayoutX(card.getLayoutX());
                     newCardImage.setId(String.valueOf(msg.getCardID()));
                     newCardImage.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> chosenBuyableCard(mouseEvent));
+                    gameView.getChildren().add(card);
                 }
             } else {
                 showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht kaufen!", "Fehler");
