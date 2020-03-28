@@ -13,31 +13,31 @@ public abstract class AbstractPlayground {
         /**
          * Müll
          */
-        Trash,
+        TRASH,
         /**
          * Hand
          */
-        Hand,
+        HAND,
         /**
          * Kaufzone
          */
-        Buy,
+        BUY,
         /**
          * Nachziehstapel
          */
-        Draw,
+        DRAW,
         /**
          * Ablegestapel
          */
-        Discard,
+        DISCARD,
         /**
          * Zwischenspeicher
          */
-        Temp,
+        TEMP,
         /**
          * Keine festgelegte Zone
          */
-        None
+        NONE
     }
 
     /**
@@ -47,14 +47,14 @@ public abstract class AbstractPlayground {
         /**
          * Buy player activity value.
          */
-        Buy,
+        BUY,
         /**
          * Action player activity value.
          */
-        Action,
+        ACTION,
         /**
          * Money player activity value.
          */
-        Money
+        MONEY
     }
 }

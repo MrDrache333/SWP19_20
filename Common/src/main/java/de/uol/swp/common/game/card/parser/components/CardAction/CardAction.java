@@ -15,23 +15,23 @@ public abstract class CardAction implements Action {
         /**
          * Auf niemanden anders(Nur mich selbst).
          */
-        None,
+        NONE,
         /**
          * Auf alle Spieler.
          */
-        All,
+        ALL,
         /**
          * Auf alle anderen Spieler(Nicht mich).
          */
-        Others,
+        OTHERS,
         /**
          * Auf den Spieler, der vor mir am Zug war.
          */
-        Last,
+        LAST,
         /**
          * Auf den Spieler, der nach mir am Zug ist.
          */
-        Next
+        NEXT
     }
 
 }

@@ -32,7 +32,7 @@ public abstract class ComplexCardAction extends CardAction {
     /**
      * Gibt an, auf wen die Aktion anzuwenden ist aus sicht des aktuellen Spielers.
      */
-    private ExecuteType executeType = ExecuteType.None;
+    private ExecuteType executeType = ExecuteType.NONE;
     /**
      * Gibt an, ob für jede hinzugefügte Karte eine entfernt werden muss und umgekehrt.
      */
@@ -40,11 +40,11 @@ public abstract class ComplexCardAction extends CardAction {
     /**
      * Gibt an, woher eine Karte genommen werden muss.
      */
-    private AbstractPlayground.ZoneType cardSource = AbstractPlayground.ZoneType.None;
+    private AbstractPlayground.ZoneType cardSource = AbstractPlayground.ZoneType.NONE;
     /**
      * Gibt an, wohin eine Karte gelegt werden muss.
      */
-    private AbstractPlayground.ZoneType cardDestination = AbstractPlayground.ZoneType.None;
+    private AbstractPlayground.ZoneType cardDestination = AbstractPlayground.ZoneType.NONE;
     /**
      * Gibt an, ob die Ausführung der Aktion durch den Benutzer abgebrochen werden kann (liefert bei Abbruch false als
      * Rückgabewert bei execute())
