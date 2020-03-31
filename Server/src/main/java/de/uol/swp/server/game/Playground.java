@@ -4,8 +4,8 @@ import com.google.inject.Inject;
 import de.uol.swp.common.game.AbstractPlayground;
 import de.uol.swp.common.game.card.ActionCard;
 import de.uol.swp.common.game.card.Card;
-import de.uol.swp.common.game.card.parser.CardPack;
 import de.uol.swp.common.game.card.parser.JsonCardParser;
+import de.uol.swp.common.game.card.parser.components.CardPack;
 import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.lobby.Lobby;
@@ -82,8 +82,8 @@ class Playground extends AbstractPlayground {
             Card card = cardsPackField.getCards().getActionCards().get(i);
             cardField.put(card.getId(), 10);
         }
-        for (int i = 0; i < cardsPackField.getCards().getReactionCards().size(); i++) {
-            Card card = cardsPackField.getCards().getReactionCards().get(i);
+        for (int i = 0; i < cardsPackField.getCards().getCurseCards().size(); i++) {
+            Card card = cardsPackField.getCards().getCurseCards().get(i);
             cardField.put(card.getId(), 10);
         }
         for (int i = 0; i < cardsPackField.getCards().getMoneyCards().size(); i++) {
