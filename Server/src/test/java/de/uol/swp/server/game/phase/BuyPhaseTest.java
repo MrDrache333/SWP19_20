@@ -1,13 +1,12 @@
 package de.uol.swp.server.game.phase;
 
 import com.google.common.eventbus.EventBus;
-import de.uol.swp.common.game.GameService;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.chat.ChatManagement;
 import de.uol.swp.server.game.GameManagement;
+import de.uol.swp.server.game.GameService;
 import de.uol.swp.server.game.Playground;
-
 import de.uol.swp.server.game.player.Player;
 import de.uol.swp.server.lobby.LobbyManagement;
 import de.uol.swp.server.message.StartGameInternalMessage;
