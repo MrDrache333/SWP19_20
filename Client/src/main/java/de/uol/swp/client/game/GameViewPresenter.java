@@ -34,7 +34,6 @@ import javafx.stage.Modality;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -403,9 +402,9 @@ public class GameViewPresenter extends AbstractPresenter {
             // Karte befindet sich im Shop
             ImageView cardImage = (ImageView) mouseEvent.getSource();
             String cardID = cardImage.getId();
-            String PathCardLargeView = "/cards/images/" + cardID + ".png";
+            String PathCardLargeView = "file:Client/src/main/resources/cards/images/" + cardID + ".png";
             // ein großes Bild der Karte wird hinzugefügt
-            ImageView bigCardImage = new ImageView(new Image(new File(getClass().getResource(PathCardLargeView).toExternalForm().replace("file:", "")).toURI().toString()));
+            ImageView bigCardImage = new ImageView(new Image(PathCardLargeView));
             // setzt die Größe und die Position des Bildes. Das Bild ist im Vordergrund. Bild wird hinzugefügt
             bigCardImage.setFitHeight(225.0);
             bigCardImage.setFitWidth(150.0);
