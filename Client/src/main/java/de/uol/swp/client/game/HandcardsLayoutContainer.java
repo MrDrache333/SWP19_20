@@ -32,10 +32,9 @@ public class HandcardsLayoutContainer extends Region {
 
     @Override
     protected void layoutChildren() {
-        super.layoutChildren();
         ObservableList<Node> children = getChildren();
         double sum = 0;
-        double size = this.getChildren().size();
+        double size = children.size();
         for (Node child : children) {
             sum += Math.round(child.getBoundsInLocal().getWidth());
         }

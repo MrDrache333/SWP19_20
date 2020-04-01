@@ -30,19 +30,15 @@ public class AnimationManagement {
     /**
      * Erstellt ein neues MoveTo Objekt für den Pfad, wobei die aktuellen Kooridnaten der Karte übernommen werden.
      *
-     * @param card         die Kare
-     * @param hasOwnParent gibt an, ob die Karte zu einem anderen Conatiner als der AnchorPane gehört
+     * @param card die Kare
      * @return MoveTo
      * @author Anna
      * @since Sprint5
      */
-    public static MoveTo keepPosition(ImageView card, boolean hasOwnParent) {
+    public static MoveTo keepPosition(ImageView card) {
         double w = card.getFitWidth() / 2;
         double h = card.getFitHeight() / 2;
-        if (hasOwnParent) {
-            return new MoveTo(w + card.getParent().getLayoutX(), h + card.getParent().getLayoutY());
-        }
-        return new MoveTo(w, h);
+        return new MoveTo(w + card.getParent().getLayoutX(), h + card.getParent().getLayoutY());
     }
 
     /**
@@ -129,7 +125,7 @@ public class AnimationManagement {
      * @since Sprint5
      */
     public static Boolean playCard(ImageView card, int count) {
-        return createArcToPath(card, keepPosition(card, true), ACTION_ZONE_X, ACTION_ZONE_Y, count, true);
+        return createArcToPath(card, keepPosition(card), ACTION_ZONE_X, ACTION_ZONE_Y, count, true);
     }
 
     /**
@@ -155,7 +151,7 @@ public class AnimationManagement {
      * @since Sprint5
      */
     public static Boolean buyCard(ImageView card) {
-        return createLineToPath(card, keepPosition(card, false), ABLAGE_X, ABLAGE_Y);
+        return createLineToPath(card, keepPosition(card), ABLAGE_X, ABLAGE_Y);
     }
 
     /**
@@ -167,7 +163,7 @@ public class AnimationManagement {
      * @since Sprint5
      */
     public static Boolean opponentBuysCard(ImageView card) {
-        return createLineToPath(card, keepPosition(card, false), 334, -300);
+        return createLineToPath(card, keepPosition(card), 334, -300);
     }
 
     /**
@@ -179,7 +175,7 @@ public class AnimationManagement {
      * @since Sprint5
      */
     public static Boolean deleteCard(ImageView card) {
-        return createArcToPath(card, keepPosition(card, true), TRASH_X, TRASH_Y, 0, true);
+        return createArcToPath(card, keepPosition(card), TRASH_X, TRASH_Y, 0, true);
     }
 
     /**
@@ -204,7 +200,7 @@ public class AnimationManagement {
             card.toFront();
             path.getElements().add(new LineTo(w, h));
             PathTransition pathTransition = new PathTransition();
-            pathTransition.setDuration(Duration.millis(600));
+            pathTransition.setDuration(Duration.millis(700));
             pathTransition.setNode(card);
             pathTransition.setPath(path);
             pathTransition.setCycleCount(1);

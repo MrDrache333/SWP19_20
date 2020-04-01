@@ -3,7 +3,6 @@ package de.uol.swp.common.game.messages;
 import de.uol.swp.common.user.User;
 import javafx.scene.image.ImageView;
 
-import java.util.ArrayList;
 import java.util.UUID;
 
 public class PlayCardMessage {
@@ -27,20 +26,18 @@ public class PlayCardMessage {
     private User currentUser;
     private Short handCardID;
     private ImageView cardImage;
-    private ArrayList<ImageView> handCards;
     private int count;
     private boolean playCard;
 
     public PlayCardMessage() {
     }
 
-    public PlayCardMessage(UUID lobbyID, User currentUser, Short handCardID, ImageView cardImage,
-                           ArrayList<ImageView> handCards, int count, boolean playCard) {
+    public PlayCardMessage(UUID lobbyID, User currentUser, Short handCardID, ImageView cardImage, int count,
+                           boolean playCard) {
         this.lobbyID = lobbyID;
         this.currentUser = currentUser;
         this.handCardID = handCardID;
         this.cardImage = cardImage;
-        this.handCards = handCards;
         this.count = count;
         this.playCard = playCard;
     }
@@ -59,10 +56,6 @@ public class PlayCardMessage {
 
     public ImageView getCardImage() {
         return cardImage;
-    }
-
-    public ArrayList<ImageView> getHandCards() {
-        return handCards;
     }
 
     public int getCount() {
