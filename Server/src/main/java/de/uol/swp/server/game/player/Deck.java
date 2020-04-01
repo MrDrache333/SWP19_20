@@ -141,7 +141,6 @@ public class Deck {
         for (Card card : hand) {
             if (card instanceof MoneyCard) {
                 money += ((MoneyCard) card).getValue();
-                addCardToDiscardPile(card);
                 if (money >= value) {
                     break;
                 }
