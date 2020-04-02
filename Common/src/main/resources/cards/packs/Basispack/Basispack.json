@@ -338,7 +338,7 @@
                     "GetCard": {
                       "count": 255,
                       "allowedCardType": "MONEYCARD",
-                      "cardSource": "DRAW"
+                      "cardSource": "TEMP"
                     }
                   }
                 },
@@ -349,21 +349,31 @@
                 {
                   "GetCard": {
                     "count": 1,
-                    "cardSource": "DRAW"
+                    "cardSource": "DRAW",
+                    "nextAction": {
+                      "Move": {
+                        "cardDestination": "TEMP"
+                      }
+                    }
                   }
                 }
               ]
             },
             "nextAction": {
-              "Move": {
-                "allowedCardType": "MONEYCARD",
-                "executeType": "NONE",
-                "cardDestination": "HAND"
-              }
-            },
-            "nextAction": {
-              "Move": {
-                "cardDestination": "DISCARD"
+              "GetCard": {
+                "count": 255,
+                "cardSource": "TEMP",
+                "nextAction": {
+                  "Move": {
+                    "allowedCardType": "MONEYCARD",
+                    "cardDestination": "HAND",
+                    "nextAction": {
+                      "Move": {
+                        "cardDestination": "DISCARD"
+                      }
+                    }
+                  }
+                }
               }
             }
           }
@@ -587,13 +597,63 @@
       {
         "id": 25,
         "name": "Bibliothek",
-        "cost": 5
+        "cost": 5,
+        "actions": [
+          {
+            "While": {
+              "condition": {
+                "left": {
+                  "Count": {
+                    "GetCard": {
+                      "count": 255,
+                      "cardSource": "HAND"
+                    }
+                  }
+                },
+                "operator": "LOWER",
+                "right": 7
+              },
+              "actions": [
+                {
+                  "GetCard": {
+                    "count": 1,
+                    "cardSource": "DRAW",
+                    "nextAction": {
+                      "Move": {
+                        "cardDestination": "TEMP",
+                        "allowedCardType": "ACTIONCARD",
+                        "nextAction": {
+                          "Move": {
+                            "cardDestination": "HAND"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "GetCard": {
+              "count": 255,
+              "cardSource": "TEMP",
+              "nextAction": {
+                "Move": {
+                  "cardDestination": "DISCARD"
+                }
+              }
+            }
+          }
+        ]
       },
       {
         "id": 26,
         "name": "Dieb",
         "cost": 4,
-        "type": "Attack"
+        "type": "Attack",
+        "actions": [
+        ]
       },
       {
         "id": 27,
@@ -722,36 +782,6 @@
             }
           }
         ]
-      },
-      {
-        "id": 32,
-        "name": "Händlerin",
-        "cost": 3
-      },
-      {
-        "id": 33,
-        "name": "Vorbotin",
-        "cost": 3
-      },
-      {
-        "id": 34,
-        "name": "Vasall",
-        "cost": 3
-      },
-      {
-        "id": 35,
-        "name": "Töpferei",
-        "cost": 6
-      },
-      {
-        "id": 36,
-        "name": "Wilddiebin",
-        "cost": 4
-      },
-      {
-        "id": 37,
-        "name": "Torwächterin",
-        "cost": 5
       }
     ],
     "CurseCards": [
