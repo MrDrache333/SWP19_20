@@ -94,12 +94,9 @@ public class BuyCardTest {
      */
     @Test
     void testIfCardOnPlayGroundIsActualAfterBuyingACard() {
-
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         int cardsOnPlaygoundAfterBuying = playground.getCompositePhase().executeBuyPhase(player, (short) 10);
-        int cardsOnPlaygoundAfterBuying2 = playground.getCompositePhase().executeBuyPhase(player, (short) 10);
-        int cardsOnPlaygoundAfterBuying3 = playground.getCompositePhase().executeBuyPhase(player, (short) 10);
-        assertTrue(Playground.getCardField().get(card.getId()).equals(7));
+        assertTrue(Playground.getCardField().get(card.getId()).equals(9));
 
     }
 
@@ -115,9 +112,7 @@ public class BuyCardTest {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         int CardsOnDiscardPile = player.getPlayerDeck().getDiscardPile().size();
         int BuyingCard = playground.getCompositePhase().executeBuyPhase(player, (short) 10);
-        int BuyingCard2 = playground.getCompositePhase().executeBuyPhase(player, (short) 10);
-        int BuyingCard3 = playground.getCompositePhase().executeBuyPhase(player, (short) 10);
-        assertEquals(CardsOnDiscardPile + 3, player.getPlayerDeck().getDiscardPile().size());
+        assertEquals(CardsOnDiscardPile + 1, player.getPlayerDeck().getDiscardPile().size());
 
     }
 
