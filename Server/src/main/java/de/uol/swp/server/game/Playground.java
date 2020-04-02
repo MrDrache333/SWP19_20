@@ -6,12 +6,11 @@ import de.uol.swp.common.game.card.Card;
 import de.uol.swp.common.game.card.parser.CardPack;
 import de.uol.swp.common.game.card.parser.JsonCardParser;
 import de.uol.swp.common.game.exception.GamePhaseException;
-import de.uol.swp.common.game.messages.DrawHandMessage;
-import de.uol.swp.common.game.messages.StartActionPhaseMessage;
-import de.uol.swp.common.game.messages.StartBuyPhaseMessage;
-import de.uol.swp.common.game.messages.StartClearPhaseMessage;
+import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.lobby.Lobby;
+import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
+import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.game.phase.CompositePhase;
 import de.uol.swp.server.game.phase.Phase;
 import de.uol.swp.server.game.player.Player;
@@ -27,14 +26,15 @@ import java.util.*;
 public class Playground {
 
     private static final Logger LOG = LogManager.getLogger(Playground.class);
-
+    private static Map<Short, Integer> cardField = new TreeMap<>();
     /**
      * Die Spieler
      */
     private List<Player> players = new ArrayList<>();
-    private static Map<Short, Integer> cardField = new TreeMap<>();
+    private Map<String, Integer> resultsGame = new TreeMap<>();
     private Player actualPlayer;
     private Player nextPlayer;
+    private Player latestGavedUpPlayer;
     private Phase.Type actualPhase;
     private ArrayList<Short> theIdsFromTheHand = new ArrayList<>(5);
     private GameService gameService;
@@ -113,7 +113,7 @@ public class Playground {
         } else {
             //Spieler muss Clearphase durchlaufen haben
             if (actualPhase != Phase.Type.Clearphase) return;
-            sendPlayersHand();
+            if (actualPlayer != latestGavedUpPlayer) sendPlayersHand();
             int index = players.indexOf(nextPlayer);
             actualPlayer = nextPlayer;
             nextPlayer = players.get(++index % players.size());
@@ -126,6 +126,17 @@ public class Playground {
         } else {
             skipCurrentPhase();
         }
+    }
+
+    /**
+     * Beendet das Spiel, versendet die gameOverMessage und löscht das Spiel im GameManagement.
+     *
+     * @param lobbyID Die Lobby in der das Spiel beendet ist.
+     * @param gameEnd Die GameOverMessage
+     */
+    public void endGame(UUID lobbyID, ServerMessage gameEnd) {
+        gameService.sendToAllPlayers(lobbyID, gameEnd);
+        gameService.dropFinishedGame(lobbyID);
     }
 
     /**
@@ -180,6 +191,52 @@ public class Playground {
     }
 
     /**
+     * Die Methode kümmert sich um das Aufgeben des Spielers in dem spezifizierten Game/Playground.
+     *
+     * @param lobbyID
+     * @param theGivingUpUser
+     * @param wantsToGiveUp
+     * @return Ob der Spieler erfolgreich entfernt worden ist oder nicht.
+     * @author Haschem, Ferit
+     */
+    public Boolean playerGaveUp(UUID lobbyID, UserDTO theGivingUpUser, Boolean wantsToGiveUp) {
+        int thePositionInList = -1;
+        for (int i = 0; i < players.size(); i++) {
+            if (players.get(i).getPlayerName().equals(theGivingUpUser.getUsername())) {
+                thePositionInList = i;
+                break;
+            }
+        }
+        if (this.players.get(thePositionInList).getPlayerName().equals(theGivingUpUser.getUsername()) && wantsToGiveUp && lobbyID.equals(this.theSpecificLobbyID)) {
+            latestGavedUpPlayer = this.players.get(thePositionInList);
+            gameService.userGavesUpLeavesLobby(lobbyID, theGivingUpUser);
+            if (this.players.size() == 2) {
+                this.players.remove(thePositionInList);
+                GameOverMessage gameOverByGaveUp = new GameOverMessage(lobbyID, this.players.get(0).getTheUserInThePlayer(), this.players.get(0).getPlayerName(), resultsGame);
+                endGame(lobbyID, gameOverByGaveUp);
+            } else if (actualPlayer.equals(latestGavedUpPlayer)) {
+                this.players.remove(thePositionInList);
+                actualPhase = Phase.Type.Clearphase;
+                newTurn();
+            } else if (nextPlayer.equals(latestGavedUpPlayer)) {
+                if (thePositionInList < this.players.size() - 1) {
+                    nextPlayer = this.players.get(++thePositionInList);
+                    this.players.remove(thePositionInList);
+                } else {
+                    this.players.remove(thePositionInList);
+                    nextPlayer = this.players.get(0);
+                }
+            } else {
+                this.players.remove(thePositionInList);
+            }
+            return true;
+        } // TODO: Wenn Spielelogik weiter implementiert wird und ein Spieler aufgibt, Handling implementieren wie mit aufgegeben Spielern weiter umgegangen wird.
+        else {
+            return false;
+        }
+    }
+
+    /**
      * Sendet die Initiale Hand an jeden Spieler spezifisch. Überprüfung via SessionID.
      *
      * @author Ferit
@@ -197,7 +254,6 @@ public class Playground {
             LOG.debug("All OK with sending initial Hands...");
         }
     }
-
 
     /**
      * Überprüft, ob der aktuelle Spieler eine Aktionskarte auf der Hand hat, die er spielen könnte.
@@ -243,22 +299,22 @@ public class Playground {
         this.actualPhase = actualPhase;
     }
 
-
     /**
-     * Es wird das Kartenfeld übergeben.
+     * Gibt den Spieler zurück der als letztes Aufgegeben hat.
      *
-     * @return Das Kartenfeld, also alle Karten die auf dem Playground initalisiert sind.
+     * @return s.o
+     * @author Haschem, Ferit
+     * @since Sprint5
      */
     public Map<Short, Integer> getCardField() {
         return cardField;
     }
+    public Player getLatestGavedUpPlayer() {
+        return latestGavedUpPlayer;
+    }
 
     public CardPack getCardsPackField() {
         return cardsPackField;
-    }
-
-    public CompositePhase getCompositePhase() {
-        return compositePhase;
     }
 
     /**
@@ -268,4 +324,16 @@ public class Playground {
         timer.cancel();
     }
 
+    public CompositePhase getCompositePhase() {
+        return compositePhase;
+    }
+
+    /**
+     * Es wird das Kartenfeld übergeben.
+     *
+     * @return Das Kartenfeld, also alle Karten die auf dem Playground initalisiert sind.
+     */
+    public static Map<Short, Integer> getCardField() {
+        return cardField;
+    }
 }

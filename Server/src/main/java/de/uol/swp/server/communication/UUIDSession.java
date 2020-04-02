@@ -63,6 +63,7 @@ public class UUIDSession implements Session {
 
     /**
      * Setter für Benutzer
+     *
      * @param user Der neue Benutzer
      * @author Ferit
      * @since Sprint 3
@@ -74,6 +75,7 @@ public class UUIDSession implements Session {
 
     /**
      * Vergleicht Session mit einer anderen Session
+     *
      * @param o Die andere Session
      * @return true wenn gleich, false falls nicht
      * @author Marco Grawunder
@@ -89,6 +91,7 @@ public class UUIDSession implements Session {
 
     /**
      * Hasht die SessionID
+     *
      * @return Hash als Integer
      * @author Marco Grawunder
      * @since Start
@@ -100,6 +103,7 @@ public class UUIDSession implements Session {
 
     /**
      * Gibt SessionID als String wieder
+     *
      * @return "SessiondId: [sessionID]"
      * @author Marco Grawunder
      * @since Start
