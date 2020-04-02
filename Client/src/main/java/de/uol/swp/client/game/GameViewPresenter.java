@@ -341,9 +341,9 @@ public class GameViewPresenter extends AbstractPresenter {
                     card.setFitHeight(107);
                     card.setPreserveRatio(true);
                     card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
-                    System.out.println(card.getFitWidth());
                     deckPane.getChildren().add(card);
                     AnimationManagement.addToHand(card, handcards.getChildren().size());
+                    deckPane.getChildren().remove(card);
                     handcards.getChildren().add(card);
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
                         PlayCardRequest request = new PlayCardRequest(lobbyID, loggedInUser, HandCardID.get(n), card);
