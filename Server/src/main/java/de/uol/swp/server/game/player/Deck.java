@@ -138,9 +138,11 @@ public class Deck {
 
     public void discardMoneyCardsForValue(int value) {
         int money = 0;
-        for (Card card : hand) {
-            if (card instanceof MoneyCard) {
-                money += ((MoneyCard) card).getValue();
+        int sizeHand = hand.size();
+        for (int i=0; i<sizeHand; i++){
+            if (hand.get(i) instanceof MoneyCard) {
+                money += ((MoneyCard) hand.get(i)).getValue();
+                hand.remove(hand.get(i));
                 if (money >= value) {
                     break;
                 }

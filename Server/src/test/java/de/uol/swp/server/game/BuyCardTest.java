@@ -116,13 +116,25 @@ public class BuyCardTest {
         int CardsOnDiscardPile = player.getPlayerDeck().getDiscardPile().size();
         int BuyingCard = playground.getCompositePhase().executeBuyPhase(player, (short) 10);
         int BuyingCard2 = playground.getCompositePhase().executeBuyPhase(player, (short) 10);
-        int BuyingCard22 = playground.getCompositePhase().executeBuyPhase(player, (short) 10);
+        int BuyingCard3 = playground.getCompositePhase().executeBuyPhase(player, (short) 10);
         assertEquals(CardsOnDiscardPile + 3, player.getPlayerDeck().getDiscardPile().size());
-
 
     }
 
-    // Noch erledigen:
-    // Überprüfen, ob Geld abgezogen wird?
-    // in Methode Buy Log hinnzufügen ?
+    /**
+     * Test, ob Geld auch abgezogen wird
+     *
+     * @author Paula
+     * @since Sprint6
+     */
+    @Test
+    //Falls nicht: exception, fehlermeldung muss angzeiegt werden
+    void testIfMonneyIsSubstracted(){
+        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
+        int moneyPlayer = player.getPlayerDeck().actualMoneyFromPlayer();
+        int BuyingCard = playground.getCompositePhase().executeBuyPhase(player, (short) 10);
+        assertEquals(1, player.getPlayerDeck().actualMoneyFromPlayer());
+    }
+
+
 }
