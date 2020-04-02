@@ -67,6 +67,7 @@ public class GameViewPresenter extends AbstractPresenter {
     private Injector injector;
     private GameManagement gameManagement;
     private GameService gameService;
+    private MouseEvent mouseEvent;
 
     /**
      * Instantiiert einen neuen GameView Presenter.
@@ -273,12 +274,14 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     @Subscribe
     public void onBuyCardMessage(BuyCardMessage msg) {
+        System.out.println(msg.getCounterCard());
+        ImageView selectedCard = (ImageView) mouseEvent.getSource();
         if (msg.getLobbyID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
             if (msg.isBuyCard()) {
                 String pfad = "file:Client/scr/main/resources/cards/images/" + msg.getCardID().toString() + ".png";
                 Image picture = new Image(pfad);
                 ImageView card = new ImageView(picture);
-                AnimationManagement.buyCard(card);
+                AnimationManagement.buyCard(selectedCard);
                 LOG.debug("Der Spieler " + msg.getCurrentUser() + " hat die Karte " + msg.getCardID() + " gekauft.");
                 if (msg.getCounterCard() > 0) {
                     // fügt ein "neues" Bild an der Stelle des alten Bildes im Shop hinzu
@@ -288,7 +291,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     newCardImage.setLayoutX(card.getLayoutX());
                     newCardImage.setId(String.valueOf(msg.getCardID()));
                     newCardImage.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> chosenBuyableCard(mouseEvent));
-                    gameView.getChildren().add(card);
+                    gameView.getChildren().add(newCardImage);
                 }
             } else {
                 showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht kaufen!", "Fehler");
@@ -429,6 +432,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 back.setVisible(false);
                 bigCardImage.setVisible(false);
                 gameService.sendBuyCardRequest(lobbyID, loggedInUser, Short.valueOf(cardID));
+                this.mouseEvent = mouseEvent;
             });
             // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt
             back.setOnAction(event -> {

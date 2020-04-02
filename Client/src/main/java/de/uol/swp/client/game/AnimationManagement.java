@@ -68,7 +68,6 @@ public class AnimationManagement {
             pathTransition.setNode(card);
             pathTransition.setPath(path);
             pathTransition.setCycleCount(1);
-            card.toFront();
             pathTransition.play();
             setNewCoordinates(card, pathTransition);
             return true;
