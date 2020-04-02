@@ -24,7 +24,7 @@ import java.util.*;
 /**
  * Playground stellt das eigentliche Spielfeld dar
  */
-class Playground extends AbstractPlayground {
+public class Playground extends AbstractPlayground {
 
     private static final Logger LOG = LogManager.getLogger(Playground.class);
     private static Map<Short, Integer> cardField = new TreeMap<>();
@@ -43,6 +43,7 @@ class Playground extends AbstractPlayground {
     private CompositePhase compositePhase;
     private Timer timer = new Timer();
     private short lobbySizeOnStart;
+    private CardPack cardsPackField;
 
     /**
      * Erstellt ein neues Spielfeld und übergibt die Spieler. Die Reihenfolge der Spieler wird zufällig zusammengestellt.
@@ -62,8 +63,9 @@ class Playground extends AbstractPlayground {
         Collections.shuffle(players);
         this.gameService = gameService;
         this.theSpecificLobbyID = lobby.getLobbyID();
-        this.compositePhase = new CompositePhase();
+        this.compositePhase = new CompositePhase(this);
         this.lobbySizeOnStart = (short) lobby.getUsers().size();
+        this.cardsPackField = new JsonCardParser().loadPack("Basispack");
         initializeCardField();
     }
 
@@ -71,7 +73,6 @@ class Playground extends AbstractPlayground {
      * Methode initalisiert das Kartenfeld mit der richtigen Anzahl an Karten auf dem Feld.
      */
     private void initializeCardField() {
-        CardPack cardsPackField = new JsonCardParser().loadPack("Basispack");
         for (int i = 0; i < cardsPackField.getCards().getValueCards().size(); i++) {
             Card card = cardsPackField.getCards().getValueCards().get(i);
             if (lobbySizeOnStart < 3) {
@@ -109,7 +110,6 @@ class Playground extends AbstractPlayground {
             actualPlayer = players.get(0);
             nextPlayer = players.get(1);
             sendInitialHands();
-
         } else {
             //Spieler muss Clearphase durchlaufen haben
             if (actualPhase != Phase.Type.Clearphase) return;
@@ -306,8 +306,16 @@ class Playground extends AbstractPlayground {
      * @author Haschem, Ferit
      * @since Sprint5
      */
+    public Map<Short, Integer> getCardField() {
+        return cardField;
+    }
+
     public Player getLatestGavedUpPlayer() {
         return latestGavedUpPlayer;
+    }
+
+    public CardPack getCardsPackField() {
+        return cardsPackField;
     }
 
     /**
@@ -321,12 +329,4 @@ class Playground extends AbstractPlayground {
         return compositePhase;
     }
 
-    /**
-     * Es wird das Kartenfeld übergeben.
-     *
-     * @return Das Kartenfeld, also alle Karten die auf dem Playground initalisiert sind.
-     */
-    public static Map<Short, Integer> getCardField() {
-        return cardField;
-    }
 }
