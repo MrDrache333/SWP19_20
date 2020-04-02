@@ -36,6 +36,7 @@ public class ServerModule extends AbstractModule {
         bind(LobbyManagement.class).toInstance(lobbyManagement);
         bind(ChatManagement.class).toInstance(chatManagement);
         bind(GameManagement.class).toInstance(gameManagement);
+        bind(ChatManagement.class).toInstance(chatManagement);
         bind(UserStore.class).toInstance(store);
         bind(EventBus.class).toInstance(bus);
         bind(AuthenticationService.class).toInstance(authenticationService);
