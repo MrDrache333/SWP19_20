@@ -309,6 +309,7 @@ public class Playground {
     public Map<Short, Integer> getCardField() {
         return cardField;
     }
+
     public Player getLatestGavedUpPlayer() {
         return latestGavedUpPlayer;
     }
@@ -328,12 +329,4 @@ public class Playground {
         return compositePhase;
     }
 
-    /**
-     * Es wird das Kartenfeld übergeben.
-     *
-     * @return Das Kartenfeld, also alle Karten die auf dem Playground initalisiert sind.
-     */
-    public static Map<Short, Integer> getCardField() {
-        return cardField;
-    }
 }
