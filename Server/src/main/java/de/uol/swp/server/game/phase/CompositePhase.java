@@ -75,12 +75,12 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      * @since Sprint6
      */
     public boolean checkIfGameIsFinished() {
-        if (Playground.getCardField().get((short) 6) == 0) {
+        if (playground.getCardField().get((short) 6) == 0) {
             return true;
         }
         int counter = 0;
         for (Card card : playground.getCardsPackField().getCards().getActionCards()) {
-            if (Playground.getCardField().containsKey(card.getId()) && Playground.getCardField().get(card.getId()) == 0) {
+            if (playground.getCardField().containsKey(card.getId()) && playground.getCardField().get(card.getId()) == 0) {
                 counter++;
                 if (counter >= 3) {
                     return true;

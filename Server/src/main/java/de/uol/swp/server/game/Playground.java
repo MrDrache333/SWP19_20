@@ -402,7 +402,7 @@ public class Playground {
      *
      * @return Das Kartenfeld, also alle Karten die auf dem Playground initalisiert sind.
      */
-    public static Map<Short, Integer> getCardField() {
+    public Map<Short, Integer> getCardField() {
         return cardField;
     }
 }
