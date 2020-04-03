@@ -130,7 +130,7 @@ public class Playground {
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartActionPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID, timestamp));
             phaseTimer();
         } else {
-            skipCurrentPhase();
+            nextPhase();
         }
     }
 
@@ -152,20 +152,20 @@ public class Playground {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                skipCurrentPhase();
+                nextPhase();
                 timer.cancel();
             }
         }, 35000);
     }
 
     /**
-     * Überspringt die aktuelle Phase und startet die nächste, falls der Spieler sich gerade in der Aktions- oder Kaufphase befindet.
+     * Startet innerhalb eines Spielzugs die nächste Phase.
      * Befindet er sich in der Clearphase, wird eine GamePhaseException geworfen.
      *
      * @author Julia
      * @since Sprint5
      */
-    public void skipCurrentPhase() {
+    public void nextPhase() {
         if (actualPhase == Phase.Type.Clearphase) {
             throw new GamePhaseException("Du kannst die Clearphase nicht überspringen!");
         }
@@ -387,6 +387,14 @@ public class Playground {
 
     public Map<Player, Integer> getPlayerTurns() {
         return playerTurns;
+    }
+
+    public Map<String, Integer> getResultsGame() {
+        return resultsGame;
+    }
+
+    public UUID getID() {
+        return theSpecificLobbyID;
     }
 
     /**

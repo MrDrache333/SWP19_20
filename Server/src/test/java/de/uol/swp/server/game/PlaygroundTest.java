@@ -5,7 +5,6 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.common.game.card.Card;
 import de.uol.swp.common.game.card.parser.CardPack;
-import de.uol.swp.common.game.card.parser.JsonCardParser;
 import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.request.GameGiveUpRequest;
 import de.uol.swp.common.user.User;
@@ -153,12 +152,12 @@ public class PlaygroundTest {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         playground.setActualPhase(Phase.Type.ActionPhase);
 
-        playground.skipCurrentPhase();
+        playground.nextPhase();
         assertEquals(Phase.Type.Buyphase, playground.getActualPhase());
 
-        playground.skipCurrentPhase();
+        playground.nextPhase();
         assertEquals(Phase.Type.Clearphase, playground.getActualPhase());
-        assertThrows(GamePhaseException.class, () -> playground.skipCurrentPhase());
+        assertThrows(GamePhaseException.class, () -> playground.nextPhase());
     }
 
     /**
@@ -197,7 +196,7 @@ public class PlaygroundTest {
     @Test
     void calculateWinnerHighestScoreTest() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
-        CardPack cardsPackField = new JsonCardParser().loadPack("Basispack");
+        CardPack cardsPackField = playground.getCardsPackField();
         Card card = cardsPackField.getCards().getValueCards().get(2);
         playground.getActualPlayer().getPlayerDeck().getCardsDeck().add(card);
         List<String> winners = playground.calculateWinners();

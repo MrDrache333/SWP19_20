@@ -131,7 +131,7 @@ public class GameService extends AbstractService {
             Playground playground = game.get().getPlayground();
             if (playground.getActualPlayer().getTheUserInThePlayer().equals(msg.getUser())) {
                 try {
-                    playground.skipCurrentPhase();
+                    playground.nextPhase();
                 } catch (GamePhaseException e) {
                     sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(msg.getGameID(), e.getMessage()));
                 }
