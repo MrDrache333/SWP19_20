@@ -142,13 +142,13 @@ public class PlaygroundTest {
     }
 
     /**
-     * Testet ob Aktions- und Kaufphase übersprungen werden können
+     * Testet, ob korrekt zur nächsten Phase gewechselt wird
      *
      * @author Julia
      * @since Sprint5
      */
     @Test
-    void testSkipCurrentPhase() {
+    void testNextPhase() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         playground.setActualPhase(Phase.Type.ActionPhase);
 
@@ -156,7 +156,13 @@ public class PlaygroundTest {
         assertEquals(Phase.Type.Buyphase, playground.getActualPhase());
 
         playground.nextPhase();
-        assertEquals(Phase.Type.Clearphase, playground.getActualPhase());
+        if (playground.checkForActionCard()) {
+            assertEquals(Phase.Type.ActionPhase, playground.getActualPhase());
+        } else {
+            assertEquals(Phase.Type.Buyphase, playground.getActualPhase());
+        }
+
+        playground.setActualPhase(Phase.Type.Clearphase);
         assertThrows(GamePhaseException.class, () -> playground.nextPhase());
     }
 

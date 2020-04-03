@@ -160,7 +160,7 @@ public class Playground {
 
     /**
      * Startet innerhalb eines Spielzugs die nächste Phase.
-     * Befindet er sich in der Clearphase, wird eine GamePhaseException geworfen.
+     * Befindet sich der Spieler in der Clearphase, wird eine GamePhaseException geworfen.
      *
      * @author Julia
      * @since Sprint5
