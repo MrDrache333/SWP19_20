@@ -1,14 +1,18 @@
 package de.uol.swp.server.game.phase;
 
 import de.uol.swp.common.game.card.Card;
+import de.uol.swp.common.game.messages.GameOverMessage;
 import de.uol.swp.server.game.Playground;
 import de.uol.swp.server.game.player.Deck;
 import de.uol.swp.server.game.player.Player;
+
+import java.util.List;
 
 /**
  * Die Funktionsklasse aller Phasen
  */
 public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
+
     private Playground playground;
 
     /**
@@ -46,8 +50,12 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         deck.getDiscardPile().addAll(deck.getHand());
         deck.getHand().clear();
         deck.drawHand();
-        checkIfGameIsFinished();
-
+        if (checkIfGameIsFinished()) {
+            List<String> winners = playground.calculateWinners();
+            playground.endGame(playground.getID(), new GameOverMessage(playground.getID(), winners, playground.getResultsGame()));
+        } else {
+            playground.newTurn();
+        }
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import de.uol.swp.common.game.AbstractPlayground;
 import de.uol.swp.common.game.card.ActionCard;
 import de.uol.swp.common.game.card.Card;
+import de.uol.swp.common.game.card.ValueCard;
 import de.uol.swp.common.game.card.parser.JsonCardParser;
 import de.uol.swp.common.game.card.parser.components.CardPack;
 import de.uol.swp.common.game.exception.GamePhaseException;
@@ -14,6 +15,7 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.game.phase.CompositePhase;
 import de.uol.swp.server.game.phase.Phase;
+import de.uol.swp.server.game.player.Deck;
 import de.uol.swp.server.game.player.Player;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,6 +35,7 @@ public class Playground extends AbstractPlayground {
      */
     private List<Player> players = new ArrayList<>();
     private Map<String, Integer> resultsGame = new TreeMap<>();
+    private Map<Player, Integer> playerTurns = new HashMap<>();
     private Player actualPlayer;
     private Player nextPlayer;
     private Player latestGavedUpPlayer;
@@ -59,6 +62,7 @@ public class Playground extends AbstractPlayground {
             Player player = new Player(user.getUsername());
             player.setTheUserInThePlayer(user);
             players.add(player);
+            playerTurns.put(player, 0);
         }
         Collections.shuffle(players);
         this.gameService = gameService;
@@ -118,13 +122,16 @@ public class Playground extends AbstractPlayground {
             actualPlayer = nextPlayer;
             nextPlayer = players.get(++index % players.size());
         }
+
+        int turns = playerTurns.get(actualPlayer);
+        playerTurns.replace(actualPlayer, ++turns);
         actualPhase = Phase.Type.ActionPhase;
         if (checkForActionCard()) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartActionPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID, timestamp));
             phaseTimer();
         } else {
-            skipCurrentPhase();
+            nextPhase();
         }
     }
 
@@ -146,20 +153,20 @@ public class Playground extends AbstractPlayground {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                skipCurrentPhase();
+                nextPhase();
                 timer.cancel();
             }
         }, 35000);
     }
 
     /**
-     * Überspringt die aktuelle Phase und startet die nächste, falls der Spieler sich gerade in der Aktions- oder Kaufphase befindet.
-     * Befindet er sich in der Clearphase, wird eine GamePhaseException geworfen.
+     * Startet innerhalb eines Spielzugs die nächste Phase.
+     * Befindet sich der Spieler in der Clearphase, wird eine GamePhaseException geworfen.
      *
      * @author Julia
      * @since Sprint5
      */
-    public void skipCurrentPhase() {
+    public void nextPhase() {
         if (actualPhase == Phase.Type.Clearphase) {
             throw new GamePhaseException("Du kannst die Clearphase nicht überspringen!");
         }
@@ -212,7 +219,8 @@ public class Playground extends AbstractPlayground {
             gameService.userGavesUpLeavesLobby(lobbyID, theGivingUpUser);
             if (this.players.size() == 2) {
                 this.players.remove(thePositionInList);
-                GameOverMessage gameOverByGaveUp = new GameOverMessage(lobbyID, this.players.get(0).getTheUserInThePlayer(), this.players.get(0).getPlayerName(), resultsGame);
+                List<String> winners = calculateWinners();
+                GameOverMessage gameOverByGaveUp = new GameOverMessage(lobbyID, winners, resultsGame);
                 endGame(lobbyID, gameOverByGaveUp);
             } else if (actualPlayer.equals(latestGavedUpPlayer)) {
                 this.players.remove(thePositionInList);
@@ -271,6 +279,59 @@ public class Playground extends AbstractPlayground {
         return false;
     }
 
+    /**
+     * Ermittelt den/die Gewinner des Spiels. Bei Gleichstand gewinnen der/die mit den wenigsten Zügen.
+     *
+     * @return Liste mit allen Gewinnern
+     * @author Julia
+     * @since Sprint6
+     */
+    public List<String> calculateWinners() {
+        List<String> winners = new ArrayList<>();
+        for (Player player : players) {
+            int victoryPoints = 0;
+            Deck deck = player.getPlayerDeck();
+            deck.getCardsDeck().addAll(deck.getHand());
+            deck.getCardsDeck().addAll(deck.getDiscardPile());
+            deck.getHand().clear();
+            deck.getDiscardPile().clear();
+
+            for (Card card : deck.getCardsDeck()) {
+                if (card instanceof ValueCard) {
+                    victoryPoints += ((ValueCard) card).getValue();
+                }
+            }
+            resultsGame.put(player.getPlayerName(), victoryPoints);
+        }
+
+        int max = Collections.max(resultsGame.values());
+        for (Map.Entry<String, Integer> entry : resultsGame.entrySet()) {
+            if (entry.getValue() == max) {
+                winners.add(entry.getKey());
+            }
+        }
+
+        if (winners.size() > 1) {
+            Map<String, Integer> winnerTurns = new HashMap<>();
+            for (Map.Entry<Player, Integer> entry : playerTurns.entrySet()) {
+                if (winners.contains(entry.getKey().getPlayerName())) {
+                    winnerTurns.put(entry.getKey().getPlayerName(), entry.getValue());
+                }
+            }
+
+            winners.clear();
+            int minTurns = Collections.min(winnerTurns.values());
+            for (Map.Entry<String, Integer> entry : winnerTurns.entrySet()) {
+                if (entry.getValue() == minTurns) {
+                    winners.add(entry.getKey());
+                }
+            }
+        }
+
+        return winners;
+    }
+
+
     public List<Player> getPlayers() {
         return players;
     }
@@ -306,10 +367,6 @@ public class Playground extends AbstractPlayground {
      * @author Haschem, Ferit
      * @since Sprint5
      */
-    public Map<Short, Integer> getCardField() {
-        return cardField;
-    }
-
     public Player getLatestGavedUpPlayer() {
         return latestGavedUpPlayer;
     }
@@ -329,4 +386,24 @@ public class Playground extends AbstractPlayground {
         return compositePhase;
     }
 
+    public Map<Player, Integer> getPlayerTurns() {
+        return playerTurns;
+    }
+
+    public Map<String, Integer> getResultsGame() {
+        return resultsGame;
+    }
+
+    public UUID getID() {
+        return theSpecificLobbyID;
+    }
+
+    /**
+     * Es wird das Kartenfeld übergeben.
+     *
+     * @return Das Kartenfeld, also alle Karten die auf dem Playground initalisiert sind.
+     */
+    public Map<Short, Integer> getCardField() {
+        return cardField;
+    }
 }
