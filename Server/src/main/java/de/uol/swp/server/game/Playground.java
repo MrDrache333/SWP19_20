@@ -1,11 +1,13 @@
 package de.uol.swp.server.game;
 
 import com.google.inject.Inject;
+import de.uol.swp.common.game.AbstractPlayground;
 import de.uol.swp.common.game.card.ActionCard;
 import de.uol.swp.common.game.card.Card;
 import de.uol.swp.common.game.card.ValueCard;
 import de.uol.swp.common.game.card.parser.CardPack;
 import de.uol.swp.common.game.card.parser.JsonCardParser;
+import de.uol.swp.common.game.card.parser.components.CardPack;
 import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.lobby.Lobby;
@@ -25,7 +27,7 @@ import java.util.*;
 /**
  * Playground stellt das eigentliche Spielfeld dar
  */
-public class Playground {
+public class Playground extends AbstractPlayground {
 
     private static final Logger LOG = LogManager.getLogger(Playground.class);
     private static Map<Short, Integer> cardField = new TreeMap<>();
@@ -86,8 +88,8 @@ public class Playground {
             Card card = cardsPackField.getCards().getActionCards().get(i);
             cardField.put(card.getId(), 10);
         }
-        for (int i = 0; i < cardsPackField.getCards().getReactionCards().size(); i++) {
-            Card card = cardsPackField.getCards().getReactionCards().get(i);
+        for (int i = 0; i < cardsPackField.getCards().getCurseCards().size(); i++) {
+            Card card = cardsPackField.getCards().getCurseCards().get(i);
             cardField.put(card.getId(), 10);
         }
         for (int i = 0; i < cardsPackField.getCards().getMoneyCards().size(); i++) {
