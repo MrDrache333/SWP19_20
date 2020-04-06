@@ -7,17 +7,31 @@ import javafx.scene.layout.Region;
 
 /**
  * Layoutcontainer für die Karten auf der Hand.
- * Die Kinderknoten werden hier immer mittig angeordnet.
- * Würde die Breite des Containers überschritten werden, fangen die Knoten an sich zu überlappen, soviel wie nötig ist.
  *
  * @author Anna
  * @since Sprint6
  */
 public class HandcardsLayoutContainer extends Region {
 
+    /**
+     * Instantiiert einen neuen HandcardsLayoutContainer.
+     *
+     * @author Anna
+     * @since Sprint6
+     */
     public HandcardsLayoutContainer() {
     }
 
+    /**
+     * Instantiiert einen neuen HandcardsLayoutContainer.
+     *
+     * @param layoutX x-Koordinate
+     * @param layoutY y-Koordinate
+     * @param height  Höhe
+     * @param width   Breite
+     * @author Anna
+     * @since Sprint6
+     */
     public HandcardsLayoutContainer(double layoutX, double layoutY, double height, double width) {
         this.setLayoutX(layoutX);
         this.setLayoutY(layoutY);
@@ -25,11 +39,14 @@ public class HandcardsLayoutContainer extends Region {
         this.setPrefWidth(width);
     }
 
-    @Override
-    public ObservableList<Node> getChildren() {
-        return super.getChildren();
-    }
-
+    /**
+     * Hier wird festgelegt, wie sich die Kinder anordnen sollen.
+     * Wenn die Pane breit genug ordnen sie sich, von der Mitte ausgehend, direkt nebeneinander an.
+     * Ansonsten überlappen sie sich, aber immer nur so viel wie nötig.
+     *
+     * @author Anna
+     * @since Sprint6
+     */
     @Override
     protected void layoutChildren() {
         ObservableList<Node> children = getChildren();
@@ -54,6 +71,18 @@ public class HandcardsLayoutContainer extends Region {
                 i += Math.round(child.getBoundsInLocal().getWidth() - change);
             }
         }
+    }
+
+    /**
+     * Getter für fie Liste der Kinderknoten
+     *
+     * @return Kinder
+     * @author Anna
+     * @since Sprint6
+     */
+    @Override
+    public ObservableList<Node> getChildren() {
+        return super.getChildren();
     }
 }
 
