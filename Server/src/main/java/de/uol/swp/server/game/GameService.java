@@ -159,7 +159,6 @@ public class GameService extends AbstractService {
         }
     }
 
-
     public void userGavesUpLeavesLobby(UUID gameID, UserDTO user) {
         LobbyLeaveUserRequest leaveUserRequest = new LobbyLeaveUserRequest(gameID, user);
         post(leaveUserRequest);
@@ -209,9 +208,23 @@ public class GameService extends AbstractService {
             LOG.error("Es existiert kein Spiel mit der ID " + request.getCardID());
         }
     }
+
+    /**
+     * Erstellt eine buyCardMessage und postet diese auf dem Eventbus
+     *
+     * @param lobbyID die LobbyID
+     * @param currentUser der aktuelle Spieler
+     * @param cardID die Karte, die gekauft werden soll
+     * @param buyCard gibt an, ob Karte noch gekauft werden kann
+     * @param counterCard Anzahl der Karten (die die selbe ID haben) die man noch kaufen kann
+     * @author Paula
+     * @since Sprint6
+     */
     public void buyCardMessage(UUID lobbyID, User currentUser, Short cardID, boolean buyCard, int counterCard) {
-      BuyCardMessage buyCardMessage = new BuyCardMessage(lobbyID, currentUser, cardID, buyCard, counterCard);
+        BuyCardMessage buyCardMessage = new BuyCardMessage(lobbyID, currentUser, cardID, buyCard, counterCard);
         post(buyCardMessage);
 
     }
+
+
 }

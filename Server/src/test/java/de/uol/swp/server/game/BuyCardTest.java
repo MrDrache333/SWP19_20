@@ -123,7 +123,6 @@ public class BuyCardTest {
      * @since Sprint6
      */
     @Test
-    //Falls nicht: exception, fehlermeldung muss angzeiegt werden
     void testIfMonneyIsSubstracted(){
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         int moneyPlayer = player.getPlayerDeck().actualMoneyFromPlayer();

@@ -1,5 +1,6 @@
 package de.uol.swp.server.game.phase;
 
+import de.uol.swp.common.game.GameService;
 import de.uol.swp.common.game.card.Card;
 import de.uol.swp.common.game.card.parser.CardPack;
 import de.uol.swp.common.game.card.parser.CardStack;
@@ -8,6 +9,8 @@ import de.uol.swp.common.game.exception.NotEnoughMoneyException;
 import de.uol.swp.server.game.Playground;
 import de.uol.swp.server.game.player.Deck;
 import de.uol.swp.server.game.player.Player;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 /**
@@ -15,6 +18,7 @@ import de.uol.swp.server.game.player.Player;
  */
 public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
 
+    private static final Logger LOG = LogManager.getLogger(GameService.class);
 
     private Playground playGround;
 
@@ -41,19 +45,23 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
             if (currentCard == null) {
                 throw new IllegalArgumentException("CardID wurde nicht gefunden");
             }
-            //Falls die ID vorhanden ist wird der Geldwert des Spielers wird berechnet, hat er
-            // genug Geld, wird die Karte seinem Ablagestapel hinzugefügt, das Geld wird ihm entzogen
-            // und die Anzahl der Karte auf dem Spielfeld verringert sich um eins
+            /*Falls die ID vorhanden ist wird der Geldwert des Spielers berechnet, hat er
+              genug Geld, wird die Karte seinem Ablagestapel hinzugefügt, das Geld wird ihm entzogen
+              und die Anzahl der Karte auf dem Spielfeld verringert sich um eins
+            */
             int moneyValuePlayer = player.getPlayerDeck().actualMoneyFromPlayer();
             if (moneyValuePlayer < currentCard.getCosts()) {
+                LOG.error("Nicht genug Geld");
+                // TODO: Client muss eine Fehlermeldung erstellen, die angezeigt wird, wenn der Spieler nicht genug Geld hat
                 throw new NotEnoughMoneyException("Nicht genug Geld vorhanden");
             }
             player.getPlayerDeck().addCardToDiscardPile(currentCard);
             moneyValuePlayer -= currentCard.getCosts();
+            // TODO: Client muss Geldkarten aus Hand abziehen (und in Ablagestapel legen?), wenn Kauf gelungen.
             player.getPlayerDeck().discardMoneyCardsForValue(currentCard.getCosts());
+            // TODO: Client: Stückzahl der Karten anpassen bzw.: wenn Karte nicht vorhanden, keine Bild der Karte
             Playground.getCardField().put(cardId, --count);
-            count =- 1;
-
+            count = -1;
         }
         return count;
     }
