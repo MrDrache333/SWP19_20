@@ -9,10 +9,12 @@ public class ExecuteCardAction {
 
     private short cardID;
     private Playground playground;
+    private Player player;
 
     public ExecuteCardAction(short cardID, Playground playground) {
         this.playground = playground;
         this.cardID = cardID;
+        player = playground.getActualPlayer();
     }
 
     /**
@@ -25,7 +27,6 @@ public class ExecuteCardAction {
      * @since Sprint6
      */
     public boolean executeAddCapablePlayerActivity(short count, AbstractPlayground.PlayerActivityValue activity) {
-        Player player = playground.getActualPlayer();
         if (activity == AbstractPlayground.PlayerActivityValue.ACTION) {
             player.setAvailableActions(count + player.getAvailableActions());
         } else if (activity == AbstractPlayground.PlayerActivityValue.BUY) {
@@ -47,7 +48,7 @@ public class ExecuteCardAction {
      * @since Sprint6
      */
     public boolean executeShowCard(short cardID, AbstractPlayground.ZoneType zone) {
-        playground.getGameService().sendToSpecificPlayer(playground.getActualPlayer(), new ShowCardMessage(cardID, zone));
+        playground.getGameService().sendToSpecificPlayer(playground.getActualPlayer(), new ShowCardMessage(cardID, zone, playground.getID()));
         return true;
     }
 
