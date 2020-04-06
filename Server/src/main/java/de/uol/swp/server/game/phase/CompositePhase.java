@@ -27,6 +27,20 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
     }
 
     @Override
+    public void executeActionPhase(Player player, short cardId) {
+        /*
+        1. Verifiziere, dass Karte existiert
+        2. Überprüfe, ob Spieler diese Karte in der Hand hat
+        3. Führe die auf der Karte befindlichen Aktionen aus
+         */
+        //TODO: availableActions um 1 verringern, wenn Aktionskarte erfolgreich gespielt wurde
+
+        if (player.getAvailableActions() == 0) {
+            playground.newTurn();
+        }
+    }
+
+    @Override
     public void executeBuyPhase(Player player, short cardId) {
         /*
         1. Verifiziere, dass Karte existiert
@@ -35,6 +49,11 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
 
         Werfe bei fehlern eine Exception, sodass aufrufender den Kauf abbrechen kann
          */
+        //TODO: availableBuys um 1 verringern, wenn Kauf erfolgreich war
+
+        if (player.getAvailableBuys() == 0) {
+            playground.newTurn();
+        }
     }
 
     /**
@@ -50,21 +69,15 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         deck.getDiscardPile().addAll(deck.getHand());
         deck.getHand().clear();
         deck.drawHand();
+        player.setAdditionalMoney(0);
+        player.setAvailableBuys(1);
+        player.setAvailableActions(1);
         if (checkIfGameIsFinished()) {
             List<String> winners = playground.calculateWinners();
             playground.endGame(playground.getID(), new GameOverMessage(playground.getID(), winners, playground.getResultsGame()));
         } else {
             playground.newTurn();
         }
-    }
-
-    @Override
-    public void executeActionPhase(Player player, short cardId) {
-        /*
-        1. Verifiziere, dass Karte existiert
-        2. Überprüfe, ob Spieler diese Karte in der Hand hat
-        3. Führe die auf der Karte befindlichen Aktionen aus
-         */
     }
 
     /**
