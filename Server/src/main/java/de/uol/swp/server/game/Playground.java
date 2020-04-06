@@ -43,6 +43,7 @@ class Playground {
     private CompositePhase compositePhase;
     private Timer timer = new Timer();
     private short lobbySizeOnStart;
+    private CardPack cardsPackField;
     private Timestamp timestamp;
 
     /**
@@ -66,15 +67,6 @@ class Playground {
         this.compositePhase = new CompositePhase();
         this.lobbySizeOnStart = (short) lobby.getUsers().size();
         initializeCardField();
-    }
-
-    /**
-     * Es wird das Kartenfeld übergeben.
-     *
-     * @return Das Kartenfeld, also alle Karten, die auf dem Playground initialisiert sind.
-     */
-    public static Map<Short, Integer> getCardField() {
-        return cardField;
     }
 
     /**
@@ -150,6 +142,8 @@ class Playground {
     }
 
     /**
+     * Startet innerhalb eines Spielzugs die nächste Phase.
+     * Befindet sich der Spieler in der Clearphase, wird eine GamePhaseException geworfen.
      * Überspringt die aktuelle Phase und startet die nächste, falls der Spieler sich gerade in der Aktions- oder Kaufphase befindet.
      * Befindet er sich in der Clearphase, wird eine GamePhaseException geworfen.
      *
@@ -327,6 +321,10 @@ class Playground {
 
     public CompositePhase getCompositePhase() {
         return compositePhase;
+    }
+
+    public Map<Short, Integer> getCardField() {
+        return cardField;
     }
 
     /**
