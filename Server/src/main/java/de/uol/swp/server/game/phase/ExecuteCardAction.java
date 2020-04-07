@@ -2,8 +2,10 @@ package de.uol.swp.server.game.phase;
 
 import de.uol.swp.common.game.AbstractPlayground;
 import de.uol.swp.common.game.card.Card;
+import de.uol.swp.common.game.card.parser.components.CardAction.CardAction;
 import de.uol.swp.common.game.card.parser.components.CardAction.Value;
 import de.uol.swp.common.game.messages.CardMovedMessage;
+import de.uol.swp.common.game.messages.ChooseNextActionMessage;
 import de.uol.swp.common.game.messages.SelectCardsFromHandMessage;
 import de.uol.swp.common.game.messages.ShowCardMessage;
 import de.uol.swp.server.game.Playground;
@@ -11,6 +13,7 @@ import de.uol.swp.server.game.player.Player;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 public class ExecuteCardAction {
@@ -38,7 +41,7 @@ public class ExecuteCardAction {
      * @author Julia
      * @since Sprint6
      */
-    public boolean executeAddCapablePlayerActivity(short count, AbstractPlayground.PlayerActivityValue activity) {
+    private boolean executeAddCapablePlayerActivity(short count, AbstractPlayground.PlayerActivityValue activity) {
         if (activity == AbstractPlayground.PlayerActivityValue.ACTION) {
             player.setAvailableActions(count + player.getAvailableActions());
         } else if (activity == AbstractPlayground.PlayerActivityValue.BUY) {
@@ -59,8 +62,8 @@ public class ExecuteCardAction {
      * @author Julia
      * @since Sprint6
      */
-    public boolean executeShowCard(short cardID, AbstractPlayground.ZoneType zone) {
-        playground.getGameService().sendToSpecificPlayer(playground.getActualPlayer(), new ShowCardMessage(cardID, zone, playground.getID()));
+    private boolean executeShowCard(short cardID, AbstractPlayground.ZoneType zone) {
+        playground.getGameService().sendToSpecificPlayer(player, new ShowCardMessage(cardID, zone, playground.getID()));
         return true;
     }
 
@@ -71,7 +74,7 @@ public class ExecuteCardAction {
      * @return 0 = Übergebenes Array ist leer. | sonst die größe des KartenArrays
      */
 
-    public int executeCount(ArrayList<Card> cards) {
+    private int executeCount(ArrayList<Card> cards) {
         if (!cards.isEmpty()) {
             return cards.size();
         }
@@ -86,8 +89,21 @@ public class ExecuteCardAction {
      * @param where    Wohin damit
      * @return true(? ? ?)
      */
-    public boolean executeChooseCard(Value theValue, AbstractPlayground.ZoneType from, AbstractPlayground.ZoneType where) {
-        playground.getGameService().sendToSpecificPlayer(playground.getActualPlayer(), new SelectCardsFromHandMessage(theValue, from, where));
+    private boolean executeChooseCard(Value theValue, AbstractPlayground.ZoneType from, AbstractPlayground.ZoneType where) {
+        playground.getGameService().sendToSpecificPlayer(player, new SelectCardsFromHandMessage(theValue, from, where));
+        return true;
+    }
+
+    /**
+     * Sendet dem Spieler eine Nachricht mit den Aktionen, aus denen er eine auswählen kann
+     *
+     * @param actions Liste aller möglichen nächsten Aktionen
+     * @return true
+     * @author Julia
+     * @since Sprint6
+     */
+    private boolean executeChooseNextAction(List<CardAction> actions) {
+        playground.getGameService().sendToSpecificPlayer(player, new ChooseNextActionMessage(gameID, actions));
         return true;
     }
 
@@ -99,7 +115,7 @@ public class ExecuteCardAction {
      * @param destination Wohin
      * @return true(? ? ?)
      */
-    public boolean executeMoveAction(ArrayList<Card> cardsToMove, AbstractPlayground.ZoneType source, AbstractPlayground.ZoneType destination) {
+    private boolean executeMoveAction(ArrayList<Card> cardsToMove, AbstractPlayground.ZoneType source, AbstractPlayground.ZoneType destination) {
         ArrayList<Short> theIds = new ArrayList<>();
         if (source.equals(AbstractPlayground.ZoneType.HAND) && destination.equals(AbstractPlayground.ZoneType.DISCARD)) {
             for (Card card : cardsToMove) {
