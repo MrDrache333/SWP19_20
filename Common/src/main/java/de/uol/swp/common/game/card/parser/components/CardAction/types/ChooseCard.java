@@ -63,4 +63,5 @@ public class ChooseCard extends ComplexCardAction {
     public Value getCount() {
         return count;
     }
+
 }

@@ -29,4 +29,12 @@ public class AddCapablePlayerActivity extends SimpleCardAction {
         //TODO
         return false;
     }
+
+    public short getCount() {
+        return count;
+    }
+
+    public AbstractPlayground.PlayerActivityValue getActivity() {
+        return activity;
+    }
 }

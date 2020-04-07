@@ -51,4 +51,8 @@ public class Move extends ComplexCardAction {
     public boolean execute() {
         return false;
     }
+
+    public ArrayList<Card> getCardsToMove() {
+        return cardsToMove;
+    }
 }

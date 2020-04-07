@@ -31,4 +31,8 @@ public class ShowCard extends ComplexCardAction {
     public boolean execute() {
         return false;
     }
+
+    public Card getCard() {
+        return card;
+    }
 }

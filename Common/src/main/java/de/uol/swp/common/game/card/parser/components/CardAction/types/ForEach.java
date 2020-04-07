@@ -37,4 +37,12 @@ public class ForEach extends SimpleCardAction {
     public boolean execute() {
         return false;
     }
+
+    public ArrayList<Card> getCards() {
+        return cards;
+    }
+
+    public ArrayList<CardAction> getActions() {
+        return actions;
+    }
 }
