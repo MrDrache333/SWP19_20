@@ -50,6 +50,7 @@ public class Playground extends AbstractPlayground {
     private CardPack cardsPackField;
     private ArrayList<Short> chosenCards;
     private final UserDTO infoUser = new UserDTO("infoUser", "", "");
+    private ArrayList<Card> trash;
 
     /**
      * Erstellt ein neues Spielfeld und übergibt die Spieler. Die Reihenfolge der Spieler wird zufällig zusammengestellt.
@@ -478,5 +479,9 @@ public class Playground extends AbstractPlayground {
 
     public GameService getGameService() {
         return gameService;
+    }
+
+    public ArrayList<Card> getTrash() {
+        return trash;
     }
 }

@@ -168,6 +168,18 @@ public class Deck {
     }
 
 
+    /**
+     * Hilfsmethode um eine Karte zum Ablagestapel hinzuzufügen
+     *
+     * @param card
+     * @author Paula
+     * @since Sprint6
+     */
+    public void addCardToDiscardPile(Card card) {
+        discardPile.add(card);
+
+    }
+
     public ArrayList<Card> getHand() {
         return hand;
     }
