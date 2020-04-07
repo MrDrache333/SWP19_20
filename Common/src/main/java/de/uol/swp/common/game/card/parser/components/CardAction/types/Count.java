@@ -30,4 +30,8 @@ public class Count extends ComplexCardAction {
     public boolean execute() {
         return false;
     }
+
+    public ArrayList<Card> getCards() {
+        return cards;
+    }
 }

@@ -42,4 +42,16 @@ public class If extends SimpleCardAction {
         //TODO
         return false;
     }
+
+    public Condition getCondition() {
+        return condition;
+    }
+
+    public boolean isExpectedResult() {
+        return expectedResult;
+    }
+
+    public CardAction getConditionedAction() {
+        return conditionedAction;
+    }
 }

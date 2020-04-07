@@ -48,4 +48,8 @@ public class GetCard extends ComplexCardAction {
     public ArrayList<Card> getCards() {
         return cards;
     }
+
+    public short getCount() {
+        return count;
+    }
 }

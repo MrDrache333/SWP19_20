@@ -24,4 +24,8 @@ public class UseCard extends SimpleCardAction {
     public boolean execute() {
         return false;
     }
+
+    public short getCount() {
+        return count;
+    }
 }

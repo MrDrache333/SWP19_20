@@ -50,4 +50,6 @@ public class ChooseNextAction extends SimpleCardAction {
     public ArrayList<CardAction> getNextActions() {
         return nextActions;
     }
+
+
 }
