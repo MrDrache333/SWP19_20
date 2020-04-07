@@ -7,9 +7,21 @@ import com.google.gson.annotations.SerializedName;
  */
 public abstract class Card {
 
+    /**
+     * The Name.
+     */
     private String name;
+    /**
+     * The Id.
+     */
     private short id;
-    private Type cardtype;
+    /**
+     * The Cardtype.
+     */
+    private Type cardType;
+    /**
+     * The Costs.
+     */
     @SerializedName("cost")
     private short costs;
 
@@ -22,12 +34,20 @@ public abstract class Card {
      * @author KenoO
      * @since Sprint 5
      */
-    public Card(Type cardtype, String name, short id) {
-        this.cardtype = cardtype;
+    Card(Type cardtype, String name, short id, short costs) {
+        this.cardType = cardtype;
         this.name = name;
         this.id = id;
+        this.costs = costs;
     }
 
+    /**
+     * Gets costs.
+     *
+     * @return the costs
+     * @author KenoO
+     * @since
+     */
     public short getCosts() {
         return costs;
     }
@@ -61,14 +81,18 @@ public abstract class Card {
      * @author KenoO
      * @since Sprint 5
      */
-    public Type getCardtype() {
-        return cardtype;
+    public Type getCardType() {
+        return cardType;
     }
 
     /**
      * The enum Type.
      */
     public enum Type {
+        /**
+         * Kein Festgelegter Kartentyp
+         */
+        None,
         /**
          * Der Typ Aktionskarte
          */
@@ -84,6 +108,10 @@ public abstract class Card {
         /**
          * Der Typ Geldkarte
          */
-        MoneyCard
+        MoneyCard,
+        /**
+         * Der Typ Fluchkarte.
+         */
+        Cursecard
     }
 }

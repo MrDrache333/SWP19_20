@@ -27,6 +27,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -180,7 +181,7 @@ public class GameManagement {
     @Subscribe
     public void onGameOverMessage(GameOverMessage message) {
         if (message.getGameID().equals(id)) {
-            showGameOverView(loggedInUser, message.getWinner(), message.getResults());
+            showGameOverView(loggedInUser, message.getWinners(), message.getResults());
         }
     }
 
@@ -222,16 +223,16 @@ public class GameManagement {
      * Status der Spieler wird auf "nicht bereit" gesetzt.
      *
      * @param loggedInUser der aktuelle Nutzer
-     * @param winner       der Gewinner des Spiels
+     * @param winners      der/die Gewinner des Spiels
      * @author Anna
      * @since Sprint6
      */
-    public void showGameOverView(User loggedInUser, String winner, Map<String, Integer> res) {
+    public void showGameOverView(User loggedInUser, List<String> winners, Map<String, Integer> res) {
         if (loggedInUser.getUsername().equals(this.loggedInUser.getUsername())) {
             UserDTO loggedInUserDTO = new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail());
             lobbyPresenter.getLobbyService().setLobbyUserStatus(id, loggedInUserDTO, false);
             lobbyPresenter.setButtonReady(loggedInUserDTO);
-            initGameOverView(this.loggedInUser, winner, res);
+            initGameOverView(this.loggedInUser, winners, res);
             Platform.runLater(() -> {
                 gameOverStage.setScene(gameOverScene);
                 gameOverStage.setTitle("Spielergebnis");
@@ -308,13 +309,13 @@ public class GameManagement {
      * GameOverView wird initalisiert und deklariert.
      * Neue Szene für das Fenster mit dem Spielergebnis wird erstellt und gespeichert
      *
-     * @param user   der User, dem das Fenster angezeigt wird
-     * @param winner der Gewinner des Spiels
+     * @param user    der User, dem das Fenster angezeigt wird
+     * @param winners der/die Gewinner des Spiels
      * @author Anna
      * @since Sprint6
      */
-    private void initGameOverView(User user, String winner, Map<String, Integer> res) {
-        Parent rootPane = initPresenter(new GameOverViewPresenter(this, user, winner, res), GameOverViewPresenter.fxml);
+    private void initGameOverView(User user, List<String> winners, Map<String, Integer> res) {
+        Parent rootPane = initPresenter(new GameOverViewPresenter(this, user, winners, res), GameOverViewPresenter.fxml);
         gameOverScene = new Scene(rootPane, 420, 280);
         lobbyScene.getStylesheets().add(styleSheet);
     }

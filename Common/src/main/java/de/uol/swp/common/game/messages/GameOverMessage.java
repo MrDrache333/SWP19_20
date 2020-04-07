@@ -1,8 +1,8 @@
 package de.uol.swp.common.game.messages;
 
 import de.uol.swp.common.message.AbstractServerMessage;
-import de.uol.swp.common.user.User;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -10,23 +10,20 @@ public class GameOverMessage extends AbstractServerMessage {
 
     private static final long serialVersionUID = 8386864315993015152L;
     private UUID gameID;
-    private User player;
-    private String winner;
+    private List<String> winners;
     private Map<String, Integer> results;
 
     /**
      * Instanziiert GameOverMessage
      *
-     * @param gameID Die ID des Games
-     * @param player Der Spieler
-     * @param winner Der Gewinner
+     * @param gameID  Die ID des Games
+     * @param winners Der/die Gewinner
      * @author Anna
      * @since Sprint6
      */
-    public GameOverMessage(UUID gameID, User player, String winner, Map<String, Integer> results) {
+    public GameOverMessage(UUID gameID, List<String> winners, Map<String, Integer> results) {
         this.gameID = gameID;
-        this.player = player;
-        this.winner = winner;
+        this.winners = winners;
         this.results = results;
     }
 
@@ -42,25 +39,14 @@ public class GameOverMessage extends AbstractServerMessage {
     }
 
     /**
-     * Gibt den Spieler zurück.
-     *
-     * @return der Spieler
-     * @author Anna
-     * @since Sprint6
-     */
-    public User getPlayer() {
-        return player;
-    }
-
-    /**
-     * Gibt den Gewinner des Spiels zurück.
+     * Gibt den/die Gewinner des Spiels zurück.
      *
      * @return der Gewinner
      * @author Anna
      * @since Sprint6
      */
-    public String getWinner() {
-        return winner;
+    public List<String> getWinners() {
+        return winners;
     }
 
     /**

@@ -3,7 +3,7 @@ package de.uol.swp.server.game;
 import com.google.inject.Inject;
 import de.uol.swp.common.game.card.ActionCard;
 import de.uol.swp.common.game.card.Card;
-import de.uol.swp.common.game.card.parser.CardPack;
+import de.uol.swp.common.game.card.ValueCard;
 import de.uol.swp.common.game.card.parser.JsonCardParser;
 import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.*;
@@ -13,6 +13,7 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.game.phase.CompositePhase;
 import de.uol.swp.server.game.phase.Phase;
+import de.uol.swp.server.game.player.Deck;
 import de.uol.swp.server.game.player.Player;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,7 +24,7 @@ import java.util.*;
 /**
  * Playground stellt das eigentliche Spielfeld dar
  */
-public class Playground {
+public class Playground extends AbstractPlayground {
 
     private static final Logger LOG = LogManager.getLogger(Playground.class);
     private static Map<Short, Integer> cardField = new TreeMap<>();
@@ -32,6 +33,7 @@ public class Playground {
      */
     private List<Player> players = new ArrayList<>();
     private Map<String, Integer> resultsGame = new TreeMap<>();
+    private Map<Player, Integer> playerTurns = new HashMap<>();
     private Player actualPlayer;
     private Player nextPlayer;
     private Player latestGavedUpPlayer;
@@ -42,6 +44,7 @@ public class Playground {
     private CompositePhase compositePhase;
     private Timer timer = new Timer();
     private short lobbySizeOnStart;
+    private CardPack cardsPackField;
 
     /**
      * Erstellt ein neues Spielfeld und übergibt die Spieler. Die Reihenfolge der Spieler wird zufällig zusammengestellt.
@@ -57,12 +60,14 @@ public class Playground {
             Player player = new Player(user.getUsername());
             player.setTheUserInThePlayer(user);
             players.add(player);
+            playerTurns.put(player, 0);
         }
         Collections.shuffle(players);
         this.gameService = gameService;
         this.theSpecificLobbyID = lobby.getLobbyID();
         this.compositePhase = new CompositePhase(this);
         this.lobbySizeOnStart = (short) lobby.getUsers().size();
+        this.cardsPackField = new JsonCardParser().loadPack("Basispack");
         initializeCardField();
     }
 
@@ -81,8 +86,8 @@ public class Playground {
             Card card = cardsPackField.getCards().getActionCards().get(i);
             cardField.put(card.getId(), 10);
         }
-        for (int i = 0; i < cardsPackField.getCards().getReactionCards().size(); i++) {
-            Card card = cardsPackField.getCards().getReactionCards().get(i);
+        for (int i = 0; i < cardsPackField.getCards().getCurseCards().size(); i++) {
+            Card card = cardsPackField.getCards().getCurseCards().get(i);
             cardField.put(card.getId(), 10);
         }
         for (int i = 0; i < cardsPackField.getCards().getMoneyCards().size(); i++) {
@@ -108,7 +113,6 @@ public class Playground {
             actualPlayer = players.get(0);
             nextPlayer = players.get(1);
             sendInitialHands();
-
         } else {
             //Spieler muss Clearphase durchlaufen haben
             if (actualPhase != Phase.Type.Clearphase) return;
@@ -117,13 +121,16 @@ public class Playground {
             actualPlayer = nextPlayer;
             nextPlayer = players.get(++index % players.size());
         }
+
+        int turns = playerTurns.get(actualPlayer);
+        playerTurns.replace(actualPlayer, ++turns);
         actualPhase = Phase.Type.ActionPhase;
         if (checkForActionCard()) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartActionPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID, timestamp));
             phaseTimer();
         } else {
-            skipCurrentPhase();
+            nextPhase();
         }
     }
 
@@ -145,20 +152,20 @@ public class Playground {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                skipCurrentPhase();
+                nextPhase();
                 timer.cancel();
             }
         }, 35000);
     }
 
     /**
-     * Überspringt die aktuelle Phase und startet die nächste, falls der Spieler sich gerade in der Aktions- oder Kaufphase befindet.
-     * Befindet er sich in der Clearphase, wird eine GamePhaseException geworfen.
+     * Startet innerhalb eines Spielzugs die nächste Phase.
+     * Befindet sich der Spieler in der Clearphase, wird eine GamePhaseException geworfen.
      *
      * @author Julia
      * @since Sprint5
      */
-    public void skipCurrentPhase() {
+    public void nextPhase() {
         if (actualPhase == Phase.Type.Clearphase) {
             throw new GamePhaseException("Du kannst die Clearphase nicht überspringen!");
         }
@@ -209,16 +216,16 @@ public class Playground {
         if (this.players.get(thePositionInList).getPlayerName().equals(theGivingUpUser.getUsername()) && wantsToGiveUp && lobbyID.equals(this.theSpecificLobbyID)) {
             latestGavedUpPlayer = this.players.get(thePositionInList);
             gameService.userGavesUpLeavesLobby(lobbyID, theGivingUpUser);
-
-            if (actualPlayer.equals(latestGavedUpPlayer) && players.size() >= 3) {
+            if (this.players.size() == 2) {
+                this.players.remove(thePositionInList);
+                List<String> winners = calculateWinners();
+                GameOverMessage gameOverByGaveUp = new GameOverMessage(lobbyID, winners, resultsGame);
+                endGame(lobbyID, gameOverByGaveUp);
+            } else if (actualPlayer.equals(latestGavedUpPlayer)) {
                 this.players.remove(thePositionInList);
                 actualPhase = Phase.Type.Clearphase;
                 newTurn();
-            } else if (this.players.size() == 2) {
-                this.players.remove(thePositionInList);
-                GameOverMessage gameOverByGaveUp = new GameOverMessage(lobbyID, this.players.get(0).getTheUserInThePlayer(), this.players.get(0).getPlayerName(), resultsGame);
-                endGame(lobbyID, gameOverByGaveUp);
-            } else if (this.players.size() >= 3 && nextPlayer.equals(latestGavedUpPlayer)) {
+            } else if (nextPlayer.equals(latestGavedUpPlayer)) {
                 if (thePositionInList < this.players.size() - 1) {
                     nextPlayer = this.players.get(++thePositionInList);
                     this.players.remove(thePositionInList);
@@ -226,7 +233,7 @@ public class Playground {
                     this.players.remove(thePositionInList);
                     nextPlayer = this.players.get(0);
                 }
-            } else if (this.players.size() >= 3) {
+            } else {
                 this.players.remove(thePositionInList);
             }
             return true;
@@ -271,6 +278,59 @@ public class Playground {
         return false;
     }
 
+    /**
+     * Ermittelt den/die Gewinner des Spiels. Bei Gleichstand gewinnen der/die mit den wenigsten Zügen.
+     *
+     * @return Liste mit allen Gewinnern
+     * @author Julia
+     * @since Sprint6
+     */
+    public List<String> calculateWinners() {
+        List<String> winners = new ArrayList<>();
+        for (Player player : players) {
+            int victoryPoints = 0;
+            Deck deck = player.getPlayerDeck();
+            deck.getCardsDeck().addAll(deck.getHand());
+            deck.getCardsDeck().addAll(deck.getDiscardPile());
+            deck.getHand().clear();
+            deck.getDiscardPile().clear();
+
+            for (Card card : deck.getCardsDeck()) {
+                if (card instanceof ValueCard) {
+                    victoryPoints += ((ValueCard) card).getValue();
+                }
+            }
+            resultsGame.put(player.getPlayerName(), victoryPoints);
+        }
+
+        int max = Collections.max(resultsGame.values());
+        for (Map.Entry<String, Integer> entry : resultsGame.entrySet()) {
+            if (entry.getValue() == max) {
+                winners.add(entry.getKey());
+            }
+        }
+
+        if (winners.size() > 1) {
+            Map<String, Integer> winnerTurns = new HashMap<>();
+            for (Map.Entry<Player, Integer> entry : playerTurns.entrySet()) {
+                if (winners.contains(entry.getKey().getPlayerName())) {
+                    winnerTurns.put(entry.getKey().getPlayerName(), entry.getValue());
+                }
+            }
+
+            winners.clear();
+            int minTurns = Collections.min(winnerTurns.values());
+            for (Map.Entry<String, Integer> entry : winnerTurns.entrySet()) {
+                if (entry.getValue() == minTurns) {
+                    winners.add(entry.getKey());
+                }
+            }
+        }
+
+        return winners;
+    }
+
+
     public List<Player> getPlayers() {
         return players;
     }
@@ -303,6 +363,10 @@ public class Playground {
         return latestGavedUpPlayer;
     }
 
+    public CardPack getCardsPackField() {
+        return cardsPackField;
+    }
+
     /**
      * Beendet den Timer, sofern innerhalb der 35 Sekunden eine ActionKarte Ausgewählt worden ist.
      */
@@ -314,12 +378,24 @@ public class Playground {
         return compositePhase;
     }
 
+    public Map<Player, Integer> getPlayerTurns() {
+        return playerTurns;
+    }
+
+    public Map<String, Integer> getResultsGame() {
+        return resultsGame;
+    }
+
+    public UUID getID() {
+        return theSpecificLobbyID;
+    }
+
     /**
      * Es wird das Kartenfeld übergeben.
      *
      * @return Das Kartenfeld, also alle Karten die auf dem Playground initalisiert sind.
      */
-    public static Map<Short, Integer> getCardField() {
+    public Map<Short, Integer> getCardField() {
         return cardField;
     }
 

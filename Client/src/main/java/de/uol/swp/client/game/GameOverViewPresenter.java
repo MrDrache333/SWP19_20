@@ -16,6 +16,7 @@ import javafx.scene.text.TextFlow;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,7 +50,7 @@ public class GameOverViewPresenter extends AbstractPresenter {
     private GameManagement gameManagement;
 
     private User loggedInUser;
-    private String winner;
+    private List<String> winners;
     private Map<String, Integer> results;
 
     /**
@@ -57,12 +58,12 @@ public class GameOverViewPresenter extends AbstractPresenter {
      *
      * @param gameManagement das GameManagement
      * @param loggedInUser   der aktuelle User
-     * @param winner         der Gewinner des Spiels
+     * @param winners        der/die Gewinner des Spiels
      */
-    public GameOverViewPresenter(GameManagement gameManagement, User loggedInUser, String winner, Map<String, Integer> results) {
+    public GameOverViewPresenter(GameManagement gameManagement, User loggedInUser, List<String> winners, Map<String, Integer> results) {
         this.gameManagement = gameManagement;
         this.loggedInUser = loggedInUser;
-        this.winner = winner;
+        this.winners = winners;
         this.results = results;
     }
 
@@ -85,7 +86,7 @@ public class GameOverViewPresenter extends AbstractPresenter {
             player.setFill(Paint.valueOf("gold"));
             flow.getChildren().add(player);
         }
-        if (winner.equals(loggedInUser.getUsername())) {
+        if (winners.contains(loggedInUser.getUsername())) {
             background.setImage(new Image("file:Client/src/main/resources/images/burgHohenzollern.jpg"));
             bannerText.setText("Du hast gewonnen!");
             bannerTextBox.setAlignment(Pos.CENTER_LEFT);
@@ -110,7 +111,16 @@ public class GameOverViewPresenter extends AbstractPresenter {
         } else {
             trophy.setVisible(false);
             background.setImage(new Image("file:Client/src/main/resources/images/burgHohenzollernDarker.jpg"));
-            bannerText.setText(winner + " hat gewonnen!");
+            if (winners.size() == 1) {
+                bannerText.setText(winners.get(0) + " hat gewonnen!");
+            } else {
+                StringBuilder tmp = new StringBuilder();
+                for (int i = 0; i < winners.size() - 1; i++) {
+                    tmp.append(winners.get(i) + " & ");
+                }
+                tmp.append(winners.get(winners.size() - 1) + " haben gewonnen!");
+                bannerText.setText(tmp.toString());
+            }
             bannerText.setLayoutX(62);
             bannerText.setTextAlignment(TextAlignment.CENTER);
             double scale = 160 / bannerText.getBoundsInLocal().getWidth();

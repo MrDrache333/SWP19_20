@@ -1,4 +1,4 @@
-package de.uol.swp.common.game.card.parser;
+package de.uol.swp.common.game.card.parser.components;
 
 import com.google.gson.annotations.SerializedName;
 

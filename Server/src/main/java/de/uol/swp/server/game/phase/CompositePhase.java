@@ -1,11 +1,7 @@
 package de.uol.swp.server.game.phase;
 
-import de.uol.swp.common.game.GameService;
 import de.uol.swp.common.game.card.Card;
-import de.uol.swp.common.game.card.parser.CardPack;
-import de.uol.swp.common.game.card.parser.CardStack;
-import de.uol.swp.common.game.card.parser.JsonCardParser;
-import de.uol.swp.common.game.exception.NotEnoughMoneyException;
+import de.uol.swp.common.game.messages.GameOverMessage;
 import de.uol.swp.server.game.Playground;
 import de.uol.swp.server.game.player.Deck;
 import de.uol.swp.server.game.player.Player;
@@ -13,18 +9,28 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
+import java.util.List;
+
 /**
  * Die Funktionsklasse aller Phasen
  */
 public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
 
+    private Playground playground;
+
+    /**
+     * Der Konstruktor
+     *
+     * @param playground das Spielfeld
+     * @author Fenja
+     * @since Sprint6
+     */
+    public CompositePhase(Playground playground) {
+        this.playground = playground;
+    }
+
     private static final Logger LOG = LogManager.getLogger(GameService.class);
 
-    private Playground playGround;
-
-    public CompositePhase(Playground playGround) {
-        this.playGround = playGround;
-    }
 
     /**
      * Methode um eine Karte zu kaufen. Diese wird dem Ablagestapel des Spielers hinzugefügt, wenn er genug Geld hat
@@ -79,6 +85,12 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         deck.getDiscardPile().addAll(deck.getHand());
         deck.getHand().clear();
         deck.drawHand();
+        if (checkIfGameIsFinished()) {
+            List<String> winners = playground.calculateWinners();
+            playground.endGame(playground.getID(), new GameOverMessage(playground.getID(), winners, playground.getResultsGame()));
+        } else {
+            playground.newTurn();
+        }
     }
 
     @Override
@@ -123,6 +135,29 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
             }
         }
         return null;
+    }
+
+    /**
+     * Überprüft, ob das Spiel in der Clearphase beendet ist
+     *
+     * @return false, wenn das Spiel nicht vorbei ist
+     * @author Fenja
+     * @since Sprint6
+     */
+    public boolean checkIfGameIsFinished() {
+        if (playground.getCardField().get((short) 6) == 0) {
+            return true;
+        }
+        int counter = 0;
+        for (Card card : playground.getCardsPackField().getCards().getActionCards()) {
+            if (playground.getCardField().containsKey(card.getId()) && playground.getCardField().get(card.getId()) == 0) {
+                counter++;
+                if (counter >= 3) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
 

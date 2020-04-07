@@ -1,9 +1,9 @@
-package de.uol.swp.common.game.card.parser;
+package de.uol.swp.common.game.card.parser.components;
 
 import com.google.gson.annotations.SerializedName;
 import de.uol.swp.common.game.card.ActionCard;
+import de.uol.swp.common.game.card.CurseCard;
 import de.uol.swp.common.game.card.MoneyCard;
-import de.uol.swp.common.game.card.ReactionCard;
 import de.uol.swp.common.game.card.ValueCard;
 
 import java.util.ArrayList;
@@ -19,8 +19,8 @@ public class CardStack {
     private ArrayList<ValueCard> valueCards = new ArrayList<>();
     @SerializedName("ActionCards")
     private ArrayList<ActionCard> actionCards = new ArrayList<>();
-    @SerializedName("ReactionCards")
-    private ArrayList<ReactionCard> reactionCards = new ArrayList<>();
+    @SerializedName("CurseCards")
+    private ArrayList<CurseCard> curseCards = new ArrayList<>();
 
     /**
      * @return Objekt als String
@@ -38,13 +38,13 @@ public class CardStack {
         for (ValueCard card : valueCards) {
             string.append("\t\t").append(card.getId()).append(": ").append(card.getName()).append(", Value: ").append(card.getValue()).append(", Cost: ").append(card.getCosts()).append("\n");
         }
-        string.append("\tReactionCards:\n");
-        for (ReactionCard card : reactionCards) {
-            string.append("\t\t").append(card.getId()).append(": ").append(card.getName()).append(", Cost: ").append(card.getCosts()).append("\n");
-        }
         string.append("\tActionCards:\n");
         for (ActionCard card : actionCards) {
             string.append("\t\t").append(card.getId()).append(": ").append(card.getName()).append(", Cost: ").append(card.getCosts()).append("\n");
+        }
+        string.append("\tCurseCards:\n");
+        for (CurseCard card : curseCards) {
+            string.append("\t\t").append(card.getId()).append(": ").append(card.getName()).append(", Value: ").append(card.getValue()).append("\n");
         }
 
         return string.toString();
@@ -53,7 +53,7 @@ public class CardStack {
     /**
      * Gibt die money cards zurück
      *
-     * @return Die money cards
+     * @return Die Geldkarten
      */
     public ArrayList<MoneyCard> getMoneyCards() {
         return moneyCards;
@@ -62,7 +62,7 @@ public class CardStack {
     /**
      * Gibt die value cards zurück
      *
-     * @return Die value cards
+     * @return Die Anwesenkarten
      */
     public ArrayList<ValueCard> getValueCards() {
         return valueCards;
@@ -71,18 +71,18 @@ public class CardStack {
     /**
      * Gibt die action cards zurück
      *
-     * @return Die action cards
+     * @return Die Aktionskarten
      */
     public ArrayList<ActionCard> getActionCards() {
         return actionCards;
     }
 
     /**
-     * Gibt die reaction cards zurück
+     * Gibt die curse cards zurück
      *
-     * @return Die reaction cards
+     * @return Die Fuchkarten
      */
-    public ArrayList<ReactionCard> getReactionCards() {
-        return reactionCards;
+    public ArrayList<CurseCard> getCurseCards() {
+        return curseCards;
     }
 }

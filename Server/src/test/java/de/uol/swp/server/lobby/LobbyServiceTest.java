@@ -5,6 +5,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
+import de.uol.swp.common.lobby.message.UpdatedInGameMessage;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.lobby.request.*;
@@ -26,8 +27,7 @@ import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Der Test um den LobbyService zu testen.
@@ -154,5 +154,19 @@ class LobbyServiceTest {
         assertEquals(2, lobbies.size());
         assertTrue((lobbies.get(0).getName().equals(defaultLobbyName) && lobbies.get(1).getName().equals("Lobby2"))
                 || (lobbies.get(1).getName().equals(defaultLobbyName) && lobbies.get(0).getName().equals("Lobby2")));
+    }
+
+    @Test
+    void onGameEndTest() throws InterruptedException {
+        UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
+        lobbyManagement.getLobby(lobbyID).get().setInGame(true);
+        lobbyService.onGameEnd(new UpdateInGameRequest(lobbyID));
+
+        lock.await(1000, TimeUnit.MILLISECONDS);
+
+        assertTrue(event instanceof UpdatedInGameMessage);
+        UpdatedInGameMessage message = (UpdatedInGameMessage) event;
+        assertEquals(lobbyID, message.getLobbyID());
+        assertFalse(lobbyManagement.getLobby(lobbyID).get().getInGame());
     }
 }

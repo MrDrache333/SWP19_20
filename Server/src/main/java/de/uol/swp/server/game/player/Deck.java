@@ -169,4 +169,8 @@ public class Deck {
     public ArrayList<Card> getDiscardPile() {
         return discardPile;
     }
+
+    public ArrayList<Card> getCardsDeck() {
+        return cardsDeck;
+    }
 }
