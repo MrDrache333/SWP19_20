@@ -50,10 +50,21 @@ public class GameService {
         bus.post(request);
     }
 
+
     public void sendPlayCardRequest(UUID lobbyID, User loggedInUser, Short aShort, ImageView card, ArrayList<ImageView> handCards, boolean b) {
         PlayCardRequest request = new PlayCardRequest(lobbyID, loggedInUser, aShort, card, handCards, b);
         bus.post(request);
     }
+
+    /**
+     * Erstellte eine BuyCardRequest und postet diese auf dem Eventbus
+     *
+     * @param lobbyID   die LobbyID zum Lobbynamen
+     * @param loggedInUser der User, der gerade dran ist
+     * @param valueOf      ID der Karte
+     * @author Paula
+     * @since Sprint6
+     */
     public void sendBuyCardRequest(UUID lobbyID, User loggedInUser, Short valueOf) {
         BuyCardRequest buyCardRequest = new BuyCardRequest(lobbyID, loggedInUser, valueOf);
         bus.post(buyCardRequest);

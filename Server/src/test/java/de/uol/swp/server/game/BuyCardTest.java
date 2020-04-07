@@ -16,10 +16,8 @@ import de.uol.swp.server.usermanagement.store.MainMemoryBasedUserStore;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -34,7 +32,8 @@ public class BuyCardTest {
     static final GameManagement gameManagement = new GameManagement(chatManagement, lobbyManagement);
     static final AuthenticationService authenticationService = new AuthenticationService(bus, new UserManagement(new MainMemoryBasedUserStore()));
     static final GameService gameService = new GameService(bus, gameManagement, authenticationService);
-    
+
+
     static UUID gameID;
     private final CountDownLatch lock = new CountDownLatch(1);
     private Object event;
@@ -45,6 +44,15 @@ public class BuyCardTest {
         lobbyManagement.getLobby(gameID).get().joinUser(secondPlayer);
         lobbyManagement.getLobby(gameID).get().joinUser(thirdPlayer);
         bus.post(new StartGameInternalMessage(gameID));
+    }
+
+    @AfterEach
+    void afterEach() {
+        gameManagement.deleteGame(gameID);
+        lobbyManagement.dropLobby(gameID);
+        chatManagement.deleteChat(gameID.toString());
+
+
     }
 
     /**
@@ -71,6 +79,7 @@ public class BuyCardTest {
         bus.unregister(this);
     }
 
+
     /**
      * Bei Auftreten eines DeadEvents wird dieses ausgegeben und der CountDownLatch wird um eins verringert
      *
@@ -85,17 +94,10 @@ public class BuyCardTest {
         lock.countDown();
     }
 
-    @AfterEach
-    void afterEach() {
-        gameManagement.deleteGame(gameID);
-        lobbyManagement.dropLobby(gameID);
-        chatManagement.deleteChat(gameID.toString());
-    }
-
     /**
      * Testet, ob sich die Anzahl der Karten auf dem Playground nach dem Kauf aktualisiert.
      *
-     * @author Paula
+     * @author Paula, Ferit
      * @since Sprint6
      */
     @Test
@@ -108,23 +110,21 @@ public class BuyCardTest {
     /**
      * Testet, ob eine gekaufte Karte dem Ablagestapel des Spielers hinzugefügt wird
      *
-     * @author Paula
+     * @author Paula, Ferit
      * @since Sprint6
      */
-
     @Test
     void testIfCardIsAddedToDiscardPile() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         int CardsOnDiscardPile = playground.getActualPlayer().getPlayerDeck().getDiscardPile().size();
         int BuyingCard = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), (short) 10);
         assertEquals(CardsOnDiscardPile + 1, playground.getActualPlayer().getPlayerDeck().getDiscardPile().size());
-
     }
 
     /**
      * Test, ob Geld auch abgezogen wird
      *
-     * @author Paula
+     * @author Paula, Ferit
      * @since Sprint6
      */
     @Test
@@ -133,6 +133,7 @@ public class BuyCardTest {
         int moneyPlayer = playground.getActualPlayer().getPlayerDeck().actualMoneyFromPlayer();
         int BuyingCard = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), (short) 10);
         assertEquals(moneyPlayer - 2, playground.getActualPlayer().getPlayerDeck().actualMoneyFromPlayer());
+
     }
 
 
