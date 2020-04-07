@@ -59,4 +59,8 @@ public class ChooseCard extends ComplexCardAction {
     public ArrayList<Card> getChoosenCards() {
         return choosenCards;
     }
+
+    public Value getCount() {
+        return count;
+    }
 }

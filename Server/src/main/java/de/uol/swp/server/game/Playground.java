@@ -47,6 +47,7 @@ public class Playground extends AbstractPlayground {
     private Timer timer = new Timer();
     private short lobbySizeOnStart;
     private CardPack cardsPackField;
+    private ArrayList<Card> trash;
 
     /**
      * Erstellt ein neues Spielfeld und übergibt die Spieler. Die Reihenfolge der Spieler wird zufällig zusammengestellt.
@@ -409,5 +410,9 @@ public class Playground extends AbstractPlayground {
 
     public GameService getGameService() {
         return gameService;
+    }
+
+    public ArrayList<Card> getTrash() {
+        return trash;
     }
 }

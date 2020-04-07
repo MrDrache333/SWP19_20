@@ -22,6 +22,7 @@ public class Deck {
     private ArrayList<Card> cardsDeck = new ArrayList<>();
     private ArrayList<Card> discardPile = new ArrayList<>();
     private ArrayList<Card> hand = new ArrayList<>();
+    private ArrayList<Card> temp = new ArrayList<>();
 
     /**
      * Konstruktor
@@ -110,6 +111,18 @@ public class Deck {
         discardPile.remove(card);
     }
 
+    /**
+     * Hilfsmethode um eine Karte zum Ablagestapel hinzuzufügen
+     *
+     * @param card
+     * @author Paula
+     * @since Sprint6
+     */
+    public void addCardToDiscardPile(Card card) {
+        discardPile.add(card);
+
+    }
+
     public ArrayList<Card> getHand() {
         return hand;
     }
@@ -120,5 +133,9 @@ public class Deck {
 
     public ArrayList<Card> getCardsDeck() {
         return cardsDeck;
+    }
+
+    public ArrayList<Card> getTemp() {
+        return temp;
     }
 }
