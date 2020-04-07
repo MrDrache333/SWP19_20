@@ -3,7 +3,6 @@ package de.uol.swp.common.game.request;
 import de.uol.swp.common.user.User;
 import javafx.scene.image.ImageView;
 
-import java.util.ArrayList;
 import java.util.UUID;
 
 public class PlayCardRequest {
@@ -25,20 +24,15 @@ public class PlayCardRequest {
     private User currentUser;
     private Short handCardID;
     private ImageView cardImage;
-    private ArrayList<ImageView> handCards;
-    private boolean smallSpace;
 
     public PlayCardRequest() {
     }
 
-    public PlayCardRequest(UUID lobbyID, User currentUser, Short handCardID, ImageView cardImage,
-                           ArrayList<ImageView> handCards, boolean smallSpace) {
+    public PlayCardRequest(UUID lobbyID, User currentUser, Short handCardID, ImageView cardImage) {
         this.lobbyID = lobbyID;
         this.currentUser = currentUser;
         this.handCardID = handCardID;
         this.cardImage = cardImage;
-        this.handCards = handCards;
-        this.smallSpace = smallSpace;
     }
 
     public UUID getLobbyID() {
@@ -55,13 +49,5 @@ public class PlayCardRequest {
 
     public ImageView getCardImage() {
         return cardImage;
-    }
-
-    public ArrayList<ImageView> getHandCards() {
-        return handCards;
-    }
-
-    public boolean isSmallSpace() {
-        return smallSpace;
     }
 }

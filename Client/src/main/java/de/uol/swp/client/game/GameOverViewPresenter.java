@@ -180,7 +180,6 @@ public class GameOverViewPresenter extends AbstractPresenter {
     @FXML
     public void onReturnButtonPressed(ActionEvent actionEvent) {
         LOG.debug("Player " + loggedInUser.getUsername() + " wants to return to the MainMenu.");
-        gameManagement.close();
         gameManagement.closeGameOverViewAndLeaveLobby();
     }
 }

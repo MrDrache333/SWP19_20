@@ -317,7 +317,7 @@ public class GameManagement {
     private void initGameOverView(User user, List<String> winners, Map<String, Integer> res) {
         Parent rootPane = initPresenter(new GameOverViewPresenter(this, user, winners, res), GameOverViewPresenter.fxml);
         gameOverScene = new Scene(rootPane, 420, 280);
-        lobbyScene.getStylesheets().add(styleSheet);
+        gameOverScene.getStylesheets().add(styleSheet);
     }
 
     /**
