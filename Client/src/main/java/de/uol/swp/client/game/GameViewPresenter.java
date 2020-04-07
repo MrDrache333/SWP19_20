@@ -10,6 +10,7 @@ import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.common.game.messages.BuyCardMessage;
 import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.game.messages.PlayCardMessage;
+import de.uol.swp.common.game.request.PlayCardRequest;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
@@ -30,6 +31,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -353,8 +355,6 @@ public class GameViewPresenter extends AbstractPresenter {
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
                         PlayCardRequest request = new PlayCardRequest(lobbyID, loggedInUser, HandCardID.get(n), card);
                         eventBus.post(request);
-                        gameService.sendPlayCardRequest(lobbyID, loggedInUser, HandCardID.get(n), card, HandCards, false);
-
                     });
                 });
             }
