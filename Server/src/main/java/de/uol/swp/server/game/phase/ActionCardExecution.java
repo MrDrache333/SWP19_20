@@ -4,7 +4,6 @@ import de.uol.swp.common.game.AbstractPlayground;
 import de.uol.swp.common.game.card.ActionCard;
 import de.uol.swp.common.game.card.Card;
 import de.uol.swp.common.game.card.parser.components.CardAction.CardAction;
-import de.uol.swp.common.game.card.parser.components.CardAction.Value;
 import de.uol.swp.common.game.card.parser.components.CardAction.types.*;
 import de.uol.swp.common.game.messages.CardMovedMessage;
 import de.uol.swp.common.game.messages.ChooseNextActionMessage;
@@ -59,8 +58,8 @@ public class ActionCardExecution {
             return executeChooseCard((ChooseCard) action);
         if (action instanceof ChooseNextAction)
             return executeChooseNextAction((ChooseNextAction) action);
-        if (action instanceof Count)
-            return executeCount((Count) action);
+   /*     if (action instanceof Count)
+            return executeCount((Count) action); */
         if (action instanceof ForEach)
             return executeForEach((ForEach) action);
         if (action instanceof GetCard)
@@ -140,13 +139,12 @@ public class ActionCardExecution {
     /**
      * Zählt ein übergebenes KartenArray und übergibt die Größe.
      *
-     * @param cards das Übergebene KartenArray
      * @return 0 = Übergebenes Array ist leer. | sonst die größe des KartenArrays
      */
 
-    private int executeCount(ArrayList<Card> cards) {
-        if (!cards.isEmpty()) {
-            return cards.size();
+    private int executeCount(Count action) {
+        if (!action.getCards().isEmpty()) {
+            return action.getCards().size();
         }
         return 0;
     }
@@ -154,13 +152,11 @@ public class ActionCardExecution {
     /**
      * Schickt dem Spieler eine Nachricht das er eine bestimmte Anzahl an Karten auswählen kann.
      *
-     * @param theValue Die Anzahl der Karten
-     * @param from     Woher
-     * @param where    Wohin damit
+     * @param action Die Anzahl der Karten
      * @return true(? ? ?)
      */
-    private boolean executeChooseCard(Value theValue, AbstractPlayground.ZoneType from, AbstractPlayground.ZoneType where) {
-        playground.getGameService().sendToSpecificPlayer(player, new SelectCardsFromHandMessage(theValue, from, where));
+    private boolean executeChooseCard(ChooseCard action) {
+        playground.getGameService().sendToSpecificPlayer(player, new SelectCardsFromHandMessage(action.getCount(), action.getCardSource(), action.getCardDestination()));
         return true;
     }
 
@@ -180,54 +176,51 @@ public class ActionCardExecution {
     /**
      * Bewegt Karten von einem Ort zum anderen. ----------WIP----------
      *
-     * @param cardsToMove
-     * @param source      Woher
-     * @param destination Wohin
      * @return true(? ? ?)
      */
-    private boolean executeMoveAction(ArrayList<Card> cardsToMove, AbstractPlayground.ZoneType source, AbstractPlayground.ZoneType destination) {
+    private boolean executeMoveAction(Move action) {
         ArrayList<Short> theIds = new ArrayList<>();
-        if (source.equals(AbstractPlayground.ZoneType.HAND) && destination.equals(AbstractPlayground.ZoneType.DISCARD)) {
-            for (Card card : cardsToMove) {
+        if (action.getCardSource().equals(AbstractPlayground.ZoneType.HAND) && action.getCardDestination().equals(AbstractPlayground.ZoneType.DISCARD)) {
+            for (Card card : action.getCardsToMove()) {
                 if (player.getPlayerDeck().getHand().contains(card)) {
                     player.getPlayerDeck().getHand().remove(card);
                     player.getPlayerDeck().getDiscardPile().add(card);
                     theIds.add(card.getId());
                 }
             }
-        } else if (source.equals(AbstractPlayground.ZoneType.HAND) && destination.equals(AbstractPlayground.ZoneType.TRASH)) {
-            for (Card card : cardsToMove) {
+        } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.HAND) && action.getCardDestination().equals(AbstractPlayground.ZoneType.TRASH)) {
+            for (Card card : action.getCardsToMove()) {
                 if (player.getPlayerDeck().getHand().contains(card)) {
                     player.getPlayerDeck().getHand().remove(card);
                     playground.getTrash().add(card);
                     theIds.add(card.getId());
                 }
             }
-        } else if (source.equals(AbstractPlayground.ZoneType.BUY) && destination.equals(AbstractPlayground.ZoneType.DISCARD)) {
-            for (Card card : cardsToMove) {
+        } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.BUY) && action.getCardDestination().equals(AbstractPlayground.ZoneType.DISCARD)) {
+            for (Card card : action.getCardsToMove()) {
                 // TODO: BuyCard Implementierung von Paula hier einfügen.
                 player.getPlayerDeck().getDiscardPile().add(card);
                 theIds.add(card.getId());
             }
-        } else if (source.equals(AbstractPlayground.ZoneType.DRAW) && destination.equals(AbstractPlayground.ZoneType.TEMP)) {
+        } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.DRAW) && action.getCardDestination().equals(AbstractPlayground.ZoneType.TEMP)) {
             // TODO: Implementierung im Playerdeck, dass der Spieler eine bestimmte Anzahl an Karten nachziehen kann.
-            for (Card card : cardsToMove) {
+            for (Card card : action.getCardsToMove()) {
                 player.getPlayerDeck().getCardsDeck().remove(card);
                 player.getPlayerDeck().getTemp().add(card);
             }
-        } else if (source.equals(AbstractPlayground.ZoneType.DRAW) && destination.equals(AbstractPlayground.ZoneType.DISCARD)) {
-            for (Card card : cardsToMove) {
+        } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.DRAW) && action.getCardDestination().equals(AbstractPlayground.ZoneType.DISCARD)) {
+            for (Card card : action.getCardsToMove()) {
                 player.getPlayerDeck().getCardsDeck().remove(card);
                 player.getPlayerDeck().getDiscardPile().add(card);
             }
-        } else if (source.equals(AbstractPlayground.ZoneType.DISCARD) && destination.equals(AbstractPlayground.ZoneType.DRAW)) {
-            for (Card card : cardsToMove) {
+        } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.DISCARD) && action.getCardDestination().equals(AbstractPlayground.ZoneType.DRAW)) {
+            for (Card card : action.getCardsToMove()) {
                 player.getPlayerDeck().getDiscardPile().remove(card);
                 player.getPlayerDeck().getCardsDeck().add(card);
                 Collections.shuffle(player.getPlayerDeck().getCardsDeck());
             }
-        } else if (source.equals(AbstractPlayground.ZoneType.TEMP) && destination.equals(AbstractPlayground.ZoneType.HAND)) {
-            for (Card card : cardsToMove) {
+        } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.TEMP) && action.getCardDestination().equals(AbstractPlayground.ZoneType.HAND)) {
+            for (Card card : action.getCardsToMove()) {
                 player.getPlayerDeck().getTemp().remove(card);
                 player.getPlayerDeck().getHand().add(card);
                 theIds.add(card.getId());
@@ -235,15 +228,15 @@ public class ActionCardExecution {
             if (true) {
                 // TODO: Checken, ob nextAction gegeben und dann von Hand auf Discard.
             }
-        } else if (source.equals(AbstractPlayground.ZoneType.TEMP) && destination.equals(AbstractPlayground.ZoneType.DISCARD)) {
-            for (Card card : cardsToMove) {
+        } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.TEMP) && action.getCardDestination().equals(AbstractPlayground.ZoneType.DISCARD)) {
+            for (Card card : action.getCardsToMove()) {
                 player.getPlayerDeck().getTemp().remove(card);
                 player.getPlayerDeck().getDiscardPile().add(card);
                 theIds.add(card.getId());
             }
         }
         if (!theIds.isEmpty()) {
-            CardMovedMessage cardMovedMessage = new CardMovedMessage(theIds, source, destination, gameID);
+            CardMovedMessage cardMovedMessage = new CardMovedMessage(theIds, action.getCardSource(), action.getCardDestination(), gameID);
             playground.getGameService().sendToSpecificPlayer(player, cardMovedMessage);
         }
         return true;
