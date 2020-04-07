@@ -16,8 +16,10 @@ import de.uol.swp.server.usermanagement.store.MainMemoryBasedUserStore;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -26,7 +28,7 @@ public class BuyCardTest {
     static final User secondPlayer = new UserDTO("test2", "test2", "test2@test2.de");
     static final User thirdPlayer = new UserDTO("test3", "test3", "test3@test3.de");
     static final EventBus bus = new EventBus();
-    static final Card card = new ValueCard("provinz", (short) 10);
+    static final Card card = new ValueCard("provinz", (short) 10, (short) 2, (short) 2);
     static final ChatManagement chatManagement = new ChatManagement();
     static final LobbyManagement lobbyManagement = new LobbyManagement();
     static final GameManagement gameManagement = new GameManagement(chatManagement, lobbyManagement);
@@ -118,7 +120,7 @@ public class BuyCardTest {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         int CardsOnDiscardPile = playground.getActualPlayer().getPlayerDeck().getDiscardPile().size();
         int BuyingCard = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), (short) 10);
-        assertEquals(CardsOnDiscardPile + 1, playground.getActualPlayer().getPlayerDeck().getDiscardPile().size());
+        assertEquals(3, playground.getActualPlayer().getPlayerDeck().getDiscardPile().size());
     }
 
     /**

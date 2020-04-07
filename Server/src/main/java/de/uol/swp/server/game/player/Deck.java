@@ -2,8 +2,8 @@ package de.uol.swp.server.game.player;
 
 import de.uol.swp.common.game.card.Card;
 import de.uol.swp.common.game.card.MoneyCard;
-import de.uol.swp.common.game.card.parser.CardPack;
 import de.uol.swp.common.game.card.parser.JsonCardParser;
+import de.uol.swp.common.game.card.parser.components.CardPack;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,7 +12,6 @@ import java.util.Collections;
  * Kartendeck eines Spielers
  */
 public class Deck {
-
 
     /**
      * Listen für Hand, Deck, Ablagestapel
@@ -143,24 +142,16 @@ public class Deck {
             if (hand.get(i) instanceof MoneyCard) {
                 money += ((MoneyCard) hand.get(i)).getValue();
                 hand.remove(hand.get(i));
+                discardPile.add(hand.get(i));
                 if (money >= value) {
                     break;
                 }
+
             }
         }
     }
 
-    /**
-     * Hilfsmethode um eine Karte zum Ablagestapel hinzuzufügen
-     *
-     * @param card
-     * @author Paula
-     * @since Sprint6
-     */
-    public void addCardToDiscardPile(Card card) {
-        discardPile.add(card);
 
-    }
 
     public ArrayList<Card> getHand() {
         return hand;

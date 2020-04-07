@@ -28,25 +28,26 @@ public abstract class Card {
     /**
      * Erstellt eine neue Spielkarte
      *
-     * @param cardtype Der Kartentyp
+     * @param cardType Der Kartentyp
      * @param name     Der Kartenname
      * @param id       Die KartenID
      * @author KenoO
      * @since Sprint 5
      */
-    Card(Type cardtype, String name, short id, short costs) {
-        this.cardType = cardtype;
+    public Card(Type cardType, String name, short id, short costs) {
+        this.cardType = cardType;
         this.name = name;
         this.id = id;
         this.costs = costs;
     }
+
 
     /**
      * Gets costs.
      *
      * @return the costs
      * @author KenoO
-     * @since
+     * @since Sprint 5
      */
     public short getCosts() {
         return costs;

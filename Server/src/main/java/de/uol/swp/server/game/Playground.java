@@ -1,10 +1,12 @@
 package de.uol.swp.server.game;
 
 import com.google.inject.Inject;
+import de.uol.swp.common.game.AbstractPlayground;
 import de.uol.swp.common.game.card.ActionCard;
 import de.uol.swp.common.game.card.Card;
 import de.uol.swp.common.game.card.ValueCard;
 import de.uol.swp.common.game.card.parser.JsonCardParser;
+import de.uol.swp.common.game.card.parser.components.CardPack;
 import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.lobby.Lobby;
@@ -395,7 +397,7 @@ public class Playground extends AbstractPlayground {
      *
      * @return Das Kartenfeld, also alle Karten die auf dem Playground initalisiert sind.
      */
-    public Map<Short, Integer> getCardField() {
+    public static Map<Short, Integer> getCardField() {
         return cardField;
     }
 

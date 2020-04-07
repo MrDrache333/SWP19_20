@@ -1,13 +1,16 @@
 package de.uol.swp.server.game.phase;
 
 import de.uol.swp.common.game.card.Card;
+import de.uol.swp.common.game.card.parser.components.CardPack;
+import de.uol.swp.common.game.card.parser.components.CardStack;
+import de.uol.swp.common.game.exception.NotEnoughMoneyException;
 import de.uol.swp.common.game.messages.GameOverMessage;
+import de.uol.swp.server.game.GameService;
 import de.uol.swp.server.game.Playground;
 import de.uol.swp.server.game.player.Deck;
 import de.uol.swp.server.game.player.Player;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import java.util.List;
 
@@ -42,7 +45,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      */
     @Override
     public int executeBuyPhase(Player player, short cardId) {
-        CardPack cardsPackField = new JsonCardParser().loadPack("Basispack");
+        CardPack cardsPackField = playground.getCardsPackField();
         Card currentCard = getCardFromId(cardsPackField.getCards(), cardId);
         // Karten und deren Anzahl werden aus dem Spielfeld geladen.
         int count = Playground.getCardField().get(cardId);
@@ -61,7 +64,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
                 // TODO: Client muss eine Fehlermeldung erstellen, die angezeigt wird, wenn der Spieler nicht genug Geld hat
                 throw new NotEnoughMoneyException("Nicht genug Geld vorhanden");
             }
-            player.getPlayerDeck().addCardToDiscardPile(currentCard);
+            player.getPlayerDeck().getDiscardPile().add(currentCard);
             moneyValuePlayer -= currentCard.getCosts();
             // TODO: Client muss Geldkarten aus Hand abziehen (und in Ablagestapel legen?), wenn Kauf gelungen.
             player.getPlayerDeck().discardMoneyCardsForValue(currentCard.getCosts());
@@ -108,7 +111,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      *
      * @param cardStack
      * @param cardId
-     * @return
+     * @return card Karte, zu der die ID gehört
      * @author Paula
      * @since Sprint6
      */
@@ -124,11 +127,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
                 return card;
             }
         }
-        for (Card card : cardStack.getReactionCards()) {
-            if (card.getId() == cardId) {
-                return card;
-            }
-        }
+
         for (Card card : cardStack.getValueCards()) {
             if (card.getId() == cardId) {
                 return card;
@@ -145,12 +144,12 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      * @since Sprint6
      */
     public boolean checkIfGameIsFinished() {
-        if (playground.getCardField().get((short) 6) == 0) {
+        if (Playground.getCardField().get((short) 6) == 0) {
             return true;
         }
         int counter = 0;
         for (Card card : playground.getCardsPackField().getCards().getActionCards()) {
-            if (playground.getCardField().containsKey(card.getId()) && playground.getCardField().get(card.getId()) == 0) {
+            if (Playground.getCardField().containsKey(card.getId()) && Playground.getCardField().get(card.getId()) == 0) {
                 counter++;
                 if (counter >= 3) {
                     return true;
