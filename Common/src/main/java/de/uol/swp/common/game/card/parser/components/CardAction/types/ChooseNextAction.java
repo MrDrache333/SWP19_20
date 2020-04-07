@@ -46,4 +46,8 @@ public class ChooseNextAction extends SimpleCardAction {
     public CardAction getChoosenAction() {
         return choosenAction;
     }
+
+    public ArrayList<CardAction> getNextActions() {
+        return nextActions;
+    }
 }
