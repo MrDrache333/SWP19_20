@@ -16,18 +16,18 @@ public class ChooseNextActionMessage extends AbstractServerMessage {
 
     private static final long serialVersionUID = 860181339817068498L;
     private UUID gameID;
-    private List<CardAction> acions;
+    private List<CardAction> actions;
 
-    public ChooseNextActionMessage(UUID gameID, List<CardAction> acions) {
+    public ChooseNextActionMessage(UUID gameID, List<CardAction> actions) {
         this.gameID = gameID;
-        this.acions = acions;
+        this.actions = actions;
     }
 
     public UUID getGameID() {
         return gameID;
     }
 
-    public List<CardAction> getAcions() {
-        return acions;
+    public List<CardAction> getActions() {
+        return actions;
     }
 }
