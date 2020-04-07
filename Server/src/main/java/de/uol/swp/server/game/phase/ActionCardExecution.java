@@ -15,7 +15,6 @@ import de.uol.swp.server.game.player.Player;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 
 public class ActionCardExecution {
@@ -128,14 +127,13 @@ public class ActionCardExecution {
      * Sendet eine Message mit der ID der Karte, die angezeigt werden soll und der Zone,
      * in der sie angezeigt werden soll an den aktuellen Spieler.
      *
-     * @param cardID die ID der Karte
-     * @param zone   die Zone im Spielfeld, in der die Karte angezeigt werdem soll
+     * @param showCard
      * @return true
      * @author Julia
      * @since Sprint6
      */
-    private boolean executeShowCard(short cardID, AbstractPlayground.ZoneType zone) {
-        playground.getGameService().sendToSpecificPlayer(player, new ShowCardMessage(cardID, zone, playground.getID()));
+    private boolean executeShowCard(ShowCard showCard) {
+        playground.getGameService().sendToSpecificPlayer(player, new ShowCardMessage(showCard.getCard().getId(), showCard.getCardSource(), playground.getID()));
         return true;
     }
 
@@ -169,13 +167,13 @@ public class ActionCardExecution {
     /**
      * Sendet dem Spieler eine Nachricht mit den Aktionen, aus denen er eine auswählen kann
      *
-     * @param actions Liste aller möglichen nächsten Aktionen
+     * @param chooseNextAction
      * @return true
      * @author Julia
      * @since Sprint6
      */
-    private boolean executeChooseNextAction(List<CardAction> actions) {
-        playground.getGameService().sendToSpecificPlayer(player, new ChooseNextActionMessage(gameID, actions));
+    private boolean executeChooseNextAction(ChooseNextAction chooseNextAction) {
+        playground.getGameService().sendToSpecificPlayer(player, new ChooseNextActionMessage(gameID, chooseNextAction.getNextActions()));
         return true;
     }
 
