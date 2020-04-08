@@ -1,4 +1,4 @@
-package de.uol.swp.server.game.phase;
+package de.uol.swp.common.game.phase;
 
 /**
  * Das interface einer InGame Phase

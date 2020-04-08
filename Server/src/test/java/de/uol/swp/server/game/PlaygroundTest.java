@@ -6,16 +6,17 @@ import com.google.common.eventbus.Subscribe;
 import de.uol.swp.common.game.card.Card;
 import de.uol.swp.common.game.card.parser.components.CardPack;
 import de.uol.swp.common.game.exception.GamePhaseException;
+import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.game.request.GameGiveUpRequest;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.chat.ChatManagement;
-import de.uol.swp.server.game.phase.Phase;
 import de.uol.swp.server.lobby.LobbyManagement;
 import de.uol.swp.server.message.StartGameInternalMessage;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import de.uol.swp.server.usermanagement.UserManagement;
 import de.uol.swp.server.usermanagement.store.MainMemoryBasedUserStore;
+import de.uol.swp.server.usermanagement.store.UserStore;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,15 +33,20 @@ public class PlaygroundTest {
     static final User defaultOwner = new UserDTO("test1", "test1", "test1@test.de");
     static final User secondPlayer = new UserDTO("test2", "test2", "test2@test2.de");
     static final User thirdPlayer = new UserDTO("test3", "test3", "test3@test3.de");
-    static final EventBus bus = new EventBus();
+    static final String lobbyName = "DrawHandMessageLobyTest";
+    static final String lobbyPassword = "";
     static final ChatManagement chatManagement = new ChatManagement();
     static final LobbyManagement lobbyManagement = new LobbyManagement();
     static final GameManagement gameManagement = new GameManagement(chatManagement, lobbyManagement);
-    static final AuthenticationService authenticationService = new AuthenticationService(bus, new UserManagement(new MainMemoryBasedUserStore()));
-    static final GameService gameService = new GameService(bus, gameManagement, authenticationService);
+    static final UserStore userStore = new MainMemoryBasedUserStore();
+    static final EventBus bus = new EventBus();
+    static final UserManagement userManagement = new UserManagement(userStore);
+    static final AuthenticationService authService = new AuthenticationService(bus, userManagement);
+    static final GameService gameService = new GameService(bus, gameManagement, authService);
+    static UUID id;
+    private final CountDownLatch lock = new CountDownLatch(1);
 
     static UUID gameID;
-    private final CountDownLatch lock = new CountDownLatch(1);
     private Object event;
 
     @BeforeAll
