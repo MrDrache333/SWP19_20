@@ -2,6 +2,7 @@ package de.uol.swp.common.game.card.parser;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import de.uol.swp.common.game.card.parser.components.CardPack;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
