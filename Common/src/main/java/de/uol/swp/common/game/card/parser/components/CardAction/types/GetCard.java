@@ -33,11 +33,6 @@ public class GetCard extends ComplexCardAction {
         setCardSource(source);
     }
 
-    @Override
-    public boolean execute() {
-        return false;
-    }
-
     /**
      * Gibt die "geholten" Karten zurück
      *
@@ -51,5 +46,24 @@ public class GetCard extends ComplexCardAction {
 
     public short getCount() {
         return count;
+    }
+
+
+    /**
+     * Sets new Die Anzahl der Karten default=1.
+     *
+     * @param count New value of Die Anzahl der Karten default=1.
+     */
+    public void setCount(short count) {
+        this.count = count;
+    }
+
+    /**
+     * Sets new Die "geholten" Karten aus der angegebenen Quelle.
+     *
+     * @param cards New value of Die "geholten" Karten aus der angegebenen Quelle.
+     */
+    public void setCards(ArrayList<Card> cards) {
+        this.cards = cards;
     }
 }

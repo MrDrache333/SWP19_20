@@ -4,6 +4,7 @@ import de.uol.swp.common.game.AbstractPlayground;
 import de.uol.swp.common.game.card.ActionCard;
 import de.uol.swp.common.game.card.Card;
 import de.uol.swp.common.game.card.parser.components.CardAction.CardAction;
+import de.uol.swp.common.game.card.parser.components.CardAction.ComplexCardAction;
 import de.uol.swp.common.game.card.parser.components.CardAction.types.*;
 import de.uol.swp.common.game.messages.CardMovedMessage;
 import de.uol.swp.common.game.messages.ChooseNextActionMessage;
@@ -17,6 +18,14 @@ import java.util.Collections;
 import java.util.UUID;
 
 public class ActionCardExecution {
+
+    //TODO
+    /*
+
+    Was passiert, wenn das Attribut executeType andere Spieler involviert?
+
+
+     */
 
     private short cardID;
     private Playground playground;
@@ -58,16 +67,10 @@ public class ActionCardExecution {
             return executeChooseCard((ChooseCard) action);
         if (action instanceof ChooseNextAction)
             return executeChooseNextAction((ChooseNextAction) action);
-   /*     if (action instanceof Count)
-            return executeCount((Count) action); */
         if (action instanceof ForEach)
             return executeForEach((ForEach) action);
-        if (action instanceof GetCard)
-            return executeGetCard((GetCard) action);
         if (action instanceof If)
             return executeIf((If) action);
-        if (action instanceof Move)
-            return executeMoveAction((Move) action);
         if (action instanceof ShowCard)
             return executeShowCard((ShowCard) action);
         if (action instanceof UseCard)
@@ -76,6 +79,30 @@ public class ActionCardExecution {
             return executeWhile((While) action);
 
         return false;
+    }
+
+    /**
+     * Führt eine Kartenaktion mit Eingabe von Karten aus und gibt das Ergebnis zurück
+     *
+     * @param action Auszuführende Aktion
+     * @param input  Eingabe an Karten
+     * @return Ergebnis
+     */
+    private ArrayList<Card> executeCardAction(CardAction action, ArrayList<Card> input) {
+        //TODO
+        return null;
+    }
+
+    /**
+     * Filtert ein Array an Karten anhand der Eigenschaften in der übergebenen Aktion
+     *
+     * @param action Die Kartenaktion mit den filtereigenschaften
+     * @param cards  Die zu filternden Karten
+     * @return Das gefilterte Kartenarray
+     */
+    private ArrayList<Card> filterCards(ComplexCardAction action, ArrayList<Card> cards) {
+        //TODO
+        return cards;
     }
 
     private boolean executeWhile(While action) {
@@ -93,9 +120,38 @@ public class ActionCardExecution {
         return false;
     }
 
-    private boolean executeGetCard(GetCard action) {
-        //TODO
-        return false;
+    private ArrayList<Card> executeGetCard(GetCard action) {
+        if (action.getCardSource() != AbstractPlayground.ZoneType.NONE) {
+            switch (action.getCardSource()) {
+
+                case TRASH:
+                    action.setCards(playground.getTrash());
+                    break;
+                case HAND:
+                    action.setCards(player.getPlayerDeck().getHand());
+                    break;
+                case BUY:
+                    playground.getCardsPackField().getCards().getAllCards().forEach(card -> {
+                        if (playground.getCardField().containsKey(card.getId())) {
+                            if (playground.getCardField().get(card.getId()) > 0) {
+                                action.getCards().add(card);
+                            }
+                        }
+                    });
+                    break;
+                case DRAW:
+                    action.setCards(player.getPlayerDeck().getCardsDeck());
+                    break;
+                case DISCARD:
+                    action.setCards(player.getPlayerDeck().getDiscardPile());
+                    break;
+                case TEMP:
+                    action.setCards(player.getPlayerDeck().getTemp());
+                    break;
+            }
+            action.setCards(filterCards(action, action.getCards()));
+        }
+        return action.getCards();
     }
 
     private boolean executeForEach(ForEach action) {
@@ -251,7 +307,6 @@ public class ActionCardExecution {
                 theCard = (ActionCard) player.getPlayerDeck().getHand().get(i);
                 break;
             }
-
         }
     }
 }

@@ -1,10 +1,7 @@
 package de.uol.swp.common.game.card.parser.components;
 
 import com.google.gson.annotations.SerializedName;
-import de.uol.swp.common.game.card.ActionCard;
-import de.uol.swp.common.game.card.CurseCard;
-import de.uol.swp.common.game.card.MoneyCard;
-import de.uol.swp.common.game.card.ValueCard;
+import de.uol.swp.common.game.card.*;
 
 import java.util.ArrayList;
 
@@ -84,5 +81,14 @@ public class CardStack {
      */
     public ArrayList<CurseCard> getCurseCards() {
         return curseCards;
+    }
+
+    public ArrayList<Card> getAllCards() {
+        ArrayList<Card> cards = new ArrayList<>();
+        cards.addAll(moneyCards);
+        cards.addAll(valueCards);
+        cards.addAll(actionCards);
+        cards.addAll(curseCards);
+        return cards;
     }
 }

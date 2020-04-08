@@ -24,17 +24,19 @@ public class AddCapablePlayerActivity extends SimpleCardAction {
         this.activity = activity;
     }
 
-    @Override
-    public boolean execute() {
-        //TODO
-        return false;
-    }
-
     public short getCount() {
         return count;
     }
 
     public AbstractPlayground.PlayerActivityValue getActivity() {
         return activity;
+    }
+
+    public void setCount(short count) {
+        this.count = count;
+    }
+
+    public void setActivity(AbstractPlayground.PlayerActivityValue activity) {
+        this.activity = activity;
     }
 }

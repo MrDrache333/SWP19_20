@@ -20,12 +20,16 @@ public class UseCard extends SimpleCardAction {
         this.count = count;
     }
 
-    @Override
-    public boolean execute() {
-        return false;
-    }
-
     public short getCount() {
         return count;
+    }
+
+    /**
+     * Sets new count.
+     *
+     * @param count New value of count.
+     */
+    public void setCount(short count) {
+        this.count = count;
     }
 }

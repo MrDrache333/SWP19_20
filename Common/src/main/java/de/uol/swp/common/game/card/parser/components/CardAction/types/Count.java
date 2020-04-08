@@ -26,12 +26,17 @@ public class Count extends ComplexCardAction {
         this.cards = cards;
     }
 
-    @Override
-    public boolean execute() {
-        return false;
-    }
-
     public ArrayList<Card> getCards() {
         return cards;
+    }
+
+
+    /**
+     * Sets new Die Karten, auf die die Aktionen angewendet werden sollen.
+     *
+     * @param cards New value of Die Karten, auf die die Aktionen angewendet werden sollen.
+     */
+    public void setCards(ArrayList<Card> cards) {
+        this.cards = cards;
     }
 }
