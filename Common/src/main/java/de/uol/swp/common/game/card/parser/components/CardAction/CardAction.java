@@ -3,7 +3,7 @@ package de.uol.swp.common.game.card.parser.components.CardAction;
 /**
  * Abstrakte Kartenaktion.
  */
-public abstract class CardAction implements Action {
+public abstract class CardAction {
 
     public CardAction() {
 

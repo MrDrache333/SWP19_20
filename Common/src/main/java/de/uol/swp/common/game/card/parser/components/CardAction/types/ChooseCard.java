@@ -43,12 +43,6 @@ public class ChooseCard extends ComplexCardAction {
         this.count = new Value(countMin, countMax);
     }
 
-
-    @Override
-    public boolean execute() {
-        return false;
-    }
-
     /**
      * Gibt die ausgewählten Karten zurück
      *
@@ -64,4 +58,11 @@ public class ChooseCard extends ComplexCardAction {
         return count;
     }
 
+    public void setCount(Value count) {
+        this.count = count;
+    }
+
+    public void setChoosenCards(ArrayList<Card> choosenCards) {
+        this.choosenCards = choosenCards;
+    }
 }

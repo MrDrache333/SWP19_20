@@ -37,12 +37,6 @@ public class If extends SimpleCardAction {
         this.conditionedAction = conditionedAction;
     }
 
-    @Override
-    public boolean execute() {
-        //TODO
-        return false;
-    }
-
     public Condition getCondition() {
         return condition;
     }
@@ -53,5 +47,33 @@ public class If extends SimpleCardAction {
 
     public CardAction getConditionedAction() {
         return conditionedAction;
+    }
+
+
+    /**
+     * Sets new Die Aktion, deren ergebnis ausgewertet wird.
+     *
+     * @param condition New value of Die Aktion, deren ergebnis ausgewertet wird.
+     */
+    public void setCondition(Condition condition) {
+        this.condition = condition;
+    }
+
+    /**
+     * Sets new Die Aktion, deren Ausführung von dem Ergebnis der vorhergegangen Aktion abhängt.
+     *
+     * @param conditionedAction New value of Die Aktion, deren Ausführung von dem Ergebnis der vorhergegangen Aktion abhängt.
+     */
+    public void setConditionedAction(CardAction conditionedAction) {
+        this.conditionedAction = conditionedAction;
+    }
+
+    /**
+     * Sets new Gewünschtes Ergebnis der vorherigen Aktion.
+     *
+     * @param expectedResult New value of Gewünschtes Ergebnis der vorherigen Aktion.
+     */
+    public void setExpectedResult(boolean expectedResult) {
+        this.expectedResult = expectedResult;
     }
 }
