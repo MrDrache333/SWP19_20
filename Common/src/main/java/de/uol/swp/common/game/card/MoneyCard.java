@@ -7,7 +7,6 @@ public class MoneyCard extends Card {
 
     private short value;
 
-
     /**
      * Erstellt eine neue Geldkarte
      *
@@ -16,8 +15,9 @@ public class MoneyCard extends Card {
      * @author KenoO
      * @since Sprint 5
      */
-    public MoneyCard(String name, short id) {
-        super(Type.MoneyCard, name, id);
+    public MoneyCard(String name, short id, short costs, short value) {
+        super(Type.MoneyCard, name, id, costs);
+        this.value = value;
     }
 
     /**

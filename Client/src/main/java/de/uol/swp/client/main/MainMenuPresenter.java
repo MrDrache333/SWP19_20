@@ -457,6 +457,30 @@ public class MainMenuPresenter extends AbstractPresenter {
     }
 
     /**
+     * Aktualisiert den Status einer Lobby in der Tabelle, wenn das Spiel in ihr zu Ende ist
+     *
+     * @param message die UpdatedInGameMessage
+     * @author Julia
+     * @since Sprint6
+     */
+    @Subscribe
+    public void onGameEnd(UpdatedInGameMessage message) {
+        Platform.runLater(() -> {
+            Lobby updatedLobby = null;
+            for (Lobby lobby : lobbies) {
+                if (lobby.getLobbyID().equals(message.getLobbyID())) {
+                    updatedLobby = lobby;
+                    break;
+                }
+            }
+            lobbies.remove(updatedLobby);
+            updatedLobby.setInGame(false);
+            lobbies.add(0, updatedLobby);
+            lobbiesView.refresh();
+        });
+    }
+
+    /**
      * Aktualisiert den loggedInUser und die Lobbytabelle sowie die Userliste, falls sich der Username geändert hat
      *
      * @param message die UpdatedUserMessage

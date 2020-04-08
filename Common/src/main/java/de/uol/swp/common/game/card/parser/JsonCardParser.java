@@ -2,7 +2,15 @@ package de.uol.swp.common.game.card.parser;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import de.uol.swp.common.game.card.ActionCard;
+import de.uol.swp.common.game.card.CurseCard;
+import de.uol.swp.common.game.card.MoneyCard;
+import de.uol.swp.common.game.card.ValueCard;
 import de.uol.swp.common.game.card.parser.components.CardPack;
+import de.uol.swp.common.game.card.parser.components.deserializer.ActionCardDeSerializer;
+import de.uol.swp.common.game.card.parser.components.deserializer.CurseCardDeSerializer;
+import de.uol.swp.common.game.card.parser.components.deserializer.MoneyCardDeSerializer;
+import de.uol.swp.common.game.card.parser.components.deserializer.ValueCardDeSerializer;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -13,16 +21,6 @@ import java.io.FileReader;
 public class JsonCardParser {
 
     /**
-     * The entry point of application.
-     *
-     * @param args the input arguments
-     */
-    public static void main(String[] args) {
-        CardPack pack = new JsonCardParser().loadPack("Basispack");
-        System.out.println(pack.toString());
-    }
-
-    /**
      * Methode, die versucht ein angegebenes Kartenpaket zu laden.
      *
      * @param packname Das zu ladene Kartenpack
@@ -31,7 +29,12 @@ public class JsonCardParser {
      * @since Sprint 5
      */
     public CardPack loadPack(String packname) {
-        GsonBuilder gsonobj = new GsonBuilder();
+        GsonBuilder gsonobj = new GsonBuilder().
+                registerTypeAdapter(ActionCard.class, new ActionCardDeSerializer()).
+                registerTypeAdapter(ValueCard.class, new ValueCardDeSerializer()).
+                registerTypeAdapter(MoneyCard.class, new MoneyCardDeSerializer()).
+                registerTypeAdapter(CurseCard.class, new CurseCardDeSerializer());
+
         Gson gsonRealObj = gsonobj.create();
         CardPack pack;
         try {
