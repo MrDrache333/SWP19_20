@@ -57,7 +57,7 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     public static final String fxml = "/fxml/GameView.fxml";
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
-    private UUID lobbyID;
+    private final UUID lobbyID;
     private User loggedInUser;
 
     @FXML
@@ -71,12 +71,12 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     private StackPane deckPane;
 
-    private HandcardsLayoutContainer handcards;
+    private final HandcardsLayoutContainer handcards;
 
     private ObservableList<String> users;
-    private ChatViewPresenter chatViewPresenter;
-    private Injector injector;
-    private GameManagement gameManagement;
+    private final ChatViewPresenter chatViewPresenter;
+    private final Injector injector;
+    private final GameManagement gameManagement;
 
     /**
      * Instantiiert einen neuen GameView Presenter.
@@ -364,10 +364,44 @@ public class GameViewPresenter extends AbstractPresenter {
                     handcards.getChildren().add(card);
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
                         PlayCardRequest request = new PlayCardRequest(lobbyID, loggedInUser, HandCardID.get(n), card);
-                        eventBus.post(request);
+                        playChoosenCard(pfad, request);
                     });
                 });
             }
+        });
+    }
+
+    private void playChoosenCard(String pfad, PlayCardRequest request) {
+
+        ImageView bigCardImage = new ImageView(new Image(pfad));
+        bigCardImage.setFitHeight(225.0);
+        bigCardImage.setFitWidth(150.0);
+        bigCardImage.toFront();
+        bigCardImage.setLayoutX(425.0);
+        bigCardImage.setLayoutY(155.0);
+        gameView.getChildren().add(bigCardImage);
+        Button play = new Button("auspielen");
+        Button back = new Button("zurück");
+        play.setLayoutX(432.0);
+        play.setLayoutY(385.0);
+        back.setLayoutX(516.0);
+        back.setLayoutY(385.0);
+        back.setMinWidth(52.0);
+        gameView.getChildren().add(play);
+        gameView.getChildren().add(back);
+
+        play.setOnAction(event -> {
+            gameView.getChildren().remove(play);
+            gameView.getChildren().remove(back);
+            gameView.getChildren().remove(bigCardImage);
+            eventBus.post(request);
+
+        });
+        // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt
+        back.setOnAction(event -> {
+            gameView.getChildren().remove(play);
+            gameView.getChildren().remove(back);
+            gameView.getChildren().remove(bigCardImage);
         });
     }
 
