@@ -5,10 +5,11 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import de.uol.swp.common.game.exception.GameManagementException;
 import de.uol.swp.common.game.exception.GamePhaseException;
+import de.uol.swp.common.game.exception.NotEnoughMoneyException;
 import de.uol.swp.common.game.messages.BuyCardMessage;
 import de.uol.swp.common.game.messages.GameExceptionMessage;
-import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.game.messages.UserGaveUpMessage;
+import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.game.request.GameGiveUpRequest;
 import de.uol.swp.common.game.request.SelectCardRequest;
 import de.uol.swp.common.game.request.SkipPhaseRequest;
@@ -204,29 +205,19 @@ public class GameService extends AbstractService {
         Optional<Game> game = gameManagement.getGame(request.getLobbyID());
         if (game.isPresent()) {
             Playground playground = game.get().getPlayground();
-            int count = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), request.getCardID());
-            buyCardMessage(request.getLobbyID(), request.getCurrentUser(), request.getCardID(), true, count);
+            try {
+                int count = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), request.getCardID());
+                BuyCardMessage buyCard = new BuyCardMessage(request.getLobbyID(), request.getCurrentUser(), request.getCardID(), true, count);
+                sendToSpecificPlayer(playground.getActualPlayer(), buyCard);
+            } catch (NotEnoughMoneyException notEnoughMoney) {
+                sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(request.getLobbyID(), notEnoughMoney.getMessage()));
+
+            }
         } else {
             LOG.error("Es existiert kein Spiel mit der ID " + request.getCardID());
         }
     }
-
-    /**
-     * Erstellt eine buyCardMessage und postet diese auf dem Eventbus
-     *
-     * @param lobbyID die LobbyID
-     * @param currentUser der aktuelle Spieler
-     * @param cardID die Karte, die gekauft werden soll
-     * @param buyCard gibt an, ob Karte noch gekauft werden kann
-     * @param counterCard Anzahl der Karten (die die selbe ID haben) die man noch kaufen kann
-     * @author Paula
-     * @since Sprint6
-     */
-    public void buyCardMessage(UUID lobbyID, User currentUser, Short cardID, boolean buyCard, int counterCard) {
-        BuyCardMessage buyCardMessage = new BuyCardMessage(lobbyID, currentUser, cardID, buyCard, counterCard);
-        post(buyCardMessage);
-
-    }
-
-
 }
+
+
+

@@ -70,7 +70,6 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
             player.getPlayerDeck().discardMoneyCardsForValue(currentCard.getCosts());
             // TODO: Client: Stückzahl der Karten anpassen bzw.: wenn Karte nicht vorhanden, keine Bild der Karte
             Playground.getCardField().put(cardId, --count);
-            count = -1;
         }
         return count;
     }
