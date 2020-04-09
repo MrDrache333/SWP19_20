@@ -1,8 +1,7 @@
 package de.uol.swp.server.game.phase;
 
 import de.uol.swp.common.game.AbstractPlayground;
-import de.uol.swp.common.game.card.ActionCard;
-import de.uol.swp.common.game.card.Card;
+import de.uol.swp.common.game.card.*;
 import de.uol.swp.common.game.card.parser.components.CardAction.CardAction;
 import de.uol.swp.common.game.card.parser.components.CardAction.ComplexCardAction;
 import de.uol.swp.common.game.card.parser.components.CardAction.types.*;
@@ -15,6 +14,7 @@ import de.uol.swp.server.game.player.Player;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 public class ActionCardExecution {
@@ -96,12 +96,52 @@ public class ActionCardExecution {
     /**
      * Filtert ein Array an Karten anhand der Eigenschaften in der übergebenen Aktion
      *
-     * @param action Die Kartenaktion mit den filtereigenschaften
+     * @param action Die Kartenaktion mit den Filtereigenschaften
      * @param cards  Die zu filternden Karten
      * @return Das gefilterte Kartenarray
+     * @author Julia
+     * @since Sprint6
      */
     private ArrayList<Card> filterCards(ComplexCardAction action, ArrayList<Card> cards) {
-        //TODO
+        Card.Type allowedType = action.getAllowedCardType();
+        if (allowedType == Card.Type.ActionCard) {
+            cards.removeIf(c -> c.getCardType() != Card.Type.ActionCard);
+        } else if (allowedType == Card.Type.ReactionCard) {
+            cards.removeIf(c -> c.getCardType() != Card.Type.ReactionCard);
+        } else if (allowedType == Card.Type.MoneyCard) {
+            cards.removeIf(c -> c.getCardType() != Card.Type.MoneyCard);
+        } else if (allowedType == Card.Type.ValueCard) {
+            cards.removeIf(c -> c.getCardType() != Card.Type.ValueCard);
+        } else if (allowedType == Card.Type.Cursecard) {
+            cards.removeIf(c -> c.getCardType() != Card.Type.Cursecard);
+        }
+
+        if (action.getHasCost().isSet()) {
+            cards.removeIf(c -> c.getCosts() < action.getHasCost().getMin() || c.getCosts() > action.getHasCost().getMax());
+        }
+
+        if (action.getHasWorth().isSet()) {
+            cards.removeIf(c -> c.getCardType() == Card.Type.ActionCard || c.getCardType() == Card.Type.ReactionCard);
+            List<Card> tmp = new ArrayList<>();
+            cards.forEach(card -> {
+                if (card.getCardType() == Card.Type.ValueCard) {
+                    if (((ValueCard) card).getValue() < action.getHasWorth().getMin() || ((ValueCard) card).getValue() > action.getHasWorth().getMax()) {
+                        tmp.add(card);
+                    }
+                } else if (card.getCardType() == Card.Type.MoneyCard) {
+                    if (((MoneyCard) card).getValue() < action.getHasWorth().getMin() || ((MoneyCard) card).getValue() > action.getHasWorth().getMax()) {
+                        tmp.add(card);
+                    }
+                } else {
+                    if (((CurseCard) card).getValue() < action.getHasWorth().getMin() || ((CurseCard) card).getValue() > action.getHasWorth().getMax()) {
+                        tmp.add(card);
+                    }
+                }
+            });
+
+            cards.removeAll(tmp);
+        }
+
         return cards;
     }
 
@@ -188,7 +228,7 @@ public class ActionCardExecution {
      * @since Sprint6
      */
     private boolean executeShowCard(ShowCard showCard) {
-        playground.getGameService().sendToSpecificPlayer(player, new ShowCardMessage(showCard.getCard().getId(), showCard.getCardSource(), playground.getID()));
+        playground.getGameService().sendToSpecificPlayer(player, new ShowCardMessage(showCard.getCard().getId(), showCard.getCardSource(), gameID));
         return true;
     }
 
