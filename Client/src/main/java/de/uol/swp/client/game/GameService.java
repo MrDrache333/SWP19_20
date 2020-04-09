@@ -4,6 +4,8 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.game.request.GameGiveUpRequest;
+import de.uol.swp.common.game.request.SkipPhaseRequest;
+import de.uol.swp.common.user.User;
 import de.uol.swp.common.game.request.PlayCardRequest;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
@@ -41,6 +43,19 @@ public class GameService {
     public void giveUp(UUID lobbyID, UserDTO theUserWhoGivedUp) {
         GameGiveUpRequest request = new GameGiveUpRequest(theUserWhoGivedUp, lobbyID);
         bus.post(request);
+    }
+
+    /**
+     * Erstellt skipPhaseRequest und postet diese auf den EventBus.
+     *
+     * @param gameID die LobbyID zum Lobbynamen
+     * @param user   der User der seine Phase skippen möchte
+     * @author Devin
+     * @since Sprint5
+     */
+    public void skipPhase(User user, UUID gameID) {
+        SkipPhaseRequest req = new SkipPhaseRequest(user, gameID);
+        bus.post(req);
     }
 
 

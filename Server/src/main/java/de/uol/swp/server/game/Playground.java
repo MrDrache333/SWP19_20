@@ -9,6 +9,7 @@ import de.uol.swp.common.game.card.parser.JsonCardParser;
 import de.uol.swp.common.game.card.parser.components.CardPack;
 import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.*;
+import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
@@ -77,7 +78,6 @@ public class Playground extends AbstractPlayground {
      * Methode initalisiert das Kartenfeld mit der richtigen Anzahl an Karten auf dem Feld.
      */
     private void initializeCardField() {
-        CardPack cardsPackField = new JsonCardParser().loadPack("Basispack");
         for (int i = 0; i < cardsPackField.getCards().getValueCards().size(); i++) {
             Card card = cardsPackField.getCards().getValueCards().get(i);
             if (lobbySizeOnStart < 3) {
@@ -345,7 +345,14 @@ public class Playground extends AbstractPlayground {
         return nextPlayer;
     }
 
-
+    /**
+     * Getter und Setter um an die aktuelle Phase zu kommen
+     *
+     * @return aktuelle Phase
+     * @author Paula
+     * @version 1
+     * @since Sprint5
+     */
     public Phase.Type getActualPhase() {
         return actualPhase;
     }

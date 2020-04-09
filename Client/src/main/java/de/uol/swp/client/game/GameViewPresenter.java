@@ -104,6 +104,11 @@ public class GameViewPresenter extends AbstractPresenter {
         initializeUserList();
     }
 
+    /*
+        showAlert Methode, um Alert Box zu erstellen
+         */
+
+
     /**
      * Show Alert für den Aufgeben Button
      *
@@ -327,6 +332,16 @@ public class GameViewPresenter extends AbstractPresenter {
         });
     }
 
+    /**
+     * Skips die aktuelle Phase des Spielers zur nächsten.
+     *
+     * @author Devin S.
+     * @since Sprint6
+     */
+    @FXML
+    public void onSkipPhaseButtonPressed(ActionEvent actionEvent) {
+            gameManagement.getGameService().skipPhase(loggedInUser, lobbyID);
+    }
 
     /**
      * Zeigt die Karten auf der Hand in der GameView an
@@ -346,6 +361,8 @@ public class GameViewPresenter extends AbstractPresenter {
                     Image picture = new Image(pfad);
                     ImageView card = new ImageView(picture);
                     card.setFitHeight(107);
+                    card.setLayoutY(603);
+                    card.setLayoutX(171);
                     card.setPreserveRatio(true);
                     card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
                     deckPane.getChildren().add(card);
