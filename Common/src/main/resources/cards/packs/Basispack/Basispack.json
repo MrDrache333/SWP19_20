@@ -237,7 +237,7 @@
                         },
                         "cardSource": "BUY",
                         "allowedCardType": "MONEYCARD",
-                        "hasMoreWorthThenInput": {
+                        "hasMoreCostThanInput": {
                           "min": 0,
                           "max": 3
                         },
@@ -290,7 +290,7 @@
                           "min": 1
                         },
                         "cardSource": "BUY",
-                        "hasMoreWorthThenInput": {
+                        "hasMoreCostThanInput": {
                           "min": 0,
                           "max": 2
                         },
@@ -311,7 +311,7 @@
         "actions": [
           {
             "ChooseCard": {
-              "hasWorth": {
+              "hasCost": {
                 "min": 0,
                 "max": 4
               },

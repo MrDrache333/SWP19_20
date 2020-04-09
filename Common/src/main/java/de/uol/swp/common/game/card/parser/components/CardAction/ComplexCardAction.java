@@ -21,10 +21,15 @@ public abstract class ComplexCardAction extends CardAction {
      */
     private Value hasWorth = new Value((short) 0);
     /**
+     * Gibt an, wie hoch der Preis der durch die Aktion aufgenommene/ abgelegte Karte mindestens/ höchstens sein muss/darf
+     * im Vergleih zur Karte, die als Eingabe in diese Aktion übergeben wurde
+     */
+    private Value hasMoreCostThanInput = new Value((short) 0);
+    /**
      * Gibt an, wie hoch der Wert der durch die Aktion aufgenommene/ abgelegte Karte mindestens/ höchstens sein muss/darf
      * im Vergleih zur Karte, die als Eingabe in diese Aktion übergeben wurde
      */
-    private Value hasMoreWorthThenInput = new Value((short) 0);
+    private Value hasMoreWorthThanInput = new Value((short) 0);
     /**
      * Gibt an, wie hoch der Preis der durch die Aktion aufgenommene/ abgelegte Karte mindestens/ höchstens sein muss/darf
      */
@@ -316,25 +321,47 @@ public abstract class ComplexCardAction extends CardAction {
     }
 
     /**
-     * Gets has more worth then input.
+     * Gets has more cost than input.
      *
-     * @return the has more worth then input
-     * @author KenoO
+     * @return the has more cost than input
+     * @author Julia
      * @since Sprint 6
      */
-    public Value getHasMoreWorthThenInput() {
-        return hasMoreWorthThenInput;
+    public Value getHasMoreCostThanInput() {
+        return hasMoreCostThanInput;
     }
 
     /**
-     * Sets has more worth then input.
+     * Sets has more cost than input.
      *
-     * @param hasMoreWorthThenInput the has more worth then input
+     * @param hasMoreCostThanInput the has more cost than input
+     * @author Julia
+     * @since Sprint 6
+     */
+    public void setHasMoreCostThanInput(Value hasMoreCostThanInput) {
+        this.hasMoreCostThanInput = hasMoreCostThanInput;
+    }
+
+    /**
+     * Gets has more worth than input.
+     *
+     * @return the has more worth than input
      * @author KenoO
      * @since Sprint 6
      */
-    public void setHasMoreWorthThenInput(Value hasMoreWorthThenInput) {
-        this.hasMoreWorthThenInput = hasMoreWorthThenInput;
+    public Value getHasMoreWorthThanInput() {
+        return hasMoreWorthThanInput;
+    }
+
+    /**
+     * Sets has more worth than input.
+     *
+     * @param hasMoreWorthThanInput the has more worth than input
+     * @author KenoO
+     * @since Sprint 6
+     */
+    public void setHasMoreWorthThanInput(Value hasMoreWorthThanInput) {
+        this.hasMoreWorthThanInput = hasMoreWorthThanInput;
     }
 
     /**
