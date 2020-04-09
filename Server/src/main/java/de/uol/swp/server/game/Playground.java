@@ -15,7 +15,6 @@ import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.game.phase.CompositePhase;
-import de.uol.swp.server.game.phase.Phase;
 import de.uol.swp.server.game.player.Deck;
 import de.uol.swp.server.game.player.Player;
 import org.apache.logging.log4j.LogManager;
