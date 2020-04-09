@@ -106,7 +106,7 @@ public class BuyCardTest {
     void testIfCardOnPlayGroundIsActualAfterBuyingACard() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         int cardsOnPlaygoundAfterBuying = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), (short) 10);
-        assertTrue(Playground.getCardField().get(card.getId()).equals(9));
+        assertTrue(playground.getCardField().get(card.getId()).equals(9));
     }
 
     /**

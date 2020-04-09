@@ -48,7 +48,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         CardPack cardsPackField = playground.getCardsPackField();
         Card currentCard = getCardFromId(cardsPackField.getCards(), cardId);
         // Karten und deren Anzahl werden aus dem Spielfeld geladen.
-        int count = Playground.getCardField().get(cardId);
+        int count = playground.getCardField().get(cardId);
         if (count > 0) {
             // Falls die ID der Karte nicht vorhanden ist, wird eine Exception geworfen
             if (currentCard == null) {
@@ -69,7 +69,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
             // TODO: Client muss Geldkarten aus Hand abziehen (und in Ablagestapel legen?), wenn Kauf gelungen.
             player.getPlayerDeck().discardMoneyCardsForValue(currentCard.getCosts());
             // TODO: Client: Stückzahl der Karten anpassen bzw.: wenn Karte nicht vorhanden, keine Bild der Karte
-            Playground.getCardField().put(cardId, --count);
+            playground.getCardField().put(cardId, --count);
         }
         return count;
     }
@@ -143,12 +143,12 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      * @since Sprint6
      */
     public boolean checkIfGameIsFinished() {
-        if (Playground.getCardField().get((short) 6) == 0) {
+        if (playground.getCardField().get((short) 6) == 0) {
             return true;
         }
         int counter = 0;
         for (Card card : playground.getCardsPackField().getCards().getActionCards()) {
-            if (Playground.getCardField().containsKey(card.getId()) && Playground.getCardField().get(card.getId()) == 0) {
+            if (playground.getCardField().containsKey(card.getId()) && playground.getCardField().get(card.getId()) == 0) {
                 counter++;
                 if (counter >= 3) {
                     return true;
