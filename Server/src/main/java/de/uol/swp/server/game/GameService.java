@@ -185,7 +185,7 @@ public class GameService extends AbstractService {
                     // Karte wird an die ActionPhase zum Handling übergeben. TODO: Weitere Implementierung in der ActionPhase.
                     playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), request.getMessage().getCardID());
                 } catch (GamePhaseException e) {
-                    sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(request.getMessage().getGameID(), e.getMessage()));
+                    sendToAllPlayers(playground.getID(), new GameExceptionMessage(request.getMessage().getGameID(), e.getMessage()));
                 }
             }
         } else {
