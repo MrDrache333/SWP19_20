@@ -11,7 +11,6 @@ import de.uol.swp.common.game.messages.BuyCardMessage;
 import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.game.messages.PlayCardMessage;
 import de.uol.swp.common.game.request.BuyCardRequest;
-import de.uol.swp.common.game.request.PlayCardRequest;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
@@ -363,15 +362,14 @@ public class GameViewPresenter extends AbstractPresenter {
                     deckPane.getChildren().remove(card);
                     handcards.getChildren().add(card);
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-                        PlayCardRequest request = new PlayCardRequest(lobbyID, loggedInUser, HandCardID.get(n), card);
-                        playChoosenCard(pfad, request);
+                        playChoosenCard(lobbyID, loggedInUser, pfad, HandCardID.get(n), card);
                     });
                 });
             }
         });
     }
 
-    private void playChoosenCard(String pfad, PlayCardRequest request) {
+    private void playChoosenCard(UUID lobbyID, User loggedInUser, String pfad, Short id, ImageView card) {
 
         ImageView bigCardImage = new ImageView(new Image(pfad));
         bigCardImage.setFitHeight(225.0);
@@ -394,7 +392,7 @@ public class GameViewPresenter extends AbstractPresenter {
             gameView.getChildren().remove(play);
             gameView.getChildren().remove(back);
             gameView.getChildren().remove(bigCardImage);
-            eventBus.post(request);
+            gameManagement.getGameService().playCard(lobbyID, loggedInUser, id, card);
 
         });
         // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt

@@ -8,6 +8,7 @@ import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.GameExceptionMessage;
 import de.uol.swp.common.game.messages.UserGaveUpMessage;
 import de.uol.swp.common.game.request.GameGiveUpRequest;
+import de.uol.swp.common.game.request.PlayCardRequest;
 import de.uol.swp.common.game.request.SelectCardRequest;
 import de.uol.swp.common.game.request.SkipPhaseRequest;
 import de.uol.swp.common.lobby.request.LobbyLeaveUserRequest;
@@ -190,4 +191,11 @@ public class GameService extends AbstractService {
             LOG.error("Irgendwas ist bei der onSelectCardRequest im GameService falsch gelaufen..Folgende ID: " + request.getMessage().getGameID());
         }
     }
+
+
+    @Subscribe
+    public void onPlayCardRequest(PlayCardRequest request) {
+        System.out.println("hi");
+    }
+
 }

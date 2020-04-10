@@ -3,9 +3,11 @@ package de.uol.swp.client.game;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import de.uol.swp.common.game.request.GameGiveUpRequest;
+import de.uol.swp.common.game.request.PlayCardRequest;
 import de.uol.swp.common.game.request.SkipPhaseRequest;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
+import javafx.scene.image.ImageView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -53,4 +55,10 @@ public class GameService {
         SkipPhaseRequest req = new SkipPhaseRequest(user, gameID);
         bus.post(req);
     }
+
+    public void playCard(UUID lobbyID, User loggedInUser, Short id, ImageView card) {
+        PlayCardRequest req = new PlayCardRequest(lobbyID, loggedInUser, id, card);
+        bus.post(req);
+    }
+
 }
