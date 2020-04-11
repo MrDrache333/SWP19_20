@@ -392,7 +392,7 @@ public class GameViewPresenter extends AbstractPresenter {
             gameView.getChildren().remove(play);
             gameView.getChildren().remove(back);
             gameView.getChildren().remove(bigCardImage);
-            gameManagement.getGameService().playCard(lobbyID, loggedInUser, id, card);
+            gameManagement.getGameService().playCard(lobbyID, loggedInUser, id);
 
         });
         // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt

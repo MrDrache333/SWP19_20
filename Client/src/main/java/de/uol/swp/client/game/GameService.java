@@ -7,7 +7,6 @@ import de.uol.swp.common.game.request.PlayCardRequest;
 import de.uol.swp.common.game.request.SkipPhaseRequest;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
-import javafx.scene.image.ImageView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -56,8 +55,8 @@ public class GameService {
         bus.post(req);
     }
 
-    public void playCard(UUID lobbyID, User loggedInUser, Short id, ImageView card) {
-        PlayCardRequest req = new PlayCardRequest(lobbyID, loggedInUser, id, card);
+    public void playCard(UUID lobbyID, User loggedInUser, Short id) {
+        PlayCardRequest req = new PlayCardRequest(lobbyID, loggedInUser, id);
         bus.post(req);
     }
 
