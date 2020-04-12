@@ -2,7 +2,6 @@ package de.uol.swp.server.game.phase;
 
 import de.uol.swp.common.game.card.Card;
 import de.uol.swp.common.game.messages.GameOverMessage;
-import de.uol.swp.common.user.User;
 import de.uol.swp.server.game.Playground;
 import de.uol.swp.server.game.player.Deck;
 import de.uol.swp.server.game.player.Player;
@@ -50,7 +49,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
     public void executeClearPhase(Player player) {
         Deck deck = player.getPlayerDeck();
         deck.getDiscardPile().addAll(deck.getHand());
-        playground.sendLastCardOfDiscardPile(playground.getID(), deck.getDiscardPile().get(deck.getDiscardPile().size() - 1).getId(), (User) player);
+        playground.sendLastCardOfDiscardPile(playground.getID(), deck.getDiscardPile().get(deck.getDiscardPile().size() - 1).getId(), player.getTheUserInThePlayer());
         deck.getHand().clear();
         deck.drawHand();
         if (checkIfGameIsFinished()) {
