@@ -185,7 +185,7 @@ public class GameService extends AbstractService {
                     // Karte wird an die ActionPhase zum Handling übergeben. TODO: Weitere Implementierung in der ActionPhase.
                     playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), request.getMessage().getCardID());
                 } catch (GamePhaseException e) {
-                    sendToAllPlayers(playground.getID(), new GameExceptionMessage(request.getMessage().getGameID(), e.getMessage()));
+                    sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(request.getMessage().getGameID(), e.getMessage()));
                 }
             }
         } else {
@@ -208,9 +208,8 @@ public class GameService extends AbstractService {
             try {
                 int count = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), request.getCardID());
                 BuyCardMessage buyCard = new BuyCardMessage(request.getLobbyID(), request.getCurrentUser(), request.getCardID(), true, count);
-                sendToSpecificPlayer(playground.getActualPlayer(), buyCard);
             } catch (NotEnoughMoneyException notEnoughMoney) {
-                sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(request.getLobbyID(), notEnoughMoney.getMessage()));
+                sendToAllPlayers(playground.getID(), new GameExceptionMessage(request.getLobbyID(), notEnoughMoney.getMessage()));
 
             }
         } else {
