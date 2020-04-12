@@ -5,6 +5,7 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import de.uol.swp.common.game.exception.GameManagementException;
 import de.uol.swp.common.game.exception.GamePhaseException;
+import de.uol.swp.common.game.messages.DiscardPileLastCardMessage;
 import de.uol.swp.common.game.messages.GameExceptionMessage;
 import de.uol.swp.common.game.messages.UserGaveUpMessage;
 import de.uol.swp.common.game.request.GameGiveUpRequest;
@@ -64,12 +65,25 @@ public class GameService extends AbstractService {
      * @author Ferit
      * @since Sprint 5
      */
-    // TODO: Wenn PlaygroundService implementiert ist, dann verschieben der Methode dorthin.
     public void sendToSpecificPlayer(Player thePlayer, ServerMessage message) {
         Set<User> playerToUserSet = new HashSet<User>(1);
         playerToUserSet.add(thePlayer.getTheUserInThePlayer());
         message.setReceiver(authenticationService.getSessions(playerToUserSet));
         post(message);
+    }
+
+    /**
+     * Sendet die letzte Karte an den Game Service
+     *
+     * @param gameID
+     * @param cardID
+     * @param user
+     * @author Fenja
+     * @since Sprint6
+     */
+    public void sendLastCardOfDiscardPile(UUID gameID, short cardID, User user) {
+        DiscardPileLastCardMessage message = new DiscardPileLastCardMessage(gameID, cardID, user);
+        sendToAllPlayers(gameID, message);
     }
 
     /**
