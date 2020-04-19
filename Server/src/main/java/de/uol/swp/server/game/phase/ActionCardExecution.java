@@ -11,6 +11,8 @@ import de.uol.swp.common.game.messages.SelectCardsFromHandMessage;
 import de.uol.swp.common.game.messages.ShowCardMessage;
 import de.uol.swp.server.game.Playground;
 import de.uol.swp.server.game.player.Player;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,6 +20,8 @@ import java.util.List;
 import java.util.UUID;
 
 public class ActionCardExecution {
+
+    private static final Logger LOG = LogManager.getLogger(ActionCardExecution.class);
 
     //TODO
     /*
@@ -45,12 +49,14 @@ public class ActionCardExecution {
      * Führt beim Aufruf alle enthaltenen Aktionen der Aktionskarte aus
      *
      * @author KenoO
+     * @return
      */
-    public void execute() {
+    public boolean execute() {
         //TODO Some pretty nice and clean Code to Execute the Shit out of that Card
         for (CardAction action : theCard.getActions()) {
-            executeCardAction(action);
+            if (!executeCardAction(action)) return false;
         }
+        return true;
     }
 
     /**
@@ -88,7 +94,8 @@ public class ActionCardExecution {
      * @param input  Eingabe an Karten
      * @return Ergebnis
      */
-    private ArrayList<Card> executeCardAction(CardAction action, ArrayList<Card> input) {
+    private ArrayList<Card> executeCardAction(CardAction action, ArrayList<Card> input) throws NullPointerException {
+        if (action == null || input == null) throw new NullPointerException("Actions nor input can't be null");
         //TODO
         return null;
     }
@@ -151,8 +158,16 @@ public class ActionCardExecution {
     }
 
     private boolean executeUseCard(UseCard action) {
-        //TODO
-        return false;
+        if (action.getCardId() == 0) {
+            LOG.debug("No CardId specified! Using current Card(" + cardID + ")");
+            action.setCardId(cardID);
+        }
+        ActionCardExecution execution = new ActionCardExecution(action.getCardId(), playground);
+
+        for (int i = 0; i < action.getCount(); i++) {
+            if (!execution.execute()) return false;
+        }
+        return true;
     }
 
     private boolean executeIf(If action) {
@@ -194,9 +209,26 @@ public class ActionCardExecution {
         return action.getCards();
     }
 
+    /**
+     * Führt eine Reihe von Aktionen auf eine beliebige Anzahl an Karten aus
+     *
+     * @param action Die ForEach-Aktion
+     * @return
+     */
     private boolean executeForEach(ForEach action) {
-        //TODO
-        return false;
+        try {
+            for (Card card : action.getCards()) {
+                ArrayList<Card> cards = new ArrayList<>();
+                cards.add(card);
+                for (CardAction cardAction : action.getActions()) {
+                    cards = executeCardAction(cardAction, cards);
+                }
+            }
+        } catch (NullPointerException e) {
+            LOG.error(e.fillInStackTrace());
+            return false;
+        }
+        return true;
     }
 
     /**
