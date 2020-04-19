@@ -67,7 +67,6 @@ class ServerApp {
     private static void createServices(Injector injector) {
         UserManagement userManagement = injector.getInstance(UserManagement.class);
         ChatManagement chatManagement = injector.getInstance(ChatManagement.class);
-        GameManagement gameManagement = injector.getInstance(GameManagement.class);
 
         // TODO: Nach der Registrierung entfernen (Von Marco --> Nur übersetzt)
         for (int i = 0; i < 100; i++) {
