@@ -96,6 +96,7 @@ public class BuyCardTest {
         lock.countDown();
     }
 
+
     /**
      * Testet, ob sich die Anzahl der Karten auf dem Playground nach dem Kauf aktualisiert.
      *
@@ -123,20 +124,7 @@ public class BuyCardTest {
         assertEquals(3, playground.getActualPlayer().getPlayerDeck().getDiscardPile().size());
     }
 
-    /**
-     * Test, ob Geld auch abgezogen wird
-     *
-     * @author Paula, Ferit
-     * @since Sprint6
-     */
-    @Test
-    void testIfMoneyIsSubstracted() {
-        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
-        int moneyPlayer = playground.getActualPlayer().getPlayerDeck().actualMoneyFromPlayer();
-        int BuyingCard = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), (short) 10);
-        assertEquals(moneyPlayer - 2, playground.getActualPlayer().getPlayerDeck().actualMoneyFromPlayer());
 
-    }
 
 
 }
