@@ -292,7 +292,7 @@ public class GameViewPresenter extends AbstractPresenter {
     public void onPlayCardMessage(PlayCardMessage msg) {
         if (msg.getLobbyID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
             if (msg.isPlayCard()) {
-                AnimationManagement.playCard((ImageView) mouseEvent.getTarget(), 3);
+                AnimationManagement.playCard((ImageView) mouseEvent.getTarget(), msg.getCount());
                 if (handcards.getChildren().contains(mouseEvent.getTarget())) {
                     handcards.getChildren().remove(mouseEvent.getTarget());
                     gameView.getChildren().add((ImageView) mouseEvent.getTarget());
