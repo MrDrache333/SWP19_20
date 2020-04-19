@@ -23,6 +23,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -58,6 +59,7 @@ public class GameViewPresenter extends AbstractPresenter {
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
     private final UUID lobbyID;
     private User loggedInUser;
+    private MouseEvent mouseEvent;
 
     @FXML
     private Pane gameView;
@@ -290,10 +292,10 @@ public class GameViewPresenter extends AbstractPresenter {
     public void onPlayCardMessage(PlayCardMessage msg) {
         if (msg.getLobbyID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
             if (msg.isPlayCard()) {
-                AnimationManagement.playCard(msg.getCardImage(), msg.getCount());
-                if (handcards.getChildren().contains(msg.getCardImage())) {
-                    handcards.getChildren().remove(msg.getCardImage());
-                    gameView.getChildren().add(msg.getCardImage());
+                AnimationManagement.playCard((ImageView) mouseEvent.getTarget(), 3);
+                if (handcards.getChildren().contains(mouseEvent.getTarget())) {
+                    handcards.getChildren().remove(mouseEvent.getTarget());
+                    gameView.getChildren().add((ImageView) mouseEvent.getTarget());
                 }
             } else {
                 showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht spielen!", "Fehler");
@@ -362,14 +364,14 @@ public class GameViewPresenter extends AbstractPresenter {
                     deckPane.getChildren().remove(card);
                     handcards.getChildren().add(card);
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-                        playChoosenCard(lobbyID, loggedInUser, pfad, HandCardID.get(n), card);
+                        playChoosenCard(lobbyID, loggedInUser, pfad, HandCardID.get(n), card, e);
                     });
                 });
             }
         });
     }
 
-    private void playChoosenCard(UUID lobbyID, User loggedInUser, String pfad, Short id, ImageView card) {
+    private void playChoosenCard(UUID lobbyID, User loggedInUser, String pfad, Short id, ImageView card, MouseEvent e) {
 
         ImageView bigCardImage = new ImageView(new Image(pfad));
         bigCardImage.setFitHeight(225.0);
@@ -389,11 +391,19 @@ public class GameViewPresenter extends AbstractPresenter {
         gameView.getChildren().add(back);
 
         play.setOnAction(event -> {
+            mouseEvent = e;
             gameView.getChildren().remove(play);
             gameView.getChildren().remove(back);
             gameView.getChildren().remove(bigCardImage);
-            gameManagement.getGameService().playCard(lobbyID, loggedInUser, id);
-
+            int counter = 0;
+            for (Node a : handcards.getChildren()) {
+                ImageView b = (ImageView) a;
+                if (b.equals(card)) {
+                    gameManagement.getGameService().playCard(lobbyID, loggedInUser, id, counter);
+                } else {
+                    counter++;
+                }
+            }
         });
         // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt
         back.setOnAction(event -> {

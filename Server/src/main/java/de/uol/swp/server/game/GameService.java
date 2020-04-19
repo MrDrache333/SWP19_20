@@ -6,9 +6,9 @@ import com.google.inject.Inject;
 import de.uol.swp.common.game.exception.GameManagementException;
 import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.GameExceptionMessage;
+import de.uol.swp.common.game.messages.PlayCardMessage;
 import de.uol.swp.common.game.messages.UserGaveUpMessage;
 import de.uol.swp.common.game.request.GameGiveUpRequest;
-import de.uol.swp.common.game.request.PlayCardRequest;
 import de.uol.swp.common.game.request.SelectCardRequest;
 import de.uol.swp.common.game.request.SkipPhaseRequest;
 import de.uol.swp.common.lobby.request.LobbyLeaveUserRequest;
@@ -175,6 +175,12 @@ public class GameService extends AbstractService {
     @Subscribe
     public void onSelectCardRequest(SelectCardRequest request) {
         Optional<Game> game = gameManagement.getGame(request.getMessage().getGameID());
+        PlayCardMessage message = (PlayCardMessage) request.getMessage();
+        UUID gameID = message.getGameID();
+        User player = message.getPlayer();
+        Short cardID = message.getCardID();
+        int counter = message.getCount();
+
         if (game.isPresent()) {
             Playground playground = game.get().getPlayground();
             // TODO: Timestamp Handling wenn die SelectCardRequest Clientseitig implementiert worden ist.
@@ -183,6 +189,7 @@ public class GameService extends AbstractService {
                     playground.endTimer();
                     // Karte wird an die ActionPhase zum Handling übergeben. TODO: Weitere Implementierung in der ActionPhase.
                     playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), request.getMessage().getCardID());
+                    sendToSpecificPlayer(playground.getActualPlayer(), (ServerMessage) new PlayCardMessage(gameID, player, cardID, counter, true));
                 } catch (GamePhaseException e) {
                     sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(request.getMessage().getGameID(), e.getMessage()));
                 }
@@ -190,12 +197,6 @@ public class GameService extends AbstractService {
         } else {
             LOG.error("Irgendwas ist bei der onSelectCardRequest im GameService falsch gelaufen..Folgende ID: " + request.getMessage().getGameID());
         }
-    }
-
-
-    @Subscribe
-    public void onPlayCardRequest(PlayCardRequest request) {
-        System.out.println("hi");
     }
 
 }
