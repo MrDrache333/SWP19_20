@@ -296,7 +296,7 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void onPlayCardMessage(PlayCardMessage msg) {
-        if (msg.getLobbyID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
+        if (msg.getGameID().equals(lobbyID) && msg.getPlayer().equals(loggedInUser)) {
             if (msg.isPlayCard()) {
                 AnimationManagement.playCard(msg.getCardImage(), msg.getCount());
                 if (handcards.getChildren().contains(msg.getCardImage())) {
@@ -305,7 +305,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 }
             } else {
                 showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht spielen!", "Fehler");
-                LOG.debug("Das Spielen der Karte " + msg.getHandCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
+                LOG.debug("Das Spielen der Karte " + msg.getCardID() + " von " + msg.getPlayer() + " ist fehlgeschlagen");
             }
         }
     }
