@@ -8,6 +8,7 @@ import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.common.game.messages.BuyCardMessage;
+import de.uol.swp.common.game.messages.DiscardPileLastCardMessage;
 import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.game.messages.PlayCardMessage;
 import de.uol.swp.common.game.request.BuyCardRequest;
@@ -72,6 +73,7 @@ public class GameViewPresenter extends AbstractPresenter {
     private StackPane deckPane;
 
     private HandcardsLayoutContainer handcards;
+    private DiscardPileLayoutContainer discardPile;
 
     private ObservableList<String> users;
     private ChatViewPresenter chatViewPresenter;
@@ -100,6 +102,7 @@ public class GameViewPresenter extends AbstractPresenter {
         this.injector = injector;
         this.gameManagement = gameManagement;
         handcards = new HandcardsLayoutContainer(284, 598, 119, 430);
+        discardPile = new DiscardPileLayoutContainer(738,538,119,120);
         initializeUserList();
     }
 
@@ -301,6 +304,31 @@ public class GameViewPresenter extends AbstractPresenter {
                 LOG.debug("Das Spielen der Karte " + msg.getHandCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
             }
         }
+    }
+
+    /**
+     * Aktualisiert die letzte Karte auf dem Ablagestapel
+     * @param msg Die Nachricht
+     * @author Timo
+     * @Sprint 6
+     */
+    @Subscribe
+    public void onDiscardPileLastCardMessage(DiscardPileLastCardMessage msg)
+    {
+        Platform.runLater(() -> {
+            if(msg.getGameID() == this.gameManagement.getID())
+            {
+                String pfad = "file:Client/src/main/resources/cards/images/" + msg.getCardID() + ".png";
+                Image picture = new Image(pfad);
+                ImageView card = new ImageView(picture);
+                card.setFitHeight(107);
+                card.setLayoutY(603);
+                card.setLayoutX(171);
+                card.setPreserveRatio(true);
+                card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
+                discardPile.getChildren().add(card);
+            }
+        });
     }
 
     /**
