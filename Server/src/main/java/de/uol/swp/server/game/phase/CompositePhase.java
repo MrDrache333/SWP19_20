@@ -38,16 +38,18 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
     }
 
     /**
-     * Alle Karten auf der Hand des Spielers werden auf den Ablagestapel verschoben und eine neue Hand gezogen
+     * Alle Karten auf der Hand des Spielers werden auf den Ablagestapel verschoben
+     * und eine neue Hand gezogen und die letzte Karte, die auf den Ablagestapel gelegt wird, wird übergeben
      *
      * @param player Der aktuelle Spieler
-     * @author Julia
+     * @author Julia, Fenja
      * @since Sprint6
      */
     @Override
     public void executeClearPhase(Player player) {
         Deck deck = player.getPlayerDeck();
         deck.getDiscardPile().addAll(deck.getHand());
+        playground.sendLastCardOfDiscardPile(playground.getID(), deck.getDiscardPile().get(deck.getDiscardPile().size() - 1).getId(), player.getTheUserInThePlayer());
         deck.getHand().clear();
         deck.drawHand();
         if (checkIfGameIsFinished()) {
