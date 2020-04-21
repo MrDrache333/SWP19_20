@@ -96,6 +96,20 @@ public class BuyCardTest {
         lock.countDown();
     }
 
+    /**
+     * Testet, ob eine gekaufte Karte dem Ablagestapel des Spielers hinzugefügt wird
+     *
+     * @author Paula, Ferit
+     * @since Sprint6
+     */
+    @Test
+    void testIfCardIsAddedToDiscardPile() {
+        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
+        int CardsOnDiscardPile = playground.getActualPlayer().getPlayerDeck().getDiscardPile().size();
+        int BuyingCard = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), (short) 10);
+        assertEquals(3, playground.getActualPlayer().getPlayerDeck().getDiscardPile().size());
+    }
+
 
     /**
      * Testet, ob sich die Anzahl der Karten auf dem Playground nach dem Kauf aktualisiert.
@@ -110,19 +124,6 @@ public class BuyCardTest {
         assertTrue(playground.getCardField().get(card.getId()).equals(9));
     }
 
-    /**
-     * Testet, ob eine gekaufte Karte dem Ablagestapel des Spielers hinzugefügt wird
-     *
-     * @author Paula, Ferit
-     * @since Sprint6
-     */
-    @Test
-    void testIfCardIsAddedToDiscardPile() {
-        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
-        int CardsOnDiscardPile = playground.getActualPlayer().getPlayerDeck().getDiscardPile().size();
-        int BuyingCard = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), (short) 10);
-        assertEquals(3, playground.getActualPlayer().getPlayerDeck().getDiscardPile().size());
-    }
 
 
 
