@@ -1,46 +1,49 @@
 package de.uol.swp.common.game.request;
 
+import de.uol.swp.common.message.AbstractRequestMessage;
 import de.uol.swp.common.user.User;
 
 import java.util.UUID;
 
-public class PlayCardRequest {
+public class PlayCardRequest extends AbstractRequestMessage {
 
     /**
      * Die Request die gestellt wird, wenn eine Karte von der hand angeklickt wurde
      *
-     * @param lobbyID       Die ID der aktuellen Lobby
-     * @param currentUser   Der Spieler der die Request stellt
-     * @param handCardID    Die ID der angeklickten Karte
-     * @param handCards     Das Array mit den ImageViews die auf der Hand sind
-     * @param smallSpace    gibt an, ob die Karten zusammen gerückt sind oder nicht
-     * @author Rike
+     * @param count       Der Platz der Karte in der Hand, die gewählt wurde.
+     * @author Rike , Devin
      * @since Sprint 5
      */
 
-    private UUID lobbyID;
-    private User currentUser;
-    private Short handCardID;
+    private int count;
+    private UUID gameID;
+    private User user;
+    private Short id;
 
     public PlayCardRequest() {
     }
 
-    public PlayCardRequest(UUID lobbyID, User currentUser, Short handCardID) {
-        this.lobbyID = lobbyID;
-        this.currentUser = currentUser;
-        this.handCardID = handCardID;
+    public PlayCardRequest(UUID gameID, User currentUser, Short handCardID, int count) {
+
+        this.gameID = gameID;
+        this.user = currentUser;
+        this.id = handCardID;
+        this.count = count;
     }
 
-    public UUID getLobbyID() {
-        return lobbyID;
+    public UUID getGameID() {
+        return gameID;
     }
 
     public User getCurrentUser() {
-        return currentUser;
+        return user;
     }
 
     public Short getHandCardID() {
-        return handCardID;
+        return id;
     }
 
+    public int getCount() {
+        return count;
+    }
 }

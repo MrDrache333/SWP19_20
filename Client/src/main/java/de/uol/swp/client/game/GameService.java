@@ -2,9 +2,9 @@ package de.uol.swp.client.game;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
-import de.uol.swp.common.game.messages.PlayCardMessage;
+import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.game.request.GameGiveUpRequest;
-import de.uol.swp.common.game.request.SelectCardRequest;
+import de.uol.swp.common.game.request.PlayCardRequest;
 import de.uol.swp.common.game.request.SkipPhaseRequest;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
@@ -57,10 +57,12 @@ public class GameService {
     }
 
 
-    public void playCard(UUID lobbyID, User loggedInUser, Short id, int count) {
-        System.out.println(count);
-        PlayCardMessage message = new PlayCardMessage(lobbyID, loggedInUser, id, count);
-        SelectCardRequest req = new SelectCardRequest(message);
+    public void playCard(UUID gameID, User loggedInUser, Short id, int count) {
+        PlayCardRequest req = new PlayCardRequest(gameID, loggedInUser, id, count);
+        bus.post(req);
+    }
+
+    public void buyCard(BuyCardRequest req) {
         bus.post(req);
     }
 

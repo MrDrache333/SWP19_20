@@ -1,11 +1,12 @@
 package de.uol.swp.common.game.messages;
 
-import de.uol.swp.common.game.response.AbstractGameMessage;
+
+import de.uol.swp.common.message.AbstractServerMessage;
 import de.uol.swp.common.user.User;
 
 import java.util.UUID;
 
-public class PlayCardMessage extends AbstractGameMessage {
+public class PlayCardMessage extends AbstractServerMessage {
 
     /**
      * Die Message die gesendet wird, wenn eine Handkarte angeklickt wurde

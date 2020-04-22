@@ -9,6 +9,7 @@ import de.uol.swp.common.game.messages.GameExceptionMessage;
 import de.uol.swp.common.game.messages.PlayCardMessage;
 import de.uol.swp.common.game.messages.UserGaveUpMessage;
 import de.uol.swp.common.game.request.GameGiveUpRequest;
+import de.uol.swp.common.game.request.PlayCardRequest;
 import de.uol.swp.common.game.request.SelectCardRequest;
 import de.uol.swp.common.game.request.SkipPhaseRequest;
 import de.uol.swp.common.lobby.request.LobbyLeaveUserRequest;
@@ -175,11 +176,6 @@ public class GameService extends AbstractService {
     @Subscribe
     public void onSelectCardRequest(SelectCardRequest request) {
         Optional<Game> game = gameManagement.getGame(request.getMessage().getGameID());
-        PlayCardMessage message = (PlayCardMessage) request.getMessage();
-        UUID gameID = message.getGameID();
-        User player = message.getPlayer();
-        Short cardID = message.getCardID();
-        int counter = message.getCount();
 
         if (game.isPresent()) {
             Playground playground = game.get().getPlayground();
@@ -189,13 +185,38 @@ public class GameService extends AbstractService {
                     playground.endTimer();
                     // Karte wird an die ActionPhase zum Handling übergeben. TODO: Weitere Implementierung in der ActionPhase.
                     playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), request.getMessage().getCardID());
-                    sendToSpecificPlayer(playground.getActualPlayer(), (ServerMessage) new PlayCardMessage(gameID, player, cardID, counter, true));
+                    sendToSpecificPlayer(playground.getActualPlayer(), new PlayCardMessage(request.getMessage().getGameID(), request.getMessage().getPlayer(), request.getMessage().getCardID(), 3, true));
                 } catch (GamePhaseException e) {
                     sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(request.getMessage().getGameID(), e.getMessage()));
                 }
             }
         } else {
             LOG.error("Irgendwas ist bei der onSelectCardRequest im GameService falsch gelaufen..Folgende ID: " + request.getMessage().getGameID());
+        }
+    }
+
+    @Subscribe
+    public void onPlayCardRequest(PlayCardRequest msg) {
+        Optional<Game> game = gameManagement.getGame(msg.getGameID());
+        UUID gameID = msg.getGameID();
+        User player = msg.getCurrentUser();
+        Short cardID = msg.getHandCardID();
+        int counter = msg.getCount();
+
+        if (game.isPresent()) {
+            Playground playground = game.get().getPlayground();
+            if (playground.getActualPlayer().getTheUserInThePlayer().getUsername().equals(player.getUsername())) {
+                try {
+                    playground.endTimer();
+                    // Karte wird an die ActionPhase zum Handling übergeben.
+                    playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), cardID);
+                    sendToSpecificPlayer(playground.getActualPlayer(), new PlayCardMessage(gameID, player, cardID, counter, true));
+                } catch (GamePhaseException e) {
+                    sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(gameID, e.getMessage()));
+                }
+            }
+        } else {
+            LOG.error("Irgendwas ist bei der onSelectCardRequest im GameService falsch gelaufen..Folgende ID: " + gameID);
         }
     }
 

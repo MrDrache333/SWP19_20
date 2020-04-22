@@ -59,7 +59,6 @@ public class GameViewPresenter extends AbstractPresenter {
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
     private final UUID lobbyID;
     private User loggedInUser;
-    private MouseEvent mouseEvent;
 
     @FXML
     private Pane gameView;
@@ -78,6 +77,7 @@ public class GameViewPresenter extends AbstractPresenter {
     private final ChatViewPresenter chatViewPresenter;
     private final Injector injector;
     private final GameManagement gameManagement;
+    private MouseEvent mouseEvent;
 
     /**
      * Instantiiert einen neuen GameView Presenter.
@@ -288,14 +288,17 @@ public class GameViewPresenter extends AbstractPresenter {
      * @author Rike
      * @since Sprint 5
      */
+    @FXML
     @Subscribe
     public void onPlayCardMessage(PlayCardMessage msg) {
+        System.out.println("bin dein Digimon");
+        ImageView card = (ImageView) mouseEvent.getTarget();
         if (msg.getLobbyID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
             if (msg.isPlayCard()) {
-                AnimationManagement.playCard((ImageView) mouseEvent.getTarget(), msg.getCount());
-                if (handcards.getChildren().contains(mouseEvent.getTarget())) {
-                    handcards.getChildren().remove(mouseEvent.getTarget());
-                    gameView.getChildren().add((ImageView) mouseEvent.getTarget());
+                AnimationManagement.playCard(card, msg.getCount());
+                if (handcards.getChildren().contains(card)) {
+                    handcards.getChildren().remove(card);
+                    gameView.getChildren().add(card);
                 }
             } else {
                 showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht spielen!", "Fehler");
@@ -358,6 +361,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     card.setLayoutY(603);
                     card.setLayoutX(171);
                     card.setPreserveRatio(true);
+                    card.setId(n.toString());
                     card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
                     deckPane.getChildren().add(card);
                     AnimationManagement.addToHand(card, handcards.getChildren().size());
@@ -372,7 +376,6 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     private void playChoosenCard(UUID lobbyID, User loggedInUser, String pfad, Short id, ImageView card, MouseEvent e) {
-
         ImageView bigCardImage = new ImageView(new Image(pfad));
         bigCardImage.setFitHeight(225.0);
         bigCardImage.setFitWidth(150.0);
@@ -391,7 +394,6 @@ public class GameViewPresenter extends AbstractPresenter {
         gameView.getChildren().add(back);
 
         play.setOnAction(event -> {
-            mouseEvent = e;
             gameView.getChildren().remove(play);
             gameView.getChildren().remove(back);
             gameView.getChildren().remove(bigCardImage);
@@ -399,6 +401,7 @@ public class GameViewPresenter extends AbstractPresenter {
             for (Node a : handcards.getChildren()) {
                 ImageView b = (ImageView) a;
                 if (b.equals(card)) {
+                    mouseEvent = e;
                     gameManagement.getGameService().playCard(lobbyID, loggedInUser, id, counter);
                 } else {
                     counter++;
@@ -460,7 +463,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 back.setVisible(false);
                 bigCardImage.setVisible(false);
                 BuyCardRequest request = new BuyCardRequest(lobbyID, loggedInUser, cardID, cardImage);
-                eventBus.post(request);
+                gameManagement.getGameService().buyCard(request);
             });
             // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt
             back.setOnAction(event -> {
