@@ -71,9 +71,10 @@ public class GameViewPresenter extends AbstractPresenter {
     private ListView<String> usersView;
     @FXML
     private StackPane deckPane;
+    @FXML
+    private StackPane discardPilePane;
 
     private HandcardsLayoutContainer handcards;
-    private DiscardPileLayoutContainer discardPile;
 
     private ObservableList<String> users;
     private ChatViewPresenter chatViewPresenter;
@@ -102,7 +103,6 @@ public class GameViewPresenter extends AbstractPresenter {
         this.injector = injector;
         this.gameManagement = gameManagement;
         handcards = new HandcardsLayoutContainer(284, 598, 119, 430);
-        discardPile = new DiscardPileLayoutContainer(738,538,119,120);
         initializeUserList();
     }
 
@@ -307,7 +307,7 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Aktualisiert die letzte Karte auf dem Ablagestapel
+     * Fügt die Karte aus der DiscardPileLastCardMessage dem Ablagestapel hinzu.
      * @param msg Die Nachricht
      * @author Timo
      * @Sprint 6
@@ -316,7 +316,7 @@ public class GameViewPresenter extends AbstractPresenter {
     public void onDiscardPileLastCardMessage(DiscardPileLastCardMessage msg)
     {
         Platform.runLater(() -> {
-            if(msg.getGameID() == this.gameManagement.getID())
+            if(msg.getGameID().equals(this.gameManagement.getID()) && msg.getUser().equals(this.loggedInUser))
             {
                 String pfad = "file:Client/src/main/resources/cards/images/" + msg.getCardID() + ".png";
                 Image picture = new Image(pfad);
@@ -326,7 +326,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 card.setLayoutX(171);
                 card.setPreserveRatio(true);
                 card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
-                discardPile.getChildren().add(card);
+                discardPilePane.getChildren().add(card);
             }
         });
     }
