@@ -291,7 +291,6 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     @Subscribe
     public void onPlayCardMessage(PlayCardMessage msg) {
-        System.out.println("bin dein Digimon");
         ImageView card = (ImageView) mouseEvent.getTarget();
         if (msg.getLobbyID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
             if (msg.isPlayCard()) {
