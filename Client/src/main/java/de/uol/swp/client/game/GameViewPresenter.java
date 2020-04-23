@@ -291,14 +291,17 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     @Subscribe
     public void onPlayCardMessage(PlayCardMessage msg) {
+
         ImageView card = (ImageView) mouseEvent.getTarget();
         if (msg.getLobbyID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
             if (msg.isPlayCard()) {
-                AnimationManagement.playCard(card, msg.getCount());
-                if (handcards.getChildren().contains(card)) {
-                    handcards.getChildren().remove(card);
-                    gameView.getChildren().add(card);
-                }
+                Platform.runLater(() -> {
+                    AnimationManagement.playCard(card, msg.getCount());
+                    if (handcards.getChildren().contains(card)) {
+                        handcards.getChildren().remove(card);
+                        gameView.getChildren().add(card);
+                    }
+                });
             } else {
                 showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht spielen!", "Fehler");
                 LOG.debug("Das Spielen der Karte " + msg.getHandCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
