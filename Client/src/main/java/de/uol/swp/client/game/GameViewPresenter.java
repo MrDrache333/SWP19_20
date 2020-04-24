@@ -21,6 +21,8 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -78,6 +80,13 @@ public class GameViewPresenter extends AbstractPresenter {
     private final Injector injector;
     private final GameManagement gameManagement;
     private MouseEvent mouseEvent;
+    private final EventHandler<MouseEvent> handCardEventHandler = new EventHandler() {
+        @Override
+        public void handle(Event event) {
+            ImageView card = (ImageView) event.getSource();
+            playChoosenCard(lobbyID, loggedInUser, card.getImage().getUrl(), Short.valueOf(card.getId()), card, (MouseEvent) event);
+        }
+    };
 
     /**
      * Instantiiert einen neuen GameView Presenter.
@@ -300,6 +309,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     if (handcards.getChildren().contains(card)) {
                         handcards.getChildren().remove(card);
                         gameView.getChildren().add(card);
+                        card.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                     }
                 });
             } else {
@@ -369,9 +379,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     AnimationManagement.addToHand(card, handcards.getChildren().size());
                     deckPane.getChildren().remove(card);
                     handcards.getChildren().add(card);
-                    card.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-                        playChoosenCard(lobbyID, loggedInUser, pfad, HandCardID.get(n), card, e);
-                    });
+                    card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                 });
             }
         });
