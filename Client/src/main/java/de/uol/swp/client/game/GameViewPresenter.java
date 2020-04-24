@@ -8,6 +8,7 @@ import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.common.game.messages.BuyCardMessage;
+import de.uol.swp.common.game.messages.DiscardPileLastCardMessage;
 import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.game.messages.PlayCardMessage;
 import de.uol.swp.common.game.request.BuyCardRequest;
@@ -70,6 +71,8 @@ public class GameViewPresenter extends AbstractPresenter {
     private ListView<String> usersView;
     @FXML
     private StackPane deckPane;
+    @FXML
+    private StackPane discardPilePane;
 
     private HandcardsLayoutContainer handcards;
 
@@ -301,6 +304,29 @@ public class GameViewPresenter extends AbstractPresenter {
                 LOG.debug("Das Spielen der Karte " + msg.getHandCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
             }
         }
+    }
+
+    /**
+     * Fügt die Karte aus der DiscardPileLastCardMessage dem Ablagestapel hinzu.
+     * @param msg Die Nachricht
+     * @author Timo
+     * @Sprint 6
+     */
+    @Subscribe
+    public void onDiscardPileLastCardMessage(DiscardPileLastCardMessage msg)
+    {
+        Platform.runLater(() -> {
+            if(msg.getGameID().equals(this.gameManagement.getID()) && msg.getUser().equals(this.loggedInUser))
+            {
+                String pfad = "file:Client/src/main/resources/cards/images/" + msg.getCardID() + ".png";
+                Image picture = new Image(pfad);
+                ImageView card = new ImageView(picture);
+                card.setFitHeight(107);
+                card.setPreserveRatio(true);
+                card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
+                discardPilePane.getChildren().add(card);
+            }
+        });
     }
 
     /**
