@@ -108,6 +108,7 @@ public class BuyCardTest {
         int CardsOnDiscardPile = playground.getActualPlayer().getPlayerDeck().getDiscardPile().size();
         int BuyingCard = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), (short) 10);
         assertEquals(3, playground.getActualPlayer().getPlayerDeck().getDiscardPile().size());
+
     }
 
 

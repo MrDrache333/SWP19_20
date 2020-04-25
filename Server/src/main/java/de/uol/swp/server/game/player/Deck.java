@@ -138,16 +138,20 @@ public class Deck {
     public void discardMoneyCardsForValue(int value) {
         int money = 0;
         int sizeHand = hand.size();
+        ArrayList<Card> removeCards = new ArrayList<>();
         for (int i=0; i<sizeHand; i++){
             if (hand.get(i) instanceof MoneyCard) {
                 money += ((MoneyCard) hand.get(i)).getValue();
-                hand.remove(hand.get(i));
                 discardPile.add(hand.get(i));
+                removeCards.add(hand.get(i));
                 if (money >= value) {
                     break;
                 }
 
             }
+        }
+        for (Card card : removeCards) {
+            hand.remove(card);
         }
     }
 
