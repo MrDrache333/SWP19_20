@@ -11,7 +11,6 @@ import de.uol.swp.common.game.messages.BuyCardMessage;
 import de.uol.swp.common.game.messages.DiscardPileLastCardMessage;
 import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.game.messages.PlayCardMessage;
-import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.game.request.PlayCardRequest;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
@@ -38,7 +37,6 @@ import javafx.stage.Modality;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -80,6 +78,8 @@ public class GameViewPresenter extends AbstractPresenter {
     private ChatViewPresenter chatViewPresenter;
     private Injector injector;
     private GameManagement gameManagement;
+    private GameService gameService;
+    private MouseEvent mouseEvent;
 
     /**
      * Instantiiert einen neuen GameView Presenter.
@@ -93,7 +93,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * @param injector          der Injector
      * @param gameManagement    das Game Management
      */
-    public GameViewPresenter(User loggedInUser, UUID lobbyID, ChatService chatService, ChatViewPresenter chatViewPresenter, LobbyService lobbyService, UserService userService, Injector injector, GameManagement gameManagement) {
+    public GameViewPresenter(User loggedInUser, UUID lobbyID, ChatService chatService, ChatViewPresenter chatViewPresenter, LobbyService lobbyService, UserService userService, Injector injector, GameManagement gameManagement, GameService gameService) {
         this.loggedInUser = loggedInUser;
         this.lobbyID = lobbyID;
         this.chatService = chatService;
@@ -103,6 +103,7 @@ public class GameViewPresenter extends AbstractPresenter {
         this.injector = injector;
         this.gameManagement = gameManagement;
         handcards = new HandcardsLayoutContainer(284, 598, 119, 430);
+        this.gameService = gameService;
         initializeUserList();
     }
 
@@ -258,23 +259,29 @@ public class GameViewPresenter extends AbstractPresenter {
      * Überprüft ob die Spieler noch Karten der gekauften Art kaufen können und fügt ggf. das ImageView (kleines Bild) wieder hinzu
      *
      * @param msg die Nachricht
-     * @author Rike
+     * @author Rike, Devin
      * @since Sprint 5
      */
     @Subscribe
     public void onBuyCardMessage(BuyCardMessage msg) {
+        System.out.println(msg.getCounterCard());
+        ImageView selectedCard = (ImageView) mouseEvent.getSource();
         if (msg.getLobbyID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
             if (msg.isBuyCard()) {
-                AnimationManagement.buyCard(msg.getCardImage());
+                String pfad = "file:Client/scr/main/resources/cards/images/" + msg.getCardID().toString() + ".png";
+                Image picture = new Image(pfad);
+                ImageView card = new ImageView(picture);
+                AnimationManagement.buyCard(selectedCard);
                 LOG.debug("Der Spieler " + msg.getCurrentUser() + " hat die Karte " + msg.getCardID() + " gekauft.");
                 if (msg.getCounterCard() > 0) {
                     // fügt ein "neues" Bild an der Stelle des alten Bildes im Shop hinzu
-                    ImageView newCardImage = msg.getCardImage();
-                    newCardImage.setFitWidth(msg.getCardImage().getFitWidth());
-                    newCardImage.setLayoutY(msg.getCardImage().getLayoutY());
-                    newCardImage.setLayoutX(msg.getCardImage().getLayoutX());
-                    newCardImage.setId(msg.getCardID());
+                    ImageView newCardImage = card;
+                    newCardImage.setFitWidth(card.getFitWidth());
+                    newCardImage.setLayoutY(card.getLayoutY());
+                    newCardImage.setLayoutX(card.getLayoutX());
+                    newCardImage.setId(String.valueOf(msg.getCardID()));
                     newCardImage.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> chosenBuyableCard(mouseEvent));
+                    gameView.getChildren().add(newCardImage);
                 }
             } else {
                 showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht kaufen!", "Fehler");
@@ -292,7 +299,7 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void onPlayCardMessage(PlayCardMessage msg) {
-        if (msg.getLobbyID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
+        if (msg.getGameID().equals(lobbyID) && msg.getPlayer().equals(loggedInUser)) {
             if (msg.isPlayCard()) {
                 AnimationManagement.playCard(msg.getCardImage(), msg.getCount());
                 if (handcards.getChildren().contains(msg.getCardImage())) {
@@ -301,7 +308,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 }
             } else {
                 showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht spielen!", "Fehler");
-                LOG.debug("Das Spielen der Karte " + msg.getHandCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
+                LOG.debug("Das Spielen der Karte " + msg.getCardID() + " von " + msg.getPlayer() + " ist fehlgeschlagen");
             }
         }
     }
@@ -417,9 +424,9 @@ public class GameViewPresenter extends AbstractPresenter {
             // Karte befindet sich im Shop
             ImageView cardImage = (ImageView) mouseEvent.getSource();
             String cardID = cardImage.getId();
-            String PathCardLargeView = "/cards/images/" + cardID + ".png";
+            String PathCardLargeView = "file:Client/src/main/resources/cards/images/" + cardID + ".png";
             // ein großes Bild der Karte wird hinzugefügt
-            ImageView bigCardImage = new ImageView(new Image(new File(getClass().getResource(PathCardLargeView).toExternalForm().replace("file:", "")).toURI().toString()));
+            ImageView bigCardImage = new ImageView(new Image(PathCardLargeView));
             // setzt die Größe und die Position des Bildes. Das Bild ist im Vordergrund. Bild wird hinzugefügt
             bigCardImage.setFitHeight(225.0);
             bigCardImage.setFitWidth(150.0);
@@ -443,8 +450,8 @@ public class GameViewPresenter extends AbstractPresenter {
                 buy.setVisible(false);
                 back.setVisible(false);
                 bigCardImage.setVisible(false);
-                BuyCardRequest request = new BuyCardRequest(lobbyID, loggedInUser, cardID, cardImage);
-                eventBus.post(request);
+                gameService.sendBuyCardRequest(lobbyID, loggedInUser, Short.valueOf(cardID));
+                this.mouseEvent = mouseEvent;
             });
             // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt
             back.setOnAction(event -> {

@@ -35,6 +35,7 @@ public class PlayCardRequest {
         this.cardImage = cardImage;
     }
 
+
     public UUID getLobbyID() {
         return lobbyID;
     }

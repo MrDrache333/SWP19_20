@@ -5,9 +5,12 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import de.uol.swp.common.game.exception.GameManagementException;
 import de.uol.swp.common.game.exception.GamePhaseException;
+import de.uol.swp.common.game.exception.NotEnoughMoneyException;
+import de.uol.swp.common.game.messages.BuyCardMessage;
 import de.uol.swp.common.game.messages.DiscardPileLastCardMessage;
 import de.uol.swp.common.game.messages.GameExceptionMessage;
 import de.uol.swp.common.game.messages.UserGaveUpMessage;
+import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.game.request.GameGiveUpRequest;
 import de.uol.swp.common.game.request.SelectCardRequest;
 import de.uol.swp.common.game.request.SkipPhaseRequest;
@@ -65,6 +68,7 @@ public class GameService extends AbstractService {
      * @author Ferit
      * @since Sprint 5
      */
+    // TODO: Wenn PlaygroundService implementiert ist, dann verschieben der Methode dorthin.
     public void sendToSpecificPlayer(Player thePlayer, ServerMessage message) {
         Set<User> playerToUserSet = new HashSet<User>(1);
         playerToUserSet.add(thePlayer.getTheUserInThePlayer());
@@ -173,7 +177,6 @@ public class GameService extends AbstractService {
         }
     }
 
-
     public void userGavesUpLeavesLobby(UUID gameID, UserDTO user) {
         LobbyLeaveUserRequest leaveUserRequest = new LobbyLeaveUserRequest(gameID, user);
         post(leaveUserRequest);
@@ -204,4 +207,33 @@ public class GameService extends AbstractService {
             LOG.error("Irgendwas ist bei der onSelectCardRequest im GameService falsch gelaufen..Folgende ID: " + request.getMessage().getGameID());
         }
     }
+
+    /**
+     * Versuch eine Karte zu kaufen
+     *
+     * @param request BuyCardRequest wird hier vom Client empfangen
+     * @author Paula
+     * @since Sprint6
+     */
+    @Subscribe
+    public void onBuyCardRequest(BuyCardRequest request) {
+        Optional<Game> game = gameManagement.getGame(request.getLobbyID());
+        if (game.isPresent()) {
+            Playground playground = game.get().getPlayground();
+            try {
+                int count = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), request.getCardID());
+                BuyCardMessage buyCard = new BuyCardMessage(request.getLobbyID(), request.getCurrentUser(), request.getCardID(), true, count);
+                sendToAllPlayers(request.getLobbyID(), buyCard);
+
+            } catch (NotEnoughMoneyException notEnoughMoney) {
+                sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(request.getLobbyID(), notEnoughMoney.getMessage()));
+
+            }
+        } else {
+            LOG.error("Es existiert kein Spiel mit der ID " + request.getCardID());
+        }
+    }
 }
+
+
+
