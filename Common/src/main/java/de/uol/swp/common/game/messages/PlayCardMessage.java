@@ -8,6 +8,7 @@ import java.util.UUID;
 
 public class PlayCardMessage extends AbstractServerMessage {
 
+    private static final long serialVersionUID = 3669837484946853842L;
     /**
      * Die Message die gesendet wird, wenn eine Handkarte angeklickt wurde
      *
@@ -20,13 +21,13 @@ public class PlayCardMessage extends AbstractServerMessage {
      * @since Sprint 5
      */
 
-    private UUID lobbyID;
-    private User currentUser;
-    private Short handCardID;
-    private int count;
+    private final UUID lobbyID;
+    private final User currentUser;
+    private final Short handCardID;
+    private final int count;
     private boolean playCard;
 
-    public PlayCardMessage(UUID gameID, User player, short cardID, int count) {
+    public PlayCardMessage(UUID gameID, User player, Short cardID, int count) {
         this.lobbyID = gameID;
         this.currentUser = player;
         this.handCardID = cardID;

@@ -11,7 +11,6 @@ import de.uol.swp.common.game.messages.BuyCardMessage;
 import de.uol.swp.common.game.messages.DiscardPileLastCardMessage;
 import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.game.messages.PlayCardMessage;
-import de.uol.swp.common.game.request.PlayCardRequest;
 import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
@@ -79,7 +78,7 @@ public class GameViewPresenter extends AbstractPresenter {
     private final HandcardsLayoutContainer handcards;
 
     private ObservableList<String> users;
-    private GameService gameService;
+    private final GameService gameService;
     private MouseEvent mouseEvent;
     private final ChatViewPresenter chatViewPresenter;
     private final Injector injector;
@@ -507,7 +506,8 @@ public class GameViewPresenter extends AbstractPresenter {
                 buy.setVisible(false);
                 back.setVisible(false);
                 bigCardImage.setVisible(false);
-                gameService.sendBuyCardRequest(lobbyID, loggedInUser, Short.valueOf(cardID));
+                BuyCardRequest req = new BuyCardRequest(lobbyID, loggedInUser, Short.valueOf(cardID));
+                gameService.buyCard(req);
                 this.mouseEvent = mouseEvent;
             });
             // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt
