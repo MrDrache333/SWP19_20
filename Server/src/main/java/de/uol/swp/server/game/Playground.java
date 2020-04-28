@@ -245,6 +245,19 @@ public class Playground extends AbstractPlayground {
     }
 
     /**
+     * Sendet die letzte Karte vom Ablagestapel an den GameService
+     *
+     * @param gameID
+     * @param cardID
+     * @param user
+     * @author Fenja
+     * @since Sprint6
+     */
+    public void sendLastCardOfDiscardPile(UUID gameID, short cardID, User user) {
+        gameService.sendLastCardOfDiscardPile(gameID, cardID, user);
+    }
+
+    /**
      * Sendet die Initiale Hand an jeden Spieler spezifisch. Überprüfung via SessionID.
      *
      * @author Ferit
@@ -406,4 +419,5 @@ public class Playground extends AbstractPlayground {
     public Map<Short, Integer> getCardField() {
         return cardField;
     }
+
 }

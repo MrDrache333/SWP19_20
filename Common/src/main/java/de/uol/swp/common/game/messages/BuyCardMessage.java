@@ -2,7 +2,6 @@ package de.uol.swp.common.game.messages;
 
 import de.uol.swp.common.message.AbstractServerMessage;
 import de.uol.swp.common.user.User;
-import javafx.scene.image.ImageView;
 
 import java.util.UUID;
 
@@ -23,19 +22,17 @@ public class BuyCardMessage extends AbstractServerMessage {
 
     private UUID lobbyID;
     private User currentUser;
-    private String cardID;
-    private ImageView cardImage;
+    private Short cardID;
     private boolean buyCard;
     private int counterCard;
 
     public BuyCardMessage() {
     }
 
-    public BuyCardMessage(UUID lobbyID, User currentUser, String cardID, ImageView cardImage, boolean buyCard, int counterCard) {
+    public BuyCardMessage(UUID lobbyID, User currentUser, Short cardID, boolean buyCard, int counterCard) {
         this.lobbyID = lobbyID;
         this.currentUser = currentUser;
         this.cardID = cardID;
-        this.cardImage = cardImage;
         this.buyCard = buyCard;
         this.counterCard = counterCard;
     }
@@ -48,12 +45,8 @@ public class BuyCardMessage extends AbstractServerMessage {
         return currentUser;
     }
 
-    public String getCardID() {
+    public Short getCardID() {
         return cardID;
-    }
-
-    public ImageView getCardImage() {
-        return cardImage;
     }
 
     public boolean isBuyCard() {

@@ -46,6 +46,7 @@ public class PlaygroundTest {
     static UUID id;
     private final CountDownLatch lock = new CountDownLatch(1);
 
+
     static UUID gameID;
     private Object event;
 

@@ -26,9 +26,6 @@ public class PlayCardMessage extends AbstractServerMessage {
     private int count;
     private boolean playCard;
 
-    public PlayCardMessage() {
-    }
-
     public PlayCardMessage(UUID gameID, User player, short cardID, int count) {
         this.lobbyID = gameID;
         this.currentUser = player;

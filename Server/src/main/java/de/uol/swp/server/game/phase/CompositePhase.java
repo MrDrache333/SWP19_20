@@ -1,10 +1,16 @@
 package de.uol.swp.server.game.phase;
 
 import de.uol.swp.common.game.card.Card;
+import de.uol.swp.common.game.card.parser.components.CardPack;
+import de.uol.swp.common.game.card.parser.components.CardStack;
+import de.uol.swp.common.game.exception.NotEnoughMoneyException;
 import de.uol.swp.common.game.messages.GameOverMessage;
+import de.uol.swp.server.game.GameService;
 import de.uol.swp.server.game.Playground;
 import de.uol.swp.server.game.player.Deck;
 import de.uol.swp.server.game.player.Player;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
@@ -26,28 +32,61 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         this.playground = playground;
     }
 
-    @Override
-    public void executeBuyPhase(Player player, short cardId) {
-        /*
-        1. Verifiziere, dass Karte existiert
-        2. Überprüfe, ob Karte, durch auf der Hand befindliche Geldkarten, gekauft werden kann
-        3. Führe Kauf aus
+    private static final Logger LOG = LogManager.getLogger(GameService.class);
 
-        Werfe bei fehlern eine Exception, sodass aufrufender den Kauf abbrechen kann
-         */
+
+    /**
+     * Methode um eine Karte zu kaufen. Diese wird dem Ablagestapel des Spielers hinzugefügt, wenn er genug Geld hat
+     *
+     * @param player Der Spieler
+     * @param cardId Die Karten-ID
+     * @author Paula
+     * @since Sprint6
+     */
+    @Override
+    public int executeBuyPhase(Player player, short cardId) {
+        CardPack cardsPackField = playground.getCardsPackField();
+        Card currentCard = getCardFromId(cardsPackField.getCards(), cardId);
+        // Karten und deren Anzahl werden aus dem Spielfeld geladen.
+        int count = playground.getCardField().get(cardId);
+        if (count > 0) {
+            // Falls die ID der Karte nicht vorhanden ist, wird eine Exception geworfen
+            if (currentCard == null) {
+                throw new IllegalArgumentException("CardID wurde nicht gefunden");
+            }
+            /*Falls die ID vorhanden ist wird der Geldwert des Spielers berechnet, hat er
+              genug Geld, wird die Karte seinem Ablagestapel hinzugefügt, das Geld wird ihm entzogen
+              und die Anzahl der Karte auf dem Spielfeld verringert sich um eins
+            */
+            int moneyValuePlayer = player.getPlayerDeck().actualMoneyFromPlayer();
+            if (moneyValuePlayer < currentCard.getCosts()) {
+                LOG.error("Nicht genug Geld");
+                // TODO: Client muss eine Fehlermeldung erstellen, die angezeigt wird, wenn der Spieler nicht genug Geld hat
+                throw new NotEnoughMoneyException("Nicht genug Geld vorhanden");
+            }
+            player.getPlayerDeck().getDiscardPile().add(currentCard);
+            moneyValuePlayer -= currentCard.getCosts();
+            // TODO: Client muss Geldkarten aus Hand abziehen (und in Ablagestapel legen?), wenn Kauf gelungen.
+            player.getPlayerDeck().discardMoneyCardsForValue(currentCard.getCosts());
+            // TODO: Client: Stückzahl der Karten anpassen bzw.: wenn Karte nicht vorhanden, keine Bild der Karte
+            playground.getCardField().put(cardId, --count);
+        }
+        return count;
     }
 
     /**
-     * Alle Karten auf der Hand des Spielers werden auf den Ablagestapel verschoben und eine neue Hand gezogen
+     * Alle Karten auf der Hand des Spielers werden auf den Ablagestapel verschoben
+     * und eine neue Hand gezogen und die letzte Karte, die auf den Ablagestapel gelegt wird, wird übergeben
      *
      * @param player Der aktuelle Spieler
-     * @author Julia
+     * @author Julia, Fenja
      * @since Sprint6
      */
     @Override
     public void executeClearPhase(Player player) {
         Deck deck = player.getPlayerDeck();
         deck.getDiscardPile().addAll(deck.getHand());
+        playground.sendLastCardOfDiscardPile(playground.getID(), deck.getDiscardPile().get(deck.getDiscardPile().size() - 1).getId(), player.getTheUserInThePlayer());
         deck.getHand().clear();
         deck.drawHand();
         if (checkIfGameIsFinished()) {
@@ -65,6 +104,37 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         2. Überprüfe, ob Spieler diese Karte in der Hand hat
         3. Führe die auf der Karte befindlichen Aktionen aus
          */
+    }
+
+
+    /**
+     * Hilfsmethode um an die Daten über die ID zu kommen
+     *
+     * @param cardStack
+     * @param cardId
+     * @return card Karte, zu der die ID gehört
+     * @author Paula
+     * @since Sprint6
+     */
+
+    private Card getCardFromId(CardStack cardStack, short cardId) {
+        for (Card card : cardStack.getActionCards()) {
+            if (card.getId() == cardId) {
+                return card;
+            }
+        }
+        for (Card card : cardStack.getMoneyCards()) {
+            if (card.getId() == cardId) {
+                return card;
+            }
+        }
+
+        for (Card card : cardStack.getValueCards()) {
+            if (card.getId() == cardId) {
+                return card;
+            }
+        }
+        return null;
     }
 
     /**
@@ -90,3 +160,4 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         return false;
     }
 }
+
