@@ -75,7 +75,9 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     private StackPane discardPilePane;
 
+
     private final HandcardsLayoutContainer handcards;
+    private final PlayedCardLayoutContainer playedCardLayoutContainer;
 
     private ObservableList<String> users;
     private final GameService gameService;
@@ -114,6 +116,7 @@ public class GameViewPresenter extends AbstractPresenter {
         this.injector = injector;
         this.gameManagement = gameManagement;
         handcards = new HandcardsLayoutContainer(284, 598, 119, 430);
+        playedCardLayoutContainer = new PlayedCardLayoutContainer(414, 434, 86, 200);
         this.gameService = gameService;
         initializeUserList();
     }
@@ -164,6 +167,7 @@ public class GameViewPresenter extends AbstractPresenter {
         ((Pane) chatView.getChildren().get(0)).setPrefHeight(chatView.getPrefHeight());
         ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getPrefWidth());
         gameView.getChildren().add(handcards);
+        gameView.getChildren().add(playedCardLayoutContainer);
     }
 
     /**
@@ -316,6 +320,7 @@ public class GameViewPresenter extends AbstractPresenter {
         if (msg.getLobbyID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
             if (msg.isPlayCard()) {
                 Platform.runLater(() -> {
+                    playedCardLayoutContainer.getChildren().add(card);
                     AnimationManagement.playCard(card, msg.getCount());
                     if (handcards.getChildren().contains(card)) {
                         handcards.getChildren().remove(card);

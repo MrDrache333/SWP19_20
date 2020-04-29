@@ -48,4 +48,8 @@ public class PlayCardRequest extends AbstractRequestMessage {
     public Short getHandCardID() {
         return id;
     }
+
+    public int getCount() {
+        return count;
+    }
 }
