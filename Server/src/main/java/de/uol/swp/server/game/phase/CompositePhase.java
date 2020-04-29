@@ -99,36 +99,25 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
 
     @Override
     public void executeActionPhase(Player player, short cardId) {
-
-        // 1. Verifiziere, dass Karte existiert
         CardPack cardsPackField = playground.getCardsPackField();
         Card currentCard = getCardFromId(cardsPackField.getCards(), cardId);
+        // 1. Verifiziere, dass Karte existiert
+
         if (currentCard.equals(null)) {
             throw new IllegalArgumentException("CardID wurde nicht gefunden");
         }
-
         // 2. Überprüfe, ob Spieler diese Karte in der Hand hat
         if (player.getPlayerDeck().getHand().contains(currentCard)) {
             throw new IllegalArgumentException("Die Hand enthält die gesuchte Karte nicht");
         }
-
         /*
         3. Führe die auf der Karte befindlichen Aktionen aus
+        3.1 Die Karte wird auf den ActionPile gelegt und aus der Hand entfernt.
          */
-
-        /*
-        3.1 Es wird überprüft ob der Spieler genügen Geld hat, um die Karte auszuspielen und wenn ja,
-        dann wird das nötige Geld entfernt.
-        3.2 Die Karte wird auf den ActionPile gelegt und aus der Hand entfernt.
-         */
-        if (player.getPlayerDeck().actualMoneyFromPlayer() >= currentCard.getCosts()) {
-            player.getPlayerDeck().getActionPile().add(currentCard);
-            player.getPlayerDeck().getActionPile().remove(currentCard);
+        player.getPlayerDeck().getActionPile().add(currentCard);
+        player.getPlayerDeck().getHand().remove(currentCard);
             // TODO: Die Aktion der Karte muss noch ausgeführt werden
 
-        } else {
-            throw new IllegalArgumentException("Der Spieler hat nicht genügend Geld zum ausspielen der Karte");
-        }
     }
 
 
