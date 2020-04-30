@@ -424,6 +424,9 @@ public class LobbyPresenter extends AbstractPresenter {
                     readyUserList.remove(username);
                     updateUsersList();
                 }
+                if (loggedInUser.getUsername().equals(username)) {
+                    readyButton.setText("Bereit");
+                }
             });
         }
     }
