@@ -398,4 +398,8 @@ public class SceneManager {
 
         }
     }
+
+    public Map<UUID, GameManagement> getGames() {
+        return games;
+    }
 }
