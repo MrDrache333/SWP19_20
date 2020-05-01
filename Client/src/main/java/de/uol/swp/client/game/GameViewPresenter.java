@@ -309,15 +309,15 @@ public class GameViewPresenter extends AbstractPresenter {
      * Die Nachricht die angibt ob die Karte gespielt werden konnte
      *
      * @param msg die Nachricht
-     * @author Rike
-     * @since Sprint 5
+     * @author Devin
+     * @since Sprint 6
      */
     @FXML
     @Subscribe
     public void onPlayCardMessage(PlayCardMessage msg) {
 
         ImageView card = (ImageView) mouseEvent.getTarget();
-        if (msg.getLobbyID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
+        if (msg.getGameID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
             if (msg.isPlayCard()) {
                 Platform.runLater(() -> {
                     if (handcards.getChildren().contains(card)) {
@@ -417,15 +417,26 @@ public class GameViewPresenter extends AbstractPresenter {
                     AnimationManagement.addToHand(card, handcards.getChildren().size());
                     deckPane.getChildren().remove(card);
                     handcards.getChildren().add(card);
-                    if(n>6) {
-                        card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
-                    }
+                    card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                 });
             }
         });
     }
 
-    private void playChoosenCard(UUID lobbyID, User loggedInUser, String pfad, Short id, ImageView card, MouseEvent e) {
+    /**
+     * Methode, die beim anklicken einer Handkarte ausgeführt wird.
+     *
+     * @param gameID Die ID des Spiels
+     * @param loggedInUser der User der gerade eingelogt im Spiel ist und die Karte ausgewählt hat.
+     * @param pfad Der Pfad zum entsprechendem Vollbild
+     * @param id Die ID der Karte
+     * @param card Die ImageView der ausgewählten Karte
+     * @param e Das MouseEvent, das zum anlicken der Karte zuständig ist.
+     * @author Devin
+     * @since Sprint 6
+     */
+
+    private void playChoosenCard(UUID gameID, User loggedInUser, String pfad, Short id, ImageView card, MouseEvent e) {
         ImageView bigCardImage = new ImageView(new Image(pfad));
         bigCardImage.setFitHeight(225.0);
         bigCardImage.setFitWidth(150.0);
@@ -433,34 +444,50 @@ public class GameViewPresenter extends AbstractPresenter {
         bigCardImage.setLayoutX(425.0);
         bigCardImage.setLayoutY(155.0);
         gameView.getChildren().add(bigCardImage);
-        Button play = new Button("auspielen");
-        Button back = new Button("zurück");
-        play.setLayoutX(432.0);
-        play.setLayoutY(385.0);
-        back.setLayoutX(516.0);
-        back.setLayoutY(385.0);
-        back.setMinWidth(52.0);
-        gameView.getChildren().add(play);
-        gameView.getChildren().add(back);
+        if (id>6) {
+            Button play = new Button("auspielen");
+            Button back = new Button("zurück");
+            play.setLayoutX(432.0);
+            play.setLayoutY(385.0);
+            back.setLayoutX(516.0);
+            back.setLayoutY(385.0);
+            back.setMinWidth(52.0);
+            gameView.getChildren().add(play);
+            gameView.getChildren().add(back);
 
-        play.setOnAction(event -> {
-            gameView.getChildren().remove(play);
-            gameView.getChildren().remove(back);
-            gameView.getChildren().remove(bigCardImage);
-            for (Node a : handcards.getChildren()) {
-                ImageView b = (ImageView) a;
-                if (b.equals(card)) {
-                    mouseEvent = e;
-                    gameManagement.getGameService().playCard(lobbyID, loggedInUser, id);
+            play.setOnAction(event -> {
+                gameView.getChildren().remove(play);
+                gameView.getChildren().remove(back);
+                gameView.getChildren().remove(bigCardImage);
+                for (Node a : handcards.getChildren()) {
+                    ImageView b = (ImageView) a;
+                    if (b.equals(card)) {
+                        mouseEvent = e;
+                        gameManagement.getGameService().playCard(gameID, loggedInUser, id);
+                    }
                 }
-            }
-        });
-        // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt
-        back.setOnAction(event -> {
-            gameView.getChildren().remove(play);
-            gameView.getChildren().remove(back);
-            gameView.getChildren().remove(bigCardImage);
-        });
+            });
+            // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt
+            back.setOnAction(event -> {
+                gameView.getChildren().remove(play);
+                gameView.getChildren().remove(back);
+                gameView.getChildren().remove(bigCardImage);
+            });
+        } else {
+            Button back = new Button("zurück");
+
+            back.setLayoutX(516.0);
+            back.setLayoutY(385.0);
+            back.setMinWidth(52.0);
+            gameView.getChildren().add(back);
+
+            // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt
+            back.setOnAction(event -> {
+                gameView.getChildren().remove(back);
+                gameView.getChildren().remove(bigCardImage);
+            });
+        }
+
     }
 
     /**

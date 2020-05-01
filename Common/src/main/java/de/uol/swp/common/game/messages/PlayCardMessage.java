@@ -12,36 +12,35 @@ public class PlayCardMessage extends AbstractServerMessage {
     /**
      * Die Message die gesendet wird, wenn eine Handkarte angeklickt wurde
      *
-     * @param lobbyID       Die ID der aktuellen Lobby
+     * @param gameID       Die ID des aktuellen Spiels
      * @param currentUser   Der Spieler der die Request stellt
      * @param handCardID    Die ID der angeklickten Karte
-     * @param count         gibt an, die wievielte Karte gespielt wurde
      * @param playCard      gibt an, ob die karte gespielt werden kann
      * @author Rike
      * @since Sprint 5
      */
 
-    private final UUID lobbyID;
+    private final UUID gameID;
     private final User currentUser;
     private final Short handCardID;
     private boolean playCard;
 
     public PlayCardMessage(UUID gameID, User player, short cardID) {
-        this.lobbyID = gameID;
+        this.gameID = gameID;
         this.currentUser = player;
         this.handCardID = cardID;
     }
 
 
-    public PlayCardMessage(UUID lobbyID, User currentUser, Short handCardID, boolean playCard) {
-        this.lobbyID = lobbyID;
+    public PlayCardMessage(UUID gameID, User currentUser, Short handCardID, boolean playCard) {
+        this.gameID = gameID;
         this.currentUser = currentUser;
         this.handCardID = handCardID;
         this.playCard = playCard;
     }
 
-    public UUID getLobbyID() {
-        return lobbyID;
+    public UUID getGameID() {
+        return gameID;
     }
 
     public User getCurrentUser() {
