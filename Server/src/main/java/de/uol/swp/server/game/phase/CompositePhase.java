@@ -36,7 +36,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         //TODO: availableActions um 1 verringern, wenn Aktionskarte erfolgreich gespielt wurde
 
         if (player.getAvailableActions() == 0) {
-            playground.newTurn();
+            playground.nextPhase();
         }
     }
 
@@ -52,7 +52,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         //TODO: availableBuys um 1 verringern, wenn Kauf erfolgreich war
 
         if (player.getAvailableBuys() == 0) {
-            playground.newTurn();
+            playground.nextPhase();
         }
     }
 
