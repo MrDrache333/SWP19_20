@@ -318,7 +318,7 @@ public class GameViewPresenter extends AbstractPresenter {
 
         ImageView card = (ImageView) mouseEvent.getTarget();
         if (msg.getGameID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
-            if (msg.isPlayCard()) {
+            if (msg.getIsPlayed()) {
                 Platform.runLater(() -> {
                     if (handcards.getChildren().contains(card)) {
                         AnimationManagement.playCard(card, playedCardLayoutContainer.getChildren().size());

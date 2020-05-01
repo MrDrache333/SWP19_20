@@ -15,19 +15,22 @@ public class PlayCardMessage extends AbstractServerMessage {
      * @param gameID       Die ID des aktuellen Spiels
      * @param currentUser   Der Spieler der die Request stellt
      * @param handCardID    Die ID der angeklickten Karte
-     * @author Rike
+     * @param isPlayed      Sagt aus, ob die Karte ausgespielt werden darf
+     * @author Rike, Devin
      * @since Sprint 5
      */
 
     private final UUID gameID;
     private final User currentUser;
     private final Short handCardID;
+    private final Boolean isPlayed;
 
 
-    public PlayCardMessage(UUID gameID, User currentUser, Short handCardID) {
+    public PlayCardMessage(UUID gameID, User currentUser, Short handCardID, Boolean isPlayed) {
         this.gameID = gameID;
         this.currentUser = currentUser;
         this.handCardID = handCardID;
+        this.isPlayed = isPlayed;
     }
 
     public UUID getGameID() {
@@ -41,5 +44,7 @@ public class PlayCardMessage extends AbstractServerMessage {
     public short getHandCardID() {
         return handCardID;
     }
+
+    public Boolean getIsPlayed() {return isPlayed;}
 
 }
