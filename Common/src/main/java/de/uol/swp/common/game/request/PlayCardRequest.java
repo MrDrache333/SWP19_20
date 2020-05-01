@@ -11,12 +11,9 @@ public class PlayCardRequest extends AbstractRequestMessage {
     /**
      * Die Request die gestellt wird, wenn eine Karte von der hand angeklickt wurde
      *
-     * @param lobbyID       Die ID der aktuellen Lobby
-     * @param currentUser   Der Spieler der die Request stellt
-     * @param handCardID    Die ID der angeklickten Karte
-     * @param cardImage     Die ImageView der Karte
-     * @param handCards     Das Array mit den ImageViews die auf der Hand sind
-     * @param smallSpace    gibt an, ob die Karten zusammen gerückt sind oder nicht
+     * @param gameID       Die ID der aktuellen Lobby
+     * @param user         Der SPieler, der eine Karte ausspielen möchte
+     * @param id    Die ID der angeklickten Karte
      * @author Rike
      * @since Sprint 5
      */
