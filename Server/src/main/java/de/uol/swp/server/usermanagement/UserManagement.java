@@ -123,7 +123,6 @@ public class UserManagement extends AbstractUserManagement {
         }
         logout(userToDrop);
         userStore.removeUser(userToDrop.getUsername());
-
     }
 
     private String firstNotNull(String firstValue, String secondValue) {

@@ -32,7 +32,7 @@ public class DrawHandMessageTest {
     static final UserStore userStore = new MainMemoryBasedUserStore();
     static final EventBus bus = new EventBus();
     static final UserManagement userManagement = new UserManagement(userStore);
-    static final AuthenticationService authService = new AuthenticationService(bus, userManagement);
+    static final AuthenticationService authService = new AuthenticationService(bus, userManagement, lobbyManagement);
     static final GameService gameService = new GameService(bus, gameManagement, authService);
     static UUID id;
     private Object event;

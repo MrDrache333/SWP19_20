@@ -41,7 +41,7 @@ class LobbyServiceTest {
     final EventBus bus = new EventBus();
     final UserManagement userManagement = new UserManagement(new MainMemoryBasedUserStore());
     final LobbyManagement lobbyManagement = new LobbyManagement();
-    final LobbyService lobbyService = new LobbyService(lobbyManagement, new AuthenticationService(bus, userManagement), new ChatManagement(), bus);
+    final LobbyService lobbyService = new LobbyService(lobbyManagement, new AuthenticationService(bus, userManagement, lobbyManagement), new ChatManagement(), bus);
     private CountDownLatch lock = new CountDownLatch(1);
     private Object event;
 

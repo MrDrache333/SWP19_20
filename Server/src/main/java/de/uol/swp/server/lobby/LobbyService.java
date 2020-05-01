@@ -136,7 +136,7 @@ public class LobbyService extends AbstractService {
      * Lobbys, in denen User drinnen ist, werden verlassen
      *
      * @param msg the msg
-     * @author Paula, Julia, Marvin
+     * @author Paula, Julia, Marvin, Darian
      * @since Sprint3
      */
     @Subscribe
@@ -144,7 +144,7 @@ public class LobbyService extends AbstractService {
         List<LobbyDTO> toLeave = new ArrayList<>();
         lobbyManagement.getLobbies().forEach(lobby -> {
             List<User> users = new ArrayList<>(lobby.getUsers());
-            if (users.contains(msg.getUser())) {
+            if (users.contains(msg.getUser()) && !lobby.getInGame()) {
                 toLeave.add((LobbyDTO) lobby);
             }
         });

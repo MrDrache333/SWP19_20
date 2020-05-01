@@ -125,7 +125,6 @@ public class GameManagement {
             LOG.debug("Game mit folgender ID geschlossen: " + id);
         } else {
             // TODO: Fehlerbehandlung später implementieren.
-
         }
     }
 

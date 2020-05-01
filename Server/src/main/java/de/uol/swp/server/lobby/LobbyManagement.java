@@ -71,6 +71,28 @@ public class LobbyManagement {
     }
 
     /**
+     * Es wird herausgefunden ob der User ingame ist
+     *
+     * @param user der User
+     * @return Boolean ob der User ingame ist
+     * @author Darian
+     * @since Sprint5
+     */
+    public boolean isUserIngame(User user) {
+        for (Map.Entry<UUID, Lobby> lobby : lobbies.entrySet()){
+            if (lobby.getValue().getUsers().contains(user) ){
+
+                if (lobby.getValue().getInGame()) {
+
+                    return true;
+                }
+
+            }
+        }
+        
+        return false;
+    }
+    /**
      * Handling das ein User die Lobby verlässt. Überprüft, ob die gegebene Lobby existiert.
      *
      * @param id   die LobbyID

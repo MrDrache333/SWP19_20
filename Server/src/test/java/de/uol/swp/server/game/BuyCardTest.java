@@ -32,7 +32,7 @@ public class BuyCardTest {
     static final ChatManagement chatManagement = new ChatManagement();
     static final LobbyManagement lobbyManagement = new LobbyManagement();
     static final GameManagement gameManagement = new GameManagement(chatManagement, lobbyManagement);
-    static final AuthenticationService authenticationService = new AuthenticationService(bus, new UserManagement(new MainMemoryBasedUserStore()));
+    static final AuthenticationService authenticationService = new AuthenticationService(bus, new UserManagement(new MainMemoryBasedUserStore()), lobbyManagement);
     static final GameService gameService = new GameService(bus, gameManagement, authenticationService);
 
 

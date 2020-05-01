@@ -16,9 +16,9 @@ public class ServerModule extends AbstractModule {
     private final EventBus bus = new EventBus();
     private final UserStore store = new MainMemoryBasedUserStore();
     private final UserManagement userManagement = new UserManagement(store);
-    private final AuthenticationService authenticationService = new AuthenticationService(bus, userManagement);
     private final ChatManagement chatManagement = new ChatManagement();
     private final LobbyManagement lobbyManagement = new LobbyManagement();
+    private final AuthenticationService authenticationService = new AuthenticationService(bus, userManagement, lobbyManagement);
     private final GameManagement gameManagement = new GameManagement(chatManagement, lobbyManagement);
 
 
