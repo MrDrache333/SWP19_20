@@ -57,8 +57,8 @@ public class GameService {
     }
 
 
-    public void playCard(UUID gameID, User loggedInUser, Short id, int count) {
-        PlayCardRequest req = new PlayCardRequest(gameID, loggedInUser, id, count);
+    public void playCard(UUID gameID, User loggedInUser, Short id) {
+        PlayCardRequest req = new PlayCardRequest(gameID, loggedInUser, id);
         bus.post(req);
     }
 

@@ -24,23 +24,19 @@ public class PlayCardMessage extends AbstractServerMessage {
     private final UUID lobbyID;
     private final User currentUser;
     private final Short handCardID;
-    private final int count;
     private boolean playCard;
 
-    public PlayCardMessage(UUID gameID, User player, Short cardID, int count) {
+    public PlayCardMessage(UUID gameID, User player, short cardID) {
         this.lobbyID = gameID;
         this.currentUser = player;
         this.handCardID = cardID;
-        this.count = count;
     }
 
 
-    public PlayCardMessage(UUID lobbyID, User currentUser, Short handCardID, int count,
-                           boolean playCard) {
+    public PlayCardMessage(UUID lobbyID, User currentUser, Short handCardID, boolean playCard) {
         this.lobbyID = lobbyID;
         this.currentUser = currentUser;
         this.handCardID = handCardID;
-        this.count = count;
         this.playCard = playCard;
     }
 
@@ -52,12 +48,8 @@ public class PlayCardMessage extends AbstractServerMessage {
         return currentUser;
     }
 
-    public Short getHandCardID() {
+    public short getHandCardID() {
         return handCardID;
-    }
-
-    public int getCount() {
-        return count;
     }
 
     public boolean isPlayCard() {

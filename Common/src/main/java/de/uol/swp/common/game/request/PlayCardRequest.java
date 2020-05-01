@@ -21,7 +21,6 @@ public class PlayCardRequest extends AbstractRequestMessage {
      * @since Sprint 5
      */
 
-    private int count;
     private UUID gameID;
     private User user;
     private Short id;
@@ -29,12 +28,11 @@ public class PlayCardRequest extends AbstractRequestMessage {
     public PlayCardRequest() {
     }
 
-    public PlayCardRequest(UUID gameID, User currentUser, Short handCardID, int count) {
+    public PlayCardRequest(UUID gameID, User currentUser, Short handCardID) {
 
         this.gameID = gameID;
         this.user = currentUser;
         this.id = handCardID;
-        this.count = count;
     }
 
     public UUID getGameID() {
@@ -47,9 +45,5 @@ public class PlayCardRequest extends AbstractRequestMessage {
 
     public Short getHandCardID() {
         return id;
-    }
-
-    public int getCount() {
-        return count;
     }
 }

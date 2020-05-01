@@ -14,7 +14,6 @@ import de.uol.swp.common.game.messages.UserGaveUpMessage;
 import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.game.request.GameGiveUpRequest;
 import de.uol.swp.common.game.request.PlayCardRequest;
-import de.uol.swp.common.game.request.SelectCardRequest;
 import de.uol.swp.common.game.request.SkipPhaseRequest;
 import de.uol.swp.common.lobby.request.LobbyLeaveUserRequest;
 import de.uol.swp.common.lobby.request.UpdateInGameRequest;
@@ -186,33 +185,6 @@ public class GameService extends AbstractService {
     }
 
     /**
-     * Die Methode cancelt aktuell den Timer der AktionPhase.
-     *
-     * @param request SelectCardRequest vom Client an Server wird hier empfangen.
-     */
-    @Subscribe
-    public void onSelectCardRequest(SelectCardRequest request) {
-        Optional<Game> game = gameManagement.getGame(request.getMessage().getGameID());
-
-        if (game.isPresent()) {
-            Playground playground = game.get().getPlayground();
-            // TODO: Timestamp Handling wenn die SelectCardRequest Clientseitig implementiert worden ist.
-            if (playground.getActualPlayer().getTheUserInThePlayer().getUsername().equals(request.getMessage().getPlayer().getUsername())) {
-                try {
-                    playground.endTimer();
-                    // Karte wird an die ActionPhase zum Handling übergeben. TODO: Weitere Implementierung in der ActionPhase.
-                    playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), request.getMessage().getCardID());
-                    sendToSpecificPlayer(playground.getActualPlayer(), new PlayCardMessage(request.getMessage().getGameID(), request.getMessage().getPlayer(), request.getMessage().getCardID(), 3, true));
-                } catch (GamePhaseException e) {
-                    sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(request.getMessage().getGameID(), e.getMessage()));
-                }
-            }
-        } else {
-            LOG.error("Irgendwas ist bei der onSelectCardRequest im GameService falsch gelaufen..Folgende ID: " + request.getMessage().getGameID());
-        }
-    }
-
-    /**
      * Versuch eine Karte zu kaufen
      *
      * @param request BuyCardRequest wird hier vom Client empfangen
@@ -238,14 +210,19 @@ public class GameService extends AbstractService {
         }
     }
 
+    /**
+     * Versuch eine Karte zu spielen
+     *
+     * @param rqs PlayCardRequest wird hier vom Client empfangen
+     * @author Devin
+     * @since Sprint6
+     */
     @Subscribe
-    public void onPlayCardRequest(PlayCardRequest msg) {
-        Optional<Game> game = gameManagement.getGame(msg.getGameID());
-        UUID gameID = msg.getGameID();
-        User player = msg.getCurrentUser();
-        Short cardID = msg.getHandCardID();
-        int counter = msg.getCount();
-
+    public void onPlayCardRequest(PlayCardRequest rqs) {
+        Optional<Game> game = gameManagement.getGame(rqs.getGameID());
+        UUID gameID = rqs.getGameID();
+        User player = rqs.getCurrentUser();
+        Short cardID = rqs.getHandCardID();
         if (game.isPresent()) {
             Playground playground = game.get().getPlayground();
             if (playground.getActualPlayer().getTheUserInThePlayer().getUsername().equals(player.getUsername())) {
@@ -253,7 +230,7 @@ public class GameService extends AbstractService {
                     playground.endTimer();
                     // Karte wird an die ActionPhase zum Handling übergeben.
                     playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), cardID);
-                    sendToSpecificPlayer(playground.getActualPlayer(), new PlayCardMessage(gameID, player, cardID, counter, true));
+                    sendToSpecificPlayer(playground.getActualPlayer(), new PlayCardMessage(gameID, player, cardID, true));
                 } catch (GamePhaseException e) {
                     sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(gameID, e.getMessage()));
                 }

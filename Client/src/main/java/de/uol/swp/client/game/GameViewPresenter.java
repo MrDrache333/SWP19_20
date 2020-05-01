@@ -320,11 +320,10 @@ public class GameViewPresenter extends AbstractPresenter {
         if (msg.getLobbyID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
             if (msg.isPlayCard()) {
                 Platform.runLater(() -> {
-                    playedCardLayoutContainer.getChildren().add(card);
-                    AnimationManagement.playCard(card, msg.getCount());
                     if (handcards.getChildren().contains(card)) {
+                        AnimationManagement.playCard(card, playedCardLayoutContainer.getChildren().size());
                         handcards.getChildren().remove(card);
-                        gameView.getChildren().add(card);
+                        playedCardLayoutContainer.getChildren().add(card);
                         card.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                     }
                 });
@@ -418,7 +417,9 @@ public class GameViewPresenter extends AbstractPresenter {
                     AnimationManagement.addToHand(card, handcards.getChildren().size());
                     deckPane.getChildren().remove(card);
                     handcards.getChildren().add(card);
-                    card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+                    if(n>6) {
+                        card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+                    }
                 });
             }
         });
@@ -446,14 +447,11 @@ public class GameViewPresenter extends AbstractPresenter {
             gameView.getChildren().remove(play);
             gameView.getChildren().remove(back);
             gameView.getChildren().remove(bigCardImage);
-            int counter = 0;
             for (Node a : handcards.getChildren()) {
                 ImageView b = (ImageView) a;
                 if (b.equals(card)) {
                     mouseEvent = e;
-                    gameManagement.getGameService().playCard(lobbyID, loggedInUser, id, counter);
-                } else {
-                    counter++;
+                    gameManagement.getGameService().playCard(lobbyID, loggedInUser, id);
                 }
             }
         });

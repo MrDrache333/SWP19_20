@@ -163,6 +163,5 @@
                 <Image url="@../cards/images/16_sm.png" />
             </image>
         </ImageView>
-        <Pane layoutX="414.0" layoutY="434.0" prefHeight="86.0" prefWidth="200.0"/>
     </children>
 </AnchorPane>
