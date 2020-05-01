@@ -232,11 +232,7 @@ public class ClientApp extends Application implements ConnectionListener {
     @Subscribe
     public void onUserJoinedLobbyMessage(UserJoinedLobbyMessage message) {
         if (message.getUser().getUsername().equals(user.getUsername())) {
-            if (sceneManager.getGameManagement(message.getLobbyID()) != null) {
-                sceneManager.getGameManagement(message.getLobbyID()).showLobbyView();
-            } else {
-                sceneManager.showLobbyScreen(message.getUser(), message.getLobby().getName(), message.getLobbyID(), message.getGameOwner());
-            }
+            sceneManager.showLobbyScreen(message.getUser(), message.getLobby().getName(), message.getLobbyID(), message.getGameOwner());
             LOG.info("User " + message.getUser().getUsername() + " joined lobby successfully");
         }
     }
@@ -255,6 +251,7 @@ public class ClientApp extends Application implements ConnectionListener {
             sceneManager.showMainScreen(user);
             LOG.info("User " + message.getUser().getUsername() + " left lobby successfully");
             sceneManager.getGameManagement(message.getLobbyID()).close();
+            sceneManager.getGames().remove(message.getLobbyID());
         }
     }
 
@@ -318,6 +315,7 @@ public class ClientApp extends Application implements ConnectionListener {
             LOG.info("User " + message.getUser().getUsername() + " is kicked from the lobby successfully");
             sceneManager.getGameManagement(message.getLobbyID()).close();
             SceneManager.showAlert(Alert.AlertType.WARNING, "Sie wurden aus der Lobby entfernt", "Lobby verlassen");
+            sceneManager.getGames().remove(message.getLobbyID());
         }
     }
 
@@ -339,6 +337,7 @@ public class ClientApp extends Application implements ConnectionListener {
         if (message.getUsername().equals(user.getUsername())) {
             sceneManager.closeAllStages();
             sceneManager.showLoginScreen();
+            sceneManager.getGames().clear();
         }
     }
 
@@ -374,6 +373,7 @@ public class ClientApp extends Application implements ConnectionListener {
         if (message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.closeAllStages();
             sceneManager.showLoginScreen();
+            sceneManager.getGames().clear();
         }
     }
 
