@@ -15,9 +15,9 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
+import javafx.animation.PathTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.ModifiableObservableListBase;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -291,13 +291,20 @@ public class GameViewPresenter extends AbstractPresenter {
                     // fügt ein "neues" Bild an der Stelle des alten Bildes im Shop hinzu
                     newCardImage.setPreserveRatio(true);
                     newCardImage.setFitHeight(107);
-                    newCardImage.setFitWidth(newCardImage.getBoundsInLocal().getWidth());
+                    newCardImage.setFitWidth(Math.round(newCardImage.getBoundsInLocal().getWidth()));
                     newCardImage.setLayoutX(selectedCard.getLayoutX());
                     newCardImage.setLayoutY(selectedCard.getLayoutY());
                     newCardImage.setId(String.valueOf(msg.getCardID()));
                     Platform.runLater(() -> {
                         gameView.getChildren().add(newCardImage);
-                        AnimationManagement.buyCard(newCardImage);
+                        PathTransition pathTransition = AnimationManagement.buyCard(newCardImage);
+                        pathTransition.setOnFinished(actionEvent -> {
+                            gameView.getChildren().remove(newCardImage);
+                            ImageView iv = new ImageView(picture);
+                            iv.setPreserveRatio(true);
+                            iv.setFitHeight(107);
+                            discardPilePane.getChildren().add(iv);
+                        });
                     });
                     if (msg.getCounterCard() < 1) {
                         ColorAdjust makeImageDarker = new ColorAdjust();
@@ -382,8 +389,6 @@ public class GameViewPresenter extends AbstractPresenter {
                     Image picture = new Image(pfad);
                     ImageView card = new ImageView(picture);
                     card.setFitHeight(107);
-                    card.setLayoutY(603);
-                    card.setLayoutX(171);
                     card.setPreserveRatio(true);
                     card.setId(n.toString());
                     card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
@@ -422,7 +427,6 @@ public class GameViewPresenter extends AbstractPresenter {
                 Scene scene = new Scene(root);
                 dialogStage.setScene(scene);
                 dialogStage.initModality(Modality.APPLICATION_MODAL);
-                dialogStage.setAlwaysOnTop(true);
                 dialogStage.setResizable(false);
                 dialogStage.showAndWait();
             });

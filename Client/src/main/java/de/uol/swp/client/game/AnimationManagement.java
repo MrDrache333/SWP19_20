@@ -54,7 +54,7 @@ public class AnimationManagement {
      * @author Anna
      * @since Sprint5
      */
-    public static Boolean createLineToPath(ImageView card, MoveTo moveTo, double EndPointX, double EndPointY) {
+    public static PathTransition createLineToPath(ImageView card, MoveTo moveTo, double EndPointX, double EndPointY) {
         double x = card.getLayoutX();
         double y = card.getLayoutY();
         double w = card.getFitWidth() / 2;
@@ -70,10 +70,9 @@ public class AnimationManagement {
             pathTransition.setCycleCount(1);
             card.toFront();
             pathTransition.play();
-            setNewCoordinates(card, pathTransition);
-            return true;
+            return pathTransition;
         }
-        return false;
+        return null;
     }
 
     /**
@@ -150,7 +149,7 @@ public class AnimationManagement {
      * @author Anna
      * @since Sprint5
      */
-    public static Boolean buyCard(ImageView card) {
+    public static PathTransition buyCard(ImageView card) {
         return createLineToPath(card, keepPosition(card), ABLAGE_X, ABLAGE_Y);
     }
 
@@ -162,7 +161,7 @@ public class AnimationManagement {
      * @author Anna
      * @since Sprint5
      */
-    public static Boolean opponentBuysCard(ImageView card) {
+    public static PathTransition opponentBuysCard(ImageView card) {
         return createLineToPath(card, keepPosition(card), 334, -300);
     }
 
