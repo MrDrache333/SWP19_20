@@ -102,9 +102,10 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
     public void executeActionPhase(Player player, short cardId) {
         CardPack cardsPackField = playground.getCardsPackField();
         Card currentCard = getCardFromId(cardsPackField.getCards(), cardId);
+        player.getPlayerDeck().getHand().add(currentCard);
         // 1. Verifiziere, dass Karte existiert
 
-        if (currentCard.equals(null)) {
+        if (currentCard == null) {
             throw new IllegalArgumentException("CardID wurde nicht gefunden");
         }
         // 2. Überprüfe, ob Spieler diese Karte in der Hand hat
