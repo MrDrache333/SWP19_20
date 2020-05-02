@@ -26,6 +26,10 @@ abstract public class AbstractGameMessage {
         this.cardID = cardID;
     }
 
+    public AbstractGameMessage() {
+
+    }
+
     /**
      * Gibt GameID zurück
      *

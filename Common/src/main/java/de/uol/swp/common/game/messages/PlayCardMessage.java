@@ -1,46 +1,50 @@
 package de.uol.swp.common.game.messages;
 
-import de.uol.swp.common.game.response.AbstractGameMessage;
+
+import de.uol.swp.common.message.AbstractServerMessage;
 import de.uol.swp.common.user.User;
-import javafx.scene.image.ImageView;
 
 import java.util.UUID;
 
-public class PlayCardMessage extends AbstractGameMessage {
+public class PlayCardMessage extends AbstractServerMessage {
 
+    private static final long serialVersionUID = 3669837484946853842L;
     /**
      * Die Message die gesendet wird, wenn eine Handkarte angeklickt wurde
      *
-     * @param cardImage     Die ImageView der Karte
-     * @param handCards     Das Array mit den ImageViews die auf der Hand sind
-     * @param smallSpace    gibt an, ob die Karten zusammen gerückt sind oder nicht
-     * @param count         gibt an, die wievielte Karte gespielt wurde
-     * @param playCard      gibt an, ob die karte gespielt werden kann
-     * @author Rike
+     * @param gameID       Die ID des aktuellen Spiels
+     * @param currentUser   Der Spieler der die Request stellt
+     * @param handCardID    Die ID der angeklickten Karte
+     * @param isPlayed      Sagt aus, ob die Karte ausgespielt werden darf
+     * @author Rike, Devin
      * @since Sprint 5
      */
 
-    private ImageView cardImage;
-    private int count;
-    private boolean playCard;
+    private final UUID gameID;
+    private final User currentUser;
+    private final Short handCardID;
+    private final Boolean isPlayed;
 
-    public PlayCardMessage(UUID lobbyID, User currentUser, Short handCardID, ImageView cardImage, int count,
-                           boolean playCard) {
-        super(lobbyID, currentUser, handCardID);
-        this.cardImage = cardImage;
-        this.count = count;
-        this.playCard = playCard;
+
+    public PlayCardMessage(UUID gameID, User currentUser, Short handCardID, Boolean isPlayed) {
+        this.gameID = gameID;
+        this.currentUser = currentUser;
+        this.handCardID = handCardID;
+        this.isPlayed = isPlayed;
     }
 
-    public ImageView getCardImage() {
-        return cardImage;
+    public UUID getGameID() {
+        return gameID;
     }
 
-    public int getCount() {
-        return count;
+    public User getCurrentUser() {
+        return currentUser;
     }
 
-    public boolean isPlayCard() {
-        return playCard;
+    public short getHandCardID() {
+        return handCardID;
     }
+
+    public Boolean getIsPlayed() {return isPlayed;}
+
 }

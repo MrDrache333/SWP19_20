@@ -4,12 +4,10 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.game.request.GameGiveUpRequest;
+import de.uol.swp.common.game.request.PlayCardRequest;
 import de.uol.swp.common.game.request.SkipPhaseRequest;
 import de.uol.swp.common.user.User;
-import de.uol.swp.common.game.request.PlayCardRequest;
-import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
-import javafx.scene.image.ImageView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -59,22 +57,13 @@ public class GameService {
     }
 
 
-    public void sendPlayCardRequest(UUID lobbyID, User currentUser, Short handCardID, ImageView cardImage) {
-        PlayCardRequest request = new PlayCardRequest(lobbyID, currentUser, handCardID, cardImage);
-        bus.post(request);
+    public void playCard(UUID gameID, User loggedInUser, Short id) {
+        PlayCardRequest req = new PlayCardRequest(gameID, loggedInUser, id);
+        bus.post(req);
     }
 
-    /**
-     * Erstellte eine BuyCardRequest und postet diese auf dem Eventbus
-     *
-     * @param lobbyID   die LobbyID zum Lobbynamen
-     * @param loggedInUser der User, der gerade dran ist
-     * @param valueOf      ID der Karte
-     * @author Paula
-     * @since Sprint6
-     */
-    public void sendBuyCardRequest(UUID lobbyID, User loggedInUser, Short valueOf) {
-        BuyCardRequest buyCardRequest = new BuyCardRequest(lobbyID, loggedInUser, valueOf);
-        bus.post(buyCardRequest);
+    public void buyCard(BuyCardRequest req) {
+        bus.post(req);
     }
+
 }
