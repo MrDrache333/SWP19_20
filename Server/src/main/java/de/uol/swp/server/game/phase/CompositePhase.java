@@ -86,6 +86,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
     public void executeClearPhase(Player player) {
         Deck deck = player.getPlayerDeck();
         deck.getDiscardPile().addAll(deck.getHand());
+        deck.getDiscardPile().addAll(deck.getActionPile());
         playground.sendLastCardOfDiscardPile(playground.getID(), deck.getDiscardPile().get(deck.getDiscardPile().size() - 1).getId(), player.getTheUserInThePlayer());
         deck.getHand().clear();
         deck.drawHand();
