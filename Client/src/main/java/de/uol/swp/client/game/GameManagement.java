@@ -300,7 +300,7 @@ public class GameManagement {
     private void initLobbyView() {
         if (lobbyScene == null) {
             Parent rootPane = initPresenter(lobbyPresenter, LobbyPresenter.fxml);
-            lobbyScene = new Scene(rootPane, 900, 750);
+            lobbyScene = new Scene(rootPane, 1280, 750);
             lobbyScene.getStylesheets().add(styleSheet);
         }
     }

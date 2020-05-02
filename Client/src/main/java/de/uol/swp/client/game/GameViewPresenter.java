@@ -57,7 +57,7 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Die Konstante fxml.
      */
-    public static final String fxml = "/fxml/GameView.fxml";
+    public static final String fxml = "/fxml/GameViewWIP.fxml";
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
     private final UUID lobbyID;
     private User loggedInUser;
@@ -166,8 +166,8 @@ public class GameViewPresenter extends AbstractPresenter {
         chatView.getChildren().add(loader.load());
         ((Pane) chatView.getChildren().get(0)).setPrefHeight(chatView.getPrefHeight());
         ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getPrefWidth());
-        gameView.getChildren().add(handcards);
-        gameView.getChildren().add(playedCardLayoutContainer);
+     //   gameView.getChildren().add(playedCardLayoutContainer);
+//        gameView.getChildren().add(handcards);
     }
 
     /**
