@@ -19,9 +19,10 @@ public class Deck {
      * @author Paula
      * @since Sprint5
      */
-    private ArrayList<Card> cardsDeck = new ArrayList<>();
-    private ArrayList<Card> discardPile = new ArrayList<>();
-    private ArrayList<Card> hand = new ArrayList<>();
+    private final ArrayList<Card> cardsDeck = new ArrayList<>();
+    private final ArrayList<Card> discardPile = new ArrayList<>();
+    private final ArrayList<Card> hand = new ArrayList<>();
+    private final ArrayList<Card> actionPile = new ArrayList<>();
 
     /**
      * Konstruktor
@@ -167,5 +168,9 @@ public class Deck {
 
     public ArrayList<Card> getCardsDeck() {
         return cardsDeck;
+    }
+
+    public ArrayList<Card> getActionPile() {
+        return actionPile;
     }
 }

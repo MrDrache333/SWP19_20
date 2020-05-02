@@ -11,7 +11,7 @@ import de.uol.swp.common.game.messages.BuyCardMessage;
 import de.uol.swp.common.game.messages.DiscardPileLastCardMessage;
 import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.game.messages.PlayCardMessage;
-import de.uol.swp.common.game.request.PlayCardRequest;
+import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
@@ -22,8 +22,11 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -56,7 +59,7 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     public static final String fxml = "/fxml/GameView.fxml";
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
-    private UUID lobbyID;
+    private final UUID lobbyID;
     private User loggedInUser;
 
     @FXML
@@ -72,14 +75,24 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     private StackPane discardPilePane;
 
-    private HandcardsLayoutContainer handcards;
+
+    private final HandcardsLayoutContainer handcards;
+    private final PlayedCardLayoutContainer playedCardLayoutContainer;
 
     private ObservableList<String> users;
-    private ChatViewPresenter chatViewPresenter;
-    private Injector injector;
-    private GameManagement gameManagement;
-    private GameService gameService;
+    private final GameService gameService;
     private MouseEvent mouseEvent;
+    private final ChatViewPresenter chatViewPresenter;
+    private final Injector injector;
+    private final GameManagement gameManagement;
+
+    private final EventHandler<MouseEvent> handCardEventHandler = new EventHandler() {
+        @Override
+        public void handle(Event event) {
+            ImageView card = (ImageView) event.getSource();
+            playChoosenCard(lobbyID, loggedInUser, card.getImage().getUrl(), Short.valueOf(card.getId()), card, (MouseEvent) event);
+        }
+    };
 
     /**
      * Instantiiert einen neuen GameView Presenter.
@@ -103,6 +116,7 @@ public class GameViewPresenter extends AbstractPresenter {
         this.injector = injector;
         this.gameManagement = gameManagement;
         handcards = new HandcardsLayoutContainer(284, 598, 119, 430);
+        playedCardLayoutContainer = new PlayedCardLayoutContainer(414, 434, 86, 200);
         this.gameService = gameService;
         initializeUserList();
     }
@@ -153,6 +167,7 @@ public class GameViewPresenter extends AbstractPresenter {
         ((Pane) chatView.getChildren().get(0)).setPrefHeight(chatView.getPrefHeight());
         ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getPrefWidth());
         gameView.getChildren().add(handcards);
+        gameView.getChildren().add(playedCardLayoutContainer);
     }
 
     /**
@@ -294,21 +309,27 @@ public class GameViewPresenter extends AbstractPresenter {
      * Die Nachricht die angibt ob die Karte gespielt werden konnte
      *
      * @param msg die Nachricht
-     * @author Rike
-     * @since Sprint 5
+     * @author Devin
+     * @since Sprint 6
      */
+    @FXML
     @Subscribe
     public void onPlayCardMessage(PlayCardMessage msg) {
-        if (msg.getGameID().equals(lobbyID) && msg.getPlayer().equals(loggedInUser)) {
-            if (msg.isPlayCard()) {
-                AnimationManagement.playCard(msg.getCardImage(), msg.getCount());
-                if (handcards.getChildren().contains(msg.getCardImage())) {
-                    handcards.getChildren().remove(msg.getCardImage());
-                    gameView.getChildren().add(msg.getCardImage());
-                }
+
+        ImageView card = (ImageView) mouseEvent.getTarget();
+        if (msg.getGameID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
+            if (msg.getIsPlayed()) {
+                Platform.runLater(() -> {
+                    if (handcards.getChildren().contains(card)) {
+                        AnimationManagement.playCard(card, playedCardLayoutContainer.getChildren().size());
+                        handcards.getChildren().remove(card);
+                        playedCardLayoutContainer.getChildren().add(card);
+                        card.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+                    }
+                });
             } else {
                 showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht spielen!", "Fehler");
-                LOG.debug("Das Spielen der Karte " + msg.getCardID() + " von " + msg.getPlayer() + " ist fehlgeschlagen");
+                LOG.debug("Das Spielen der Karte " + msg.getHandCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
             }
         }
     }
@@ -390,18 +411,83 @@ public class GameViewPresenter extends AbstractPresenter {
                     card.setLayoutY(603);
                     card.setLayoutX(171);
                     card.setPreserveRatio(true);
+                    card.setId(n.toString());
                     card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
                     deckPane.getChildren().add(card);
                     AnimationManagement.addToHand(card, handcards.getChildren().size());
                     deckPane.getChildren().remove(card);
                     handcards.getChildren().add(card);
-                    card.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-                        PlayCardRequest request = new PlayCardRequest(lobbyID, loggedInUser, HandCardID.get(n), card);
-                        eventBus.post(request);
-                    });
+                    card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                 });
             }
         });
+    }
+
+    /**
+     * Methode, die beim anklicken einer Handkarte ausgeführt wird.
+     *
+     * @param gameID Die ID des Spiels
+     * @param loggedInUser der User der gerade eingelogt im Spiel ist und die Karte ausgewählt hat.
+     * @param pfad Der Pfad zum entsprechendem Vollbild
+     * @param id Die ID der Karte
+     * @param card Die ImageView der ausgewählten Karte
+     * @param e Das MouseEvent, das zum anlicken der Karte zuständig ist.
+     * @author Devin
+     * @since Sprint 6
+     */
+
+    private void playChoosenCard(UUID gameID, User loggedInUser, String pfad, Short id, ImageView card, MouseEvent e) {
+        ImageView bigCardImage = new ImageView(new Image(pfad));
+        bigCardImage.setFitHeight(225.0);
+        bigCardImage.setFitWidth(150.0);
+        bigCardImage.toFront();
+        bigCardImage.setLayoutX(425.0);
+        bigCardImage.setLayoutY(155.0);
+        gameView.getChildren().add(bigCardImage);
+        if (id>6) {
+            Button play = new Button("auspielen");
+            Button back = new Button("zurück");
+            play.setLayoutX(432.0);
+            play.setLayoutY(385.0);
+            back.setLayoutX(516.0);
+            back.setLayoutY(385.0);
+            back.setMinWidth(52.0);
+            gameView.getChildren().add(play);
+            gameView.getChildren().add(back);
+
+            play.setOnAction(event -> {
+                gameView.getChildren().remove(play);
+                gameView.getChildren().remove(back);
+                gameView.getChildren().remove(bigCardImage);
+                for (Node a : handcards.getChildren()) {
+                    ImageView b = (ImageView) a;
+                    if (b.equals(card)) {
+                        mouseEvent = e;
+                        gameManagement.getGameService().playCard(gameID, loggedInUser, id);
+                    }
+                }
+            });
+            // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt
+            back.setOnAction(event -> {
+                gameView.getChildren().remove(play);
+                gameView.getChildren().remove(back);
+                gameView.getChildren().remove(bigCardImage);
+            });
+        } else {
+            Button back = new Button("zurück");
+
+            back.setLayoutX(516.0);
+            back.setLayoutY(385.0);
+            back.setMinWidth(52.0);
+            gameView.getChildren().add(back);
+
+            // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt
+            back.setOnAction(event -> {
+                gameView.getChildren().remove(back);
+                gameView.getChildren().remove(bigCardImage);
+            });
+        }
+
     }
 
     /**
@@ -450,7 +536,8 @@ public class GameViewPresenter extends AbstractPresenter {
                 buy.setVisible(false);
                 back.setVisible(false);
                 bigCardImage.setVisible(false);
-                gameService.sendBuyCardRequest(lobbyID, loggedInUser, Short.valueOf(cardID));
+                BuyCardRequest req = new BuyCardRequest(lobbyID, loggedInUser, Short.valueOf(cardID));
+                gameService.buyCard(req);
                 this.mouseEvent = mouseEvent;
             });
             // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt

@@ -1,54 +1,46 @@
 package de.uol.swp.common.game.request;
 
+import de.uol.swp.common.message.AbstractRequestMessage;
 import de.uol.swp.common.user.User;
-import javafx.scene.image.ImageView;
 
 import java.util.UUID;
 
-public class PlayCardRequest {
+public class PlayCardRequest extends AbstractRequestMessage {
 
+    private static final long serialVersionUID = -7995157255412993346L;
     /**
      * Die Request die gestellt wird, wenn eine Karte von der hand angeklickt wurde
      *
-     * @param lobbyID       Die ID der aktuellen Lobby
-     * @param currentUser   Der Spieler der die Request stellt
-     * @param handCardID    Die ID der angeklickten Karte
-     * @param cardImage     Die ImageView der Karte
-     * @param handCards     Das Array mit den ImageViews die auf der Hand sind
-     * @param smallSpace    gibt an, ob die Karten zusammen gerückt sind oder nicht
+     * @param gameID       Die ID der aktuellen Lobby
+     * @param user         Der SPieler, der eine Karte ausspielen möchte
+     * @param id    Die ID der angeklickten Karte
      * @author Rike
      * @since Sprint 5
      */
 
-    private UUID lobbyID;
-    private User currentUser;
-    private Short handCardID;
-    private ImageView cardImage;
+    private UUID gameID;
+    private User user;
+    private Short id;
 
     public PlayCardRequest() {
     }
 
-    public PlayCardRequest(UUID lobbyID, User currentUser, Short handCardID, ImageView cardImage) {
-        this.lobbyID = lobbyID;
-        this.currentUser = currentUser;
-        this.handCardID = handCardID;
-        this.cardImage = cardImage;
+    public PlayCardRequest(UUID gameID, User currentUser, Short handCardID) {
+
+        this.gameID = gameID;
+        this.user = currentUser;
+        this.id = handCardID;
     }
 
-
-    public UUID getLobbyID() {
-        return lobbyID;
+    public UUID getGameID() {
+        return gameID;
     }
 
     public User getCurrentUser() {
-        return currentUser;
+        return user;
     }
 
     public Short getHandCardID() {
-        return handCardID;
-    }
-
-    public ImageView getCardImage() {
-        return cardImage;
+        return id;
     }
 }
