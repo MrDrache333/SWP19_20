@@ -14,8 +14,8 @@ public class AnimationManagement {
 
     private static final double HAND_X = 284;
 
-    private static final double ABLAGE_X = 733 + 30;
-    private static final double ABLAGE_Y = 538 + 92;
+    private static final double ABLAGE_X = 759;
+    private static final double ABLAGE_Y = 603;
 
     private static final double ACTION_ZONE_X = 370;
     private static final double ACTION_ZONE_Y = 421;
@@ -68,6 +68,7 @@ public class AnimationManagement {
             pathTransition.setNode(card);
             pathTransition.setPath(path);
             pathTransition.setCycleCount(1);
+            card.toFront();
             pathTransition.play();
             setNewCoordinates(card, pathTransition);
             return true;
