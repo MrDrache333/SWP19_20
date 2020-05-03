@@ -18,9 +18,9 @@
                 <Rectangle2D height="1000.0" width="1000.0" />
             </viewport>
         </ImageView>
-        <VBox prefHeight="750.0" prefWidth="300.0" style=" -fx-border-width: 1;     -fx-border-color: white;     -fx-border">
+        <VBox prefHeight="750.0" prefWidth="300.0" style="-fx-border-width: 0,7; -fx-border-color: white;">
             <children>
-                <VBox maxHeight="453.0" maxWidth="300.0" minHeight="453.0" minWidth="300.0" opacity="0.74" prefHeight="453.0" prefWidth="300.0" style="-fx-background-color: #805E4B;">
+                <VBox maxHeight="453.0" maxWidth="300.0" minHeight="453.0" minWidth="300.0" opacity="0.73" prefHeight="453.0" prefWidth="300.0" style="-fx-background-color: #3D3D3D;">
                     <children>
                         <Label text="Einstellungen:" textFill="WHITE">
                             <HBox.margin>
@@ -119,14 +119,14 @@
                         </VBox>
                     </children>
                 </VBox>
-                <HBox opacity="0.74" prefHeight="181.0" prefWidth="300.0">
+                <HBox prefHeight="181.0" prefWidth="300.0">
                     <children>
-                        <ListView fx:id="usersView" nodeOrientation="LEFT_TO_RIGHT" prefHeight="181.0" prefWidth="328.0" style="-fx-background-color: #805E4B;">
+                        <ListView fx:id="usersView" nodeOrientation="LEFT_TO_RIGHT" opacity="0.73" prefHeight="181.0" prefWidth="328.0" style="-fx-background-color: #3D3D3D;">
 
                         </ListView>
                     </children>
                 </HBox>
-                <HBox prefHeight="115.0" prefWidth="300.0" style="-fx-background-color: #805E4B;">
+                <HBox opacity="0.73" prefHeight="115.0" prefWidth="300.0" style="-fx-background-color: #3D3D3D;">
                     <children>
                         <Button fx:id="giveUpButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onLeaveLobbyButtonPressed" prefHeight="40.0" prefWidth="118.0" text="Lobby Verlassen">
                             <HBox.margin>

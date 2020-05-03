@@ -12,23 +12,23 @@ import javafx.util.Duration;
 
 public class AnimationManagement {
 
-    private static final double HAND_X = 284;
+    private static final double HAND_X = 460;
 
-    private static final double ABLAGE_X = 733 + 30;
-    private static final double ABLAGE_Y = 538 + 92;
+    private static final double ABLAGE_X = 1156;
+    private static final double ABLAGE_Y = 590;
 
-    private static final double ACTION_ZONE_X = 370;
-    private static final double ACTION_ZONE_Y = 421;
+    private static final double ACTION_ZONE_X = 510;
+    private static final double ACTION_ZONE_Y = 600;
 
     private static final double ACTION_ZONE_OPPONENT_X = ACTION_ZONE_X;
-    private static final double ACTION_ZONE_OPPONENT_Y = 31;
+    private static final double ACTION_ZONE_OPPONENT_Y = 205;
 
-    private static final double TRASH_X = 100;
-    private static final double TRASH_Y = 233;
+    private static final double TRASH_X = 150;
+    private static final double TRASH_Y = 455;
 
 
     /**
-     * Erstellt ein neues MoveTo Objekt für den Pfad, wobei die aktuellen Kooridnaten der Karte übernommen werden.
+     * Erstellt ein neues MoveTo Objekt für den Pfad, wobei die aktuellen Koordinaten der Karte übernommen werden.
      *
      * @param card die Kare
      * @return MoveTo
