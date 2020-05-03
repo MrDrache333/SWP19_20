@@ -81,17 +81,14 @@ public class LobbyManagement {
     public boolean isUserIngame(User user) {
         for (Map.Entry<UUID, Lobby> lobby : lobbies.entrySet()){
             if (lobby.getValue().getUsers().contains(user) ){
-
                 if (lobby.getValue().getInGame()) {
-
                     return true;
                 }
-
             }
         }
-        
         return false;
     }
+
     /**
      * Handling das ein User die Lobby verlässt. Überprüft, ob die gegebene Lobby existiert.
      *

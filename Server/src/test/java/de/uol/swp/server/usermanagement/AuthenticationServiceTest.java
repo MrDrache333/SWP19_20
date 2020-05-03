@@ -164,7 +164,6 @@ class AuthenticationServiceTest {
 
         assertEquals(((AllOnlineUsersResponse) event).getUsers().size(), 1);
         assertEquals(((AllOnlineUsersResponse) event).getUsers().get(0), user);
-
     }
 
     /**
@@ -215,7 +214,6 @@ class AuthenticationServiceTest {
         assertTrue(event instanceof AllOnlineUsersResponse);
 
         assertTrue(((AllOnlineUsersResponse) event).getUsers().isEmpty());
-
     }
 
     /**
@@ -233,7 +231,6 @@ class AuthenticationServiceTest {
         users.add(user);
         users.add(user2);
         users.add(user3);
-
 
         Optional<Session> session1 = authService.getSession(user);
         Optional<Session> session2 = authService.getSession(user2);
@@ -267,5 +264,4 @@ class AuthenticationServiceTest {
         assertTrue(userManagement.isLoggedIn(userToLogin));
         userManagement.dropUser(userToLogin);
     }
-
 }

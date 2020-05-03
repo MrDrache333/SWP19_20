@@ -63,7 +63,6 @@ public class AuthenticationService extends AbstractService {
         this.lobbyManagement = lobbyManagement;
     }
 
-
     /**
      * Session von einem User wird übergeben
      *
@@ -138,17 +137,13 @@ public class AuthenticationService extends AbstractService {
             if (!lobbyManagement.isUserIngame(userToLogOut)) {
                 // Could be already logged out
                 if (userToLogOut != null) {
-
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Logging out user " + userToLogOut.getUsername());
                     }
-
                     userManagement.logout(userToLogOut);
                     userSessions.remove(session);
-
                     ServerMessage returnMessage = new UserLoggedOutMessage(userToLogOut.getUsername());
                     post(returnMessage);
-
                 }
             }
             else{
@@ -197,7 +192,6 @@ public class AuthenticationService extends AbstractService {
         }
         post(returnMessage);
     }
-
 
     /**
      * Der Nutzer wird gelöscht und eine entprechende Message zurückgesendet

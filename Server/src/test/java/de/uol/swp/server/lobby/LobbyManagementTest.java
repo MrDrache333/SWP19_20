@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 
 class LobbyManagementTest {
@@ -125,5 +126,18 @@ class LobbyManagementTest {
         lobbyManagement.dropLobby(lobbyID);
         lobbyManagement.dropLobby(lobbyID2);
         assertEquals(0, lobbyManagement.getLobbies().size());
+    }
+
+    /**
+     * Es wir getestet ob der User im Spiel ist.
+     *
+     * @author Darian
+     * @since Sprint 7
+     */
+    @Test
+    void isUserIngameTest() {
+        assertFalse(lobbyManagement.isUserIngame(defaultLobbyOwner));
+        lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, defaultLobbyOwner);
+        assertFalse(lobbyManagement.isUserIngame(defaultLobbyOwner));
     }
 }
