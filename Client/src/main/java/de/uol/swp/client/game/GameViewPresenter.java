@@ -7,6 +7,9 @@ import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
+import de.uol.swp.common.game.card.Card;
+import de.uol.swp.common.game.card.parser.JsonCardParser;
+import de.uol.swp.common.game.card.parser.components.CardPack;
 import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
@@ -136,7 +139,7 @@ public class GameViewPresenter extends AbstractPresenter {
         this.injector = injector;
         this.gameManagement = gameManagement;
         handcards = new HandcardsLayoutContainer(460, 618, 160, 650);
-        playedCardLayoutContainer = new PlayedCardLayoutContainer(20, 20, 160, 100);
+        playedCardLayoutContainer = new PlayedCardLayoutContainer(500, 500, 160, 100);
         this.gameService = gameService;
         initializeUserList();
     }
@@ -320,40 +323,41 @@ public class GameViewPresenter extends AbstractPresenter {
      * @author Rike, Devin, Anna
      * @since Sprint 5
      */
+    // TODO: Karte wenn sie gekauft wird, von der richtigen Postition einfliegen lassen. ( Weiter nach rechts)
     @Subscribe
     public void onBuyCardMessage(BuyCardMessage msg) {
-
         System.out.println(msg.getCounterCard());
         if (msg.getLobbyID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
             if (msg.isBuyCard()) {
-                    String pfad = "file:Client/src/main/resources/cards/images/" + msg.getCardID() + ".png";
-                    Image picture = new Image(pfad);
-                    ImageView newCardImage = new ImageView(picture);
-                    LOG.debug("Der Spieler " + msg.getCurrentUser() + " hat die Karte " + msg.getCardID() + " gekauft.");
-                    // fügt ein "neues" Bild an der Stelle des alten Bildes im Shop hinzu
-                    newCardImage.setPreserveRatio(true);
-                    newCardImage.setFitHeight(107);
-                    newCardImage.setFitWidth(Math.round(newCardImage.getBoundsInLocal().getWidth()));
-                    newCardImage.setLayoutX(selectedCard.getLayoutX());
-                    newCardImage.setLayoutY(selectedCard.getLayoutY());
-                    newCardImage.setId(String.valueOf(msg.getCardID()));
-                    Platform.runLater(() -> {
-                        gameView.getChildren().add(newCardImage);
-                        PathTransition pathTransition = AnimationManagement.buyCard(newCardImage);
-                        pathTransition.setOnFinished(actionEvent -> {
-                            gameView.getChildren().remove(newCardImage);
-                            ImageView iv = new ImageView(picture);
-                            iv.setPreserveRatio(true);
-                            iv.setFitHeight(107);
-                            discardPilePane.getChildren().add(iv);
-                        });
+                ImageView selectedCard = (ImageView) mouseEvent.getSource();
+                String pfad = "file:Client/src/main/resources/cards/images/" + msg.getCardID().toString() + ".png";
+                Image picture = new Image(pfad);
+                ImageView newCardImage = new ImageView(picture);
+                LOG.debug("Der Spieler " + msg.getCurrentUser() + " hat die Karte " + msg.getCardID() + " gekauft.");
+                // fügt ein "neues" Bild an der Stelle des alten Bildes im Shop hinzu
+                newCardImage.setPreserveRatio(true);
+                newCardImage.setFitHeight(107);
+                newCardImage.setFitWidth(Math.round(newCardImage.getBoundsInLocal().getWidth()));
+                newCardImage.setLayoutX(selectedCard.getLayoutX());
+                newCardImage.setLayoutY(selectedCard.getLayoutY());
+                newCardImage.setId(String.valueOf(msg.getCardID()));
+                Platform.runLater(() -> {
+                    gameViewWIP.getChildren().add(newCardImage);
+                    PathTransition pathTransition = AnimationManagement.buyCard(newCardImage);
+                    pathTransition.setOnFinished(actionEvent -> {
+                        gameViewWIP.getChildren().remove(newCardImage);
+                        ImageView iv = new ImageView(picture);
+                        iv.setPreserveRatio(true);
+                        iv.setFitHeight(107);
+                        discardPilePane.getChildren().add(iv);
                     });
-                    if (msg.getCounterCard() < 1) {
-                        ColorAdjust makeImageDarker = new ColorAdjust();
-                        makeImageDarker.setBrightness(-0.7);
-                        selectedCard.setEffect(makeImageDarker);
-                    }
-                    playAllMoneyCardsOnHand();
+                });
+                if (msg.getCounterCard() < 1) {
+                    ColorAdjust makeImageDarker = new ColorAdjust();
+                    makeImageDarker.setBrightness(-0.7);
+                    selectedCard.setEffect(makeImageDarker);
+                }
+                playAllMoneyCardsOnHand();
             } else {
                 showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht kaufen!", "Fehler");
                 LOG.debug("Der Kauf der Karte " + msg.getCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
@@ -446,7 +450,7 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Hier wird die GameExceptionMessage abgefangen und die Nachricht in einem neuem Fenster angezeigt
      *
-     * @param msg   die Nachricht
+     * @param msg die Nachricht
      * @author Anna
      * @since Sprint 7
      */
@@ -473,6 +477,7 @@ public class GameViewPresenter extends AbstractPresenter {
             });
         }
     }
+
     /**
      * Die usersView Liste wird geupdatet.
      * Äquivalent zu MainMenuPresenter.updateUsersList.
@@ -504,33 +509,6 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     public void onSkipPhaseButtonPressed(ActionEvent actionEvent) {
         gameManagement.getGameService().skipPhase(loggedInUser, lobbyID);
-    }
-
-
-    @FXML
-    @Subscribe
-    public void ShowNewHand(DrawHandMessage message) {
-        Platform.runLater(() -> {
-            if (lobbyID.equals(message.getTheLobbyID())) {
-                ArrayList<Short> handCardID = message.getCardsOnHand();
-                handCardID.forEach((n) -> {
-                    String pfad = "file:Client/src/main/resources/cards/images/" + n + ".png";
-                    Image picture = new Image(pfad);
-                    ImageView card = new ImageView(picture);
-                    card.setFitHeight(100);
-                    card.setLayoutY(603);
-                    card.setLayoutX(171);
-                    card.setPreserveRatio(true);
-                    card.setId(n.toString());
-                    card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
-                    deckPane.getChildren().add(card);
-                    AnimationManagement.addToHand(card, handcards.getChildren().size());
-                    deckPane.getChildren().remove(card);
-                    handcards.getChildren().add(card);
-                    card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
-                });
-            }
-        });
     }
 
     /**
@@ -616,53 +594,13 @@ public class GameViewPresenter extends AbstractPresenter {
         double mouseY = mouseEvent.getSceneY();
         ImageView cardImage = (ImageView) mouseEvent.getSource();
         // Überprüdung ob sich die angeklickte Karte innerhalb des Shops befindet und nicht bereits auf dem Ablagestapel
-        if (mouseX > shopTeppich.getLayoutX() && mouseX < (shopTeppich.getLayoutX() + shopTeppich.getFitWidth()) &&
-                mouseY > shopTeppich.getLayoutY() && mouseY < (shopTeppich.getLayoutY() + shopTeppich.getFitHeight()) && cardImage.getEffect() == null) {
-            // Karte befindet sich im Shop
-            String cardID = cardImage.getId();
-            String PathCardLargeView = "file:Client/src/main/resources/cards/images/" + cardID + ".png";
-            // ein großes Bild der Karte wird hinzugefügt
-            ImageView bigCardImage = new ImageView(new Image(PathCardLargeView));
-            // setzt die Größe und die Position des Bildes. Das Bild ist im Vordergrund. Bild wird hinzugefügt
-            bigCardImage.setFitHeight(225.0);
-            bigCardImage.setFitWidth(150.0);
-            bigCardImage.toFront();
-            bigCardImage.setLayoutX(425.0);
-            bigCardImage.setLayoutY(155.0);
-            gameView.getChildren().add(bigCardImage);
-            // es werden zwei Buttons hinzugefügt (zurück und kaufen)
-            Button buy = new Button("kaufen");
-            Button back = new Button("zurück");
-            gameView.getChildren().add(buy);
-            gameView.getChildren().add(back);
-            // Position der Buttons wird gesetzt
-            buy.setLayoutX(432.0);
-            buy.setLayoutY(385.0);
-            back.setLayoutX(516.0);
-            back.setLayoutY(385.0);
-            back.setMinWidth(52.0);
-            // Aktion hinter dem Kauf-Button
-            buy.setOnAction(event -> {
-                buy.setVisible(false);
-                back.setVisible(false);
-                bigCardImage.setVisible(false);
-                BuyCardRequest req = new BuyCardRequest(lobbyID, loggedInUser, Short.valueOf(cardID));
-                gameService.buyCard(req);
-                this.mouseEvent = mouseEvent;
-            });
-            // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt
-            back.setOnAction(event -> {
-                buy.setVisible(false);
-                back.setVisible(false);
-                bigCardImage.setVisible(false);
-            });
-        }
-
-        String bla = cardImage.getImage().getUrl();
-
-        String cardID2 = bla.replace("_sm.png", "");
+        //    if (mouseX > shopTeppich.getLayoutX() && mouseX < (shopTeppich.getLayoutX() + shopTeppich.getWidth()) &&
+        //          mouseY > shopTeppich.getLayoutY() && mouseY < (shopTeppich.getLayoutY() + shopTeppich.getHeight()) && cardImage.getEffect() == null) {
+        // Karte befindet sich im Shop
+        String cardID3 = cardImage.getImage().getUrl();
+        String cardID2 = cardID3.replace("_sm.png", "");
         String cardID = cardID2.substring(cardID2.length() - 1);
-        String PathCardLargeView = bla.replace("_sm.png", ".png"); // "file:Client/src/main/resources/cards/images/" + cardID + ".png";
+        String PathCardLargeView = "file:Client/src/main/resources/cards/images/" + cardID + ".png";
         // ein großes Bild der Karte wird hinzugefügt
         ImageView bigCardImage = new ImageView(new Image(PathCardLargeView));
         // setzt die Größe und die Position des Bildes. Das Bild ist im Vordergrund. Bild wird hinzugefügt
@@ -700,6 +638,8 @@ public class GameViewPresenter extends AbstractPresenter {
             bigCardImage.setVisible(false);
         });
     }
+
+//}
 
     /**
      * Hier werden alle Geldkarten, die sich auf der Hand befinden, ausgespielt

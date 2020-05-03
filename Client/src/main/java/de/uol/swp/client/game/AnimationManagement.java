@@ -14,8 +14,8 @@ public class AnimationManagement {
 
     private static final double HAND_X = 460;
 
-    private static final double ABLAGE_X = 759;
-    private static final double ABLAGE_Y = 603;
+    private static final double ABLAGE_X = 1156;
+    private static final double ABLAGE_Y = 590;
 
     private static final double ACTION_ZONE_X = 510;
     private static final double ACTION_ZONE_Y = 600;

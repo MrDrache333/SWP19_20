@@ -119,9 +119,9 @@
                         </VBox>
                     </children>
                 </VBox>
-                <HBox prefHeight="181.0" prefWidth="300.0">
+                <HBox maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="181.0" prefWidth="300.0">
                     <children>
-                        <ListView fx:id="usersView" nodeOrientation="LEFT_TO_RIGHT" opacity="0.73" prefHeight="181.0" prefWidth="328.0" style="-fx-background-color: #3D3D3D;">
+                        <ListView fx:id="usersView" maxWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" opacity="0.73" prefHeight="181.0" prefWidth="300.0" style="-fx-background-color: #3D3D3D;">
 
                         </ListView>
                     </children>
@@ -137,10 +137,10 @@
                 </HBox>
             </children>
         </VBox>
-        <VBox layoutX="300.0" prefHeight="750.0" prefWidth="980.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <VBox layoutX="300.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="980.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
 
-                <Pane fx:id="chatView" maxHeight="703.0" maxWidth="1056.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="630.0" prefWidth="990.0">
+                <Pane fx:id="chatView" maxHeight="630.0" maxWidth="990.0" minHeight="630.0" minWidth="942.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="630.0" prefWidth="942.0">
                     <VBox.margin>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="5.0" />
                     </VBox.margin>
