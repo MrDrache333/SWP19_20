@@ -192,6 +192,7 @@ public class AnimationManagement {
         double w = card.getFitWidth() / 2;
         double h = card.getFitHeight() / 2;
         double endPointX = parent.getLayoutX() + parent.getBoundsInLocal().getWidth() / 2 - w - HAND_X - w * 2 * count;
+        endPointX += 350;
         parent.toBack();
         if (HAND_X + count * w != endPointX) {
             Path path = new Path();

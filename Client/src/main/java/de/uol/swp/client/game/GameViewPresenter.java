@@ -205,7 +205,7 @@ public class GameViewPresenter extends AbstractPresenter {
         int index = 0;
         for (ImageView imageView : allImageViews) {
             String theIdInString = String.valueOf(theList.get(index));
-            String imageUrl = "cards\\images\\" + theIdInString + "_sm.png";
+            String imageUrl = "/cards/images/" + theIdInString + "_sm.png";
             Image theImage = new Image(imageUrl);
             imageView.setImage(theImage);
             index++;
