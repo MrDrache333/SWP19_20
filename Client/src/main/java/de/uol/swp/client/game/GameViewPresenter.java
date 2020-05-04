@@ -247,7 +247,7 @@ public class GameViewPresenter extends AbstractPresenter {
         if (loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
             loggedInUser = message.getUser();
         }
-        if (users.contains(message.getOldUser().getUsername())) {
+        if (users != null && users.contains(message.getOldUser().getUsername())) {
             users.remove(message.getOldUser().getUsername());
             users.add(message.getUser().getUsername());
         }
