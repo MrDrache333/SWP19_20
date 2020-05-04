@@ -126,7 +126,7 @@ public class AuthenticationService extends AbstractService {
      * Serverlogikg vom LogoutRequest
      *
      * @param msg LogoutRequest
-     * @author Marco
+     * @author Marco, Darian
      * @since Start
      */
     @Subscribe
@@ -147,7 +147,8 @@ public class AuthenticationService extends AbstractService {
                 }
             }
             else{
-                throw new UserManagementException("Account is in a game!");
+                UpdateUserFailedMessage returnMessage = new UpdateUserFailedMessage(session.getUser(), "Account is in Game. You can not logout.");
+                post(returnMessage);
             }
         }
     }
@@ -216,7 +217,8 @@ public class AuthenticationService extends AbstractService {
                 post(returnMessage);
             }
             else{
-                throw new UserManagementException("Account is in a game!");
+                UpdateUserFailedMessage returnMessage = new UpdateUserFailedMessage(userToDrop,"Account is in Game. You can not delete your Account.");
+                post(returnMessage);
             }
         }
     }

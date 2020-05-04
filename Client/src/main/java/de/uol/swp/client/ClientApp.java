@@ -20,6 +20,7 @@ import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import de.uol.swp.common.user.request.OpenSettingsRequest;
 import de.uol.swp.common.user.response.LoginSuccessfulResponse;
 import de.uol.swp.common.user.response.RegistrationSuccessfulResponse;
+import de.uol.swp.server.usermanagement.UserUpdateException;
 import io.netty.channel.Channel;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -302,13 +303,12 @@ public class ClientApp extends Application implements ConnectionListener {
         }
     }
 
-
     /**
      * Empfängt vom Server die Message, dass ein User gekickt wurde. Bei diesem User wird das Lobbyfenster
      * geschlossen und das MainMenu wird angezeigt
      *
      * @param message KickUserMessage
-     * @author Darian. Marvin
+     * @author Darian, Marvin
      * @since Sprint 4
      */
     @Subscribe

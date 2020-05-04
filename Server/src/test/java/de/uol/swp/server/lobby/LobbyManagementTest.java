@@ -1,6 +1,7 @@
 package de.uol.swp.server.lobby;
 
 import de.uol.swp.common.lobby.Lobby;
+import de.uol.swp.common.lobby.message.UpdatedLobbyReadyStatusMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class LobbyManagementTest {
     static final User defaultLobbyOwner = new UserDTO("Owner", "Test", "123@test.de");
+    static final User secondUser = new UserDTO("Test", "Test", "1234@test.de");
     static final String defaultLobbyName = "Lobby";
     static final String defaultLobbyPassword = "Lobby";
     final LobbyManagement lobbyManagement = new LobbyManagement();
@@ -137,7 +139,10 @@ class LobbyManagementTest {
     @Test
     void isUserIngameTest() {
         assertFalse(lobbyManagement.isUserIngame(defaultLobbyOwner));
-        lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, defaultLobbyOwner);
+        lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, defaultLobbyOwner);
         assertFalse(lobbyManagement.isUserIngame(defaultLobbyOwner));
+        Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyID);
+        lobby.get().setInGame(true);
+        assertTrue(lobbyManagement.isUserIngame(defaultLobbyOwner));
     }
 }

@@ -12,6 +12,7 @@ import de.uol.swp.common.user.request.LogoutRequest;
 import de.uol.swp.common.user.request.RetrieveAllOnlineUsersRequest;
 import de.uol.swp.common.user.response.AllOnlineUsersResponse;
 import de.uol.swp.server.lobby.LobbyManagement;
+import de.uol.swp.server.lobby.LobbyService;
 import de.uol.swp.server.message.ClientAuthorizedMessage;
 import de.uol.swp.server.message.ServerExceptionMessage;
 import de.uol.swp.server.usermanagement.store.MainMemoryBasedUserStore;
@@ -260,7 +261,6 @@ class AuthenticationServiceTest {
         userManagement.createUser(userToLogin);
         final LoginRequest loginRequest = new LoginRequest(userToLogin.getUsername(), userToLogin.getPassword());
         bus.post(loginRequest);
-
         assertTrue(userManagement.isLoggedIn(userToLogin));
         userManagement.dropUser(userToLogin);
     }
