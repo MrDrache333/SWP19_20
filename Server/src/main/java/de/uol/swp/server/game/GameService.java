@@ -196,14 +196,19 @@ public class GameService extends AbstractService {
         Optional<Game> game = gameManagement.getGame(request.getLobbyID());
         if (game.isPresent()) {
             Playground playground = game.get().getPlayground();
-            try {
-                int count = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), request.getCardID());
-                BuyCardMessage buyCard = new BuyCardMessage(request.getLobbyID(), request.getCurrentUser(), request.getCardID(), true, count);
-                sendToAllPlayers(request.getLobbyID(), buyCard);
+            if (request.getCurrentUser().equals(playground.getActualPlayer().getTheUserInThePlayer())) {
+                try {
+                    int count = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), request.getCardID());
+                    BuyCardMessage buyCard = new BuyCardMessage(request.getLobbyID(), request.getCurrentUser(), request.getCardID(), true, count);
+                    sendToAllPlayers(request.getLobbyID(), buyCard);
 
-            } catch (NotEnoughMoneyException notEnoughMoney) {
-                sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(request.getLobbyID(), notEnoughMoney.getMessage()));
+                } catch (NotEnoughMoneyException notEnoughMoney) {
+                    sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(request.getLobbyID(), notEnoughMoney.getMessage()));
 
+                }
+            }
+            else {
+                LOG.error("Du bist nicht dran. " + playground.getActualPlayer().getPlayerName() + "ist an der Reihe.");
             }
         } else {
             LOG.error("Es existiert kein Spiel mit der ID " + request.getCardID());

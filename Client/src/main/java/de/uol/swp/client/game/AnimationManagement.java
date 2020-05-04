@@ -14,8 +14,8 @@ public class AnimationManagement {
 
     private static final double HAND_X = 284;
 
-    private static final double ABLAGE_X = 733 + 30;
-    private static final double ABLAGE_Y = 538 + 92;
+    private static final double ABLAGE_X = 759;
+    private static final double ABLAGE_Y = 603;
 
     private static final double ACTION_ZONE_X = 370;
     private static final double ACTION_ZONE_Y = 421;
@@ -54,7 +54,7 @@ public class AnimationManagement {
      * @author Anna
      * @since Sprint5
      */
-    public static Boolean createLineToPath(ImageView card, MoveTo moveTo, double EndPointX, double EndPointY) {
+    public static PathTransition createLineToPath(ImageView card, MoveTo moveTo, double EndPointX, double EndPointY) {
         double x = card.getLayoutX();
         double y = card.getLayoutY();
         double w = card.getFitWidth() / 2;
@@ -68,11 +68,11 @@ public class AnimationManagement {
             pathTransition.setNode(card);
             pathTransition.setPath(path);
             pathTransition.setCycleCount(1);
+            card.toFront();
             pathTransition.play();
-            setNewCoordinates(card, pathTransition);
-            return true;
+            return pathTransition;
         }
-        return false;
+        return null;
     }
 
     /**
@@ -149,7 +149,7 @@ public class AnimationManagement {
      * @author Anna
      * @since Sprint5
      */
-    public static Boolean buyCard(ImageView card) {
+    public static PathTransition buyCard(ImageView card) {
         return createLineToPath(card, keepPosition(card), ABLAGE_X, ABLAGE_Y);
     }
 
@@ -161,7 +161,7 @@ public class AnimationManagement {
      * @author Anna
      * @since Sprint5
      */
-    public static Boolean opponentBuysCard(ImageView card) {
+    public static PathTransition opponentBuysCard(ImageView card) {
         return createLineToPath(card, keepPosition(card), 334, -300);
     }
 

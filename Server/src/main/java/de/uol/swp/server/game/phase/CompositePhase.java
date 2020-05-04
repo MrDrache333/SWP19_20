@@ -61,14 +61,11 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
             int moneyValuePlayer = player.getPlayerDeck().actualMoneyFromPlayer();
             if (moneyValuePlayer < currentCard.getCosts()) {
                 LOG.error("Nicht genug Geld");
-                // TODO: Client muss eine Fehlermeldung erstellen, die angezeigt wird, wenn der Spieler nicht genug Geld hat
                 throw new NotEnoughMoneyException("Nicht genug Geld vorhanden");
             }
             player.getPlayerDeck().getDiscardPile().add(currentCard);
             moneyValuePlayer -= currentCard.getCosts();
-            // TODO: Client muss Geldkarten aus Hand abziehen (und in Ablagestapel legen?), wenn Kauf gelungen.
             player.getPlayerDeck().discardMoneyCardsForValue(currentCard.getCosts());
-            // TODO: Client: Stückzahl der Karten anpassen bzw.: wenn Karte nicht vorhanden, keine Bild der Karte
             playground.getCardField().put(cardId, --count);
         }
         return count;
