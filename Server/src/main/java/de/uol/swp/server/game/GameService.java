@@ -3,6 +3,8 @@ package de.uol.swp.server.game;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import de.uol.swp.common.chat.ChatMessage;
+import de.uol.swp.common.chat.request.NewChatMessageRequest;
 import de.uol.swp.common.game.exception.GameManagementException;
 import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.exception.NotEnoughMoneyException;
@@ -119,16 +121,20 @@ public class GameService extends AbstractService {
 
     /**
      * Startet das Spiel wenn die StartGameInternalMessage ankommt.
+     * Sendet außerdem eine Nachricht mit dem ersten Spieler in den Chat.
      *
      * @param msg InterneMessage mit der LobbyId um das Game zu starten.
-     * @author Ferit, Julia
+     * @author Ferit, Julia, Marvin
      * @since Sprint5
      */
     @Subscribe
     void startGame(StartGameInternalMessage msg) {
         try {
             gameManagement.createGame(msg.getLobbyID());
-            gameManagement.getGame(msg.getLobbyID()).get().getPlayground().newTurn();
+            Game game = gameManagement.getGame(msg.getLobbyID()).get();
+            game.getPlayground().newTurn();
+            Player first = game.getPlayground().getPlayers().get(0);
+            post(new NewChatMessageRequest(msg.getLobbyID().toString(), new ChatMessage(new UserDTO("server", "", ""), first.getPlayerName() + " beginnt")));
         } catch (GameManagementException e) {
             LOG.error("Es wurde eine GameManagementException geworfen: " + e.getMessage());
             // TODO: In späteren Sprints hier ggf. weiteres Handling?
