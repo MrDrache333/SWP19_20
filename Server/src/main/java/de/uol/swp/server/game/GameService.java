@@ -93,9 +93,10 @@ public class GameService extends AbstractService {
 
     /**
      * Startet das Spiel wenn die StartGameInternalMessage ankommt.
+     * Sendet außerdem eine Nachricht mit dem ersten Spieler in den Chat.
      *
      * @param msg InterneMessage mit der LobbyId um das Game zu starten.
-     * @author Ferit, Julia
+     * @author Ferit, Julia, Marvin
      * @since Sprint5
      */
     @Subscribe
