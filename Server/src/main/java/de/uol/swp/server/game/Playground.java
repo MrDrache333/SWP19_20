@@ -1,8 +1,6 @@
 package de.uol.swp.server.game;
 
 import com.google.inject.Inject;
-import de.uol.swp.common.chat.ChatMessage;
-import de.uol.swp.common.chat.request.NewChatMessageRequest;
 import de.uol.swp.common.game.card.ActionCard;
 import de.uol.swp.common.game.card.Card;
 import de.uol.swp.common.game.card.parser.CardPack;
@@ -14,7 +12,6 @@ import de.uol.swp.common.game.messages.StartBuyPhaseMessage;
 import de.uol.swp.common.game.messages.StartClearPhaseMessage;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.user.User;
-import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.game.phase.CompositePhase;
 import de.uol.swp.server.game.phase.Phase;
 import de.uol.swp.server.game.player.Player;
@@ -66,7 +63,6 @@ class Playground {
         this.theSpecificLobbyID = lobby.getLobbyID();
         this.compositePhase = new CompositePhase();
         this.lobbySizeOnStart = (short) lobby.getUsers().size();
-        announceFirstPlayer();
         initializeCardField();
     }
 
@@ -96,10 +92,6 @@ class Playground {
             else if (i == 2) cardField.put(card.getId(), 30);
             else LOG.debug("Komisch: @ initializeCardField- Else Methode in 104 ausgeschlagen.... @ @ @");
         }
-    }
-
-    private void announceFirstPlayer() {
-        new NewChatMessageRequest(theSpecificLobbyID.toString(), new ChatMessage(new UserDTO("server", "", ""), players.get(0).getPlayerName() + "ist als Erstes an der Reihe."));
     }
 
     /**

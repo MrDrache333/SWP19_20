@@ -3,6 +3,8 @@ package de.uol.swp.server.game;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import de.uol.swp.common.chat.ChatMessage;
+import de.uol.swp.common.chat.request.NewChatMessageRequest;
 import de.uol.swp.common.game.exception.GameManagementException;
 import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.GameExceptionMessage;
@@ -10,6 +12,7 @@ import de.uol.swp.common.game.request.SelectCardRequest;
 import de.uol.swp.common.game.request.SkipPhaseRequest;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
+import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.game.player.Player;
 import de.uol.swp.server.message.StartGameInternalMessage;
@@ -99,7 +102,10 @@ public class GameService extends AbstractService {
     void startGame(StartGameInternalMessage msg) {
         try {
             gameManagement.createGame(msg.getLobbyID());
-            gameManagement.getGame(msg.getLobbyID()).get().getPlayground().newTurn();
+            Game game = gameManagement.getGame(msg.getLobbyID()).get();
+            game.getPlayground().newTurn();
+            Player first = game.getPlayground().getPlayers().get(0);
+            post(new NewChatMessageRequest(msg.getLobbyID().toString(), new ChatMessage(new UserDTO("server", "", ""), first.getPlayerName() + " beginnt")));
         } catch (GameManagementException e) {
             LOG.error("Es wurde eine GameManagementException geworfen: " + e.getMessage());
             // TODO: In späteren Sprints hier ggf. weiteres Handling?
