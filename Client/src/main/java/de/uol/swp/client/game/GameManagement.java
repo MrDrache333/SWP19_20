@@ -8,20 +8,24 @@ import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.LobbyPresenter;
 import de.uol.swp.client.lobby.LobbyService;
+import de.uol.swp.client.main.PrimaryPresenter;
 import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.game.messages.GameOverMessage;
 import de.uol.swp.common.game.messages.UserGaveUpMessage;
-import de.uol.swp.common.lobby.message.KickUserMessage;
+import de.uol.swp.common.lobby.message.CreateLobbyMessage;
+import de.uol.swp.common.lobby.message.UserLeftAllLobbiesMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
-import de.uol.swp.common.user.message.UserLoggedOutMessage;
+import de.uol.swp.common.user.message.UserDroppedMessage;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Tab;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,7 +44,7 @@ import java.util.UUID;
 public class GameManagement {
 
     static final Logger LOG = LogManager.getLogger(GameManagement.class);
-    static final String styleSheet = "css/swp.css";
+    static final String styleSheet = "css/global.css";
 
     private LobbyPresenter lobbyPresenter;
     private GameViewPresenter gameViewPresenter;
@@ -50,14 +54,16 @@ public class GameManagement {
     private UserDTO gameOwner;
     private String lobbyName;
 
-    private Scene gameScene;
-    private Scene lobbyScene;
+    private Pane gamePane;
+    private Pane lobbyPane;
     private Scene gameOverScene;
+
+    private Tab primaryTab;
+    private PrimaryPresenter primaryPresenter;
 
     private Injector injector;
     private EventBus eventBus;
 
-    private Stage primaryStage;
     private Stage gameOverStage;
 
     private GameService gameService;
@@ -77,38 +83,27 @@ public class GameManagement {
      * @author Keno O., Darian
      * @since Sprint3
      */
-    public GameManagement(EventBus eventBus, UUID id, String lobbyName, User loggedInUser, ChatService chatService, LobbyService lobbyService, UserService userService, Injector injector, UserDTO gameOwner, GameService gameService) {
+    public GameManagement(EventBus eventBus, UUID id, String lobbyName, User loggedInUser, ChatService chatService, LobbyService lobbyService, UserService userService, Injector injector, UserDTO gameOwner, GameService gameService, PrimaryPresenter primaryPresenter) {
         this.id = id;
         this.loggedInUser = loggedInUser;
         this.injector = injector;
-        this.primaryStage = new Stage();
+        this.primaryTab = new Tab();
         this.gameOverStage = new Stage();
         this.lobbyName = lobbyName;
         this.eventBus = eventBus;
         this.gameOwner = gameOwner;
         this.gameService = gameService;
+        this.primaryPresenter = primaryPresenter;
 
         this.chatViewPresenter = new ChatViewPresenter(lobbyName, id, loggedInUser, ChatViewPresenter.THEME.Light, chatService, injector, this);
         this.gameViewPresenter = new GameViewPresenter(loggedInUser, id, chatService, chatViewPresenter, lobbyService, userService, injector, this, gameService);
         this.lobbyPresenter = new LobbyPresenter(loggedInUser, lobbyName, id, chatService, chatViewPresenter, lobbyService, userService, injector, gameOwner, this, eventBus);
 
+        this.primaryTab.setId(id.toString());
+
         eventBus.register(chatViewPresenter);
         eventBus.register(lobbyPresenter);
         eventBus.register(gameViewPresenter);
-    }
-
-    /**
-     * Schließt das Fenster, wenn der aktuelle Benutzer diese Lobby verlassen hat
-     *
-     * @param msg die UserLeftLobbyMessage
-     * @author Keno O.
-     * @since Sprint3
-     */
-    @Subscribe
-    private void userLeft(UserLeftLobbyMessage msg) {
-        if (msg.getLobbyID().equals(id) && msg.getUser().getUsername().equals(loggedInUser.getUsername())) {
-            close();
-        }
     }
 
     /**
@@ -121,39 +116,40 @@ public class GameManagement {
     @Subscribe
     private void userGivedUp(UserGaveUpMessage msg) {
         if (msg.getLobbyID().equals(id) && msg.getUserGivedUp() && msg.getTheUser().equals(loggedInUser)) {
-            close();
+            primaryPresenter.closeTab(msg.getLobbyID(), true);
             LOG.debug("Game mit folgender ID geschlossen: " + id);
         } else {
             // TODO: Fehlerbehandlung später implementieren.
         }
     }
 
-    /**
-     * Wenn die Nachricht abgefangen wird und man der gekickte Benutzer ist und in der Lobby ist wird das Lobbyfenster
-     * geschlossen
-     *
-     * @author Darian, Marvin
-     * @since sprint4
-     */
     @Subscribe
-    private void onKickUserMessage(KickUserMessage msg) {
-        if (msg.getLobbyID().equals(id) && msg.getUser().getUsername().equals(loggedInUser.getUsername())) {
-            close();
+    private void userLeftLobby(UserLeftLobbyMessage msg) {
+        if (msg.getUser().getUsername().equals(loggedInUser.getUsername()) && msg.getLobby().getLobbyID().equals(id)) {
+            primaryPresenter.closeTab(id, true);
         }
     }
 
-    /**
-     * Schließt das Fenster, wenn sich der aktuelle Benutzer ausgeloggt hat
-     *
-     * @param msg die UserLoggedOutMessage
-     * @author Keno O.
-     * @since Sprint3
-     */
     @Subscribe
-    private void userLoggedOut(UserLoggedOutMessage msg) {
-        if (msg.getUsername().equals(loggedInUser.getUsername())) {
-            close();
+    private void userLeftAllLobbys(UserLeftAllLobbiesMessage msg) {
+        if (msg.getUser().getUsername().equals(loggedInUser.getUsername())) {
+            primaryPresenter.closeAllTabs();
         }
+    }
+
+    @Subscribe
+    private void userDrppedAccount(UserDroppedMessage msg) {
+        if (msg.getUser().getUsername().equals(loggedInUser.getUsername())) {
+            primaryPresenter.closeAllTabs();
+        }
+    }
+
+    @Subscribe
+    private void lobbyCreated(CreateLobbyMessage msg) {
+        if (msg.getUser().getUsername().equals(loggedInUser.getUsername())) {
+            primaryPresenter.showTab(msg.getChatID());
+        }
+        //Fenja
     }
 
     /**
@@ -192,7 +188,7 @@ public class GameManagement {
      * @since Sprint3
      */
     public boolean hasFocus() {
-        return primaryStage.isFocused();
+        return primaryPresenter.getFocusedTab().equals(id.toString());
     }
 
     /**
@@ -203,7 +199,7 @@ public class GameManagement {
      */
     public void showLobbyView() {
         initLobbyView();
-        showScene(lobbyScene, lobbyName);
+        showView(lobbyPane, lobbyName);
     }
 
     /**
@@ -214,7 +210,7 @@ public class GameManagement {
      */
     public void showGameView() {
         initGameView();
-        showScene(gameScene, lobbyName);
+        showView(gamePane, lobbyName);
     }
 
     /**
@@ -239,19 +235,8 @@ public class GameManagement {
                 gameOverStage.show();
                 gameOverStage.toFront();
                 gameOverStage.setOnCloseRequest(windowEvent -> closeGameOverViewAndLeaveLobby());
-                primaryStage.close();
             });
         }
-    }
-
-    /**
-     * Methode zum Schließen der aktuellen Stage
-     *
-     * @author Keno O.
-     * @since Sprint3
-     */
-    public void close() {
-        Platform.runLater(() -> primaryStage.close());
     }
 
     /**
@@ -272,20 +257,20 @@ public class GameManagement {
      */
     public void closeGameOverViewAndLeaveLobby() {
         Platform.runLater(() -> gameOverStage.close());
+        primaryPresenter.closeTab(id, true);
         lobbyPresenter.getLobbyService().leaveLobby(id, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
     }
 
     /**
      * Initialisieren der GameView
      *
-     * @author Keno O.
-     * @since Sprint3
+     * @author Keno O., Fenja
+     * @since Sprint7
      */
     private void initGameView() {
-        if (gameScene == null) {
-            Parent rootPane = initPresenter(gameViewPresenter, GameViewPresenter.fxml);
-            gameScene = new Scene(rootPane, 1280, 750);
-            gameScene.getStylesheets().add(styleSheet);
+        if (gamePane == null) {
+            gamePane = initPresenter(gameViewPresenter, GameViewPresenter.fxml);
+            gamePane.getStylesheets().add(styleSheet);
         }
     }
 
@@ -293,14 +278,13 @@ public class GameManagement {
      * LobbyView wird initalisiert und deklariert.
      * Neue Szene für die neue Lobby wird erstellt und gespeichert
      *
-     * @author Keno O.
-     * @since Sprint3
+     * @author Keno O., Fenja
+     * @since Sprint7
      */
     private void initLobbyView() {
-        if (lobbyScene == null) {
-            Parent rootPane = initPresenter(lobbyPresenter, LobbyPresenter.fxml);
-            lobbyScene = new Scene(rootPane, 900, 750);
-            lobbyScene.getStylesheets().add(styleSheet);
+        if (lobbyPane == null) {
+            lobbyPane = initPresenter(lobbyPresenter, LobbyPresenter.fxml);
+            lobbyPane.getStylesheets().add(styleSheet);
         }
     }
 
@@ -325,11 +309,11 @@ public class GameManagement {
      * @param presenter der Presenter
      * @param fxml      die zum Presenter gehörige fxml
      * @return die rootPane
-     * @author Keno O.
-     * @since Sprint3
+     * @author Keno O., Fenja
+     * @since Sprint7
      */
-    private Parent initPresenter(AbstractPresenter presenter, String fxml) {
-        Parent rootPane;
+    private Pane initPresenter(AbstractPresenter presenter, String fxml) {
+        Pane rootPane;
         FXMLLoader loader = injector.getInstance(FXMLLoader.class);
         try {
             URL url = getClass().getResource(fxml);
@@ -347,23 +331,15 @@ public class GameManagement {
     /**
      * Setzt die Szene der primaryStage auf die übergebene Szene und aktualisiert den Titel der Stage
      *
-     * @param scene die Szene
+     * @param pane die Szene
      * @param title der Titel der Stage
-     * @author Julia, Keno O., Marvin
-     * @since Sprint3
+     * @author Julia, Keno O., Marvin, Fenja
+     * @since Sprint7
      */
-    private void showScene(final Scene scene, final String title) {
+    private void showView(final Pane pane, final String title) {
         Platform.runLater(() -> {
-            primaryStage.setTitle(title);
-            primaryStage.setScene(scene);
-            primaryStage.setResizable(false);
-            //User wird aus der Lobby ausgeloggt, wenn er das Lobbyfenster schließt
-            primaryStage.setOnCloseRequest(windowEvent -> {
-                if (primaryStage.getScene().equals(lobbyScene)) {
-                    lobbyPresenter.getLobbyService().leaveLobby(id, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
-                }
-            });
-            primaryStage.show();
+            primaryTab.setText(title);
+            primaryTab.setContent(pane);
             new SoundMediaPlayer(SoundMediaPlayer.Sound.Window_Opened, SoundMediaPlayer.Type.Sound).play();
         });
     }
@@ -389,9 +365,28 @@ public class GameManagement {
      *
      * @return der LobbyService
      * @author Anna
-     * @aince Sprint6
+     * @Since Sprint6
      */
     public LobbyService getLobbyService() {
         return this.lobbyPresenter.getLobbyService();
     }
+
+
+    public Tab getPrimaryTab() {
+        return primaryTab;
+    }
+
+    /**
+     * Gets the Lobby Name.
+     *
+     * @return the Name
+     * @author Keno Oelrichs Garcia
+     * @Version 1.0
+     * @since Sprint 4
+     */
+
+    public String getLobbyName() {
+        return lobbyName;
+    }
+
 }

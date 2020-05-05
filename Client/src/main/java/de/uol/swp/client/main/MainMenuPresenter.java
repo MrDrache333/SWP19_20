@@ -28,8 +28,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
@@ -39,7 +37,6 @@ import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,9 +73,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     @FXML
     private Pane chatView;
     @FXML
-    private Button createLobbyButton, logoutButton;
-    @FXML
-    private ImageView soundIcon;
+    private Button createLobbyButton;
 
 
     //--------------------------------------
@@ -133,12 +128,6 @@ public class MainMenuPresenter extends AbstractPresenter {
         joinLobby.setPrefWidth(85);
 
         createLobbyButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
-        logoutButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
-
-        soundIcon.setOnMouseClicked(event -> {
-            SoundMediaPlayer.setSound(!SoundMediaPlayer.isSoundEnabled());
-            soundIcon.setImage(new Image(new File(getClass().getResource(SoundMediaPlayer.isSoundEnabled() ? "/images/sound_on_icon.png" : "/images/sound_off_icon.png").toExternalForm().replace("file:", "")).toURI().toString()));
-        });
     }
 
     /**
