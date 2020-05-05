@@ -3,7 +3,9 @@ package de.uol.swp.server.usermanagement;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.request.UpdateLobbiesRequest;
+import de.uol.swp.common.message.AbstractMessage;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.Session;
 import de.uol.swp.common.user.User;
@@ -16,6 +18,7 @@ import de.uol.swp.common.user.request.*;
 import de.uol.swp.common.user.response.AllOnlineUsersResponse;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.communication.UUIDSession;
+import de.uol.swp.server.lobby.LobbyManagement;
 import de.uol.swp.server.message.ClientAuthorizedMessage;
 import de.uol.swp.server.message.ServerExceptionMessage;
 import de.uol.swp.server.message.ServerInternalMessage;
@@ -43,6 +46,7 @@ public class AuthenticationService extends AbstractService {
     final private Map<Session, User> userSessions = new HashMap<>();
 
     private final UserManagement userManagement;
+    private final LobbyManagement lobbyManagement;
 
     /**
      * AuthenticationService wird initialisiert
@@ -53,11 +57,11 @@ public class AuthenticationService extends AbstractService {
      * @since Start
      */
     @Inject
-    public AuthenticationService(EventBus bus, UserManagement userManagement) {
+    public AuthenticationService(EventBus bus, UserManagement userManagement, LobbyManagement lobbyManagement) {
         super(bus);
         this.userManagement = userManagement;
+        this.lobbyManagement = lobbyManagement;
     }
-
 
     /**
      * Session von einem User wird übergeben
@@ -122,7 +126,7 @@ public class AuthenticationService extends AbstractService {
      * Serverlogikg vom LogoutRequest
      *
      * @param msg LogoutRequest
-     * @author Marco
+     * @author Marco, Darian
      * @since Start
      */
     @Subscribe
@@ -130,20 +134,21 @@ public class AuthenticationService extends AbstractService {
         if (msg.getSession().isPresent()) {
             Session session = msg.getSession().get();
             User userToLogOut = session.getUser();
-
-            // Could be already logged out
-            if (userToLogOut != null) {
-
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Logging out user " + userToLogOut.getUsername());
+            if (!lobbyManagement.isUserIngame(userToLogOut)) {
+                // Could be already logged out
+                if (userToLogOut != null) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Logging out user " + userToLogOut.getUsername());
+                    }
+                    userManagement.logout(userToLogOut);
+                    userSessions.remove(session);
+                    ServerMessage returnMessage = new UserLoggedOutMessage(userToLogOut.getUsername());
+                    post(returnMessage);
                 }
-
-                userManagement.logout(userToLogOut);
-                userSessions.remove(session);
-
-                ServerMessage returnMessage = new UserLoggedOutMessage(userToLogOut.getUsername());
+            }
+            else{
+                UpdateUserFailedMessage returnMessage = new UpdateUserFailedMessage(session.getUser(), "Account is in Game. You can not logout.");
                 post(returnMessage);
-
             }
         }
     }
@@ -189,29 +194,32 @@ public class AuthenticationService extends AbstractService {
         post(returnMessage);
     }
 
-
     /**
      * Der Nutzer wird gelöscht und eine entprechende Message zurückgesendet
      *
-     * @author Anna, Julia
+     * @author Anna, Julia, Darian
      * @since Sprint4
      */
     @Subscribe
     public void onDropUserRequest(DropUserRequest msg) {
         User userToDrop = msg.getUser();
 
-        // Could be already logged out/removed
-        if (userToDrop != null) {
+        // Could be already logged out/removed or he is in a game
+        if (userToDrop != null ) {
+            if (!lobbyManagement.isUserIngame(userToDrop)) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Dropping user " + userToDrop.getUsername());
+                }
+                userSessions.remove(msg.getSession().get());
+                userManagement.dropUser(userToDrop);
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Dropping user " + userToDrop.getUsername());
+                ServerMessage returnMessage = new UserDroppedMessage(userToDrop);
+                post(returnMessage);
             }
-            userSessions.remove(msg.getSession().get());
-            userManagement.dropUser(userToDrop);
-
-            ServerMessage returnMessage = new UserDroppedMessage(userToDrop);
-            post(returnMessage);
+            else{
+                UpdateUserFailedMessage returnMessage = new UpdateUserFailedMessage(userToDrop,"Account is in Game. You can not delete your Account.");
+                post(returnMessage);
+            }
         }
     }
-
 }

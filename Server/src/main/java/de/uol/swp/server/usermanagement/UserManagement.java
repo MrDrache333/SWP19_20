@@ -104,7 +104,7 @@ public class UserManagement extends AbstractUserManagement {
         if (mails.contains(userToUpdate.getEMail()) && !userToUpdate.getEMail().equals(oldUser.getEMail())) {
             throw new UserUpdateException("Diese Email ist bereits vergeben!");
         }
-        return userStore.updateUser(userToUpdate.getUsername(), userToUpdate.getPassword(), userToUpdate.getEMail(), oldUser.getUsername(), currentPassword);
+        return userStore.updateUser(userToUpdate.getUsername(), userToUpdate.getPassword(), userToUpdate.getEMail(), oldUser, currentPassword);
     }
 
     /**
@@ -123,7 +123,6 @@ public class UserManagement extends AbstractUserManagement {
         }
         logout(userToDrop);
         userStore.removeUser(userToDrop.getUsername());
-
     }
 
     private String firstNotNull(String firstValue, String secondValue) {
