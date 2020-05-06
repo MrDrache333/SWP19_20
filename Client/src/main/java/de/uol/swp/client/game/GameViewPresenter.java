@@ -62,6 +62,7 @@ public class GameViewPresenter extends AbstractPresenter {
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
     private final UUID lobbyID;
     private User loggedInUser;
+    private Short numberOfPlayersInGame;
 
     @FXML
     private Pane gameView;
@@ -78,7 +79,14 @@ public class GameViewPresenter extends AbstractPresenter {
 
 
     private final HandcardsLayoutContainer handcards;
+    private final HandcardsLayoutContainer firstEnemyHand;
+    private final HandcardsLayoutContainer secondEnemyHand;
+    private final HandcardsLayoutContainer thirdEnemyHand;
     private final PlayedCardLayoutContainer playedCardLayoutContainer;
+
+    private final StackPane firstEnemyDeck;
+    private final StackPane secondEnemyDeck;
+    private final StackPane thirdEnemyDeck;
 
     private ObservableList<String> users;
     private final GameService gameService;
@@ -117,6 +125,17 @@ public class GameViewPresenter extends AbstractPresenter {
         this.injector = injector;
         this.gameManagement = gameManagement;
         handcards = new HandcardsLayoutContainer(284, 598, 119, 430);
+        firstEnemyHand = new HandcardsLayoutContainer(284, 0, 119, 430);
+        secondEnemyHand = new HandcardsLayoutContainer(0, 299, 430, 119);
+        thirdEnemyHand = new HandcardsLayoutContainer(900, 299, 430, 119);
+
+        firstEnemyDeck = new StackPane();
+        firstEnemyDeck.setLayoutX(300); firstEnemyDeck.setLayoutY(0);
+        secondEnemyDeck = new StackPane();
+        secondEnemyDeck.setLayoutX(0); secondEnemyDeck.setLayoutY(200);
+        thirdEnemyDeck = new StackPane();
+        thirdEnemyDeck.setLayoutX(900); thirdEnemyDeck.setLayoutY(200);
+
         playedCardLayoutContainer = new PlayedCardLayoutContainer(414, 434, 86, 200);
         this.gameService = gameService;
         initializeUserList();
@@ -168,6 +187,12 @@ public class GameViewPresenter extends AbstractPresenter {
         ((Pane) chatView.getChildren().get(0)).setPrefHeight(chatView.getPrefHeight());
         ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getPrefWidth());
         gameView.getChildren().add(handcards);
+        gameView.getChildren().add(firstEnemyHand);
+        gameView.getChildren().add(secondEnemyHand);
+        gameView.getChildren().add(thirdEnemyHand);
+        gameView.getChildren().add(firstEnemyDeck);
+        gameView.getChildren().add(secondEnemyDeck);
+        gameView.getChildren().add(thirdEnemyDeck);
         gameView.getChildren().add(playedCardLayoutContainer);
     }
 
@@ -381,6 +406,7 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     @Subscribe
     public void ShowNewHand(DrawHandMessage message) {
+        numberOfPlayersInGame = message.getNumberOfPlayers();
         Platform.runLater(() -> {
             if (lobbyID.equals(message.getTheLobbyID())) {
                 ArrayList<Short> HandCardID = message.getCardsOnHand();
@@ -398,6 +424,33 @@ public class GameViewPresenter extends AbstractPresenter {
                     handcards.getChildren().add(card);
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                 });
+
+                String pfad = "file:Client/src/main/resources/cards/images/back.png";
+                Image picture = new Image(pfad);
+                ImageView card = new ImageView(picture);
+                card.setFitHeight(107);
+                card.setPreserveRatio(true);
+                card.setId("back");
+                card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
+                for(int i=0; i<5; i++) {
+                    firstEnemyDeck.getChildren().add(card);
+                    AnimationManagement.addToHand(card, firstEnemyHand.getChildren().size());
+                    firstEnemyDeck.getChildren().remove(card);
+                    firstEnemyHand.getChildren().add(card);
+                    if(numberOfPlayersInGame >= 3) {
+                        secondEnemyDeck.getChildren().add(card);
+                        AnimationManagement.addToHand(card, secondEnemyHand.getChildren().size());
+                        secondEnemyDeck.getChildren().remove(card);
+                        secondEnemyHand.getChildren().add(card);
+                        if (numberOfPlayersInGame == 4){
+                            thirdEnemyDeck.getChildren().add(card);
+                            AnimationManagement.addToHand(card, thirdEnemyHand.getChildren().size());
+                            thirdEnemyDeck.getChildren().remove(card);
+                            thirdEnemyHand.getChildren().add(card);
+                        }
+                    }
+                }
+
             }
         });
     }

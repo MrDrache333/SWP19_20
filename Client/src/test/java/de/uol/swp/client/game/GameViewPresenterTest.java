@@ -35,7 +35,7 @@ class GameViewPresenterTest {
     static final ChatManagement chatManagement = new ChatManagement();
     static final LobbyManagement lobbyManagement = new LobbyManagement();
     static final de.uol.swp.server.game.GameManagement gameManagement = new GameManagement(chatManagement, lobbyManagement);
-    static final AuthenticationService authenticationService = new AuthenticationService(bus, new UserManagement(new MainMemoryBasedUserStore()));
+    static final AuthenticationService authenticationService = new AuthenticationService(bus, new UserManagement(new MainMemoryBasedUserStore()), lobbyManagement);
     static final de.uol.swp.server.game.GameService gameService = new GameService(bus, gameManagement, authenticationService);
 
     static UUID gameID;
