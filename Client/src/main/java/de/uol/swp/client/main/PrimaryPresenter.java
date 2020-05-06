@@ -68,13 +68,14 @@ public class PrimaryPresenter extends AbstractPresenter {
      * @Version 1.0
      * @since Sprint 4
      */
-    public void initialise(EventBus eventBus, User loggedInUser, ChatService chatService, LobbyService lobbyService, UserService userService, Injector injector) {
+    public void initialise(EventBus eventBus, User loggedInUser, ChatService chatService, LobbyService lobbyService, UserService userService, Injector injector, GameService gameService) {
         this.loggedInUser = loggedInUser;
         this.injector = injector;
         this.eventBus = eventBus;
         this.chatService = chatService;
         this.lobbyService = lobbyService;
         this.userService = userService;
+        this.gameService = gameService;
 
     }
 

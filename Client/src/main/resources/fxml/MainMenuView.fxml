@@ -3,23 +3,12 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.effect.Blend?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="750.0" maxWidth="1280.0" prefHeight="750.0"
             prefWidth="1280.0" stylesheets="@../css/MainMenuPresenter.css" xmlns="http://javafx.com/javafx/11.0.1"
             fx:controller="de.uol.swp.client.main.MainMenuPresenter">
-    <ImageView fitHeight="750.0" fitWidth="1280.0" mouseTransparent="true" opacity="0.8" pickOnBounds="true"
-               preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-               AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <image>
-            <Image url="@../images/mainMenu_background.png"/>
-        </image>
-    </ImageView>
-    <GridPane hgap="10.0" maxHeight="750.0" maxWidth="1280.0" prefHeight="750.0" prefWidth="1280.0"
-              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-              AnchorPane.topAnchor="0.0">
+    <GridPane hgap="10.0" maxHeight="750.0" maxWidth="1280.0" prefHeight="750.0" prefWidth="1280.0">
         <children>
             <VBox prefHeight="200.0" prefWidth="100.0">
                 <children>
@@ -62,7 +51,7 @@
                     <Insets top="49.0"/>
                 </GridPane.margin>
             </Pane>
-            <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2">
+            <VBox prefHeight="200.0" prefWidth="226.0" GridPane.columnIndex="2">
                 <children>
                     <Label stylesheets="@../css/global.css" text="Online Spieler">
                         <font>
@@ -72,7 +61,7 @@
                             <Insets left="10.0"/>
                         </VBox.margin>
                     </Label>
-                    <ListView fx:id="usersView" minWidth="100.0" prefHeight="200.0" prefWidth="200.0"
+                    <ListView fx:id="usersView" minWidth="100.0" prefHeight="701.0" prefWidth="258.0"
                               VBox.vgrow="ALWAYS"/>
                 </children>
             </VBox>

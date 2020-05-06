@@ -149,7 +149,6 @@ public class GameManagement {
         if (msg.getUser().getUsername().equals(loggedInUser.getUsername())) {
             primaryPresenter.showTab(msg.getChatID());
         }
-        //Fenja
     }
 
     /**

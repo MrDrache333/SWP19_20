@@ -319,9 +319,9 @@ public class SceneManager {
     private void initPrimaryView() {
         if (primaryScene == null) {
             primaryPresenter = new PrimaryPresenter();
-            primaryPresenter.initialise(eventBus, currentUser, chatService, lobbyService, userService, injector);
+            primaryPresenter.initialise(eventBus, currentUser, chatService, lobbyService, userService, injector, gameService);
             Parent rootPane = initPresenter(PrimaryPresenter.fxml, primaryPresenter);
-            primaryScene = new Scene(rootPane, 1460, 850);
+            primaryScene = new Scene(rootPane, 1400, 790);
             primaryScene.getStylesheets().add(styleSheet);
             primaryScene.getStylesheets().add(PrimaryPresenter.css);
             primaryStage.setOnCloseRequest(event -> {
