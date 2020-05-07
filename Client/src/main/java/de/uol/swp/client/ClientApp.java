@@ -20,11 +20,9 @@ import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import de.uol.swp.common.user.request.OpenSettingsRequest;
 import de.uol.swp.common.user.response.LoginSuccessfulResponse;
 import de.uol.swp.common.user.response.RegistrationSuccessfulResponse;
-import de.uol.swp.server.usermanagement.UserUpdateException;
 import io.netty.channel.Channel;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -251,8 +249,6 @@ public class ClientApp extends Application implements ConnectionListener {
         if (message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showMainScreen(user);
             LOG.info("User " + message.getUser().getUsername() + " left lobby successfully");
-            sceneManager.getGameManagement(message.getLobbyID()).close();
-            sceneManager.getGames().remove(message.getLobbyID());
         }
     }
 
@@ -313,9 +309,6 @@ public class ClientApp extends Application implements ConnectionListener {
         if (message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showMainScreen(user);
             LOG.info("User " + message.getUser().getUsername() + " is kicked from the lobby successfully");
-            sceneManager.getGameManagement(message.getLobbyID()).close();
-            SceneManager.showAlert(Alert.AlertType.WARNING, "Sie wurden aus der Lobby entfernt", "Lobby verlassen");
-            sceneManager.getGames().remove(message.getLobbyID());
         }
     }
 
@@ -338,7 +331,6 @@ public class ClientApp extends Application implements ConnectionListener {
         if (message.getUsername().equals(user.getUsername())) {
             sceneManager.closeAllStages();
             sceneManager.showLoginScreen();
-            sceneManager.getGames().clear();
         }
     }
 
@@ -374,7 +366,6 @@ public class ClientApp extends Application implements ConnectionListener {
         if (message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.closeAllStages();
             sceneManager.showLoginScreen();
-            sceneManager.getGames().clear();
         }
     }
 

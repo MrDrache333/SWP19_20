@@ -3,9 +3,8 @@ package de.uol.swp.server.usermanagement;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
-import de.uol.swp.common.lobby.Lobby;
+import de.uol.swp.common.lobby.request.LeaveAllLobbiesOnLogoutRequest;
 import de.uol.swp.common.lobby.request.UpdateLobbiesRequest;
-import de.uol.swp.common.message.AbstractMessage;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.Session;
 import de.uol.swp.common.user.User;
@@ -142,6 +141,8 @@ public class AuthenticationService extends AbstractService {
                     }
                     userManagement.logout(userToLogOut);
                     userSessions.remove(session);
+                    LeaveAllLobbiesOnLogoutRequest request = new LeaveAllLobbiesOnLogoutRequest((UserDTO) userToLogOut);
+                    post(request);
                     ServerMessage returnMessage = new UserLoggedOutMessage(userToLogOut.getUsername());
                     post(returnMessage);
                 }

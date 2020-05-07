@@ -8,11 +8,7 @@ import de.uol.swp.common.chat.request.NewChatMessageRequest;
 import de.uol.swp.common.game.exception.GameManagementException;
 import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.exception.NotEnoughMoneyException;
-import de.uol.swp.common.game.messages.BuyCardMessage;
-import de.uol.swp.common.game.messages.DiscardPileLastCardMessage;
-import de.uol.swp.common.game.messages.GameExceptionMessage;
-import de.uol.swp.common.game.messages.PlayCardMessage;
-import de.uol.swp.common.game.messages.UserGaveUpMessage;
+import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.game.request.GameGiveUpRequest;
 import de.uol.swp.common.game.request.PlayCardRequest;
@@ -34,6 +30,7 @@ import java.util.*;
 /**
  * Der GameService. Verarbeitet alle Anfragen, die über den Bus gesendet werden.
  */
+@SuppressWarnings("UnstableApiUsage")
 public class GameService extends AbstractService {
 
     private static final Logger LOG = LogManager.getLogger(GameService.class);
