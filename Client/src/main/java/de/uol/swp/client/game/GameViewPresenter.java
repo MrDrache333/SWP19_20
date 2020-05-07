@@ -459,7 +459,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                 });
 
-                String pfad = "file:Client/src/main/resources/cards/images/back.png";
+                String pfad = "file:Client/src/main/resources/cards/images/card_back.png";
                 Image picture = new Image(pfad);
                 ImageView card = new ImageView(picture);
                 card.setFitHeight(107);
