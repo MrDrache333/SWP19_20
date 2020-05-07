@@ -15,7 +15,6 @@ import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
 import de.uol.swp.common.user.message.UserDroppedMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
-import de.uol.swp.common.user.request.OpenSettingsRequest;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -117,19 +116,6 @@ public class LobbyPresenter extends AbstractPresenter {
     }
 
     /**
-     * Die Methode postet ein Request auf den Bus, wenn der Einstellungen-Button gedrückt wird.
-     *
-     * @param actionEvent
-     * @author Anna
-     * @since Sprint4
-     */
-    @FXML
-    public void onSettingsButtonPressed(ActionEvent actionEvent) {
-        OpenSettingsRequest request = new OpenSettingsRequest(loggedInUser);
-        eventBus.post(request);
-    }
-
-    /**
      * Intitialisieren des Chats - FXML laden, Controller setzen (muss immer eine eigene Instanz sein)
      * und chatView ind die chatView-Pane dieses Controllers laden.
      * Der eingeloggte User wird zur Userliste hinzugefügt und diese wird aktualisiert.
@@ -168,22 +154,6 @@ public class LobbyPresenter extends AbstractPresenter {
         lobbyService.leaveAllLobbiesOnLogout(loggedInUserDTO);
         userService.logout(loggedInUser);
     } */
-
-    /**
-     * Wird aufgerufen wenn der Spielanleitung-Button gedrückt wird.
-     *
-     * @param actionEvent
-     * @author Keno S, Keno O., Timo
-     * @since Sprint3
-     */
-    @FXML
-    public void onInstructionsButtonPressed(ActionEvent actionEvent) {
-        try {
-            this.lobbyService.startWebView();
-        } catch (Exception e1) {
-            e1.printStackTrace();
-        }
-    }
 
     /**
      * Wird aufgerufen wenn der Bereit-Button gedrückt wird.

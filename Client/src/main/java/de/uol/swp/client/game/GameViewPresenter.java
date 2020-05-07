@@ -217,20 +217,6 @@ public class GameViewPresenter extends AbstractPresenter {
 
 
     /**
-     * Logout Button gedrückt Ereignis.
-     *
-     * @param actionEvent das Ereignis der Aktion.
-     * @author Fenja
-     * @since Sprint 3
-     */
-    @FXML
-    public void onLogoutButtonPressed(ActionEvent actionEvent) {
-        lobbyService.leaveAllLobbiesOnLogout(new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
-        userService.logout(loggedInUser);
-    }
-
-
-    /**
      * Aufgeben Button gedrückt Ereignis.
      *
      * @param actionEvent das Ereignis der Aktion.

@@ -26,10 +26,12 @@ import javafx.scene.control.TabPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+@SuppressWarnings("UnstableApiUsage")
 public class PrimaryPresenter extends AbstractPresenter {
 
     /**
@@ -119,7 +121,6 @@ public class PrimaryPresenter extends AbstractPresenter {
      */
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
-        lobbyService.leaveAllLobbiesOnLogout((UserDTO) loggedInUser);
         userService.logout(loggedInUser);
     }
 
@@ -146,7 +147,11 @@ public class PrimaryPresenter extends AbstractPresenter {
      */
     @FXML
     public void onInstructionsButtonPressed(ActionEvent actionEvent) {
-        //TODO
+        try {
+            this.lobbyService.startWebView();
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
     }
 
     /**
@@ -290,7 +295,12 @@ public class PrimaryPresenter extends AbstractPresenter {
      * @since Sprint3
      */
     public void closeAllTabs() {
-        Platform.runLater(() -> games.values().forEach(e -> closeTab(e.getID(), true)));
+        Platform.runLater(() -> games.values().forEach(e -> {
+            try {
+                closeTab(e.getID(), true);
+            } catch (ConcurrentModificationException ignored) {
+            }
+        }));
     }
 
 }

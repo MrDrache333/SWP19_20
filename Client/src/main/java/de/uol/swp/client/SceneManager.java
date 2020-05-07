@@ -325,7 +325,6 @@ public class SceneManager {
             primaryScene.getStylesheets().add(styleSheet);
             primaryScene.getStylesheets().add(PrimaryPresenter.css);
             primaryStage.setOnCloseRequest(event -> {
-                lobbyService.leaveAllLobbiesOnLogout((UserDTO) currentUser);
                 userService.logout(currentUser);
             });
             eventBus.register(primaryPresenter);

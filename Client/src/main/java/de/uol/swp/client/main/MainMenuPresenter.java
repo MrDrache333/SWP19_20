@@ -16,7 +16,6 @@ import de.uol.swp.common.user.message.UpdatedUserMessage;
 import de.uol.swp.common.user.message.UserDroppedMessage;
 import de.uol.swp.common.user.message.UserLoggedInMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
-import de.uol.swp.common.user.request.OpenSettingsRequest;
 import de.uol.swp.common.user.response.AllOnlineUsersResponse;
 import de.uol.swp.common.user.response.LoginSuccessfulResponse;
 import javafx.application.Platform;
@@ -223,36 +222,6 @@ public class MainMenuPresenter extends AbstractPresenter {
         createLobbyDialoge.add(panel);
         createLobbyDialoge.setVisible(true);
     }
-
-
-    /**
-     * Die Methode postet ein Request auf den Bus, wenn der Einstellungen-Button gedrückt wird
-     *
-     * @param actionEvent das ActionEvent
-     * @author Anna
-     * @since Sprint4
-     */
-    @FXML
-    public void onSettingsButtonPressed(ActionEvent actionEvent) {
-        OpenSettingsRequest request = new OpenSettingsRequest(loggedInUser);
-        eventBus.post(request);
-    }
-
-    /**
-     * Drückt man auf den LogoutButton, wird der User aus allen Lobbys, in denen er angemeldet ist, entfernt
-     * Zudem wird der User ausgeloggt.
-     *
-     * @param actionEvent das ActionEvent
-     * @author Julia, Paula
-     * @since Sprint3
-     */
-    @FXML
-    public void onLogoutButtonPressed(ActionEvent actionEvent) {
-        new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Pressed, SoundMediaPlayer.Type.Sound).play();
-        lobbyService.leaveAllLobbiesOnLogout(new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
-        userService.logout(loggedInUser);
-    }
-
 
     //--------------------------------------
     // EVENTBUS

@@ -74,19 +74,6 @@ public class LobbyService {
     }
 
     /**
-     * Erstellt eine LeaveAllLobbiesOnLogoutRequest und postet diese auf den EventBus.
-     *
-     * @param user der User der alle Lobbys verlassen will
-     * @author Julia, Paula
-     * @since Sprint3
-     */
-
-    public void leaveAllLobbiesOnLogout(UserDTO user) {
-        LeaveAllLobbiesOnLogoutRequest request = new LeaveAllLobbiesOnLogoutRequest(user);
-        bus.post(request);
-    }
-
-    /**
      * Erstellt ein RetrieveAllOnlineLobbiesRequest und postet diese auf den Eventbus.
      *
      * @author Julia

@@ -41,6 +41,7 @@ import java.util.UUID;
  * @author Keno O.
  * @since Sprint3
  */
+@SuppressWarnings("UnstableApiUsage")
 public class GameManagement {
 
     static final Logger LOG = LogManager.getLogger(GameManagement.class);
@@ -125,7 +126,7 @@ public class GameManagement {
 
     @Subscribe
     private void userLeftLobby(UserLeftLobbyMessage msg) {
-        if (msg.getUser().getUsername().equals(loggedInUser.getUsername()) && msg.getLobby().getLobbyID().equals(id)) {
+        if (msg.getUser().getUsername().equals(loggedInUser.getUsername()) && msg.getLobbyID().equals(id)) {
             primaryPresenter.closeTab(id, true);
         }
     }

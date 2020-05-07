@@ -3,14 +3,15 @@ package de.uol.swp.client.lobby;
 import com.google.common.eventbus.DeadEvent;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import de.uol.swp.client.user.UserService;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
-import de.uol.swp.common.lobby.request.LeaveAllLobbiesOnLogoutRequest;
 import de.uol.swp.common.lobby.request.LobbyJoinUserRequest;
 import de.uol.swp.common.lobby.request.LobbyLeaveUserRequest;
 import de.uol.swp.common.lobby.request.RetrieveAllOnlineLobbiesRequest;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
+import de.uol.swp.common.user.request.LogoutRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -176,15 +177,12 @@ class LobbyServiceTest {
 
         event = null;
 
-        LobbyService lobbyService = new LobbyService(bus);
-        lobbyService.leaveAllLobbiesOnLogout(new UserDTO(defaultUser.getUsername(), defaultUser.getPassword(), defaultUser.getEMail()));
+        UserService userService = new UserService(bus);
+        userService.logout(defaultUser);
+
 
         lock.await(1000, TimeUnit.MILLISECONDS);
 
-        assertTrue(event instanceof LeaveAllLobbiesOnLogoutRequest);
-
-        LeaveAllLobbiesOnLogoutRequest leaveAllLobbiesOnLogoutRequest = (LeaveAllLobbiesOnLogoutRequest) event;
-
-        assertEquals(defaultUser, leaveAllLobbiesOnLogoutRequest.getUser());
+        assertTrue(event instanceof LogoutRequest);
     }
 }
