@@ -3,12 +3,15 @@ package de.uol.swp.server.game;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import de.uol.swp.common.chat.ChatMessage;
+import de.uol.swp.common.chat.request.NewChatMessageRequest;
 import de.uol.swp.common.game.exception.GameManagementException;
 import de.uol.swp.common.game.exception.GamePhaseException;
-import de.uol.swp.common.game.messages.GameExceptionMessage;
-import de.uol.swp.common.game.messages.UserGaveUpMessage;
+import de.uol.swp.common.game.exception.NotEnoughMoneyException;
+import de.uol.swp.common.game.messages.*;
+import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.game.request.GameGiveUpRequest;
-import de.uol.swp.common.game.request.SelectCardRequest;
+import de.uol.swp.common.game.request.PlayCardRequest;
 import de.uol.swp.common.game.request.SkipPhaseRequest;
 import de.uol.swp.common.lobby.request.LobbyLeaveUserRequest;
 import de.uol.swp.common.lobby.request.UpdateInGameRequest;
@@ -27,6 +30,7 @@ import java.util.*;
 /**
  * Der GameService. Verarbeitet alle Anfragen, die über den Bus gesendet werden.
  */
+@SuppressWarnings("UnstableApiUsage")
 public class GameService extends AbstractService {
 
     private static final Logger LOG = LogManager.getLogger(GameService.class);
@@ -73,6 +77,20 @@ public class GameService extends AbstractService {
     }
 
     /**
+     * Sendet die letzte Karte an den Game Service
+     *
+     * @param gameID
+     * @param cardID
+     * @param user
+     * @author Fenja
+     * @since Sprint6
+     */
+    public void sendLastCardOfDiscardPile(UUID gameID, short cardID, User user) {
+        DiscardPileLastCardMessage message = new DiscardPileLastCardMessage(gameID, cardID, user);
+        sendToAllPlayers(gameID, message);
+    }
+
+    /**
      * Sendet eine Nachricht an alle Player eines Games
      *
      * @param gameID  die ID des Games
@@ -100,16 +118,20 @@ public class GameService extends AbstractService {
 
     /**
      * Startet das Spiel wenn die StartGameInternalMessage ankommt.
+     * Sendet außerdem eine Nachricht mit dem ersten Spieler in den Chat.
      *
      * @param msg InterneMessage mit der LobbyId um das Game zu starten.
-     * @author Ferit, Julia
+     * @author Ferit, Julia, Marvin
      * @since Sprint5
      */
     @Subscribe
     void startGame(StartGameInternalMessage msg) {
         try {
             gameManagement.createGame(msg.getLobbyID());
-            gameManagement.getGame(msg.getLobbyID()).get().getPlayground().newTurn();
+            Game game = gameManagement.getGame(msg.getLobbyID()).get();
+            game.getPlayground().newTurn();
+            Player first = game.getPlayground().getPlayers().get(0);
+            post(new NewChatMessageRequest(msg.getLobbyID().toString(), new ChatMessage(new UserDTO("server", "", ""), first.getPlayerName() + " beginnt")));
         } catch (GameManagementException e) {
             LOG.error("Es wurde eine GameManagementException geworfen: " + e.getMessage());
             // TODO: In späteren Sprints hier ggf. weiteres Handling?
@@ -159,7 +181,6 @@ public class GameService extends AbstractService {
         }
     }
 
-
     public void userGavesUpLeavesLobby(UUID gameID, UserDTO user) {
         LobbyLeaveUserRequest leaveUserRequest = new LobbyLeaveUserRequest(gameID, user);
         post(leaveUserRequest);
@@ -167,27 +188,68 @@ public class GameService extends AbstractService {
     }
 
     /**
-     * Die Methode cancelt aktuell den Timer der AktionPhase.
+     * Versuch eine Karte zu kaufen
      *
-     * @param request SelectCardRequest vom Client an Server wird hier empfangen.
+     * @param request BuyCardRequest wird hier vom Client empfangen
+     * @author Paula
+     * @since Sprint6
      */
     @Subscribe
-    public void onSelectCardRequest(SelectCardRequest request) {
-        Optional<Game> game = gameManagement.getGame(request.getMessage().getGameID());
+    public void onBuyCardRequest(BuyCardRequest request) {
+        Optional<Game> game = gameManagement.getGame(request.getLobbyID());
         if (game.isPresent()) {
             Playground playground = game.get().getPlayground();
-            // TODO: Timestamp Handling wenn die SelectCardRequest Clientseitig implementiert worden ist.
-            if (playground.getActualPlayer().getTheUserInThePlayer().getUsername().equals(request.getMessage().getPlayer().getUsername())) {
+            if (request.getCurrentUser().equals(playground.getActualPlayer().getTheUserInThePlayer())) {
+                try {
+                    int count = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), request.getCardID());
+                    BuyCardMessage buyCard = new BuyCardMessage(request.getLobbyID(), request.getCurrentUser(), request.getCardID(), true, count);
+                    sendToAllPlayers(request.getLobbyID(), buyCard);
+
+                } catch (NotEnoughMoneyException notEnoughMoney) {
+                    sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(request.getLobbyID(), notEnoughMoney.getMessage()));
+
+                }
+            }
+            else {
+                LOG.error("Du bist nicht dran. " + playground.getActualPlayer().getPlayerName() + "ist an der Reihe.");
+            }
+        } else {
+            LOG.error("Es existiert kein Spiel mit der ID " + request.getCardID());
+        }
+    }
+
+    /**
+     * Versuch eine Karte zu spielen
+     *
+     * @param rqs PlayCardRequest wird hier vom Client empfangen
+     * @author Devin
+     * @since Sprint6
+     */
+    @Subscribe
+    public void onPlayCardRequest(PlayCardRequest rqs) {
+        Optional<Game> game = gameManagement.getGame(rqs.getGameID());
+        UUID gameID = rqs.getGameID();
+        User player = rqs.getCurrentUser();
+        Short cardID = rqs.getHandCardID();
+        if (game.isPresent()) {
+            Playground playground = game.get().getPlayground();
+            if (playground.getActualPlayer().getTheUserInThePlayer().getUsername().equals(player.getUsername())) {
                 try {
                     playground.endTimer();
-                    // Karte wird an die ActionPhase zum Handling übergeben. TODO: Weitere Implementierung in der ActionPhase.
-                    playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), request.getMessage().getCardID());
-                } catch (GamePhaseException e) {
-                    sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(request.getMessage().getGameID(), e.getMessage()));
+                    // Karte wird an die ActionPhase zum Handling übergeben.
+                    playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), cardID);
+                    sendToSpecificPlayer(playground.getActualPlayer(), new PlayCardMessage(gameID, player, cardID, true));
+                    /*
+                     TODO: Nachdem das gegnerische Feld und ein Text-Feld für den generellem Spiel ablauf hinzugefügt wurde, muss allen Gegnern das ausspielen der Karte mitgeteilt werden.
+                     */
+
+                } catch (IllegalArgumentException e) {
+                    sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(gameID, e.getMessage()));
                 }
             }
         } else {
-            LOG.error("Irgendwas ist bei der onSelectCardRequest im GameService falsch gelaufen..Folgende ID: " + request.getMessage().getGameID());
+            LOG.error("Irgendwas ist bei der onSelectCardRequest im GameService falsch gelaufen..Folgende ID: " + gameID);
         }
     }
+
 }

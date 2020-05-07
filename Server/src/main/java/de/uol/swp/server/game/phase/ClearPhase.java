@@ -1,5 +1,6 @@
 package de.uol.swp.server.game.phase;
 
+import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.server.game.player.Player;
 
 /**

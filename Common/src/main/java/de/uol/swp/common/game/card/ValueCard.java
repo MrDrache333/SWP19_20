@@ -20,6 +20,7 @@ public class ValueCard extends Card {
         this.value = value;
     }
 
+
     /**
      * Gibt den Anwesenheitswert der Karte zurück
      *

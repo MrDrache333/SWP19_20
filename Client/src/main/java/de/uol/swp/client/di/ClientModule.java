@@ -8,6 +8,7 @@ import de.uol.swp.client.ClientConnectionFactory;
 import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.SceneManagerFactory;
 import de.uol.swp.client.chat.ChatService;
+import de.uol.swp.client.game.GameService;
 import de.uol.swp.client.user.UserService;
 import javafx.fxml.FXMLLoader;
 

@@ -1,81 +1,50 @@
 package de.uol.swp.common.game.messages;
 
-import de.uol.swp.common.user.User;
-import javafx.scene.image.ImageView;
 
-import java.util.ArrayList;
+import de.uol.swp.common.message.AbstractServerMessage;
+import de.uol.swp.common.user.User;
+
 import java.util.UUID;
 
-public class PlayCardMessage {
+public class PlayCardMessage extends AbstractServerMessage {
 
+    private static final long serialVersionUID = 3669837484946853842L;
     /**
      * Die Message die gesendet wird, wenn eine Handkarte angeklickt wurde
      *
-     * @param lobbyID       Die ID der aktuellen Lobby
+     * @param gameID       Die ID des aktuellen Spiels
      * @param currentUser   Der Spieler der die Request stellt
      * @param handCardID    Die ID der angeklickten Karte
-     * @param cardImage     Die ImageView der Karte
-     * @param handCards     Das Array mit den ImageViews die auf der Hand sind
-     * @param smallSpace    gibt an, ob die Karten zusammen gerückt sind oder nicht
-     * @param count         gibt an, die wievielte Karte gespielt wurde
-     * @param playCard      gibt an, ob die karte gespielt werden kann
-     * @author Rike
+     * @param isPlayed      Sagt aus, ob die Karte ausgespielt werden darf
+     * @author Rike, Devin
      * @since Sprint 5
      */
 
-    private UUID lobbyID;
-    private User currentUser;
-    private Short handCardID;
-    private ImageView cardImage;
-    private ArrayList<ImageView> handCards;
-    private boolean smallSpace;
-    private int count;
-    private boolean playCard;
+    private final UUID gameID;
+    private final User currentUser;
+    private final Short handCardID;
+    private final Boolean isPlayed;
 
-    public PlayCardMessage() {
-    }
 
-    public PlayCardMessage(UUID lobbyID, User currentUser, Short handCardID, ImageView cardImage,
-                           ArrayList<ImageView> handCards, boolean smallSpace, int count, boolean playCard) {
-        this.lobbyID = lobbyID;
+    public PlayCardMessage(UUID gameID, User currentUser, Short handCardID, Boolean isPlayed) {
+        this.gameID = gameID;
         this.currentUser = currentUser;
         this.handCardID = handCardID;
-        this.cardImage = cardImage;
-        this.handCards = handCards;
-        this.smallSpace = smallSpace;
-        this.count = count;
-        this.playCard = playCard;
+        this.isPlayed = isPlayed;
     }
 
-    public UUID getLobbyID() {
-        return lobbyID;
+    public UUID getGameID() {
+        return gameID;
     }
 
     public User getCurrentUser() {
         return currentUser;
     }
 
-    public Short getHandCardID() {
+    public short getHandCardID() {
         return handCardID;
     }
 
-    public ImageView getCardImage() {
-        return cardImage;
-    }
+    public Boolean getIsPlayed() {return isPlayed;}
 
-    public ArrayList<ImageView> getHandCards() {
-        return handCards;
-    }
-
-    public boolean isSmallSpace() {
-        return smallSpace;
-    }
-
-    public int getCount() {
-        return count;
-    }
-
-    public boolean isPlayCard() {
-        return playCard;
-    }
 }

@@ -1,6 +1,7 @@
 package de.uol.swp.server.game.player;
 
 import de.uol.swp.common.game.card.Card;
+import de.uol.swp.common.game.card.MoneyCard;
 import de.uol.swp.common.game.card.parser.JsonCardParser;
 import de.uol.swp.common.game.card.parser.components.CardPack;
 
@@ -12,7 +13,6 @@ import java.util.Collections;
  */
 public class Deck {
 
-
     /**
      * Listen für Hand, Deck, Ablagestapel
      *
@@ -23,6 +23,7 @@ public class Deck {
     private ArrayList<Card> discardPile = new ArrayList<>();
     private ArrayList<Card> hand = new ArrayList<>();
     private ArrayList<Card> temp = new ArrayList<>();
+    private final ArrayList<Card> actionPile = new ArrayList<>();
 
     /**
      * Konstruktor
@@ -123,6 +124,53 @@ public class Deck {
 
     }
 
+    /**
+     * Methode, die den Geldwert eines Spielers berechnet und zurückgibt
+     *
+     * @return Geldwert der Karten eines Spielers
+     * @author Paula
+     * @since Sprint6
+     */
+    public int actualMoneyFromPlayer() {
+        int money = 0;
+        for (Card card : hand) {
+            if (card instanceof MoneyCard) {
+                money += ((MoneyCard) card).getValue();
+            }
+        }
+        return money;
+    }
+
+    /**
+     * Hilfsmethode, um bei einem Kauf Geldkarten für den Kauf abzuziehen
+     *
+     * @param value Wert einer Geldkarte
+     * @author Paula
+     * @since Sprint6
+     */
+
+    public void discardMoneyCardsForValue(int value) {
+        int money = 0;
+        int sizeHand = hand.size();
+        ArrayList<Card> removeCards = new ArrayList<>();
+        for (int i=0; i<sizeHand; i++){
+            if (hand.get(i) instanceof MoneyCard) {
+                money += ((MoneyCard) hand.get(i)).getValue();
+                discardPile.add(hand.get(i));
+                removeCards.add(hand.get(i));
+                if (money >= value) {
+                    break;
+                }
+
+            }
+        }
+        for (Card card : removeCards) {
+            hand.remove(card);
+        }
+    }
+
+
+
     public ArrayList<Card> getHand() {
         return hand;
     }
@@ -137,5 +185,9 @@ public class Deck {
 
     public ArrayList<Card> getTemp() {
         return temp;
+    }
+
+    public ArrayList<Card> getActionPile() {
+        return actionPile;
     }
 }

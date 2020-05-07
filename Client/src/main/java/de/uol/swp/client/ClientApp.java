@@ -6,6 +6,7 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import de.uol.swp.client.di.ClientModule;
+import de.uol.swp.client.game.GameService;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.lobby.message.*;
@@ -22,7 +23,6 @@ import de.uol.swp.common.user.response.RegistrationSuccessfulResponse;
 import io.netty.channel.Channel;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,6 +37,7 @@ public class ClientApp extends Application implements ConnectionListener {
     private int port;
     private UserService userService;
     private LobbyService lobbyService;
+    private GameService gameService;
     private User user;
     private ClientConnection clientConnection;
     private EventBus eventBus;
@@ -98,6 +99,7 @@ public class ClientApp extends Application implements ConnectionListener {
         // get user service from guice, is needed for logout
         this.userService = injector.getInstance(UserService.class);
         this.lobbyService = injector.getInstance(LobbyService.class);
+        this.gameService = injector.getInstance(GameService.class);
 
         // get event bus from guice
         eventBus = injector.getInstance(EventBus.class);
@@ -229,11 +231,7 @@ public class ClientApp extends Application implements ConnectionListener {
     @Subscribe
     public void onUserJoinedLobbyMessage(UserJoinedLobbyMessage message) {
         if (message.getUser().getUsername().equals(user.getUsername())) {
-            if (sceneManager.getGameManagement(message.getLobbyID()) != null) {
-                sceneManager.getGameManagement(message.getLobbyID()).showLobbyView();
-            } else {
-                sceneManager.showLobbyScreen(message.getUser(), message.getLobby().getName(), message.getLobbyID(), message.getGameOwner());
-            }
+            sceneManager.showLobbyScreen(message.getUser(), message.getLobby().getName(), message.getLobbyID(), message.getGameOwner());
             LOG.info("User " + message.getUser().getUsername() + " joined lobby successfully");
         }
     }
@@ -251,7 +249,6 @@ public class ClientApp extends Application implements ConnectionListener {
         if (message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showMainScreen(user);
             LOG.info("User " + message.getUser().getUsername() + " left lobby successfully");
-            sceneManager.getGameManagement(message.getLobbyID()).close();
         }
     }
 
@@ -299,13 +296,12 @@ public class ClientApp extends Application implements ConnectionListener {
         }
     }
 
-
     /**
      * Empfängt vom Server die Message, dass ein User gekickt wurde. Bei diesem User wird das Lobbyfenster
      * geschlossen und das MainMenu wird angezeigt
      *
      * @param message KickUserMessage
-     * @author Darian. Marvin
+     * @author Darian, Marvin
      * @since Sprint 4
      */
     @Subscribe
@@ -313,8 +309,6 @@ public class ClientApp extends Application implements ConnectionListener {
         if (message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showMainScreen(user);
             LOG.info("User " + message.getUser().getUsername() + " is kicked from the lobby successfully");
-            sceneManager.getGameManagement(message.getLobbyID()).close();
-            SceneManager.showAlert(Alert.AlertType.WARNING, "Sie wurden aus der Lobby entfernt", "Lobby verlassen");
         }
     }
 
@@ -333,6 +327,7 @@ public class ClientApp extends Application implements ConnectionListener {
     @Subscribe
     public void onUserLoggedOutMessage(UserLoggedOutMessage message) {
         LOG.info("Logout and leaving of all lobbies successful.");
+
         if (message.getUsername().equals(user.getUsername())) {
             sceneManager.closeAllStages();
             sceneManager.showLoginScreen();

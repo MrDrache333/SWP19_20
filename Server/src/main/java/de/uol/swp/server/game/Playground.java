@@ -9,12 +9,12 @@ import de.uol.swp.common.game.card.parser.JsonCardParser;
 import de.uol.swp.common.game.card.parser.components.CardPack;
 import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.*;
+import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.game.phase.CompositePhase;
-import de.uol.swp.server.game.phase.Phase;
 import de.uol.swp.server.game.player.Deck;
 import de.uol.swp.server.game.player.Player;
 import org.apache.logging.log4j.LogManager;
@@ -243,6 +243,19 @@ public class Playground extends AbstractPlayground {
         else {
             return false;
         }
+    }
+
+    /**
+     * Sendet die letzte Karte vom Ablagestapel an den GameService
+     *
+     * @param gameID
+     * @param cardID
+     * @param user
+     * @author Fenja
+     * @since Sprint6
+     */
+    public void sendLastCardOfDiscardPile(UUID gameID, short cardID, User user) {
+        gameService.sendLastCardOfDiscardPile(gameID, cardID, user);
     }
 
     /**

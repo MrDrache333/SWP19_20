@@ -4,5 +4,9 @@ target/
 .idea
 *.iml
 *.db
-.idea
-.xml
+!.idea
+.idea/inspectionProfiles/Project_Default.xml
+
+*.xml
+
+.idea/

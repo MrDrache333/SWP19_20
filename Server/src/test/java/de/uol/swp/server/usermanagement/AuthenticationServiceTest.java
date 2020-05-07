@@ -11,6 +11,8 @@ import de.uol.swp.common.user.request.LoginRequest;
 import de.uol.swp.common.user.request.LogoutRequest;
 import de.uol.swp.common.user.request.RetrieveAllOnlineUsersRequest;
 import de.uol.swp.common.user.response.AllOnlineUsersResponse;
+import de.uol.swp.server.lobby.LobbyManagement;
+import de.uol.swp.server.lobby.LobbyService;
 import de.uol.swp.server.message.ClientAuthorizedMessage;
 import de.uol.swp.server.message.ServerExceptionMessage;
 import de.uol.swp.server.usermanagement.store.MainMemoryBasedUserStore;
@@ -39,7 +41,8 @@ class AuthenticationServiceTest {
     final UserStore userStore = new MainMemoryBasedUserStore();
     final EventBus bus = new EventBus();
     final UserManagement userManagement = new UserManagement(userStore);
-    final AuthenticationService authService = new AuthenticationService(bus, userManagement);
+    private LobbyManagement lobbyManagement = new LobbyManagement();
+    final AuthenticationService authService = new AuthenticationService(bus, userManagement, lobbyManagement);
     private final CountDownLatch lock = new CountDownLatch(1);
     private Object event;
 
@@ -162,7 +165,6 @@ class AuthenticationServiceTest {
 
         assertEquals(((AllOnlineUsersResponse) event).getUsers().size(), 1);
         assertEquals(((AllOnlineUsersResponse) event).getUsers().get(0), user);
-
     }
 
     /**
@@ -213,7 +215,6 @@ class AuthenticationServiceTest {
         assertTrue(event instanceof AllOnlineUsersResponse);
 
         assertTrue(((AllOnlineUsersResponse) event).getUsers().isEmpty());
-
     }
 
     /**
@@ -231,7 +232,6 @@ class AuthenticationServiceTest {
         users.add(user);
         users.add(user2);
         users.add(user3);
-
 
         Optional<Session> session1 = authService.getSession(user);
         Optional<Session> session2 = authService.getSession(user2);
@@ -261,9 +261,7 @@ class AuthenticationServiceTest {
         userManagement.createUser(userToLogin);
         final LoginRequest loginRequest = new LoginRequest(userToLogin.getUsername(), userToLogin.getPassword());
         bus.post(loginRequest);
-
         assertTrue(userManagement.isLoggedIn(userToLogin));
         userManagement.dropUser(userToLogin);
     }
-
 }

@@ -69,7 +69,7 @@ class ServerApp {
         ChatManagement chatManagement = injector.getInstance(ChatManagement.class);
 
         // TODO: Nach der Registrierung entfernen (Von Marco --> Nur übersetzt)
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 100; i++) {
             userManagement.createUser(new UserDTO("test" + i, "test" + i, "test" + i + "@test.de"));
         }
 

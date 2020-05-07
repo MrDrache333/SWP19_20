@@ -1,0 +1,25 @@
+package de.uol.swp.common.game.phase;
+
+/**
+ * Das interface einer InGame Phase
+ */
+public interface Phase {
+
+    /**
+     * Die verschiedenen Phasen
+     */
+    enum Type {
+        /**
+         * Die Aktionsphase
+         */
+        ActionPhase,
+        /**
+         * Die Kaufphase
+         */
+        Buyphase,
+        /**
+         * Die Aufräumphase
+         */
+        Clearphase
+    }
+}

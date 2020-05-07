@@ -1,10 +1,16 @@
 package de.uol.swp.server.game.phase;
 
 import de.uol.swp.common.game.card.Card;
+import de.uol.swp.common.game.card.parser.components.CardPack;
+import de.uol.swp.common.game.card.parser.components.CardStack;
+import de.uol.swp.common.game.exception.NotEnoughMoneyException;
 import de.uol.swp.common.game.messages.GameOverMessage;
+import de.uol.swp.server.game.GameService;
 import de.uol.swp.server.game.Playground;
 import de.uol.swp.server.game.player.Deck;
 import de.uol.swp.server.game.player.Player;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
@@ -13,7 +19,8 @@ import java.util.List;
  */
 public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
 
-    private Playground playground;
+    private final Playground playground;
+    private static final Logger LOG = LogManager.getLogger(GameService.class);
 
     /**
      * Der Konstruktor
@@ -26,48 +33,63 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         this.playground = playground;
     }
 
+    /**
+     * Methode um eine Karte zu kaufen. Diese wird dem Ablagestapel des Spielers hinzugefügt, wenn er genug Geld hat
+     *
+     * @param player Der Spieler
+     * @param cardId Die Karten-ID
+     * @author Paula
+     * @since Sprint6
+     */
     @Override
-    public void executeActionPhase(Player player, short cardId) {
-        /*
-        1. Verifiziere, dass Karte existiert
-        2. Überprüfe, ob Spieler diese Karte in der Hand hat
-        3. Führe die auf der Karte befindlichen Aktionen aus
-         */
-        //TODO: availableActions um 1 verringern, wenn Aktionskarte erfolgreich gespielt wurde
-
-        if (player.getAvailableActions() == 0) {
-            playground.nextPhase();
-        }
-    }
-
-    @Override
-    public void executeBuyPhase(Player player, short cardId) {
-        /*
-        1. Verifiziere, dass Karte existiert
-        2. Überprüfe, ob Karte, durch auf der Hand befindliche Geldkarten, gekauft werden kann
-        3. Führe Kauf aus
-
-        Werfe bei fehlern eine Exception, sodass aufrufender den Kauf abbrechen kann
-         */
-        //TODO: availableBuys um 1 verringern, wenn Kauf erfolgreich war
+    public int executeBuyPhase(Player player, short cardId) {
+        CardPack cardsPackField = playground.getCardsPackField();
+        Card currentCard = getCardFromId(cardsPackField.getCards(), cardId);
 
         if (player.getAvailableBuys() == 0) {
             playground.nextPhase();
         }
+
+        // Karten und deren Anzahl werden aus dem Spielfeld geladen.
+        int count = playground.getCardField().get(cardId);
+        if (count > 0) {
+            // Falls die ID der Karte nicht vorhanden ist, wird eine Exception geworfen
+            if (currentCard == null) {
+                throw new IllegalArgumentException("CardID wurde nicht gefunden");
+            }
+            /*Falls die ID vorhanden ist wird der Geldwert des Spielers berechnet, hat er
+              genug Geld, wird die Karte seinem Ablagestapel hinzugefügt, das Geld wird ihm entzogen
+              und die Anzahl der Karte auf dem Spielfeld verringert sich um eins
+            */
+            int moneyValuePlayer = player.getPlayerDeck().actualMoneyFromPlayer();
+            if (moneyValuePlayer < currentCard.getCosts()) {
+                LOG.error("Nicht genug Geld");
+                throw new NotEnoughMoneyException("Nicht genug Geld vorhanden");
+            }
+            player.getPlayerDeck().getDiscardPile().add(currentCard);
+            moneyValuePlayer -= currentCard.getCosts();
+            player.getPlayerDeck().discardMoneyCardsForValue(currentCard.getCosts());
+            playground.getCardField().put(cardId, --count);
+        }
+        return count;
     }
 
     /**
-     * Alle Karten auf der Hand des Spielers werden auf den Ablagestapel verschoben und eine neue Hand gezogen
+     * Alle Karten auf der Hand des Spielers werden auf den Ablagestapel verschoben
+     * und eine neue Hand gezogen und die letzte Karte, die auf den Ablagestapel gelegt wird, wird übergeben
      *
      * @param player Der aktuelle Spieler
-     * @author Julia
+     * @author Julia, Fenja
      * @since Sprint6
      */
     @Override
     public void executeClearPhase(Player player) {
         Deck deck = player.getPlayerDeck();
         deck.getDiscardPile().addAll(deck.getHand());
+        deck.getDiscardPile().addAll(deck.getActionPile());
+        playground.sendLastCardOfDiscardPile(playground.getID(), deck.getDiscardPile().get(deck.getDiscardPile().size() - 1).getId(), player.getTheUserInThePlayer());
         deck.getHand().clear();
+        deck.getActionPile().clear();
         deck.drawHand();
         player.setAdditionalMoney(0);
         player.setAvailableBuys(1);
@@ -78,6 +100,61 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         } else {
             playground.newTurn();
         }
+    }
+
+    @Override
+    public void executeActionPhase(Player player, short cardId) {
+        CardPack cardsPackField = playground.getCardsPackField();
+        Card currentCard = getCardFromId(cardsPackField.getCards(), cardId);
+        player.getPlayerDeck().getHand().add(currentCard);
+        // 1. Verifiziere, dass Karte existiert
+
+        if (currentCard == null) {
+            throw new IllegalArgumentException("CardID wurde nicht gefunden");
+        }
+        // 2. Überprüfe, ob Spieler diese Karte in der Hand hat
+        if (!player.getPlayerDeck().getHand().contains(currentCard)) {
+            throw new IllegalArgumentException("Die Hand enthält die gesuchte Karte nicht");
+        }
+        /*
+        3. Führe die auf der Karte befindlichen Aktionen aus
+        3.1 Die Karte wird auf den ActionPile gelegt und aus der Hand entfernt.
+         */
+        player.getPlayerDeck().getActionPile().add(currentCard);
+        player.getPlayerDeck().getHand().remove(currentCard);
+            // TODO: Die Aktion der Karte muss noch ausgeführt werden
+
+    }
+
+
+    /**
+     * Hilfsmethode um an die Daten über die ID zu kommen
+     *
+     * @param cardStack
+     * @param cardId
+     * @return card Karte, zu der die ID gehört
+     * @author Paula
+     * @since Sprint6
+     */
+
+    private Card getCardFromId(CardStack cardStack, short cardId) {
+        for (Card card : cardStack.getActionCards()) {
+            if (card.getId() == cardId) {
+                return card;
+            }
+        }
+        for (Card card : cardStack.getMoneyCards()) {
+            if (card.getId() == cardId) {
+                return card;
+            }
+        }
+
+        for (Card card : cardStack.getValueCards()) {
+            if (card.getId() == cardId) {
+                return card;
+            }
+        }
+        return null;
     }
 
     /**

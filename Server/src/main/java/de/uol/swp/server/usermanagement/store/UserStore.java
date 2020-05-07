@@ -53,13 +53,13 @@ public interface UserStore {
      * @param username        der neue Username
      * @param password        das Passwort des Users
      * @param eMail           die E-Mail-Adresse des Users
-     * @param oldUsername     der alter Username
+     * @param oldUser         der alter User
      * @param currentPassword das momentane Passwort des Users
      * @return den aktualisierten User
-     * @author Marco, Julia
+     * @author Marco, Julia, Darian
      * @since Start
      */
-    User updateUser(String username, String password, String eMail, String oldUsername, String currentPassword);
+    User updateUser(String username, String password, String eMail, User oldUser, String currentPassword);
 
     /**
      * Löscht einen User aus der Liste

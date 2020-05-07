@@ -8,11 +8,10 @@ import com.google.inject.assistedinject.Assisted;
 import de.uol.swp.client.auth.LoginPresenter;
 import de.uol.swp.client.auth.events.ShowLoginViewEvent;
 import de.uol.swp.client.chat.ChatService;
-import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.client.game.GameService;
 import de.uol.swp.client.game.event.GameQuitEvent;
 import de.uol.swp.client.lobby.LobbyService;
-import de.uol.swp.client.main.MainMenuPresenter;
+import de.uol.swp.client.main.PrimaryPresenter;
 import de.uol.swp.client.register.RegistrationPresenter;
 import de.uol.swp.client.register.event.RegistrationCanceledEvent;
 import de.uol.swp.client.register.event.RegistrationErrorEvent;
@@ -23,9 +22,9 @@ import de.uol.swp.client.settings.event.CloseDeleteAccountEvent;
 import de.uol.swp.client.settings.event.CloseSettingsEvent;
 import de.uol.swp.client.settings.event.DeleteAccountEvent;
 import de.uol.swp.client.sound.SoundMediaPlayer;
+import de.uol.swp.client.user.UserService;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
-import de.uol.swp.common.user.UserService;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -37,8 +36,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -68,13 +65,11 @@ public class SceneManager {
     private Scene mainScene;
     private Scene settingsScene;
     private Scene deleteAccountScene;
-    private Scene gameScene;
     private Scene lastScene = null;
     private Scene currentScene = null;
     private User currentUser;
-    private Map<UUID, Scene> lobbyScenes = new HashMap<>();
-    private Map<UUID, GameManagement> games = new HashMap<>();
-    private Map<UUID, Stage> lobbyStages = new HashMap<>();
+    private PrimaryPresenter primaryPresenter;
+    private Scene primaryScene;
 
 
     @Inject
@@ -209,7 +204,7 @@ public class SceneManager {
     }
 
     public void showMainScreen(User currentUser) {
-        showScene(mainScene, "Welcome " + currentUser.getUsername());
+        showScene(primaryScene, "Welcome " + currentUser.getUsername());
     }
 
 
@@ -233,13 +228,7 @@ public class SceneManager {
     public void showLobbyScreen(User currentUser, String title, UUID lobbyID, UserDTO gameOwner) {
         Platform.runLater(() -> {
             //neue Instanz des LobbyPresenter mit (name, id) wird erstellt
-            GameManagement gameManagement = new GameManagement(eventBus, lobbyID, title, currentUser, chatService, lobbyService, userService, injector, gameOwner, gameService);
-
-            eventBus.register(gameManagement);
-
-            //LobbyPresenter und lobbyStage in der jeweilige Map speichern. Die lobbyID dient als Schlüssel.
-            games.put(lobbyID, gameManagement);
-            gameManagement.showLobbyView();
+            primaryPresenter.createLobby(currentUser, title, lobbyID, gameOwner);
         });
     }
 
@@ -268,18 +257,6 @@ public class SceneManager {
     }
 
     /**
-     * Gibt die übergebenen lobbyID zurück, die zum jeweiligen GameManagement gehört.
-     *
-     * @param lobbyID die übergebene LobbyID
-     * @return GameManagement
-     * @author Julia, Paula
-     * @since Sprint3
-     */
-    public GameManagement getGameManagement(UUID lobbyID) {
-        return games.get(lobbyID);
-    }
-
-    /**
      * Schließt alle Stages
      *
      * @author Julia, Paula
@@ -287,7 +264,6 @@ public class SceneManager {
      */
     public void closeAllStages() {
         Platform.runLater(() -> {
-            games.values().forEach(GameManagement::close);
             if (settingsStage != null) {
                 settingsStage.close();
             }
@@ -307,8 +283,8 @@ public class SceneManager {
 
     private void initViews() {
         initLoginView();
-        initMainView();
         initRegistrationView();
+        initPrimaryView();
     }
 
     private Parent initPresenter(String fxmlFile) {
@@ -323,6 +299,36 @@ public class SceneManager {
             throw new RuntimeException("Could not load View!" + e.getMessage(), e);
         }
         return rootPane;
+    }
+
+    private Parent initPresenter(String fxmlFile, PrimaryPresenter presenter) {
+        Parent rootPane;
+        FXMLLoader loader = injector.getInstance(FXMLLoader.class);
+        try {
+            URL url = getClass().getResource(fxmlFile);
+            LOG.debug("Loading " + url);
+            loader.setLocation(url);
+            loader.setController(presenter);
+            rootPane = loader.load();
+        } catch (Exception e) {
+            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
+        }
+        return rootPane;
+    }
+
+    private void initPrimaryView() {
+        if (primaryScene == null) {
+            primaryPresenter = new PrimaryPresenter();
+            primaryPresenter.initialise(eventBus, currentUser, chatService, lobbyService, userService, injector, gameService);
+            Parent rootPane = initPresenter(PrimaryPresenter.fxml, primaryPresenter);
+            primaryScene = new Scene(rootPane, 1400, 790);
+            primaryScene.getStylesheets().add(styleSheet);
+            primaryScene.getStylesheets().add(PrimaryPresenter.css);
+            primaryStage.setOnCloseRequest(event -> {
+                userService.logout(currentUser);
+            });
+            eventBus.register(primaryPresenter);
+        }
     }
 
     private Parent initSettingsPresenter(SettingsPresenter settingsPresenter) {
@@ -355,15 +361,6 @@ public class SceneManager {
         return rootPane;
     }
 
-    private void initMainView() {
-        if (mainScene == null) {
-            Parent rootPane = initPresenter(MainMenuPresenter.fxml);
-            mainScene = new Scene(rootPane, 1280, 750);
-            mainScene.getStylesheets().add(styleSheet);
-            mainScene.getStylesheets().add(MainMenuPresenter.css);
-        }
-    }
-
     private void initLoginView() {
         if (loginScene == null) {
             Parent rootPane = initPresenter(LoginPresenter.fxml);
@@ -393,7 +390,7 @@ public class SceneManager {
     private void initDeleteAccountView() {
         if (deleteAccountScene == null) {
             Parent rootPane = initDeleteAccountPresenter(new DeleteAccountPresenter(currentUser, lobbyService, userService, eventBus));
-            deleteAccountScene = new Scene(rootPane, 200, 100);
+            deleteAccountScene = new Scene(rootPane, 250, 100);
             deleteAccountScene.getStylesheets().add(SettingsPresenter.css);
 
         }
