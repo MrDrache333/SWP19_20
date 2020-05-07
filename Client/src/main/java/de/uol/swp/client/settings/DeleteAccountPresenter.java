@@ -4,7 +4,6 @@ import com.google.common.eventbus.EventBus;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.settings.event.CloseDeleteAccountEvent;
 import de.uol.swp.common.user.User;
-import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -63,7 +62,6 @@ public class DeleteAccountPresenter {
     @FXML
     public void onYesButtonPressed(ActionEvent actionEvent) {
         LOG.debug("Der Benutzer " + loggedInUser.getUsername() + " löscht seinen Account!");
-        lobbyService.leaveAllLobbiesOnLogout((UserDTO) loggedInUser);
         userService.dropUser(loggedInUser);
     }
 
