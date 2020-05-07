@@ -149,7 +149,7 @@ public class GameViewPresenter extends AbstractPresenter {
         handcards = new HandcardsLayoutContainer(460, 618, 160, 650);
         playedCardLayoutContainer = new PlayedCardLayoutContainer(500, 500, 160, 100);
         firstEnemyHand = new HandcardsLayoutContainer(284, 0, 119, 430);
-        secondEnemyHand = new HandcardsLayoutContainer(0, 299, 430, 119);
+        secondEnemyHand = new HandcardsLayoutContainer(300, 299, 430, 119);
         thirdEnemyHand = new HandcardsLayoutContainer(900, 299, 430, 119);
 
         firstEnemyDeck = new StackPane();
@@ -210,15 +210,12 @@ public class GameViewPresenter extends AbstractPresenter {
         ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getPrefWidth());
         gameViewWIP.getChildren().add(playedCardLayoutContainer);
         gameViewWIP.getChildren().add(handcards);
-
-        gameViewWIP.getChildren().add(handcards);
         gameViewWIP.getChildren().add(firstEnemyHand);
         gameViewWIP.getChildren().add(secondEnemyHand);
         gameViewWIP.getChildren().add(thirdEnemyHand);
         gameViewWIP.getChildren().add(firstEnemyDeck);
         gameViewWIP.getChildren().add(secondEnemyDeck);
         gameViewWIP.getChildren().add(thirdEnemyDeck);
-        gameViewWIP.getChildren().add(playedCardLayoutContainer);
         initalizeCardFieldImages();
     }
 
@@ -460,27 +457,34 @@ public class GameViewPresenter extends AbstractPresenter {
                 });
 
                 String pfad = "file:Client/src/main/resources/cards/images/card_back.png";
+                String pfad2 = "file:Client/src/main/resources/cards/images/card_back_vertikal.png";
                 Image picture = new Image(pfad);
+                Image picture2 = new Image(pfad2);
                 ImageView card = new ImageView(picture);
+                ImageView card2 = new ImageView(picture2);
                 card.setFitHeight(107);
                 card.setPreserveRatio(true);
                 card.setId("back");
                 card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
+                card2.setFitHeight(107);
+                card2.setPreserveRatio(true);
+                card2.setId("back");
+                card2.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
                 for(int i=0; i<5; i++) {
                     firstEnemyDeck.getChildren().add(card);
                     AnimationManagement.addToHand(card, firstEnemyHand.getChildren().size());
                     firstEnemyDeck.getChildren().remove(card);
                     firstEnemyHand.getChildren().add(card);
                     if(numberOfPlayersInGame >= 3) {
-                        secondEnemyDeck.getChildren().add(card);
-                        AnimationManagement.addToHand(card, secondEnemyHand.getChildren().size());
-                        secondEnemyDeck.getChildren().remove(card);
-                        secondEnemyHand.getChildren().add(card);
+                        secondEnemyDeck.getChildren().add(card2);
+                        AnimationManagement.addToHand(card2, secondEnemyHand.getChildren().size());
+                        secondEnemyDeck.getChildren().remove(card2);
+                        secondEnemyHand.getChildren().add(card2);
                         if (numberOfPlayersInGame == 4){
-                            thirdEnemyDeck.getChildren().add(card);
-                            AnimationManagement.addToHand(card, thirdEnemyHand.getChildren().size());
-                            thirdEnemyDeck.getChildren().remove(card);
-                            thirdEnemyHand.getChildren().add(card);
+                            thirdEnemyDeck.getChildren().add(card2);
+                            AnimationManagement.addToHand(card2, thirdEnemyHand.getChildren().size());
+                            thirdEnemyDeck.getChildren().remove(card2);
+                            thirdEnemyHand.getChildren().add(card2);
                         }
                     }
                 }
@@ -571,16 +575,16 @@ public class GameViewPresenter extends AbstractPresenter {
         bigCardImage.setFitHeight(225.0);
         bigCardImage.setFitWidth(150.0);
         bigCardImage.toFront();
-        bigCardImage.setLayoutX(425.0);
-        bigCardImage.setLayoutY(155.0);
+        bigCardImage.setLayoutX(725.0);
+        bigCardImage.setLayoutY(205.0);
         gameViewWIP.getChildren().add(bigCardImage);
         if (id > 6) {
             Button play = new Button("auspielen");
             Button back = new Button("zurück");
-            play.setLayoutX(432.0);
-            play.setLayoutY(385.0);
-            back.setLayoutX(516.0);
-            back.setLayoutY(385.0);
+            play.setLayoutX(732.0);
+            play.setLayoutY(435.0);
+            back.setLayoutX(816.0);
+            back.setLayoutY(435.0);
             back.setMinWidth(52.0);
             gameViewWIP.getChildren().add(play);
             gameViewWIP.getChildren().add(back);
@@ -606,8 +610,8 @@ public class GameViewPresenter extends AbstractPresenter {
         } else {
             Button back = new Button("zurück");
 
-            back.setLayoutX(516.0);
-            back.setLayoutY(385.0);
+            back.setLayoutX(816.0);
+            back.setLayoutY(435.0);
             back.setMinWidth(52.0);
             gameViewWIP.getChildren().add(back);
 
@@ -646,11 +650,11 @@ public class GameViewPresenter extends AbstractPresenter {
         // ein großes Bild der Karte wird hinzugefügt
         ImageView bigCardImage = new ImageView(new Image(PathCardLargeView));
         // setzt die Größe und die Position des Bildes. Das Bild ist im Vordergrund. Bild wird hinzugefügt
-        bigCardImage.setFitHeight(240.0);
+        bigCardImage.setFitHeight(225.0);
         bigCardImage.setFitWidth(150.0);
         bigCardImage.toFront();
-        bigCardImage.setLayoutX(325.0);
-        bigCardImage.setLayoutY(20.0);
+        bigCardImage.setLayoutX(725.0);
+        bigCardImage.setLayoutY(205.0);
         gameViewWIP.getChildren().add(bigCardImage);
         // es werden zwei Buttons hinzugefügt (zurück und kaufen)
         Button buy = new Button("kaufen");
@@ -658,11 +662,11 @@ public class GameViewPresenter extends AbstractPresenter {
         gameViewWIP.getChildren().add(buy);
         gameViewWIP.getChildren().add(back);
         // Position der Buttons wird gesetzt
-        buy.setLayoutX(325.0);
-        buy.setLayoutY(255.0);
+        buy.setLayoutX(732.0);
+        buy.setLayoutY(435.0);
         buy.setMinWidth(70.0);
-        back.setLayoutX(405.0);
-        back.setLayoutY(255.0);
+        back.setLayoutX(816.0);
+        back.setLayoutY(435.0);
         back.setMinWidth(70.0);
         // Aktion hinter dem Kauf-Button
         buy.setOnAction(event -> {
