@@ -196,6 +196,10 @@ public class LobbyPresenter extends AbstractPresenter {
         lobbyService.setMaxPlayer(this.getLobbyID(), this.loggedInUser, chooseMaxPlayer.getValue());
     }
 
+    @FXML
+    public void onGamesettingsButtonPressed(ActionEvent actionEvent) {
+
+    }
     //--------------------------------------
     // EVENTBUS
     //--------------------------------------
@@ -356,7 +360,9 @@ public class LobbyPresenter extends AbstractPresenter {
         if (message.getLobby() != null) {
             gameOwner = message.getGameOwner();
             userLeftLobby(message.getUser().getUsername(), false);
-
+            if (gameOwner.getUsername().equals(loggedInUser.getUsername())) {
+                gamesettingsButton.setVisible(true);
+            }
         }
     }
 
