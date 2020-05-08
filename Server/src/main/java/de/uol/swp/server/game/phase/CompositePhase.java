@@ -33,6 +33,37 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         this.playground = playground;
     }
 
+    @Override
+    public void executeActionPhase(Player player, short cardId) {
+        CardPack cardsPackField = playground.getCardsPackField();
+        Card currentCard = getCardFromId(cardsPackField.getCards(), cardId);
+        // 1. Verifiziere, dass Karte existiert
+
+        if (currentCard == null) {
+            throw new IllegalArgumentException("CardID wurde nicht gefunden");
+        }
+        // 2. Überprüfe, ob Spieler diese Karte in der Hand hat
+        if (!player.getPlayerDeck().getHand().contains(currentCard)) {
+            throw new IllegalArgumentException("Die Hand enthält die gesuchte Karte nicht");
+        }
+        /*
+        3. Führe die auf der Karte befindlichen Aktionen aus
+        3.1 Die Karte wird auf den ActionPile gelegt und aus der Hand entfernt.
+         */
+        ActionCardExecution executeAction = new ActionCardExecution(cardId, playground);
+        executeAction.execute(); //TODO: Abfrage ob erfolgreich
+        player.getPlayerDeck().getActionPile().add(currentCard);
+        player.getPlayerDeck().getHand().remove(currentCard);
+        // TODO: Die Aktion der Karte muss noch ausgeführt werden
+        //TODO: wenn Aktion erfolgreich ausgeführt wurde:
+        player.setAvailableActions(player.getAvailableActions() - 1);
+        if (player.getAvailableActions() == 0) {
+            playground.nextPhase();
+        }
+
+    }
+
+
     /**
      * Methode um eine Karte zu kaufen. Diese wird dem Ablagestapel des Spielers hinzugefügt, wenn er genug Geld hat
      *
@@ -62,14 +93,23 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
               und die Anzahl der Karte auf dem Spielfeld verringert sich um eins
             */
             int moneyValuePlayer = player.getPlayerDeck().actualMoneyFromPlayer();
-            if (moneyValuePlayer < currentCard.getCosts()) {
+            int additionalMoney = player.getAdditionalMoney();
+            if (moneyValuePlayer + additionalMoney < currentCard.getCosts()) {
                 LOG.error("Nicht genug Geld");
                 throw new NotEnoughMoneyException("Nicht genug Geld vorhanden");
+            }
+            if (moneyValuePlayer < currentCard.getCosts()) {
+                int diff = currentCard.getCosts() - moneyValuePlayer;
+                player.setAdditionalMoney(additionalMoney - diff);
             }
             player.getPlayerDeck().getDiscardPile().add(currentCard);
             moneyValuePlayer -= currentCard.getCosts();
             player.getPlayerDeck().discardMoneyCardsForValue(currentCard.getCosts());
             playground.getCardField().put(cardId, --count);
+        }
+        player.setAvailableBuys(player.getAvailableBuys() - 1);
+        if (player.getAvailableBuys() == 0) {
+            playground.nextPhase();
         }
         return count;
     }
@@ -101,31 +141,6 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
             playground.newTurn();
         }
     }
-
-    @Override
-    public void executeActionPhase(Player player, short cardId) {
-        CardPack cardsPackField = playground.getCardsPackField();
-        Card currentCard = getCardFromId(cardsPackField.getCards(), cardId);
-        player.getPlayerDeck().getHand().add(currentCard);
-        // 1. Verifiziere, dass Karte existiert
-
-        if (currentCard == null) {
-            throw new IllegalArgumentException("CardID wurde nicht gefunden");
-        }
-        // 2. Überprüfe, ob Spieler diese Karte in der Hand hat
-        if (!player.getPlayerDeck().getHand().contains(currentCard)) {
-            throw new IllegalArgumentException("Die Hand enthält die gesuchte Karte nicht");
-        }
-        /*
-        3. Führe die auf der Karte befindlichen Aktionen aus
-        3.1 Die Karte wird auf den ActionPile gelegt und aus der Hand entfernt.
-         */
-        player.getPlayerDeck().getActionPile().add(currentCard);
-        player.getPlayerDeck().getHand().remove(currentCard);
-            // TODO: Die Aktion der Karte muss noch ausgeführt werden
-
-    }
-
 
     /**
      * Hilfsmethode um an die Daten über die ID zu kommen
