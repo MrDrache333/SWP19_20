@@ -64,6 +64,8 @@ public class LobbyPresenter extends AbstractPresenter {
     private Pane chatView;
     @FXML
     private Button readyButton;
+    @FXML
+    private Button gamesettingsButton;
 
     private ObservableList<HBox> userHBoxes;
 
@@ -140,6 +142,12 @@ public class LobbyPresenter extends AbstractPresenter {
         updateUsersList();
 
         chooseMaxPlayer.setValue(4);
+
+        if (gameOwner.getUsername().equals(loggedInUser.getUsername())) {
+            gamesettingsButton.setVisible(true);
+        } else {
+            gamesettingsButton.setVisible(false);
+        }
     }
 /*
     /**
@@ -348,6 +356,7 @@ public class LobbyPresenter extends AbstractPresenter {
         if (message.getLobby() != null) {
             gameOwner = message.getGameOwner();
             userLeftLobby(message.getUser().getUsername(), false);
+
         }
     }
 

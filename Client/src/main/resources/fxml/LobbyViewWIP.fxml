@@ -6,16 +6,17 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.*?>
 <?import java.lang.Integer?>
-<AnchorPane fx:id="LobbyViewWIP" prefHeight="750.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="LobbyViewWIP" prefHeight="750.0" prefWidth="1280.0"
+            xmlns="http://javafx.com/javafx/8.0.999-ea">
     <children>
         <ImageView fitHeight="750.0" fitWidth="1280.0" pickOnBounds="true">
             <image>
-                <Image url="@../images/wood_texture_background.jpg" />
+                <Image url="@../images/wood_texture_background.jpg"/>
             </image>
             <viewport>
-                <Rectangle2D height="1000.0" width="1000.0" />
+                <Rectangle2D height="1000.0" width="1000.0"/>
             </viewport>
         </ImageView>
         <VBox prefHeight="750.0" prefWidth="300.0" style="-fx-border-width: 0,7; -fx-border-color: white;">
@@ -59,25 +60,35 @@
                                 </ChoiceBox>
                             </children>
                             <VBox.margin>
-                                <Insets />
+                                <Insets/>
                             </VBox.margin>
                             <padding>
-                                <Insets bottom="5.0" top="5.0" />
+                                <Insets bottom="5.0" top="5.0"/>
                             </padding>
                         </HBox>
-                        <VBox prefHeight="303.0" prefWidth="300.0">
+
+                        <VBox prefHeight="303.0" prefWidth="300.0" spacing="20">
                             <children>
                                 <Label text="Persönliche Einstellungen:" textFill="WHITE">
                                     <VBox.margin>
-                                        <Insets bottom="15.0" right="15.0" />
+                                        <Insets bottom="15.0" right="15.0"/>
                                     </VBox.margin>
                                     <font>
-                                        <Font name="System Bold" size="12.0" />
+                                        <Font name="System Bold" size="12.0"/>
                                     </font>
                                 </Label>
-                                <Button fx:id="readyButton" mnemonicParsing="false" onAction="#onReadyButtonPressed" prefHeight="31.0" prefWidth="419.0" text="Bereit">
+
+                                <Button fx:id="readyButton" mnemonicParsing="false" onAction="#onReadyButtonPressed"
+                                        prefHeight="31.0" prefWidth="419.0" text="Bereit">
                                     <font>
-                                        <Font size="15.0" />
+                                        <Font size="15.0"/>
+                                    </font>
+                                </Button>
+                                <Button fx:id="gamesettingsButton" alignment="CENTER" mnemonicParsing="false"
+                                        prefHeight="31.0" prefWidth="419.0" text="Spieleinstellungen"
+                                        onAction="#onGamesettingsButtonPressed" visible="false">
+                                    <font>
+                                        <Font size="15.0"/>
                                     </font>
                                 </Button>
                             </children>
