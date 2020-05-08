@@ -31,13 +31,20 @@ public class ActionCardExecution {
 
      */
 
+    //TODO: Subscribe Methode -> waitedForPlayerInput prüfen -> auf false setzen -> benötigen Antwort vom Client
+    // -> ChooseCard (IDs der gewählten Karten) und ChooseNextAction (gewählte Aktion)
+
     private short cardID;
     private Playground playground;
     private Player player;
     private ActionCard theCard;
     private UUID gameID;
+    private boolean waitedForPlayerInput;
+    private int actualStateIndex;
 
     public ActionCardExecution(short cardID, Playground playground) {
+        this.waitedForPlayerInput = false;
+        this.actualStateIndex = 0;
         this.playground = playground;
         this.cardID = cardID;
         this.player = playground.getActualPlayer();
@@ -52,11 +59,15 @@ public class ActionCardExecution {
      * @return
      */
     public boolean execute() {
+        //????????????????????????????????????
         //TODO Some pretty nice and clean Code to Execute the Shit out of that Card
-        for (CardAction action : theCard.getActions()) {
-            if (!executeCardAction(action)) return false;
+        if (actualStateIndex < theCard.getActions().size() && !waitedForPlayerInput) {
+            return executeCardAction(theCard.getActions().get(actualStateIndex));
         }
-        return true;
+        //for (CardAction action : theCard.getActions()) {
+        //  if (!executeCardAction(action)) return false;
+        //}
+        return false;
     }
 
     /**
@@ -67,6 +78,7 @@ public class ActionCardExecution {
      * @author KenoO
      */
     private boolean executeCardAction(CardAction action) {
+        if (!(action instanceof ChooseNextAction) && !(action instanceof ChooseCard)) actualStateIndex++;
         if (action instanceof AddCapablePlayerActivity)
             return executeAddCapablePlayerActivity((AddCapablePlayerActivity) action);
         if (action instanceof ChooseCard)
@@ -247,6 +259,7 @@ public class ActionCardExecution {
         } else {
             player.setAdditionalMoney(activity.getCount() + player.getAdditionalMoney());
         }
+
         return true;
     }
 
@@ -284,8 +297,10 @@ public class ActionCardExecution {
      * @return true(? ? ?)
      */
     private boolean executeChooseCard(ChooseCard action) {
+        waitedForPlayerInput = true;
         playground.getGameService().sendToSpecificPlayer(player, new SelectCardsFromHandMessage(action.getCount(), action.getCardSource(), action.getCardDestination()));
         return true;
+
     }
 
     /**
@@ -297,6 +312,7 @@ public class ActionCardExecution {
      * @since Sprint6
      */
     private boolean executeChooseNextAction(ChooseNextAction chooseNextAction) {
+        waitedForPlayerInput = true;
         playground.getGameService().sendToSpecificPlayer(player, new ChooseNextActionMessage(gameID, chooseNextAction.getNextActions()));
         return true;
     }
