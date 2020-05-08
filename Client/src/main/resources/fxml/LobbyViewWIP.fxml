@@ -107,24 +107,30 @@
                 </HBox>
                 <HBox opacity="0.73" prefHeight="115.0" prefWidth="300.0" style="-fx-background-color: #3D3D3D;">
                     <children>
-                        <Button fx:id="giveUpButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onLeaveLobbyButtonPressed" prefHeight="40.0" prefWidth="118.0" text="Lobby Verlassen">
+                        <Button fx:id="giveUpButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false"
+                                onAction="#onLeaveLobbyButtonPressed" prefHeight="40.0" prefWidth="118.0"
+                                text="Lobby Verlassen">
                             <HBox.margin>
-                                <Insets bottom="37.5" left="91.0" right="91.0" top="37.5" />
+                                <Insets bottom="37.5" left="91.0" right="91.0" top="37.5"/>
                             </HBox.margin>
                         </Button>
                     </children>
                 </HBox>
             </children>
         </VBox>
-        <VBox layoutX="300.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="980.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <HBox fx:id="lobbyHBox" layoutX="300.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+              minWidth="-Infinity" prefHeight="750.0" prefWidth="980.0" spacing="20" nodeOrientation="RIGHT_TO_LEFT"
+              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="0.0"
+              AnchorPane.topAnchor="0.0">
             <children>
 
-                <Pane fx:id="chatView" maxHeight="630.0" maxWidth="990.0" minHeight="630.0" minWidth="942.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="630.0" prefWidth="942.0">
+                <Pane fx:id="chatView" maxHeight="630.0" maxWidth="450.0" minHeight="630.0" minWidth="400.0"
+                      nodeOrientation="RIGHT_TO_LEFT" prefHeight="630.0" prefWidth="450.0">
                     <VBox.margin>
-                        <Insets bottom="15.0" left="15.0" right="15.0" top="5.0" />
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="5.0"/>
                     </VBox.margin>
                 </Pane>
             </children>
-        </VBox>
+        </HBox>
     </children>
 </AnchorPane>

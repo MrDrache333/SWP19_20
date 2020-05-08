@@ -7,6 +7,8 @@ import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.common.chat.ChatService;
+import de.uol.swp.common.game.card.parser.JsonCardParser;
+import de.uol.swp.common.game.card.parser.components.CardPack;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
@@ -22,15 +24,16 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.NodeOrientation;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import org.apache.logging.log4j.LogManager;
@@ -58,6 +61,9 @@ public class LobbyPresenter extends AbstractPresenter {
     private EventBus eventBus;
     private Injector injector;
     private boolean ownReadyStatus = false;
+
+    @FXML
+    private Pane LobbyViewWIP;
     @FXML
     private ListView<HBox> usersView;
     @FXML
@@ -66,10 +72,14 @@ public class LobbyPresenter extends AbstractPresenter {
     private Button readyButton;
     @FXML
     private Button gamesettingsButton;
+    @FXML
+    private HBox lobbyHBox;
 
     private ObservableList<HBox> userHBoxes;
 
     private GameManagement gameManagement;
+
+    private CardPack cardpack;
 
     /**
      * Instanziiert einen neuen LobbyPresenter.
@@ -99,6 +109,7 @@ public class LobbyPresenter extends AbstractPresenter {
         this.gameManagement = gameManagement;
         this.eventBus = eventBus;
         this.loggedInUserDTO = new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail());
+        this.cardpack = new JsonCardParser().loadPack("Basispack");
     }
 
     //--------------------------------------
@@ -198,7 +209,72 @@ public class LobbyPresenter extends AbstractPresenter {
 
     @FXML
     public void onGamesettingsButtonPressed(ActionEvent actionEvent) {
+        Platform.runLater(() -> {
+            VBox gameSettingsVBox = new VBox();
+            gameSettingsVBox.setSpacing(20);
+            gameSettingsVBox.setPrefSize(450, 630);
+            TilePane tilePane = new TilePane();
+            tilePane.setPrefHeight(500);
+            tilePane.setPrefWidth(400);
+            tilePane.setMaxWidth(400);
+            tilePane.setVgap(10);
+            tilePane.setHgap(10);
+            tilePane.setStyle("-fx-background-color: #3D3D3D");
+            for (int i = 0; i < cardpack.getCards().getActionCards().size(); i++) {
+                short cardID = cardpack.getCards().getActionCards().get(i).getId();
+                String pfad = "file:Client/src/main/resources/cards/images/" + cardID + "_sm.png";
+                if (pfad != null) {
+                    Image picture = new Image(pfad);
+                    ImageView card = new ImageView(picture);
+                    card.setPreserveRatio(true);
+                    card.setFitWidth(100);
+                    tilePane.getChildren().add(card);
+                    card.setOnMouseClicked(event ->
+                    {
+                        if (event.getButton() == MouseButton.PRIMARY) {
+                            System.out.println("click");
+                        } else {
+                            showBigCardImage(cardID);
+                        }
+                    });
+                }
+            }
+            ScrollPane scrollPane = new ScrollPane(tilePane);
+            scrollPane.setPrefHeight(500);
+            scrollPane.setPrefWidth(620);
+            scrollPane.setMaxWidth(620);
+            scrollPane.setStyle("-fx-background-color: #3D3D3D");
+            scrollPane.setOpacity(0.73);
+            scrollPane.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
+            gameSettingsVBox.getChildren().add(scrollPane);
+            lobbyHBox.getChildren().add(gameSettingsVBox);
 
+            //ausgewählte Karten anzeigen
+            TilePane chosenCards = new TilePane();
+            chosenCards.setPrefSize(450, 100);
+            chosenCards.setStyle("-fx-background-color: #3D3D3D");
+            chosenCards.setOpacity(0.5);
+            gameSettingsVBox.getChildren().add(chosenCards);
+
+            //Button zum Abschicken
+            Button sendCards = new Button();
+            sendCards.setText("Auswahl abschicken");
+            sendCards.setPrefSize(450, 31);
+            gameSettingsVBox.getChildren().add(sendCards);
+        });
+    }
+
+    public void showBigCardImage(short cardID) {
+        Platform.runLater(() -> {
+            String pfad = "file:Client/src/main/resources/cards/images/" + cardID + ".png";
+            Image picture = new Image(pfad);
+            ImageView card = new ImageView(picture);
+            card.setPreserveRatio(true);
+            card.setFitWidth(150);
+            card.setLayoutX(400);
+            card.setLayoutY(200);
+            LobbyViewWIP.getChildren().add(card);
+        });
     }
     //--------------------------------------
     // EVENTBUS
