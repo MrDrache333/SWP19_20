@@ -301,6 +301,10 @@ public class SceneManager {
         Platform.runLater(() -> settingsStage.close());
     }
 
+    public void closeCreateLobby() {
+        Platform.runLater(() -> createLobbyStage.close());
+    }
+
 
     //-----------------
     // PRIVATE METHODS

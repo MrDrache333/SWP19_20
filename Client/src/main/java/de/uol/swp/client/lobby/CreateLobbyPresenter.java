@@ -69,11 +69,13 @@ public class CreateLobbyPresenter extends AbstractPresenter {
             CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), "");
             eventBus.post(msg);
             LOG.info("Request wurde gesendet.");
+
         } else {
             SceneManager.showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden", "Fehler");
-            //lobbyName.requestFocus();
+
         }
         lobbynameField.clear();
+
     }
 
     /**
