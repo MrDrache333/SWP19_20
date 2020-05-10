@@ -202,7 +202,8 @@ public class GameService extends AbstractService {
             if (request.getCurrentUser().equals(playground.getActualPlayer().getTheUserInThePlayer())) {
                 try {
                     int count = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), request.getCardID());
-                    BuyCardMessage buyCard = new BuyCardMessage(request.getLobbyID(), request.getCurrentUser(), request.getCardID(), true, count);
+                    int valueOfHand = playground.getActualPlayer().getPlayerDeck().actualMoneyFromPlayer();
+                    BuyCardMessage buyCard = new BuyCardMessage(request.getLobbyID(), request.getCurrentUser(), request.getCardID(), true, count, valueOfHand);
                     sendToAllPlayers(request.getLobbyID(), buyCard);
 
                 } catch (NotEnoughMoneyException notEnoughMoney) {

@@ -16,6 +16,7 @@ public class BuyCardMessage extends AbstractServerMessage {
      * @param cardImage     die ImageView der Karte
      * @param buyCard       gibt an, ob der Kauf erfolgreich war
      * @param counterCard   Anzahl der Karten (die die selbe ID haben) die man noch kaufen kann
+     * @param valueOfHand   der Wert der Geldkarten auf der Hand nach dem Kauf
      * @author Rike
      * @since Sprint 5
      */
@@ -25,16 +26,18 @@ public class BuyCardMessage extends AbstractServerMessage {
     private Short cardID;
     private boolean buyCard;
     private int counterCard;
+    private int valueOfHand;
 
     public BuyCardMessage() {
     }
 
-    public BuyCardMessage(UUID lobbyID, User currentUser, Short cardID, boolean buyCard, int counterCard) {
+    public BuyCardMessage(UUID lobbyID, User currentUser, Short cardID, boolean buyCard, int counterCard, int valueOfHand) {
         this.lobbyID = lobbyID;
         this.currentUser = currentUser;
         this.cardID = cardID;
         this.buyCard = buyCard;
         this.counterCard = counterCard;
+        this.valueOfHand = valueOfHand;
     }
 
     public UUID getLobbyID() {
@@ -55,5 +58,9 @@ public class BuyCardMessage extends AbstractServerMessage {
 
     public int getCounterCard() {
         return counterCard;
+    }
+
+    public int getValueOfHand() {
+        return valueOfHand;
     }
 }

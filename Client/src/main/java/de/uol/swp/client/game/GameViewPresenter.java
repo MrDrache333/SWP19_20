@@ -14,6 +14,7 @@ import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
+import de.uol.swp.common.message.AbstractServerMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
@@ -98,6 +99,14 @@ public class GameViewPresenter extends AbstractPresenter {
     private ImageView cardPlaceholder9;
     @FXML
     private ImageView cardPlaceholder10;
+    @FXML
+    private Label numberOfAction;
+    @FXML
+    private Label numberOfMoney;
+    @FXML
+    private Label numberOfBuy;
+    @FXML
+    private Label infoActualPhase;
 
     private final HandcardsLayoutContainer handcards;
     private final PlayedCardLayoutContainer playedCardLayoutContainer;
@@ -344,6 +353,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     selectedCard.setEffect(makeImageDarker);
                 }
                 playAllMoneyCardsOnHand();
+                numberOfMoney.setText(msg.getValueOfHand() + " Geld");
             } else {
                 showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht kaufen!", "Fehler");
                 LOG.debug("Der Kauf der Karte " + msg.getCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
@@ -429,6 +439,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     handcards.getChildren().add(card);
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                 });
+                numberOfMoney.setText(message.getValueOfHand() + " Geld");
             }
         });
     }
@@ -462,6 +473,30 @@ public class GameViewPresenter extends AbstractPresenter {
                 dialogStage.showAndWait();
             });
         }
+    }
+
+    /**
+     * Impelemntiert das Verhalten bei erhalten einer StartActionPhaseMessage, StartBuyPhaseMessage und StartClearPhaseMessage
+     * die onStartPhase Methode wird aufgerufen
+     *
+     * @param msg
+     * @author Rike
+     * @since Sprint 7
+     */
+
+    @Subscribe
+    public void onStartActionPhaseMessage(StartActionPhaseMessage msg) {
+        onStartPhase(msg.getGameID(), msg.getUser(), msg);
+    }
+
+    @Subscribe
+    public void onStartBuyPhaseMessage(StartBuyPhaseMessage msg) {
+        onStartPhase(msg.getGameID(), msg.getUser(), msg);
+    }
+
+    @Subscribe
+    public void onStartClearPhaseMessage(StartClearPhaseMessage msg) {
+        onStartPhase(msg.getGameID(), msg.getUser(), msg);
     }
 
     /**
@@ -642,6 +677,33 @@ public class GameViewPresenter extends AbstractPresenter {
                     handcards.getChildren().remove(c);
                     playedCardLayoutContainer.getChildren().add(card);
                 });
+            }
+        }
+    }
+
+    /**
+     * Hilfsmethode für die onStartActionPhaseMessage, onStartBuyPhaseMessage und onStartClearPhaseMessage
+     *
+     * @param gameID die ID des Spieles
+     * @param user   der User
+     * @param msg    die Message
+     * @author Rike
+     * @since Sprint 7
+     */
+    private void onStartPhase(UUID gameID, User user, AbstractServerMessage msg) {
+        if (gameID.equals(lobbyID)) {
+            if (user.equals(loggedInUser)) {
+                if (msg instanceof StartActionPhaseMessage) {
+                    infoActualPhase.setText("Du darfst Aktionskarten spielen.");
+                }
+                if (msg instanceof StartBuyPhaseMessage) {
+                    infoActualPhase.setText("Du darfst karten kaufen..");
+                }
+                if (msg instanceof StartClearPhaseMessage) {
+                    infoActualPhase.setText("Dein Zug ist zuende.");
+                }
+            } else {
+                infoActualPhase.setText("Du bist nicht dran.");
             }
         }
     }

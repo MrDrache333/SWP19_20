@@ -185,7 +185,7 @@ public class Playground extends AbstractPlayground {
     /**
      * Methode, welche vom aktuellen Player die Hand versendet. Holt sich von der aktuellen Hand des Spielers die Karten und speichert die IDs dieser in einer ArrayList.
      *
-     * @author Ferit
+     * @author Ferit, Rike
      * @version 1
      * @since Sprint5
      */
@@ -193,7 +193,8 @@ public class Playground extends AbstractPlayground {
         for (Card card : actualPlayer.getPlayerDeck().getHand()) {
             theIdsFromTheHand.add(card.getId());
         }
-        DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID);
+        int valueOfHand = actualPlayer.getPlayerDeck().actualMoneyFromPlayer();
+        DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID, valueOfHand);
         gameService.sendToSpecificPlayer(actualPlayer, theHandMessage);
     }
 
@@ -260,7 +261,7 @@ public class Playground extends AbstractPlayground {
     /**
      * Sendet die Initiale Hand an jeden Spieler spezifisch. Überprüfung via SessionID.
      *
-     * @author Ferit
+     * @author Ferit, Rike
      * @since Sprint6
      */
     public void sendInitialHands() {
@@ -269,7 +270,8 @@ public class Playground extends AbstractPlayground {
             for (Card card : playerhand.getPlayerDeck().getHand()) {
                 theIdsFromInitalPlayerDeck.add(card.getId());
             }
-            DrawHandMessage initialHandFromPlayer = new DrawHandMessage(theIdsFromInitalPlayerDeck, theSpecificLobbyID);
+            int valueOfHand = playerhand.getPlayerDeck().actualMoneyFromPlayer();
+            DrawHandMessage initialHandFromPlayer = new DrawHandMessage(theIdsFromInitalPlayerDeck, theSpecificLobbyID, valueOfHand);
             gameService.sendToSpecificPlayer(playerhand, initialHandFromPlayer);
             // TODO: Bessere Logging Message irgendwann später implementieren..
             LOG.debug("All OK with sending initial Hands...");
