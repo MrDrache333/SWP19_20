@@ -39,7 +39,11 @@ public class ActionCardExecution {
     private Player player;
     private ActionCard theCard;
     private UUID gameID;
+
+    //Ob auf eine Auswahl oder Reaktion des Spielers gewartet werden muss
     private boolean waitedForPlayerInput;
+
+    //Index der aktuell auszuführenden Aktion
     private int actualStateIndex;
 
     public ActionCardExecution(short cardID, Playground playground) {
