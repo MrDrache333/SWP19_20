@@ -271,6 +271,13 @@ public class ClientApp extends Application implements ConnectionListener {
         }
     }
 
+    /**
+     * Empfängt Nachricht, dass das Lobby erstellen Fenster geöffnet werden soll
+     * @param message
+     * @author Paula
+     * @since Sprint4
+     */
+
     @Subscribe
     public void onOpenCreateLobby(OpenLobbyCreateRequest message) {
         if (message.getUser().getUsername().equals(user.getUsername())) {
