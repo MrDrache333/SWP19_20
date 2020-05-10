@@ -10,6 +10,7 @@ import de.uol.swp.client.auth.events.ShowLoginViewEvent;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.game.GameService;
 import de.uol.swp.client.game.event.GameQuitEvent;
+import de.uol.swp.client.lobby.CreateLobbyPresenter;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.PrimaryPresenter;
 import de.uol.swp.client.register.RegistrationPresenter;
@@ -49,6 +50,7 @@ public class SceneManager {
     static final Logger LOG = LogManager.getLogger(SceneManager.class);
     static final String styleSheet = "css/global.css";
 
+
     final private Stage primaryStage;
     final private EventBus eventBus;
     final private UserService userService;
@@ -57,6 +59,9 @@ public class SceneManager {
     final private ChatService chatService;
     private final Injector injector;
     private SettingsPresenter settingsPresenter;
+    private CreateLobbyPresenter createLobbyPresenter;
+    private Stage createLobbyStage;
+    private Scene createLobbyScene;
     private Stage settingsStage;
     private Stage deleteAccountStage;
     private Scene loginScene;
@@ -207,7 +212,6 @@ public class SceneManager {
         showScene(primaryScene, "Welcome " + currentUser.getUsername());
     }
 
-
     public void showLoginScreen() {
         showScene(loginScene, "Login");
     }
@@ -257,6 +261,26 @@ public class SceneManager {
     }
 
     /**
+     * Öffnet das Lobby-erstellen Fenster
+     *
+     * @param loggedInUser
+     * @author Paula
+     */
+
+    public void showCreateLobbyScreen(User loggedInUser) {
+        Platform.runLater(() -> {
+            createLobbyPresenter = new CreateLobbyPresenter(loggedInUser, lobbyService, userService, eventBus);
+            initCreateLobbyView(createLobbyPresenter);
+            createLobbyStage = new Stage();
+            createLobbyStage.setTitle("Lobby");
+            createLobbyStage.setScene(createLobbyScene);
+            createLobbyStage.setResizable(false);
+            createLobbyStage.show();
+            eventBus.register(createLobbyPresenter);
+        });
+    }
+
+    /**
      * Schließt alle Stages
      *
      * @author Julia, Paula
@@ -276,6 +300,7 @@ public class SceneManager {
     public void closeSettings() {
         Platform.runLater(() -> settingsStage.close());
     }
+
 
     //-----------------
     // PRIVATE METHODS
@@ -346,6 +371,21 @@ public class SceneManager {
         return rootPane;
     }
 
+    private Parent initCreateLobbyPresenter(CreateLobbyPresenter createLobbyPresenter) {
+        Parent rootPane;
+        FXMLLoader loader = injector.getInstance(FXMLLoader.class);
+        try {
+            URL url = getClass().getResource(CreateLobbyPresenter.fxml);
+            LOG.debug("Loading " + url);
+            loader.setLocation(url);
+            loader.setController(createLobbyPresenter);
+            rootPane = loader.load();
+        } catch (Exception e) {
+            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
+        }
+        return rootPane;
+    }
+
     private Parent initDeleteAccountPresenter(DeleteAccountPresenter deleteAccountPresenter) {
         Parent rootPane;
         FXMLLoader loader = injector.getInstance(FXMLLoader.class);
@@ -394,5 +434,14 @@ public class SceneManager {
             deleteAccountScene.getStylesheets().add(SettingsPresenter.css);
 
         }
+    }
+
+    private void initCreateLobbyView(CreateLobbyPresenter createLobbyPresenter) {
+        if (createLobbyScene == null) {
+            Parent rootPane = initCreateLobbyPresenter(createLobbyPresenter);
+            createLobbyScene = new Scene(rootPane, 400, 255);
+        }
+
+
     }
 }

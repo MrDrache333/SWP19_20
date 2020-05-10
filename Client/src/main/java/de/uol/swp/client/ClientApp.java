@@ -10,6 +10,7 @@ import de.uol.swp.client.game.GameService;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.lobby.message.*;
+import de.uol.swp.common.lobby.request.OpenLobbyCreateRequest;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.exception.RegistrationExceptionMessage;
@@ -23,6 +24,7 @@ import de.uol.swp.common.user.response.RegistrationSuccessfulResponse;
 import io.netty.channel.Channel;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -214,9 +216,11 @@ public class ClientApp extends Application implements ConnectionListener {
      */
     @Subscribe
     public void onCreateLobbyMessage(CreateLobbyMessage message) {
-        if (message.getUser().getUsername().equals(user.getUsername())) {
+        if (message.getUser() != null && message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getChatID(), message.getUser());
             LOG.debug("CreateLobbyMessage vom Server erfolgreich angekommen");
+        } else {
+            SceneManager.showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden", "Fehler");
         }
     }
 
@@ -264,6 +268,15 @@ public class ClientApp extends Application implements ConnectionListener {
     public void onOpenSettingsRequest(OpenSettingsRequest message) {
         if (message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showSettingsScreen(message.getUser());
+        }
+    }
+
+    @Subscribe
+    public void onOpenCreateLobby(OpenLobbyCreateRequest message) {
+        if (message.getUser().getUsername().equals(user.getUsername())) {
+            sceneManager.showCreateLobbyScreen(message.getUser());
+
+
         }
     }
 

@@ -9,6 +9,7 @@ import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.request.CreateLobbyRequest;
+import de.uol.swp.common.lobby.request.OpenLobbyCreateRequest;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
@@ -128,31 +129,14 @@ public class MainMenuPresenter extends AbstractPresenter {
 
         createLobbyButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
     }
-
     /**
-     * Sobald der Lobby erstellen Button gedrückt wird, öffnet sich ein Dialog. Hier wird man aufgefordert einen Namen für die Lobby anzugeben. Das Passwortfeld ist optional
-     * auszufüllen. Bleibt das Passwortfeld leer, wird die Lobby offen. Wird ein Passwort angegegben, wird dieses gespeicherrt und die Lobby wird privat
-     *
-     * @param event das Event
-     * @author Rike, Paula
-     * @since Sprint4
+     * Request für Lobby erstellen Fenester
+     * @param actionEvent
      */
     @FXML
-    public void onCreateLobbyButtonPressed(ActionEvent event) {
-        List<String> lobbyNames = new ArrayList<>();
-        lobbies.forEach(lobby -> lobbyNames.add(lobby.getName()));
-        if (lobbyNames.contains(lobbyName.getText())) {
-            SceneManager.showAlert(Alert.AlertType.WARNING, "Dieser Name ist bereits vergeben", "Fehler");
-            lobbyName.requestFocus();
-        } else if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName.getText())) {
-            CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName.getText(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), "");
-            eventBus.post(msg);
-            LOG.info("Request wurde gesendet.");
-        } else {
-            SceneManager.showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden", "Fehler");
-            lobbyName.requestFocus();
-        }
-        lobbyName.clear();
+    public void onOpenCreateLobbyView(ActionEvent actionEvent) {
+        OpenLobbyCreateRequest request = new OpenLobbyCreateRequest(loggedInUser);
+        eventBus.post(request);
     }
 
     @FXML
@@ -301,9 +285,12 @@ public class MainMenuPresenter extends AbstractPresenter {
     @Subscribe
     public void newLobbyCreated(CreateLobbyMessage message) {
         LOG.debug("New lobby " + message.getLobbyName() + " created");
-        Platform.runLater(() -> {
-            lobbies.add(0, message.getLobby());
-        });
+        if (message.getLobbyName() != null){
+            Platform.runLater(() -> {
+                lobbies.add(0, message.getLobby());
+            });
+
+        }
     }
 
     /**
@@ -510,6 +497,7 @@ public class MainMenuPresenter extends AbstractPresenter {
         updateLobbiesTable(allLobbiesResponse.getLobbies());
     }
 
+
     //-----------------
     // PRIVATE METHODS
     //-----------------
@@ -653,4 +641,7 @@ public class MainMenuPresenter extends AbstractPresenter {
             }
         });
     }
+
+
+
 }
