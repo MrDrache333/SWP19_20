@@ -105,11 +105,9 @@ public class GameViewPresenter extends AbstractPresenter {
     private final HandcardsLayoutContainer secondEnemyHand;
     private final HandcardsLayoutContainer thirdEnemyHand;
     private final PlayedCardLayoutContainer playedCardLayoutContainer;
-
     private final StackPane firstEnemyDeck;
     private final StackPane secondEnemyDeck;
     private final StackPane thirdEnemyDeck;
-
     private ObservableList<String> users;
     private final GameService gameService;
     private MouseEvent mouseEvent;
@@ -148,16 +146,15 @@ public class GameViewPresenter extends AbstractPresenter {
         this.gameManagement = gameManagement;
         handcards = new HandcardsLayoutContainer(460, 618, 160, 650);
         playedCardLayoutContainer = new PlayedCardLayoutContainer(500, 500, 160, 100);
-        firstEnemyHand = new HandcardsLayoutContainer(284, 0, 119, 430);
-        secondEnemyHand = new HandcardsLayoutContainer(300, 299, 430, 119);
-        thirdEnemyHand = new HandcardsLayoutContainer(900, 299, 430, 119);
+        firstEnemyHand = new HandcardsLayoutContainer(584, 100, 119, 430);
+        secondEnemyHand = new HandcardsLayoutContainer(200, 299, 119, 430);
+        thirdEnemyHand = new HandcardsLayoutContainer(900, 299, 119, 430);
+        secondEnemyHand.setRotate(90);
+        thirdEnemyHand.setRotate(90);
+        firstEnemyDeck = new StackPane(); firstEnemyDeck.setLayoutX(300); firstEnemyDeck.setLayoutY(0); firstEnemyDeck.setPrefWidth(100); firstEnemyDeck.setPrefHeight(160);
+        secondEnemyDeck = new StackPane(); secondEnemyDeck.setLayoutX(0); secondEnemyDeck.setLayoutY(0); secondEnemyDeck.setPrefWidth(0); secondEnemyDeck.setPrefHeight(0);
+        thirdEnemyDeck = new StackPane(); thirdEnemyDeck.setLayoutX(0); thirdEnemyDeck.setLayoutY(0); thirdEnemyDeck.setPrefWidth(0); thirdEnemyDeck.setPrefHeight(0);
 
-        firstEnemyDeck = new StackPane();
-        firstEnemyDeck.setLayoutX(300); firstEnemyDeck.setLayoutY(0);
-        secondEnemyDeck = new StackPane();
-        secondEnemyDeck.setLayoutX(0); secondEnemyDeck.setLayoutY(200);
-        thirdEnemyDeck = new StackPane();
-        thirdEnemyDeck.setLayoutX(900); thirdEnemyDeck.setLayoutY(200);
 
         this.gameService = gameService;
         initializeUserList();
@@ -457,20 +454,23 @@ public class GameViewPresenter extends AbstractPresenter {
                 });
 
                 String pfad = "file:Client/src/main/resources/cards/images/card_back.png";
-                String pfad2 = "file:Client/src/main/resources/cards/images/card_back_vertikal.png";
                 Image picture = new Image(pfad);
-                Image picture2 = new Image(pfad2);
-                ImageView card = new ImageView(picture);
-                ImageView card2 = new ImageView(picture2);
-                card.setFitHeight(107);
-                card.setPreserveRatio(true);
-                card.setId("back");
-                card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
-                card2.setFitHeight(107);
-                card2.setPreserveRatio(true);
-                card2.setId("back");
-                card2.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
                 for(int i=0; i<5; i++) {
+                    ImageView card = new ImageView(picture);
+                    ImageView card2 = new ImageView(picture);
+                    ImageView card3 = new ImageView(picture);
+                    card.setFitHeight(107);
+                    card.setPreserveRatio(true);
+                    card.setId("back");
+                    card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
+                    card2.setFitHeight(card.getFitWidth());
+                    card2.setPreserveRatio(true);
+                    card2.setId("back");
+                    card2.setFitWidth(card.getFitHeight());
+                    card3.setFitHeight(card.getFitWidth());
+                    card3.setPreserveRatio(true);
+                    card3.setId("back");
+                    card3.setFitWidth(card.getFitHeight());
                     firstEnemyDeck.getChildren().add(card);
                     AnimationManagement.addToHand(card, firstEnemyHand.getChildren().size());
                     firstEnemyDeck.getChildren().remove(card);
@@ -481,10 +481,10 @@ public class GameViewPresenter extends AbstractPresenter {
                         secondEnemyDeck.getChildren().remove(card2);
                         secondEnemyHand.getChildren().add(card2);
                         if (numberOfPlayersInGame == 4){
-                            thirdEnemyDeck.getChildren().add(card2);
-                            AnimationManagement.addToHand(card2, thirdEnemyHand.getChildren().size());
-                            thirdEnemyDeck.getChildren().remove(card2);
-                            thirdEnemyHand.getChildren().add(card2);
+                            thirdEnemyDeck.getChildren().add(card3);
+                            AnimationManagement.addToHand(card3, thirdEnemyHand.getChildren().size());
+                            thirdEnemyDeck.getChildren().remove(card3);
+                            thirdEnemyHand.getChildren().add(card3);
                         }
                     }
                 }
