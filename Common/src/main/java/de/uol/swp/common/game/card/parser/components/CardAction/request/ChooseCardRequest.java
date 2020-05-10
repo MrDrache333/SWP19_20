@@ -120,7 +120,6 @@ public class ChooseCardRequest extends AbstractGameMessage {
     public String getMessage() {
         return message;
     }
-
     /**
      * Gets count.
      *
