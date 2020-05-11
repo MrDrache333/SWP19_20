@@ -237,6 +237,10 @@ public class GameViewPresenter extends AbstractPresenter {
         showAlert(Alert.AlertType.CONFIRMATION, " ", "Möchtest du wirklich aufgeben?");
     }
 
+    @FXML
+    public void onPlayAllMoneyCardsButtonPressed(ActionEvent actionEvent) {
+        playAllMoneyCardsOnHand();
+    }
     /**
      * Ereignis das ausgeführt wird, wenn auf eine Karte im Shop angeklickt wird.
      * ruft die chosenBuyableCard()-Methode auf
@@ -352,8 +356,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     makeImageDarker.setBrightness(-0.7);
                     selectedCard.setEffect(makeImageDarker);
                 }
-                playAllMoneyCardsOnHand();
-                numberOfMoney.setText(msg.getValueOfHand() + " Geld");
+
             } else {
                 showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht kaufen!", "Fehler");
                 LOG.debug("Der Kauf der Karte " + msg.getCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
@@ -439,7 +442,6 @@ public class GameViewPresenter extends AbstractPresenter {
                     handcards.getChildren().add(card);
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                 });
-                numberOfMoney.setText(message.getValueOfHand() + " Geld");
             }
         });
     }
@@ -669,9 +671,11 @@ public class GameViewPresenter extends AbstractPresenter {
      * @since Sprint 7
      */
     public void playAllMoneyCardsOnHand() {
+        int moneyOnHand = 0;
         for (Node c : handcards.getChildren()) {
             ImageView card = (ImageView) c;
             if (card.getId().equals("1") || card.getId().equals("2") || card.getId().equals("3")) {
+                moneyOnHand += Integer.parseInt(card.getId());
                 Platform.runLater(() -> {
                     AnimationManagement.playCard(card, playedCardLayoutContainer.getChildren().size());
                     handcards.getChildren().remove(c);
@@ -679,6 +683,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 });
             }
         }
+        numberOfMoney.setText(moneyOnHand + " Geld");
     }
 
     /**
