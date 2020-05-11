@@ -64,6 +64,10 @@ public class GameViewPresenter extends AbstractPresenter {
     private final UUID lobbyID;
     private User loggedInUser;
 
+    private int usableMoney;
+    private int numberOfActionPlayer;
+    private int numberOfBuyPlayer;
+
     // @FXML
     //   private Pane gameView;
 
@@ -107,6 +111,8 @@ public class GameViewPresenter extends AbstractPresenter {
     private Label numberOfBuy;
     @FXML
     private Label infoActualPhase;
+    @FXML
+    private Button playAllMoneyCardsButton;
 
     private final HandcardsLayoutContainer handcards;
     private final PlayedCardLayoutContainer playedCardLayoutContainer;
@@ -356,7 +362,11 @@ public class GameViewPresenter extends AbstractPresenter {
                     makeImageDarker.setBrightness(-0.7);
                     selectedCard.setEffect(makeImageDarker);
                 }
-
+                usableMoney -= msg.getCostCard();
+                numberOfBuyPlayer -= 1;
+                numberOfMoney.setText(usableMoney + " Geld");
+                numberOfBuy.setText(numberOfBuyPlayer + " Kauf");
+                //TODO: die Geldkarten die für den Kauf benötigt wurden, müssen auf den Ablagestapel gelegt werden
             } else {
                 showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht kaufen!", "Fehler");
                 LOG.debug("Der Kauf der Karte " + msg.getCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
@@ -386,6 +396,8 @@ public class GameViewPresenter extends AbstractPresenter {
                         card.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                     }
                 });
+                numberOfActionPlayer -= 1;
+                numberOfAction.setText(numberOfActionPlayer + " Aktion");
             } else {
                 showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht spielen!", "Fehler");
                 LOG.debug("Das Spielen der Karte " + msg.getHandCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
@@ -441,7 +453,18 @@ public class GameViewPresenter extends AbstractPresenter {
                     deckPane.getChildren().remove(card);
                     handcards.getChildren().add(card);
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+                    if (!(n == 1 || n == 2 || n == 3)) {
+                        // Bekommt der Spieler keine Geldkarten auf der Hand, kann er diese auch nicht mit einem Button ausspielen
+                        playAllMoneyCardsButton.setVisible(false);
+                    }
                 });
+                //es wurden noch keine Geldkarten ausgespielt
+                usableMoney = 0;
+                numberOfActionPlayer = 1;
+                numberOfBuyPlayer = 1;
+                numberOfMoney.setText(usableMoney + " Geld");
+                numberOfAction.setText(numberOfActionPlayer + " Aktion");
+                numberOfBuy.setText(numberOfBuyPlayer + " Kauf");
             }
         });
     }
@@ -647,12 +670,19 @@ public class GameViewPresenter extends AbstractPresenter {
         back.setMinWidth(70.0);
         // Aktion hinter dem Kauf-Button
         buy.setOnAction(event -> {
-            buy.setVisible(false);
-            back.setVisible(false);
-            bigCardImage.setVisible(false);
-            BuyCardRequest req = new BuyCardRequest(lobbyID, loggedInUser, Short.valueOf(cardID));
-            gameService.buyCard(req);
-            this.mouseEvent = mouseEvent;
+            if (usableMoney > 0) {
+                buy.setVisible(false);
+                back.setVisible(false);
+                bigCardImage.setVisible(false);
+                BuyCardRequest req = new BuyCardRequest(lobbyID, loggedInUser, Short.valueOf(cardID));
+                gameService.buyCard(req);
+                this.mouseEvent = mouseEvent;
+            } else {
+                buy.setVisible(false);
+                back.setVisible(false);
+                bigCardImage.setVisible(false);
+                showAlert(Alert.AlertType.WARNING, "Du musst erst Geldkarten spielen!", "Fehler");
+            }
         });
         // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt
         back.setOnAction(event -> {
@@ -671,11 +701,10 @@ public class GameViewPresenter extends AbstractPresenter {
      * @since Sprint 7
      */
     public void playAllMoneyCardsOnHand() {
-        int moneyOnHand = 0;
         for (Node c : handcards.getChildren()) {
             ImageView card = (ImageView) c;
             if (card.getId().equals("1") || card.getId().equals("2") || card.getId().equals("3")) {
-                moneyOnHand += Integer.parseInt(card.getId());
+                usableMoney += Integer.parseInt(card.getId());
                 Platform.runLater(() -> {
                     AnimationManagement.playCard(card, playedCardLayoutContainer.getChildren().size());
                     handcards.getChildren().remove(c);
@@ -683,7 +712,8 @@ public class GameViewPresenter extends AbstractPresenter {
                 });
             }
         }
-        numberOfMoney.setText(moneyOnHand + " Geld");
+        numberOfMoney.setText(usableMoney + " Geld");
+        playAllMoneyCardsButton.setVisible(false);
     }
 
     /**
@@ -702,7 +732,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     infoActualPhase.setText("Du darfst Aktionskarten spielen.");
                 }
                 if (msg instanceof StartBuyPhaseMessage) {
-                    infoActualPhase.setText("Du darfst karten kaufen..");
+                    infoActualPhase.setText("Du darfst Karten kaufen.");
                 }
                 if (msg instanceof StartClearPhaseMessage) {
                     infoActualPhase.setText("Dein Zug ist zuende.");

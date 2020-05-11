@@ -7,7 +7,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.*?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="gameViewWIP" prefHeight="750.0" prefWidth="1280.0"
-            xmlns="http://javafx.com/javafx/8">
+            xmlns="http://javafx.com/javafx/11.0.1">
     <children>
         <ImageView fitHeight="750.0" fitWidth="1280.0" pickOnBounds="true">
             <image>
@@ -229,8 +229,8 @@
                                 <Insets bottom="7.0" left="5.0" right="5.0" top="7.0"/>
                             </padding>
                             <children>
-                                <Button fx:id="playAllMoneyCardsButton" layoutX="243.0" layoutY="-1.0"
-                                        mnemonicParsing="false" onAction="onPlayAllMoneyCardsButtonPressed"
+                                <Button fx:id="playAllMoneyCardsButton" layoutX="262.0" layoutY="2.0"
+                                        mnemonicParsing="false" onAction="#onPlayAllMoneyCardsButtonPressed"
                                         text="Alle Geldkarten ausspielen"/>
                             </children>
                         </Pane>

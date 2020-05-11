@@ -131,7 +131,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      * @since Sprint6
      */
 
-    private Card getCardFromId(CardStack cardStack, short cardId) {
+    public Card getCardFromId(CardStack cardStack, short cardId) {
         for (Card card : cardStack.getActionCards()) {
             if (card.getId() == cardId) {
                 return card;
