@@ -230,7 +230,7 @@
                             </padding>
                             <children>
                                 <Button fx:id="playAllMoneyCardsButton" layoutX="243.0" layoutY="-1.0"
-                                        mnemonicParsing="false" onAction="onPlayAllMoneyCardsButtonPressed"
+                                        mnemonicParsing="false" onAction="#onPlayAllMoneyCardsButtonPressed"
                                         text="Alle Geldkarten ausspielen"/>
                             </children>
                         </Pane>
