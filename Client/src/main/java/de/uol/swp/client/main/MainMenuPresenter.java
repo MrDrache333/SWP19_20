@@ -4,6 +4,7 @@ import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.chat.ChatViewPresenter;
+import de.uol.swp.client.lobby.OpenJoinLobbyRequest;
 import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
@@ -129,8 +130,11 @@ public class MainMenuPresenter extends AbstractPresenter {
 
         createLobbyButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
     }
+
+
+
     /**
-     * Request für Lobby erstellen Fenester
+     * Request für Lobby erstellen Fenster
      * @param actionEvent
      */
     @FXML
@@ -138,7 +142,15 @@ public class MainMenuPresenter extends AbstractPresenter {
         OpenLobbyCreateRequest request = new OpenLobbyCreateRequest(loggedInUser);
         eventBus.post(request);
     }
-
+//
+//    /**
+//     *
+//     * @param actionEvent
+//     */
+//    @FXML public void onJoinLobbyOpenView (ActionEvent actionEvent) {
+//        OpenJoinLobbyRequest request = new OpenJoinLobbyRequest(loggedInUser, null);
+//        eventBus.post(request);
+//    }
     @FXML
     public void onShowLobbyDialogButtonPressed(ActionEvent event) {
         // Erzeugung Dialog
@@ -527,11 +539,13 @@ public class MainMenuPresenter extends AbstractPresenter {
      * @author Rike, Julia, Paula, Marvin
      * @since Sprint3
      */
+
     private void addJoinLobbyButton() {
         Callback<TableColumn<Lobby, Void>, TableCell<Lobby, Void>> cellFactory = new Callback<>() {
             @Override
             public TableCell<Lobby, Void> call(final TableColumn<Lobby, Void> param) {
                 return new TableCell<>() {
+
                     final Button joinLobbyButton = new Button("Beitreten");
 
                     {
@@ -547,45 +561,10 @@ public class MainMenuPresenter extends AbstractPresenter {
                                 if (lobby.getLobbyPassword().isEmpty()) {
                                     lobbyService.joinLobby(lobby.getLobbyID(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
                                 } else if (!lobby.getLobbyPassword().isEmpty()) {
-                                    // Es soll ein Dialogfenster geöffnet werden, wenn für die Lobby ein lobbyPassword existiert
-                                    JDialog joinLobbyDialog = new JDialog();
-                                    joinLobbyDialog.setResizable(false);
-                                    joinLobbyDialog.setTitle("Lobby beitreten");
-                                    joinLobbyDialog.setSize(400, 150);
-
-                                    JPanel panel = new JPanel();
-                                    // Textfeld für Passwort wird erstellt und Panel hinzugefügt
-                                    JLabel enteredPassword = new JLabel("Passwort: ");
-                                    JPasswordField ePassword = new JPasswordField("", 15);
-                                    panel.add(enteredPassword);
-                                    panel.add(ePassword);
-
-                                    // enteredPassword mit dem lobbyPassword vergleichen, wenn "Beitreten"-Button gedrückt
-                                    JButton joinLobby = new JButton("Lobby beitreten");
-                                    ActionListener onEnteredPasswordPressed = new ActionListener() {
-                                        @Override
-                                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                                            // Passwort ist nicht gleich, Fehlermeldung erscheint
-                                            if (!lobby.getLobbyPassword().equals(String.valueOf(ePassword.getPassword()))) {
-                                                Platform.runLater(() -> {
-                                                    SceneManager.showAlert(Alert.AlertType.ERROR, "Das eingegebene Passwort ist falsch.", "Fehler");
-                                                    ePassword.setText("");
-                                                });
-                                            }
-                                            // Passwort ist gleich, man wird zur Lobby hinzugefügt
-                                            else if (lobby.getLobbyPassword().equals(String.valueOf(ePassword.getPassword()))) {
-                                                lobbyService.joinLobby(lobby.getLobbyID(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
-                                                // Dialog wird nicht mehr angezeigt
-                                                joinLobbyDialog.setVisible(false);
-                                            }
-                                        }
-                                    };
+                                    OpenJoinLobbyRequest request = new OpenJoinLobbyRequest(loggedInUser, lobby);
+                                    eventBus.post(request);
 
 
-                                    joinLobby.addActionListener(onEnteredPasswordPressed);
-                                    panel.add(joinLobby);
-                                    joinLobbyDialog.add(panel);
-                                    joinLobbyDialog.setVisible(true);
                                 }
                             }
                         });
@@ -600,12 +579,19 @@ public class MainMenuPresenter extends AbstractPresenter {
                             setGraphic(joinLobbyButton);
                         }
                     }
-                };
+                    }
+
+                    ;
+                }
             }
-        };
+
+            ;
+
 
         joinLobby.setCellFactory(cellFactory);
     }
+
+
 
     /**
      * Updatet die Liste mit den angemeldeten Usern

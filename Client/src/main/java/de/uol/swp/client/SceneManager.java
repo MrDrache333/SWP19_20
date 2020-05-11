@@ -11,7 +11,10 @@ import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.game.GameService;
 import de.uol.swp.client.game.event.GameQuitEvent;
 import de.uol.swp.client.lobby.CreateLobbyPresenter;
+import de.uol.swp.client.lobby.JoinLobbyPresenter;
 import de.uol.swp.client.lobby.LobbyService;
+import de.uol.swp.client.lobby.event.CloseCreateLobbyEvent;
+import de.uol.swp.client.lobby.event.CloseJoinLobbyEvent;
 import de.uol.swp.client.main.PrimaryPresenter;
 import de.uol.swp.client.register.RegistrationPresenter;
 import de.uol.swp.client.register.event.RegistrationCanceledEvent;
@@ -24,6 +27,7 @@ import de.uol.swp.client.settings.event.CloseSettingsEvent;
 import de.uol.swp.client.settings.event.DeleteAccountEvent;
 import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.client.user.UserService;
+import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import javafx.application.Platform;
@@ -60,6 +64,9 @@ public class SceneManager {
     private final Injector injector;
     private SettingsPresenter settingsPresenter;
     private CreateLobbyPresenter createLobbyPresenter;
+    private JoinLobbyPresenter joinLobbyPresenter;
+    private Stage joinLobbyStage;
+    private Scene joinLobbyScene;
     private Stage createLobbyStage;
     private Scene createLobbyScene;
     private Stage settingsStage;
@@ -110,6 +117,7 @@ public class SceneManager {
         });
     }
 
+
     @Subscribe
     public void onShowRegistrationViewEvent(ShowRegistrationViewEvent event) {
         showRegistrationScreen();
@@ -140,6 +148,15 @@ public class SceneManager {
         closeDeleteAccount();
     }
 
+    @Subscribe
+    public void onCloseCreateLobbyEvent(CloseCreateLobbyEvent event) {
+        closeCreateLobby();
+    }
+
+    @Subscribe
+    public void onCloseJoinLobbyEvent(CloseJoinLobbyEvent event) {
+        closeJoinLobby();
+    }
 
     /**
      * Wenn in den Einstellungen auf den Button "Account löschen" geklickt wird, wird ein neues Fenster geöffnet,
@@ -255,6 +272,7 @@ public class SceneManager {
             settingsStage.setTitle("Einstellungen");
             settingsStage.setScene(settingsScene);
             settingsStage.setResizable(false);
+            settingsStage.initModality(Modality.APPLICATION_MODAL);
             settingsStage.show();
             eventBus.register(settingsPresenter);
         });
@@ -263,8 +281,9 @@ public class SceneManager {
     /**
      * Öffnet das Lobby-erstellen Fenster
      *
-     * @param loggedInUser
+     * @param loggedInUser der eingeloggte User
      * @author Paula
+     * @since Sprint7
      */
 
     public void showCreateLobbyScreen(User loggedInUser) {
@@ -275,8 +294,31 @@ public class SceneManager {
             createLobbyStage.setTitle("Lobby");
             createLobbyStage.setScene(createLobbyScene);
             createLobbyStage.setResizable(false);
+            createLobbyStage.initModality(Modality.APPLICATION_MODAL);
             createLobbyStage.show();
             eventBus.register(createLobbyPresenter);
+        });
+    }
+
+    /**
+     * Öffnet das Lobby beitreten Fenster,falls man aufgefordert wird sein Passwort anzugeben
+     *
+     * @param loggedInUser
+     * @author Paula
+     * @since Sprint7
+     */
+
+    public void showJoinLobbyScreen(User loggedInUser, Lobby lobby) {
+        Platform.runLater(() -> {
+            joinLobbyPresenter = new JoinLobbyPresenter(loggedInUser, lobbyService, userService, eventBus, lobby);
+            initJoinLobbyView(joinLobbyPresenter);
+            joinLobbyStage = new Stage();
+            joinLobbyStage.setTitle("Lobby beitreten");
+            joinLobbyStage.setScene(joinLobbyScene);
+            joinLobbyStage.setResizable(false);
+            joinLobbyStage.initModality(Modality.APPLICATION_MODAL);
+            joinLobbyStage.show();
+            eventBus.register(joinLobbyPresenter);
         });
     }
 
@@ -303,6 +345,10 @@ public class SceneManager {
 
     public void closeCreateLobby() {
         Platform.runLater(() -> createLobbyStage.close());
+    }
+
+    public void closeJoinLobby() {
+        Platform.runLater(() -> joinLobbyStage.close());
     }
 
 
@@ -390,6 +436,21 @@ public class SceneManager {
         return rootPane;
     }
 
+    private Parent initJoinLobbyPresenter(JoinLobbyPresenter joinLobbyPresenter) {
+        Parent rootPane;
+        FXMLLoader loader = injector.getInstance(FXMLLoader.class);
+        try {
+            URL url = getClass().getResource(JoinLobbyPresenter.fxml);
+            LOG.debug("Loading " + url);
+            loader.setLocation(url);
+            loader.setController(joinLobbyPresenter);
+            rootPane = loader.load();
+        } catch (Exception e) {
+            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
+        }
+        return rootPane;
+    }
+
     private Parent initDeleteAccountPresenter(DeleteAccountPresenter deleteAccountPresenter) {
         Parent rootPane;
         FXMLLoader loader = injector.getInstance(FXMLLoader.class);
@@ -445,7 +506,14 @@ public class SceneManager {
             Parent rootPane = initCreateLobbyPresenter(createLobbyPresenter);
             createLobbyScene = new Scene(rootPane, 400, 255);
         }
-
-
     }
+
+    private void initJoinLobbyView(JoinLobbyPresenter joinLobbyPresenter) {
+        if (joinLobbyScene == null) {
+            Parent rootPane = initJoinLobbyPresenter(joinLobbyPresenter);
+            joinLobbyScene = new Scene(rootPane, 400, 255);
+        }
+    }
+
+
 }

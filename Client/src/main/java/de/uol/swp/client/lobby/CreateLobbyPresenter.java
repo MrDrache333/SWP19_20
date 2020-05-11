@@ -3,7 +3,7 @@ package de.uol.swp.client.lobby;
 import com.google.common.eventbus.EventBus;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.SceneManager;
-import de.uol.swp.client.main.MainMenuPresenter;
+import de.uol.swp.client.lobby.event.CloseCreateLobbyEvent;
 import de.uol.swp.common.lobby.request.CreateLobbyRequest;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
@@ -29,9 +29,6 @@ public class CreateLobbyPresenter extends AbstractPresenter {
     private static final Logger LOG = LogManager.getLogger(CreateLobbyPresenter.class);
 
     private User loggedInUser;
-    private LobbyService lobbyService;
-    private MainMenuPresenter mainMenuPresenter;
-    private UserService userService;
     private EventBus eventBus;
     
 
@@ -65,21 +62,22 @@ public class CreateLobbyPresenter extends AbstractPresenter {
     @FXML
     public void onCreateLobbyButtonPressed(ActionEvent actionEvent) {
         String lobbyName = lobbynameField.getText();
+        String lobbyPassword = passwordField.getText();
         if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName)) {
-            CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), "");
+            CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), lobbyPassword);
             eventBus.post(msg);
             LOG.info("Request wurde gesendet.");
-
         } else {
             SceneManager.showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden", "Fehler");
-
         }
         lobbynameField.clear();
+        passwordField.clear();
 
     }
 
     /**
      *
+     *Bei Drücken auf den Abbrechen Button schließt sich das Fenster.
      *
      * @param actionEvent
      * @author Paula
@@ -87,25 +85,10 @@ public class CreateLobbyPresenter extends AbstractPresenter {
      */
     @FXML
     public void onCancelButtonPressed(ActionEvent actionEvent) {
-        clearAll();
-
-    }
-
-
-
-    /**
-     * Leert alle Felder (Benutzername, E-Mail und alle Passwortfelder)
-     *
-     * @author Paula
-     * @since Sprint7
-     */
-    private void clearAll() {
-        lobbynameField.clear();
+        eventBus.post(new CloseCreateLobbyEvent());
         passwordField.clear();
-
+        lobbynameField.clear();
     }
-
-
     }
 
 

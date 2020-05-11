@@ -8,6 +8,7 @@ import com.google.inject.Injector;
 import de.uol.swp.client.di.ClientModule;
 import de.uol.swp.client.game.GameService;
 import de.uol.swp.client.lobby.LobbyService;
+import de.uol.swp.client.lobby.OpenJoinLobbyRequest;
 import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.request.OpenLobbyCreateRequest;
@@ -221,7 +222,7 @@ public class ClientApp extends Application implements ConnectionListener {
             sceneManager.closeCreateLobby();
             LOG.debug("CreateLobbyMessage vom Server erfolgreich angekommen");
         } else {
-            SceneManager.showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden", "Fehler");
+            SceneManager.showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden. Zudem darf er noch nicht vorhanden sein.", "Fehler");
         }
     }
 
@@ -237,9 +238,13 @@ public class ClientApp extends Application implements ConnectionListener {
     public void onUserJoinedLobbyMessage(UserJoinedLobbyMessage message) {
         if (message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showLobbyScreen(message.getUser(), message.getLobby().getName(), message.getLobbyID(), message.getGameOwner());
+            sceneManager.closeJoinLobby();
             LOG.info("User " + message.getUser().getUsername() + " joined lobby successfully");
+        } else {
+            SceneManager.showAlert(Alert.AlertType.WARNING, "Fehlerhafte Angabe", "Fehler");
         }
-    }
+        }
+
 
     /**
      * Empfängt vom Server die Message, dass User Lobby verlassen hat.
@@ -287,7 +292,14 @@ public class ClientApp extends Application implements ConnectionListener {
 
         }
     }
+        @Subscribe
+        public void onOpenJoinLobby (OpenJoinLobbyRequest message){
+            if (message.getUser().getUsername().equals(user.getUsername())) {
+                sceneManager.showJoinLobbyScreen(message.getUser(), message.getLobby());
 
+
+        }
+    }
     /**
      * Aktualisiert den User und schließt das Einstellungsfenster.
      *
