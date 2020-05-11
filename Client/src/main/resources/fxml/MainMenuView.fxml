@@ -37,7 +37,6 @@
                             </TableView>
                             <ButtonBar minWidth="70.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="54.0" prefWidth="558.0" style="-fx-border-color: black;">
                                 <buttons>
-                                    <Button fx:id="createLobbyButton" maxWidth="160.0" minWidth="160.0" mnemonicParsing="false" onAction="#onShowLobbyDialogButtonPressed" prefHeight="27.0" prefWidth="160.0" text=" lobby alt" textAlignment="CENTER" />
                            <Button fx:id="openCreateLobbyView" mnemonicParsing="false" onAction="#onOpenCreateLobbyView" text="Lobby erstellen" />
                                 </buttons>
                                 <padding>

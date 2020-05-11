@@ -505,6 +505,7 @@ public class SceneManager {
         if (createLobbyScene == null) {
             Parent rootPane = initCreateLobbyPresenter(createLobbyPresenter);
             createLobbyScene = new Scene(rootPane, 400, 255);
+          createLobbyScene.getStylesheets().add(createLobbyPresenter.css);
         }
     }
 
@@ -512,6 +513,7 @@ public class SceneManager {
         if (joinLobbyScene == null) {
             Parent rootPane = initJoinLobbyPresenter(joinLobbyPresenter);
             joinLobbyScene = new Scene(rootPane, 400, 255);
+            joinLobbyScene.getStylesheets().add(JoinLobbyPresenter.css);
         }
     }
 

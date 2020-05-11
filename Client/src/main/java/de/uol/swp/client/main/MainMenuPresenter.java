@@ -5,11 +5,9 @@ import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.OpenJoinLobbyRequest;
-import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.lobby.message.*;
-import de.uol.swp.common.lobby.request.CreateLobbyRequest;
 import de.uol.swp.common.lobby.request.OpenLobbyCreateRequest;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.user.User;
@@ -36,14 +34,11 @@ import javafx.util.Callback;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.swing.*;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.regex.Pattern;
 
 
 public class MainMenuPresenter extends AbstractPresenter {
@@ -128,95 +123,19 @@ public class MainMenuPresenter extends AbstractPresenter {
         inGame.setPrefWidth(60);
         joinLobby.setPrefWidth(85);
 
-        createLobbyButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
-    }
 
+    }
 
 
     /**
      * Request für Lobby erstellen Fenster
+     *
      * @param actionEvent
      */
     @FXML
     public void onOpenCreateLobbyView(ActionEvent actionEvent) {
         OpenLobbyCreateRequest request = new OpenLobbyCreateRequest(loggedInUser);
         eventBus.post(request);
-    }
-//
-//    /**
-//     *
-//     * @param actionEvent
-//     */
-//    @FXML public void onJoinLobbyOpenView (ActionEvent actionEvent) {
-//        OpenJoinLobbyRequest request = new OpenJoinLobbyRequest(loggedInUser, null);
-//        eventBus.post(request);
-//    }
-    @FXML
-    public void onShowLobbyDialogButtonPressed(ActionEvent event) {
-        // Erzeugung Dialog
-        JDialog createLobbyDialoge = new JDialog();
-        createLobbyDialoge.setResizable(false);
-        createLobbyDialoge.setTitle("Lobby erstellen");
-        createLobbyDialoge.setSize(400, 150);
-        JPanel panel = new JPanel();
-
-        // Textfeld für Name wird erstellt und Panel hinzugefügt
-        // Text und Spaltenanzahl werden dabei direkt gesetzt
-        JLabel lname = new JLabel("Lobbyname: ");
-        JTextField lName_input = new JTextField("", 20);
-        lname.setSize(60, 60);
-        panel.add(lname);
-        panel.add(lName_input);
-
-        // Textfeld für Passwort wird erstellt und Panel hinzugefügt´
-        JLabel lobbyPassword = new JLabel("Passwort (optional): ");
-        JPasswordField lPassword_input = new JPasswordField("", 20);
-        lPassword_input.setEchoChar('*');
-        panel.add(lobbyPassword);
-        panel.add(lPassword_input);
-
-        //Lobby erstellen Button + Action
-        JButton createLobby = new JButton("Lobby erstellen");
-        ActionListener onCreateLobbyButtonPressed = new ActionListener() {
-
-
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent e) {
-                List<String> lobbyNames = new ArrayList<>();
-                //Eingaben des Nutzers als String speichern
-                String lobbyName = lName_input.getText();
-                String lobbyPassword = String.valueOf(lPassword_input.getPassword());
-                //Lobbys werden durchgegangen
-                lobbies.forEach(lobby -> lobbyNames.add(lobby.getName()));
-                // wenn Name vorhanden: Alert + Moeglichkeit neuen Namen anzugeben
-                if (lobbyNames.contains(lName_input.getText())) {
-                    Platform.runLater(() -> {
-                        SceneManager.showAlert(Alert.AlertType.WARNING, "Dieser Name ist bereits vergeben", "Fehler");
-                        lName_input.setText("");
-                        createLobbyDialoge.requestFocus();
-                    });
-                }
-                // Wenn Name noch nicht vorhanden: Erstellen neuer Lobby
-                else if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName)) {
-                    CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), lobbyPassword);
-                    eventBus.post(msg);
-                    LOG.info("Request wurde gesendet.");
-
-                    //  Dialog wird geschlossen
-                    createLobbyDialoge.setVisible(false);
-                } else {
-                    Platform.runLater(() -> {
-                        SceneManager.showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden", "Fehler");
-                        lName_input.setText("");
-                        createLobbyDialoge.requestFocus();
-                    });
-                }
-            }
-        };
-        createLobby.addActionListener(onCreateLobbyButtonPressed);
-        panel.add(createLobby);
-        createLobbyDialoge.add(panel);
-        createLobbyDialoge.setVisible(true);
     }
 
     //--------------------------------------
@@ -627,7 +546,4 @@ public class MainMenuPresenter extends AbstractPresenter {
             }
         });
     }
-
-
-
 }

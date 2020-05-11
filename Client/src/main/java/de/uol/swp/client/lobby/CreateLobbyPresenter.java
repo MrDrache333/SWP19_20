@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.lobby.event.CloseCreateLobbyEvent;
+import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.lobby.request.CreateLobbyRequest;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
@@ -63,6 +64,7 @@ public class CreateLobbyPresenter extends AbstractPresenter {
     public void onCreateLobbyButtonPressed(ActionEvent actionEvent) {
         String lobbyName = lobbynameField.getText();
         String lobbyPassword = passwordField.getText();
+        createButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
         if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName)) {
             CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), lobbyPassword);
             eventBus.post(msg);
@@ -74,6 +76,7 @@ public class CreateLobbyPresenter extends AbstractPresenter {
         passwordField.clear();
 
     }
+
 
     /**
      *
