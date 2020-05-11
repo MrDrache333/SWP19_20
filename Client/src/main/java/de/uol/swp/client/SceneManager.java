@@ -32,7 +32,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -337,19 +336,6 @@ public class SceneManager {
         }
     }
 
-    private EventHandler<KeyEvent> hotkeyEventHandler = new EventHandler<>() {
-        @Override
-        public void handle(KeyEvent event) {
-            Optional<GameManagement> optGameManagement = Optional.ofNullable(primaryPresenter.getGameManagement(UUID.fromString(primaryPresenter.getFocusedTab())));
-            if (optGameManagement.isPresent()) {
-                if (event.getCode() == KeyCode.S) {
-                    LOG.debug("Skip Phase Hotkey pressed");
-                    gameService.skipPhase(optGameManagement.get().getLoggedInUser(), optGameManagement.get().getID());
-                }
-            }
-        }
-    };
-
     private Parent initSettingsPresenter(SettingsPresenter settingsPresenter) {
         Parent rootPane;
         FXMLLoader loader = injector.getInstance(FXMLLoader.class);
@@ -414,4 +400,34 @@ public class SceneManager {
 
         }
     }
+
+    /**
+     * EventHandler für Hotkeys während eines Spiels. Momentane Hotkeys:
+     * S: SkipPhase
+     * G: GiveUp
+     *
+     * @author Marvin
+     * @since Sprint7
+     */
+
+    private EventHandler<KeyEvent> hotkeyEventHandler = new EventHandler<>() {
+        @Override
+        public void handle(KeyEvent event) {
+            Optional<GameManagement> optGameManagement = Optional.ofNullable(primaryPresenter.getGameManagement(UUID.fromString(primaryPresenter.getFocusedTab())));
+            if (optGameManagement.isPresent()) {
+                User user = optGameManagement.get().getLoggedInUser();
+                UUID lobbyID = optGameManagement.get().getID();
+                switch (event.getCode()) {
+                    case S:
+                        LOG.debug("Skip Phase Hotkey pressed");
+                        gameService.skipPhase(user, lobbyID);
+                        break;
+                    case G:
+                        LOG.debug("Give Up Hotkey pressed");
+                        gameService.giveUp(lobbyID, (UserDTO) user);
+                        break;
+                }
+            }
+        }
+    };
 }
