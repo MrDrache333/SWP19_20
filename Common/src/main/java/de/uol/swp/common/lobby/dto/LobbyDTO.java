@@ -4,10 +4,7 @@ import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.user.User;
 
 import java.io.Serializable;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Die LobbyDTO
@@ -27,6 +24,7 @@ public class LobbyDTO implements Lobby, Serializable {
     private UUID lobbyID;
     private Integer maxPlayer;
     private boolean inGame;
+    private ArrayList<Short> chosenCards;
 
     /**
      * Insatnziiert eine neue LobbyDTO.
@@ -190,5 +188,13 @@ public class LobbyDTO implements Lobby, Serializable {
     @Override
     public void setInGame(boolean inGame) {
         this.inGame = inGame;
+    }
+
+    public ArrayList<Short> getChosenCards() {
+        return chosenCards;
+    }
+
+    public void setChosenCards(ArrayList<Short> chosenCards) {
+        this.chosenCards = chosenCards;
     }
 }

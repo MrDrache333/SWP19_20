@@ -26,6 +26,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.NodeOrientation;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -63,7 +64,7 @@ public class LobbyPresenter extends AbstractPresenter {
     private boolean ownReadyStatus = false;
 
     @FXML
-    private Pane LobbyViewWIP;
+    private Pane lobbyViewWIP;
     @FXML
     private ListView<HBox> usersView;
     @FXML
@@ -75,11 +76,15 @@ public class LobbyPresenter extends AbstractPresenter {
     @FXML
     private HBox lobbyHBox;
 
+    private ImageView bigCard;
+
     private ObservableList<HBox> userHBoxes;
 
     private GameManagement gameManagement;
 
     private CardPack cardpack;
+
+    private boolean gameSettingsOpen;
 
     /**
      * Instanziiert einen neuen LobbyPresenter.
@@ -110,6 +115,7 @@ public class LobbyPresenter extends AbstractPresenter {
         this.eventBus = eventBus;
         this.loggedInUserDTO = new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail());
         this.cardpack = new JsonCardParser().loadPack("Basispack");
+        this.gameSettingsOpen = false;
     }
 
     //--------------------------------------
@@ -209,71 +215,109 @@ public class LobbyPresenter extends AbstractPresenter {
 
     @FXML
     public void onGamesettingsButtonPressed(ActionEvent actionEvent) {
-        Platform.runLater(() -> {
-            VBox gameSettingsVBox = new VBox();
-            gameSettingsVBox.setSpacing(20);
-            gameSettingsVBox.setPrefSize(450, 630);
-            TilePane tilePane = new TilePane();
-            tilePane.setPrefHeight(500);
-            tilePane.setPrefWidth(400);
-            tilePane.setMaxWidth(400);
-            tilePane.setVgap(10);
-            tilePane.setHgap(10);
-            tilePane.setStyle("-fx-background-color: #3D3D3D");
-            for (int i = 0; i < cardpack.getCards().getActionCards().size(); i++) {
-                short cardID = cardpack.getCards().getActionCards().get(i).getId();
-                String pfad = "file:Client/src/main/resources/cards/images/" + cardID + "_sm.png";
-                if (pfad != null) {
-                    Image picture = new Image(pfad);
-                    ImageView card = new ImageView(picture);
-                    card.setPreserveRatio(true);
-                    card.setFitWidth(100);
-                    tilePane.getChildren().add(card);
-                    card.setOnMouseClicked(event ->
-                    {
-                        if (event.getButton() == MouseButton.PRIMARY) {
-                            System.out.println("click");
-                        } else {
-                            showBigCardImage(cardID);
+        if (!gameSettingsOpen) {
+            gameSettingsOpen = true;
+            Platform.runLater(() -> {
+                String pfad1 = "file:Client/src/main/resources/cards/images/card_back.png";
+                Image picture1 = new Image(pfad1);
+                bigCard = new ImageView(picture1);
+                bigCard.setPreserveRatio(true);
+                bigCard.setFitWidth(250);
+                bigCard.setLayoutX(400);
+                bigCard.setLayoutY(100);
+                bigCard.setVisible(false);
+                lobbyViewWIP.setOnMouseClicked(mouseEvent -> {
+                    if (bigCard.isVisible()) {
+                        bigCard.setVisible(false);
+                    }
+                });
+                lobbyViewWIP.getChildren().add(bigCard);
+
+                VBox gameSettingsVBox = new VBox();
+                gameSettingsVBox.setSpacing(20);
+                gameSettingsVBox.setPrefSize(450, 630);
+
+                //ausgewählte Karten anzeigen
+                TilePane chosenCards = new TilePane();
+                chosenCards.setPrefSize(400, 160);
+                chosenCards.setStyle("-fx-background-color: #3D3D3D");
+                chosenCards.setOpacity(0.5);
+                chosenCards.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
+
+                //Button zum Abschicken
+                Button sendCards = new Button();
+                sendCards.setText("Auswahl abschicken");
+                sendCards.setPrefSize(450, 31);
+                sendCards.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent e) {
+                        if (chosenCards.getChildren().size() > 0) {
+                            ArrayList<Short> chosenCardIDs = new ArrayList<>();
+                            for (Node n : chosenCards.getChildren()) {
+                                chosenCardIDs.add(Short.valueOf(n.getId()));
+                            }
+                            lobbyService.sendChosenCards(lobbyID, chosenCardIDs);
                         }
-                    });
+                    }
+                });
+
+                //auswählbare Karten initilaisieren
+                TilePane tilePane = new TilePane();
+                tilePane.setPrefHeight(500);
+                tilePane.setPrefWidth(400);
+                tilePane.setMaxWidth(400);
+                tilePane.setVgap(10);
+                tilePane.setHgap(10);
+                tilePane.setStyle("-fx-background-color: #3D3D3D");
+                for (int i = 0; i < cardpack.getCards().getActionCards().size(); i++) {
+                    short cardID = cardpack.getCards().getActionCards().get(i).getId();
+                    String pfad = "file:Client/src/main/resources/cards/images/" + cardID + "_sm.png";
+                    if (pfad != null) {
+                        Image picture = new Image(pfad);
+                        ImageView card = new ImageView(picture);
+                        card.setPreserveRatio(true);
+                        card.setFitWidth(100);
+                        tilePane.getChildren().add(card);
+                        card.setOnMouseClicked(event ->
+                        {
+                            if (event.getButton() == MouseButton.PRIMARY) {
+                                if (chosenCards.getChildren().size() < 10) {
+                                    tilePane.getChildren().remove(card);
+                                    ImageView chosenCard = new ImageView(picture);
+                                    chosenCard.setPreserveRatio(true);
+                                    chosenCard.setFitWidth(80);
+                                    chosenCard.setId(String.valueOf(cardID));
+                                    chosenCards.getChildren().add(chosenCard);
+                                }
+                            } else {
+                                showBigCardImage(cardID);
+                            }
+                        });
+                    }
                 }
-            }
-            ScrollPane scrollPane = new ScrollPane(tilePane);
-            scrollPane.setPrefHeight(500);
-            scrollPane.setPrefWidth(620);
-            scrollPane.setMaxWidth(620);
-            scrollPane.setStyle("-fx-background-color: #3D3D3D");
-            scrollPane.setOpacity(0.73);
-            scrollPane.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
-            gameSettingsVBox.getChildren().add(scrollPane);
-            lobbyHBox.getChildren().add(gameSettingsVBox);
 
-            //ausgewählte Karten anzeigen
-            TilePane chosenCards = new TilePane();
-            chosenCards.setPrefSize(450, 100);
-            chosenCards.setStyle("-fx-background-color: #3D3D3D");
-            chosenCards.setOpacity(0.5);
-            gameSettingsVBox.getChildren().add(chosenCards);
+                ScrollPane scrollPane = new ScrollPane(tilePane);
+                scrollPane.setPrefHeight(500);
+                scrollPane.setPrefWidth(620);
+                scrollPane.setMaxWidth(620);
+                scrollPane.setStyle("-fx-background-color: #3D3D3D");
+                scrollPane.setOpacity(0.73);
+                scrollPane.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
 
-            //Button zum Abschicken
-            Button sendCards = new Button();
-            sendCards.setText("Auswahl abschicken");
-            sendCards.setPrefSize(450, 31);
-            gameSettingsVBox.getChildren().add(sendCards);
-        });
+                gameSettingsVBox.getChildren().add(scrollPane);
+                gameSettingsVBox.getChildren().add(chosenCards);
+                gameSettingsVBox.getChildren().add(sendCards);
+                lobbyHBox.getChildren().add(gameSettingsVBox);
+            });
+        }
     }
 
     public void showBigCardImage(short cardID) {
         Platform.runLater(() -> {
             String pfad = "file:Client/src/main/resources/cards/images/" + cardID + ".png";
             Image picture = new Image(pfad);
-            ImageView card = new ImageView(picture);
-            card.setPreserveRatio(true);
-            card.setFitWidth(150);
-            card.setLayoutX(400);
-            card.setLayoutY(200);
-            LobbyViewWIP.getChildren().add(card);
+            bigCard.setImage(picture);
+            bigCard.setVisible(true);
         });
     }
     //--------------------------------------

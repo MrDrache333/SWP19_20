@@ -134,6 +134,11 @@ public class LobbyService {
         bus.post(cmd);
     }
 
+    public void sendChosenCards(UUID lobbyID, ArrayList<Short> chosencards) {
+        SendChosenCardsRequest requestMessage = new SendChosenCardsRequest(lobbyID, chosencards);
+        bus.post(requestMessage);
+    }
+
     /**
      * Erstellt eine neue Stage und öffnet darin die Anleitung als WebView
      *

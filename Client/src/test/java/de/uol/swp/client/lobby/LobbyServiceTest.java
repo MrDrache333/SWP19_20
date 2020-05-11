@@ -185,4 +185,13 @@ class LobbyServiceTest {
 
         assertTrue(event instanceof LogoutRequest);
     }
+
+    @Test
+    void sendChosenCardsTest() throws InterruptedException {
+        joinLobby();
+
+        event = null;
+
+
+    }
 }

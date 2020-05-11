@@ -274,6 +274,13 @@ public class LobbyService extends AbstractService {
 
     }
 
+    @Subscribe
+    public void onSendChosenCardsRequest(SendChosenCardsRequest msg) {
+        System.out.println("received chosen cards");
+        LobbyDTO lobby = (LobbyDTO) lobbyManagement.getLobby(msg.getLobbyID()).get();
+        lobby.setChosenCards(msg.getChosenCards());
+    }
+
     //--------------------------------------
     // Help Methods
     //--------------------------------------

@@ -11,6 +11,7 @@ import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.lobby.Lobby;
+import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
@@ -47,6 +48,7 @@ public class Playground extends AbstractPlayground {
     private Timer timer = new Timer();
     private short lobbySizeOnStart;
     private CardPack cardsPackField;
+    private ArrayList<Short> chosenCards;
 
     /**
      * Erstellt ein neues Spielfeld und übergibt die Spieler. Die Reihenfolge der Spieler wird zufällig zusammengestellt.
@@ -70,6 +72,7 @@ public class Playground extends AbstractPlayground {
         this.compositePhase = new CompositePhase(this);
         this.lobbySizeOnStart = (short) lobby.getUsers().size();
         this.cardsPackField = new JsonCardParser().loadPack("Basispack");
+        this.chosenCards = ((LobbyDTO) lobby).getChosenCards();
         initializeCardField();
     }
 
@@ -83,9 +86,14 @@ public class Playground extends AbstractPlayground {
                 cardField.put(card.getId(), 8);
             } else cardField.put(card.getId(), 12);
         }
-        for (int i = 0; i < cardsPackField.getCards().getActionCards().size(); i++) {
-            Card card = cardsPackField.getCards().getActionCards().get(i);
-            cardField.put(card.getId(), 10);
+        while (chosenCards.size() < 10) {
+            short random = (short) (Math.random() * 31);
+            if (!chosenCards.contains(random) && random > 6) {
+                chosenCards.add(random);
+            }
+        }
+        for (Short chosenCard : chosenCards) {
+            cardField.put(chosenCard, 10);
         }
         for (int i = 0; i < cardsPackField.getCards().getCurseCards().size(); i++) {
             Card card = cardsPackField.getCards().getCurseCards().get(i);
@@ -98,6 +106,7 @@ public class Playground extends AbstractPlayground {
             else if (i == 2) cardField.put(card.getId(), 30);
             else LOG.debug("Komisch: @ initializeCardField- Else Methode in 104 ausgeschlagen.... @ @ @");
         }
+        gameService.sendCardField(theSpecificLobbyID, cardField);
     }
 
     /**

@@ -7,9 +7,6 @@ import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
-import de.uol.swp.common.game.card.Card;
-import de.uol.swp.common.game.card.parser.JsonCardParser;
-import de.uol.swp.common.game.card.parser.components.CardPack;
 import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
@@ -191,26 +188,18 @@ public class GameViewPresenter extends AbstractPresenter {
         ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getPrefWidth());
         gameViewWIP.getChildren().add(playedCardLayoutContainer);
         gameViewWIP.getChildren().add(handcards);
-        initalizeCardFieldImages();
     }
 
-    private void initalizeCardFieldImages() {
-        ArrayList<Short> theList = new ArrayList<>();
-        CardPack cardsPackField = new JsonCardParser().loadPack("Basispack");
-        for (int i = 0; i < 10; i++) {
-            Card card = cardsPackField.getCards().getActionCards().get(i);
-            theList.add(card.getId());
-        }
+    private void initalizeCardFieldImages(ArrayList<Short> theList) {
         ArrayList<ImageView> allImageViews = new ArrayList<>(Arrays.asList(cardPlaceholder1, cardPlaceholder2, cardPlaceholder3, cardPlaceholder4, cardPlaceholder5, cardPlaceholder6, cardPlaceholder7, cardPlaceholder8, cardPlaceholder9, cardPlaceholder10));
         int index = 0;
         for (ImageView imageView : allImageViews) {
-            String theIdInString = String.valueOf(theList.get(index));
+            String theIdInString = String.valueOf(theList.get(index) % 17);
             String imageUrl = "/cards/images/" + theIdInString + "_sm.png";
             Image theImage = new Image(imageUrl);
             imageView.setImage(theImage);
             index++;
         }
-        cardsPackField = null;
         theList = null;
         allImageViews = null;
     }
@@ -249,6 +238,17 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     public void initializeUserList() {
         lobbyService.retrieveAllUsersInLobby(lobbyID);
+    }
+
+    @Subscribe
+    public void onSendCardFieldMessage(SendCardFieldMessage msg) {
+        ArrayList<Short> list = new ArrayList<>();
+        for (Short key : msg.getCardField().keySet()) {
+            if (key > 6) {
+                list.add(key);
+            }
+        }
+        initalizeCardFieldImages(list);
     }
 
     /**

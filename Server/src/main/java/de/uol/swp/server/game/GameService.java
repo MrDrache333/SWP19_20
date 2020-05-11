@@ -116,6 +116,11 @@ public class GameService extends AbstractService {
         post(new UpdateInGameRequest(lobbyID));
     }
 
+    public void sendCardField(UUID gameID, Map<Short, Integer> cardField) {
+        SendCardFieldMessage message = new SendCardFieldMessage(gameID, cardField);
+        post(message);
+    }
+
     /**
      * Startet das Spiel wenn die StartGameInternalMessage ankommt.
      * Sendet außerdem eine Nachricht mit dem ersten Spieler in den Chat.
