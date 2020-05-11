@@ -288,6 +288,14 @@ public class LobbyPresenter extends AbstractPresenter {
                                     chosenCard.setFitWidth(80);
                                     chosenCard.setId(String.valueOf(cardID));
                                     chosenCards.getChildren().add(chosenCard);
+                                    chosenCard.setOnMouseClicked(event2 -> {
+                                        if (event2.getButton() == MouseButton.PRIMARY) {
+                                            chosenCards.getChildren().remove(chosenCard);
+                                            tilePane.getChildren().add(0, card);
+                                        } else {
+                                            showBigCardImage(cardID);
+                                        }
+                                    });
                                 }
                             } else {
                                 showBigCardImage(cardID);
