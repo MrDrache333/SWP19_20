@@ -317,7 +317,7 @@
               },
               "cardSource": "BUY",
               "nextAction": {
-                "MoveCard": {
+                "Move": {
                   "cardDestination": "DISCARD"
                 }
               }
