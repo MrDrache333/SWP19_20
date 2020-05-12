@@ -305,11 +305,11 @@ public class ActionCardExecution {
             cards.removeIf(c -> c.getCardType() != Card.Type.Cursecard);
         }
 
-        if (action.getHasCost().isSet()) {
+        if (action.getHasCost() != null) {
             cards.removeIf(c -> c.getCosts() < action.getHasCost().getMin() || c.getCosts() > action.getHasCost().getMax());
         }
 
-        if (action.getHasWorth().isSet()) {
+        if (action.getHasWorth() != null) {
             cards.removeIf(c -> c.getCardType() == Card.Type.ActionCard || c.getCardType() == Card.Type.ReactionCard);
             List<Card> tmp = new ArrayList<>();
             cards.forEach(card -> {
