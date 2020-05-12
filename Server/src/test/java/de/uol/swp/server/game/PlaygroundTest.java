@@ -237,4 +237,31 @@ public class PlaygroundTest {
         assertTrue(winners.contains(playground.getNextPlayer().getPlayerName()));
     }
 
+    //TODO: In ActionCardExecution Testklasse verschieben
+    //nur mal zum testen...
+    @Test
+    void testHolzfäller() {
+        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
+        playground.setActualPhase(Phase.Type.ActionPhase);
+        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(2));
+        playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 9);
+        assertEquals(2, playground.getActualPlayer().getAvailableBuys());
+        assertEquals(2, playground.getActualPlayer().getAdditionalMoney());
+        assertEquals(Phase.Type.Buyphase, playground.getActualPhase());
+    }
+
+    //TODO: In ActionCardExecution Testklasse verschieben
+    //nur mal zum testen...
+    @Test
+    void testJahrmarkt() {
+        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
+        playground.setActualPhase(Phase.Type.ActionPhase);
+        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(20));
+        playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 27);
+        assertEquals(2, playground.getActualPlayer().getAvailableBuys());
+        assertEquals(2, playground.getActualPlayer().getAvailableActions());
+        assertEquals(2, playground.getActualPlayer().getAdditionalMoney());
+        assertEquals(Phase.Type.ActionPhase, playground.getActualPhase());
+    }
+
 }
