@@ -190,10 +190,12 @@ public class LobbyDTO implements Lobby, Serializable {
         this.inGame = inGame;
     }
 
+    @Override
     public ArrayList<Short> getChosenCards() {
         return chosenCards;
     }
 
+    @Override
     public void setChosenCards(ArrayList<Short> chosenCards) {
         this.chosenCards = chosenCards;
     }

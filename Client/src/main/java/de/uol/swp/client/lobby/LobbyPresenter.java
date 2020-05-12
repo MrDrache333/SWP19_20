@@ -11,6 +11,7 @@ import de.uol.swp.common.game.card.parser.JsonCardParser;
 import de.uol.swp.common.game.card.parser.components.CardPack;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
+import de.uol.swp.common.lobby.response.SetChosenCardsResponse;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
@@ -213,6 +214,13 @@ public class LobbyPresenter extends AbstractPresenter {
         lobbyService.setMaxPlayer(this.getLobbyID(), this.loggedInUser, chooseMaxPlayer.getValue());
     }
 
+    /**
+     * Wird aufgerufen, wenn der Button für die Spieleinstellungen betätigt wird.
+     *
+     * @param actionEvent
+     * @author Fenja, Anna
+     * @since Sprint 7
+     */
     @FXML
     public void onGamesettingsButtonPressed(ActionEvent actionEvent) {
         if (!gameSettingsOpen) {
@@ -244,7 +252,7 @@ public class LobbyPresenter extends AbstractPresenter {
                 chosenCards.setOpacity(0.5);
                 chosenCards.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
 
-                //Button zum Abschicken
+                //Button zum Abschicken der Nachricht für die Karten
                 Button sendCards = new Button();
                 sendCards.setText("Auswahl abschicken");
                 sendCards.setPrefSize(450, 31);
@@ -264,8 +272,8 @@ public class LobbyPresenter extends AbstractPresenter {
                 //auswählbare Karten initilaisieren
                 TilePane tilePane = new TilePane();
                 tilePane.setPrefHeight(500);
-                tilePane.setPrefWidth(400);
-                tilePane.setMaxWidth(400);
+                tilePane.setPrefWidth(500);
+                tilePane.setMaxWidth(500);
                 tilePane.setVgap(10);
                 tilePane.setHgap(10);
                 tilePane.setStyle("-fx-background-color: #3D3D3D");
@@ -315,11 +323,19 @@ public class LobbyPresenter extends AbstractPresenter {
                 gameSettingsVBox.getChildren().add(scrollPane);
                 gameSettingsVBox.getChildren().add(chosenCards);
                 gameSettingsVBox.getChildren().add(sendCards);
+                gameSettingsVBox.setId("gameSettingsVBox");
                 lobbyHBox.getChildren().add(gameSettingsVBox);
             });
         }
     }
 
+    /**
+     * Hilfsmethode, um die Karte groß anzuzeigen
+     *
+     * @param cardID
+     * @author Fenja, Anna
+     * @since Sprint 7
+     */
     public void showBigCardImage(short cardID) {
         Platform.runLater(() -> {
             String pfad = "file:Client/src/main/resources/cards/images/" + cardID + ".png";
@@ -328,9 +344,31 @@ public class LobbyPresenter extends AbstractPresenter {
             bigCard.setVisible(true);
         });
     }
+
     //--------------------------------------
     // EVENTBUS
     //--------------------------------------
+
+    /**
+     * Ruft Methode auf, die die ausgewählten Karten sendet.
+     *
+     * @param message
+     * @author Fenja, Anna
+     * @since Sprint 7
+     */
+    @Subscribe
+    public void onSendChosenCardsMessage(SetChosenCardsResponse message) {
+        if (!message.getLobbyID().equals(lobbyID)) return;
+        if (message.isSuccess()) {
+            lobbyHBox.getChildren().forEach(t -> {
+                if (t.getId().equals("gameSettingsVBox")) {
+                    Platform.runLater(() -> lobbyHBox.getChildren().remove(t));
+
+                }
+            });
+
+        }
+    }
 
     /**
      * Ruft Methode auf, die den Status des Nutzers ändert, nachdem der Bereit-Status des Nutzers serverseitig geändert wurde.

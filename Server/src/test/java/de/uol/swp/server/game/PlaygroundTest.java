@@ -22,6 +22,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
@@ -45,6 +46,8 @@ public class PlaygroundTest {
     static final GameService gameService = new GameService(bus, gameManagement, authService);
     static UUID id;
     private final CountDownLatch lock = new CountDownLatch(1);
+    private static ArrayList<Short> chosenCards = new ArrayList<Short>();
+
 
 
     static UUID gameID;
@@ -56,6 +59,7 @@ public class PlaygroundTest {
         chatManagement.createChat(gameID.toString());
         lobbyManagement.getLobby(gameID).get().joinUser(secondPlayer);
         lobbyManagement.getLobby(gameID).get().joinUser(thirdPlayer);
+        lobbyManagement.getLobby(gameID).get().setChosenCards(chosenCards);
         bus.post(new StartGameInternalMessage(gameID));
     }
 

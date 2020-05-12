@@ -10,6 +10,7 @@ import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.lobby.request.*;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
+import de.uol.swp.common.lobby.response.SetChosenCardsResponse;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.chat.ChatManagement;
@@ -168,5 +169,21 @@ class LobbyServiceTest {
         UpdatedInGameMessage message = (UpdatedInGameMessage) event;
         assertEquals(lobbyID, message.getLobbyID());
         assertFalse(lobbyManagement.getLobby(lobbyID).get().getInGame());
+    }
+
+    @Test
+    void onSendChosenCardsTest() throws InterruptedException {
+        UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
+        ArrayList<Short> chosenCards = new ArrayList<>();
+        chosenCards.add((short) 5);
+        chosenCards.add((short) 7);
+        lobbyService.onSendChosenCardsRequest(new SendChosenCardsRequest(lobbyID, chosenCards));
+
+        lock.await(500, TimeUnit.MILLISECONDS);
+
+        assertTrue(event instanceof SetChosenCardsResponse);
+        SetChosenCardsResponse response = (SetChosenCardsResponse) event;
+        assertTrue(response.isSuccess());
+
     }
 }

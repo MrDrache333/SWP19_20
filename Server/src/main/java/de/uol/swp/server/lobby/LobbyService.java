@@ -10,6 +10,7 @@ import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.request.*;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
+import de.uol.swp.common.lobby.response.SetChosenCardsResponse;
 import de.uol.swp.common.message.ResponseMessage;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
@@ -274,11 +275,22 @@ public class LobbyService extends AbstractService {
 
     }
 
+    /**
+     * Sende die Anfrage, der ausgewählten Karten
+     *
+     * @param msg
+     * @author Fenja, Anna
+     * @since Sprint 7
+     */
     @Subscribe
     public void onSendChosenCardsRequest(SendChosenCardsRequest msg) {
         System.out.println("received chosen cards");
         LobbyDTO lobby = (LobbyDTO) lobbyManagement.getLobby(msg.getLobbyID()).get();
         lobby.setChosenCards(msg.getChosenCards());
+
+        SetChosenCardsResponse response = new SetChosenCardsResponse(msg.getLobbyID(), true);
+        response.initWithMessage(msg);
+        post(response);
     }
 
     //--------------------------------------
