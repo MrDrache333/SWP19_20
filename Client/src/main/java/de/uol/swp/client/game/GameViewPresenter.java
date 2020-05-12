@@ -45,6 +45,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -105,9 +106,16 @@ public class GameViewPresenter extends AbstractPresenter {
     private final HandcardsLayoutContainer secondEnemyHand;
     private final HandcardsLayoutContainer thirdEnemyHand;
     private final PlayedCardLayoutContainer playedCardLayoutContainer;
+    private final PlayedCardLayoutContainer firstEnemyPCLC;
+    private final PlayedCardLayoutContainer secondEnemyPCLC;
+    private final PlayedCardLayoutContainer thirdEnemyPCLC;
     private final StackPane firstEnemyDeck;
     private final StackPane secondEnemyDeck;
     private final StackPane thirdEnemyDeck;
+    private final StackPane discardPile;
+    private final StackPane firstEnemyDiscardPile;
+    private final StackPane secondEnemyDiscardPile;
+    private final StackPane thirdEnemyDiscardPile;
     private ObservableList<String> users;
     private final GameService gameService;
     private MouseEvent mouseEvent;
@@ -144,13 +152,18 @@ public class GameViewPresenter extends AbstractPresenter {
         this.chatViewPresenter = chatViewPresenter;
         this.injector = injector;
         this.gameManagement = gameManagement;
-        handcards = new HandcardsLayoutContainer(460, 618, 160, 650);
         playedCardLayoutContainer = new PlayedCardLayoutContainer(500, 500, 160, 100);
+        firstEnemyPCLC = new PlayedCardLayoutContainer(584, 200,160, 100);
+        secondEnemyPCLC = new PlayedCardLayoutContainer(300, 299,160, 100);
+        thirdEnemyPCLC = new PlayedCardLayoutContainer(800, 299, 119, 430);
+        handcards = new HandcardsLayoutContainer(460, 618, 160, 650);
         firstEnemyHand = new HandcardsLayoutContainer(584, 100, 119, 430);
-        secondEnemyHand = new HandcardsLayoutContainer(200, 299, 119, 430);
-        thirdEnemyHand = new HandcardsLayoutContainer(900, 299, 119, 430);
-        secondEnemyHand.setRotate(90);
-        thirdEnemyHand.setRotate(90);
+        secondEnemyHand = new HandcardsLayoutContainer(200, 299, 119, 430); secondEnemyHand.setRotate(90);
+        thirdEnemyHand = new HandcardsLayoutContainer(900, 299, 119, 430); thirdEnemyHand.setRotate(90);
+        discardPile = new StackPane(); discardPile.setLayoutX(420); discardPile.setLayoutY(200);
+        firstEnemyDiscardPile = new StackPane(); firstEnemyDiscardPile.setLayoutX(420); firstEnemyDiscardPile.setLayoutY(200);
+        secondEnemyDiscardPile = new StackPane(); secondEnemyDiscardPile.setLayoutX(300); secondEnemyDiscardPile.setLayoutY(199); secondEnemyDiscardPile.setRotate(90);
+        thirdEnemyDiscardPile = new StackPane(); thirdEnemyDiscardPile.setLayoutX(0); thirdEnemyDiscardPile.setLayoutY(199); thirdEnemyDiscardPile.setRotate(90);
         firstEnemyDeck = new StackPane(); firstEnemyDeck.setLayoutX(300); firstEnemyDeck.setLayoutY(0); firstEnemyDeck.setPrefWidth(100); firstEnemyDeck.setPrefHeight(160);
         secondEnemyDeck = new StackPane(); secondEnemyDeck.setLayoutX(0); secondEnemyDeck.setLayoutY(0); secondEnemyDeck.setPrefWidth(0); secondEnemyDeck.setPrefHeight(0);
         thirdEnemyDeck = new StackPane(); thirdEnemyDeck.setLayoutX(0); thirdEnemyDeck.setLayoutY(0); thirdEnemyDeck.setPrefWidth(0); thirdEnemyDeck.setPrefHeight(0);
@@ -206,6 +219,9 @@ public class GameViewPresenter extends AbstractPresenter {
         ((Pane) chatView.getChildren().get(0)).setPrefHeight(chatView.getPrefHeight());
         ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getPrefWidth());
         gameViewWIP.getChildren().add(playedCardLayoutContainer);
+        gameViewWIP.getChildren().add(firstEnemyPCLC);
+        gameViewWIP.getChildren().add(secondEnemyPCLC);
+        gameViewWIP.getChildren().add(thirdEnemyPCLC);
         gameViewWIP.getChildren().add(handcards);
         gameViewWIP.getChildren().add(firstEnemyHand);
         gameViewWIP.getChildren().add(secondEnemyHand);
@@ -401,6 +417,38 @@ public class GameViewPresenter extends AbstractPresenter {
             }
         }
     }
+
+    /**
+     * Wenn ein anderer Spieler eine Karte entsorgt, wird dies den anderen Spielern angezeigt.
+     *
+     * @param msg       Die Message die vom server gesendet wird, wenn ein anderer Spieler eine KArte entsorgt.
+     *
+     */
+    public void onOtherPlayerDiscardCardMessage (OtherPlayerDiscardMessage msg) {
+
+        List<Short> playerIndexNumbers = new ArrayList<>(); playerIndexNumbers.add((short) 0); playerIndexNumbers.add((short) 1); playerIndexNumbers.add((short) 2); playerIndexNumbers.add((short) 3);
+
+        if (msg.getGameID().equals(lobbyID) && !msg.getCurrentUser().equals(loggedInUser)) {
+            playerIndexNumbers.remove(msg.getEnemyPlaceNumber());
+            ImageView card = new ImageView(new Image("file:Client/src/main/resources/cards/images/" + msg.getCardID() + ".png"));
+            if (playerIndexNumbers.get(0).equals(msg.getUserPlaceNumber())) {
+                firstEnemyDiscardPile.getChildren().add(card);
+                return;
+            }
+
+            if (playerIndexNumbers.get(1).equals(msg.getUserPlaceNumber())) {
+                secondEnemyDiscardPile.getChildren().add(card);
+                return;
+            }
+
+            if (playerIndexNumbers.get(2).equals(msg.getUserPlaceNumber())) {
+                thirdEnemyDiscardPile.getChildren().add(card);
+                return;
+            }
+
+        }
+    }
+
 
     /**
      * Fügt die Karte aus der DiscardPileLastCardMessage dem Ablagestapel hinzu.
