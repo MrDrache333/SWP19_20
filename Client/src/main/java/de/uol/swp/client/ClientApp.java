@@ -221,7 +221,8 @@ public class ClientApp extends Application implements ConnectionListener {
             sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getChatID(), message.getUser());
             sceneManager.closeCreateLobby();
             LOG.debug("CreateLobbyMessage vom Server erfolgreich angekommen");
-        } else {
+        } else if (message.getLobbyName() == null )
+        {
             SceneManager.showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden. Zudem darf er noch nicht vorhanden sein.", "Fehler");
         }
     }
@@ -236,12 +237,13 @@ public class ClientApp extends Application implements ConnectionListener {
      */
     @Subscribe
     public void onUserJoinedLobbyMessage(UserJoinedLobbyMessage message) {
-        if (message.getUser().getUsername().equals(user.getUsername())) {
+
+        if (message.getUser().getUsername().equals(user.getUsername() )) {
             sceneManager.showLobbyScreen(message.getUser(), message.getLobby().getName(), message.getLobbyID(), message.getGameOwner());
             sceneManager.closeJoinLobby();
             LOG.info("User " + message.getUser().getUsername() + " joined lobby successfully");
-        } else {
-            SceneManager.showAlert(Alert.AlertType.WARNING, "Fehlerhafte Angabe", "Fehler");
+        } else if (message.getLobby().getLobbyPassword() == null) {
+            SceneManager.showAlert(Alert.AlertType.WARNING, "Das Passwort ist falsch", "Fehler");
         }
         }
 

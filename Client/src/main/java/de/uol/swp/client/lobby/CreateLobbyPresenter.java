@@ -64,7 +64,7 @@ public class CreateLobbyPresenter extends AbstractPresenter {
     public void onCreateLobbyButtonPressed(ActionEvent actionEvent) {
         String lobbyName = lobbynameField.getText();
         String lobbyPassword = passwordField.getText();
-        createButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
+       createButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
         if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName)) {
             CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), lobbyPassword);
             eventBus.post(msg);
@@ -74,9 +74,10 @@ public class CreateLobbyPresenter extends AbstractPresenter {
         }
         lobbynameField.clear();
         passwordField.clear();
+        lobbynameField.requestFocus();
+
 
     }
-
 
     /**
      *

@@ -60,17 +60,21 @@ public class JoinLobbyPresenter {
     @FXML
     public void onJoinButtonPressed(javafx.event.ActionEvent actionEvent) {
         // Passwörter stimmen überein
-        if (lobby.getLobbyPassword().equals(String.valueOf(passwordField.getText()))) {
+        if (lobby.getLobbyPassword().equals(String.valueOf(passwordField.getText())) || lobby.getLobbyPassword()== null && passwordField.getText().equals(null)) {
             lobbyService.joinLobby(lobby.getLobbyID(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
             LobbyJoinUserRequest msg = new LobbyJoinUserRequest(lobby.getLobbyID(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
             eventBus.post(msg);
             LOG.info("Request wurde gesendet.");
+
         }
         //Passwörter stimmen nicht überein
         else {
             SceneManager.showAlert(Alert.AlertType.ERROR, "Das eingegebene Passwort ist falsch.", "Fehler");
         }
-        passwordField.setText("");
+        passwordField.clear();
+        passwordField.requestFocus();
+
+
     }
 
     /**
