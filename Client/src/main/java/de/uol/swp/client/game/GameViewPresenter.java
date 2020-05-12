@@ -190,11 +190,18 @@ public class GameViewPresenter extends AbstractPresenter {
         gameViewWIP.getChildren().add(handcards);
     }
 
+    /**
+     * Die Aktionskarten werden erstellt und auf dem Spielfeld angezeigt.
+     *
+     * @param theList die IDs der Aktionskarten
+     * @author Ferit, Fenja, Anna
+     * @since Sprint 7
+     */
     private void initalizeCardFieldImages(ArrayList<Short> theList) {
         ArrayList<ImageView> allImageViews = new ArrayList<>(Arrays.asList(cardPlaceholder1, cardPlaceholder2, cardPlaceholder3, cardPlaceholder4, cardPlaceholder5, cardPlaceholder6, cardPlaceholder7, cardPlaceholder8, cardPlaceholder9, cardPlaceholder10));
         int index = 0;
         for (ImageView imageView : allImageViews) {
-            String theIdInString = String.valueOf(theList.get(index) % 17);
+            String theIdInString = String.valueOf(theList.get(index));
             String imageUrl = "/cards/images/" + theIdInString + "_sm.png";
             Image theImage = new Image(imageUrl);
             imageView.setImage(theImage);
@@ -240,6 +247,13 @@ public class GameViewPresenter extends AbstractPresenter {
         lobbyService.retrieveAllUsersInLobby(lobbyID);
     }
 
+    /**
+     * Die IDs der gesendeten Aktionskarten werden initilaisiert
+     *
+     * @param msg die Nachricht mit den IDs und der jeweiligen Azahl der Spielkarten
+     * @author Anna, Fenja
+     * @since Sprint 7
+     */
     @Subscribe
     public void onSendCardFieldMessage(SendCardFieldMessage msg) {
         ArrayList<Short> list = new ArrayList<>();

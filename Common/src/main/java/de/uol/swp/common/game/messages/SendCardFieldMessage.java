@@ -5,10 +5,16 @@ import de.uol.swp.common.message.AbstractServerMessage;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Message, in der dem Client das Kartenfeld geschickt wird
+ *
+ * @author Fenja, Anna
+ * @since Sprint 7
+ */
 public class SendCardFieldMessage extends AbstractServerMessage {
 
     private static final long serialVersionUID = 1906869054271279251L;
-    UUID gameID;
+    private UUID gameID;
     private Map<Short, Integer> cardField;
 
     public SendCardFieldMessage(UUID gameID, Map<Short, Integer> cardField) {

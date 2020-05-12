@@ -134,6 +134,14 @@ public class LobbyService {
         bus.post(cmd);
     }
 
+    /**
+     * Erstellt einen SendChosenCardsRequest, um die ausgewählten Karten an den Server zu schicken.
+     *
+     * @param lobbyID     die ID der Lobby
+     * @param chosencards die gewählten Aktionskarten
+     * @author Anna, Fenja
+     * @since Sprint 7
+     */
     public void sendChosenCards(UUID lobbyID, ArrayList<Short> chosencards) {
         SendChosenCardsRequest requestMessage = new SendChosenCardsRequest(lobbyID, chosencards);
         bus.post(requestMessage);

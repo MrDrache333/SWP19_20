@@ -116,6 +116,14 @@ public class GameService extends AbstractService {
         post(new UpdateInGameRequest(lobbyID));
     }
 
+    /**
+     * Das Kartfeld wird geschickt.
+     *
+     * @param gameID    die ID des Spiels
+     * @param cardField das Kartenfeld
+     * @author Anna, Fenja
+     * @since Sprint 7
+     */
     public void sendCardField(UUID gameID, Map<Short, Integer> cardField) {
         SendCardFieldMessage message = new SendCardFieldMessage(gameID, cardField);
         post(message);

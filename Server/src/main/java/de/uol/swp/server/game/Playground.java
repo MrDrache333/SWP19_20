@@ -87,10 +87,17 @@ public class Playground extends AbstractPlayground {
             } else cardField.put(card.getId(), 12);
         }
         while (chosenCards.size() < 10) {
-            short random = (short) (Math.random() * 31);
+            for (short i = 7; i < 17; i++) {
+                if (!chosenCards.contains(i)) {
+                    chosenCards.add(i);
+                }
+            }
+            //TODO: die 16 ändern, sobald mehr Karten vorhanden sind, die obere for-Schleife auskommentieren
+            // und den unteren Block dafür entkommentieren
+            /*short random = (short) (Math.random() * 16);
             if (!chosenCards.contains(random) && random > 6) {
                 chosenCards.add(random);
-            }
+            }*/
         }
         for (Short chosenCard : chosenCards) {
             cardField.put(chosenCard, 10);
