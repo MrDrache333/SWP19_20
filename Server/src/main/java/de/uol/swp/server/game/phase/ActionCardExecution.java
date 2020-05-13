@@ -88,7 +88,7 @@ public class ActionCardExecution {
             playerList.add(player);
 
             if (!response.isExecute()) {
-                if (!response.isSubAction()) {
+                if (finishedNextActions) {
                     actualStateIndex++;
                     execute();
                 } else {
@@ -97,7 +97,7 @@ public class ActionCardExecution {
                 }
             } else {
                 executeOptionalAction = true;
-                if (!response.isSubAction()) {
+                if (finishedNextActions) {
                     execute();
                 } else {
                     executeNextActions(playerList);
@@ -119,7 +119,7 @@ public class ActionCardExecution {
             CardAction action = theCard.getActions().get(actualStateIndex);
             getNextActions(action);
             if (action instanceof ComplexCardAction && ((ComplexCardAction) action).isExecutionOptional() && !executeOptionalAction) {
-                playground.getGameService().sendToSpecificPlayer(player, new OptionalActionRequest(gameID, player.getTheUserInThePlayer(), action, false));
+                playground.getGameService().sendToSpecificPlayer(player, new OptionalActionRequest(gameID, player.getTheUserInThePlayer(), action));
             } else {
                 List<Player> playerList = getAffectedPlayers(action);
                 if (!(action instanceof GetCard) && !(action instanceof Move)) {
@@ -176,7 +176,7 @@ public class ActionCardExecution {
         while (nextActionIndex < nextActions.size() && !waitedForPlayerInput) {
             CardAction action = nextActions.get(nextActionIndex);
             if (action instanceof ComplexCardAction && ((ComplexCardAction) action).isExecutionOptional() && !executeOptionalAction) {
-                playground.getGameService().sendToSpecificPlayer(player, new OptionalActionRequest(gameID, player.getTheUserInThePlayer(), action, true));
+                playground.getGameService().sendToSpecificPlayer(player, new OptionalActionRequest(gameID, player.getTheUserInThePlayer(), action));
             } else {
                 if (!(action instanceof GetCard) && !(action instanceof Move)) {
                     if (!executeCardAction(action, playerList, true)) return false;
