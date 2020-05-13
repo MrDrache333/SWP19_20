@@ -8,8 +8,10 @@ import com.google.inject.Injector;
 import de.uol.swp.client.di.ClientModule;
 import de.uol.swp.client.game.GameService;
 import de.uol.swp.client.lobby.LobbyService;
+import de.uol.swp.client.lobby.OpenJoinLobbyRequest;
 import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.lobby.message.*;
+import de.uol.swp.common.lobby.request.OpenLobbyCreateRequest;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.exception.RegistrationExceptionMessage;
@@ -23,6 +25,7 @@ import de.uol.swp.common.user.response.RegistrationSuccessfulResponse;
 import io.netty.channel.Channel;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -214,9 +217,13 @@ public class ClientApp extends Application implements ConnectionListener {
      */
     @Subscribe
     public void onCreateLobbyMessage(CreateLobbyMessage message) {
-        if (message.getUser().getUsername().equals(user.getUsername())) {
+        if (message.getUser() != null && message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getChatID(), message.getUser());
+            sceneManager.closeCreateLobby();
             LOG.debug("CreateLobbyMessage vom Server erfolgreich angekommen");
+        } else if (message.getLobbyName() == null )
+        {
+            SceneManager.showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden. Zudem darf er noch nicht vorhanden sein.", "Fehler");
         }
     }
 
@@ -230,11 +237,16 @@ public class ClientApp extends Application implements ConnectionListener {
      */
     @Subscribe
     public void onUserJoinedLobbyMessage(UserJoinedLobbyMessage message) {
-        if (message.getUser().getUsername().equals(user.getUsername())) {
+
+        if (message.getUser().getUsername().equals(user.getUsername() )) {
             sceneManager.showLobbyScreen(message.getUser(), message.getLobby().getName(), message.getLobbyID(), message.getGameOwner());
+            sceneManager.closeJoinLobby();
             LOG.info("User " + message.getUser().getUsername() + " joined lobby successfully");
+        } else if (message.getLobby().getLobbyPassword() == null) {
+            SceneManager.showAlert(Alert.AlertType.WARNING, "Das Passwort ist falsch", "Fehler");
         }
-    }
+        }
+
 
     /**
      * Empfängt vom Server die Message, dass User Lobby verlassen hat.
@@ -267,6 +279,29 @@ public class ClientApp extends Application implements ConnectionListener {
         }
     }
 
+    /**
+     * Empfängt Nachricht, dass das Lobby erstellen Fenster geöffnet werden soll
+     * @param message
+     * @author Paula
+     * @since Sprint4
+     */
+
+    @Subscribe
+    public void onOpenCreateLobby(OpenLobbyCreateRequest message) {
+        if (message.getUser().getUsername().equals(user.getUsername())) {
+            sceneManager.showCreateLobbyScreen(message.getUser());
+
+
+        }
+    }
+        @Subscribe
+        public void onOpenJoinLobby (OpenJoinLobbyRequest message){
+            if (message.getUser().getUsername().equals(user.getUsername())) {
+                sceneManager.showJoinLobbyScreen(message.getUser(), message.getLobby());
+
+
+        }
+    }
     /**
      * Aktualisiert den User und schließt das Einstellungsfenster.
      *
