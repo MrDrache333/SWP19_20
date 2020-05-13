@@ -375,7 +375,6 @@ public class SceneManager {
             Parent rootPane = initPresenter(RegistrationPresenter.fxml);
             registrationScene = new Scene(rootPane, 1280, 750);
             registrationScene.getStylesheets().add(styleSheet);
-            registrationScene.getStylesheets().add(RegistrationPresenter.css);
         }
     }
 
