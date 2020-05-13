@@ -3,6 +3,7 @@ package de.uol.swp.server.lobby;
 import com.google.common.eventbus.DeadEvent;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import de.uol.swp.common.chat.request.NewChatMessageRequest;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
 import de.uol.swp.common.lobby.message.UpdatedInGameMessage;
@@ -168,5 +169,18 @@ class LobbyServiceTest {
         UpdatedInGameMessage message = (UpdatedInGameMessage) event;
         assertEquals(lobbyID, message.getLobbyID());
         assertFalse(lobbyManagement.getLobby(lobbyID).get().getInGame());
+    }
+
+    @Test
+    void onSendChosenCardsTest() throws InterruptedException {
+        UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
+        ArrayList<Short> chosenCards = new ArrayList<>();
+        chosenCards.add((short) 5);
+        chosenCards.add((short) 7);
+        lobbyService.onSendChosenCardsRequest(new SendChosenCardsRequest(lobbyID, chosenCards));
+
+        lock.await(500, TimeUnit.MILLISECONDS);
+
+        assertTrue(event instanceof NewChatMessageRequest);
     }
 }

@@ -19,6 +19,17 @@ public class AbstractLobbyRequest extends AbstractRequestMessage {
      * Eine Anfrage wird erstellt die allgemein mit der Lobby zu tun hat.
      *
      * @param lobbyID LobbyID der Lobby auf die sich die Anfrage bezieht
+     * @author Marco, Marvin
+     * @since Start
+     */
+    public AbstractLobbyRequest(UUID lobbyID) {
+        this.lobbyID = lobbyID;
+    }
+
+    /**
+     * Eine Anfrage wird erstellt die allgemein mit der Lobby zu tun hat.
+     *
+     * @param lobbyID LobbyID der Lobby auf die sich die Anfrage bezieht
      * @param user    User der die Anfrage verschickt
      * @author Marco, Marvin
      * @since Start

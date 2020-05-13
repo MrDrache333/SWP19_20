@@ -117,6 +117,19 @@ public class GameService extends AbstractService {
     }
 
     /**
+     * Das Kartfeld wird geschickt.
+     *
+     * @param gameID    die ID des Spiels
+     * @param cardField das Kartenfeld
+     * @author Anna, Fenja
+     * @since Sprint 7
+     */
+    public void sendCardField(UUID gameID, Map<Short, Integer> cardField) {
+        SendCardFieldMessage message = new SendCardFieldMessage(gameID, cardField);
+        post(message);
+    }
+
+    /**
      * Startet das Spiel wenn die StartGameInternalMessage ankommt.
      * Sendet außerdem eine Nachricht mit dem ersten Spieler in den Chat.
      *
