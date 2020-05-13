@@ -349,6 +349,10 @@ public class Playground extends AbstractPlayground {
         return players;
     }
 
+    public Short getIndexOfPlayer(Player player) {
+        return (short) players.indexOf(player);
+    }
+
     public Player getActualPlayer() {
         return actualPlayer;
     }
