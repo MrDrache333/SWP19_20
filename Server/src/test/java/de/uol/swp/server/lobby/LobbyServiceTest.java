@@ -3,6 +3,7 @@ package de.uol.swp.server.lobby;
 import com.google.common.eventbus.DeadEvent;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import de.uol.swp.common.chat.request.NewChatMessageRequest;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
 import de.uol.swp.common.lobby.message.UpdatedInGameMessage;
@@ -10,7 +11,6 @@ import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.lobby.request.*;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
-import de.uol.swp.common.lobby.response.SetChosenCardsResponse;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.chat.ChatManagement;
@@ -181,9 +181,6 @@ class LobbyServiceTest {
 
         lock.await(500, TimeUnit.MILLISECONDS);
 
-        assertTrue(event instanceof SetChosenCardsResponse);
-        SetChosenCardsResponse response = (SetChosenCardsResponse) event;
-        assertTrue(response.isSuccess());
-
+        assertTrue(event instanceof NewChatMessageRequest);
     }
 }
