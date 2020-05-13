@@ -64,7 +64,7 @@ public class GameViewPresenter extends AbstractPresenter {
     private User loggedInUser;
 
     // @FXML
-    //   private Pane gameView;
+    // private Pane gameView;
 
     @FXML
     private Pane gameViewWIP;
@@ -108,6 +108,8 @@ public class GameViewPresenter extends AbstractPresenter {
     private final ChatViewPresenter chatViewPresenter;
     private final Injector injector;
     private final GameManagement gameManagement;
+
+    private ArrayList<Short> handCardIDs;
 
     private final EventHandler<MouseEvent> handCardEventHandler = new EventHandler() {
         @Override
@@ -266,6 +268,30 @@ public class GameViewPresenter extends AbstractPresenter {
         }
     }
 
+    @Subscribe
+    public void onStartClearPhase(StartClearPhaseMessage msg){
+        if (msg.getGameID().equals(this.lobbyID) && msg.getUser().equals(loggedInUser)) {
+            ArrayList<Node> removeIds = new ArrayList<>();
+            synchronized (handcards){
+                for (Node c : handcards.getChildren()) {
+                    ImageView card = (ImageView) c;
+                    Platform.runLater(() -> {
+                        AnimationManagement.clearCards(card);
+                        //
+                        handcards.getChildren().remove(c);
+                    });
+                }
+                //removeIds.add(c);
+                //LOG.debug(handcards.getChildren());
+            }
+            //for (Node c : removeIds){
+            //    handcards.getChildren().remove(c);
+            //}
+
+        }
+        LOG.debug(msg.getUser().getUsername());
+    }
+
     /**
      * Aktualisiert den loggedInUser sowie die Liste, falls sich der Username geändert hat
      *
@@ -361,7 +387,6 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     @Subscribe
     public void onPlayCardMessage(PlayCardMessage msg) {
-
         ImageView card = (ImageView) mouseEvent.getTarget();
         if (msg.getGameID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
             if (msg.getIsPlayed()) {
@@ -408,14 +433,13 @@ public class GameViewPresenter extends AbstractPresenter {
      * @author Devin S., Anna
      * @since Sprint5
      */
-
     @FXML
     @Subscribe
-    public void ShowNewHand(DrawHandMessage message) {
+    public void onDrawHandMessage(DrawHandMessage message) {
         Platform.runLater(() -> {
             if (lobbyID.equals(message.getTheLobbyID())) {
-                ArrayList<Short> HandCardID = message.getCardsOnHand();
-                HandCardID.forEach((n) -> {
+                handCardIDs = message.getCardsOnHand();
+                handCardIDs.forEach((n) -> {
                     String pfad = "file:Client/src/main/resources/cards/images/" + n + ".png";
                     Image picture = new Image(pfad);
                     ImageView card = new ImageView(picture);
@@ -424,9 +448,11 @@ public class GameViewPresenter extends AbstractPresenter {
                     card.setId(n.toString());
                     card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
                     deckPane.getChildren().add(card);
-                    AnimationManagement.addToHand(card, handcards.getChildren().size());
-                    deckPane.getChildren().remove(card);
-                    handcards.getChildren().add(card);
+                    synchronized (handcards) {
+                        AnimationManagement.addToHand(card, handcards.getChildren().size());
+                        deckPane.getChildren().remove(card);
+                        handcards.getChildren().add(card);
+                    }
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                 });
             }
@@ -468,7 +494,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * Die usersView Liste wird geupdatet.
      * Äquivalent zu MainMenuPresenter.updateUsersList.
      *
-     * @param userList
+     * @param userList die neue Userliste
      * @author Marvin
      * @since Sprint3
      */
@@ -509,7 +535,6 @@ public class GameViewPresenter extends AbstractPresenter {
      * @author Devin
      * @since Sprint 6
      */
-
     private void playChoosenCard(UUID gameID, User loggedInUser, String pfad, Short id, ImageView card, MouseEvent e) {
         ImageView bigCardImage = new ImageView(new Image(pfad));
         bigCardImage.setFitHeight(225.0);
@@ -528,7 +553,6 @@ public class GameViewPresenter extends AbstractPresenter {
             back.setMinWidth(52.0);
             gameViewWIP.getChildren().add(play);
             gameViewWIP.getChildren().add(back);
-
             play.setOnAction(event -> {
                 gameViewWIP.getChildren().remove(play);
                 gameViewWIP.getChildren().remove(back);
@@ -549,19 +573,16 @@ public class GameViewPresenter extends AbstractPresenter {
             });
         } else {
             Button back = new Button("zurück");
-
             back.setLayoutX(516.0);
             back.setLayoutY(385.0);
             back.setMinWidth(52.0);
             gameViewWIP.getChildren().add(back);
-
             // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt
             back.setOnAction(event -> {
                 gameViewWIP.getChildren().remove(back);
                 gameViewWIP.getChildren().remove(bigCardImage);
             });
         }
-
     }
 
     /**
@@ -625,8 +646,6 @@ public class GameViewPresenter extends AbstractPresenter {
         });
     }
 
-//}
-
     /**
      * Hier werden alle Geldkarten, die sich auf der Hand befinden, ausgespielt
      *
@@ -634,15 +653,17 @@ public class GameViewPresenter extends AbstractPresenter {
      * @since Sprint 7
      */
     public void playAllMoneyCardsOnHand() {
-        for (Node c : handcards.getChildren()) {
-            ImageView card = (ImageView) c;
-            if (card.getId().equals("1") || card.getId().equals("2") || card.getId().equals("3")) {
-                Platform.runLater(() -> {
-                    AnimationManagement.playCard(card, playedCardLayoutContainer.getChildren().size());
-                    handcards.getChildren().remove(c);
-                    playedCardLayoutContainer.getChildren().add(card);
-                });
+            synchronized (handcards) {
+                for (Node c : handcards.getChildren()) {
+                    ImageView card = (ImageView) c;
+                    if (card.getId().equals("1") || card.getId().equals("2") || card.getId().equals("3")) {
+                        Platform.runLater(() -> {
+                            AnimationManagement.playCard(card, playedCardLayoutContainer.getChildren().size());
+                            handcards.getChildren().remove(c);
+                            playedCardLayoutContainer.getChildren().add(card);
+                        });
+                    }
+                }
             }
-        }
     }
 }

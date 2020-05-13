@@ -154,6 +154,18 @@ public class AnimationManagement {
     }
 
     /**
+     * Wenn die Clearphase ist gehen die Karten auf den Ablagestapel
+     * Die neuen Koordinaten werden übernommen.
+     *
+     * @param card die Karte
+     * @author Darian
+     * @since Sprint7
+     */
+    public static void clearCards(ImageView card) {
+        createLineToPath(card, keepPosition(card), ABLAGE_X, ABLAGE_Y);
+    }
+
+    /**
      * Wenn ein Gegenspieler eine Karte kauft, wird sie aus dem Spielfeld bewegt.
      *
      * @param card die Karte
