@@ -17,11 +17,13 @@ public class OptionalActionResponse extends AbstractGameMessage {
     private static final long serialVersionUID = -4612871995662134853L;
     private CardAction action;
     private boolean execute;
+    private boolean subAction;
 
-    public OptionalActionResponse(UUID gameID, User player, CardAction action, boolean execute) {
+    public OptionalActionResponse(UUID gameID, User player, CardAction action, boolean execute, boolean subAction) {
         super(gameID, player);
         this.action = action;
         this.execute = execute;
+        this.subAction = subAction;
     }
 
     public CardAction getAction() {
@@ -30,5 +32,9 @@ public class OptionalActionResponse extends AbstractGameMessage {
 
     public boolean isExecute() {
         return execute;
+    }
+
+    public boolean isSubAction() {
+        return subAction;
     }
 }

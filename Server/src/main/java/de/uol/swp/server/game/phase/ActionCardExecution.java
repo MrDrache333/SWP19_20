@@ -1,9 +1,12 @@
 package de.uol.swp.server.game.phase;
 
+import com.google.common.eventbus.Subscribe;
 import de.uol.swp.common.game.AbstractPlayground;
 import de.uol.swp.common.game.card.*;
 import de.uol.swp.common.game.card.parser.components.CardAction.CardAction;
 import de.uol.swp.common.game.card.parser.components.CardAction.ComplexCardAction;
+import de.uol.swp.common.game.card.parser.components.CardAction.request.OptionalActionRequest;
+import de.uol.swp.common.game.card.parser.components.CardAction.response.OptionalActionResponse;
 import de.uol.swp.common.game.card.parser.components.CardAction.types.*;
 import de.uol.swp.common.game.messages.CardMovedMessage;
 import de.uol.swp.common.game.messages.ChooseNextActionMessage;
@@ -54,6 +57,8 @@ public class ActionCardExecution {
 
     //Index der aktuell auszuführenden Unteraktion
     private int nextActionIndex;
+    //Ob eine optionale Aktion ausgeführt werden soll
+    private boolean executeOptionalAction;
 
     public ActionCardExecution(short cardID, Playground playground) {
         this.waitedForPlayerInput = false;
@@ -66,6 +71,39 @@ public class ActionCardExecution {
         this.players = playground.getPlayers();
         this.nextActionIndex = 0;
         this.finishedNextActions = true;
+        this.executeOptionalAction = false;
+    }
+
+    /**
+     * Führt eine optionale Aktion oder überspringt diese (je nach Entscheidung des Spielers)
+     *
+     * @param response Die OptionalActionResponse
+     * @author Julia
+     * @since Sprint7
+     */
+    @Subscribe
+    public void onOptionalActionResponse(OptionalActionResponse response) {
+        if (response.getGameID().equals(gameID)) {
+            List<Player> playerList = new ArrayList<>();
+            playerList.add(player);
+
+            if (!response.isExecute()) {
+                if (!response.isSubAction()) {
+                    actualStateIndex++;
+                    execute();
+                } else {
+                    nextActionIndex++;
+                    executeNextActions(playerList);
+                }
+            } else {
+                executeOptionalAction = true;
+                if (!response.isSubAction()) {
+                    execute();
+                } else {
+                    executeNextActions(playerList);
+                }
+            }
+        }
     }
 
     /**
@@ -79,25 +117,28 @@ public class ActionCardExecution {
         //TODO Some pretty nice and clean Code to Execute the Shit out of that Card
         while (actualStateIndex < theCard.getActions().size() && !waitedForPlayerInput && finishedNextActions) {
             CardAction action = theCard.getActions().get(actualStateIndex);
-            List<Player> playerList = getAffectedPlayers(action);
-
-            if (!(action instanceof GetCard) && !(action instanceof Move)) {
-                if (!executeCardAction(action, playerList, false)) return false;
-            } else {
-                //TODO
-            }
-
             getNextActions(action);
-            if (nextActions.isEmpty()) {
-                finishedNextActions = true;
-                nextActionIndex = 0;
-            }
+            if (action instanceof ComplexCardAction && ((ComplexCardAction) action).isExecutionOptional() && !executeOptionalAction) {
+                playground.getGameService().sendToSpecificPlayer(player, new OptionalActionRequest(gameID, player.getTheUserInThePlayer(), action, false));
+            } else {
+                List<Player> playerList = getAffectedPlayers(action);
+                if (!(action instanceof GetCard) && !(action instanceof Move)) {
+                    if (!executeCardAction(action, playerList, false)) return false;
+                } else {
+                    //TODO
+                }
+                if (nextActions.isEmpty()) {
+                    finishedNextActions = true;
+                    nextActionIndex = 0;
+                }
 
-            //TODO: ggf. gegebene nextActions müssen wenn Spielerantwort da ist, ausgeführt werden
-            // -> über finishedNextActions kann dies geprüft werden
-            if (!nextActions.isEmpty() && !waitedForPlayerInput) {
-                if (!executeNextActions()) return false;
+                //TODO: ggf. gegebene nextActions müssen wenn Spielerantwort da ist, ausgeführt werden
+                // -> über finishedNextActions kann dies geprüft werden
+                if (!nextActions.isEmpty() && !waitedForPlayerInput) {
+                    if (!executeNextActions(playerList)) return false;
+                }
             }
+            executeOptionalAction = false;
         }
 
         checkIfComplete();
@@ -130,17 +171,20 @@ public class ActionCardExecution {
      * @author Julia
      * @since Sprint7
      */
-    private boolean executeNextActions() {
+    private boolean executeNextActions(List<Player> playerList) {
         finishedNextActions = false;
         while (nextActionIndex < nextActions.size() && !waitedForPlayerInput) {
             CardAction action = nextActions.get(nextActionIndex);
-            List<Player> playerList = getAffectedPlayers(action);
-
-            if (!(action instanceof GetCard) && !(action instanceof Move)) {
-                if (!executeCardAction(action, playerList, true)) return false;
+            if (action instanceof ComplexCardAction && ((ComplexCardAction) action).isExecutionOptional() && !executeOptionalAction) {
+                playground.getGameService().sendToSpecificPlayer(player, new OptionalActionRequest(gameID, player.getTheUserInThePlayer(), action, true));
             } else {
-                //TODO
+                if (!(action instanceof GetCard) && !(action instanceof Move)) {
+                    if (!executeCardAction(action, playerList, true)) return false;
+                } else {
+                    //TODO
+                }
             }
+            executeOptionalAction = false;
         }
 
         //Alle Unteraktionen wurden vollständig ausgeführt
