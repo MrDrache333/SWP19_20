@@ -16,19 +16,13 @@ public class OptionalActionRequest extends AbstractGameMessage {
 
     private static final long serialVersionUID = -2721566171106710582L;
     private CardAction action;
-    private boolean subAction;
 
-    public OptionalActionRequest(UUID gameID, User player, CardAction action, boolean subAction) {
+    public OptionalActionRequest(UUID gameID, User player, CardAction action) {
         super(gameID, player);
         this.action = action;
-        this.subAction = subAction;
     }
 
     public CardAction getAction() {
         return action;
-    }
-
-    public boolean isSubAction() {
-        return subAction;
     }
 }
