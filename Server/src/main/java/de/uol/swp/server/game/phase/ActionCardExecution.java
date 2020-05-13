@@ -112,10 +112,12 @@ public class ActionCardExecution {
      * @author Julia
      * @since Sprint7
      */
-    private void checkIfComplete() {
+    private boolean checkIfComplete() {
         if (actualStateIndex == theCard.getActions().size() && !waitedForPlayerInput && finishedNextActions) {
             playground.getCompositePhase().finishedActionCardExecution(player, theCard);
+            return true;
         }
+        return false;
     }
 
     //TODO: Was ist, wenn aus der vorherigen Aktion Karten übergeben werden müssen?
@@ -146,7 +148,10 @@ public class ActionCardExecution {
             finishedNextActions = true;
             nextActions.clear();
             nextActionIndex = 0;
-            checkIfComplete();
+            if (!checkIfComplete()) {
+                actualStateIndex++;
+                execute();
+            }
         }
 
         return true;
@@ -157,7 +162,7 @@ public class ActionCardExecution {
      * Liefert eine Liste mit allen Unteraktionen einer Aktion
      *
      * @param action die Kartenaktion, deren Unteraktionen herausgefiltert werden sollen
-     * @return Liste mit allen Unteraktionen der Karte
+     * @return Liste mit allen Unteraktionen der Aktion
      * @author Julia
      * @since Sprint7
      */
