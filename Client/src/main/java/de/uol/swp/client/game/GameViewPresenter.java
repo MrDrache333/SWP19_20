@@ -390,18 +390,20 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Die Nachricht die angibt ob die Karte gespielt werden konnte
+     * Die Nachricht die angibt ob die Karte gespielt werden konnte.
+     * Wenn currentPlayer eine Karte ausspielt, wird die ausgewählte Karte auf das Ausspielfeld gelegt.
+     * Wenn ein anderer Spieler eine Karte ausspielt, bekommen wird das für dei anderen Spieler angezeigt.
      *
-     * @param msg die Nachricht
+     * @param msg die Nachricht die vom server gesendet wird, wenn ein Spieler eine Karte ausspielz.
      * @author Devin
-     * @since Sprint 6
+     * @since Sprint 6,7
      */
     @FXML
     @Subscribe
     public void onPlayCardMessage(PlayCardMessage msg) {
-
-        ImageView card = (ImageView) mouseEvent.getTarget();
+        // Falls diese Message an den currentPlayer geschickt wird, wird das ausspielen der Karte angezeigt.
         if (msg.getGameID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
+            ImageView card = (ImageView) mouseEvent.getTarget();
             if (msg.getIsPlayed()) {
                 Platform.runLater(() -> {
                     if (handcards.getChildren().contains(card)) {
@@ -416,36 +418,216 @@ public class GameViewPresenter extends AbstractPresenter {
                 LOG.debug("Das Spielen der Karte " + msg.getHandCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
             }
         }
+        // Falls die Message bei anderen Spielern ankommt, wird ihnen angezeigt, dass ihr Gegner eine Karte spiet.
+        if (msg.getGameID().equals(lobbyID) && !msg.getCurrentUser().equals(loggedInUser)) {
+            if (msg.getIsPlayed()) {
+                List<Short> playerIndexNumbers = new ArrayList<>();
+                playerIndexNumbers.add((short) 0);
+                playerIndexNumbers.add((short) 1);
+                playerIndexNumbers.add((short) 2);
+                playerIndexNumbers.add((short) 3);
+                if (msg.getGameID().equals(lobbyID) && !msg.getCurrentUser().equals(loggedInUser)) {
+                    playerIndexNumbers.remove(msg.getUserPlaceNumber());
+                    ImageView card = new ImageView(new Image("file:Client/src/main/resources/cards/images/" + msg.getHandCardID() + ".png"));
+
+                    if (playerIndexNumbers.get(0).equals(msg.getEnemyPlaceNumber())) {
+                        firstEnemyHand.getChildren().remove(0);
+                        // TODO: Animation
+                        firstEnemyPCLC.getChildren().add(card);
+                        return;
+                    }
+
+                    if (playerIndexNumbers.get(1).equals(msg.getEnemyPlaceNumber())) {
+                        secondEnemyHand.getChildren().remove(0);
+                        // TODO: Animation
+                        secondEnemyPCLC.getChildren().add(card);
+                        return;
+                    }
+
+                    if (playerIndexNumbers.get(2).equals(msg.getEnemyPlaceNumber())) {
+                        thirdEnemyHand.getChildren().remove(0);
+                        // TODO: Animation
+                        thirdEnemyPCLC.getChildren().add(card);
+                        return;
+                    }
+                }
+            } else {
+                showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht spielen!", "Fehler");
+                LOG.debug("Das Spielen der Karte " + msg.getHandCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
+            }
+        }
     }
 
     /**
-     * Wenn ein anderer Spieler eine Karte entsorgt, wird dies den anderen Spielern angezeigt.
+     * Wenn ein anderer Spieler eine Karte von der Hand entsorgt, wird dies den anderen Spielern angezeigt.
      *
-     * @param msg       Die Message die vom server gesendet wird, wenn ein anderer Spieler eine KArte entsorgt.
-     *
+     * @param msg       Die Message die vom server gesendet wird, wenn ein anderer Spieler eine Karte entsorgt.
+     * @author Devin
+     * @since Sprint 7
      */
-    public void onOtherPlayerDiscardCardMessage (OtherPlayerDiscardMessage msg) {
+    @FXML
+    @Subscribe
+    public void onDiscardCardMessage (DiscardCardMessage msg) {
+        if (msg.getGameID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
+            //TODO: Aussuchverfahren zum abwerfen von Karten implementieren
+        }
+
 
         List<Short> playerIndexNumbers = new ArrayList<>(); playerIndexNumbers.add((short) 0); playerIndexNumbers.add((short) 1); playerIndexNumbers.add((short) 2); playerIndexNumbers.add((short) 3);
-
         if (msg.getGameID().equals(lobbyID) && !msg.getCurrentUser().equals(loggedInUser)) {
-            playerIndexNumbers.remove(msg.getEnemyPlaceNumber());
-            ImageView card = new ImageView(new Image("file:Client/src/main/resources/cards/images/" + msg.getCardID() + ".png"));
-            if (playerIndexNumbers.get(0).equals(msg.getUserPlaceNumber())) {
-                firstEnemyDiscardPile.getChildren().add(card);
+            playerIndexNumbers.remove(msg.getUserPlaceNumber());
+            if (playerIndexNumbers.get(0).equals(msg.getEnemyPlaceNumber())) {
+                int numberOfCardsInHand = firstEnemyHand.getChildren().size();
+                for (Short id: msg.getCardID()) {
+                    ImageView card = new ImageView(new Image("file:Client/src/main/resources/cards/images/" + id + ".png"));
+                    if(numberOfCardsInHand==0) {
+                        LOG.debug("Die Hand hat keine Karten mehr zum entsorgen");
+                        return;
+                    }
+                    firstEnemyHand.getChildren().remove(0);
+                    // TODO: Animation Management zum entsorgen einer Karte
+                    firstEnemyDiscardPile.getChildren().add(card);
+                }
+                return;
+            }
+            if (playerIndexNumbers.get(1).equals(msg.getEnemyPlaceNumber())) {
+                int numberOfCardsInHand = secondEnemyHand.getChildren().size();
+                for (Short id: msg.getCardID()) {
+                    ImageView card = new ImageView(new Image("file:Client/src/main/resources/cards/images/" + id + ".png"));
+                    if(numberOfCardsInHand==0) {
+                        LOG.debug("Die Hand hat keine Karten mehr zum entsorgen");
+                        return;
+                    }
+                    secondEnemyHand.getChildren().remove(0);
+                    // TODO: Animation Management zum entsorgen einer Karte
+                    secondEnemyDiscardPile.getChildren().add(card);
+                }
+                return;
+            }
+            if (playerIndexNumbers.get(2).equals(msg.getEnemyPlaceNumber())) {
+                int numberOfCardsInHand = thirdEnemyHand.getChildren().size();
+                for (Short id: msg.getCardID()) {
+                    ImageView card = new ImageView(new Image("file:Client/src/main/resources/cards/images/" + id + ".png"));
+                    if(numberOfCardsInHand==0) {
+                        LOG.debug("Die Hand hat keine Karten mehr zum entsorgen");
+                        return;
+                    }
+                    thirdEnemyHand.getChildren().remove(0);
+                    // TODO: Animation Management zum entsorgen einer Karte
+                    thirdEnemyDiscardPile.getChildren().add(card);
+                }
+                return;
+            }
+        }
+    }
+
+    /**
+     * Wenn ein anderer Spieler sich in der ClearPhase befindet, wird das Entsorgen dessen Handkarten und ausgespielten Karten den anderen Spielern angezeigt
+     *
+     * @param msg       Die Message die vom server gesendet wird, wenn ein anderer Spieler eine Karte sich in der ClearPhase befindet.
+     * @author Devin
+     * @since Sprint 7
+     */
+    @FXML
+    @Subscribe
+    public void ClearPhaseMesage (ClearPhaseMessage msg) {
+        // Wenn die ClearMessage an den currentPlayer geht werden, seine Handkarten und
+        // ausgespielten Karten auf den Ablagestapel getan und fünf neue Karten gezogen.
+        if (msg.getGameID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
+            // TODO: Animation für das aufräumen des Feldes muss eingefügt werden.
+            discardPile.getChildren().addAll(playedCardLayoutContainer.getChildren());
+            playedCardLayoutContainer.getChildren().clear();
+            discardPile.getChildren().addAll(handcards.getChildren());
+            handcards.getChildren().clear();
+            ArrayList<Short> HandCardID = msg.getCardsToDraw();
+            HandCardID.forEach((n) -> {
+                String pfad = "file:Client/src/main/resources/cards/images/" + n + ".png";
+                Image picture = new Image(pfad);
+                ImageView card = new ImageView(picture);
+                card.setFitHeight(107);
+                card.setPreserveRatio(true);
+                card.setId(n.toString());
+                card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
+                deckPane.getChildren().add(card);
+                AnimationManagement.addToHand(card, handcards.getChildren().size());
+                deckPane.getChildren().remove(card);
+                handcards.getChildren().add(card);
+                card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+            });
+        }
+        // Wenn ein anderer Spieler eine ClearPhaseMessage erhählt wird dies den anderen Spielern
+        // angezeigt, indem deren Repräsentation des Spieler seine Handkarten und ausgespielten Karten auf den Ablagestapel legt.
+        if (msg.getGameID().equals(lobbyID) && !msg.getCurrentUser().equals(loggedInUser)) {
+            List<Short> playerIndexNumbers = new ArrayList<>(); playerIndexNumbers.add((short) 0); playerIndexNumbers.add((short) 1); playerIndexNumbers.add((short) 2); playerIndexNumbers.add((short) 3);
+            playerIndexNumbers.remove(msg.getUserPlaceNumber());
+
+            if (playerIndexNumbers.get(0).equals(msg.getEnemyPlaceNumber())) {
+                firstEnemyDiscardPile.getChildren().addAll(firstEnemyHand.getChildren());
+                firstEnemyHand.getChildren().clear();
+                firstEnemyDiscardPile.getChildren().addAll(firstEnemyPCLC.getChildren());
+                firstEnemyPCLC.getChildren().clear();
+
+                String pfad = "file:Client/src/main/resources/cards/images/card_back.png";
+                Image picture = new Image(pfad);
+                for(int i=0; i<5; i++) {
+                    ImageView card = new ImageView(picture);
+                    card.setFitHeight(107);
+                    card.setPreserveRatio(true);
+                    card.setId("back");
+                    card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
+                    firstEnemyDeck.getChildren().add(card);
+                    AnimationManagement.addToHand(card, firstEnemyHand.getChildren().size());
+                    firstEnemyDeck.getChildren().remove(card);
+                    firstEnemyHand.getChildren().add(card);
+                        }
                 return;
             }
 
-            if (playerIndexNumbers.get(1).equals(msg.getUserPlaceNumber())) {
-                secondEnemyDiscardPile.getChildren().add(card);
+            if (playerIndexNumbers.get(1).equals(msg.getEnemyPlaceNumber())) {
+                secondEnemyDiscardPile.getChildren().addAll(secondEnemyHand.getChildren());
+                secondEnemyHand.getChildren().clear();
+                secondEnemyDiscardPile.getChildren().addAll(secondEnemyPCLC.getChildren());
+                secondEnemyPCLC.getChildren().clear();
+                String pfad = "file:Client/src/main/resources/cards/images/card_back.png";
+                Image picture = new Image(pfad);
+                for(int i=0; i<5; i++) {
+                    ImageView card = new ImageView(picture);
+                    card.setFitHeight(107);
+                    card.setPreserveRatio(true);
+                    card.setId("back");
+                    card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
+                    secondEnemyDeck.getChildren().add(card);
+                    AnimationManagement.addToHand(card, secondEnemyHand.getChildren().size());
+                    secondEnemyDeck.getChildren().remove(card);
+                    secondEnemyHand.getChildren().add(card);
+                }
+
                 return;
             }
 
-            if (playerIndexNumbers.get(2).equals(msg.getUserPlaceNumber())) {
-                thirdEnemyDiscardPile.getChildren().add(card);
+            if (playerIndexNumbers.get(2).equals(msg.getEnemyPlaceNumber())) {
+                thirdEnemyDiscardPile.getChildren().addAll(thirdEnemyHand.getChildren());
+                thirdEnemyHand.getChildren().clear();
+                thirdEnemyDiscardPile.getChildren().addAll(thirdEnemyPCLC.getChildren());
+                thirdEnemyPCLC.getChildren().clear();
+                String pfad = "file:Client/src/main/resources/cards/images/card_back.png";
+                Image picture = new Image(pfad);
+                for(int i=0; i<5; i++) {
+                    ImageView card = new ImageView(picture);
+                    card.setFitHeight(107);
+                    card.setPreserveRatio(true);
+                    card.setId("back");
+                    card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
+                    thirdEnemyDeck.getChildren().add(card);
+                    AnimationManagement.addToHand(card, thirdEnemyHand.getChildren().size());
+                    thirdEnemyDeck.getChildren().remove(card);
+                    thirdEnemyHand.getChildren().add(card);
+                }
                 return;
             }
-
+        } else {
+            showAlert(Alert.AlertType.WARNING, "Der Spieler wurde nicht gefunden oder ein unerwarter Fehler ist aufgetaucht", "Fehler");
+            LOG.debug("Das aufräumen des Feldes von Spieler " + msg.getCurrentUser() + " ist fehlgeschlagen");
         }
     }
 

@@ -3,16 +3,16 @@ package de.uol.swp.common.game.messages;
 import de.uol.swp.common.message.AbstractServerMessage;
 import de.uol.swp.common.user.User;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
-public class OtherPlayerDiscardMessage extends AbstractServerMessage {
+public class ClearPhaseMessage extends AbstractServerMessage {
 
     /**
      * Die Message die anderen Spielern gesendet wird, wenn ein Spieler eine Karte entsorgt.
      *
      * @param gameID                Die ID des aktuellen Spiels
      * @param currentUser           Der Spieler der gerade am Zug ist
-     * @param cardID                Die ID der entsorgten Karte
      * @param UserPlaceNumber       Der Index des Users in der Players Liste
      * @param enemyPlaceNumber      Der Index des Gegners in der Player Liste
      * @author Devin
@@ -21,16 +21,16 @@ public class OtherPlayerDiscardMessage extends AbstractServerMessage {
 
     private final UUID gameID;
     private final User currentUser;
-    private final Short cardID;
     private final Short userPlaceNumber;
     private final Short enemyPlaceNumber;
+    private ArrayList<Short> cardsToDraw;
 
-    public OtherPlayerDiscardMessage (UUID gameID, User currentUser, Short cardID, Short userPlaceNumber, Short enemyPlaceNumber) {
-            this.gameID = gameID;
-            this.currentUser = currentUser;
-            this.cardID = cardID;
-            this.userPlaceNumber = userPlaceNumber;
-            this.enemyPlaceNumber = enemyPlaceNumber;
+    public ClearPhaseMessage (UUID gameID, User currentUser, Short userPlaceNumber, Short enemyPlaceNumber, ArrayList<Short> cardsToDraw) {
+        this.gameID = gameID;
+        this.currentUser = currentUser;
+        this.userPlaceNumber = userPlaceNumber;
+        this.enemyPlaceNumber = enemyPlaceNumber;
+        this.cardsToDraw = cardsToDraw;
 
     }
 
@@ -42,10 +42,6 @@ public class OtherPlayerDiscardMessage extends AbstractServerMessage {
         return currentUser;
     }
 
-    public Short getCardID() {
-        return cardID;
-    }
-
     public Short getEnemyPlaceNumber() {
         return enemyPlaceNumber;
     }
@@ -54,4 +50,7 @@ public class OtherPlayerDiscardMessage extends AbstractServerMessage {
         return userPlaceNumber;
     }
 
+    public ArrayList<Short> getCardsToDraw() {
+        return cardsToDraw;
+    }
 }
