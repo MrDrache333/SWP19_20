@@ -1,6 +1,6 @@
 package de.uol.swp.common.game;
 
-import de.uol.swp.common.message.AbstractMessage;
+import de.uol.swp.common.message.AbstractServerMessage;
 import de.uol.swp.common.user.User;
 
 import java.util.UUID;
@@ -8,7 +8,7 @@ import java.util.UUID;
 /**
  * The type AbstractGameMessage.
  */
-abstract public class AbstractGameMessage extends AbstractMessage {
+abstract public class AbstractGameMessage extends AbstractServerMessage {
 
     private static final long serialVersionUID = 5242147448456127805L;
     /**
