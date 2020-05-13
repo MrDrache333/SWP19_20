@@ -208,13 +208,15 @@ public class ActionCardExecution {
         }
 
         //Prüfe ob einer der betroffenen Spieler eine Reaktionskarte auf der Hand hat
-        for (Player p : affectedPlayers) {
-            if (!p.equals(this.player) && checkForReactionCard(p)) {
-                players.remove(p);
-                affectedPlayers.remove(p);
+        if (theCard.getType() == ActionCard.ActionType.Attack) {
+            for (Player p : affectedPlayers) {
+                if (!p.equals(this.player) && checkForReactionCard(p)) {
+                    players.remove(p);
+                    affectedPlayers.remove(p);
+                }
             }
-        }
 
+        }
         return affectedPlayers;
     }
 
