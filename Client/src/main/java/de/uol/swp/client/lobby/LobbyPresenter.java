@@ -38,6 +38,9 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.scene.text.TextFlow;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -224,6 +227,7 @@ public class LobbyPresenter extends AbstractPresenter {
     @FXML
     public void onGamesettingsButtonPressed(ActionEvent actionEvent) {
         if (!gameSettingsOpen) {
+            gamesettingsButton.setText("Spieleinstellungen schließen");
             gameSettingsOpen = true;
             Platform.runLater(() -> {
                 String pfad1 = "file:Client/src/main/resources/cards/images/card_back.png";
@@ -244,6 +248,7 @@ public class LobbyPresenter extends AbstractPresenter {
                 VBox gameSettingsVBox = new VBox();
                 gameSettingsVBox.setSpacing(20);
                 gameSettingsVBox.setPrefSize(450, 630);
+                gameSettingsVBox.setId("gameSettingsVBox");
 
                 //ausgewählte Karten anzeigen
                 TilePane chosenCards = new TilePane();
@@ -251,11 +256,20 @@ public class LobbyPresenter extends AbstractPresenter {
                 chosenCards.setStyle("-fx-background-color: #3D3D3D");
                 chosenCards.setOpacity(0.5);
                 chosenCards.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
+                TextFlow textFlow = new TextFlow();
+                textFlow.setPrefSize(200, 50);
+                textFlow.setTextAlignment(TextAlignment.CENTER);
+                Text text = new Text("Wähle Karten aus...");
+                text.setFill(Paint.valueOf("white"));
+                text.setStyle("-fx-font-size: 24");
+                textFlow.getChildren().add(text);
+                chosenCards.getChildren().add(textFlow);
 
                 //Button zum Abschicken der Nachricht für die Karten
                 Button sendCards = new Button();
                 sendCards.setText("Auswahl abschicken");
                 sendCards.setPrefSize(450, 31);
+                sendCards.setVisible(false);
                 sendCards.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent e) {
@@ -290,16 +304,24 @@ public class LobbyPresenter extends AbstractPresenter {
                         {
                             if (event.getButton() == MouseButton.PRIMARY) {
                                 if (chosenCards.getChildren().size() < 10) {
+                                    if (chosenCards.getChildren().contains(textFlow)) {
+                                        chosenCards.getChildren().remove(textFlow);
+                                    }
                                     tilePane.getChildren().remove(card);
                                     ImageView chosenCard = new ImageView(picture);
                                     chosenCard.setPreserveRatio(true);
                                     chosenCard.setFitWidth(80);
                                     chosenCard.setId(String.valueOf(cardID));
                                     chosenCards.getChildren().add(chosenCard);
+                                    sendCards.setVisible(true);
                                     chosenCard.setOnMouseClicked(event2 -> {
                                         if (event2.getButton() == MouseButton.PRIMARY) {
                                             chosenCards.getChildren().remove(chosenCard);
                                             tilePane.getChildren().add(0, card);
+                                            if (chosenCards.getChildren().size() == 0) {
+                                                chosenCards.getChildren().add(textFlow);
+                                                sendCards.setVisible(false);
+                                            }
                                         } else {
                                             showBigCardImage(cardID);
                                         }
@@ -323,9 +345,16 @@ public class LobbyPresenter extends AbstractPresenter {
                 gameSettingsVBox.getChildren().add(scrollPane);
                 gameSettingsVBox.getChildren().add(chosenCards);
                 gameSettingsVBox.getChildren().add(sendCards);
-                gameSettingsVBox.setId("gameSettingsVBox");
                 lobbyHBox.getChildren().add(gameSettingsVBox);
             });
+        } else {
+            lobbyHBox.getChildren().forEach(t -> {
+                if (t.getId().equals("gameSettingsVBox")) {
+                    Platform.runLater(() -> lobbyHBox.getChildren().remove(t));
+                    gameSettingsOpen = false;
+                }
+            });
+            gamesettingsButton.setText("Spieleinstellungen");
         }
     }
 
@@ -363,10 +392,12 @@ public class LobbyPresenter extends AbstractPresenter {
             lobbyHBox.getChildren().forEach(t -> {
                 if (t.getId().equals("gameSettingsVBox")) {
                     Platform.runLater(() -> lobbyHBox.getChildren().remove(t));
-
+                    gameSettingsOpen = false;
+                    Platform.runLater(() -> {
+                        gamesettingsButton.setText("Spieleinstellungen");
+                    });
                 }
             });
-
         }
     }
 

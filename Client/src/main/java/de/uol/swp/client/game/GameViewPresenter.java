@@ -205,6 +205,7 @@ public class GameViewPresenter extends AbstractPresenter {
             String imageUrl = "/cards/images/" + theIdInString + "_sm.png";
             Image theImage = new Image(imageUrl);
             imageView.setImage(theImage);
+            imageView.setId(theIdInString);
             index++;
         }
         theList = null;
@@ -586,7 +587,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * zurück-Button -> Buttons und große Ansicht der Karte werden entfernt
      *
      * @param mouseEvent das Event
-     * @author Rike
+     * @author Rike, Fenja, Anna
      * @since Sprint 5
      */
     private void chosenBuyableCard(MouseEvent mouseEvent) {
@@ -597,9 +598,11 @@ public class GameViewPresenter extends AbstractPresenter {
         //    if (mouseX > shopTeppich.getLayoutX() && mouseX < (shopTeppich.getLayoutX() + shopTeppich.getWidth()) &&
         //          mouseY > shopTeppich.getLayoutY() && mouseY < (shopTeppich.getLayoutY() + shopTeppich.getHeight()) && cardImage.getEffect() == null) {
         // Karte befindet sich im Shop
-        String cardID3 = cardImage.getImage().getUrl();
-        String cardID2 = cardID3.replace("_sm.png", "");
-        String cardID = cardID2.substring(cardID2.length() - 1);
+        //Karte hat noch keinen Effekt gesetzt bekommen, ist also noch im Shop vorhanden
+        if (cardImage.getEffect() != null) {
+            return;
+        }
+        String cardID = cardImage.getId();
         String PathCardLargeView = "file:Client/src/main/resources/cards/images/" + cardID + ".png";
         // ein großes Bild der Karte wird hinzugefügt
         ImageView bigCardImage = new ImageView(new Image(PathCardLargeView));

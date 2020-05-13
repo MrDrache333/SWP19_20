@@ -3,6 +3,8 @@ package de.uol.swp.server.lobby;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import de.uol.swp.common.chat.ChatMessage;
+import de.uol.swp.common.chat.request.NewChatMessageRequest;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.LobbyUser;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
@@ -284,13 +286,14 @@ public class LobbyService extends AbstractService {
      */
     @Subscribe
     public void onSendChosenCardsRequest(SendChosenCardsRequest msg) {
-        System.out.println("received chosen cards");
+        LOG.debug("received chosen cards");
         LobbyDTO lobby = (LobbyDTO) lobbyManagement.getLobby(msg.getLobbyID()).get();
         lobby.setChosenCards(msg.getChosenCards());
 
         SetChosenCardsResponse response = new SetChosenCardsResponse(msg.getLobbyID(), true);
         response.initWithMessage(msg);
         post(response);
+        post(new NewChatMessageRequest(msg.getLobbyID().toString(), new ChatMessage(new UserDTO("server", "", ""), "Karten wurden ausgewählt")));
     }
 
     //--------------------------------------
