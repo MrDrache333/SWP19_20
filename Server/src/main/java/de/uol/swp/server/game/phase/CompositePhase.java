@@ -103,7 +103,6 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
                 player.setAdditionalMoney(additionalMoney - diff);
             }
             player.getPlayerDeck().getDiscardPile().add(currentCard);
-            moneyValuePlayer -= currentCard.getCosts();
             player.getPlayerDeck().discardMoneyCardsForValue(currentCard.getCosts());
             playground.getCardField().put(cardId, --count);
         }
