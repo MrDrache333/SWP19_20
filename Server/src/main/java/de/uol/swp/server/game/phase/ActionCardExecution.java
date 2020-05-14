@@ -123,7 +123,7 @@ public class ActionCardExecution {
             } else {
                 List<Player> playerList = getAffectedPlayers(action);
                 if (!(action instanceof GetCard) && !(action instanceof Move)) {
-                    if (!executeCardAction(action, playerList, false)) return false;
+                    if (!executeCardAction(action, playerList)) return false;
                 } else {
                     //TODO
                 }
@@ -155,7 +155,7 @@ public class ActionCardExecution {
      */
     private boolean checkIfComplete() {
         if (actualStateIndex == theCard.getActions().size() && !waitedForPlayerInput && finishedNextActions) {
-            playground.getCompositePhase().finishedActionCardExecution(player, theCard);
+            playground.getCompositePhase().finishedActionCardExecution(player);
             return true;
         }
         return false;
@@ -179,7 +179,7 @@ public class ActionCardExecution {
                 playground.getGameService().sendToSpecificPlayer(player, new OptionalActionRequest(gameID, player.getTheUserInThePlayer(), action));
             } else {
                 if (!(action instanceof GetCard) && !(action instanceof Move)) {
-                    if (!executeCardAction(action, playerList, true)) return false;
+                    if (!executeCardAction(action, playerList)) return false;
                 } else {
                     //TODO
                 }
@@ -288,13 +288,12 @@ public class ActionCardExecution {
      *
      * @param action     Die auszuführende Kartenaktion
      * @param thePlayers Liste aller Player, auf die die Aktion ausgeführt werden soll
-     * @param subAction  Ob es sich um eine Unteraktion handelt
      * @return Ob die Ausführung erfolgreich war.
      * @author KenoO
      */
-    private boolean executeCardAction(CardAction action, List<Player> thePlayers, boolean subAction) {
+    private boolean executeCardAction(CardAction action, List<Player> thePlayers) {
         if (!(action instanceof ChooseNextAction) && !(action instanceof ChooseCard)) {
-            if (subAction) nextActionIndex++;
+            if (!finishedNextActions) nextActionIndex++;
             else actualStateIndex++;
         }
         if (action instanceof AddCapablePlayerActivity)

@@ -61,7 +61,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         playground.sendCardsDeckSize();
     }
 
-    public void finishedActionCardExecution(Player player, Card currentCard) {
+    public void finishedActionCardExecution(Player player) {
         player.setAvailableActions(player.getAvailableActions() - 1);
         int availableAction = player.getAvailableActions();
         int availableBuy = player.getAvailableBuys();
