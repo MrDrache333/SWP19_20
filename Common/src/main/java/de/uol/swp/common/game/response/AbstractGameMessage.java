@@ -1,10 +1,11 @@
 package de.uol.swp.common.game.response;
 
+import de.uol.swp.common.message.AbstractServerMessage;
 import de.uol.swp.common.user.User;
 
 import java.util.UUID;
 
-abstract public class AbstractGameMessage {
+abstract public class AbstractGameMessage extends AbstractServerMessage {
 
     private User player;
     private UUID gameID;
@@ -28,6 +29,11 @@ abstract public class AbstractGameMessage {
 
     public AbstractGameMessage() {
 
+    }
+
+    public AbstractGameMessage(UUID gameID, User player) {
+        this.gameID = gameID;
+        this.player = player;
     }
 
     /**

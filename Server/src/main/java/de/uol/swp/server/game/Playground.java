@@ -129,11 +129,15 @@ public class Playground extends AbstractPlayground {
         if (actualPlayer == null && nextPlayer == null) {
             actualPlayer = players.get(0);
             nextPlayer = players.get(1);
+            sendInitialCardsDeckSize();
             sendInitialHands();
         } else {
             //Spieler muss Clearphase durchlaufen haben
             if (actualPhase != Phase.Type.Clearphase) return;
-            if (actualPlayer != latestGavedUpPlayer) sendPlayersHand();
+            if (actualPlayer != latestGavedUpPlayer) {
+                sendPlayersHand();
+                sendCardsDeckSize();
+            }
             int index = players.indexOf(nextPlayer);
             actualPlayer = nextPlayer;
             nextPlayer = players.get(++index % players.size());
@@ -211,6 +215,31 @@ public class Playground extends AbstractPlayground {
         }
         DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID);
         gameService.sendToSpecificPlayer(actualPlayer, theHandMessage);
+    }
+
+    /**
+     * Sendet dem aktuellen Spieler die Anzahl seiner Karten auf dem Nachziehstapel
+     *
+     * @author Julia
+     * @since Sprint7
+     */
+    public int sendCardsDeckSize() {
+        int size = actualPlayer.getPlayerDeck().getCardsDeck().size();
+        gameService.sendToSpecificPlayer(actualPlayer, new CardsDeckSizeMessage(theSpecificLobbyID, actualPlayer.getTheUserInThePlayer(), size));
+        return size;
+    }
+
+    /**
+     * Sendet zu Spielbeginn jedem Spieler die Anzahl seiner Karten auf dem Nachziehstapel
+     *
+     * @author Julia
+     * @since Sprint7
+     */
+    public void sendInitialCardsDeckSize() {
+        for (Player player : players) {
+            int size = player.getPlayerDeck().getCardsDeck().size();
+            gameService.sendToSpecificPlayer(player, new CardsDeckSizeMessage(theSpecificLobbyID, player.getTheUserInThePlayer(), size));
+        }
     }
 
     /**
