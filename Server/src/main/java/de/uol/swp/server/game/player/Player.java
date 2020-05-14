@@ -10,6 +10,9 @@ public class Player {
     private String playerName;
     private User theUserInThePlayer;
     private Deck playerDeck = new Deck();
+    private int availableActions;
+    private int availableBuys;
+    private int additionalMoney;
 
     /**
      * Erstellt einen neuen Spieler
@@ -18,6 +21,9 @@ public class Player {
      */
     public Player(String playerName) {
         this.playerName = playerName;
+        availableActions = 1;
+        availableBuys = 1;
+        additionalMoney = 0;
     }
 
     /*
@@ -49,5 +55,29 @@ public class Player {
      */
     public String getPlayerName() {
         return playerName;
+    }
+
+    public int getAvailableActions() {
+        return availableActions;
+    }
+
+    public void setAvailableActions(int availableActions) {
+        this.availableActions = availableActions;
+    }
+
+    public int getAvailableBuys() {
+        return availableBuys;
+    }
+
+    public void setAvailableBuys(int availableBuys) {
+        this.availableBuys = availableBuys;
+    }
+
+    public int getAdditionalMoney() {
+        return additionalMoney;
+    }
+
+    public void setAdditionalMoney(int additionalMoney) {
+        this.additionalMoney = additionalMoney;
     }
 }

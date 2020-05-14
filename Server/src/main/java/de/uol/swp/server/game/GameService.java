@@ -202,8 +202,10 @@ public class GameService extends AbstractService {
             if (request.getCurrentUser().equals(playground.getActualPlayer().getTheUserInThePlayer())) {
                 try {
                     int count = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), request.getCardID());
-                    int costCard = playground.getCompositePhase().getCardFromId(playground.getCardsPackField().getCards(), request.getCardID()).getCosts();
-                    BuyCardMessage buyCard = new BuyCardMessage(request.getLobbyID(), request.getCurrentUser(), request.getCardID(), true, count, costCard);
+                    int moneyValuePlayer = playground.getActualPlayer().getPlayerDeck().actualMoneyFromPlayer();
+                    int additionalMoney = playground.getActualPlayer().getAdditionalMoney();
+                    int availableBuys = playground.getActualPlayer().getAvailableBuys();
+                    BuyCardMessage buyCard = new BuyCardMessage(request.getLobbyID(), request.getCurrentUser(), request.getCardID(), true, count, moneyValuePlayer, additionalMoney, availableBuys);
                     sendToAllPlayers(request.getLobbyID(), buyCard);
 
                 } catch (NotEnoughMoneyException notEnoughMoney) {
@@ -239,7 +241,10 @@ public class GameService extends AbstractService {
                     playground.endTimer();
                     // Karte wird an die ActionPhase zum Handling übergeben.
                     playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), cardID);
-                    sendToSpecificPlayer(playground.getActualPlayer(), new PlayCardMessage(gameID, player, cardID, true));
+                    int availableActions = playground.getActualPlayer().getAvailableActions();
+                    int availableBuys = playground.getActualPlayer().getAvailableBuys();
+                    int additionalMoney = playground.getActualPlayer().getAdditionalMoney();
+                    sendToSpecificPlayer(playground.getActualPlayer(), new PlayCardMessage(gameID, player, cardID, true, availableActions, availableBuys, additionalMoney));
                     /*
                      TODO: Nachdem das gegnerische Feld und ein Text-Feld für den generellem Spiel ablauf hinzugefügt wurde, muss allen Gegnern das ausspielen der Karte mitgeteilt werden.
                      */

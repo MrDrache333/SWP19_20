@@ -47,6 +47,11 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
     public int executeBuyPhase(Player player, short cardId) {
         CardPack cardsPackField = playground.getCardsPackField();
         Card currentCard = getCardFromId(cardsPackField.getCards(), cardId);
+
+        if (player.getAvailableBuys() == 0) {
+            playground.nextPhase();
+        }
+
         // Karten und deren Anzahl werden aus dem Spielfeld geladen.
         int count = playground.getCardField().get(cardId);
         if (count > 0) {
@@ -59,14 +64,22 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
               und die Anzahl der Karte auf dem Spielfeld verringert sich um eins
             */
             int moneyValuePlayer = player.getPlayerDeck().actualMoneyFromPlayer();
-            if (moneyValuePlayer < currentCard.getCosts()) {
+            int additionalMoney = player.getAdditionalMoney();
+            if (moneyValuePlayer + additionalMoney < currentCard.getCosts()) {
                 LOG.error("Nicht genug Geld");
                 throw new NotEnoughMoneyException("Nicht genug Geld vorhanden");
             }
+            if (moneyValuePlayer < currentCard.getCosts()) {
+                int diff = currentCard.getCosts() - moneyValuePlayer;
+                player.setAdditionalMoney(additionalMoney - diff);
+            }
             player.getPlayerDeck().getDiscardPile().add(currentCard);
-            moneyValuePlayer -= currentCard.getCosts();
             player.getPlayerDeck().discardMoneyCardsForValue(currentCard.getCosts());
             playground.getCardField().put(cardId, --count);
+        }
+        player.setAvailableBuys(player.getAvailableBuys() - 1);
+        if (player.getAvailableBuys() == 0) {
+            playground.nextPhase();
         }
         return count;
     }
@@ -88,6 +101,9 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         deck.getHand().clear();
         deck.getActionPile().clear();
         deck.drawHand();
+        player.setAdditionalMoney(0);
+        player.setAvailableBuys(1);
+        player.setAvailableActions(1);
         if (checkIfGameIsFinished()) {
             List<String> winners = playground.calculateWinners();
             playground.endGame(playground.getID(), new GameOverMessage(playground.getID(), winners, playground.getResultsGame()));

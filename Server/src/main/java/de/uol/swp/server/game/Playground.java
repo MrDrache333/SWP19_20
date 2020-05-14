@@ -193,7 +193,7 @@ public class Playground extends AbstractPlayground {
         for (Card card : actualPlayer.getPlayerDeck().getHand()) {
             theIdsFromTheHand.add(card.getId());
         }
-        DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID);
+        DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID, actualPlayer.getAvailableActions(), actualPlayer.getAvailableBuys(), actualPlayer.getAdditionalMoney());
         gameService.sendToSpecificPlayer(actualPlayer, theHandMessage);
     }
 
@@ -269,7 +269,7 @@ public class Playground extends AbstractPlayground {
             for (Card card : playerhand.getPlayerDeck().getHand()) {
                 theIdsFromInitalPlayerDeck.add(card.getId());
             }
-            DrawHandMessage initialHandFromPlayer = new DrawHandMessage(theIdsFromInitalPlayerDeck, theSpecificLobbyID);
+            DrawHandMessage initialHandFromPlayer = new DrawHandMessage(theIdsFromInitalPlayerDeck, theSpecificLobbyID, actualPlayer.getAvailableActions(), actualPlayer.getAvailableBuys(), actualPlayer.getAdditionalMoney());
             gameService.sendToSpecificPlayer(playerhand, initialHandFromPlayer);
             // TODO: Bessere Logging Message irgendwann später implementieren..
             LOG.debug("All OK with sending initial Hands...");
