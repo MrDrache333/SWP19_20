@@ -7,9 +7,6 @@ import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
-import de.uol.swp.common.game.card.Card;
-import de.uol.swp.common.game.card.parser.JsonCardParser;
-import de.uol.swp.common.game.card.parser.components.CardPack;
 import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
@@ -245,16 +242,16 @@ public class GameViewPresenter extends AbstractPresenter {
         firstEnemyDiscardPile.setStyle("-fx-background-color: crimson");
         secondEnemyDiscardPile.setStyle("-fx-background-color: crimson");
         thirdEnemyDiscardPile.setStyle("-fx-background-color: crimson");
-        initalizeCardFieldImages();
     }
 
-    private void initalizeCardFieldImages() {
-        ArrayList<Short> theList = new ArrayList<>();
-        CardPack cardsPackField = new JsonCardParser().loadPack("Basispack");
-        for (int i = 0; i < 10; i++) {
-            Card card = cardsPackField.getCards().getActionCards().get(i);
-            theList.add(card.getId());
-        }
+    /**
+     * Die Aktionskarten werden erstellt und auf dem Spielfeld angezeigt.
+     *
+     * @param theList die IDs der Aktionskarten
+     * @author Ferit, Fenja, Anna
+     * @since Sprint 7
+     */
+    private void initalizeCardFieldImages(ArrayList<Short> theList) {
         ArrayList<ImageView> allImageViews = new ArrayList<>(Arrays.asList(cardPlaceholder1, cardPlaceholder2, cardPlaceholder3, cardPlaceholder4, cardPlaceholder5, cardPlaceholder6, cardPlaceholder7, cardPlaceholder8, cardPlaceholder9, cardPlaceholder10));
         int index = 0;
         for (ImageView imageView : allImageViews) {
@@ -262,9 +259,9 @@ public class GameViewPresenter extends AbstractPresenter {
             String imageUrl = "/cards/images/" + theIdInString + "_sm.png";
             Image theImage = new Image(imageUrl);
             imageView.setImage(theImage);
+            imageView.setId(theIdInString);
             index++;
         }
-        cardsPackField = null;
         theList = null;
         allImageViews = null;
     }
@@ -303,6 +300,24 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     public void initializeUserList() {
         lobbyService.retrieveAllUsersInLobby(lobbyID);
+    }
+
+    /**
+     * Die IDs der gesendeten Aktionskarten werden initilaisiert
+     *
+     * @param msg die Nachricht mit den IDs und der jeweiligen Azahl der Spielkarten
+     * @author Anna, Fenja
+     * @since Sprint 7
+     */
+    @Subscribe
+    public void onSendCardFieldMessage(SendCardFieldMessage msg) {
+        ArrayList<Short> list = new ArrayList<>();
+        for (Short key : msg.getCardField().keySet()) {
+            if (key > 6) {
+                list.add(key);
+            }
+        }
+        initalizeCardFieldImages(list);
     }
 
     /**
@@ -886,7 +901,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * zurück-Button -> Buttons und große Ansicht der Karte werden entfernt
      *
      * @param mouseEvent das Event
-     * @author Rike
+     * @author Rike, Fenja, Anna
      * @since Sprint 5
      */
     private void chosenBuyableCard(MouseEvent mouseEvent) {
@@ -897,9 +912,11 @@ public class GameViewPresenter extends AbstractPresenter {
         //    if (mouseX > shopTeppich.getLayoutX() && mouseX < (shopTeppich.getLayoutX() + shopTeppich.getWidth()) &&
         //          mouseY > shopTeppich.getLayoutY() && mouseY < (shopTeppich.getLayoutY() + shopTeppich.getHeight()) && cardImage.getEffect() == null) {
         // Karte befindet sich im Shop
-        String cardID3 = cardImage.getImage().getUrl();
-        String cardID2 = cardID3.replace("_sm.png", "");
-        String cardID = cardID2.substring(cardID2.length() - 1);
+        //Karte hat noch keinen Effekt gesetzt bekommen, ist also noch im Shop vorhanden
+        if (cardImage.getEffect() != null) {
+            return;
+        }
+        String cardID = cardImage.getId();
         String PathCardLargeView = "file:Client/src/main/resources/cards/images/" + cardID + ".png";
         // ein großes Bild der Karte wird hinzugefügt
         ImageView bigCardImage = new ImageView(new Image(PathCardLargeView));

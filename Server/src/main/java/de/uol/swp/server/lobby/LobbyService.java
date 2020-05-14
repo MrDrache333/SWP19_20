@@ -3,6 +3,8 @@ package de.uol.swp.server.lobby;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import de.uol.swp.common.chat.ChatMessage;
+import de.uol.swp.common.chat.request.NewChatMessageRequest;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.LobbyUser;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
@@ -10,6 +12,7 @@ import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.request.*;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
+import de.uol.swp.common.lobby.response.SetChosenCardsResponse;
 import de.uol.swp.common.message.ResponseMessage;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
@@ -61,24 +64,33 @@ public class LobbyService extends AbstractService {
     // EVENTBUS
     //--------------------------------------
 
+
     /**
      * LobbyManagement auf dem Server wird aufgerufen und übergibt LobbyNamen, LobbyPassword und den Besitzer.
      * Wenn dies erfolgt ist, folgt eine returnMessage an den Client die LobbyView anzuzeigen.
      *
      * @param msg enthält die Message vom Client mit den benötigten Daten, um die Lobby zu erstellen.
-     * @author Paula, Haschem, Ferit, Rike, Marvin
-     * @version 0.1
+     * @author Haschem, Ferit, Rike, Marvin, Paula
+     * @version 0.2
      * @since Sprint2
      */
     @Subscribe
     public void onCreateLobbyRequest(CreateLobbyRequest msg) {
-        UUID chatID = lobbyManagement.createLobby(msg.getLobbyName(), msg.getLobbyPassword(), new LobbyUser(msg.getOwner()));
-        chatManagement.createChat(chatID.toString());
-        LOG.info("Der Chat mir der UUID " + chatID + " wurde erfolgreich erstellt");
-        Optional<Lobby> lobby = lobbyManagement.getLobby(chatID);
-        ServerMessage returnMessage = new CreateLobbyMessage(msg.getLobbyName(), msg.getLobbyPassword(), msg.getUser(), chatID, (LobbyDTO) lobby.get());
-        post(returnMessage);
-        LOG.info("onCreateLobbyRequest wird auf dem Server aufgerufen.");
+        if (containsLobbyName(msg.getLobbyName())) {
+            LOG.info("Lobby wurde nicht erstellt");
+            ServerMessage returnMessage = new CreateLobbyMessage(null, null, null, null, null);
+            post(returnMessage);
+        } else {
+            UUID chatID = lobbyManagement.createLobby(msg.getLobbyName(), msg.getLobbyPassword(), new LobbyUser(msg.getOwner()));
+            chatManagement.createChat(chatID.toString());
+            LOG.info("Der Chat mir der UUID " + chatID + " wurde erfolgreich erstellt");
+            Optional<Lobby> lobby = lobbyManagement.getLobby(chatID);
+            ServerMessage returnMessage = new CreateLobbyMessage(msg.getLobbyName(), msg.getLobbyPassword(), msg.getUser(), chatID, (LobbyDTO) lobby.get());
+            post(returnMessage);
+            LOG.info("onCreateLobbyRequest wird auf dem Server aufgerufen.");
+
+        }
+
     }
 
     /**
@@ -274,6 +286,25 @@ public class LobbyService extends AbstractService {
 
     }
 
+    /**
+     * Sende die Anfrage, der ausgewählten Karten
+     *
+     * @param msg
+     * @author Fenja, Anna
+     * @since Sprint 7
+     */
+    @Subscribe
+    public void onSendChosenCardsRequest(SendChosenCardsRequest msg) {
+        LOG.debug("received chosen cards");
+        LobbyDTO lobby = (LobbyDTO) lobbyManagement.getLobby(msg.getLobbyID()).get();
+        lobby.setChosenCards(msg.getChosenCards());
+
+        SetChosenCardsResponse response = new SetChosenCardsResponse(msg.getLobbyID(), true);
+        response.initWithMessage(msg);
+        post(response);
+        post(new NewChatMessageRequest(msg.getLobbyID().toString(), new ChatMessage(new UserDTO("server", "", ""), "Karten wurden ausgewählt")));
+    }
+
     //--------------------------------------
     // Help Methods
     //--------------------------------------
@@ -318,5 +349,21 @@ public class LobbyService extends AbstractService {
         // Sendet eine interne-Nachricht, welche die Erstellung des Games initiiert.
         StartGameInternalMessage internalMessage = new StartGameInternalMessage(lobby.getLobbyID());
         post(internalMessage);
+    }
+
+    /**
+     * Überprüft, ob der LobbyName schon vergeben ist
+     *
+     * @param name Name der Lobby
+     * @return false, wenn der Name noch nicht existiert
+     * @author Paula
+     */
+    private boolean containsLobbyName(String name) {
+        for (Lobby lobby : lobbyManagement.getLobbies()) {
+            if (lobby.getName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

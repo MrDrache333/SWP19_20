@@ -13,13 +13,16 @@ import java.util.UUID;
 public class LobbyJoinUserRequest extends AbstractLobbyRequest {
 
     private static final long serialVersionUID = 5835542658263297422L;
-
+    String lobbyPassword;
+  
     /**
      * Konstruktor für die Serialisierung
      *
      * @author Julia, Paula
      * @since Sprint3
      */
+
+
     public LobbyJoinUserRequest() {
     }
 
@@ -34,4 +37,17 @@ public class LobbyJoinUserRequest extends AbstractLobbyRequest {
     public LobbyJoinUserRequest(UUID lobbyID, UserDTO user) {
         super(lobbyID, user);
     }
+
+
+
+    /**
+     * Getter für das Lobbypasswort.
+     *
+     * @return das Lobby-Passwort.
+     */
+    public String getLobbyPassword() {
+        return lobbyPassword;
+    }
+
+
 }

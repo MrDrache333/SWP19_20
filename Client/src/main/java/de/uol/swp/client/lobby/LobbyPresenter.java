@@ -7,8 +7,11 @@ import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.common.chat.ChatService;
+import de.uol.swp.common.game.card.parser.JsonCardParser;
+import de.uol.swp.common.game.card.parser.components.CardPack;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
+import de.uol.swp.common.lobby.response.SetChosenCardsResponse;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
@@ -22,17 +25,22 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.NodeOrientation;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.scene.text.TextFlow;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -58,16 +66,29 @@ public class LobbyPresenter extends AbstractPresenter {
     private EventBus eventBus;
     private Injector injector;
     private boolean ownReadyStatus = false;
+
+    @FXML
+    private Pane lobbyViewWIP;
     @FXML
     private ListView<HBox> usersView;
     @FXML
     private Pane chatView;
     @FXML
     private Button readyButton;
+    @FXML
+    private Button gamesettingsButton;
+    @FXML
+    private HBox lobbyHBox;
+
+    private ImageView bigCard;
 
     private ObservableList<HBox> userHBoxes;
 
     private GameManagement gameManagement;
+
+    private CardPack cardpack;
+
+    private boolean gameSettingsOpen;
 
     /**
      * Instanziiert einen neuen LobbyPresenter.
@@ -97,6 +118,8 @@ public class LobbyPresenter extends AbstractPresenter {
         this.gameManagement = gameManagement;
         this.eventBus = eventBus;
         this.loggedInUserDTO = new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail());
+        this.cardpack = new JsonCardParser().loadPack("Basispack");
+        this.gameSettingsOpen = false;
     }
 
     //--------------------------------------
@@ -140,6 +163,12 @@ public class LobbyPresenter extends AbstractPresenter {
         updateUsersList();
 
         chooseMaxPlayer.setValue(4);
+
+        if (gameOwner.getUsername().equals(loggedInUser.getUsername())) {
+            gamesettingsButton.setVisible(true);
+        } else {
+            gamesettingsButton.setVisible(false);
+        }
     }
 /*
     /**
@@ -188,9 +217,189 @@ public class LobbyPresenter extends AbstractPresenter {
         lobbyService.setMaxPlayer(this.getLobbyID(), this.loggedInUser, chooseMaxPlayer.getValue());
     }
 
+    /**
+     * Wird aufgerufen, wenn der Button für die Spieleinstellungen betätigt wird.
+     *
+     * @param actionEvent
+     * @author Fenja, Anna
+     * @since Sprint 7
+     */
+    @FXML
+    public void onGamesettingsButtonPressed(ActionEvent actionEvent) {
+        if (!gameSettingsOpen) {
+            gamesettingsButton.setText("Spieleinstellungen schließen");
+            gameSettingsOpen = true;
+            Platform.runLater(() -> {
+                String pfad1 = "file:Client/src/main/resources/cards/images/card_back.png";
+                Image picture1 = new Image(pfad1);
+                bigCard = new ImageView(picture1);
+                bigCard.setPreserveRatio(true);
+                bigCard.setFitWidth(250);
+                bigCard.setLayoutX(400);
+                bigCard.setLayoutY(100);
+                bigCard.setVisible(false);
+                lobbyViewWIP.setOnMouseClicked(mouseEvent -> {
+                    if (bigCard.isVisible()) {
+                        bigCard.setVisible(false);
+                    }
+                });
+                lobbyViewWIP.getChildren().add(bigCard);
+
+                VBox gameSettingsVBox = new VBox();
+                gameSettingsVBox.setSpacing(20);
+                gameSettingsVBox.setPrefSize(450, 630);
+                gameSettingsVBox.setId("gameSettingsVBox");
+
+                //ausgewählte Karten anzeigen
+                TilePane chosenCards = new TilePane();
+                chosenCards.setPrefSize(400, 160);
+                chosenCards.setStyle("-fx-background-color: #3D3D3D");
+                chosenCards.setOpacity(0.5);
+                chosenCards.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
+                TextFlow textFlow = new TextFlow();
+                textFlow.setPrefSize(200, 50);
+                textFlow.setTextAlignment(TextAlignment.CENTER);
+                Text text = new Text("Wähle Karten aus...");
+                text.setFill(Paint.valueOf("white"));
+                text.setStyle("-fx-font-size: 24");
+                textFlow.getChildren().add(text);
+                chosenCards.getChildren().add(textFlow);
+
+                //Button zum Abschicken der Nachricht für die Karten
+                Button sendCards = new Button();
+                sendCards.setText("Auswahl abschicken");
+                sendCards.setPrefSize(450, 31);
+                sendCards.setVisible(false);
+                sendCards.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent e) {
+                        if (chosenCards.getChildren().size() > 0) {
+                            ArrayList<Short> chosenCardIDs = new ArrayList<>();
+                            for (Node n : chosenCards.getChildren()) {
+                                chosenCardIDs.add(Short.valueOf(n.getId()));
+                            }
+                            lobbyService.sendChosenCards(lobbyID, chosenCardIDs);
+                        }
+                    }
+                });
+
+                //auswählbare Karten initilaisieren
+                TilePane tilePane = new TilePane();
+                tilePane.setPrefHeight(500);
+                tilePane.setPrefWidth(500);
+                tilePane.setMaxWidth(500);
+                tilePane.setVgap(10);
+                tilePane.setHgap(10);
+                tilePane.setStyle("-fx-background-color: #3D3D3D");
+                for (int i = 0; i < cardpack.getCards().getActionCards().size(); i++) {
+                    short cardID = cardpack.getCards().getActionCards().get(i).getId();
+                    String pfad = "file:Client/src/main/resources/cards/images/" + cardID + "_sm.png";
+                    if (pfad != null) {
+                        Image picture = new Image(pfad);
+                        ImageView card = new ImageView(picture);
+                        card.setPreserveRatio(true);
+                        card.setFitWidth(100);
+                        tilePane.getChildren().add(card);
+                        card.setOnMouseClicked(event ->
+                        {
+                            if (event.getButton() == MouseButton.PRIMARY) {
+                                if (chosenCards.getChildren().size() < 10) {
+                                    if (chosenCards.getChildren().contains(textFlow)) {
+                                        chosenCards.getChildren().remove(textFlow);
+                                    }
+                                    tilePane.getChildren().remove(card);
+                                    ImageView chosenCard = new ImageView(picture);
+                                    chosenCard.setPreserveRatio(true);
+                                    chosenCard.setFitWidth(80);
+                                    chosenCard.setId(String.valueOf(cardID));
+                                    chosenCards.getChildren().add(chosenCard);
+                                    sendCards.setVisible(true);
+                                    chosenCard.setOnMouseClicked(event2 -> {
+                                        if (event2.getButton() == MouseButton.PRIMARY) {
+                                            chosenCards.getChildren().remove(chosenCard);
+                                            tilePane.getChildren().add(0, card);
+                                            if (chosenCards.getChildren().size() == 0) {
+                                                chosenCards.getChildren().add(textFlow);
+                                                sendCards.setVisible(false);
+                                            }
+                                        } else {
+                                            showBigCardImage(cardID);
+                                        }
+                                    });
+                                }
+                            } else {
+                                showBigCardImage(cardID);
+                            }
+                        });
+                    }
+                }
+
+                ScrollPane scrollPane = new ScrollPane(tilePane);
+                scrollPane.setPrefHeight(500);
+                scrollPane.setPrefWidth(620);
+                scrollPane.setMaxWidth(620);
+                scrollPane.setStyle("-fx-background-color: #3D3D3D");
+                scrollPane.setOpacity(0.73);
+                scrollPane.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
+
+                gameSettingsVBox.getChildren().add(scrollPane);
+                gameSettingsVBox.getChildren().add(chosenCards);
+                gameSettingsVBox.getChildren().add(sendCards);
+                lobbyHBox.getChildren().add(gameSettingsVBox);
+            });
+        } else {
+            lobbyHBox.getChildren().forEach(t -> {
+                if (t.getId().equals("gameSettingsVBox")) {
+                    Platform.runLater(() -> lobbyHBox.getChildren().remove(t));
+                    gameSettingsOpen = false;
+                }
+            });
+            gamesettingsButton.setText("Spieleinstellungen");
+        }
+    }
+
+    /**
+     * Hilfsmethode, um die Karte groß anzuzeigen
+     *
+     * @param cardID
+     * @author Fenja, Anna
+     * @since Sprint 7
+     */
+    public void showBigCardImage(short cardID) {
+        Platform.runLater(() -> {
+            String pfad = "file:Client/src/main/resources/cards/images/" + cardID + ".png";
+            Image picture = new Image(pfad);
+            bigCard.setImage(picture);
+            bigCard.setVisible(true);
+        });
+    }
+
     //--------------------------------------
     // EVENTBUS
     //--------------------------------------
+
+    /**
+     * Ruft Methode auf, die die ausgewählten Karten sendet.
+     *
+     * @param message
+     * @author Fenja, Anna
+     * @since Sprint 7
+     */
+    @Subscribe
+    public void onSendChosenCardsMessage(SetChosenCardsResponse message) {
+        if (!message.getLobbyID().equals(lobbyID)) return;
+        if (message.isSuccess()) {
+            lobbyHBox.getChildren().forEach(t -> {
+                if (t.getId().equals("gameSettingsVBox")) {
+                    Platform.runLater(() -> lobbyHBox.getChildren().remove(t));
+                    gameSettingsOpen = false;
+                    Platform.runLater(() -> {
+                        gamesettingsButton.setText("Spieleinstellungen");
+                    });
+                }
+            });
+        }
+    }
 
     /**
      * Ruft Methode auf, die den Status des Nutzers ändert, nachdem der Bereit-Status des Nutzers serverseitig geändert wurde.
@@ -348,6 +557,9 @@ public class LobbyPresenter extends AbstractPresenter {
         if (message.getLobby() != null) {
             gameOwner = message.getGameOwner();
             userLeftLobby(message.getUser().getUsername(), false);
+            if (gameOwner.getUsername().equals(loggedInUser.getUsername())) {
+                gamesettingsButton.setVisible(true);
+            }
         }
     }
 
