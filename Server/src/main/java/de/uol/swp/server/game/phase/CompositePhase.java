@@ -56,7 +56,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         player.getPlayerDeck().getHand().remove(currentCard);
     }
 
-    public void finishedActionCardExecution(Player player, Card currentCard) {
+    public void finishedActionCardExecution(Player player) {
         player.setAvailableActions(player.getAvailableActions() - 1);
         if (player.getAvailableActions() == 0) {
             playground.nextPhase();
@@ -76,10 +76,6 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
     public int executeBuyPhase(Player player, short cardId) {
         CardPack cardsPackField = playground.getCardsPackField();
         Card currentCard = getCardFromId(cardsPackField.getCards(), cardId);
-
-        if (player.getAvailableBuys() == 0) {
-            playground.nextPhase();
-        }
 
         // Karten und deren Anzahl werden aus dem Spielfeld geladen.
         int count = playground.getCardField().get(cardId);
