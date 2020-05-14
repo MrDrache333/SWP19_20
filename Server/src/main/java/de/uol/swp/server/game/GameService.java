@@ -241,7 +241,7 @@ public class GameService extends AbstractService {
                     //sendToSpecificPlayer(playground.getActualPlayer(), new PlayCardMessage(gameID, player, cardID, true));
 
                     playground.getPlayers().forEach(n -> {
-                        PlayCardMessage msg = new PlayCardMessage(gameID, n.getTheUserInThePlayer(), cardID, true,
+                        PlayCardMessage msg = new PlayCardMessage(gameID, playground.getActualPlayer().getTheUserInThePlayer(), cardID, true,
                                 playground.getIndexOfPlayer(n), playground.getIndexOfPlayer(playground.getActualPlayer()));
                         sendToSpecificPlayer(n, msg);
                     });
