@@ -39,7 +39,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -413,19 +412,31 @@ public class SceneManager {
     private EventHandler<KeyEvent> hotkeyEventHandler = new EventHandler<>() {
         @Override
         public void handle(KeyEvent event) {
-            Optional<GameManagement> optGameManagement = Optional.ofNullable(primaryPresenter.getGameManagement(UUID.fromString(primaryPresenter.getFocusedTab())));
-            if (optGameManagement.isPresent()) {
-                User user = optGameManagement.get().getLoggedInUser();
-                UUID lobbyID = optGameManagement.get().getID();
-                switch (event.getCode()) {
-                    case S:
-                        LOG.debug("Skip Phase Hotkey pressed");
-                        gameService.skipPhase(user, lobbyID);
-                        break;
-                    case G:
-                        LOG.debug("Give Up Hotkey pressed");
-                        gameService.giveUp(lobbyID, (UserDTO) user);
-                        break;
+            if (event.isControlDown()) {
+                String focusedTab = primaryPresenter.getFocusedTab();
+                if (focusedTab.matches("^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")) {
+                    GameManagement gameManagement = primaryPresenter.getGameManagement(UUID.fromString(focusedTab));
+                    User user = gameManagement.getLoggedInUser();
+                    UUID lobbyID = gameManagement.getID();
+                    switch (event.getCode()) {
+                        case S:
+                            LOG.debug("Skip Phase Hotkey pressed");
+                            gameService.skipPhase(user, lobbyID);
+                            break;
+                        case G:
+                            LOG.debug("Give Up Hotkey pressed");
+                            gameService.giveUp(lobbyID, (UserDTO) user);
+                            break;
+                    }
+                    event.consume();
+                } else if (focusedTab.equals("Menu")) {
+                    switch (event.getCode()) {
+                        case C:
+                            LOG.debug("Create Lobby Hotkey pressed");
+                            //Muss noch implementiert werden
+                            break;
+                    }
+                    event.consume();
                 }
             }
         }
