@@ -172,7 +172,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * @since Sprint 3
      */
 
-    public void showAlert(Alert.AlertType type, String message, String title) {
+    public void showGiveUpAlert(Alert.AlertType type, String message, String title) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "");
         alert.setResizable(false);
         alert.initModality(Modality.APPLICATION_MODAL);
@@ -182,6 +182,15 @@ public class GameViewPresenter extends AbstractPresenter {
         if (result.get() == ButtonType.OK) {
             gameManagement.getGameService().giveUp(lobbyID, (UserDTO) loggedInUser);
         }
+    }
+
+    public void showAlert(Alert.AlertType type, String message, String title) {
+        Alert alert = new Alert(type, "");
+        alert.setResizable(false);
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.getDialogPane().setContentText(message);
+        alert.getDialogPane().setHeaderText(title);
+        Optional<ButtonType> result = alert.showAndWait();
     }
 
     /**
@@ -238,7 +247,7 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @FXML
     public void onGiveUpButtonPressed(ActionEvent actionEvent) {
-        showAlert(Alert.AlertType.CONFIRMATION, " ", "Möchtest du wirklich aufgeben?");
+        showGiveUpAlert(Alert.AlertType.CONFIRMATION, " ", "Möchtest du wirklich aufgeben?");
     }
 
     @FXML
@@ -331,43 +340,40 @@ public class GameViewPresenter extends AbstractPresenter {
     public void onBuyCardMessage(BuyCardMessage msg) {
         System.out.println(msg.getCounterCard());
         if (msg.getLobbyID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
-            if (msg.isBuyCard()) {
-                ImageView selectedCard = (ImageView) mouseEvent.getSource();
-                String pfad = "file:Client/src/main/resources/cards/images/" + msg.getCardID().toString() + ".png";
-                Image picture = new Image(pfad);
-                ImageView newCardImage = new ImageView(picture);
-                LOG.debug("Der Spieler " + msg.getCurrentUser() + " hat die Karte " + msg.getCardID() + " gekauft.");
-                // fügt ein "neues" Bild an der Stelle des alten Bildes im Shop hinzu
-                newCardImage.setPreserveRatio(true);
-                newCardImage.setFitHeight(107);
-                newCardImage.setFitWidth(Math.round(newCardImage.getBoundsInLocal().getWidth()));
-                newCardImage.setLayoutX(selectedCard.getLayoutX());
-                newCardImage.setLayoutY(selectedCard.getLayoutY());
-                newCardImage.setId(String.valueOf(msg.getCardID()));
-                Platform.runLater(() -> {
-                    gameViewWIP.getChildren().add(newCardImage);
-                    PathTransition pathTransition = AnimationManagement.buyCard(newCardImage);
-                    pathTransition.setOnFinished(actionEvent -> {
-                        gameViewWIP.getChildren().remove(newCardImage);
-                        ImageView iv = new ImageView(picture);
-                        iv.setPreserveRatio(true);
-                        iv.setFitHeight(107);
-                        discardPilePane.getChildren().add(iv);
-                    });
+            ImageView selectedCard = (ImageView) mouseEvent.getSource();
+            String pfad = "file:Client/src/main/resources/cards/images/" + msg.getCardID().toString() + ".png";
+            Image picture = new Image(pfad);
+            ImageView newCardImage = new ImageView(picture);
+            LOG.debug("Der Spieler " + msg.getCurrentUser() + " hat die Karte " + msg.getCardID() + " gekauft.");
+            // fügt ein "neues" Bild an der Stelle des alten Bildes im Shop hinzu
+            newCardImage.setPreserveRatio(true);
+            newCardImage.setFitHeight(107);
+            newCardImage.setFitWidth(Math.round(newCardImage.getBoundsInLocal().getWidth()));
+            newCardImage.setLayoutX(selectedCard.getLayoutX());
+            newCardImage.setLayoutY(selectedCard.getLayoutY());
+            newCardImage.setId(String.valueOf(msg.getCardID()));
+            Platform.runLater(() -> {
+                gameViewWIP.getChildren().add(newCardImage);
+                PathTransition pathTransition = AnimationManagement.buyCard(newCardImage);
+                pathTransition.setOnFinished(actionEvent -> {
+                    gameViewWIP.getChildren().remove(newCardImage);
+                    ImageView iv = new ImageView(picture);
+                    iv.setPreserveRatio(true);
+                    iv.setFitHeight(107);
+                    discardPilePane.getChildren().add(iv);
                 });
-                if (msg.getCounterCard() < 1) {
-                    ColorAdjust makeImageDarker = new ColorAdjust();
-                    makeImageDarker.setBrightness(-0.7);
-                    selectedCard.setEffect(makeImageDarker);
-                }
+            });
+            if (msg.getCounterCard() < 1) {
+                ColorAdjust makeImageDarker = new ColorAdjust();
+                makeImageDarker.setBrightness(-0.7);
+                selectedCard.setEffect(makeImageDarker);
+            }
+            Platform.runLater(() -> {
                 usableMoney = msg.getMoneyValuePlayer() + msg.getAdditionalMoney();
                 numberOfMoney.setText(usableMoney + " Geld");
                 numberOfBuy.setText(msg.getAvailableBuys() + " Kauf");
-                //TODO: die Geldkarten die für den Kauf benötigt wurden, müssen auf den Ablagestapel gelegt werden
-            } else {
-                showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht kaufen!", "Fehler");
-                LOG.debug("Der Kauf der Karte " + msg.getCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
-            }
+            });
+            //TODO: die Geldkarten die für den Kauf benötigt wurden, müssen auf den Ablagestapel gelegt werden
         }
     }
 
@@ -393,10 +399,13 @@ public class GameViewPresenter extends AbstractPresenter {
                         card.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                     }
                 });
-                usableMoney += msg.getAdditionalMoney();
-                numberOfAction.setText(msg.getAvailableActions() + " Aktion");
-                numberOfBuy.setText(msg.getAvailableBuys() + " Kauf");
-                numberOfMoney.setText(usableMoney + " Geld");
+                Platform.runLater(() -> {
+                    usableMoney += msg.getAdditionalMoney();
+                    numberOfAction.setText(msg.getAvailableActions() + " Aktion");
+                    numberOfBuy.setText(msg.getAvailableBuys() + " Kauf");
+                    numberOfMoney.setText(usableMoney + " Geld");
+                });
+                //TODO: Wenn Aktionen implementiert sind, prüfen ob showAlert noch notwendig ist oder ob Serverseitig bereits bei Scheitern eine Message gesendet wird
             } else {
                 showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht spielen!", "Fehler");
                 LOG.debug("Das Spielen der Karte " + msg.getHandCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
@@ -452,9 +461,9 @@ public class GameViewPresenter extends AbstractPresenter {
                     deckPane.getChildren().remove(card);
                     handcards.getChildren().add(card);
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
-                    if (!playAllMoneyCardsButton.isVisible() && (n == 1 || n == 2 || n == 3)) {
+                    if (playAllMoneyCardsButton.isDisable() && (n == 1 || n == 2 || n == 3)) {
                         // Bekommt der Spieler keine Geldkarten auf der Hand, kann er diese auch nicht mit einem Button ausspielen
-                        playAllMoneyCardsButton.setVisible(true);
+                        playAllMoneyCardsButton.setDisable(false);
                     }
                 });
                 usableMoney = message.getAdditionalMoney();
@@ -666,7 +675,7 @@ public class GameViewPresenter extends AbstractPresenter {
         back.setMinWidth(70.0);
         // Aktion hinter dem Kauf-Button
         buy.setOnAction(event -> {
-            if (!playAllMoneyCardsButton.isVisible()) {
+            if (playAllMoneyCardsButton.isDisable() && playAllMoneyCardsButton.isVisible()) {
                 buy.setVisible(false);
                 back.setVisible(false);
                 bigCardImage.setVisible(false);
@@ -677,7 +686,13 @@ public class GameViewPresenter extends AbstractPresenter {
                 buy.setVisible(false);
                 back.setVisible(false);
                 bigCardImage.setVisible(false);
-                showAlert(Alert.AlertType.WARNING, "Du musst erst deine Geldkarten ausspielen!", "Fehler");
+                if (!playAllMoneyCardsButton.isVisible()) {
+                    showAlert(Alert.AlertType.INFORMATION, "Du bist nicht dran!", "Fehler");
+                } else {
+                    showAlert(Alert.AlertType.INFORMATION, "Du musst erst deine Geldkarten ausspielen!", "Fehler");
+                }
+
+
             }
         });
         // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt
@@ -709,7 +724,7 @@ public class GameViewPresenter extends AbstractPresenter {
             }
         }
         numberOfMoney.setText(usableMoney + " Geld");
-        playAllMoneyCardsButton.setVisible(false);
+        playAllMoneyCardsButton.setDisable(true);
     }
 
     /**
@@ -723,18 +738,22 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     private void onStartPhase(UUID gameID, User user, AbstractServerMessage msg) {
         if (gameID.equals(lobbyID)) {
-            if (user.equals(loggedInUser)) {
-                if (msg instanceof StartActionPhaseMessage) {
-                    infoActualPhase.setText("Aktionsphase");
-                }
-                if (msg instanceof StartBuyPhaseMessage) {
-                    infoActualPhase.setText("Kaufphase");
+            Platform.runLater(() -> {
+                if (user.equals(loggedInUser)) {
+                    playAllMoneyCardsButton.setVisible(true);
+                    if (msg instanceof StartActionPhaseMessage) {
+                        infoActualPhase.setText("Aktionsphase");
+                    }
+                    if (msg instanceof StartBuyPhaseMessage) {
+                        infoActualPhase.setText("Kaufphase");
+                    } else {
+                        infoActualPhase.setText("Clearphase");
+                    }
                 } else {
-                    infoActualPhase.setText("Clearphase");
+                    playAllMoneyCardsButton.setVisible(false);
+                    infoActualPhase.setText("Du bist nicht dran.");
                 }
-            } else {
-                infoActualPhase.setText("Du bist nicht dran.");
-            }
+            });
         }
     }
 }

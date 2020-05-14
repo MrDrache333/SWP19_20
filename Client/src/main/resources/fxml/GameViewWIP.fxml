@@ -229,9 +229,9 @@
                                 <Insets bottom="7.0" left="5.0" right="5.0" top="7.0"/>
                             </padding>
                             <children>
-                                <Button fx:id="playAllMoneyCardsButton" layoutX="262.0" layoutY="2.0"
+                                <Button fx:id="playAllMoneyCardsButton" disable="true" layoutX="262.0" layoutY="2.0"
                                         mnemonicParsing="false" onAction="#onPlayAllMoneyCardsButtonPressed"
-                                        text="Alle Geldkarten ausspielen" visible="false"/>
+                                        text="Alle Geldkarten ausspielen"/>
                             </children>
                         </Pane>
                         <Pane prefHeight="200.0" prefWidth="150.0">

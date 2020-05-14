@@ -205,7 +205,7 @@ public class GameService extends AbstractService {
                     int moneyValuePlayer = playground.getActualPlayer().getPlayerDeck().actualMoneyFromPlayer();
                     int additionalMoney = playground.getActualPlayer().getAdditionalMoney();
                     int availableBuys = playground.getActualPlayer().getAvailableBuys();
-                    BuyCardMessage buyCard = new BuyCardMessage(request.getLobbyID(), request.getCurrentUser(), request.getCardID(), true, count, moneyValuePlayer, additionalMoney, availableBuys);
+                    BuyCardMessage buyCard = new BuyCardMessage(request.getLobbyID(), request.getCurrentUser(), request.getCardID(), count, moneyValuePlayer, additionalMoney, availableBuys);
                     sendToAllPlayers(request.getLobbyID(), buyCard);
 
                 } catch (NotEnoughMoneyException notEnoughMoney) {
