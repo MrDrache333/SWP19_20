@@ -231,7 +231,7 @@
                             <children>
                                 <Button fx:id="playAllMoneyCardsButton" layoutX="262.0" layoutY="2.0"
                                         mnemonicParsing="false" onAction="#onPlayAllMoneyCardsButtonPressed"
-                                        text="Alle Geldkarten ausspielen"/>
+                                        text="Alle Geldkarten ausspielen" visible="false"/>
                             </children>
                         </Pane>
                         <Pane prefHeight="200.0" prefWidth="150.0">

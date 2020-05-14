@@ -453,9 +453,9 @@ public class GameViewPresenter extends AbstractPresenter {
                     deckPane.getChildren().remove(card);
                     handcards.getChildren().add(card);
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
-                    if (!(n == 1 || n == 2 || n == 3)) {
+                    if (!playAllMoneyCardsButton.isVisible() && (n == 1 || n == 2 || n == 3)) {
                         // Bekommt der Spieler keine Geldkarten auf der Hand, kann er diese auch nicht mit einem Button ausspielen
-                        playAllMoneyCardsButton.setVisible(false);
+                        playAllMoneyCardsButton.setVisible(true);
                     }
                 });
                 //es wurden noch keine Geldkarten ausgespielt
@@ -681,7 +681,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 buy.setVisible(false);
                 back.setVisible(false);
                 bigCardImage.setVisible(false);
-                showAlert(Alert.AlertType.WARNING, "Du musst erst Geldkarten spielen!", "Fehler");
+                //TODO: Fehlermeldung, das man erst Geld spielen muss
             }
         });
         // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt
@@ -729,13 +729,12 @@ public class GameViewPresenter extends AbstractPresenter {
         if (gameID.equals(lobbyID)) {
             if (user.equals(loggedInUser)) {
                 if (msg instanceof StartActionPhaseMessage) {
-                    infoActualPhase.setText("Du darfst Aktionskarten spielen.");
+                    infoActualPhase.setText("Aktionsphase");
                 }
                 if (msg instanceof StartBuyPhaseMessage) {
-                    infoActualPhase.setText("Du darfst Karten kaufen.");
-                }
-                if (msg instanceof StartClearPhaseMessage) {
-                    infoActualPhase.setText("Dein Zug ist zuende.");
+                    infoActualPhase.setText("Kaufphase");
+                } else {
+                    infoActualPhase.setText("Clearphase");
                 }
             } else {
                 infoActualPhase.setText("Du bist nicht dran.");
