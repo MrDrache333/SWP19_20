@@ -237,4 +237,23 @@ public class PlaygroundTest {
         assertTrue(winners.contains(playground.getNextPlayer().getPlayerName()));
     }
 
+    /**
+     * Testet ob die korrekte Anzahl an Karten auf dem Nachziehstapel gesendet wird
+     *
+     * @author Julia
+     * @since Sprint7
+     */
+    @Test
+    void cardsDeckSizeTest() {
+        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
+        int size = playground.sendCardsDeckSize();
+        assertEquals(5, size);
+        playground.getCompositePhase().executeClearPhase(playground.getActualPlayer());
+        size = playground.sendCardsDeckSize();
+        assertEquals(0, size);
+        playground.getCompositePhase().executeClearPhase(playground.getActualPlayer());
+        size = playground.sendCardsDeckSize();
+        assertEquals(5, size);
+    }
+
 }
