@@ -193,7 +193,6 @@ public class ActionCardExecution {
             nextActions.clear();
             nextActionIndex = 0;
             if (!checkIfComplete()) {
-                actualStateIndex++;
                 execute();
             }
         }
@@ -546,68 +545,66 @@ public class ActionCardExecution {
      *
      * @return true(? ? ?)
      */
-    private boolean executeMoveAction(Move action, List<Player> thePlayers) {
-        for (Player player : thePlayers) {
-            ArrayList<Short> theIds = new ArrayList<>();
-            if (action.getCardSource().equals(AbstractPlayground.ZoneType.HAND) && action.getCardDestination().equals(AbstractPlayground.ZoneType.DISCARD)) {
-                for (Card card : action.getCardsToMove()) {
-                    if (player.getPlayerDeck().getHand().contains(card)) {
-                        player.getPlayerDeck().getHand().remove(card);
-                        player.getPlayerDeck().getDiscardPile().add(card);
-                        theIds.add(card.getId());
-                    }
-                }
-            } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.HAND) && action.getCardDestination().equals(AbstractPlayground.ZoneType.TRASH)) {
-                for (Card card : action.getCardsToMove()) {
-                    if (player.getPlayerDeck().getHand().contains(card)) {
-                        player.getPlayerDeck().getHand().remove(card);
-                        playground.getTrash().add(card);
-                        theIds.add(card.getId());
-                    }
-                }
-            } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.BUY) && action.getCardDestination().equals(AbstractPlayground.ZoneType.DISCARD)) {
-                for (Card card : action.getCardsToMove()) {
-                    // TODO: BuyCard Implementierung von Paula hier einfügen.
-                    player.getPlayerDeck().getDiscardPile().add(card);
-                    theIds.add(card.getId());
-                }
-            } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.DRAW) && action.getCardDestination().equals(AbstractPlayground.ZoneType.TEMP)) {
-                // TODO: Implementierung im Playerdeck, dass der Spieler eine bestimmte Anzahl an Karten nachziehen kann.
-                for (Card card : action.getCardsToMove()) {
-                    player.getPlayerDeck().getCardsDeck().remove(card);
-                    player.getPlayerDeck().getTemp().add(card);
-                }
-            } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.DRAW) && action.getCardDestination().equals(AbstractPlayground.ZoneType.DISCARD)) {
-                for (Card card : action.getCardsToMove()) {
-                    player.getPlayerDeck().getCardsDeck().remove(card);
-                    player.getPlayerDeck().getDiscardPile().add(card);
-                }
-            } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.DISCARD) && action.getCardDestination().equals(AbstractPlayground.ZoneType.DRAW)) {
-                for (Card card : action.getCardsToMove()) {
-                    player.getPlayerDeck().getDiscardPile().remove(card);
-                    player.getPlayerDeck().getCardsDeck().add(card);
-                    Collections.shuffle(player.getPlayerDeck().getCardsDeck());
-                }
-            } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.TEMP) && action.getCardDestination().equals(AbstractPlayground.ZoneType.HAND)) {
-                for (Card card : action.getCardsToMove()) {
-                    player.getPlayerDeck().getTemp().remove(card);
-                    player.getPlayerDeck().getHand().add(card);
-                    theIds.add(card.getId());
-                }
-                if (true) {
-                    // TODO: Checken, ob nextAction gegeben und dann von Hand auf Discard.
-                }
-            } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.TEMP) && action.getCardDestination().equals(AbstractPlayground.ZoneType.DISCARD)) {
-                for (Card card : action.getCardsToMove()) {
-                    player.getPlayerDeck().getTemp().remove(card);
+    private boolean executeMoveAction(Move action) {
+        ArrayList<Short> theIds = new ArrayList<>();
+        if (action.getCardSource().equals(AbstractPlayground.ZoneType.HAND) && action.getCardDestination().equals(AbstractPlayground.ZoneType.DISCARD)) {
+            for (Card card : action.getCardsToMove()) {
+                if (player.getPlayerDeck().getHand().contains(card)) {
+                    player.getPlayerDeck().getHand().remove(card);
                     player.getPlayerDeck().getDiscardPile().add(card);
                     theIds.add(card.getId());
                 }
             }
-            if (!theIds.isEmpty()) {
-                CardMovedMessage cardMovedMessage = new CardMovedMessage(theIds, action.getCardSource(), action.getCardDestination(), gameID);
-                playground.getGameService().sendToSpecificPlayer(player, cardMovedMessage);
+        } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.HAND) && action.getCardDestination().equals(AbstractPlayground.ZoneType.TRASH)) {
+            for (Card card : action.getCardsToMove()) {
+                if (player.getPlayerDeck().getHand().contains(card)) {
+                    player.getPlayerDeck().getHand().remove(card);
+                    playground.getTrash().add(card);
+                    theIds.add(card.getId());
+                }
             }
+        } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.BUY) && action.getCardDestination().equals(AbstractPlayground.ZoneType.DISCARD)) {
+            for (Card card : action.getCardsToMove()) {
+                // TODO: BuyCard Implementierung von Paula hier einfügen.
+                player.getPlayerDeck().getDiscardPile().add(card);
+                theIds.add(card.getId());
+            }
+        } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.DRAW) && action.getCardDestination().equals(AbstractPlayground.ZoneType.TEMP)) {
+            // TODO: Implementierung im Playerdeck, dass der Spieler eine bestimmte Anzahl an Karten nachziehen kann.
+            for (Card card : action.getCardsToMove()) {
+                player.getPlayerDeck().getCardsDeck().remove(card);
+                player.getPlayerDeck().getTemp().add(card);
+            }
+        } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.DRAW) && action.getCardDestination().equals(AbstractPlayground.ZoneType.DISCARD)) {
+            for (Card card : action.getCardsToMove()) {
+                player.getPlayerDeck().getCardsDeck().remove(card);
+                player.getPlayerDeck().getDiscardPile().add(card);
+            }
+        } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.DISCARD) && action.getCardDestination().equals(AbstractPlayground.ZoneType.DRAW)) {
+            for (Card card : action.getCardsToMove()) {
+                player.getPlayerDeck().getDiscardPile().remove(card);
+                player.getPlayerDeck().getCardsDeck().add(card);
+                Collections.shuffle(player.getPlayerDeck().getCardsDeck());
+            }
+        } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.TEMP) && action.getCardDestination().equals(AbstractPlayground.ZoneType.HAND)) {
+            for (Card card : action.getCardsToMove()) {
+                player.getPlayerDeck().getTemp().remove(card);
+                player.getPlayerDeck().getHand().add(card);
+                theIds.add(card.getId());
+            }
+            if (true) {
+                // TODO: Checken, ob nextAction gegeben und dann von Hand auf Discard.
+            }
+        } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.TEMP) && action.getCardDestination().equals(AbstractPlayground.ZoneType.DISCARD)) {
+            for (Card card : action.getCardsToMove()) {
+                player.getPlayerDeck().getTemp().remove(card);
+                player.getPlayerDeck().getDiscardPile().add(card);
+                theIds.add(card.getId());
+            }
+        }
+        if (!theIds.isEmpty()) {
+            CardMovedMessage cardMovedMessage = new CardMovedMessage(theIds, action.getCardSource(), action.getCardDestination(), gameID);
+            playground.getGameService().sendToSpecificPlayer(player, cardMovedMessage);
         }
         return true;
     }
