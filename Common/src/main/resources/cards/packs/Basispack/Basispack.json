@@ -118,7 +118,7 @@
                   "actions": [
                     {
                       "Move": {
-                        "CardDestination": "DISCARD"
+                        "cardDestination": "DISCARD"
                       }
                     },
                     {
@@ -743,12 +743,12 @@
                         "nextActions": [
                           {
                             "Move": {
-                              "CardDestination": "DISCARD"
+                              "cardDestination": "DISCARD"
                             }
                           },
                           {
                             "Move": {
-                              "CardDestination": "DRAW"
+                              "cardDestination": "DRAW"
                             }
                           }
                         ]
