@@ -18,8 +18,8 @@
         </ImageView>
         <TextField fx:id="lobbynameField" layoutX="23.0" layoutY="80.0" prefHeight="29.0" prefWidth="272.0" promptText="Lobbyname" />
         <PasswordField fx:id="passwordField" layoutX="23.0" layoutY="128.0" prefHeight="29.0" prefWidth="272.0" promptText="Passwort (optional)" />
-        <Button fx:id="cancelButton" layoutX="216.0" layoutY="214.0" mnemonicParsing="false" onAction="#onCancelButtonPressed" text="Abbrechen" />
-        <Button fx:id="createButton" defaultButton="true" layoutX="300.0" layoutY="214.0" mnemonicParsing="false" onAction="#onCreateLobbyButtonPressed" text="Lobby erstellen" />
+        <Button fx:id="cancelButton" layoutX="166.0" layoutY="187.0" mnemonicParsing="false" onAction="#onCancelButtonPressed" prefHeight="27.0" prefWidth="85.0" text="Abbrechen" />
+        <Button fx:id="createButton" defaultButton="true" layoutX="268.0" layoutY="187.0" mnemonicParsing="false" onAction="#onCreateLobbyButtonPressed" text="Lobby erstellen" />
         <Label layoutX="33.0" layoutY="10.0" prefHeight="46.0" prefWidth="183.0" text="Lobby erstellen">
             <font>
                 <Font size="30.0" />
