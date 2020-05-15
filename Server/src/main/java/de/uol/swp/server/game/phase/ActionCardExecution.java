@@ -155,9 +155,6 @@ public class ActionCardExecution {
         return false;
     }
 
-    //TODO: Was ist, wenn aus der vorherigen Aktion Karten übergeben werden müssen?
-    // z.B.: GetCard liefert Karten, die danach mit Move irgendwo hin bewegt werden müssen
-
     /**
      * Führt alle Unteraktionen einer Action aus
      *
@@ -317,8 +314,6 @@ public class ActionCardExecution {
      * @param input  Eingabe an Karten
      * @return Ergebnis
      */
-    //TODO: Die Aktion muss auch auf mehrere Spieler ausgeführt werden können
-    // -> executeGetCard und executeMove müssen entsprechend angepasst werden
     private ArrayList<Card> executeCardAction(CardAction action, ArrayList<Card> input, List<Player> playerList, boolean foreach) throws NullPointerException {
         if (action == null) throw new NullPointerException("Action can't be null");
         for (Player player : playerList) {

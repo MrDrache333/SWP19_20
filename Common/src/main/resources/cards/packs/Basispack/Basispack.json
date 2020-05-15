@@ -118,6 +118,7 @@
                   "actions": [
                     {
                       "Move": {
+                        "cardSource": "HAND",
                         "cardDestination": "DISCARD"
                       }
                     },
@@ -200,6 +201,7 @@
                     "cardSource": "HAND",
                     "nextAction": {
                       "Move": {
+                        "cardSource": "HAND",
                         "cardDestination": "DISCARD"
                       }
                     }
@@ -227,6 +229,7 @@
                   "actions": [
                     {
                       "Move": {
+                        "cardSource": "HAND",
                         "cardDestination": "TRASH"
                       }
                     },
@@ -281,6 +284,7 @@
                   "actions": [
                     {
                       "Move": {
+                        "cardSource": "HAND",
                         "cardDestination": "TRASH"
                       }
                     },
@@ -318,6 +322,7 @@
               "cardSource": "BUY",
               "nextAction": {
                 "Move": {
+                  "cardSource": "BUY",
                   "cardDestination": "DISCARD"
                 }
               }
@@ -352,6 +357,7 @@
                     "cardSource": "DRAW",
                     "nextAction": {
                       "Move": {
+                        "cardSource": "DRAW",
                         "cardDestination": "TEMP"
                       }
                     }
@@ -366,9 +372,11 @@
                 "nextAction": {
                   "Move": {
                     "allowedCardType": "MONEYCARD",
+                    "cardSource": "TEMP",
                     "cardDestination": "HAND",
                     "nextAction": {
                       "Move": {
+                        "cardSource": "TEMP",
                         "cardDestination": "DISCARD"
                       }
                     }
@@ -395,6 +403,7 @@
               },
               "nextAction": {
                 "Move": {
+                  "cardSource": "BUY",
                   "cardDestination": "DISCARD"
                 }
               }
@@ -438,6 +447,7 @@
                     },
                     {
                       "Move": {
+                        "cardSource": "HAND",
                         "cardDestination": "DISCARD"
                       }
                     }
@@ -466,6 +476,7 @@
               "removeCardAfter": true,
               "nextAction": {
                 "Move": {
+                  "cardSource": "BUY",
                   "cardDestination": "DISCARD"
                 }
               }
@@ -493,6 +504,7 @@
                     },
                     "nextAction": {
                       "Move": {
+                        "cardSource": "HAND",
                         "cardDestination": "TRASH"
                       }
                     }
@@ -527,6 +539,7 @@
               "cardSource": "DRAW",
               "nextAction": {
                 "Move": {
+                  "cardSource": "DRAW",
                   "cardDestination": "DISCARD"
                 }
               }
@@ -548,6 +561,7 @@
               },
               "nextAction": {
                 "Move": {
+                  "cardSource": "HAND",
                   "cardDestination": "TRASH"
                 }
               }
@@ -640,6 +654,7 @@
               "cardSource": "TEMP",
               "nextAction": {
                 "Move": {
+                  "cardSource": "TEMP",
                   "cardDestination": "DISCARD"
                 }
               }
@@ -743,11 +758,13 @@
                         "nextActions": [
                           {
                             "Move": {
+                              "cardSource": "DRAW",
                               "cardDestination": "DISCARD"
                             }
                           },
                           {
                             "Move": {
+                              "cardSource": "DRAW",
                               "cardDestination": "DRAW"
                             }
                           }
