@@ -11,6 +11,7 @@ import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.lobby.Lobby;
+import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
@@ -47,6 +48,7 @@ public class Playground extends AbstractPlayground {
     private Timer timer = new Timer();
     private short lobbySizeOnStart;
     private CardPack cardsPackField;
+    private ArrayList<Short> chosenCards;
 
     /**
      * Erstellt ein neues Spielfeld und übergibt die Spieler. Die Reihenfolge der Spieler wird zufällig zusammengestellt.
@@ -70,6 +72,7 @@ public class Playground extends AbstractPlayground {
         this.compositePhase = new CompositePhase(this);
         this.lobbySizeOnStart = (short) lobby.getUsers().size();
         this.cardsPackField = new JsonCardParser().loadPack("Basispack");
+        this.chosenCards = ((LobbyDTO) lobby).getChosenCards();
         initializeCardField();
     }
 
@@ -83,9 +86,21 @@ public class Playground extends AbstractPlayground {
                 cardField.put(card.getId(), 8);
             } else cardField.put(card.getId(), 12);
         }
-        for (int i = 0; i < cardsPackField.getCards().getActionCards().size(); i++) {
-            Card card = cardsPackField.getCards().getActionCards().get(i);
-            cardField.put(card.getId(), 10);
+        while (chosenCards.size() < 10) {
+            for (short i = 7; i < 17; i++) {
+                if (!chosenCards.contains(i)) {
+                    chosenCards.add(i);
+                }
+            }
+            //TODO: die 16 ändern, sobald mehr Karten vorhanden sind, die obere for-Schleife auskommentieren
+            // und den unteren Block dafür entkommentieren
+            /*short random = (short) (Math.random() * 16);
+            if (!chosenCards.contains(random) && random > 6) {
+                chosenCards.add(random);
+            }*/
+        }
+        for (Short chosenCard : chosenCards) {
+            cardField.put(chosenCard, 10);
         }
         for (int i = 0; i < cardsPackField.getCards().getCurseCards().size(); i++) {
             Card card = cardsPackField.getCards().getCurseCards().get(i);
@@ -98,6 +113,7 @@ public class Playground extends AbstractPlayground {
             else if (i == 2) cardField.put(card.getId(), 30);
             else LOG.debug("Komisch: @ initializeCardField- Else Methode in 104 ausgeschlagen.... @ @ @");
         }
+        gameService.sendCardField(theSpecificLobbyID, cardField);
     }
 
     /**
@@ -113,11 +129,15 @@ public class Playground extends AbstractPlayground {
         if (actualPlayer == null && nextPlayer == null) {
             actualPlayer = players.get(0);
             nextPlayer = players.get(1);
+            sendInitialCardsDeckSize();
             sendInitialHands();
         } else {
             //Spieler muss Clearphase durchlaufen haben
             if (actualPhase != Phase.Type.Clearphase) return;
-            if (actualPlayer != latestGavedUpPlayer) sendPlayersHand();
+            if (actualPlayer != latestGavedUpPlayer) {
+                sendPlayersHand();
+                sendCardsDeckSize();
+            }
             int index = players.indexOf(nextPlayer);
             actualPlayer = nextPlayer;
             nextPlayer = players.get(++index % players.size());
@@ -195,6 +215,31 @@ public class Playground extends AbstractPlayground {
         }
         DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID);
         gameService.sendToSpecificPlayer(actualPlayer, theHandMessage);
+    }
+
+    /**
+     * Sendet dem aktuellen Spieler die Anzahl seiner Karten auf dem Nachziehstapel
+     *
+     * @author Julia
+     * @since Sprint7
+     */
+    public int sendCardsDeckSize() {
+        int size = actualPlayer.getPlayerDeck().getCardsDeck().size();
+        gameService.sendToSpecificPlayer(actualPlayer, new CardsDeckSizeMessage(theSpecificLobbyID, actualPlayer.getTheUserInThePlayer(), size));
+        return size;
+    }
+
+    /**
+     * Sendet zu Spielbeginn jedem Spieler die Anzahl seiner Karten auf dem Nachziehstapel
+     *
+     * @author Julia
+     * @since Sprint7
+     */
+    public void sendInitialCardsDeckSize() {
+        for (Player player : players) {
+            int size = player.getPlayerDeck().getCardsDeck().size();
+            gameService.sendToSpecificPlayer(player, new CardsDeckSizeMessage(theSpecificLobbyID, player.getTheUserInThePlayer(), size));
+        }
     }
 
     /**

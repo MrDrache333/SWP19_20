@@ -12,6 +12,7 @@ import de.uol.swp.server.usermanagement.store.MainMemoryBasedUserStore;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,6 +27,7 @@ public class GiveUpTest {
     static final GameManagement gameManagement = new GameManagement(chatManagement, lobbyManagement);
     static final AuthenticationService authenticationService = new AuthenticationService(bus, new UserManagement(new MainMemoryBasedUserStore()), lobbyManagement);
     static final GameService gameService = new GameService(bus, gameManagement, authenticationService);
+    private static ArrayList<Short> chosenCards = new ArrayList<Short>();
     static UUID gameID;
 
     @BeforeAll
@@ -34,6 +36,7 @@ public class GiveUpTest {
         chatManagement.createChat(gameID.toString());
         lobbyManagement.getLobby(gameID).get().joinUser(secondPlayer);
         lobbyManagement.getLobby(gameID).get().joinUser(thirdPlayer);
+        lobbyManagement.getLobby(gameID).get().setChosenCards(chosenCards);
         bus.post(new StartGameInternalMessage(gameID));
     }
 

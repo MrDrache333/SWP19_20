@@ -99,23 +99,24 @@ public class AnimationManagement {
         double y = card.getBoundsInParent().getMinY();
         double w = card.getFitWidth() / 2;
         double h = card.getFitHeight() / 2;
-        EndPointX = EndPointX + w + count * w;
-        EndPointY = EndPointY + h;
+        Parent parent = card.getParent();
+        double startPointX = parent.getLayoutX() + parent.getBoundsInLocal().getWidth() / 2 - w - EndPointX - w * 2 * count + 300;
+        double startPointY = parent.getLayoutY() + parent.getBoundsInLocal().getHeight() / 2 - h - EndPointY;
         Path path = new Path();
-        if (moveTo.getX() != EndPointX || moveTo.getY() != EndPointY) {
-            path.getElements().add(moveTo);
-            path.getElements().add(new ArcTo(30, 30, 0, EndPointX - x, EndPointY - y, largeArc, !largeArc));
-            PathTransition pathTransition = new PathTransition();
-            pathTransition.setDuration(Duration.millis(1000));
-            pathTransition.setNode(card);
-            pathTransition.setPath(path);
-            pathTransition.setCycleCount(1);
-            card.toFront();
-            pathTransition.play();
-            setNewCoordinates(card, pathTransition);
-            return true;
-        }
-        return false;
+        //if (moveTo.getX() != EndPointX || moveTo.getY() != EndPointY) {
+        path.getElements().add(new MoveTo(startPointX, startPointY));
+        path.getElements().add(new ArcTo(30, 20, 0, w, h, largeArc, !largeArc));
+        PathTransition pathTransition = new PathTransition();
+        pathTransition.setDuration(Duration.millis(1000));
+        pathTransition.setNode(card);
+        pathTransition.setPath(path);
+        pathTransition.setCycleCount(1);
+        card.toFront();
+        pathTransition.play();
+        setNewCoordinates(card, pathTransition);
+        return true;
+        //}
+        //return false;
     }
 
     /**
@@ -195,12 +196,12 @@ public class AnimationManagement {
         Parent parent = card.getParent();
         double w = card.getFitWidth() / 2;
         double h = card.getFitHeight() / 2;
-        double endPointX = parent.getLayoutX() + parent.getBoundsInLocal().getWidth() / 2 - w - HAND_X - w * 2 * count;
-        endPointX += 350;
+        double startPointX = parent.getLayoutX() + parent.getBoundsInLocal().getWidth() / 2 - w - HAND_X - w * 2 * count;
+        startPointX += 350;
         parent.toBack();
-        if (HAND_X + count * w != endPointX) {
+        if (HAND_X + count * w != startPointX) {
             Path path = new Path();
-            path.getElements().add(new MoveTo(endPointX, h));
+            path.getElements().add(new MoveTo(startPointX, h));
             card.toFront();
             path.getElements().add(new LineTo(w, h));
             PathTransition pathTransition = new PathTransition();
