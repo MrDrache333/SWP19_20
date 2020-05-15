@@ -268,28 +268,36 @@ public class GameViewPresenter extends AbstractPresenter {
         }
     }
 
+    /**
+     * Wenn die StartClearPhaseMessage kommt werden die Karten auf der Hand zum Ablagestapel bewegt
+     *
+     * @param msg Die Nachricht
+     * @author Darian
+     * @since Sprint7
+     */
     @Subscribe
     public void onStartClearPhase(StartClearPhaseMessage msg){
         if (msg.getGameID().equals(this.lobbyID) && msg.getUser().equals(loggedInUser)) {
-            ArrayList<Node> removeIds = new ArrayList<>();
             synchronized (handcards){
                 for (Node c : handcards.getChildren()) {
-                    ImageView card = (ImageView) c;
                     Platform.runLater(() -> {
+                        ImageView card = (ImageView) c;
+                        /*String pfad = "file:Client/src/main/resources/cards/images/" + card.getId() + ".png";
+                        Image picture = new Image(pfad);
+                        ImageView newCardImage = new ImageView(picture);
+                        newCardImage.setPreserveRatio(true);
+                        newCardImage.setFitHeight(107);
+                        newCardImage.setFitWidth(Math.round(newCardImage.getBoundsInLocal().getWidth()));
+                        newCardImage.setLayoutX(c.getLayoutX());
+                        newCardImage.setLayoutY(c.getLayoutY());
+                        newCardImage.setId(String.valueOf(c));
+                        AnimationManagement.clearCards(newCardImage);*/
                         AnimationManagement.clearCards(card);
-                        //
                         handcards.getChildren().remove(c);
                     });
                 }
-                //removeIds.add(c);
-                //LOG.debug(handcards.getChildren());
             }
-            //for (Node c : removeIds){
-            //    handcards.getChildren().remove(c);
-            //}
-
         }
-        LOG.debug(msg.getUser().getUsername());
     }
 
     /**
@@ -653,17 +661,17 @@ public class GameViewPresenter extends AbstractPresenter {
      * @since Sprint 7
      */
     public void playAllMoneyCardsOnHand() {
-            synchronized (handcards) {
-                for (Node c : handcards.getChildren()) {
-                    ImageView card = (ImageView) c;
-                    if (card.getId().equals("1") || card.getId().equals("2") || card.getId().equals("3")) {
-                        Platform.runLater(() -> {
-                            AnimationManagement.playCard(card, playedCardLayoutContainer.getChildren().size());
-                            handcards.getChildren().remove(c);
-                            playedCardLayoutContainer.getChildren().add(card);
-                        });
-                    }
+        synchronized (handcards) {
+            for (Node c : handcards.getChildren()) {
+                ImageView card = (ImageView) c;
+                if (card.getId().equals("1") || card.getId().equals("2") || card.getId().equals("3")) {
+                    Platform.runLater(() -> {
+                        AnimationManagement.playCard(card, playedCardLayoutContainer.getChildren().size());
+                        handcards.getChildren().remove(c);
+                        playedCardLayoutContainer.getChildren().add(card);
+                    });
                 }
             }
+        }
     }
 }
