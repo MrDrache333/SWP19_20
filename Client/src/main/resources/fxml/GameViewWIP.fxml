@@ -185,8 +185,6 @@
                                     </image>
                                 </ImageView>
                                 <StackPane fx:id="countDeckPane" layoutX="104" layoutY="4" prefWidth="20">
-                                    <!--<Rectangle fx:id="countDeck" fill="darkred" height="20" width="20" arcHeight="8" arcWidth="8">
-                                    </Rectangle>-->
                                     <Circle fx:id="countDeckCircle" fill="darkred" radius="12"/>
                                     <Label fx:id="countDeckLabel" style="-fx-font-style: Bold; -fx-font-size: 14"
                                            text="5" textFill="white"/>

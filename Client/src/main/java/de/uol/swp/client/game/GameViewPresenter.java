@@ -478,6 +478,27 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
+     * Die Anzahl der Karten auf Deck wird aktualisiert und eventuell die Karten vom Ablegestapel entfernt.
+     *
+     * @param msg die Nachricht
+     * @author Fenja, Anna
+     * @since Sprint 7
+     */
+    @Subscribe
+    public void onCardsDeckSizeMessage(CardsDeckSizeMessage msg) {
+        if (msg.getGameID().equals(lobbyID)) {
+            if (msg.getPlayer().equals(loggedInUser)) {
+                Platform.runLater(() -> {
+                    countDeckLabel.setText(String.valueOf(msg.getCardsDeckSize()));
+                    if (msg.getDiscardPileWasCleared()) {
+                        discardPilePane.getChildren().clear();
+                    }
+                });
+            }
+        }
+    }
+
+    /**
      * Die usersView Liste wird geupdatet.
      * Äquivalent zu MainMenuPresenter.updateUsersList.
      *
