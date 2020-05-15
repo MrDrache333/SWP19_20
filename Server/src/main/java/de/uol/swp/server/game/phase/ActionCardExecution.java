@@ -341,6 +341,7 @@ public class ActionCardExecution {
                         ((ForEach) nextAction).setCards(c);
                     }
                 }
+                return c;
             }
         }
 
@@ -476,7 +477,12 @@ public class ActionCardExecution {
                 ArrayList<Card> cards = new ArrayList<>();
                 cards.add(card);
                 for (CardAction cardAction : action.getActions()) {
-                    cards = executeCardAction(cardAction, cards, playerList, true);
+                    if (cardAction instanceof Move || cardAction instanceof GetCard) {
+                        ArrayList<Card> c = executeCardAction(cardAction, cards, playerList, true);
+                        if (c != null) {
+                            cards = c;
+                        }
+                    } else executeCardAction(cardAction, playerList);
                 }
             }
         } catch (NullPointerException e) {
