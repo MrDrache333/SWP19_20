@@ -26,14 +26,6 @@ public class ActionCardExecution {
 
     private static final Logger LOG = LogManager.getLogger(ActionCardExecution.class);
 
-    //TODO
-    /*
-
-    Was passiert, wenn das Attribut executeType andere Spieler involviert?
-
-
-     */
-
     //TODO: Subscribe Methode -> waitedForPlayerInput prüfen -> auf false setzen -> benötigen Antwort vom Client
     // -> ChooseCard (IDs der gewählten Karten) und ChooseNextAction (gewählte Aktion)
 
@@ -113,19 +105,21 @@ public class ActionCardExecution {
      * @author KenoO, Julia
      */
     public boolean execute() {
-        //????????????????????????????????????
         //TODO Some pretty nice and clean Code to Execute the Shit out of that Card
         while (actualStateIndex < theCard.getActions().size() && !waitedForPlayerInput && finishedNextActions) {
             CardAction action = theCard.getActions().get(actualStateIndex);
-            getNextActions(action);
+            nextActions = getNextActions(action);
             if (action instanceof ComplexCardAction && ((ComplexCardAction) action).isExecutionOptional() && !executeOptionalAction) {
                 playground.getGameService().sendToSpecificPlayer(player, new OptionalActionRequest(gameID, player.getTheUserInThePlayer(), action));
             } else {
+                if (!(action instanceof ChooseNextAction) && !(action instanceof ChooseCard)) {
+                    actualStateIndex++;
+                }
                 List<Player> playerList = getAffectedPlayers(action);
                 if (!(action instanceof GetCard) && !(action instanceof Move)) {
                     if (!executeCardAction(action, playerList)) return false;
                 } else {
-                    //TODO
+                    executeCardAction(action, null, playerList, false);
                 }
                 if (nextActions.isEmpty()) {
                     finishedNextActions = true;
@@ -178,10 +172,13 @@ public class ActionCardExecution {
             if (action instanceof ComplexCardAction && ((ComplexCardAction) action).isExecutionOptional() && !executeOptionalAction) {
                 playground.getGameService().sendToSpecificPlayer(player, new OptionalActionRequest(gameID, player.getTheUserInThePlayer(), action));
             } else {
+                if (!(action instanceof ChooseNextAction) && !(action instanceof ChooseCard)) {
+                    nextActionIndex++;
+                }
                 if (!(action instanceof GetCard) && !(action instanceof Move)) {
                     if (!executeCardAction(action, playerList)) return false;
                 } else {
-                    //TODO
+                    executeCardAction(action, null, playerList, false);
                 }
             }
             executeOptionalAction = false;
@@ -292,10 +289,7 @@ public class ActionCardExecution {
      * @author KenoO
      */
     private boolean executeCardAction(CardAction action, List<Player> thePlayers) {
-        if (!(action instanceof ChooseNextAction) && !(action instanceof ChooseCard)) {
-            if (!finishedNextActions) nextActionIndex++;
-            else actualStateIndex++;
-        }
+        if (action == null) throw new NullPointerException("Action can't be null");
         if (action instanceof AddCapablePlayerActivity)
             return executeAddCapablePlayerActivity((AddCapablePlayerActivity) action);
         if (action instanceof ChooseCard)
@@ -303,7 +297,7 @@ public class ActionCardExecution {
         if (action instanceof ChooseNextAction)
             return executeChooseNextAction((ChooseNextAction) action);
         if (action instanceof ForEach)
-            return executeForEach((ForEach) action);
+            return executeForEach((ForEach) action, thePlayers);
         if (action instanceof If)
             return executeIf((If) action, thePlayers);
         if (action instanceof ShowCard)
@@ -325,9 +319,31 @@ public class ActionCardExecution {
      */
     //TODO: Die Aktion muss auch auf mehrere Spieler ausgeführt werden können
     // -> executeGetCard und executeMove müssen entsprechend angepasst werden
-    private ArrayList<Card> executeCardAction(CardAction action, ArrayList<Card> input) throws NullPointerException {
-        if (action == null || input == null) throw new NullPointerException("Actions nor input can't be null");
-        //TODO
+    private ArrayList<Card> executeCardAction(CardAction action, ArrayList<Card> input, List<Player> playerList, boolean foreach) throws NullPointerException {
+        if (action == null) throw new NullPointerException("Action can't be null");
+        for (Player player : playerList) {
+            if (action instanceof Move) {
+                if (input == null && ((Move) action).getCardsToMove() == null)
+                    throw new NullPointerException("No cards to move!");
+                if (input != null) ((Move) action).setCardsToMove(input);
+                executeMoveAction((Move) action, player);
+            } else if (action instanceof GetCard) {
+                ArrayList<Card> c = executeGetCard((GetCard) action, player);
+                if (((GetCard) action).isDirectHand()) {
+                    player.getPlayerDeck().getHand().addAll(c);
+                } else if (!foreach) {
+                    CardAction nextAction = nextActions.get(nextActionIndex);
+                    if (nextAction instanceof Move) {
+                        ((Move) nextAction).setCardsToMove(c);
+                    } else if (nextAction instanceof ShowCard && c.size() == 1) {
+                        ((ShowCard) nextAction).setCard(c.get(0));
+                    } else if (nextAction instanceof ForEach) {
+                        ((ForEach) nextAction).setCards(c);
+                    }
+                }
+            }
+        }
+
         return null;
     }
 
@@ -406,7 +422,7 @@ public class ActionCardExecution {
         return false;
     }
 
-    private ArrayList<Card> executeGetCard(GetCard action) {
+    private ArrayList<Card> executeGetCard(GetCard action, Player player) {
         if (action.getCardSource() != AbstractPlayground.ZoneType.NONE) {
             switch (action.getCardSource()) {
 
@@ -435,7 +451,15 @@ public class ActionCardExecution {
                     action.setCards(player.getPlayerDeck().getTemp());
                     break;
             }
-            action.setCards(filterCards(action, action.getCards()));
+            ArrayList<Card> cards = filterCards(action, action.getCards());
+            if (cards.size() > action.getCount()) {
+                ArrayList<Card> tmp = new ArrayList<>();
+                for (int i = 0; i < action.getCount(); i++) {
+                    tmp.add(cards.get(i));
+                }
+                action.setCards(tmp);
+            } else action.setCards(cards);
+
         }
         return action.getCards();
     }
@@ -446,13 +470,13 @@ public class ActionCardExecution {
      * @param action Die ForEach-Aktion
      * @return
      */
-    private boolean executeForEach(ForEach action) {
+    private boolean executeForEach(ForEach action, List<Player> playerList) {
         try {
             for (Card card : action.getCards()) {
                 ArrayList<Card> cards = new ArrayList<>();
                 cards.add(card);
                 for (CardAction cardAction : action.getActions()) {
-                    cards = executeCardAction(cardAction, cards);
+                    cards = executeCardAction(cardAction, cards, playerList, true);
                 }
             }
         } catch (NullPointerException e) {
@@ -516,6 +540,7 @@ public class ActionCardExecution {
      * @param action Die Anzahl der Karten
      * @return true(? ? ?)
      */
+    //TODO: fix
     private boolean executeChooseCard(ChooseCard action, List<Player> thePlayers) {
         for (Player player : thePlayers) {
             waitedForPlayerInput = true;
@@ -544,7 +569,7 @@ public class ActionCardExecution {
      *
      * @return true(? ? ?)
      */
-    private boolean executeMoveAction(Move action) {
+    private boolean executeMoveAction(Move action, Player player) {
         ArrayList<Short> theIds = new ArrayList<>();
         if (action.getCardSource().equals(AbstractPlayground.ZoneType.HAND) && action.getCardDestination().equals(AbstractPlayground.ZoneType.DISCARD)) {
             for (Card card : action.getCardsToMove()) {

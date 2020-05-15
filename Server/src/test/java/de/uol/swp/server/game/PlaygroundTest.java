@@ -33,8 +33,6 @@ public class PlaygroundTest {
     static final User defaultOwner = new UserDTO("test1", "test1", "test1@test.de");
     static final User secondPlayer = new UserDTO("test2", "test2", "test2@test2.de");
     static final User thirdPlayer = new UserDTO("test3", "test3", "test3@test3.de");
-    static final String lobbyName = "DrawHandMessageLobyTest";
-    static final String lobbyPassword = "";
     static final ChatManagement chatManagement = new ChatManagement();
     static final LobbyManagement lobbyManagement = new LobbyManagement();
     static final GameManagement gameManagement = new GameManagement(chatManagement, lobbyManagement);
@@ -236,32 +234,4 @@ public class PlaygroundTest {
         assertEquals(1, winners.size());
         assertTrue(winners.contains(playground.getNextPlayer().getPlayerName()));
     }
-
-    //TODO: In ActionCardExecution Testklasse verschieben
-    //nur mal zum testen...
-    @Test
-    void testHolzfäller() {
-        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
-        playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(2));
-        playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 9);
-        assertEquals(2, playground.getActualPlayer().getAvailableBuys());
-        assertEquals(2, playground.getActualPlayer().getAdditionalMoney());
-        assertEquals(Phase.Type.Buyphase, playground.getActualPhase());
-    }
-
-    //TODO: In ActionCardExecution Testklasse verschieben
-    //nur mal zum testen...
-    @Test
-    void testJahrmarkt() {
-        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
-        playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(20));
-        playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 27);
-        assertEquals(2, playground.getActualPlayer().getAvailableBuys());
-        assertEquals(2, playground.getActualPlayer().getAvailableActions());
-        assertEquals(2, playground.getActualPlayer().getAdditionalMoney());
-        assertEquals(Phase.Type.ActionPhase, playground.getActualPhase());
-    }
-
 }
