@@ -1,42 +1,46 @@
-package de.uol.swp.client.game;
-
+package de.uol.swp.client.game.container;
 
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
 
 /**
- * Layoutcontainer für die Karten auf der Hand.
+ * Layoutcontainer für die Karten, die von der Hand ausgespielt worden sind.
  *
- * @author Anna
+ * @author Devin
  * @since Sprint6
  */
-public class HandcardsLayoutContainer extends Region {
+
+public class PlayedCardLayoutContainer extends Region {
 
     /**
-     * Instantiiert einen neuen HandcardsLayoutContainer.
+     * Instantiiert einen neuen PlayedCardLayoutContainer.
      *
-     * @author Anna
+     * @author Devin
      * @since Sprint6
      */
-    public HandcardsLayoutContainer() {
+    public PlayedCardLayoutContainer() {
     }
 
     /**
-     * Instantiiert einen neuen HandcardsLayoutContainer.
+     * Instantiiert einen neuen PlayedCardLayoutContainer.
      *
      * @param layoutX x-Koordinate
      * @param layoutY y-Koordinate
      * @param height  Höhe
      * @param width   Breite
-     * @author Anna
+     * @author Devin
      * @since Sprint6
      */
-    public HandcardsLayoutContainer(double layoutX, double layoutY, double height, double width) {
+    public PlayedCardLayoutContainer(double layoutX, double layoutY, double height, double width, String id) {
         this.setLayoutX(layoutX);
         this.setLayoutY(layoutY);
         this.setPrefHeight(height);
         this.setPrefWidth(width);
+        this.setId(id);
+        if(this.getId().equals("2.PCLC") || this.getId().equals("3.PCLC")) {
+            this.setRotate(90);
+        }
     }
 
     /**
@@ -44,7 +48,7 @@ public class HandcardsLayoutContainer extends Region {
      * Wenn die Pane breit genug ordnen sie sich, von der Mitte ausgehend, direkt nebeneinander an.
      * Ansonsten überlappen sie sich, aber immer nur so viel wie nötig.
      *
-     * @author Anna
+     * @author Devin
      * @since Sprint6
      */
     @Override
@@ -77,12 +81,13 @@ public class HandcardsLayoutContainer extends Region {
      * Getter für fie Liste der Kinderknoten
      *
      * @return Kinder
-     * @author Anna
+     * @author Devin
      * @since Sprint6
      */
     @Override
     public ObservableList<Node> getChildren() {
         return super.getChildren();
     }
+
 }
 

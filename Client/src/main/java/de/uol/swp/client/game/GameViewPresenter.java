@@ -5,6 +5,10 @@ import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
+import de.uol.swp.client.game.container.DeckLayoutContainer;
+import de.uol.swp.client.game.container.DiscardPileLayoutContainer;
+import de.uol.swp.client.game.container.HandcardsLayoutContainer;
+import de.uol.swp.client.game.container.PlayedCardLayoutContainer;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.common.game.messages.*;
@@ -42,7 +46,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -102,17 +105,18 @@ public class GameViewPresenter extends AbstractPresenter {
     private final HandcardsLayoutContainer firstEnemyHand;
     private final HandcardsLayoutContainer secondEnemyHand;
     private final HandcardsLayoutContainer thirdEnemyHand;
-    private final PlayedCardLayoutContainer playedCardLayoutContainer;
+    private final PlayedCardLayoutContainer myPCLC;
     private final PlayedCardLayoutContainer firstEnemyPCLC;
     private final PlayedCardLayoutContainer secondEnemyPCLC;
     private final PlayedCardLayoutContainer thirdEnemyPCLC;
-    private final StackPane firstEnemyDeck;
-    private final StackPane secondEnemyDeck;
-    private final StackPane thirdEnemyDeck;
-    private final StackPane discardPile;
-    private final StackPane firstEnemyDiscardPile;
-    private final StackPane secondEnemyDiscardPile;
-    private final StackPane thirdEnemyDiscardPile;
+    private final DiscardPileLayoutContainer myDPLC;
+    private final DiscardPileLayoutContainer firstEnemyDPLC;
+    private final DiscardPileLayoutContainer secondEnemyDPLC;
+    private final DiscardPileLayoutContainer thirdEnemyDPLC;
+    private final DeckLayoutContainer myDLC;
+    private final DeckLayoutContainer firstEnemyDLC;
+    private final DeckLayoutContainer secondEnemyDLC;
+    private final DeckLayoutContainer thirdEnemyDLC;
     private ObservableList<String> users;
     private final GameService gameService;
     private MouseEvent mouseEvent;
@@ -149,31 +153,30 @@ public class GameViewPresenter extends AbstractPresenter {
         this.chatViewPresenter = chatViewPresenter;
         this.injector = injector;
         this.gameManagement = gameManagement;
-        playedCardLayoutContainer = new PlayedCardLayoutContainer(700, 500, 100, 200);
-        firstEnemyPCLC = new PlayedCardLayoutContainer(700, 150,100, 200);
-        secondEnemyPCLC = new PlayedCardLayoutContainer(420, 252,200, 100);
-        thirdEnemyPCLC = new PlayedCardLayoutContainer(1070, 252, 200, 100);
-        handcards = new HandcardsLayoutContainer(575, 630, 110, 420);
-        firstEnemyHand = new HandcardsLayoutContainer(575, 0, 110, 420);
-        secondEnemyHand = new HandcardsLayoutContainer(145, 299, 110, 420); secondEnemyHand.setRotate(90);
-        thirdEnemyHand = new HandcardsLayoutContainer(1010, 299, 110, 420); thirdEnemyHand.setRotate(90);
-        discardPile = new StackPane(); discardPile.setLayoutX(996); discardPile.setLayoutY(630); discardPile.setPrefHeight(110); discardPile.setPrefWidth(60);
-        firstEnemyDiscardPile = new StackPane(); firstEnemyDiscardPile.setLayoutX(515); firstEnemyDiscardPile.setLayoutY(0); firstEnemyDiscardPile.setPrefHeight(110); firstEnemyDiscardPile.setPrefWidth(60);
-        secondEnemyDiscardPile = new StackPane(); secondEnemyDiscardPile.setLayoutX(324); secondEnemyDiscardPile.setLayoutY(540); secondEnemyDiscardPile.setPrefHeight(110); secondEnemyDiscardPile.setPrefWidth(60); secondEnemyDiscardPile.setRotate(90);
-        thirdEnemyDiscardPile = new StackPane(); thirdEnemyDiscardPile.setLayoutX(1191); thirdEnemyDiscardPile.setLayoutY(59); thirdEnemyDiscardPile.setPrefHeight(110); thirdEnemyDiscardPile.setPrefWidth(60); thirdEnemyDiscardPile.setRotate(90);
-        firstEnemyDeck = new StackPane(); firstEnemyDeck.setLayoutX(300); firstEnemyDeck.setLayoutY(0); firstEnemyDeck.setPrefWidth(100); firstEnemyDeck.setPrefHeight(160);
-        secondEnemyDeck = new StackPane(); secondEnemyDeck.setLayoutX(0); secondEnemyDeck.setLayoutY(0); secondEnemyDeck.setPrefWidth(0); secondEnemyDeck.setPrefHeight(0);
-        thirdEnemyDeck = new StackPane(); thirdEnemyDeck.setLayoutX(0); thirdEnemyDeck.setLayoutY(0); thirdEnemyDeck.setPrefWidth(0); thirdEnemyDeck.setPrefHeight(0);
-
+        // Die Hände für jeden Spieler
+        handcards = new HandcardsLayoutContainer(575, 630, 110, 420, "My.HCLC");
+        firstEnemyHand = new HandcardsLayoutContainer(575, 0, 110, 420,"1.HCLC");
+        secondEnemyHand = new HandcardsLayoutContainer(145, 299, 110, 420,"2.HCLC");
+        thirdEnemyHand = new HandcardsLayoutContainer(1010, 299, 110, 420,"3.HCLC");
+        // Die Aktion-Zonen für jeden Spieler
+        myPCLC = new PlayedCardLayoutContainer(700, 500, 100, 200, "My.PCLC");
+        firstEnemyPCLC = new PlayedCardLayoutContainer(700, 150,100, 200,"1.PCLC");
+        secondEnemyPCLC = new PlayedCardLayoutContainer(320, 300,100, 200, "2.PCLC");
+        thirdEnemyPCLC = new PlayedCardLayoutContainer(970, 300, 100, 200,"3.PCLC");
+        // Die Abwerf-Zonen für jeden Spieler
+        myDPLC = new DiscardPileLayoutContainer(996, 630, 110,60, "My.DPLC");
+        firstEnemyDPLC = new DiscardPileLayoutContainer(515,0,110,60,"1.DPLC");
+        secondEnemyDPLC = new DiscardPileLayoutContainer(324,540,110,60,"2.DPLC");
+        thirdEnemyDPLC = new DiscardPileLayoutContainer(1191,59,110,60,"3.DPLC");
+        // Die Decks für jeden Spieler
+        myDLC = new DeckLayoutContainer(500,630,110,60,"My.DLC");
+        firstEnemyDLC = new DeckLayoutContainer(500,0,110,60,"1.DLC");
+        secondEnemyDLC = new DeckLayoutContainer(300,400,110,60,"2.DLC");
+        thirdEnemyDLC = new DeckLayoutContainer(900,100,110,60,"3.DLC");
 
         this.gameService = gameService;
         initializeUserList();
     }
-
-    /*
-        showAlert Methode, um Alert Box zu erstellen
-         */
-
 
     /**
      * Show Alert für den Aufgeben Button
@@ -215,33 +218,47 @@ public class GameViewPresenter extends AbstractPresenter {
         chatView.getChildren().add(loader.load());
         ((Pane) chatView.getChildren().get(0)).setPrefHeight(chatView.getPrefHeight());
         ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getPrefWidth());
-        gameViewWIP.getChildren().add(playedCardLayoutContainer);
-        gameViewWIP.getChildren().add(firstEnemyPCLC);
-        gameViewWIP.getChildren().add(secondEnemyPCLC);
-        gameViewWIP.getChildren().add(thirdEnemyPCLC);
+        // Die Bestandteile des Spiels wie Hände, Aktionzonen usw. werden dem GameViewWIP hinzugefügt
         gameViewWIP.getChildren().add(handcards);
         gameViewWIP.getChildren().add(firstEnemyHand);
         gameViewWIP.getChildren().add(secondEnemyHand);
         gameViewWIP.getChildren().add(thirdEnemyHand);
-        gameViewWIP.getChildren().add(firstEnemyDeck);
-        gameViewWIP.getChildren().add(secondEnemyDeck);
-        gameViewWIP.getChildren().add(thirdEnemyDeck);
-        gameViewWIP.getChildren().add(discardPile);
-        gameViewWIP.getChildren().add(firstEnemyDiscardPile);
-        gameViewWIP.getChildren().add(secondEnemyDiscardPile);
-        gameViewWIP.getChildren().add(thirdEnemyDiscardPile);
+        gameViewWIP.getChildren().add(myPCLC);
+        gameViewWIP.getChildren().add(firstEnemyPCLC);
+        gameViewWIP.getChildren().add(secondEnemyPCLC);
+        gameViewWIP.getChildren().add(thirdEnemyPCLC);
+        gameViewWIP.getChildren().add(myDPLC);
+        gameViewWIP.getChildren().add(firstEnemyDPLC);
+        gameViewWIP.getChildren().add(secondEnemyDPLC);
+        gameViewWIP.getChildren().add(thirdEnemyDPLC);
+        gameViewWIP.getChildren().add(myDLC);
+        gameViewWIP.getChildren().add(firstEnemyDLC);
+        gameViewWIP.getChildren().add(secondEnemyDLC);
+        gameViewWIP.getChildren().add(thirdEnemyDLC);
+        /*
+         * Gibt den einzelnen Elementen des Spielfelds eine Farbe,
+         * zur vorübergehend besseren Orientierung mit dem allgemeinen Layout
+         *
+         * Handkarten = Hellgrün
+         * Aktionszonen = Hellblau
+         * Abwerfzonen = Rot
+         */
         handcards.setStyle("-fx-background-color: chartreuse");
         firstEnemyHand.setStyle("-fx-background-color: chartreuse");
         secondEnemyHand.setStyle("-fx-background-color: chartreuse");
         thirdEnemyHand.setStyle("-fx-background-color: chartreuse");
-        playedCardLayoutContainer.setStyle("-fx-background-color: aqua");
+        myPCLC.setStyle("-fx-background-color: aqua");
         firstEnemyPCLC.setStyle("-fx-background-color: aqua");
         secondEnemyPCLC.setStyle("-fx-background-color: aqua");
         thirdEnemyPCLC.setStyle("-fx-background-color: aqua");
-        discardPile.setStyle("-fx-background-color: crimson");
-        firstEnemyDiscardPile.setStyle("-fx-background-color: crimson");
-        secondEnemyDiscardPile.setStyle("-fx-background-color: crimson");
-        thirdEnemyDiscardPile.setStyle("-fx-background-color: crimson");
+        myDPLC.setStyle("-fx-background-color: crimson");
+        firstEnemyDPLC.setStyle("-fx-background-color: crimson");
+        secondEnemyDPLC.setStyle("-fx-background-color: crimson");
+        thirdEnemyDPLC.setStyle("-fx-background-color: crimson");
+        myDLC.setStyle("-fx-background-color: darkviolet");
+        firstEnemyDLC.setStyle("-fx-background-color: darkviolet");
+        secondEnemyDLC.setStyle("-fx-background-color: darkviolet");
+        thirdEnemyDLC.setStyle("-fx-background-color: darkviolet");
     }
 
     /**
@@ -438,9 +455,9 @@ public class GameViewPresenter extends AbstractPresenter {
             if (msg.getIsPlayed()) {
                 Platform.runLater(() -> {
                     if (handcards.getChildren().contains(card)) {
-                        AnimationManagement.playCard(card, playedCardLayoutContainer.getChildren().size());
+                        AnimationManagement.playCard(card, myPCLC.getChildren().size(), myPCLC);
                         handcards.getChildren().remove(card);
-                        playedCardLayoutContainer.getChildren().add(card);
+                        myPCLC.getChildren().add(card);
                         card.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                     }
                 });
@@ -467,27 +484,27 @@ public class GameViewPresenter extends AbstractPresenter {
 
                     if (playerIndexNumbers.get(0).equals(msg.getEnemyPlaceNumber())) {
                         Platform.runLater(() -> {
-                        firstEnemyHand.getChildren().remove(0);
-                        // TODO: Animation
-                        firstEnemyPCLC.getChildren().add(card);
-                        return;
-                            });
+                            AnimationManagement.playCard((ImageView)firstEnemyHand.getChildren().get(0),  firstEnemyPCLC.getChildren().size(), firstEnemyPCLC);
+                            firstEnemyHand.getChildren().remove(0);
+                            firstEnemyPCLC.getChildren().add(card);
+                            return;
+                        });
                     }
 
                     if (playerIndexNumbers.get(1).equals(msg.getEnemyPlaceNumber())) {
                         Platform.runLater(() -> {
-                        secondEnemyHand.getChildren().remove(0);
-                        // TODO: Animation
-                        secondEnemyPCLC.getChildren().add(card);
-                        return;});
+                            AnimationManagement.playCard((ImageView)secondEnemyHand.getChildren().get(0),  secondEnemyPCLC.getChildren().size(), secondEnemyPCLC);
+                            secondEnemyHand.getChildren().remove(0);
+                            secondEnemyPCLC.getChildren().add(card);
+                            return;});
                     }
 
                     if (playerIndexNumbers.get(2).equals(msg.getEnemyPlaceNumber())) {
                         Platform.runLater(() -> {
-                        thirdEnemyHand.getChildren().remove(0);
-                        // TODO: Animation
-                        thirdEnemyPCLC.getChildren().add(card);
-                        return;});
+                            AnimationManagement.playCard((ImageView)thirdEnemyHand.getChildren().get(0),  thirdEnemyPCLC.getChildren().size(), thirdEnemyPCLC);
+                            thirdEnemyHand.getChildren().remove(0);
+                            thirdEnemyPCLC.getChildren().add(card);
+                            return;});
                     }
                 }
             } else {
@@ -511,7 +528,6 @@ public class GameViewPresenter extends AbstractPresenter {
             //TODO: Aussuchverfahren zum abwerfen von Karten implementieren
         }
 
-
         List<Short> playerIndexNumbers = new ArrayList<>(); playerIndexNumbers.add((short) 0); playerIndexNumbers.add((short) 1); playerIndexNumbers.add((short) 2); playerIndexNumbers.add((short) 3);
         if (msg.getGameID().equals(lobbyID) && !msg.getCurrentUser().equals(loggedInUser)) {
             playerIndexNumbers.remove(msg.getUserPlaceNumber());
@@ -523,9 +539,11 @@ public class GameViewPresenter extends AbstractPresenter {
                         LOG.debug("Die Hand hat keine Karten mehr zum entsorgen");
                         return;
                     }
+                    Platform.runLater(() -> {
                     firstEnemyHand.getChildren().remove(0);
                     // TODO: Animation Management zum entsorgen einer Karte
-                    firstEnemyDiscardPile.getChildren().add(card);
+                    firstEnemyDPLC.getChildren().add(card);
+                    });
                 }
                 return;
             }
@@ -537,9 +555,11 @@ public class GameViewPresenter extends AbstractPresenter {
                         LOG.debug("Die Hand hat keine Karten mehr zum entsorgen");
                         return;
                     }
-                    secondEnemyHand.getChildren().remove(0);
-                    // TODO: Animation Management zum entsorgen einer Karte
-                    secondEnemyDiscardPile.getChildren().add(card);
+                    Platform.runLater(() -> {
+                        secondEnemyHand.getChildren().remove(0);
+                        // TODO: Animation Management zum entsorgen einer Karte
+                        secondEnemyDPLC.getChildren().add(card);
+                    });
                 }
                 return;
             }
@@ -551,9 +571,11 @@ public class GameViewPresenter extends AbstractPresenter {
                         LOG.debug("Die Hand hat keine Karten mehr zum entsorgen");
                         return;
                     }
-                    thirdEnemyHand.getChildren().remove(0);
-                    // TODO: Animation Management zum entsorgen einer Karte
-                    thirdEnemyDiscardPile.getChildren().add(card);
+                    Platform.runLater(() -> {
+                        thirdEnemyHand.getChildren().remove(0);
+                        // TODO: Animation Management zum entsorgen einer Karte
+                        thirdEnemyDPLC.getChildren().add(card);
+                    });
                 }
                 return;
             }
@@ -569,14 +591,14 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @FXML
     @Subscribe
-    public void ClearPhaseMesage (ClearPhaseMessage msg) {
+    public void onClearPhaseMesage (ClearPhaseMessage msg) {
         // Wenn die ClearMessage an den currentPlayer geht werden, seine Handkarten und
         // ausgespielten Karten auf den Ablagestapel getan und fünf neue Karten gezogen.
         if (msg.getGameID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
             // TODO: Animation für das aufräumen des Feldes muss eingefügt werden.
-            discardPile.getChildren().addAll(playedCardLayoutContainer.getChildren());
-            playedCardLayoutContainer.getChildren().clear();
-            discardPile.getChildren().addAll(handcards.getChildren());
+            myDPLC.getChildren().addAll(myPCLC.getChildren());
+            myPCLC.getChildren().clear();
+            myDPLC.getChildren().addAll(handcards.getChildren());
             handcards.getChildren().clear();
             ArrayList<Short> HandCardID = msg.getCardsToDraw();
             HandCardID.forEach((n) -> {
@@ -601,9 +623,9 @@ public class GameViewPresenter extends AbstractPresenter {
             playerIndexNumbers.remove(msg.getUserPlaceNumber());
 
             if (playerIndexNumbers.get(0).equals(msg.getEnemyPlaceNumber())) {
-                firstEnemyDiscardPile.getChildren().addAll(firstEnemyHand.getChildren());
+                firstEnemyDPLC.getChildren().addAll(firstEnemyHand.getChildren());
                 firstEnemyHand.getChildren().clear();
-                firstEnemyDiscardPile.getChildren().addAll(firstEnemyPCLC.getChildren());
+                firstEnemyDPLC.getChildren().addAll(firstEnemyPCLC.getChildren());
                 firstEnemyPCLC.getChildren().clear();
 
                 String pfad = "file:Client/src/main/resources/cards/images/card_back.png";
@@ -614,18 +636,18 @@ public class GameViewPresenter extends AbstractPresenter {
                     card.setPreserveRatio(true);
                     card.setId("back");
                     card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
-                    firstEnemyDeck.getChildren().add(card);
+                    firstEnemyDLC.getChildren().add(card);
                     AnimationManagement.addToHand(card, firstEnemyHand.getChildren().size());
-                    firstEnemyDeck.getChildren().remove(card);
+                    firstEnemyDLC.getChildren().remove(card);
                     firstEnemyHand.getChildren().add(card);
                         }
                 return;
             }
 
             if (playerIndexNumbers.get(1).equals(msg.getEnemyPlaceNumber())) {
-                secondEnemyDiscardPile.getChildren().addAll(secondEnemyHand.getChildren());
+                secondEnemyDPLC.getChildren().addAll(secondEnemyHand.getChildren());
                 secondEnemyHand.getChildren().clear();
-                secondEnemyDiscardPile.getChildren().addAll(secondEnemyPCLC.getChildren());
+                secondEnemyDPLC.getChildren().addAll(secondEnemyPCLC.getChildren());
                 secondEnemyPCLC.getChildren().clear();
                 String pfad = "file:Client/src/main/resources/cards/images/card_back.png";
                 Image picture = new Image(pfad);
@@ -635,9 +657,9 @@ public class GameViewPresenter extends AbstractPresenter {
                     card.setPreserveRatio(true);
                     card.setId("back");
                     card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
-                    secondEnemyDeck.getChildren().add(card);
+                    secondEnemyDLC.getChildren().add(card);
                     AnimationManagement.addToHand(card, secondEnemyHand.getChildren().size());
-                    secondEnemyDeck.getChildren().remove(card);
+                    secondEnemyDLC.getChildren().remove(card);
                     secondEnemyHand.getChildren().add(card);
                 }
 
@@ -645,9 +667,9 @@ public class GameViewPresenter extends AbstractPresenter {
             }
 
             if (playerIndexNumbers.get(2).equals(msg.getEnemyPlaceNumber())) {
-                thirdEnemyDiscardPile.getChildren().addAll(thirdEnemyHand.getChildren());
+               thirdEnemyDPLC.getChildren().addAll(thirdEnemyHand.getChildren());
                 thirdEnemyHand.getChildren().clear();
-                thirdEnemyDiscardPile.getChildren().addAll(thirdEnemyPCLC.getChildren());
+                thirdEnemyDPLC.getChildren().addAll(thirdEnemyPCLC.getChildren());
                 thirdEnemyPCLC.getChildren().clear();
                 String pfad = "file:Client/src/main/resources/cards/images/card_back.png";
                 Image picture = new Image(pfad);
@@ -657,9 +679,9 @@ public class GameViewPresenter extends AbstractPresenter {
                     card.setPreserveRatio(true);
                     card.setId("back");
                     card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
-                    thirdEnemyDeck.getChildren().add(card);
+                    thirdEnemyDLC.getChildren().add(card);
                     AnimationManagement.addToHand(card, thirdEnemyHand.getChildren().size());
-                    thirdEnemyDeck.getChildren().remove(card);
+                    thirdEnemyDLC.getChildren().remove(card);
                     thirdEnemyHand.getChildren().add(card);
                 }
                 return;
@@ -715,9 +737,9 @@ public class GameViewPresenter extends AbstractPresenter {
                     card.setPreserveRatio(true);
                     card.setId(n.toString());
                     card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
-                    deckPane.getChildren().add(card);
+                    myDLC.getChildren().add(card);
                     AnimationManagement.addToHand(card, handcards.getChildren().size());
-                    deckPane.getChildren().remove(card);
+                    myDLC.getChildren().remove(card);
                     handcards.getChildren().add(card);
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                 });
@@ -740,19 +762,19 @@ public class GameViewPresenter extends AbstractPresenter {
                     card3.setPreserveRatio(true);
                     card3.setId("back");
                     card3.setFitWidth(card.getFitHeight());
-                    firstEnemyDeck.getChildren().add(card);
+                    firstEnemyDLC.getChildren().add(card);
                     AnimationManagement.addToHand(card, firstEnemyHand.getChildren().size());
-                    firstEnemyDeck.getChildren().remove(card);
+                    firstEnemyDLC.getChildren().remove(card);
                     firstEnemyHand.getChildren().add(card);
                     if(numberOfPlayersInGame >= 3) {
-                        secondEnemyDeck.getChildren().add(card2);
+                        secondEnemyDLC.getChildren().add(card2);
                         AnimationManagement.addToHand(card2, secondEnemyHand.getChildren().size());
-                        secondEnemyDeck.getChildren().remove(card2);
+                        secondEnemyDLC.getChildren().remove(card2);
                         secondEnemyHand.getChildren().add(card2);
                         if (numberOfPlayersInGame == 4){
-                            thirdEnemyDeck.getChildren().add(card3);
+                            thirdEnemyDLC.getChildren().add(card3);
                             AnimationManagement.addToHand(card3, thirdEnemyHand.getChildren().size());
-                            thirdEnemyDeck.getChildren().remove(card3);
+                            thirdEnemyDLC.getChildren().remove(card3);
                             thirdEnemyHand.getChildren().add(card3);
                         }
                     }
@@ -968,9 +990,9 @@ public class GameViewPresenter extends AbstractPresenter {
             ImageView card = (ImageView) c;
             if (card.getId().equals("1") || card.getId().equals("2") || card.getId().equals("3")) {
                 Platform.runLater(() -> {
-                    AnimationManagement.playCard(card, playedCardLayoutContainer.getChildren().size());
+                    AnimationManagement.playCard(card, myPCLC.getChildren().size(), myPCLC);
                     handcards.getChildren().remove(c);
-                    playedCardLayoutContainer.getChildren().add(card);
+                    myPCLC.getChildren().add(card);
                 });
             }
         }
