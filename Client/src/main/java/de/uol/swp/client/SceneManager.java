@@ -313,7 +313,7 @@ public class SceneManager {
             joinLobbyPresenter = new JoinLobbyPresenter(loggedInUser, lobbyService, userService, eventBus, lobby);
             initJoinLobbyView(joinLobbyPresenter);
             joinLobbyStage = new Stage();
-            joinLobbyStage.setTitle("Lobby beitreten");
+            joinLobbyStage.setTitle("Lobby: " + lobby.getName()+ " beitreten ");
             joinLobbyStage.setScene(joinLobbyScene);
             joinLobbyStage.setResizable(false);
             joinLobbyStage.initModality(Modality.APPLICATION_MODAL);
@@ -348,6 +348,7 @@ public class SceneManager {
     }
 
     public void closeJoinLobby() {
+
         Platform.runLater(() -> joinLobbyStage.close());
     }
 
@@ -504,16 +505,15 @@ public class SceneManager {
         if (createLobbyScene == null) {
             Parent rootPane = initCreateLobbyPresenter(createLobbyPresenter);
             createLobbyScene = new Scene(rootPane, 400, 255);
-          createLobbyScene.getStylesheets().add(createLobbyPresenter.css);
+            createLobbyScene.getStylesheets().add(createLobbyPresenter.css);
         }
     }
 
     private void initJoinLobbyView(JoinLobbyPresenter joinLobbyPresenter) {
-        if (joinLobbyScene == null) {
-            Parent rootPane = initJoinLobbyPresenter(joinLobbyPresenter);
-            joinLobbyScene = new Scene(rootPane, 400, 255);
-            joinLobbyScene.getStylesheets().add(JoinLobbyPresenter.css);
-        }
+        Parent rootPane = initJoinLobbyPresenter(joinLobbyPresenter);
+        joinLobbyScene = new Scene(rootPane, 400, 255);
+        joinLobbyScene.getStylesheets().add(JoinLobbyPresenter.css);
+
     }
 
 
