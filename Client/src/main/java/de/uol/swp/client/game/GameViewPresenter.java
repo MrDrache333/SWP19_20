@@ -156,23 +156,23 @@ public class GameViewPresenter extends AbstractPresenter {
         // Die Hände für jeden Spieler
         handcards = new HandcardsLayoutContainer(575, 630, 110, 420, "My.HCLC");
         firstEnemyHand = new HandcardsLayoutContainer(575, 0, 110, 420,"1.HCLC");
-        secondEnemyHand = new HandcardsLayoutContainer(145, 299, 110, 420,"2.HCLC");
-        thirdEnemyHand = new HandcardsLayoutContainer(1010, 299, 110, 420,"3.HCLC");
+        secondEnemyHand = new HandcardsLayoutContainer(250, 308, 105, 215,"2.HCLC");
+        thirdEnemyHand = new HandcardsLayoutContainer(1120, 308, 105, 215,"3.HCLC");
         // Die Aktion-Zonen für jeden Spieler
-        myPCLC = new PlayedCardLayoutContainer(700, 500, 100, 200, "My.PCLC");
+        myPCLC = new PlayedCardLayoutContainer(900, 500, 100, 200, "My.PCLC");
         firstEnemyPCLC = new PlayedCardLayoutContainer(700, 150,100, 200,"1.PCLC");
-        secondEnemyPCLC = new PlayedCardLayoutContainer(320, 300,100, 200, "2.PCLC");
-        thirdEnemyPCLC = new PlayedCardLayoutContainer(970, 300, 100, 200,"3.PCLC");
+        secondEnemyPCLC = new PlayedCardLayoutContainer(360, 308,107, 215, "2.PCLC");
+        thirdEnemyPCLC = new PlayedCardLayoutContainer(1012, 308, 105, 215,"3.PCLC");
         // Die Abwerf-Zonen für jeden Spieler
-        myDPLC = new DiscardPileLayoutContainer(996, 630, 110,60, "My.DPLC");
-        firstEnemyDPLC = new DiscardPileLayoutContainer(515,0,110,60,"1.DPLC");
-        secondEnemyDPLC = new DiscardPileLayoutContainer(324,540,110,60,"2.DPLC");
-        thirdEnemyDPLC = new DiscardPileLayoutContainer(1191,59,110,60,"3.DPLC");
+        myDPLC = new DiscardPileLayoutContainer(997, 630, 110,60, "My.DPLC");
+        firstEnemyDPLC = new DiscardPileLayoutContainer(513,0,110,60,"1.DPLC");
+        secondEnemyDPLC = new DiscardPileLayoutContainer(328,447,104,60,"2.DPLC");
+        thirdEnemyDPLC = new DiscardPileLayoutContainer(1198,169,106,60,"3.DPLC");
         // Die Decks für jeden Spieler
-        myDLC = new DeckLayoutContainer(500,630,110,60,"My.DLC");
-        firstEnemyDLC = new DeckLayoutContainer(500,0,110,60,"1.DLC");
-        secondEnemyDLC = new DeckLayoutContainer(300,400,110,60,"2.DLC");
-        thirdEnemyDLC = new DeckLayoutContainer(900,100,110,60,"3.DLC");
+        myDLC = new DeckLayoutContainer(513,630,110,60,"My.DLC");
+        firstEnemyDLC = new DeckLayoutContainer(997,0,110,60,"1.DLC");
+        secondEnemyDLC = new DeckLayoutContainer(328,169,104,60,"2.DLC");
+        thirdEnemyDLC = new DeckLayoutContainer(1198,446,106,60,"3.DLC");
 
         this.gameService = gameService;
         initializeUserList();
@@ -738,7 +738,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     card.setId(n.toString());
                     card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
                     myDLC.getChildren().add(card);
-                    AnimationManagement.addToHand(card, handcards.getChildren().size());
+                    // AnimationManagement.addToHand(card, handcards.getChildren().size());
                     myDLC.getChildren().remove(card);
                     handcards.getChildren().add(card);
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
@@ -763,17 +763,17 @@ public class GameViewPresenter extends AbstractPresenter {
                     card3.setId("back");
                     card3.setFitWidth(card.getFitHeight());
                     firstEnemyDLC.getChildren().add(card);
-                    AnimationManagement.addToHand(card, firstEnemyHand.getChildren().size());
+                    // AnimationManagement.addToHand(card, firstEnemyHand.getChildren().size());
                     firstEnemyDLC.getChildren().remove(card);
                     firstEnemyHand.getChildren().add(card);
                     if(numberOfPlayersInGame >= 3) {
                         secondEnemyDLC.getChildren().add(card2);
-                        AnimationManagement.addToHand(card2, secondEnemyHand.getChildren().size());
+                        // AnimationManagement.addToHand(card2, secondEnemyHand.getChildren().size());
                         secondEnemyDLC.getChildren().remove(card2);
                         secondEnemyHand.getChildren().add(card2);
                         if (numberOfPlayersInGame == 4){
                             thirdEnemyDLC.getChildren().add(card3);
-                            AnimationManagement.addToHand(card3, thirdEnemyHand.getChildren().size());
+                            // AnimationManagement.addToHand(card3, thirdEnemyHand.getChildren().size());
                             thirdEnemyDLC.getChildren().remove(card3);
                             thirdEnemyHand.getChildren().add(card3);
                         }

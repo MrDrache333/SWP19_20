@@ -46,7 +46,7 @@ public class DeckLayoutContainer extends StackPane {
             this.setRotate(90);
         }
 
-        this.getChildren().add(new Card("card_back",this.getLayoutX(), this.getLayoutY(), 110, 60));
+        // this.getChildren().add(new Card("card_back",this.getLayoutX(), this.getLayoutY(), 110, 60));
     }
 
     /**
