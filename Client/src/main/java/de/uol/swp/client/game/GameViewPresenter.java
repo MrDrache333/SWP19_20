@@ -141,10 +141,6 @@ public class GameViewPresenter extends AbstractPresenter {
         initializeUserList();
     }
 
-    /*
-        showAlert Methode, um Alert Box zu erstellen
-         */
-
     /**
      * Show Alert für den Aufgeben Button
      *
@@ -499,7 +495,7 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Skips die aktuelle Phase des Spielers zur nächsten.
+     * Skipt die aktuelle Phase des Spielers zur nächsten.
      *
      * @author Devin S.
      * @since Sprint6
@@ -590,7 +586,7 @@ public class GameViewPresenter extends AbstractPresenter {
         double mouseX = mouseEvent.getSceneX();
         double mouseY = mouseEvent.getSceneY();
         ImageView cardImage = (ImageView) mouseEvent.getSource();
-        // Überprüdung ob sich die angeklickte Karte innerhalb des Shops befindet und nicht bereits auf dem Ablagestapel
+        // Überprüfung ob sich die angeklickte Karte innerhalb des Shops befindet und nicht bereits auf dem Ablagestapel
         //    if (mouseX > shopTeppich.getLayoutX() && mouseX < (shopTeppich.getLayoutX() + shopTeppich.getWidth()) &&
         //          mouseY > shopTeppich.getLayoutY() && mouseY < (shopTeppich.getLayoutY() + shopTeppich.getHeight()) && cardImage.getEffect() == null) {
         // Karte befindet sich im Shop
@@ -600,16 +596,16 @@ public class GameViewPresenter extends AbstractPresenter {
         }
         String cardID = cardImage.getId();
         String PathCardLargeView = "file:Client/src/main/resources/cards/images/" + cardID + ".png";
-        // ein großes Bild der Karte wird hinzugefügt
+        // Ein großes Bild der Karte wird hinzugefügt
         ImageView bigCardImage = new ImageView(new Image(PathCardLargeView));
-        // setzt die Größe und die Position des Bildes. Das Bild ist im Vordergrund. Bild wird hinzugefügt
+        // Setzt die Größe und die Position des Bildes. Das Bild ist im Vordergrund. Bild wird hinzugefügt
         bigCardImage.setFitHeight(240.0);
         bigCardImage.setFitWidth(150.0);
         bigCardImage.toFront();
         bigCardImage.setLayoutX(325.0);
         bigCardImage.setLayoutY(20.0);
         gameViewWIP.getChildren().add(bigCardImage);
-        // es werden zwei Buttons hinzugefügt (zurück und kaufen)
+        // Es werden zwei Buttons hinzugefügt (Zurück und Kaufen)
         Button buy = new Button("Kaufen");
         Button back = new Button("Zurück");
         gameViewWIP.getChildren().add(buy);
@@ -630,15 +626,13 @@ public class GameViewPresenter extends AbstractPresenter {
             gameService.buyCard(req);
             this.mouseEvent = mouseEvent;
         });
-        // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt
+        // Aktion hinter dem Zurück-Button -> Buttons und das große Bild werden entfernt
         back.setOnAction(event -> {
             buy.setVisible(false);
             back.setVisible(false);
             bigCardImage.setVisible(false);
         });
     }
-
-//}
 
     /**
      * Hier werden alle Geldkarten, die sich auf der Hand befinden, ausgespielt

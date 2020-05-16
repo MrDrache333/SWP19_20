@@ -181,7 +181,7 @@ public class SceneManager {
 
     @Subscribe
     public void onGameQuitEvent(GameQuitEvent event) {
-        showScene(mainScene, "test");
+        showScene(mainScene, "Test");
     }
 
 
