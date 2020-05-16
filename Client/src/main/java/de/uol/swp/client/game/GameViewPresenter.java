@@ -146,11 +146,6 @@ public class GameViewPresenter extends AbstractPresenter {
         initializeUserList();
     }
 
-    /*
-        showAlert Methode, um Alert Box zu erstellen
-         */
-
-
     /**
      * Show Alert für den Aufgeben Button
      *
@@ -282,18 +277,26 @@ public class GameViewPresenter extends AbstractPresenter {
                 for (Node c : handcards.getChildren()) {
                     Platform.runLater(() -> {
                         ImageView card = (ImageView) c;
-                        /*String pfad = "file:Client/src/main/resources/cards/images/" + card.getId() + ".png";
+                        String pfad = "file:Client/src/main/resources/cards/images/" + card.getId() + ".png";
                         Image picture = new Image(pfad);
                         ImageView newCardImage = new ImageView(picture);
                         newCardImage.setPreserveRatio(true);
                         newCardImage.setFitHeight(107);
                         newCardImage.setFitWidth(Math.round(newCardImage.getBoundsInLocal().getWidth()));
-                        newCardImage.setLayoutX(c.getLayoutX());
-                        newCardImage.setLayoutY(c.getLayoutY());
+                        newCardImage.setLayoutX(450 + c.getLayoutX());
+                        newCardImage.setLayoutY(610);
+                        LOG.debug(c.getLayoutX()+"  "+c.getLayoutY());
                         newCardImage.setId(String.valueOf(c));
-                        AnimationManagement.clearCards(newCardImage);*/
-                        AnimationManagement.clearCards(card);
                         handcards.getChildren().remove(c);
+                        gameViewWIP.getChildren().add(newCardImage);
+                        PathTransition pathTransition = AnimationManagement.clearCards(newCardImage);
+                        pathTransition.setOnFinished(actionEvent -> {
+                            gameViewWIP.getChildren().remove(newCardImage);
+                            ImageView iv = new ImageView(picture);
+                            iv.setPreserveRatio(true);
+                            iv.setFitHeight(107);
+                            discardPilePane.getChildren().add(iv);
+                        });
                     });
                 }
             }
@@ -411,28 +414,6 @@ public class GameViewPresenter extends AbstractPresenter {
                 LOG.debug("Das Spielen der Karte " + msg.getHandCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
             }
         }
-    }
-
-    /**
-     * Fügt die Karte aus der DiscardPileLastCardMessage dem Ablagestapel hinzu.
-     *
-     * @param msg Die Nachricht
-     * @author Timo
-     * @Sprint 6
-     */
-    @Subscribe
-    public void onDiscardPileLastCardMessage(DiscardPileLastCardMessage msg) {
-        Platform.runLater(() -> {
-            if (msg.getGameID().equals(this.gameManagement.getID()) && msg.getUser().equals(this.loggedInUser)) {
-                String pfad = "file:Client/src/main/resources/cards/images/" + msg.getCardID() + ".png";
-                Image picture = new Image(pfad);
-                ImageView card = new ImageView(picture);
-                card.setFitHeight(107);
-                card.setPreserveRatio(true);
-                card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
-                discardPilePane.getChildren().add(card);
-            }
-        });
     }
 
     /**

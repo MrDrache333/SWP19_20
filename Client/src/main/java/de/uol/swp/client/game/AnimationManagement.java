@@ -14,8 +14,8 @@ public class AnimationManagement {
 
     private static final double HAND_X = 460;
 
-    private static final double ABLAGE_X = 1156;
-    private static final double ABLAGE_Y = 590;
+    private static final double ABLAGE_X = 1170;
+    private static final double ABLAGE_Y = 610;
 
     private static final double ACTION_ZONE_X = 510;
     private static final double ACTION_ZONE_Y = 600;
@@ -161,8 +161,8 @@ public class AnimationManagement {
      * @author Darian
      * @since Sprint7
      */
-    public static void clearCards(ImageView card) {
-        createLineToPath(card, keepPosition(card), ABLAGE_X, ABLAGE_Y);
+    public static PathTransition clearCards(ImageView card) {
+        return createLineToPath(card, keepPosition(card), ABLAGE_X, ABLAGE_Y);
     }
 
     /**
