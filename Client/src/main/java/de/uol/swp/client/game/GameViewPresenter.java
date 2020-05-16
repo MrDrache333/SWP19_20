@@ -159,7 +159,7 @@ public class GameViewPresenter extends AbstractPresenter {
         secondEnemyHand = new HandcardsLayoutContainer(250, 308, 105, 215,"2.HCLC");
         thirdEnemyHand = new HandcardsLayoutContainer(1120, 308, 105, 215,"3.HCLC");
         // Die Aktion-Zonen für jeden Spieler
-        myPCLC = new PlayedCardLayoutContainer(900, 500, 100, 200, "My.PCLC");
+        myPCLC = new PlayedCardLayoutContainer(960, 480, 100, 200, "My.PCLC");
         firstEnemyPCLC = new PlayedCardLayoutContainer(700, 150,100, 200,"1.PCLC");
         secondEnemyPCLC = new PlayedCardLayoutContainer(360, 308,107, 215, "2.PCLC");
         thirdEnemyPCLC = new PlayedCardLayoutContainer(1012, 308, 105, 215,"3.PCLC");
@@ -550,7 +550,7 @@ public class GameViewPresenter extends AbstractPresenter {
             if (playerIndexNumbers.get(1).equals(msg.getEnemyPlaceNumber())) {
                 int numberOfCardsInHand = secondEnemyHand.getChildren().size();
                 for (Short id: msg.getCardID()) {
-                    ImageView card = new ImageView(new Image("file:Client/src/main/resources/cards/images/" + id + ".png"));
+                    Card card = new Card (id.toString(),328,447,104,60);
                     if(numberOfCardsInHand==0) {
                         LOG.debug("Die Hand hat keine Karten mehr zum entsorgen");
                         return;
