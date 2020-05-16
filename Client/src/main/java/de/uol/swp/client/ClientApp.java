@@ -243,7 +243,7 @@ public class ClientApp extends Application implements ConnectionListener {
             sceneManager.closeJoinLobby();
             LOG.info("User " + message.getUser().getUsername() + " joined lobby successfully");
         } else if (message.getLobby().getLobbyPassword() == null) {
-            SceneManager.showAlert(Alert.AlertType.WARNING, "Das Passwort ist falsch", "Fehler");
+            SceneManager.showAlert(Alert.AlertType.WARNING, "Das Passwort ist falsch!", "Fehler");
         }
         }
 

@@ -54,7 +54,7 @@ public class UserService extends AbstractService {
         } catch (Exception e) {
             LOG.error(e);
             //Bei Fehlern die Fehlermeldung an den Sender zurück senden
-            returnMessage = new RegistrationExceptionMessage("Cannot create user " + msg.getUser() + " " + e.getMessage());
+            returnMessage = new RegistrationExceptionMessage("Anlegen des folgenden User schlug fehl: " + msg.getUser() + " " + e.getMessage());
         }
 
         //Wenn ein Kontext in dem Request übergeben wurde, dann übernehme diesen

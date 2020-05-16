@@ -113,7 +113,7 @@ public class AuthenticationService extends AbstractService {
             returnMessage.setSession(newSession);
         } catch (Exception e) {
             LOG.error(e);
-            returnMessage = new ServerExceptionMessage(new LoginException("Cannot auth user " + msg.getUsername()));
+            returnMessage = new ServerExceptionMessage(new LoginException("Authentifizierung des Users " + msg.getUsername() + " fehlgeschlagen!"));
         }
         if (msg.getMessageContext().isPresent()) {
             returnMessage.setMessageContext(msg.getMessageContext().get());
@@ -148,7 +148,7 @@ public class AuthenticationService extends AbstractService {
                 }
             }
             else{
-                UpdateUserFailedMessage returnMessage = new UpdateUserFailedMessage(session.getUser(), "Account is in Game. You can not logout.");
+                UpdateUserFailedMessage returnMessage = new UpdateUserFailedMessage(session.getUser(), "Der Account befindet sich in einem laufenden Spiel. Du kannst dich nicht ausloggen!");
                 post(returnMessage);
             }
         }
@@ -218,7 +218,7 @@ public class AuthenticationService extends AbstractService {
                 post(returnMessage);
             }
             else{
-                UpdateUserFailedMessage returnMessage = new UpdateUserFailedMessage(userToDrop,"Account is in Game. You can not delete your Account.");
+                UpdateUserFailedMessage returnMessage = new UpdateUserFailedMessage(userToDrop,"Der Account befindet sich in einem laufenden Spiel. Du kannst deinen Account nicht löschen!");
                 post(returnMessage);
             }
         }

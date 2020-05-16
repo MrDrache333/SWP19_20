@@ -206,7 +206,7 @@ public class PrimaryPresenter extends AbstractPresenter {
 
             //Neuen Tab initialisieren, Pane vom GameManagement übernehmen und der TabView hinzufügen
 
-            //Auf schließung des Tabs reagieren
+            //Auf Schließung des Tabs reagieren
             gameManagement.getPrimaryTab().setOnCloseRequest(event -> {
                 games.remove(gameManagement);
                 lobbyService.leaveLobby(gameManagement.getID(), (UserDTO) loggedInUser);
@@ -227,7 +227,7 @@ public class PrimaryPresenter extends AbstractPresenter {
     }
 
     /**
-     * Sort dafür, das die Lobby CLientseitig geschlossen wird und diese ggf. verlassen wird
+     * Sort dafür, das die Lobby cLientseitig geschlossen wird und diese ggf. verlassen wird
      *
      * @param uuid  Die UUID der Lobby
      * @param leave Ob die Lobby Serverseitig noch verlassen werden muss

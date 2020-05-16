@@ -77,13 +77,13 @@ public class LobbyService extends AbstractService {
     @Subscribe
     public void onCreateLobbyRequest(CreateLobbyRequest msg) {
         if (containsLobbyName(msg.getLobbyName())) {
-            LOG.info("Lobby wurde nicht erstellt");
+            LOG.info("Lobby wurde nicht erstellt!");
             ServerMessage returnMessage = new CreateLobbyMessage(null, null, null, null, null);
             post(returnMessage);
         } else {
             UUID chatID = lobbyManagement.createLobby(msg.getLobbyName(), msg.getLobbyPassword(), new LobbyUser(msg.getOwner()));
             chatManagement.createChat(chatID.toString());
-            LOG.info("Der Chat mir der UUID " + chatID + " wurde erfolgreich erstellt");
+            LOG.info("Der Chat mit der UUID " + chatID + " wurde erfolgreich erstellt!");
             Optional<Lobby> lobby = lobbyManagement.getLobby(chatID);
             ServerMessage returnMessage = new CreateLobbyMessage(msg.getLobbyName(), msg.getLobbyPassword(), msg.getUser(), chatID, (LobbyDTO) lobby.get());
             post(returnMessage);

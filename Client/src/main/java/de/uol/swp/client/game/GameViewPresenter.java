@@ -145,7 +145,6 @@ public class GameViewPresenter extends AbstractPresenter {
         showAlert Methode, um Alert Box zu erstellen
          */
 
-
     /**
      * Show Alert für den Aufgeben Button
      *
@@ -211,7 +210,6 @@ public class GameViewPresenter extends AbstractPresenter {
         theList = null;
         allImageViews = null;
     }
-
 
     /**
      * Aufgeben Button gedrückt Ereignis.
@@ -423,7 +421,6 @@ public class GameViewPresenter extends AbstractPresenter {
      * @author Devin S., Anna
      * @since Sprint5
      */
-
     @FXML
     @Subscribe
     public void ShowNewHand(DrawHandMessage message) {
@@ -513,7 +510,7 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Methode, die beim anklicken einer Handkarte ausgeführt wird.
+     * Methode, die beim Anklicken einer Handkarte ausgeführt wird.
      *
      * @param gameID       Die ID des Spiels
      * @param loggedInUser der User der gerade eingelogt im Spiel ist und die Karte ausgewählt hat.
@@ -524,7 +521,6 @@ public class GameViewPresenter extends AbstractPresenter {
      * @author Devin
      * @since Sprint 6
      */
-
     private void playChoosenCard(UUID gameID, User loggedInUser, String pfad, Short id, ImageView card, MouseEvent e) {
         ImageView bigCardImage = new ImageView(new Image(pfad));
         bigCardImage.setFitHeight(225.0);
@@ -534,8 +530,8 @@ public class GameViewPresenter extends AbstractPresenter {
         bigCardImage.setLayoutY(155.0);
         gameViewWIP.getChildren().add(bigCardImage);
         if (id > 6) {
-            Button play = new Button("auspielen");
-            Button back = new Button("zurück");
+            Button play = new Button("Auspielen");
+            Button back = new Button("Zurück");
             play.setLayoutX(432.0);
             play.setLayoutY(385.0);
             back.setLayoutX(516.0);
@@ -563,7 +559,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 gameViewWIP.getChildren().remove(bigCardImage);
             });
         } else {
-            Button back = new Button("zurück");
+            Button back = new Button("Zurück");
 
             back.setLayoutX(516.0);
             back.setLayoutY(385.0);
@@ -614,8 +610,8 @@ public class GameViewPresenter extends AbstractPresenter {
         bigCardImage.setLayoutY(20.0);
         gameViewWIP.getChildren().add(bigCardImage);
         // es werden zwei Buttons hinzugefügt (zurück und kaufen)
-        Button buy = new Button("kaufen");
-        Button back = new Button("zurück");
+        Button buy = new Button("Kaufen");
+        Button back = new Button("Zurück");
         gameViewWIP.getChildren().add(buy);
         gameViewWIP.getChildren().add(back);
         // Position der Buttons wird gesetzt

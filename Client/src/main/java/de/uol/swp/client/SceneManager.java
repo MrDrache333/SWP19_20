@@ -219,7 +219,7 @@ public class SceneManager {
 
     public void showLoginErrorScreen() {
         Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Error logging in to server");
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Fehler beim Einloggen auf den Server");
             alert.showAndWait();
             showLoginScreen();
         });

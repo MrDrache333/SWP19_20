@@ -139,7 +139,7 @@ public class LobbyPresenter extends AbstractPresenter {
     }
 
     /**
-     * Intitialisieren des Chats - FXML laden, Controller setzen (muss immer eine eigene Instanz sein)
+     * Initialisieren des Chats - FXML laden, Controller setzen (muss immer eine eigene Instanz sein)
      * und chatView ind die chatView-Pane dieses Controllers laden.
      * Der eingeloggte User wird zur Userliste hinzugefügt und diese wird aktualisiert.
      * chooserMaxPlayer wird auf den Default Wert (4) gesetzt.
@@ -250,7 +250,7 @@ public class LobbyPresenter extends AbstractPresenter {
                 gameSettingsVBox.setPrefSize(450, 630);
                 gameSettingsVBox.setId("gameSettingsVBox");
 
-                //ausgewählte Karten anzeigen
+                //Ausgewählte Karten anzeigen
                 TilePane chosenCards = new TilePane();
                 chosenCards.setPrefSize(400, 160);
                 chosenCards.setStyle("-fx-background-color: #3D3D3D");
@@ -617,7 +617,6 @@ public class LobbyPresenter extends AbstractPresenter {
      * @author Darian, Keno O.
      * @since Sprint3
      */
-
     private void updateUsersList() {
         Platform.runLater(() -> {
             if (userHBoxes == null) {

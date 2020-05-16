@@ -29,7 +29,7 @@ public class LobbyManagement {
 
     public UUID createLobby(String name, String lobbyPassword, User owner) {
         if (lobbies.containsKey(name)) {
-            throw new IllegalArgumentException("Lobby name " + name + " already exists!");
+            throw new IllegalArgumentException("Lobby " + name + " existiert bereits!");
         }
         // Erstellen der UUID für die Lobbys.
         UUID lobbyID = UUID.randomUUID();
@@ -48,7 +48,7 @@ public class LobbyManagement {
      */
     public void dropLobby(UUID id) {
         if (!lobbies.containsKey(id)) {
-            throw new IllegalArgumentException("LobbyID not found! ID: " + id);
+            throw new IllegalArgumentException("LobbyID nicht gefunden! ID: " + id);
         }
         lobbies.remove(id);
         LOG.info("Lobby " + getLobby(id) + "removed");
