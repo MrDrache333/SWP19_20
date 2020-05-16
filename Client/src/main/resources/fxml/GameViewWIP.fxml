@@ -44,10 +44,8 @@
                 </VBox>
                 <HBox prefHeight="181.0" prefWidth="300.0" style="-fx-background-color: #b5e51d">
                     <children>
-                        <ListView fx:id="usersView" prefHeight="181.0" prefWidth="149.0">
-                            <HBox.margin>
-                                <Insets right="3.0"/>
-                            </HBox.margin>
+                        <ListView fx:id="usersView" prefHeight="181.0" prefWidth="150.0" style="-fx-background-color: red">
+
                         </ListView>
                     </children>
                 </HBox>

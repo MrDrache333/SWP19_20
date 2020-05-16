@@ -212,6 +212,7 @@ public class GameManagement {
     public void showGameView() {
         initGameView();
         showView(gamePane, lobbyName);
+        gameViewPresenter.loadInGameUserList(this.id);
     }
 
     /**

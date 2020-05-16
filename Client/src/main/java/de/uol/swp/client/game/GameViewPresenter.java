@@ -138,7 +138,6 @@ public class GameViewPresenter extends AbstractPresenter {
         handcards = new HandcardsLayoutContainer(460, 618, 160, 650);
         playedCardLayoutContainer = new PlayedCardLayoutContainer(500, 500, 160, 100);
         this.gameService = gameService;
-        initializeUserList();
     }
 
     /*
@@ -239,16 +238,6 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Wird bei Erstellung aufgerufen und initialisiert UserList.
-     *
-     * @author Marvin
-     * @since Sprint3
-     */
-    public void initializeUserList() {
-        lobbyService.retrieveAllUsersInLobby(lobbyID);
-    }
-
-    /**
      * Die IDs der gesendeten Aktionskarten werden initilaisiert
      *
      * @param msg die Nachricht mit den IDs und der jeweiligen Azahl der Spielkarten
@@ -300,18 +289,36 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Bei einer AllLobbyUsersResponse wird updateUsersList ausgeführt, wenn es diese Lobby betrifft.
-     * Bis auf die Lobby-Überprüfung & Response-Typ quasi äquivalent zu MainMenuPresenter.userList.
+     * Wird bei Erstellung in GameManagement aufgerufen und startet eine Abfrage an den Server für alle User in der Lobby.
      *
-     * @param allOnlineUsersInLobbyResponse die Antwort aller Lobby-Benutzer
-     * @author Marvin
+     * @author Marvin, Alex
      * @since Sprint3
      */
+    public void loadInGameUserList(UUID id) {
+        lobbyService.retrieveAllUsersInLobby(id);
+    }
+
+
+    /**
+    *
+    * Wird aufgerufen, wenn eine AllOnlineUsersInLobbyResponse empfangen wird. Prüft auch, ob aktuell das GameView angezeigt wird.
+    *
+    * @param response die Antwort aller Lobby-Benutzer
+    * @author Marvin, Alex
+    * @since Sprint3
+    */
     @Subscribe
-    public void userList(AllOnlineUsersInLobbyResponse allOnlineUsersInLobbyResponse) {
-        if (allOnlineUsersInLobbyResponse.getLobbyID().equals(this.lobbyID)) {
-            LOG.debug("Update of user list with" + allOnlineUsersInLobbyResponse.getUsers());
-            updateUsersList(allOnlineUsersInLobbyResponse.getUsers());
+    private void onReceiveAllUsersInLobby(AllOnlineUsersInLobbyResponse response) {
+        if (response.getLobbyID().equals(this.lobbyID)) {
+                LOG.debug("Update of user list with" + response.getUsers());
+
+                response.getUsers().forEach(user -> {
+                    LOG.debug("Will add to GameView Userlist: " + user.getUsername());
+                });
+
+                updateUsersList(response.getUsers());
+        } else {
+            LOG.debug("AllOnlineUsersInLobbyResponse received. Not relevant for own lobby though.");
         }
     }
 
@@ -494,6 +501,8 @@ public class GameViewPresenter extends AbstractPresenter {
                 if (users == null) {
                     users = FXCollections.observableArrayList();
                     usersView.setItems(users);
+                } else {
+                    LOG.debug("No users in Lobby.");
                 }
                 users.clear();
                 userList.forEach(u -> users.add(u.getUsername()));
