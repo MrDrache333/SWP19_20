@@ -76,25 +76,10 @@ public class ActionCardExecution {
     @Subscribe
     public void onOptionalActionResponse(OptionalActionResponse response) {
         if (response.getGameID().equals(gameID)) {
-            List<Player> playerList = new ArrayList<>();
-            playerList.add(player);
-
-            if (!response.isExecute()) {
-                if (finishedNextActions) {
-                    actualStateIndex++;
-                    execute();
-                } else {
-                    nextActionIndex++;
-                    executeNextActions(playerList);
-                }
-            } else {
-                executeOptionalAction = true;
-                if (finishedNextActions) {
-                    execute();
-                } else {
-                    executeNextActions(playerList);
-                }
-            }
+            if (!response.isExecute()) actualStateIndex++;
+            else executeOptionalAction = true;
+            waitedForPlayerInput = false;
+            execute();
         }
     }
 
@@ -111,6 +96,7 @@ public class ActionCardExecution {
             nextActions = getNextActions(action);
             if (action instanceof ComplexCardAction && ((ComplexCardAction) action).isExecutionOptional() && !executeOptionalAction) {
                 playground.getGameService().sendToSpecificPlayer(player, new OptionalActionRequest(gameID, player.getTheUserInThePlayer(), action));
+                waitedForPlayerInput = true;
             } else {
                 if (!(action instanceof ChooseNextAction) && !(action instanceof ChooseCard)) {
                     actualStateIndex++;
@@ -124,6 +110,8 @@ public class ActionCardExecution {
                 if (nextActions.isEmpty()) {
                     finishedNextActions = true;
                     nextActionIndex = 0;
+                } else {
+                    finishedNextActions = false;
                 }
 
                 //TODO: ggf. gegebene nextActions müssen wenn Spielerantwort da ist, ausgeführt werden
@@ -142,20 +130,6 @@ public class ActionCardExecution {
     //TODO: Was passiert, wenn eine Aktion false zurückgibt?
 
     /**
-     * Überprüft ob die Karte vollständig abgearbeitet ist
-     *
-     * @author Julia
-     * @since Sprint7
-     */
-    private boolean checkIfComplete() {
-        if (actualStateIndex == theCard.getActions().size() && !waitedForPlayerInput && finishedNextActions) {
-            playground.getCompositePhase().finishedActionCardExecution(player);
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * Führt alle Unteraktionen einer Action aus
      *
      * @return false sobald eine Aktion nicht erfolgreich ausgeführt werden konnte
@@ -163,22 +137,16 @@ public class ActionCardExecution {
      * @since Sprint7
      */
     private boolean executeNextActions(List<Player> playerList) {
-        finishedNextActions = false;
         while (nextActionIndex < nextActions.size() && !waitedForPlayerInput) {
             CardAction action = nextActions.get(nextActionIndex);
-            if (action instanceof ComplexCardAction && ((ComplexCardAction) action).isExecutionOptional() && !executeOptionalAction) {
-                playground.getGameService().sendToSpecificPlayer(player, new OptionalActionRequest(gameID, player.getTheUserInThePlayer(), action));
-            } else {
-                if (!(action instanceof ChooseNextAction) && !(action instanceof ChooseCard)) {
-                    nextActionIndex++;
-                }
-                if (!(action instanceof GetCard) && !(action instanceof Move)) {
-                    if (!executeCardAction(action, playerList)) return false;
-                } else {
-                    executeCardAction(action, null, playerList, false);
-                }
+            if (!(action instanceof ChooseNextAction) && !(action instanceof ChooseCard)) {
+                nextActionIndex++;
             }
-            executeOptionalAction = false;
+            if (!(action instanceof GetCard) && !(action instanceof Move)) {
+                if (!executeCardAction(action, playerList)) return false;
+            } else {
+                executeCardAction(action, null, playerList, false);
+            }
         }
 
         //Alle Unteraktionen wurden vollständig ausgeführt
@@ -192,89 +160,6 @@ public class ActionCardExecution {
         }
 
         return true;
-    }
-
-
-    /**
-     * Liefert eine Liste mit allen Unteraktionen einer Aktion
-     *
-     * @param action die Kartenaktion, deren Unteraktionen herausgefiltert werden sollen
-     * @return Liste mit allen Unteraktionen der Aktion
-     * @author Julia
-     * @since Sprint7
-     */
-    private List<CardAction> getNextActions(CardAction action) {
-        if (!(action instanceof ComplexCardAction)) return nextActions;
-        ComplexCardAction complexCardAction = (ComplexCardAction) action;
-        if (complexCardAction.getNextAction() == null) return nextActions;
-        nextActions.add(complexCardAction.getNextAction());
-        return getNextActions(complexCardAction.getNextAction());
-    }
-
-
-    /**
-     * Ermittelt alle Spieler, auf die eine Aktion ausgeführt werden muss
-     *
-     * @param action Die CardAction
-     * @return Spielerliste mit allen betroffenen Spielern
-     * @author Julia
-     * @since Sprint7
-     */
-    private List<Player> getAffectedPlayers(CardAction action) {
-        List<Player> affectedPlayers = new ArrayList<>();
-        if (!(action instanceof ComplexCardAction)) {
-            affectedPlayers.add(player);
-            return affectedPlayers;
-        }
-
-        CardAction.ExecuteType executeType = ((ComplexCardAction) action).getExecuteType();
-        if (executeType == CardAction.ExecuteType.ALL) {
-            affectedPlayers = players;
-        } else if (executeType == CardAction.ExecuteType.OTHERS) {
-            for (Player p : players) {
-                if (!p.equals(player)) affectedPlayers.add(p);
-            }
-        } else if (executeType == CardAction.ExecuteType.NEXT) {
-            int index = players.indexOf(player);
-            affectedPlayers.add(players.get(++index % players.size()));
-        } else if (executeType == CardAction.ExecuteType.LAST) {
-            int index = players.indexOf(player);
-            affectedPlayers.add(players.get(--index % players.size()));
-        } else {
-            affectedPlayers.add(player);
-        }
-
-        //Prüfe ob einer der betroffenen Spieler eine Reaktionskarte auf der Hand hat
-        if (theCard.getType() == ActionCard.ActionType.Attack) {
-            for (Player p : affectedPlayers) {
-                if (!p.equals(this.player) && checkForReactionCard(p)) {
-                    players.remove(p);
-                    affectedPlayers.remove(p);
-                }
-            }
-
-        }
-        return affectedPlayers;
-    }
-
-    /**
-     * Prüft, ob ein Spieler eine Reaktionskarte auf der Hand hat und spielt diese dann aus
-     *
-     * @param player Der Spieler, dessen Hand überprüft werden soll
-     * @return true, wenn er eine Reaktionskarte auf der Hand hat, sonst false
-     * @author Julia
-     * @since Sprint7
-     */
-    private boolean checkForReactionCard(Player player) {
-        for (Card card : player.getPlayerDeck().getHand()) {
-            if (card instanceof ActionCard && ((ActionCard) card).getType() == ActionCard.ActionType.Reaction) {
-                player.getPlayerDeck().getHand().remove(card);
-                player.getPlayerDeck().getActionPile().add(card); //?
-                //TODO: Message an Client
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -632,6 +517,102 @@ public class ActionCardExecution {
             playground.getGameService().sendToSpecificPlayer(player, cardMovedMessage);
         }
         return true;
+    }
+
+    /**
+     * Liefert eine Liste mit allen Unteraktionen einer Aktion
+     *
+     * @param action die Kartenaktion, deren Unteraktionen herausgefiltert werden sollen
+     * @return Liste mit allen Unteraktionen der Aktion
+     * @author Julia
+     * @since Sprint7
+     */
+    private List<CardAction> getNextActions(CardAction action) {
+        if (!(action instanceof ComplexCardAction)) return nextActions;
+        ComplexCardAction complexCardAction = (ComplexCardAction) action;
+        if (complexCardAction.getNextAction() == null) return nextActions;
+        nextActions.add(complexCardAction.getNextAction());
+        return getNextActions(complexCardAction.getNextAction());
+    }
+
+
+    /**
+     * Ermittelt alle Spieler, auf die eine Aktion ausgeführt werden muss
+     *
+     * @param action Die CardAction
+     * @return Spielerliste mit allen betroffenen Spielern
+     * @author Julia
+     * @since Sprint7
+     */
+    private List<Player> getAffectedPlayers(CardAction action) {
+        List<Player> affectedPlayers = new ArrayList<>();
+        if (!(action instanceof ComplexCardAction)) {
+            affectedPlayers.add(player);
+            return affectedPlayers;
+        }
+
+        CardAction.ExecuteType executeType = ((ComplexCardAction) action).getExecuteType();
+        if (executeType == CardAction.ExecuteType.ALL) {
+            affectedPlayers = players;
+        } else if (executeType == CardAction.ExecuteType.OTHERS) {
+            for (Player p : players) {
+                if (!p.equals(player)) affectedPlayers.add(p);
+            }
+        } else if (executeType == CardAction.ExecuteType.NEXT) {
+            int index = players.indexOf(player);
+            affectedPlayers.add(players.get(++index % players.size()));
+        } else if (executeType == CardAction.ExecuteType.LAST) {
+            int index = players.indexOf(player);
+            affectedPlayers.add(players.get(--index % players.size()));
+        } else {
+            affectedPlayers.add(player);
+        }
+
+        //Prüfe ob einer der betroffenen Spieler eine Reaktionskarte auf der Hand hat
+        if (theCard.getType() == ActionCard.ActionType.Attack) {
+            for (Player p : affectedPlayers) {
+                if (!p.equals(this.player) && checkForReactionCard(p)) {
+                    players.remove(p);
+                    affectedPlayers.remove(p);
+                }
+            }
+
+        }
+        return affectedPlayers;
+    }
+
+    /**
+     * Prüft, ob ein Spieler eine Reaktionskarte auf der Hand hat und spielt diese dann aus
+     *
+     * @param player Der Spieler, dessen Hand überprüft werden soll
+     * @return true, wenn er eine Reaktionskarte auf der Hand hat, sonst false
+     * @author Julia
+     * @since Sprint7
+     */
+    private boolean checkForReactionCard(Player player) {
+        for (Card card : player.getPlayerDeck().getHand()) {
+            if (card instanceof ActionCard && ((ActionCard) card).getType() == ActionCard.ActionType.Reaction) {
+                player.getPlayerDeck().getHand().remove(card);
+                player.getPlayerDeck().getActionPile().add(card); //?
+                //TODO: Message an Client
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Überprüft ob die Karte vollständig abgearbeitet ist
+     *
+     * @author Julia
+     * @since Sprint7
+     */
+    private boolean checkIfComplete() {
+        if (actualStateIndex == theCard.getActions().size() && !waitedForPlayerInput && finishedNextActions) {
+            playground.getCompositePhase().finishedActionCardExecution(player);
+            return true;
+        }
+        return false;
     }
 
     // vorläufige Hilfsmethode //
