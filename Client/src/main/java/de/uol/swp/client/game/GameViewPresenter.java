@@ -243,6 +243,7 @@ public class GameViewPresenter extends AbstractPresenter {
          * Aktionszonen = Hellblau
          * Abwerfzonen = Rot
          */
+        /*
         handcards.setStyle("-fx-background-color: chartreuse");
         firstEnemyHand.setStyle("-fx-background-color: chartreuse");
         secondEnemyHand.setStyle("-fx-background-color: chartreuse");
@@ -259,6 +260,7 @@ public class GameViewPresenter extends AbstractPresenter {
         firstEnemyDLC.setStyle("-fx-background-color: darkviolet");
         secondEnemyDLC.setStyle("-fx-background-color: darkviolet");
         thirdEnemyDLC.setStyle("-fx-background-color: darkviolet");
+         */
     }
 
     /**
@@ -476,12 +478,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 playerIndexNumbers.add((short) 3);
                 if (msg.getGameID().equals(lobbyID) && !msg.getCurrentUser().equals(loggedInUser)) {
                     playerIndexNumbers.remove(msg.getUserPlaceNumber());
-                    ImageView card = new ImageView(new Image("file:Client/src/main/resources/cards/images/" + msg.getHandCardID() + ".png"));
-                    card.setFitHeight(107);
-                    card.setPreserveRatio(true);
-                    card.setId("back");
-                    card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
-
+                    Card card = new Card(msg.getHandCardID(), firstEnemyPCLC.getLayoutX(), firstEnemyPCLC.getLayoutY(), firstEnemyPCLC.getHeight());
                     if (playerIndexNumbers.get(0).equals(msg.getEnemyPlaceNumber())) {
                         Platform.runLater(() -> {
                             AnimationManagement.playCard((ImageView)firstEnemyHand.getChildren().get(0),  firstEnemyPCLC.getChildren().size(), firstEnemyPCLC);
@@ -550,7 +547,7 @@ public class GameViewPresenter extends AbstractPresenter {
             if (playerIndexNumbers.get(1).equals(msg.getEnemyPlaceNumber())) {
                 int numberOfCardsInHand = secondEnemyHand.getChildren().size();
                 for (Short id: msg.getCardID()) {
-                    Card card = new Card (id.toString(),328,447,104,60);
+                    Card card = new Card (id.toString(),328,447,104);
                     if(numberOfCardsInHand==0) {
                         LOG.debug("Die Hand hat keine Karten mehr zum entsorgen");
                         return;
@@ -595,25 +592,23 @@ public class GameViewPresenter extends AbstractPresenter {
         // Wenn die ClearMessage an den currentPlayer geht werden, seine Handkarten und
         // ausgespielten Karten auf den Ablagestapel getan und fünf neue Karten gezogen.
         if (msg.getGameID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
-            // TODO: Animation für das aufräumen des Feldes muss eingefügt werden.
-            myDPLC.getChildren().addAll(myPCLC.getChildren());
-            myPCLC.getChildren().clear();
-            myDPLC.getChildren().addAll(handcards.getChildren());
-            handcards.getChildren().clear();
+            Platform.runLater(() -> {
+                        // TODO: Animation für das aufräumen des Feldes muss eingefügt werden.
+                        myDPLC.getChildren().addAll(myPCLC.getChildren());
+                        myPCLC.getChildren().clear();
+                        myDPLC.getChildren().addAll(handcards.getChildren());
+                        handcards.getChildren().clear();
+                    });
             ArrayList<Short> HandCardID = msg.getCardsToDraw();
             HandCardID.forEach((n) -> {
-                String pfad = "file:Client/src/main/resources/cards/images/" + n + ".png";
-                Image picture = new Image(pfad);
-                ImageView card = new ImageView(picture);
-                card.setFitHeight(107);
-                card.setPreserveRatio(true);
-                card.setId(n.toString());
-                card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
-                deckPane.getChildren().add(card);
-                AnimationManagement.addToHand(card, handcards.getChildren().size());
-                deckPane.getChildren().remove(card);
-                handcards.getChildren().add(card);
-                card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+                Card card = new Card(n.toString(), handcards.getLayoutX(), handcards.getLayoutY(), handcards.getHeight());
+                Platform.runLater(() -> {
+                    AnimationManagement.addToHand(card, handcards.getChildren().size());
+                    deckPane.getChildren().add(card);
+                    deckPane.getChildren().remove(card);
+                    handcards.getChildren().add(card);
+                    card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+                });
             });
         }
         // Wenn ein anderer Spieler eine ClearPhaseMessage erhählt wird dies den anderen Spielern
@@ -623,66 +618,59 @@ public class GameViewPresenter extends AbstractPresenter {
             playerIndexNumbers.remove(msg.getUserPlaceNumber());
 
             if (playerIndexNumbers.get(0).equals(msg.getEnemyPlaceNumber())) {
-                firstEnemyDPLC.getChildren().addAll(firstEnemyHand.getChildren());
-                firstEnemyHand.getChildren().clear();
-                firstEnemyDPLC.getChildren().addAll(firstEnemyPCLC.getChildren());
-                firstEnemyPCLC.getChildren().clear();
-
-                String pfad = "file:Client/src/main/resources/cards/images/card_back.png";
-                Image picture = new Image(pfad);
+                Platform.runLater(() -> {
+                    firstEnemyDPLC.getChildren().addAll(firstEnemyHand.getChildren());
+                    firstEnemyHand.getChildren().clear();
+                    firstEnemyDPLC.getChildren().addAll(firstEnemyPCLC.getChildren());
+                    firstEnemyPCLC.getChildren().clear();
+                });
                 for(int i=0; i<5; i++) {
-                    ImageView card = new ImageView(picture);
-                    card.setFitHeight(107);
-                    card.setPreserveRatio(true);
-                    card.setId("back");
-                    card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
-                    firstEnemyDLC.getChildren().add(card);
-                    AnimationManagement.addToHand(card, firstEnemyHand.getChildren().size());
-                    firstEnemyDLC.getChildren().remove(card);
-                    firstEnemyHand.getChildren().add(card);
+                    Card card = new Card("card_back", firstEnemyHand.getLayoutX(), firstEnemyHand.getLayoutY(), firstEnemyHand.getHeight());
+                    Platform.runLater(() -> {
+                        AnimationManagement.addToHand(card, firstEnemyHand.getChildren().size());
+                        firstEnemyDLC.getChildren().add(card);
+                        firstEnemyDLC.getChildren().remove(card);
+                        firstEnemyHand.getChildren().add(card);
+                            });
                         }
                 return;
             }
 
             if (playerIndexNumbers.get(1).equals(msg.getEnemyPlaceNumber())) {
-                secondEnemyDPLC.getChildren().addAll(secondEnemyHand.getChildren());
-                secondEnemyHand.getChildren().clear();
-                secondEnemyDPLC.getChildren().addAll(secondEnemyPCLC.getChildren());
-                secondEnemyPCLC.getChildren().clear();
-                String pfad = "file:Client/src/main/resources/cards/images/card_back.png";
-                Image picture = new Image(pfad);
+                Platform.runLater(() -> {
+                    secondEnemyDPLC.getChildren().addAll(secondEnemyHand.getChildren());
+                    secondEnemyHand.getChildren().clear();
+                    secondEnemyDPLC.getChildren().addAll(secondEnemyPCLC.getChildren());
+                    secondEnemyPCLC.getChildren().clear();
+                });
                 for(int i=0; i<5; i++) {
-                    ImageView card = new ImageView(picture);
-                    card.setFitHeight(107);
-                    card.setPreserveRatio(true);
-                    card.setId("back");
-                    card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
-                    secondEnemyDLC.getChildren().add(card);
-                    AnimationManagement.addToHand(card, secondEnemyHand.getChildren().size());
-                    secondEnemyDLC.getChildren().remove(card);
-                    secondEnemyHand.getChildren().add(card);
+                    Platform.runLater(() -> {
+                        Card card = new Card("card_back", secondEnemyHand.getLayoutX(), secondEnemyHand.getLayoutY(), secondEnemyHand.getHeight());
+                        AnimationManagement.addToHand(card, secondEnemyHand.getChildren().size());
+                        secondEnemyDLC.getChildren().add(card);
+                        secondEnemyDLC.getChildren().remove(card);
+                        secondEnemyHand.getChildren().add(card);
+                    });
                 }
 
                 return;
             }
 
             if (playerIndexNumbers.get(2).equals(msg.getEnemyPlaceNumber())) {
-               thirdEnemyDPLC.getChildren().addAll(thirdEnemyHand.getChildren());
-                thirdEnemyHand.getChildren().clear();
-                thirdEnemyDPLC.getChildren().addAll(thirdEnemyPCLC.getChildren());
-                thirdEnemyPCLC.getChildren().clear();
-                String pfad = "file:Client/src/main/resources/cards/images/card_back.png";
-                Image picture = new Image(pfad);
+                Platform.runLater(() -> {
+                    thirdEnemyDPLC.getChildren().addAll(thirdEnemyHand.getChildren());
+                    thirdEnemyHand.getChildren().clear();
+                    thirdEnemyDPLC.getChildren().addAll(thirdEnemyPCLC.getChildren());
+                    thirdEnemyPCLC.getChildren().clear();
+                });
                 for(int i=0; i<5; i++) {
-                    ImageView card = new ImageView(picture);
-                    card.setFitHeight(107);
-                    card.setPreserveRatio(true);
-                    card.setId("back");
-                    card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
-                    thirdEnemyDLC.getChildren().add(card);
-                    AnimationManagement.addToHand(card, thirdEnemyHand.getChildren().size());
-                    thirdEnemyDLC.getChildren().remove(card);
-                    thirdEnemyHand.getChildren().add(card);
+                    Platform.runLater(() -> {
+                        Card card = new Card("card_back", thirdEnemyHand.getLayoutX(), thirdEnemyHand.getLayoutY(), thirdEnemyHand.getHeight());
+                        AnimationManagement.addToHand(card, thirdEnemyHand.getChildren().size());
+                        thirdEnemyDLC.getChildren().add(card);
+                        thirdEnemyDLC.getChildren().remove(card);
+                        thirdEnemyHand.getChildren().add(card);
+                    });
                 }
                 return;
             }

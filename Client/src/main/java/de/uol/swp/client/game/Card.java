@@ -31,13 +31,12 @@ public class Card extends ImageView {
         this.setImage(new Image("file:Client/src/main/resources/cards/images/" + id + ".png"));
     }
 
-    public Card(String id, double layout_x, double layout_y, double height, double width) {
+    public Card(String id, double layout_x, double layout_y, double height) {
         this.setImage(new Image("file:Client/src/main/resources/cards/images/" + id + ".png"));
         this.setPreserveRatio(true);
         this.setLayoutX(layout_x);
         this.setLayoutY(layout_y);
         this.setFitHeight(height);
-        this.setFitWidth(height);
         this.setFitWidth(Math.round(this.getBoundsInLocal().getWidth()));
         this.setId(id);
     }

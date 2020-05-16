@@ -56,8 +56,8 @@ public class PlayCardMessage extends AbstractServerMessage {
         return currentUser;
     }
 
-    public short getHandCardID() {
-        return handCardID;
+    public String getHandCardID() {
+        return handCardID.toString();
     }
 
     public Boolean getIsPlayed() {return isPlayed;}
