@@ -193,7 +193,7 @@ public class SceneManager {
     }
 
     public void showServerError(String e) {
-        showError("Server returned an error:\n", e);
+        showError("Der Server gab einen Fehler zurück:\n", e);
     }
 
     public void showError(String e) {
