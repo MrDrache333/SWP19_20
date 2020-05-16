@@ -1,6 +1,7 @@
 package de.uol.swp.common.game.card.parser.components.CardAction.response;
 
 import de.uol.swp.common.game.AbstractGameMessage;
+import de.uol.swp.common.game.AbstractPlayground;
 import de.uol.swp.common.user.User;
 
 import java.util.ArrayList;
@@ -17,6 +18,8 @@ public class ChooseCardResponse extends AbstractGameMessage {
      * Die ausgewählten Karten
      */
     private ArrayList<Short> cards;
+
+    private AbstractPlayground.ZoneType from;
 
     /**
      * Erstellt eine neue Antwortnachricht
@@ -56,5 +59,9 @@ public class ChooseCardResponse extends AbstractGameMessage {
      */
     public ArrayList<Short> getCards() {
         return cards;
+    }
+
+    public AbstractPlayground.ZoneType getFrom() {
+        return from;
     }
 }

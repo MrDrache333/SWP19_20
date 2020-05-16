@@ -2,6 +2,7 @@ package de.uol.swp.common.game.card.parser.components.CardAction.request;
 
 import de.uol.swp.common.game.AbstractGameMessage;
 import de.uol.swp.common.game.AbstractPlayground;
+import de.uol.swp.common.game.card.parser.components.CardAction.Value;
 import de.uol.swp.common.user.User;
 
 import java.util.ArrayList;
@@ -38,6 +39,8 @@ public class ChooseCardRequest extends AbstractGameMessage {
     /**
      * Die Anzahl an wählbaren Karten
      */
+    private Value countV;
+
     private int count;
 
     /**
@@ -46,17 +49,17 @@ public class ChooseCardRequest extends AbstractGameMessage {
      * @param id           Die ID des Spiels
      * @param player       Der Spieler, der die Auswahl treffen soll
      * @param cards        Die Karten, die zur Auswahl stehen
-     * @param count        Die Anzahl an wählbaren Karten
+     * @param countV       Die Anzahl an wählbaren Karten
      * @param sourcePlayer Der Spieler, von dem die Karten ausgewählt werden
      * @param source       Die Zone, von welcher die Karten stammen
      * @param message      Die Nachricht, die dem Spieler gezeigt werden soll
      * @author KenoO
      * @since Sprint 7
      */
-    public ChooseCardRequest(UUID id, User player, ArrayList<Short> cards, int count, User sourcePlayer, AbstractPlayground.ZoneType source, String message) {
+    public ChooseCardRequest(UUID id, User player, ArrayList<Short> cards, Value countV, User sourcePlayer, AbstractPlayground.ZoneType source, String message) {
         super(id, player);
         this.cards = cards;
-        this.count = count;
+        this.countV = countV;
         this.source = source;
         if (message.equals("")) message = DEFAULT_MESSAGE;
         this.message = message;
