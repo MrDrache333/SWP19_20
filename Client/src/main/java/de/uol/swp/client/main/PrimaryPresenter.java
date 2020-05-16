@@ -112,12 +112,12 @@ public class PrimaryPresenter extends AbstractPresenter {
     }
 
     /**
-     * Methode fängt ButtonKlick ab, User verlässt alle Lobbies, in denen er angemeldet ist und wird ausgeloggt
+     * Methode fängt Button-Klick ab, User verlässt alle Lobbies, in denen er angemeldet ist und wird ausgeloggt
      *
      * @param actionEvent the action event
      * @author Julia, Paula
      * @Version 1.0
-     * @since sprint3
+     * @since Sprint3
      */
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
@@ -167,7 +167,6 @@ public class PrimaryPresenter extends AbstractPresenter {
             closeTab(msg.getLobbyID(), true);
         }
     }
-
 
     /**
      * Die Methode postet ein Request auf den Bus, wenn der Einstellungen-Button gedrückt wird
@@ -227,7 +226,7 @@ public class PrimaryPresenter extends AbstractPresenter {
     }
 
     /**
-     * Sort dafür, das die Lobby cLientseitig geschlossen wird und diese ggf. verlassen wird
+     * Sorgt dafür, dass die Lobby clientseitig geschlossen wird und diese ggf. verlassen wird
      *
      * @param uuid  Die UUID der Lobby
      * @param leave Ob die Lobby Serverseitig noch verlassen werden muss
