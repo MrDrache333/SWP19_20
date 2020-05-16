@@ -5,13 +5,16 @@ import de.uol.swp.common.game.AbstractPlayground;
 import de.uol.swp.common.game.card.*;
 import de.uol.swp.common.game.card.parser.components.CardAction.CardAction;
 import de.uol.swp.common.game.card.parser.components.CardAction.ComplexCardAction;
+import de.uol.swp.common.game.card.parser.components.CardAction.request.ChooseCardRequest;
 import de.uol.swp.common.game.card.parser.components.CardAction.request.OptionalActionRequest;
+import de.uol.swp.common.game.card.parser.components.CardAction.response.ChooseCardResponse;
 import de.uol.swp.common.game.card.parser.components.CardAction.response.OptionalActionResponse;
 import de.uol.swp.common.game.card.parser.components.CardAction.types.*;
 import de.uol.swp.common.game.messages.CardMovedMessage;
 import de.uol.swp.common.game.messages.ChooseNextActionMessage;
 import de.uol.swp.common.game.messages.SelectCardsFromHandMessage;
 import de.uol.swp.common.game.messages.ShowCardMessage;
+import de.uol.swp.common.user.User;
 import de.uol.swp.server.game.Playground;
 import de.uol.swp.server.game.player.Player;
 import org.apache.logging.log4j.LogManager;
@@ -35,6 +38,7 @@ public class ActionCardExecution {
     private ActionCard theCard;
     private UUID gameID;
     private List<Player> players;
+    private List<User> chooseCardPlayers;
     //Liste aller Unteraktionen einer Aktion
     private List<CardAction> nextActions = new ArrayList<>();
 
@@ -421,16 +425,32 @@ public class ActionCardExecution {
     }
 
     /**
-     * Schickt dem Spieler eine Nachricht das er eine bestimmte Anzahl an Karten auswählen kann.
+     * Schickt den ausgewählten Spielern eine Nachricht, dass sie eine Anzahl an Karten auswählen können.
      *
-     * @param action Die Anzahl der Karten
-     * @return true(? ? ?)
+     * @param action     Die Anzahl der Karten
+     * @param thePlayers Die Player, die Karten auswählen dürfen.
+     * @return
      */
-    //TODO: fix
+
+    //TODO: Überprüfen, ob die Logik stimmt.
     private boolean executeChooseCard(ChooseCard action, List<Player> thePlayers) {
-        for (Player player : thePlayers) {
-            waitedForPlayerInput = true;
-            playground.getGameService().sendToSpecificPlayer(player, new SelectCardsFromHandMessage(action.getCount(), action.getCardSource(), action.getCardDestination()));
+        waitedForPlayerInput = true;
+
+        for (Player playerChooseCard : thePlayers) {
+            this.chooseCardPlayers.add(playerChooseCard.getTheUserInThePlayer());
+            ArrayList<Short> theSelectableCards = new ArrayList<>();
+            if (action.getCardSource() == AbstractPlayground.ZoneType.HAND) {
+                for (Card card : playerChooseCard.getPlayerDeck().getHand()) {
+                    theSelectableCards.add(card.getId());
+                }
+            } else if (action.getCardSource() == AbstractPlayground.ZoneType.BUY) {
+                List<Short> l = new ArrayList<>(playground.getCardField().keySet());
+                for (Short card : l) {
+                    theSelectableCards.add(card.shortValue());
+                }
+            }
+            ChooseCardRequest request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount(), playerChooseCard.getTheUserInThePlayer(), action.getCardSource(), "Bitte die Anzahl der Karten auswählen von dem Bereich der dir angezeigt wird!");
+            playground.getGameService().sendToSpecificPlayer(player, request);
         }
         return true;
 
@@ -615,6 +635,29 @@ public class ActionCardExecution {
         return false;
     }
 
+    @Subscribe
+    public void chooseCardResponseHandling(ChooseCardResponse response) {
+        Player helpPlayer = players.get(helpMethodToGetThePlayerFromUser(response.getPlayer()));
+        if (response.getGameID().equals(gameID) && waitedForPlayerInput == true && chooseCardPlayers.contains(response.getPlayer())) {
+            if (response.getFrom() == AbstractPlayground.ZoneType.HAND) {
+                for (Short short2 : response.getCards()) {
+                    Card theWantedCard = helpMethod2GetTheCard(short2);
+                    if (helpPlayer.getPlayerDeck().getHand().contains(theWantedCard)) {
+                        helpPlayer.getPlayerDeck().getHand().remove(theWantedCard);
+                        helpPlayer.getPlayerDeck().getDiscardPile().add(theWantedCard);
+                    }
+                }
+            }
+            if (response.getFrom() == AbstractPlayground.ZoneType.BUY) {
+                for (Short short2 : response.getCards()) {
+                    Card theWantedCard = helpMethod2GetTheCard(short2);
+                    // TODO: Überprüfung, ob der Spieler auch eine Karte gekauft hat die in dem Wertebereich sich befindet.
+                    player.getPlayerDeck().getDiscardPile().add(theWantedCard);
+                }
+            }
+        }
+    }
+
     // vorläufige Hilfsmethode //
     private void getCardFromHand(short cardID) {
 
@@ -625,5 +668,37 @@ public class ActionCardExecution {
                 break;
             }
         }
+    }
+
+    private int helpMethodToGetThePlayerFromUser(User user) {
+        int thePlayer = -1;
+        for (int i = 0; i < players.size() - 1; i++) {
+            if (user.equals(player.getTheUserInThePlayer())) {
+                thePlayer = i;
+                break;
+
+            }
+        }
+        return thePlayer;
+    }
+
+    private Card helpMethod2GetTheCard(Short shor2) {
+        Card theCard = null;
+        boolean isfound = false;
+        for (Card card : playground.getCardsPackField().getCards().getAllCards()) {
+            for (int i = 0; i < playground.getCardsPackField().getCards().getAllCards().size() - 1; i++) {
+                if (card.getId() == shor2) {
+                    theCard = card;
+
+                    break;
+                }
+
+            }
+            if (isfound) {
+                break;
+            }
+        }
+
+        return theCard;
     }
 }
