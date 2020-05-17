@@ -77,10 +77,6 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     private ListView<String> usersView;
     @FXML
-    private StackPane deckPane;
-    @FXML
-    private StackPane discardPilePane;
-    @FXML
     private ImageView cardPlaceholder1;
     @FXML
     private ImageView cardPlaceholder2;
@@ -423,7 +419,7 @@ public class GameViewPresenter extends AbstractPresenter {
                         ImageView iv = new ImageView(picture);
                         iv.setPreserveRatio(true);
                         iv.setFitHeight(107);
-                        discardPilePane.getChildren().add(iv);
+                        myDPLC.getChildren().add(iv);
                     });
                 });
                 if (msg.getCounterCard() < 1) {
@@ -531,7 +527,7 @@ public class GameViewPresenter extends AbstractPresenter {
             if (playerIndexNumbers.get(0).equals(msg.getEnemyPlaceNumber())) {
                 int numberOfCardsInHand = firstEnemyHand.getChildren().size();
                 for (Short id: msg.getCardID()) {
-                    ImageView card = new ImageView(new Image("file:Client/src/main/resources/cards/images/" + id + ".png"));
+                    Card card = new Card (id.toString(),328,447,104);
                     if(numberOfCardsInHand==0) {
                         LOG.debug("Die Hand hat keine Karten mehr zum entsorgen");
                         return;
@@ -547,7 +543,7 @@ public class GameViewPresenter extends AbstractPresenter {
             if (playerIndexNumbers.get(1).equals(msg.getEnemyPlaceNumber())) {
                 int numberOfCardsInHand = secondEnemyHand.getChildren().size();
                 for (Short id: msg.getCardID()) {
-                    Card card = new Card (id.toString(),328,447,104);
+                    Card card = new Card (id.toString(),0,0,104);
                     if(numberOfCardsInHand==0) {
                         LOG.debug("Die Hand hat keine Karten mehr zum entsorgen");
                         return;
@@ -563,7 +559,7 @@ public class GameViewPresenter extends AbstractPresenter {
             if (playerIndexNumbers.get(2).equals(msg.getEnemyPlaceNumber())) {
                 int numberOfCardsInHand = thirdEnemyHand.getChildren().size();
                 for (Short id: msg.getCardID()) {
-                    ImageView card = new ImageView(new Image("file:Client/src/main/resources/cards/images/" + id + ".png"));
+                    Card card = new Card (id.toString(),328,447,104);
                     if(numberOfCardsInHand==0) {
                         LOG.debug("Die Hand hat keine Karten mehr zum entsorgen");
                         return;
@@ -588,7 +584,7 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @FXML
     @Subscribe
-    public void onClearPhaseMesage (ClearPhaseMessage msg) {
+    public void onStartClearPhaseMesage (StartClearPhaseMessage msg) {
         // Wenn die ClearMessage an den currentPlayer geht werden, seine Handkarten und
         // ausgespielten Karten auf den Ablagestapel getan und fünf neue Karten gezogen.
         if (msg.getGameID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
@@ -604,8 +600,8 @@ public class GameViewPresenter extends AbstractPresenter {
                 Card card = new Card(n.toString(), handcards.getLayoutX(), handcards.getLayoutY(), handcards.getHeight());
                 Platform.runLater(() -> {
                     AnimationManagement.addToHand(card, handcards.getChildren().size());
-                    deckPane.getChildren().add(card);
-                    deckPane.getChildren().remove(card);
+                    myDLC.getChildren().add(card);
+                    myDLC.getChildren().remove(card);
                     handcards.getChildren().add(card);
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                 });
@@ -627,7 +623,6 @@ public class GameViewPresenter extends AbstractPresenter {
                 for(int i=0; i<5; i++) {
                     Card card = new Card("card_back", firstEnemyHand.getLayoutX(), firstEnemyHand.getLayoutY(), firstEnemyHand.getHeight());
                     Platform.runLater(() -> {
-                        AnimationManagement.addToHand(card, firstEnemyHand.getChildren().size());
                         firstEnemyDLC.getChildren().add(card);
                         firstEnemyDLC.getChildren().remove(card);
                         firstEnemyHand.getChildren().add(card);
@@ -646,7 +641,6 @@ public class GameViewPresenter extends AbstractPresenter {
                 for(int i=0; i<5; i++) {
                     Platform.runLater(() -> {
                         Card card = new Card("card_back", secondEnemyHand.getLayoutX(), secondEnemyHand.getLayoutY(), secondEnemyHand.getHeight());
-                        AnimationManagement.addToHand(card, secondEnemyHand.getChildren().size());
                         secondEnemyDLC.getChildren().add(card);
                         secondEnemyDLC.getChildren().remove(card);
                         secondEnemyHand.getChildren().add(card);
@@ -666,7 +660,6 @@ public class GameViewPresenter extends AbstractPresenter {
                 for(int i=0; i<5; i++) {
                     Platform.runLater(() -> {
                         Card card = new Card("card_back", thirdEnemyHand.getLayoutX(), thirdEnemyHand.getLayoutY(), thirdEnemyHand.getHeight());
-                        AnimationManagement.addToHand(card, thirdEnemyHand.getChildren().size());
                         thirdEnemyDLC.getChildren().add(card);
                         thirdEnemyDLC.getChildren().remove(card);
                         thirdEnemyHand.getChildren().add(card);
@@ -698,7 +691,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 card.setFitHeight(107);
                 card.setPreserveRatio(true);
                 card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
-                discardPilePane.getChildren().add(card);
+                myDPLC.getChildren().add(card);
             }
         });
     }

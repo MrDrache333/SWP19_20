@@ -42,8 +42,14 @@ public class DeckLayoutContainer extends StackPane {
         this.setPrefHeight(height);
         this.setPrefWidth(width);
         this.setId(id);
-        if(this.getId() == "2.DLC" || this.getId() == "3.DLC") {
-            this.setRotate(90);
+        if (this.getId().equals("1.DLC")) {
+            this.setRotate(180);
+        } else {
+            if (this.getId().equals("2.DLC")) {
+                this.setRotate(90);
+            } else if (this.getId().equals("3.DLC")) {
+                this.setRotate(270);
+            }
         }
 
         // this.getChildren().add(new Card("card_back",this.getLayoutX(), this.getLayoutY(), 110, 60));

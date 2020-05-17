@@ -40,8 +40,14 @@ public class DiscardPileLayoutContainer extends StackPane {
         this.setPrefHeight(height);
         this.setPrefWidth(width);
         this.setId(id);
-        if(this.getId() == "2.DPLC" || this.getId() == "3.DPLC") {
-            this.setRotate(90);
+        if (this.getId().equals("1.DPLC")) {
+            this.setRotate(180);
+        } else {
+            if (this.getId().equals("2.DPLC")) {
+                this.setRotate(90);
+            } else if (this.getId().equals("3.DPLC")) {
+                this.setRotate(270);
+            }
         }
     }
 

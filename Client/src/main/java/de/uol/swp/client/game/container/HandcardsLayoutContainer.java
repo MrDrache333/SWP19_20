@@ -38,8 +38,14 @@ public class HandcardsLayoutContainer extends Region {
         this.setPrefHeight(height);
         this.setPrefWidth(width);
         super.setId(id);
-        if(super.getId() == "2.HCLC" || super.getId() == "3.HCLC") {
-            super.setRotate(90);
+        if (this.getId().equals("1.HCLC")) {
+            this.setRotate(180);
+        } else {
+            if (this.getId().equals("2.HCLC")) {
+                this.setRotate(90);
+            } else if (this.getId().equals("3.HCLC")) {
+                this.setRotate(270);
+            }
         }
     }
 
