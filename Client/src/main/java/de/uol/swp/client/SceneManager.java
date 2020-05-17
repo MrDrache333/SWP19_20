@@ -249,6 +249,7 @@ public class SceneManager {
             settingsPresenter = new SettingsPresenter(loggedInUser, lobbyService, userService, injector, eventBus);
             initSettingsView(settingsPresenter);
             settingsStage = new Stage();
+            settingsStage.initStyle(StageStyle.UNDECORATED);
             settingsStage.setTitle("Einstellungen");
             settingsStage.setScene(settingsScene);
             settingsStage.setResizable(false);
@@ -383,7 +384,7 @@ public class SceneManager {
     private void initSettingsView(SettingsPresenter settingsPresenter) {
         if (settingsScene == null) {
             Parent rootPane = initSettingsPresenter(settingsPresenter);
-            settingsScene = new Scene(rootPane, 420, 400);
+            settingsScene = new Scene(rootPane, 400, 420);
             settingsScene.getStylesheets().add(SettingsPresenter.css);
         }
     }

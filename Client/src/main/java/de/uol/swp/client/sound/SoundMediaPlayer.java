@@ -140,7 +140,7 @@ public class SoundMediaPlayer implements MediaPlayer {
 
     @Override
     public void unMute() {
-        setMuted(true);
+        setMuted(false);
     }
 
     /**

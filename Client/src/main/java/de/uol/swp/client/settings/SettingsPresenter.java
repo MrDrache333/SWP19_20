@@ -3,11 +3,10 @@ package de.uol.swp.client.settings;
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import com.google.inject.Inject;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.Notifyer;
 import de.uol.swp.client.SceneManager;
-import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.settings.event.CloseSettingsEvent;
 import de.uol.swp.client.settings.event.DeleteAccountEvent;
@@ -15,17 +14,15 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
-import de.uol.swp.server.chat.Chat;
-import de.uol.swp.server.chat.ChatService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.util.regex.Pattern;
 
 
@@ -50,7 +47,6 @@ public class SettingsPresenter extends AbstractPresenter {
     private User loggedInUser;
     private LobbyService lobbyService;
     private UserService userService;
-    private ChatViewPresenter chatViewPresenter;
     private Injector injector;
     private EventBus eventBus;
 
@@ -67,7 +63,7 @@ public class SettingsPresenter extends AbstractPresenter {
     @FXML
     private PasswordField currentPasswordField;
     @FXML
-    private ImageView chatMuteButton;
+    private ImageView chatMuteImage;
     @FXML
     private ToggleButton chatMuteToggleButton;
 
@@ -77,18 +73,6 @@ public class SettingsPresenter extends AbstractPresenter {
         this.userService = userService;
         this.injector = injector;
         this.eventBus = eventBus;
-    }
-
-    private void initialize ()  {
-        FXMLLoader loader = injector.getInstance(FXMLLoader.class);
-        loader.setLocation(getClass().getResource(ChatViewPresenter.fxml));
-        loader.setController(chatViewPresenter);
-
-        /*chatMuteButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-
-            LOG.debug("Button geklickt");
-            chatViewPresenter.setMuteState(!chatViewPresenter.getMuteState());
-        });*/
     }
     /**
      * Überprüft die Benutzereingaben. Falls alle gültig sind, wird im UserService die Methode updateUser aufgerufen,
@@ -170,11 +154,21 @@ public class SettingsPresenter extends AbstractPresenter {
         clearAll();
     }
 
+    /**
+     * Mutet alle Benachrichtigungen beim Aufruf
+     *
+     * @param actionEvent
+     * @author Keno S.
+     * @since Sprint7
+     */
     @FXML
     public void onChatMuteToggleButtonPressed(ActionEvent actionEvent) {
-        LOG.debug(chatMuteToggleButton.isSelected());
-        chatViewPresenter.setMuteState(chatMuteToggleButton.isSelected());
-        LOG.debug("Button geklickt");
+        Notifyer.setMuteState(chatMuteToggleButton.isSelected());
+
+        if (chatMuteToggleButton.isSelected())
+            chatMuteImage.setImage(new Image(new File("../resources/images/chat_on_icon.png").toURI().toString()));
+        else
+            chatMuteImage.setImage(new Image(new File("../resources/images/chat_off_icon.png").toURI().toString()));
     }
 
     /**

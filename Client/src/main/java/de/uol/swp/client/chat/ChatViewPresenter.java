@@ -96,9 +96,6 @@ public class ChatViewPresenter extends AbstractPresenter {
     //Name des Chats (für das Label)
     private String chatTitle;
 
-    //Der Status der Benachrichtigungen
-    private boolean muteState = false;
-
     private GameManagement gameManagement;
 
     private ChatMessage lastMessage;
@@ -257,7 +254,7 @@ public class ChatViewPresenter extends AbstractPresenter {
     @Subscribe
     private void onNewChatMessage(NewChatMessage msg) {
         if (!chatId.equals("") && msg.getChatId().equals(chatId) && (lastMessage == null || !(msg.getMessage().getSender().getUsername().equals("server") && lastMessage.getSender().getUsername().equals("server") && msg.getMessage().getMessage().equals(lastMessage.getMessage())))) {
-            if (lastMessage != null && !loggedInUser.getUsername().equals(msg.getMessage().getSender().getUsername()) && ((gameManagement != null && !gameManagement.hasFocus()) || (gameManagement == null && !ClientApp.getSceneManager().hasFocus())) && !muteState)
+            if (lastMessage != null && !loggedInUser.getUsername().equals(msg.getMessage().getSender().getUsername()) && ((gameManagement != null && !gameManagement.hasFocus()) || (gameManagement == null && !ClientApp.getSceneManager().hasFocus())))
                 try {
                     new Notifyer().notify(Notifyer.MessageType.INFO, "Nachricht von " + msg.getMessage().getSender().getUsername() + " in " + (chatId.equals("global") ? "GLOBAL" : chatTitle), msg.getMessage().getMessage());
                 } catch (Exception e) {
@@ -544,12 +541,5 @@ public class ChatViewPresenter extends AbstractPresenter {
          * Dunkles Thema
          */
         Dark
-    }
-
-    public void setMuteState (boolean muteState) {
-    this.muteState = muteState;
-}
-    public boolean getMuteState () {
-        return muteState;
     }
 }
