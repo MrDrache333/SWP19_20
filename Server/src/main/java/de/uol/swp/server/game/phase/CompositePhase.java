@@ -134,6 +134,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         player.getPlayerDeck().getHand().remove(currentCard);
             // TODO: Die Aktion der Karte muss noch ausgeführt werden
 
+        playground.sendCardsDeckSize();
     }
 
 

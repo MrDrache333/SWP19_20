@@ -2,6 +2,7 @@ package de.uol.swp.common.lobby;
 
 import de.uol.swp.common.user.User;
 
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -139,4 +140,12 @@ public interface Lobby {
      */
     void setInGame(boolean inGame);
 
+    ArrayList<Short> getChosenCards();
+
+    /**
+     * Setzt die ausgewählten Karten in der Lobby
+     *
+     * @param chosenCards
+     */
+    void setChosenCards(ArrayList<Short> chosenCards);
 }

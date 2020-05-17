@@ -17,6 +17,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
@@ -34,17 +35,19 @@ public class BuyCardTest {
     static final GameManagement gameManagement = new GameManagement(chatManagement, lobbyManagement);
     static final AuthenticationService authenticationService = new AuthenticationService(bus, new UserManagement(new MainMemoryBasedUserStore()), lobbyManagement);
     static final GameService gameService = new GameService(bus, gameManagement, authenticationService);
+    private ArrayList<Short> chosenCards = new ArrayList<Short>();
 
 
     static UUID gameID;
     private final CountDownLatch lock = new CountDownLatch(1);
-    private Object event;
 
     void init() {
         gameID = lobbyManagement.createLobby("Test", "", defaultOwner);
         chatManagement.createChat(gameID.toString());
         lobbyManagement.getLobby(gameID).get().joinUser(secondPlayer);
         lobbyManagement.getLobby(gameID).get().joinUser(thirdPlayer);
+        chosenCards.add((short) 10);
+        lobbyManagement.getLobby(gameID).get().setChosenCards(chosenCards);
         bus.post(new StartGameInternalMessage(gameID));
     }
 
@@ -65,9 +68,8 @@ public class BuyCardTest {
      */
     @BeforeEach
     void registerBus() {
-        init();
-        event = null;
         bus.register(this);
+        init();
     }
 
     /**
@@ -91,7 +93,6 @@ public class BuyCardTest {
      */
     @Subscribe
     void handle(DeadEvent e) {
-        this.event = e.getEvent();
         System.out.print(e.getEvent());
         lock.countDown();
     }

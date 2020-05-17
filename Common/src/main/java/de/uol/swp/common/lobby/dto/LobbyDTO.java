@@ -4,10 +4,7 @@ import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.user.User;
 
 import java.io.Serializable;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Die LobbyDTO
@@ -27,6 +24,7 @@ public class LobbyDTO implements Lobby, Serializable {
     private UUID lobbyID;
     private Integer maxPlayer;
     private boolean inGame;
+    private ArrayList<Short> chosenCards;
 
     /**
      * Insatnziiert eine neue LobbyDTO.
@@ -35,7 +33,7 @@ public class LobbyDTO implements Lobby, Serializable {
      * @param creator       der Ersteller
      * @param lobbyID       die LobbyID, um Lobbys mit gleichem Namen unterscheiden zu können - Serverseitig
      * @param lobbyPassword das Lobbypasswort
-     * @author Marco, Paula, Julia, Timo, Rike
+     * @author Marco, Paula, Julia, Timo, Rike, Fenja, Anna
      * @since Start
      */
     public LobbyDTO(String name, User creator, UUID lobbyID, String lobbyPassword) {
@@ -48,6 +46,7 @@ public class LobbyDTO implements Lobby, Serializable {
         this.lobbyPassword = lobbyPassword;
         this.maxPlayer = 4;
         this.inGame = false;
+        chosenCards = new ArrayList<>();
     }
 
     /**
@@ -60,7 +59,7 @@ public class LobbyDTO implements Lobby, Serializable {
      * @param players       die Spieler
      * @param maxPlayer     die maximale Spieleranzahl
      * @param inGame        ob gerade ein Spiel in der Lobby gespielt wird
-     * @author Marco, Julia, Rike, Timo
+     * @author Marco, Julia, Rike, Timo, Fenja, Anna
      * @since Start
      */
     public LobbyDTO(String name, User creator, UUID lobbyID, String lobbyPassword, Set<User> users, int players, Integer maxPlayer, boolean inGame) {
@@ -73,6 +72,7 @@ public class LobbyDTO implements Lobby, Serializable {
         this.lobbyPassword = lobbyPassword;
         this.maxPlayer = maxPlayer;
         this.inGame = inGame;
+        chosenCards = new ArrayList<>();
     }
 
     @Override
@@ -190,5 +190,15 @@ public class LobbyDTO implements Lobby, Serializable {
     @Override
     public void setInGame(boolean inGame) {
         this.inGame = inGame;
+    }
+
+    @Override
+    public ArrayList<Short> getChosenCards() {
+        return chosenCards;
+    }
+
+    @Override
+    public void setChosenCards(ArrayList<Short> chosenCards) {
+        this.chosenCards = chosenCards;
     }
 }
