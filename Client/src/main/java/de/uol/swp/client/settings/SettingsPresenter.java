@@ -164,11 +164,10 @@ public class SettingsPresenter extends AbstractPresenter {
     @FXML
     public void onChatMuteToggleButtonPressed(ActionEvent actionEvent) {
         Notifyer.setMuteState(chatMuteToggleButton.isSelected());
-
         if (chatMuteToggleButton.isSelected())
-            chatMuteImage.setImage(new Image(new File("../resources/images/chat_on_icon.png").toURI().toString()));
+            chatMuteImage.setImage(new Image("file:Client/src/main/resources/images/chat_on_icon.png"));
         else
-            chatMuteImage.setImage(new Image(new File("../resources/images/chat_off_icon.png").toURI().toString()));
+            chatMuteImage.setImage(new Image("file:Client/src/main/resources/images/chat_off_icon.png"));
     }
 
     /**
