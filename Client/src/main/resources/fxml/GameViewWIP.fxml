@@ -1,43 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Rectangle2D?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="gameViewWIP" prefHeight="750.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/10.0.2-internal"
-            xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="gameViewWIP" prefHeight="750.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <ImageView fitHeight="750.0" fitWidth="1280.0" pickOnBounds="true">
             <image>
-                <Image url="@../images/wood_texture_background.jpg"/>
+                <Image url="@../images/wood_texture_background.jpg" />
             </image>
             <viewport>
-                <Rectangle2D height="1000.0" width="1000.0"/>
+                <Rectangle2D height="1000.0" width="1000.0" />
             </viewport>
         </ImageView>
         <VBox prefHeight="750.0" prefWidth="300.0">
             <children>
-                <VBox maxHeight="453.0" maxWidth="300.0" minHeight="453.0" minWidth="300.0" opacity="0.73"
-                      prefHeight="453.0" prefWidth="300.0" style="-fx-background-color: #3D3D3D;">
+                <VBox maxHeight="453.0" maxWidth="300.0" minHeight="453.0" minWidth="300.0" opacity="0.73" prefHeight="453.0" prefWidth="300.0" style="-fx-background-color: #3D3D3D;">
                     <children>
                         <Label text="CHAT" textFill="WHITE">
                             <HBox.margin>
-                                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
+                                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                             </HBox.margin>
                             <VBox.margin>
-                                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
+                                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                             </VBox.margin>
                             <font>
-                                <Font name="System Bold" size="18.0"/>
+                                <Font name="System Bold" size="18.0" />
                             </font>
                         </Label>
 
-                        <Pane fx:id="chatView" maxHeight="368.0" maxWidth="270.0" nodeOrientation="LEFT_TO_RIGHT"
-                              prefHeight="368.0" prefWidth="270.0">
+                        <Pane fx:id="chatView" maxHeight="368.0" maxWidth="270.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="368.0" prefWidth="270.0">
                             <VBox.margin>
-                                <Insets bottom="15.0" left="15.0" right="15.0" top="5.0"/>
+                                <Insets bottom="15.0" left="15.0" right="15.0" top="5.0" />
                             </VBox.margin>
                         </Pane>
                     </children>
@@ -51,17 +56,14 @@
                 </HBox>
                 <HBox opacity="0.73" prefHeight="115.0" prefWidth="300.0" style="-fx-background-color: #3D3D3D;">
                     <children>
-                        <Button fx:id="giveUpButton" mnemonicParsing="false" onAction="#onGiveUpButtonPressed"
-                                prefHeight="41.0" prefWidth="118.0" text="Aufgeben">
+                        <Button fx:id="giveUpButton" mnemonicParsing="false" onAction="#onGiveUpButtonPressed" prefHeight="41.0" prefWidth="118.0" text="Aufgeben">
                             <HBox.margin>
-                                <Insets left="25.0" right="5.0" top="39.0"/>
+                                <Insets left="25.0" right="5.0" top="39.0" />
                             </HBox.margin>
                         </Button>
-                        <Button fx:id="skipPhaseButton" layoutX="1042.0" layoutY="19.0" mnemonicParsing="false"
-                                onAction="#onSkipPhaseButtonPressed" prefHeight="41.0" prefWidth="118.0"
-                                text="Skip  Phase">
+                        <Button fx:id="skipPhaseButton" layoutX="1042.0" layoutY="19.0" mnemonicParsing="false" onAction="#onSkipPhaseButtonPressed" prefHeight="41.0" prefWidth="118.0" text="Skip  Phase">
                             <HBox.margin>
-                                <Insets left="5.0" right="25.0" top="39.0"/>
+                                <Insets left="5.0" right="25.0" top="39.0" />
                             </HBox.margin>
                         </Button>
                     </children>
@@ -73,18 +75,18 @@
             <children>
                 <HBox prefHeight="150.0" prefWidth="980.0">
                     <children>
-                        <Pane prefHeight="200.0" prefWidth="300.0"/>
+                        <Pane prefHeight="200.0" prefWidth="300.0" />
                         <Pane prefHeight="200.0" prefWidth="380.0">
                             <children>
-                                <ImageView fx:id="avatar_icon_top" fitHeight="73.0" fitWidth="128.0" layoutX="126.0"
-                                           layoutY="7.5" pickOnBounds="true" preserveRatio="true">
+                                <ImageView fx:id="avatar_icon_top" fitHeight="73.0" fitWidth="128.0" layoutX="126.0" layoutY="7.5" pickOnBounds="true" preserveRatio="true" visible="false">
                                     <image>
-                                        <Image url="@../cards/circle_profil.png"/>
+                                        <Image url="@../cards/circle_profil.png" />
                                     </image>
                                 </ImageView>
+                        <Label fx:id="player1_label" alignment="CENTER" contentDisplay="TEXT_ONLY" layoutY="88.0" prefHeight="17.0" prefWidth="380.0" text="Spieler 1" textFill="WHITE" visible="false" />
                             </children>
                         </Pane>
-                        <Pane prefHeight="200.0" prefWidth="300.0"/>
+                        <Pane prefHeight="200.0" prefWidth="300.0" />
                     </children>
                 </HBox>
                 <HBox prefHeight="430.0" prefWidth="980.0">
@@ -93,13 +95,12 @@
                             <children>
                                 <Pane prefHeight="430.0" prefWidth="209.0">
                                     <children>
-                                        <ImageView fx:id="avatar_icon_left" fitHeight="73.0" fitWidth="128.0"
-                                                   layoutX="7.5" layoutY="178.5" pickOnBounds="true"
-                                                   preserveRatio="true">
+                                        <ImageView fx:id="avatar_icon_left" fitHeight="73.0" fitWidth="128.0" layoutX="7.5" layoutY="178.5" pickOnBounds="true" preserveRatio="true" visible="false">
                                             <image>
-                                                <Image url="@../cards/circle_profil.png"/>
+                                                <Image url="@../cards/circle_profil.png" />
                                             </image>
                                         </ImageView>
+                              <Label fx:id="player2_label" layoutY="258.0" prefHeight="17.0" prefWidth="209.0" text="Spieler 2" textFill="WHITE" visible="false" />
                                     </children>
                                 </Pane>
                             </children>
@@ -108,44 +109,16 @@
                             <children>
                                 <Pane fx:id="shopTeppich" prefHeight="455.0" prefWidth="569.0">
                                     <children>
-                                        <ImageView fx:id="cardPlaceholder1" fitHeight="100.0" fitWidth="100.0"
-                                                   layoutX="14.0" layoutY="105.0" onMouseClicked="#onBuyableCardClicked"
-                                                   pickOnBounds="true" preserveRatio="true"/>
-                                        <ImageView fx:id="cardPlaceholder2" fitHeight="100.0" fitWidth="100.0"
-                                                   layoutX="124.5" layoutY="105.0"
-                                                   onMouseClicked="#onBuyableCardClicked" pickOnBounds="true"
-                                                   preserveRatio="true"/>
-                                        <ImageView fx:id="cardPlaceholder3" fitHeight="100.0" fitWidth="100.0"
-                                                   layoutX="235.0" layoutY="105.0"
-                                                   onMouseClicked="#onBuyableCardClicked" pickOnBounds="true"
-                                                   preserveRatio="true"/>
-                                        <ImageView fx:id="cardPlaceholder4" fitHeight="100.0" fitWidth="100.0"
-                                                   layoutX="345.5" layoutY="105.0"
-                                                   onMouseClicked="#onBuyableCardClicked" pickOnBounds="true"
-                                                   preserveRatio="true"/>
-                                        <ImageView fx:id="cardPlaceholder5" fitHeight="100.0" fitWidth="100.0"
-                                                   layoutX="456.0" layoutY="105.0"
-                                                   onMouseClicked="#onBuyableCardClicked" pickOnBounds="true"
-                                                   preserveRatio="true"/>
-                                        <ImageView fx:id="cardPlaceholder6" fitHeight="100.0" fitWidth="100.0"
-                                                   layoutX="14.0" layoutY="224.0" onMouseClicked="#onBuyableCardClicked"
-                                                   pickOnBounds="true" preserveRatio="true"/>
-                                        <ImageView fx:id="cardPlaceholder7" fitHeight="100.0" fitWidth="100.0"
-                                                   layoutX="124.5" layoutY="224.0"
-                                                   onMouseClicked="#onBuyableCardClicked" pickOnBounds="true"
-                                                   preserveRatio="true"/>
-                                        <ImageView fx:id="cardPlaceholder8" fitHeight="100.0" fitWidth="100.0"
-                                                   layoutX="235.0" layoutY="224.0"
-                                                   onMouseClicked="#onBuyableCardClicked" pickOnBounds="true"
-                                                   preserveRatio="true"/>
-                                        <ImageView fx:id="cardPlaceholder9" fitHeight="100.0" fitWidth="100.0"
-                                                   layoutX="345.5" layoutY="224.0"
-                                                   onMouseClicked="#onBuyableCardClicked" pickOnBounds="true"
-                                                   preserveRatio="true"/>
-                                        <ImageView fx:id="cardPlaceholder10" fitHeight="100.0" fitWidth="100.0"
-                                                   layoutX="456.0" layoutY="224.0"
-                                                   onMouseClicked="#onBuyableCardClicked" pickOnBounds="true"
-                                                   preserveRatio="true"/>
+                                        <ImageView fx:id="cardPlaceholder1" fitHeight="100.0" fitWidth="100.0" layoutX="14.0" layoutY="105.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true" />
+                                        <ImageView fx:id="cardPlaceholder2" fitHeight="100.0" fitWidth="100.0" layoutX="124.5" layoutY="105.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true" />
+                                        <ImageView fx:id="cardPlaceholder3" fitHeight="100.0" fitWidth="100.0" layoutX="235.0" layoutY="105.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true" />
+                                        <ImageView fx:id="cardPlaceholder4" fitHeight="100.0" fitWidth="100.0" layoutX="345.5" layoutY="105.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true" />
+                                        <ImageView fx:id="cardPlaceholder5" fitHeight="100.0" fitWidth="100.0" layoutX="456.0" layoutY="105.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true" />
+                                        <ImageView fx:id="cardPlaceholder6" fitHeight="100.0" fitWidth="100.0" layoutX="14.0" layoutY="224.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true" />
+                                        <ImageView fx:id="cardPlaceholder7" fitHeight="100.0" fitWidth="100.0" layoutX="124.5" layoutY="224.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true" />
+                                        <ImageView fx:id="cardPlaceholder8" fitHeight="100.0" fitWidth="100.0" layoutX="235.0" layoutY="224.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true" />
+                                        <ImageView fx:id="cardPlaceholder9" fitHeight="100.0" fitWidth="100.0" layoutX="345.5" layoutY="224.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true" />
+                                        <ImageView fx:id="cardPlaceholder10" fitHeight="100.0" fitWidth="100.0" layoutX="456.0" layoutY="224.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true" />
                                     </children>
                                 </Pane>
                             </children>
@@ -154,13 +127,12 @@
                             <children>
                                 <Pane prefHeight="430.0" prefWidth="203.0">
                                     <children>
-                                        <ImageView fx:id="avatar_icon_right" fitHeight="73.0" fitWidth="128.0"
-                                                   layoutX="122.5" layoutY="178.5" pickOnBounds="true"
-                                                   preserveRatio="true">
+                                        <ImageView fx:id="avatar_icon_right" fitHeight="73.0" fitWidth="128.0" layoutX="122.5" layoutY="178.5" pickOnBounds="true" preserveRatio="true" visible="false">
                                             <image>
-                                                <Image url="@../cards/circle_profil.png"/>
+                                                <Image url="@../cards/circle_profil.png" />
                                             </image>
                                         </ImageView>
+                              <Label fx:id="player3_label" alignment="CENTER_RIGHT" contentDisplay="TEXT_ONLY" layoutX="-4.0" layoutY="258.0" prefHeight="17.0" prefWidth="209.0" text="Spieler 3" textFill="WHITE" visible="false" />
                                     </children>
                                 </Pane>
                             </children>
@@ -171,41 +143,37 @@
                     <children>
                         <Pane prefHeight="173.0" prefWidth="150.0">
                             <HBox.margin>
-                                <Insets/>
+                                <Insets />
                             </HBox.margin>
                             <children>
-                                <StackPane fx:id="deckPane" layoutX="24.0" layoutY="7.0" prefHeight="160.0"
-                                           prefWidth="100.0"/>
-                                <ImageView fx:id="nachziehstapel" fitHeight="160.0" fitWidth="100.0" layoutX="24.0"
-                                           layoutY="7.0" pickOnBounds="true" preserveRatio="true">
+                                <StackPane fx:id="deckPane" layoutX="24.0" layoutY="7.0" prefHeight="160.0" prefWidth="100.0" />
+                                <ImageView fx:id="nachziehstapel" fitHeight="160.0" fitWidth="100.0" layoutX="24.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../cards/images/card_back.png"/>
+                                        <Image url="@../cards/images/card_back.png" />
                                     </image>
                                 </ImageView>
                             </children>
                         </Pane>
                         <Pane fx:id="cardPane" prefHeight="173.0" prefWidth="680.0">
                             <HBox.margin>
-                                <Insets bottom="5.0" top="5.0"/>
+                                <Insets bottom="5.0" top="5.0" />
                             </HBox.margin>
                             <padding>
-                                <Insets bottom="7.0" left="5.0" right="5.0" top="7.0"/>
+                                <Insets bottom="7.0" left="5.0" right="5.0" top="7.0" />
                             </padding>
                         </Pane>
                         <Pane prefHeight="200.0" prefWidth="150.0">
                             <HBox.margin>
-                                <Insets/>
+                                <Insets />
                             </HBox.margin>
                             <children>
-                                <StackPane fx:id="discardPilePane" layoutX="24.0" layoutY="7.0" maxHeight="160.0"
-                                           maxWidth="100.0" minHeight="160.0" minWidth="100.0" prefHeight="160.0"
-                                           prefWidth="100.0">
+                                <StackPane fx:id="discardPilePane" layoutX="24.0" layoutY="7.0" maxHeight="160.0" maxWidth="100.0" minHeight="160.0" minWidth="100.0" prefHeight="160.0" prefWidth="100.0">
                                 </StackPane>
                             </children>
                         </Pane>
                     </children>
                     <VBox.margin>
-                        <Insets/>
+                        <Insets />
                     </VBox.margin>
                 </HBox>
             </children>

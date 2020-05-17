@@ -10,6 +10,7 @@ import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
+import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
@@ -95,6 +96,18 @@ public class GameViewPresenter extends AbstractPresenter {
     private ImageView cardPlaceholder9;
     @FXML
     private ImageView cardPlaceholder10;
+    @FXML
+    private Label player1_label;
+    @FXML
+    private Label player2_label;
+    @FXML
+    private Label player3_label;
+    @FXML
+    private ImageView avatar_icon_top;
+    @FXML
+    private ImageView avatar_icon_left;
+    @FXML
+    private ImageView avatar_icon_right;
 
     private final HandcardsLayoutContainer handcards;
     private final PlayedCardLayoutContainer playedCardLayoutContainer;
@@ -265,7 +278,7 @@ public class GameViewPresenter extends AbstractPresenter {
     @Subscribe
     public void newUser(UserJoinedLobbyMessage userJoinedLobbyMessage) {
         if (userJoinedLobbyMessage.getLobbyID().equals(this.lobbyID)) {
-            lobbyService.retrieveAllUsersInLobby(lobbyID);
+            getInGameUserList(this.lobbyID);
             LOG.debug("New user in Lobby, LobbyService is retrieving users");
         }
     }
@@ -286,6 +299,19 @@ public class GameViewPresenter extends AbstractPresenter {
             users.remove(message.getOldUser().getUsername());
             users.add(message.getUser().getUsername());
         }
+        getInGameUserList(this.lobbyID);
+    }
+
+    /**
+     * Aktualisiert den loggedInUser sowie die Liste, wenn ein Spieler die Lobby (also das Spiel) verlässt.
+     *
+     * @param message
+     * @author Alex
+     * @since Sprint7
+     */
+    @Subscribe
+    public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
+        getInGameUserList(this.lobbyID);
     }
 
     /**
@@ -294,7 +320,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * @author Marvin, Alex
      * @since Sprint3
      */
-    public void loadInGameUserList(UUID id) {
+    public void getInGameUserList(UUID id) {
         lobbyService.retrieveAllUsersInLobby(id);
     }
 
@@ -310,13 +336,13 @@ public class GameViewPresenter extends AbstractPresenter {
     @Subscribe
     private void onReceiveAllUsersInLobby(AllOnlineUsersInLobbyResponse response) {
         if (response.getLobbyID().equals(this.lobbyID)) {
-                LOG.debug("Update of user list with" + response.getUsers());
+            LOG.debug("Update of user list with" + response.getUsers());
 
-                response.getUsers().forEach(user -> {
-                    LOG.debug("Will add to GameView Userlist: " + user.getUsername());
-                });
+            response.getUsers().forEach(user -> {
+                LOG.debug("Will add to GameView Userlist: " + user.getUsername());
+            });
 
-                updateUsersList(response.getUsers());
+            updateUsersInGame(response.getUsers());
         } else {
             LOG.debug("AllOnlineUsersInLobbyResponse received. Not relevant for own lobby though.");
         }
@@ -508,6 +534,65 @@ public class GameViewPresenter extends AbstractPresenter {
                 userList.forEach(u -> users.add(u.getUsername()));
             }
         });
+    }
+
+    /**
+     * Aktualisiert die Spieler auf dem Spielfeld.
+     * Geht von der Reihenfolge der AllOnlineUsersInLobbyResponse aus.
+     * Setzt die Sichtbarkeit der Elemente auf true oder false, je nachdem wie viele Spieler noch im Spiel sind.
+     * Die Methode versteckt auch Spielerplätze wieder, falls ein Spieler das Spiel verlässt.
+     *
+     * @param usersList Die Liste der Spieler im Spiel bzw. in der Lobby.
+     * @author Alex
+     * @since Sprint7
+     */
+    private void updateEnemiesOnBoard(Set<User> usersList) {
+        // Attention: This must be done on the FX Thread!
+        Platform.runLater(() -> {
+            int enemyCounter = 0;
+            for( User u : usersList)
+            {
+                if (u.getUsername().equals(loggedInUser.getUsername())) {
+                    //skip self
+                } else {
+                    enemyCounter++;
+                    if (enemyCounter == 1) {
+                        player1_label.setText(u.getUsername());
+                        player1_label.setVisible(true);
+                        avatar_icon_top.setVisible(true);
+                    } else if (enemyCounter == 2) {
+                        player2_label.setText(u.getUsername());
+                        player2_label.setVisible(true);
+                        avatar_icon_left.setVisible(true);
+                    } else if (enemyCounter == 3) {
+                        player3_label.setText(u.getUsername());
+                        player3_label.setVisible(true);
+                        avatar_icon_right.setVisible(true);
+                    }
+                }
+            }
+            if (enemyCounter == 1) {
+                player2_label.setVisible(false);
+                player3_label.setVisible(false);
+                avatar_icon_left.setVisible(false);
+                avatar_icon_right.setVisible(false);
+            } else if (enemyCounter == 2) {
+                player3_label.setVisible(false);
+                avatar_icon_right.setVisible(false);
+            }
+        });
+    }
+
+    /**
+     * Fasst Funktionen zusammen, welche die Spielerlisten/Spielernamen aktualisieren.
+     *
+     * @since Sprint7
+     * @author Alex
+     * @param usersList Die User Liste als Set
+     */
+    private void updateUsersInGame(Set<User> usersList) {
+        updateEnemiesOnBoard(usersList);
+        updateUsersList(usersList);
     }
 
     /**
