@@ -12,7 +12,6 @@ import de.uol.swp.common.game.card.parser.components.CardAction.response.Optiona
 import de.uol.swp.common.game.card.parser.components.CardAction.types.*;
 import de.uol.swp.common.game.messages.CardMovedMessage;
 import de.uol.swp.common.game.messages.ChooseNextActionMessage;
-import de.uol.swp.common.game.messages.SelectCardsFromHandMessage;
 import de.uol.swp.common.game.messages.ShowCardMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.server.game.Playground;
@@ -39,6 +38,7 @@ public class ActionCardExecution {
     private UUID gameID;
     private List<Player> players;
     private List<User> chooseCardPlayers;
+    private ArrayList<Short> newHandCards = new ArrayList<>();
     //Liste aller Unteraktionen einer Aktion
     private List<CardAction> nextActions = new ArrayList<>();
 
@@ -212,9 +212,21 @@ public class ActionCardExecution {
                 if (input != null) ((Move) action).setCardsToMove(input);
                 executeMoveAction((Move) action, player);
             } else if (action instanceof GetCard) {
-                ArrayList<Card> c = executeGetCard((GetCard) action, player);
-                if (((GetCard) action).isDirectHand()) {
+                GetCard getAction = (GetCard) action;
+                ArrayList<Card> c = executeGetCard(getAction, player);
+                if (getAction.isDirectHand()) {
                     player.getPlayerDeck().getHand().addAll(c);
+                    c.forEach(card -> newHandCards.add(card.getId()));
+                    if (getAction.getCardSource() == AbstractPlayground.ZoneType.DRAW) {
+                        c.forEach(card -> player.getPlayerDeck().getCardsDeck().remove(card));
+                    } else if (getAction.getCardSource() == AbstractPlayground.ZoneType.DISCARD) {
+                        c.forEach(card -> player.getPlayerDeck().getDiscardPile().remove(card));
+                    } else if (getAction.getCardSource() == AbstractPlayground.ZoneType.TEMP) {
+                        c.forEach(card -> player.getPlayerDeck().getTemp().remove(card));
+                    } else if (getAction.getCardSource() == AbstractPlayground.ZoneType.TRASH) {
+                        c.forEach(card -> playground.getTrash().remove(card));
+                    }
+
                 } else if (!foreach) {
                     CardAction nextAction = nextActions.get(nextActionIndex);
                     if (nextAction instanceof Move) {
@@ -629,7 +641,7 @@ public class ActionCardExecution {
      */
     private boolean checkIfComplete() {
         if (actualStateIndex == theCard.getActions().size() && !waitedForPlayerInput && finishedNextActions) {
-            playground.getCompositePhase().finishedActionCardExecution(player);
+            playground.getCompositePhase().finishedActionCardExecution(player, newHandCards);
             return true;
         }
         return false;
