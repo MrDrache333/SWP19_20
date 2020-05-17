@@ -35,6 +35,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -95,6 +96,19 @@ public class GameViewPresenter extends AbstractPresenter {
     private ImageView cardPlaceholder9;
     @FXML
     private ImageView cardPlaceholder10;
+    @FXML
+    private VBox bigCardImageBox;
+    private final EventHandler<MouseEvent> closeCard = new EventHandler() {
+        @Override
+        public void handle(Event event) {
+            if (bigCardImageBox.isVisible()) {
+                bigCardImageBox.setVisible(false);
+                System.out.println("Kartenansicht schließen");
+            }
+        }
+    };
+    @FXML
+    private ImageView bigCardImage;
 
     private final HandcardsLayoutContainer handcards;
     private final PlayedCardLayoutContainer playedCardLayoutContainer;
@@ -113,6 +127,8 @@ public class GameViewPresenter extends AbstractPresenter {
             playChoosenCard(lobbyID, loggedInUser, card.getImage().getUrl(), Short.valueOf(card.getId()), card, (MouseEvent) event);
         }
     };
+    @FXML
+    private Button buyCardButton;
 
     /**
      * Instantiiert einen neuen GameView Presenter.
@@ -605,41 +621,24 @@ public class GameViewPresenter extends AbstractPresenter {
         String cardID = cardImage.getId();
         String PathCardLargeView = "file:Client/src/main/resources/cards/images/" + cardID + ".png";
         // ein großes Bild der Karte wird hinzugefügt
-        ImageView bigCardImage = new ImageView(new Image(PathCardLargeView));
+        bigCardImage.setImage(new Image(PathCardLargeView));
         // setzt die Größe und die Position des Bildes. Das Bild ist im Vordergrund. Bild wird hinzugefügt
-        bigCardImage.setFitHeight(240.0);
-        bigCardImage.setFitWidth(150.0);
-        bigCardImage.toFront();
-        bigCardImage.setLayoutX(325.0);
-        bigCardImage.setLayoutY(20.0);
-        gameViewWIP.getChildren().add(bigCardImage);
-        // es werden zwei Buttons hinzugefügt (zurück und kaufen)
-        Button buy = new Button("kaufen");
-        Button back = new Button("zurück");
-        gameViewWIP.getChildren().add(buy);
-        gameViewWIP.getChildren().add(back);
-        // Position der Buttons wird gesetzt
-        buy.setLayoutX(325.0);
-        buy.setLayoutY(255.0);
-        buy.setMinWidth(70.0);
-        back.setLayoutX(405.0);
-        back.setLayoutY(255.0);
-        back.setMinWidth(70.0);
+
         // Aktion hinter dem Kauf-Button
-        buy.setOnAction(event -> {
-            buy.setVisible(false);
-            back.setVisible(false);
-            bigCardImage.setVisible(false);
+        buyCardButton.setOnAction(event -> {
+            bigCardImageBox.setVisible(false);
             BuyCardRequest req = new BuyCardRequest(lobbyID, loggedInUser, Short.valueOf(cardID));
             gameService.buyCard(req);
             this.mouseEvent = mouseEvent;
         });
-        // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt
-        back.setOnAction(event -> {
-            buy.setVisible(false);
-            back.setVisible(false);
-            bigCardImage.setVisible(false);
-        });
+
+        if (bigCardImageBox.isVisible()) {
+            gameViewWIP.addEventHandler(MouseEvent.MOUSE_CLICKED, closeCard);
+        } else {
+            gameViewWIP.removeEventHandler(MouseEvent.MOUSE_CLICKED, closeCard);
+        }
+
+        bigCardImageBox.setVisible(true);
     }
 
 //}
