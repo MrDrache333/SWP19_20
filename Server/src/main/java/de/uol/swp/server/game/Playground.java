@@ -170,7 +170,6 @@ public class Playground extends AbstractPlayground {
         if (actualPhase == Phase.Type.Clearphase) {
             throw new GamePhaseException("Du kannst die Clearphase nicht überspringen!");
         }
-
         if (actualPhase == Phase.Type.ActionPhase) {
             actualPhase = Phase.Type.Buyphase;
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartBuyPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
@@ -179,11 +178,6 @@ public class Playground extends AbstractPlayground {
             actualPhase = Phase.Type.Clearphase;
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartClearPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
             compositePhase.executeClearPhase(actualPlayer);
-            int availableAction = actualPlayer.getAvailableActions();
-            int availableBuy = actualPlayer.getAvailableBuys();
-            int additionalMoney = actualPlayer.getAdditionalMoney();
-            int moneyOnHand = actualPlayer.getPlayerDeck().actualMoneyFromPlayer();
-            gameService.sendToSpecificPlayer(actualPlayer, new InfoPlayDisplayMessage(theSpecificLobbyID, actualPlayer.getTheUserInThePlayer(), availableAction, availableBuy, additionalMoney, moneyOnHand, actualPhase));
         }
     }
 
@@ -200,6 +194,12 @@ public class Playground extends AbstractPlayground {
         }
         DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID);
         gameService.sendToSpecificPlayer(actualPlayer, theHandMessage);
+        int availableAction = actualPlayer.getAvailableActions();
+        int availableBuy = actualPlayer.getAvailableBuys();
+        int additionalMoney = actualPlayer.getAdditionalMoney();
+        int moneyOnHand = actualPlayer.getPlayerDeck().actualMoneyFromPlayer();
+        gameService.sendToSpecificPlayer(actualPlayer, new InfoPlayDisplayMessage(theSpecificLobbyID, actualPlayer.getTheUserInThePlayer(), availableAction, availableBuy, additionalMoney, moneyOnHand, actualPhase));
+
     }
 
     /**

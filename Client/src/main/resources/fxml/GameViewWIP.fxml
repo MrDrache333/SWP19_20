@@ -152,28 +152,28 @@
                                               prefWidth="326.0" style="-fx-background-color: #3D3D3D;">
                                             <children>
                                                 <Label fx:id="numberOfAction" alignment="TOP_CENTER" layoutX="13.0"
-                                                       layoutY="7.0" prefHeight="27.0" prefWidth="96.0" text="Aktion"
+                                                       layoutY="7.0" prefHeight="27.0" prefWidth="96.0"
                                                        textFill="WHITE">
                                                     <font>
                                                         <Font name="System Bold" size="18.0"/>
                                                     </font>
                                                 </Label>
                                                 <Label fx:id="numberOfMoney" alignment="TOP_CENTER" layoutX="218.0"
-                                                       layoutY="7.0" prefHeight="27.0" prefWidth="96.0" text="Geld"
+                                                       layoutY="7.0" prefHeight="27.0" prefWidth="96.0"
                                                        textFill="WHITE">
                                                     <font>
                                                         <Font name="System Bold" size="18.0"/>
                                                     </font>
                                                 </Label>
                                                 <Label fx:id="numberOfBuy" alignment="TOP_CENTER" layoutX="115.0"
-                                                       layoutY="7.0" prefHeight="27.0" prefWidth="96.0" text="Kauf"
+                                                       layoutY="7.0" prefHeight="27.0" prefWidth="96.0"
                                                        textFill="WHITE">
                                                     <font>
                                                         <Font name="System Bold" size="18.0"/>
                                                     </font>
                                                 </Label>
                                                 <Label fx:id="infoActualPhase" alignment="TOP_CENTER" layoutX="13.0"
-                                                       layoutY="42.0" prefHeight="27.0" prefWidth="300.0" text="Phase"
+                                                       layoutY="42.0" prefHeight="27.0" prefWidth="300.0"
                                                        textFill="WHITE">
                                                     <font>
                                                         <Font name="System Bold" size="18.0"/>

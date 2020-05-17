@@ -452,7 +452,6 @@ public class GameViewPresenter extends AbstractPresenter {
                     handcards.getChildren().add(card);
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                     if (playAllMoneyCardsButton.isDisable() && (n == 1 || n == 2 || n == 3)) {
-                        // Bekommt der Spieler keine Geldkarten auf der Hand, kann er diese auch nicht mit einem Button ausspielen
                         playAllMoneyCardsButton.setDisable(false);
                     }
                 });
@@ -756,10 +755,10 @@ public class GameViewPresenter extends AbstractPresenter {
                 if (user.equals(loggedInUser)) {
                     playAllMoneyCardsButton.setVisible(true);
                     if (msg instanceof StartActionPhaseMessage) {
-                        infoActualPhase.setText("Aktionsphase");
+                        infoActualPhase.setText("Du darfst Aktionen spielen.");
                     }
                     if (msg instanceof StartBuyPhaseMessage) {
-                        infoActualPhase.setText("Kaufphase");
+                        infoActualPhase.setText("Du darfst Karten kaufen.");
                     } else {
                         infoActualPhase.setText("Clearphase");
                     }
