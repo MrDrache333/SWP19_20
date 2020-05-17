@@ -202,11 +202,13 @@ public class GameService extends AbstractService {
             if (request.getCurrentUser().equals(playground.getActualPlayer().getTheUserInThePlayer())) {
                 try {
                     int count = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), request.getCardID());
-                    int moneyValuePlayer = playground.getActualPlayer().getPlayerDeck().actualMoneyFromPlayer();
-                    int additionalMoney = playground.getActualPlayer().getAdditionalMoney();
-                    int availableBuys = playground.getActualPlayer().getAvailableBuys();
-                    BuyCardMessage buyCard = new BuyCardMessage(request.getLobbyID(), request.getCurrentUser(), request.getCardID(), count, moneyValuePlayer, additionalMoney, availableBuys);
+                    BuyCardMessage buyCard = new BuyCardMessage(request.getLobbyID(), request.getCurrentUser(), request.getCardID(), count);
                     sendToAllPlayers(request.getLobbyID(), buyCard);
+                    int availableAction = playground.getActualPlayer().getAvailableActions();
+                    int availableBuy = playground.getActualPlayer().getAvailableBuys();
+                    int additionalMoney = playground.getActualPlayer().getAdditionalMoney();
+                    int moneyOnHand = playground.getActualPlayer().getPlayerDeck().actualMoneyFromPlayer();
+                    sendToSpecificPlayer(playground.getActualPlayer(), new InfoPlayDisplayMessage(request.getLobbyID(), request.getCurrentUser(), availableAction, availableBuy, additionalMoney, moneyOnHand, playground.getActualPhase()));
 
                 } catch (NotEnoughMoneyException notEnoughMoney) {
                     sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(request.getLobbyID(), notEnoughMoney.getMessage()));
@@ -241,10 +243,12 @@ public class GameService extends AbstractService {
                     playground.endTimer();
                     // Karte wird an die ActionPhase zum Handling übergeben.
                     playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), cardID);
-                    int availableActions = playground.getActualPlayer().getAvailableActions();
-                    int availableBuys = playground.getActualPlayer().getAvailableBuys();
+                    sendToSpecificPlayer(playground.getActualPlayer(), new PlayCardMessage(gameID, player, cardID, true));
+                    int availableAction = playground.getActualPlayer().getAvailableActions();
+                    int availableBuy = playground.getActualPlayer().getAvailableBuys();
                     int additionalMoney = playground.getActualPlayer().getAdditionalMoney();
-                    sendToSpecificPlayer(playground.getActualPlayer(), new PlayCardMessage(gameID, player, cardID, true, availableActions, availableBuys, additionalMoney));
+                    int moneyOnHand = playground.getActualPlayer().getPlayerDeck().actualMoneyFromPlayer();
+                    sendToSpecificPlayer(playground.getActualPlayer(), new InfoPlayDisplayMessage(gameID, player, availableAction, availableBuy, additionalMoney, moneyOnHand, playground.getActualPhase()));
                     /*
                      TODO: Nachdem das gegnerische Feld und ein Text-Feld für den generellem Spiel ablauf hinzugefügt wurde, muss allen Gegnern das ausspielen der Karte mitgeteilt werden.
                      */

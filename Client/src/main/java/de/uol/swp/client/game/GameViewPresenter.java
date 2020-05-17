@@ -11,6 +11,7 @@ import de.uol.swp.common.game.card.Card;
 import de.uol.swp.common.game.card.parser.JsonCardParser;
 import de.uol.swp.common.game.card.parser.components.CardPack;
 import de.uol.swp.common.game.messages.*;
+import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
@@ -368,11 +369,6 @@ public class GameViewPresenter extends AbstractPresenter {
                 makeImageDarker.setBrightness(-0.7);
                 selectedCard.setEffect(makeImageDarker);
             }
-            Platform.runLater(() -> {
-                usableMoney = msg.getMoneyValuePlayer() + msg.getAdditionalMoney();
-                numberOfMoney.setText(usableMoney + " Geld");
-                numberOfBuy.setText(msg.getAvailableBuys() + " Kauf");
-            });
             //TODO: die Geldkarten die für den Kauf benötigt wurden, müssen auf den Ablagestapel gelegt werden
         }
     }
@@ -398,12 +394,6 @@ public class GameViewPresenter extends AbstractPresenter {
                         playedCardLayoutContainer.getChildren().add(card);
                         card.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                     }
-                });
-                Platform.runLater(() -> {
-                    usableMoney += msg.getAdditionalMoney();
-                    numberOfAction.setText(msg.getAvailableActions() + " Aktion");
-                    numberOfBuy.setText(msg.getAvailableBuys() + " Kauf");
-                    numberOfMoney.setText(usableMoney + " Geld");
                 });
                 //TODO: Wenn Aktionen implementiert sind, prüfen ob showAlert noch notwendig ist oder ob Serverseitig bereits bei Scheitern eine Message gesendet wird
             } else {
@@ -466,10 +456,6 @@ public class GameViewPresenter extends AbstractPresenter {
                         playAllMoneyCardsButton.setDisable(false);
                     }
                 });
-                usableMoney = message.getAdditionalMoney();
-                numberOfMoney.setText(usableMoney + " Geld");
-                numberOfAction.setText(message.getAvailableActions() + " Aktion");
-                numberOfBuy.setText(message.getAvailableBuys() + " Kauf");
             }
         });
     }
@@ -527,6 +513,34 @@ public class GameViewPresenter extends AbstractPresenter {
     @Subscribe
     public void onStartClearPhaseMessage(StartClearPhaseMessage msg) {
         onStartPhase(msg.getGameID(), msg.getUser(), msg);
+    }
+
+    /**
+     * Aktualisiert die Anzeige
+     *
+     * @param msg
+     * @author Rike
+     * @since Sprint 7
+     */
+    @Subscribe
+    public void onInfoPlayDisplayMessage(InfoPlayDisplayMessage msg) {
+        //TODO: an welcher Stelle wird die Clearphase ausgelöst -> wo kann ich die Message abschicken
+        // nach kauf einer Karte und spielen einer Karte und bei der initialen hand wird die Message mitgeschickt
+        if (msg.getLobbyID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
+            Platform.runLater(() -> {
+                numberOfBuy.setText(msg.getAvailableBuy() + " Kauf");
+                numberOfAction.setText(msg.getAvailableAction() + " Aktion");
+                if (msg.getSourceMessage() == Phase.Type.ActionPhase || msg.getSourceMessage() == Phase.Type.Clearphase) {
+                    usableMoney = msg.getAdditionalMoney();
+                }
+                if (msg.getSourceMessage() == Phase.Type.Buyphase) {
+                    if (playAllMoneyCardsButton.isDisable() && playAllMoneyCardsButton.isVisible()) {
+                        usableMoney = msg.getAdditionalMoney() + msg.getMoneyOnHand();
+                    }
+                }
+                numberOfMoney.setText(usableMoney + " Geld");
+            });
+        }
     }
 
     /**
