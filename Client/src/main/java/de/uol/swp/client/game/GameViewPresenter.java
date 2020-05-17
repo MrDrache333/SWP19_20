@@ -37,6 +37,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -274,32 +275,9 @@ public class GameViewPresenter extends AbstractPresenter {
     public void onStartClearPhase(StartClearPhaseMessage msg){
         if (msg.getGameID().equals(this.lobbyID) && msg.getUser().equals(loggedInUser)) {
             synchronized (handcards){
-                for (Node c : handcards.getChildren()) {
-                    Platform.runLater(() -> {
-                        ImageView card = (ImageView) c;
-                        String pfad = "file:Client/src/main/resources/cards/images/" + card.getId() + ".png";
-                        Image picture = new Image(pfad);
-                        ImageView newCardImage = new ImageView(picture);
-                        newCardImage.setPreserveRatio(true);
-                        newCardImage.setFitHeight(107);
-                        newCardImage.setFitWidth(Math.round(newCardImage.getBoundsInLocal().getWidth()));
-                        newCardImage.setLayoutX(450 + c.getLayoutX());
-                        newCardImage.setLayoutY(610);
-                        LOG.debug(c.getLayoutX()+"  "+c.getLayoutY());
-                        newCardImage.setId(String.valueOf(c));
-                        handcards.getChildren().remove(c);
-                        gameViewWIP.getChildren().add(newCardImage);
-                        PathTransition pathTransition = AnimationManagement.clearCards(newCardImage);
-                        pathTransition.setOnFinished(actionEvent -> {
-                            gameViewWIP.getChildren().remove(newCardImage);
-                            ImageView iv = new ImageView(picture);
-                            iv.setPreserveRatio(true);
-                            iv.setFitHeight(107);
-                            discardPilePane.getChildren().add(iv);
-                        });
-                    });
-                }
+                moveCardsToDiscardPile(handcards.getChildren(), false);
             }
+            moveCardsToDiscardPile(playedCardLayoutContainer.getChildren(), true);
         }
     }
 
@@ -575,6 +553,67 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
+     * Hier werden alle Geldkarten, die sich auf der Hand befinden, ausgespielt
+     *
+     * @author Anna
+     * @since Sprint 7
+     */
+    private void playAllMoneyCardsOnHand() {
+        synchronized (handcards) {
+            for (Node c : handcards.getChildren()) {
+                ImageView card = (ImageView) c;
+                if (card.getId().equals("1") || card.getId().equals("2") || card.getId().equals("3")) {
+                    Platform.runLater(() -> {
+                        AnimationManagement.playCard(card, playedCardLayoutContainer.getChildren().size());
+                        handcards.getChildren().remove(c);
+                        playedCardLayoutContainer.getChildren().add(card);
+                    });
+                }
+            }
+        }
+    }
+
+    /**
+     * Die Karten werden zum Ablagestapel bewegt
+     *
+     * @param children Das children von dem Karten Stapel
+     * @param achtionCards true wenn die Karten in der Aktionszone liegen
+     * @author Darian
+     * @since Sprint7
+     */
+    private void moveCardsToDiscardPile(ObservableList<Node> children, boolean achtionCards){
+        for (Node c : children) {
+            Platform.runLater(() -> {
+                ImageView card = (ImageView) c;
+                String pfad = "file:Client/src/main/resources/cards/images/" + card.getId() + ".png";
+                Image picture = new Image(pfad);
+                ImageView newCardImage = new ImageView(picture);
+                newCardImage.setPreserveRatio(true);
+                newCardImage.setFitHeight(107);
+                newCardImage.setFitWidth(Math.round(newCardImage.getBoundsInLocal().getWidth()));
+                newCardImage.setLayoutX(450 + c.getLayoutX());
+                if (achtionCards) {
+                    newCardImage.setLayoutY(493);
+                }
+                else{
+                    newCardImage.setLayoutY(610);
+                }
+                newCardImage.setId(String.valueOf(c));
+                children.remove(c);
+                gameViewWIP.getChildren().add(newCardImage);
+                PathTransition pathTransition = AnimationManagement.clearCards(newCardImage);
+                pathTransition.setOnFinished(actionEvent -> {
+                    gameViewWIP.getChildren().remove(newCardImage);
+                    ImageView iv = new ImageView(picture);
+                    iv.setPreserveRatio(true);
+                    iv.setFitHeight(107);
+                    discardPilePane.getChildren().add(iv);
+                });
+            });
+        }
+    }
+
+    /**
      * Hilfsmethode für onBuyableCardClicked() und onBuyCardMessage()
      * Großes Bild der Karte wird angezeigt.
      * Es werden zwei Buttons("kaufen"/"zurück") hinzugefügt.
@@ -633,26 +672,5 @@ public class GameViewPresenter extends AbstractPresenter {
             back.setVisible(false);
             bigCardImage.setVisible(false);
         });
-    }
-
-    /**
-     * Hier werden alle Geldkarten, die sich auf der Hand befinden, ausgespielt
-     *
-     * @author Anna
-     * @since Sprint 7
-     */
-    public void playAllMoneyCardsOnHand() {
-        synchronized (handcards) {
-            for (Node c : handcards.getChildren()) {
-                ImageView card = (ImageView) c;
-                if (card.getId().equals("1") || card.getId().equals("2") || card.getId().equals("3")) {
-                    Platform.runLater(() -> {
-                        AnimationManagement.playCard(card, playedCardLayoutContainer.getChildren().size());
-                        handcards.getChildren().remove(c);
-                        playedCardLayoutContainer.getChildren().add(card);
-                    });
-                }
-            }
-        }
     }
 }
