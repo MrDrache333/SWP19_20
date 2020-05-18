@@ -15,6 +15,7 @@ public class BuyCardMessage extends AbstractServerMessage {
      * @param cardID        die ID der Karte (String)
      * @param cardImage     die ImageView der Karte
      * @param counterCard   Anzahl der Karten (die die selbe ID haben) die man noch kaufen kann
+     * @param costCard      die Kosten der Karte
      * @author Rike
      * @since Sprint 5
      */
@@ -23,15 +24,17 @@ public class BuyCardMessage extends AbstractServerMessage {
     private User currentUser;
     private Short cardID;
     private int counterCard;
+    private Short costCard;
 
     public BuyCardMessage() {
     }
 
-    public BuyCardMessage(UUID lobbyID, User currentUser, Short cardID, int counterCard) {
+    public BuyCardMessage(UUID lobbyID, User currentUser, Short cardID, int counterCard, Short costCard) {
         this.lobbyID = lobbyID;
         this.currentUser = currentUser;
         this.cardID = cardID;
         this.counterCard = counterCard;
+        this.costCard = costCard;
     }
 
     public UUID getLobbyID() {
@@ -48,5 +51,9 @@ public class BuyCardMessage extends AbstractServerMessage {
 
     public int getCounterCard() {
         return counterCard;
+    }
+
+    public Short getCostCard() {
+        return costCard;
     }
 }

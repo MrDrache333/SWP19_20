@@ -396,6 +396,23 @@ public class GameViewPresenter extends AbstractPresenter {
                 makeImageDarker.setBrightness(-0.7);
                 selectedCard.setEffect(makeImageDarker);
             }
+            Platform.runLater(() -> {
+                int money = 0;
+                int playedCardLayoutContainerSize = playedCardLayoutContainer.getChildren().size();
+                ObservableList<Node> removeMoneyCardList = FXCollections.observableArrayList();
+                for (int i = 0; i < playedCardLayoutContainerSize; i++) {
+                    Node removeCards = playedCardLayoutContainer.getChildren().get(i);
+                    if (removeCards.getId().equals("1") || removeCards.getId().equals("2") || removeCards.getId().equals("3")) {
+                        money += Integer.parseInt(removeCards.getId());
+                        removeMoneyCardList.add(removeCards);
+                        playedCardLayoutContainer.getChildren().remove(i);
+                        if (money >= msg.getCostCard()) {
+                            break;
+                        }
+                    }
+                }
+                moveCardsToDiscardPile(removeMoneyCardList, false);
+            });
         }
         //TODO: die Geldkarten die für den Kauf benötigt wurden, müssen auf den Ablagestapel gelegt werden
     }
@@ -544,8 +561,6 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void onInfoPlayDisplayMessage(InfoPlayDisplayMessage msg) {
-        //TODO: an welcher Stelle wird die Clearphase ausgelöst -> wo kann ich die Message abschicken
-        // nach kauf einer Karte und spielen einer Karte und bei der initialen hand wird die Message mitgeschickt
         if (msg.getLobbyID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
             Platform.runLater(() -> {
                 numberOfBuy.setText(msg.getAvailableBuy() + " Kauf");

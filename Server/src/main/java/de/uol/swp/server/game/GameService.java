@@ -215,7 +215,8 @@ public class GameService extends AbstractService {
             if (request.getCurrentUser().equals(playground.getActualPlayer().getTheUserInThePlayer())) {
                 try {
                     int count = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), request.getCardID());
-                    BuyCardMessage buyCard = new BuyCardMessage(request.getLobbyID(), request.getCurrentUser(), request.getCardID(), count);
+                    Short costCard = playground.getCompositePhase().getCardFromId(playground.getCardsPackField().getCards(), request.getCardID()).getCosts();
+                    BuyCardMessage buyCard = new BuyCardMessage(request.getLobbyID(), request.getCurrentUser(), request.getCardID(), count, costCard);
                     sendToAllPlayers(request.getLobbyID(), buyCard);
                     int availableAction = playground.getActualPlayer().getAvailableActions();
                     int availableBuy = playground.getActualPlayer().getAvailableBuys();
