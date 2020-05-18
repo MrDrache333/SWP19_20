@@ -19,6 +19,7 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
+import javafx.animation.PathTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -820,10 +821,10 @@ public class GameViewPresenter extends AbstractPresenter {
         if (msg.getGameID().equals(lobbyID)) {
             if (msg.getPlayer().equals(loggedInUser)) {
                 Platform.runLater(() -> {
-                    //countDeckLabel.setText(String.valueOf(msg.getCardsDeckSize()));
-                    //if (msg.getDiscardPileWasCleared()) {
-                    //    discardPilePane.getChildren().clear();
-                    //}
+                    countDeckLabel.setText(String.valueOf(msg.getCardsDeckSize()));
+                    if (msg.getDiscardPileWasCleared()) {
+                        myDPLC.getChildren().clear();
+                    }
                 });
             }
         }
