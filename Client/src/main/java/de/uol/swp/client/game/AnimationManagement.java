@@ -14,8 +14,8 @@ public class AnimationManagement {
 
     private static final double HAND_X = 460;
 
-    private static final double ABLAGE_X = 1156;
-    private static final double ABLAGE_Y = 590;
+    private static final double ABLAGE_X = 1170;
+    private static final double ABLAGE_Y = 610;
 
     private static final double ACTION_ZONE_X = 510;
     private static final double ACTION_ZONE_Y = 600;
@@ -151,6 +151,18 @@ public class AnimationManagement {
      * @since Sprint5
      */
     public static PathTransition buyCard(ImageView card) {
+        return createLineToPath(card, keepPosition(card), ABLAGE_X, ABLAGE_Y);
+    }
+
+    /**
+     * Wenn die Clearphase ist gehen die Karten auf den Ablagestapel
+     * Die neuen Koordinaten werden übernommen.
+     *
+     * @param card die Karte
+     * @author Darian
+     * @since Sprint7
+     */
+    public static PathTransition clearCards(ImageView card) {
         return createLineToPath(card, keepPosition(card), ABLAGE_X, ABLAGE_Y);
     }
 

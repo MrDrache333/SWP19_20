@@ -41,7 +41,6 @@ public class Playground extends AbstractPlayground {
     private Player nextPlayer;
     private Player latestGavedUpPlayer;
     private Phase.Type actualPhase;
-    private ArrayList<Short> theIdsFromTheHand = new ArrayList<>(5);
     private GameService gameService;
     private UUID theSpecificLobbyID;
     private CompositePhase compositePhase;
@@ -190,7 +189,6 @@ public class Playground extends AbstractPlayground {
         if (actualPhase == Phase.Type.Clearphase) {
             throw new GamePhaseException("Du kannst die Clearphase nicht überspringen!");
         }
-
         if (actualPhase == Phase.Type.ActionPhase) {
             actualPhase = Phase.Type.Buyphase;
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartBuyPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
@@ -210,6 +208,7 @@ public class Playground extends AbstractPlayground {
      * @since Sprint5
      */
     public void sendPlayersHand() {
+        ArrayList<Short> theIdsFromTheHand = new ArrayList<>(5);
         for (Card card : actualPlayer.getPlayerDeck().getHand()) {
             theIdsFromTheHand.add(card.getId());
         }
