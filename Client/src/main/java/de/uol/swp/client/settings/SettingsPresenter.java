@@ -165,9 +165,9 @@ public class SettingsPresenter extends AbstractPresenter {
     public void onChatMuteToggleButtonPressed(ActionEvent actionEvent) {
         Notifyer.setMuteState(chatMuteToggleButton.isSelected());
         if (chatMuteToggleButton.isSelected())
-            chatMuteImage.setImage(new Image("file:Client/src/main/resources/images/chat_on_icon.png"));
+            chatMuteImage.setImage(new Image("images/chat_on_icon.png"));
         else
-            chatMuteImage.setImage(new Image("file:Client/src/main/resources/images/chat_off_icon.png"));
+            chatMuteImage.setImage(new Image("images/chat_off_icon.png"));
     }
 
     /**
