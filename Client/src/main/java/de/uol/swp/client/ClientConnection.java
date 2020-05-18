@@ -115,10 +115,10 @@ public class ClientConnection {
 
     public void receivedMessage(Message in) {
         if (in instanceof ServerMessage || in instanceof ResponseMessage) {
-            LOG.debug("Received message. Post on event bus " + in);
+            LOG.debug("Nachricht empfangen. Poste auf dem Eventbus " + in);
             eventBus.post(in);
         } else {
-            LOG.warn("Can only process ServerMessage and ResponseMessage. Received " + in);
+            LOG.warn("Kann nur ServerMessage und ResponseMessage verarbeiten. Empfangen " + in);
         }
     }
 
@@ -127,7 +127,7 @@ public class ClientConnection {
         if (channel != null) {
             channel.writeAndFlush(message);
         } else {
-            LOG.warn("Some tries to send a message, but server is not connected");
+            LOG.warn("Es wurde versucht eine Nachricht zu senden, aber der Server ist nicht verbunden");
             // TODO: may create stack trace?
         }
     }

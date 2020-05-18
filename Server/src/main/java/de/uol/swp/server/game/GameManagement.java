@@ -63,10 +63,10 @@ public class GameManagement {
                     games.put(lobbyID, game);
                 }
             } else
-                throw new GameManagementException("Chat or Lobby not found!");
+                throw new GameManagementException("Chat oder Lobby nicht gefunden!");
 
         } else
-            throw new GameManagementException("Lobby-ID not found!");
+            throw new GameManagementException("Lobby-ID nicht gefunden!");
     }
 
     /**
