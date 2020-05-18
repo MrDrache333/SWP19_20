@@ -55,6 +55,7 @@ public class ActionCardExecution {
     private int nextActionIndex;
     //Ob eine optionale Aktion ausgeführt werden soll
     private boolean executeOptionalAction;
+    private boolean startedNextActions;
 
     public ActionCardExecution(short cardID, Playground playground) {
         this.waitedForPlayerInput = false;
@@ -68,6 +69,7 @@ public class ActionCardExecution {
         this.nextActionIndex = 0;
         this.finishedNextActions = true;
         this.executeOptionalAction = false;
+        this.startedNextActions = false;
     }
 
     /**
@@ -96,6 +98,7 @@ public class ActionCardExecution {
     public boolean execute() {
         //TODO Some pretty nice and clean Code to Execute the Shit out of that Card
         while (actualStateIndex < theCard.getActions().size() && !waitedForPlayerInput && finishedNextActions) {
+            startedNextActions = false;
             CardAction action = theCard.getActions().get(actualStateIndex);
             nextActions = getNextActions(action);
             if (action instanceof ComplexCardAction && ((ComplexCardAction) action).isExecutionOptional() && !executeOptionalAction) {
@@ -141,6 +144,7 @@ public class ActionCardExecution {
      * @since Sprint7
      */
     private boolean executeNextActions(List<Player> playerList) {
+        startedNextActions = true;
         while (nextActionIndex < nextActions.size() && !waitedForPlayerInput) {
             CardAction action = nextActions.get(nextActionIndex);
             if (!(action instanceof ChooseNextAction) && !(action instanceof ChooseCard)) {
