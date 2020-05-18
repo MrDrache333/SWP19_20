@@ -585,9 +585,15 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     @Subscribe
     public void onStartClearPhaseMesage (StartClearPhaseMessage msg) {
+        System.out.println(msg.getCurrentUser().getUsername());
+        System.out.println(loggedInUser.getUsername());
+        System.out.println(msg.getUserPlaceNumber());
+        System.out.println(msg.getEnemyPlaceNumber());
+
         // Wenn die ClearMessage an den currentPlayer geht werden, seine Handkarten und
         // ausgespielten Karten auf den Ablagestapel getan und fünf neue Karten gezogen.
         if (msg.getGameID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
+            System.out.println("hi");
             Platform.runLater(() -> {
                         // TODO: Animation für das aufräumen des Feldes muss eingefügt werden.
                         myDPLC.getChildren().addAll(myPCLC.getChildren());
@@ -599,13 +605,13 @@ public class GameViewPresenter extends AbstractPresenter {
             HandCardID.forEach((n) -> {
                 Card card = new Card(n.toString(), handcards.getLayoutX(), handcards.getLayoutY(), handcards.getHeight());
                 Platform.runLater(() -> {
-                    AnimationManagement.addToHand(card, handcards.getChildren().size());
                     myDLC.getChildren().add(card);
                     myDLC.getChildren().remove(card);
                     handcards.getChildren().add(card);
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                 });
             });
+
         }
         // Wenn ein anderer Spieler eine ClearPhaseMessage erhählt wird dies den anderen Spielern
         // angezeigt, indem deren Repräsentation des Spieler seine Handkarten und ausgespielten Karten auf den Ablagestapel legt.
@@ -614,6 +620,7 @@ public class GameViewPresenter extends AbstractPresenter {
             playerIndexNumbers.remove(msg.getUserPlaceNumber());
 
             if (playerIndexNumbers.get(0).equals(msg.getEnemyPlaceNumber())) {
+                System.out.println("hhi");
                 Platform.runLater(() -> {
                     firstEnemyDPLC.getChildren().addAll(firstEnemyHand.getChildren());
                     firstEnemyHand.getChildren().clear();
@@ -632,6 +639,7 @@ public class GameViewPresenter extends AbstractPresenter {
             }
 
             if (playerIndexNumbers.get(1).equals(msg.getEnemyPlaceNumber())) {
+                System.out.println("hhihi");
                 Platform.runLater(() -> {
                     secondEnemyDPLC.getChildren().addAll(secondEnemyHand.getChildren());
                     secondEnemyHand.getChildren().clear();
@@ -651,6 +659,7 @@ public class GameViewPresenter extends AbstractPresenter {
             }
 
             if (playerIndexNumbers.get(2).equals(msg.getEnemyPlaceNumber())) {
+                System.out.println("hhihihi");
                 Platform.runLater(() -> {
                     thirdEnemyDPLC.getChildren().addAll(thirdEnemyHand.getChildren());
                     thirdEnemyHand.getChildren().clear();
@@ -667,9 +676,6 @@ public class GameViewPresenter extends AbstractPresenter {
                 }
                 return;
             }
-        } else {
-            showAlert(Alert.AlertType.WARNING, "Der Spieler wurde nicht gefunden oder ein unerwarter Fehler ist aufgetaucht", "Fehler");
-            LOG.debug("Das aufräumen des Feldes von Spieler " + msg.getCurrentUser() + " ist fehlgeschlagen");
         }
     }
 

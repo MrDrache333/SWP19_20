@@ -26,7 +26,7 @@ public class StartClearPhaseMessage extends AbstractServerMessage {
     private Short enemyPlaceNumber;
     private ArrayList<Short> cardsToDraw;
 
-    public StartClearPhaseMessage(User user, UUID gameID) {
+    public StartClearPhaseMessage(User currentUser, UUID gameID, Short userPlaceNumber, Short enemyPlaceNumber, ArrayList<Short> cardsToDraw) {
         this.gameID = gameID;
         this.currentUser = currentUser;
         this.userPlaceNumber = userPlaceNumber;

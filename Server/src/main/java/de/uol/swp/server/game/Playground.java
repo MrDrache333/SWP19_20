@@ -193,8 +193,16 @@ public class Playground extends AbstractPlayground {
             endTimer();
         } else {
             actualPhase = Phase.Type.Clearphase;
-            gameService.sendToAllPlayers(theSpecificLobbyID, new StartClearPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
+            User currentPlayer = actualPlayer.getTheUserInThePlayer();
             compositePhase.executeClearPhase(actualPlayer);
+            for (Card card : actualPlayer.getPlayerDeck().getHand()) {
+                theIdsFromTheHand.add(card.getId());
+            }
+            players.forEach(n -> {
+                StartClearPhaseMessage msg = new StartClearPhaseMessage(currentPlayer, theSpecificLobbyID, getIndexOfPlayer(n), getIndexOfPlayer(actualPlayer), theIdsFromTheHand);
+                gameService.sendToSpecificPlayer(n, msg);
+            });
+
         }
     }
 
