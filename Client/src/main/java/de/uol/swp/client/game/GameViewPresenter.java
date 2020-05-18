@@ -38,7 +38,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -629,8 +628,6 @@ public class GameViewPresenter extends AbstractPresenter {
                 for(int i=0; i<5; i++) {
                     Card card = new Card("card_back", firstEnemyHand.getLayoutX(), firstEnemyHand.getLayoutY(), firstEnemyHand.getHeight());
                     Platform.runLater(() -> {
-                        firstEnemyDLC.getChildren().add(card);
-                        firstEnemyDLC.getChildren().remove(card);
                         firstEnemyHand.getChildren().add(card);
                             });
                         }
@@ -639,14 +636,12 @@ public class GameViewPresenter extends AbstractPresenter {
 
             if (playerIndexNumbers.get(1).equals(msg.getEnemyPlaceNumber())) {
                 Platform.runLater(() -> {
-                    moveCardsToDiscardPile(secondEnemyHand.getChildren(), false, secondEnemyDPLC);
-                    moveCardsToDiscardPile(secondEnemyPCLC.getChildren(), true, secondEnemyDPLC);
+                    secondEnemyHand.getChildren().clear();
+                    secondEnemyPCLC.getChildren().clear();
                 });
                 for(int i=0; i<5; i++) {
                     Platform.runLater(() -> {
                         Card card = new Card("card_back", secondEnemyHand.getLayoutX(), secondEnemyHand.getLayoutY(), secondEnemyHand.getHeight());
-                        secondEnemyDLC.getChildren().add(card);
-                        secondEnemyDLC.getChildren().remove(card);
                         secondEnemyHand.getChildren().add(card);
                     });
                 }
@@ -655,14 +650,12 @@ public class GameViewPresenter extends AbstractPresenter {
             }
             if (playerIndexNumbers.get(2).equals(msg.getEnemyPlaceNumber())) {
                 Platform.runLater(() -> {
-                    moveCardsToDiscardPile(thirdEnemyHand.getChildren(), false, thirdEnemyDPLC);
-                    moveCardsToDiscardPile(thirdEnemyPCLC.getChildren(), true, thirdEnemyDPLC);
+                    thirdEnemyHand.getChildren().clear();
+                    thirdEnemyPCLC.getChildren().clear();
                 });
                 for(int i=0; i<5; i++) {
                     Platform.runLater(() -> {
                         Card card = new Card("card_back", thirdEnemyHand.getLayoutX(), thirdEnemyHand.getLayoutY(), thirdEnemyHand.getHeight());
-                        thirdEnemyDLC.getChildren().add(card);
-                        thirdEnemyDLC.getChildren().remove(card);
                         thirdEnemyHand.getChildren().add(card);
                     });
                 }
@@ -935,22 +928,16 @@ public class GameViewPresenter extends AbstractPresenter {
                 newCardImage.setFitWidth(Math.round(newCardImage.getBoundsInLocal().getWidth()));
                 newCardImage.setLayoutX(450 + c.getLayoutX());
                 if (actionCards) {
-                    newCardImage.setLayoutY(493);
-                }
-                else{
-                    newCardImage.setLayoutY(610);
+                    newCardImage.setLayoutY(433);
+                } else {
+                    newCardImage.setLayoutY(550);
                 }
                 newCardImage.setId(String.valueOf(c));
-                children.remove(c);
-                gameViewWIP.getChildren().add(newCardImage);
-                PathTransition pathTransition = AnimationManagement.clearCards(newCardImage, discardPile);
-                pathTransition.setOnFinished(actionEvent -> {
-                    gameViewWIP.getChildren().remove(newCardImage);
-                    ImageView iv = new ImageView(picture);
-                    iv.setPreserveRatio(true);
-                    iv.setFitHeight(107);
-                    discardPile.getChildren().add(iv);
-                });
+                //gameViewWIP.getChildren().add(newCardImage);
+                AnimationManagement.clearCards(card, myDPLC);
+                children.remove(card);
+                //gameViewWIP.getChildren().remove(newCardImage);
+                myDPLC.getChildren().add(card);
             });
         }
     }
