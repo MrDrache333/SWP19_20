@@ -156,6 +156,16 @@ public class Deck {
         }
     }
 
+    /**
+     * Überprüft, ob der Ablagestapel leer ist.
+     *
+     * @return true wenn er leer ist, sonst false
+     * @author Fenja, Anna
+     * @since Sprint 7
+     */
+    public boolean discardPileWasCleared() {
+        return discardPile.size() == 0;
+    }
 
 
     public ArrayList<Card> getHand() {

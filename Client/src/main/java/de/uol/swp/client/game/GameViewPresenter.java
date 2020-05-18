@@ -15,7 +15,6 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
-import javafx.animation.PathTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -96,6 +95,10 @@ public class GameViewPresenter extends AbstractPresenter {
     private ImageView cardPlaceholder9;
     @FXML
     private ImageView cardPlaceholder10;
+    @FXML
+    private StackPane countDeckPane;
+    @FXML
+    private Label countDeckLabel;
 
     private final HandcardsLayoutContainer handcards;
     private final PlayedCardLayoutContainer playedCardLayoutContainer;
@@ -359,14 +362,9 @@ public class GameViewPresenter extends AbstractPresenter {
                 newCardImage.setId(String.valueOf(msg.getCardID()));
                 Platform.runLater(() -> {
                     gameViewWIP.getChildren().add(newCardImage);
-                    PathTransition pathTransition = AnimationManagement.buyCard(newCardImage);
-                    pathTransition.setOnFinished(actionEvent -> {
-                        gameViewWIP.getChildren().remove(newCardImage);
-                        ImageView iv = new ImageView(picture);
-                        iv.setPreserveRatio(true);
-                        iv.setFitHeight(107);
-                        discardPilePane.getChildren().add(iv);
-                    });
+                    AnimationManagement.buyCard(newCardImage);
+                    gameViewWIP.getChildren().remove(newCardImage);
+                    discardPilePane.getChildren().add(newCardImage);
                 });
                 if (msg.getCounterCard() < 1) {
                     ColorAdjust makeImageDarker = new ColorAdjust();
@@ -469,6 +467,27 @@ public class GameViewPresenter extends AbstractPresenter {
                 dialogStage.setResizable(false);
                 dialogStage.showAndWait();
             });
+        }
+    }
+
+    /**
+     * Die Anzahl der Karten auf Deck wird aktualisiert und eventuell die Karten vom Ablegestapel entfernt.
+     *
+     * @param msg die Nachricht
+     * @author Fenja, Anna
+     * @since Sprint 7
+     */
+    @Subscribe
+    public void onCardsDeckSizeMessage(CardsDeckSizeMessage msg) {
+        if (msg.getGameID().equals(lobbyID)) {
+            if (msg.getPlayer().equals(loggedInUser)) {
+                Platform.runLater(() -> {
+                    countDeckLabel.setText(String.valueOf(msg.getCardsDeckSize()));
+                    if (msg.getDiscardPileWasCleared()) {
+                        discardPilePane.getChildren().clear();
+                    }
+                });
+            }
         }
     }
 
