@@ -405,6 +405,7 @@ public class SceneManager {
                 userService.logout(currentUser);
             });
             eventBus.register(primaryPresenter);
+            primaryScene.setOnKeyPressed(hotkeyEventHandler);
         }
     }
 
@@ -554,7 +555,7 @@ public class SceneManager {
                     switch (event.getCode()) {
                         case C:
                             LOG.debug("Create Lobby Hotkey pressed");
-                            primaryPresenter.getUser();
+                            showCreateLobbyScreen(primaryPresenter.getUser());
                             break;
                     }
                     event.consume();
