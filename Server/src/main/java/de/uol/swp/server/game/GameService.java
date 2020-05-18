@@ -259,7 +259,7 @@ public class GameService extends AbstractService {
                 }
             }
         } else {
-            LOG.error("Irgendwas ist bei der onSelectCardRequest im GameService falsch gelaufen..Folgende ID: " + gameID);
+            LOG.error("Irgendwas ist bei der onSelectCardRequest im GameService falsch gelaufen. Folgende ID: " + gameID);
         }
     }
 

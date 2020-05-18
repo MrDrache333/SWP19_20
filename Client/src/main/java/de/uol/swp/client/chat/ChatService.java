@@ -38,7 +38,7 @@ public class ChatService implements de.uol.swp.common.chat.ChatService {
     @Override
     public void sendMessage(ChatMessage message) {
         NewChatMessageRequest request = new NewChatMessageRequest(message);
-        LOG.debug("posting ChatMessageRequest to bus with parameter message");
+        LOG.debug("ChatMessageRequest mit Parameternachricht an den Bus gesendet");
         bus.post(request);
     }
 
@@ -52,7 +52,7 @@ public class ChatService implements de.uol.swp.common.chat.ChatService {
     @Override
     public void sendMessage(String ChatId, ChatMessage message) {
         NewChatMessageRequest request = new NewChatMessageRequest(ChatId, message);
-        LOG.debug("posting NewChatMessageRequest to bus with parameters ChatId, message");
+        LOG.debug("NewChatMessageRequest an den Bus mit den Parametern ChatId, message gesendet");
         bus.post(request);
     }
 
@@ -65,7 +65,7 @@ public class ChatService implements de.uol.swp.common.chat.ChatService {
     @Override
     public Chat getChatHistory(User sender) {
         ChatHistoryRequest req = new ChatHistoryRequest(sender);
-        LOG.debug("posting ChatHistoryRequest to bus with parameter sender");
+        LOG.debug("ChatHistoryRequest an den Bus mit dem Parameter sender gesendet");
         bus.post(req);
         return null;
     }
@@ -80,7 +80,7 @@ public class ChatService implements de.uol.swp.common.chat.ChatService {
     @Override
     public Chat getChatHistory(String ChatId, User sender) {
         ChatHistoryRequest req = new ChatHistoryRequest(ChatId, sender);
-        LOG.debug("posting ChatHistoryRequest to bus with parameter ChatId, sender");
+        LOG.debug("ChatHistoryRequest an den Bus mit dem Parameter ChatId, sender gesendet");
         bus.post(req);
         return null;
     }

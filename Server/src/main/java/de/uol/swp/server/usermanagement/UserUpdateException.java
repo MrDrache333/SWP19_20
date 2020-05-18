@@ -10,7 +10,6 @@ public class UserUpdateException extends RuntimeException {
     /**
      * Der Konstruktor bekommt einen String übergeben, den er als Nachricht an die RuntimeException weitergibt.
      *
-     * @param constructor
      * @author Julia
      * @since Sprint2
      */

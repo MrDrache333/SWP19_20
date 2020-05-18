@@ -95,7 +95,7 @@ class ServerHandler implements ChannelInboundHandler {
         if (msg instanceof RequestMessage) {
             delegate.process(ctx, (RequestMessage) msg);
         } else {
-            LOG.error("Illegal Object read from channel. Ignored!");
+            LOG.error("Illegales Objekt aus dem Channel gelesen. Ignoriert!");
         }
     }
 

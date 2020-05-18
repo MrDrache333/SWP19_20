@@ -139,7 +139,7 @@ public class LobbyPresenter extends AbstractPresenter {
     }
 
     /**
-     * Intitialisieren des Chats - FXML laden, Controller setzen (muss immer eine eigene Instanz sein)
+     * Initialisieren des Chats - FXML laden, Controller setzen (muss immer eine eigene Instanz sein)
      * und chatView ind die chatView-Pane dieses Controllers laden.
      * Der eingeloggte User wird zur Userliste hinzugefügt und diese wird aktualisiert.
      * chooserMaxPlayer wird auf den Default Wert (4) gesetzt.
@@ -201,7 +201,7 @@ public class LobbyPresenter extends AbstractPresenter {
             readyButton.setText("Nicht mehr Bereit");
             ownReadyStatus = true;
         }
-        LOG.debug("Set own ReadyStauts in Lobby " + lobbyID + " to " + (ownReadyStatus ? "Ready" : "Not Ready"));
+        LOG.debug("Setze eigenen Bereitstatus in der Lobby " + lobbyID + " zu " + (ownReadyStatus ? "Bereit" : "Nicht bereit"));
         lobbyService.setLobbyUserStatus(lobbyID, loggedInUserDTO, ownReadyStatus);
     }
 
@@ -250,7 +250,7 @@ public class LobbyPresenter extends AbstractPresenter {
                 gameSettingsVBox.setPrefSize(450, 630);
                 gameSettingsVBox.setId("gameSettingsVBox");
 
-                //ausgewählte Karten anzeigen
+                //Ausgewählte Karten anzeigen
                 TilePane chosenCards = new TilePane();
                 chosenCards.setPrefSize(400, 160);
                 chosenCards.setStyle("-fx-background-color: #3D3D3D");
@@ -412,7 +412,7 @@ public class LobbyPresenter extends AbstractPresenter {
     public void onUpdatedLobbyReadyStatusMessage(UpdatedLobbyReadyStatusMessage message) {
         if (!message.getLobbyID().equals(lobbyID)) return;
         if (readyUserList.containsKey(message.getUser().getUsername())) {
-            LOG.debug("User " + message.getUser().getUsername() + " changed his status to " + (message.isReady() ? "Ready" : "Not Ready") + " in Lobby " + lobbyID);
+            LOG.debug("User " + message.getUser().getUsername() + " änderte seinen Status zu " + (message.isReady() ? "Bereit" : "Nicht bereit") + " in Lobby " + lobbyID);
             updateReadyUser(message.getUser(), message.isReady());
         }
     }
@@ -448,7 +448,7 @@ public class LobbyPresenter extends AbstractPresenter {
         if (loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
             loggedInUser = message.getUser();
             loggedInUserDTO = (UserDTO) message.getUser();
-            LOG.debug("User " + message.getOldUser().getUsername() + " changed his name to " + message.getUser().getUsername());
+            LOG.debug("User " + message.getOldUser().getUsername() + " änderte seinen Namen zu " + message.getUser().getUsername());
         }
         Platform.runLater(() -> {
             if (readyUserList.containsKey(message.getOldUser().getUsername())) {
@@ -491,7 +491,7 @@ public class LobbyPresenter extends AbstractPresenter {
     @Subscribe
     public void onGameStartMessage(StartGameMessage message) {
         if (!message.getLobbyID().equals(lobbyID)) return;
-        LOG.debug("Game in lobby with ID" + message.getLobbyID() + " starts.");
+        LOG.debug("Spieler in der Lobby mit der ID" + message.getLobbyID() + " startet.");
         gameManagement.showGameView();
     }
 
@@ -529,7 +529,7 @@ public class LobbyPresenter extends AbstractPresenter {
     @Subscribe
     public void onUserJoinedLobbyMessage(UserJoinedLobbyMessage message) {
         if (!message.getLobbyID().equals(lobbyID)) return;
-        LOG.debug("New user " + message.getUser() + " logged in");
+        LOG.debug("Neuer User " + message.getUser() + " loggte sich ein");
         Platform.runLater(() -> {
             if (readyUserList != null && loggedInUser != null && !loggedInUser.toString().equals(message.getLobby().getName())) {
                 // TODO: ??? Username wird mit Lobbynamen verglichen, vor Refactoring war es:
@@ -617,7 +617,6 @@ public class LobbyPresenter extends AbstractPresenter {
      * @author Darian, Keno O.
      * @since Sprint3
      */
-
     private void updateUsersList() {
         Platform.runLater(() -> {
             if (userHBoxes == null) {
