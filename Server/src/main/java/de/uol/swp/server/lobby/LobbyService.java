@@ -110,7 +110,7 @@ public class LobbyService extends AbstractService {
             ServerMessage returnMessage = new UserJoinedLobbyMessage(msg.getLobbyID(), msg.getUser(), (UserDTO) lobby.get().getOwner(), (LobbyDTO) lobby.get());
             post(returnMessage);
         } else {
-            LOG.error("Joining lobby with ID " + msg.getLobbyID() + " failed");
+            LOG.error("Beitreten der Lobby mit der ID " + msg.getLobbyID() + " fehlgeschlagen");
         }
     }
 
@@ -128,7 +128,7 @@ public class LobbyService extends AbstractService {
         //Falls der Besitzer der Lobby aus der Lobby geht wird dieser aktualisiert
         if (lobbyManagement.leaveLobby(msg.getLobbyID(), msg.getUser())) {
             Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getLobbyID());
-            LOG.info("User " + msg.getUser().getUsername() + " is leaving lobby " + msg.getLobbyID());
+            LOG.info("User " + msg.getUser().getUsername() + " verlässt die Lobby " + msg.getLobbyID());
             ServerMessage returnMessage;
             if (lobby.isPresent()) {
                 if (!oldOwner.getUsername().equals(lobby.get().getOwner().getUsername())) {
@@ -140,7 +140,7 @@ public class LobbyService extends AbstractService {
             }
             post(returnMessage);
         } else {
-            LOG.error("Leaving lobby with ID" + msg.getLobbyID() + " failed");
+            LOG.error("Verlassen der Lobby mit der ID " + msg.getLobbyID() + " fehlgeschlagen");
         }
     }
 
@@ -160,7 +160,7 @@ public class LobbyService extends AbstractService {
                 toLeave.add((LobbyDTO) lobby);
             }
         });
-        LOG.info("User " + msg.getUser().getUsername() + " is leaving all lobbies");
+        LOG.info("User " + msg.getUser().getUsername() + " verlässt alle Lobbys");
         toLeave.forEach(lobby -> lobbyManagement.leaveLobby(lobby.getLobbyID(), msg.getUser()));
         toLeave.clear();
         lobbyManagement.getLobbies().forEach(lobby -> toLeave.add((LobbyDTO) lobby));
@@ -186,7 +186,7 @@ public class LobbyService extends AbstractService {
             LOG.debug("Sending Updated Status of User " + request.getUser().getUsername() + " to " + request.isReady() + " in Lobby: " + lobby.get().getLobbyID());
             allPlayersReady(lobby.get());
         } else
-            LOG.debug("LOBBY NOT FOUND! ID: " + request.getLobbyID());
+            LOG.debug("Lobby nicht gefunden! ID: " + request.getLobbyID());
     }
 
     /**
@@ -200,12 +200,12 @@ public class LobbyService extends AbstractService {
     public void onGameEnd(UpdateInGameRequest request) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(request.getLobbyID());
         if (lobby.isPresent()) {
-            LOG.info("Game finished in lobby " + request.getLobbyID());
+            LOG.info("Spiel in Lobby " + request.getLobbyID() + " beendet.");
             lobby.get().setInGame(false);
             ServerMessage msg = new UpdatedInGameMessage(request.getLobbyID());
             post(msg);
         } else
-            LOG.debug("LOBBY NOT FOUND! ID: " + request.getLobbyID());
+            LOG.debug("Lobby nicht gefunden! ID: " + request.getLobbyID());
     }
 
     /**
@@ -223,7 +223,7 @@ public class LobbyService extends AbstractService {
             msg.initWithMessage(request);
             post(msg);
         } else {
-            LOG.debug("LOBBY NOT FOUND! ID: " + request.getLobbyID());
+            LOG.debug("Lobby nicht gefunden! ID: " + request.getLobbyID());
         }
     }
 
@@ -263,11 +263,11 @@ public class LobbyService extends AbstractService {
     @Subscribe
     public void onKickUserRequest(KickUserRequest msg) {
         if (lobbyManagement.kickUser(msg.getLobbyID(), msg.getUserToKick(), msg.getUser())) {
-            LOG.info("User " + msg.getUser().getUsername() + " is kicked from lobby with ID" + msg.getLobbyID());
+            LOG.info("User " + msg.getUser().getUsername() + " wurde von der Lobby mit folgender ID " + msg.getLobbyID() + " gekickt!");
             ServerMessage returnMessage = new KickUserMessage(msg.getLobbyID(), msg.getUserToKick(), (LobbyDTO) lobbyManagement.getLobby(msg.getLobbyID()).get());
             post(returnMessage);
         } else {
-            LOG.error("Kicking " + msg.getUserToKick() + " from Lobby with ID " + msg.getLobbyID() + " has failed");
+            LOG.error("Kicken des Users " + msg.getUserToKick() + " von Lobby mit der ID " + msg.getLobbyID() + " ist fehlgeschlagen");
         }
     }
 
@@ -295,7 +295,7 @@ public class LobbyService extends AbstractService {
      */
     @Subscribe
     public void onSendChosenCardsRequest(SendChosenCardsRequest msg) {
-        LOG.debug("received chosen cards");
+        LOG.debug("Ausgewählte Karten erhalten");
         LobbyDTO lobby = (LobbyDTO) lobbyManagement.getLobby(msg.getLobbyID()).get();
         lobby.setChosenCards(msg.getChosenCards());
 
@@ -342,7 +342,7 @@ public class LobbyService extends AbstractService {
             if (!lobby.getReadyStatus(user)) return;
         }
         //Lobby starten
-        LOG.debug("Game starts in Lobby: " + lobby.getName());
+        LOG.debug("Spiel in Lobby: " + lobby.getName() + " startet.");
         lobby.setInGame(true);
         StartGameMessage msg = new StartGameMessage(lobby.getLobbyID());
         post(msg);

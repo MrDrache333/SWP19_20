@@ -278,7 +278,7 @@ public class GameViewPresenter extends AbstractPresenter {
     public void newUser(UserJoinedLobbyMessage userJoinedLobbyMessage) {
         if (userJoinedLobbyMessage.getLobbyID().equals(this.lobbyID)) {
             lobbyService.retrieveAllUsersInLobby(lobbyID);
-            LOG.debug("New user in Lobby, LobbyService is retrieving users");
+            LOG.debug("Neuer User in der Lobby, LobbyService empfängt Nutzer");
         }
     }
 
@@ -328,7 +328,7 @@ public class GameViewPresenter extends AbstractPresenter {
     @Subscribe
     public void userList(AllOnlineUsersInLobbyResponse allOnlineUsersInLobbyResponse) {
         if (allOnlineUsersInLobbyResponse.getLobbyID().equals(this.lobbyID)) {
-            LOG.debug("Update of user list with" + allOnlineUsersInLobbyResponse.getUsers());
+            LOG.debug("Aktualisieren der Userliste mit" + allOnlineUsersInLobbyResponse.getUsers());
             updateUsersList(allOnlineUsersInLobbyResponse.getUsers());
         }
     }

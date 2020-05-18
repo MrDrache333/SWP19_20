@@ -75,8 +75,8 @@ public class ClientApp extends Application implements ConnectionListener {
         if (args.size() != 2) {
             host = "localhost";
             port = 8889;
-            System.err.println("Usage: " + ClientConnection.class.getSimpleName() + " host port");
-            System.err.println("Using default port " + port + " on " + host);
+            System.err.println("Nutze " + ClientConnection.class.getSimpleName() + " host port");
+            System.err.println("Nutze Defaultport " + port + " auf " + host);
         } else {
             host = args.get(0);
             port = Integer.parseInt(args.get(1));
@@ -155,11 +155,11 @@ public class ClientApp extends Application implements ConnectionListener {
         eventBus.unregister(this);
         // Important: Close connection so connection thread can terminate
         // else client application will not stop
-        LOG.trace("Trying to shutting down client ...");
+        LOG.trace("Versuche den Client herunterzufahren ...");
         if (clientConnection != null) {
             clientConnection.close();
         }
-        LOG.info("ClientConnection shutdown");
+        LOG.info("ClientConnection heruntergefahren");
     }
 
     //----------------
@@ -178,15 +178,15 @@ public class ClientApp extends Application implements ConnectionListener {
      */
     @Subscribe
     public void userLoggedIn(LoginSuccessfulResponse message) {
-        LOG.debug("User logged in successfully " + message.getUser().getUsername());
+        LOG.debug("User loggte sich erfolgreich ein " + message.getUser().getUsername());
         this.user = message.getUser();
         sceneManager.showMainScreen(user);
     }
 
     @Subscribe
     public void onRegistrationExceptionMessage(RegistrationExceptionMessage message) {
-        sceneManager.showServerError("Registration error " + message);
-        LOG.error("Registration error " + message);
+        sceneManager.showServerError("Registrierungsfehler " + message);
+        LOG.error("Registrierungsfehler " + message);
     }
 
     /**
@@ -196,7 +196,7 @@ public class ClientApp extends Application implements ConnectionListener {
      */
     @Subscribe
     public void onRegistrationSuccessfulMessage(RegistrationSuccessfulResponse message) {
-        LOG.info("Registration successful.");
+        LOG.info("Registrierung erfolgreich.");
         sceneManager.showLoginScreen();
     }
 
@@ -260,7 +260,7 @@ public class ClientApp extends Application implements ConnectionListener {
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
         if (message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showMainScreen(user);
-            LOG.info("User " + message.getUser().getUsername() + " left lobby successfully");
+            LOG.info("User " + message.getUser().getUsername() + " verließ die Lobby erfolgreich");
         }
     }
 
@@ -315,7 +315,7 @@ public class ClientApp extends Application implements ConnectionListener {
             user = message.getUser();
             sceneManager.closeSettings();
             sceneManager.showMainScreen(user);
-            LOG.info("User " + message.getOldUser().getUsername() + " updated his data");
+            LOG.info("User " + message.getOldUser().getUsername() + " aktualsierte seine Daten");
         }
     }
 
@@ -343,7 +343,7 @@ public class ClientApp extends Application implements ConnectionListener {
     public void onKickUserMessage(KickUserMessage message) {
         if (message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showMainScreen(user);
-            LOG.info("User " + message.getUser().getUsername() + " is kicked from the lobby successfully");
+            LOG.info("User " + message.getUser().getUsername() + " wurde erfolgreich von der Lobby gekickt.");
         }
     }
 
@@ -361,7 +361,7 @@ public class ClientApp extends Application implements ConnectionListener {
      */
     @Subscribe
     public void onUserLoggedOutMessage(UserLoggedOutMessage message) {
-        LOG.info("Logout and leaving of all lobbies successful.");
+        LOG.info("Abmeldung und Verlassen aller Lobbys erfolgreich.");
 
         if (message.getUsername().equals(user.getUsername())) {
             sceneManager.closeAllStages();
@@ -397,7 +397,7 @@ public class ClientApp extends Application implements ConnectionListener {
      */
     @Subscribe
     public void onUserDroppedMessage(UserDroppedMessage message) {
-        LOG.info("Deleting Account and leaving of all lobbies successful.");
+        LOG.info("Löschung des Accounts und Verlassen aller Lobbys erfolgreich.");
         if (message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.closeAllStages();
             sceneManager.showLoginScreen();

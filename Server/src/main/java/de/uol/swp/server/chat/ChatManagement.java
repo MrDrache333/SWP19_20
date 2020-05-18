@@ -58,7 +58,7 @@ public class ChatManagement extends AbstractChatManagement {
      * @since Sprint 1
      */
     synchronized public void createChat(String ChatId) throws ChatException {
-        if (getChat(ChatId).isPresent()) throw new ChatException("Chat with Id " + ChatId + " already exists!");
+        if (getChat(ChatId).isPresent()) throw new ChatException("Chat mit der ID " + ChatId + " existiert bereits!");
         Chats.put(ChatId, new Chat(ChatId));
     }
 
@@ -72,7 +72,7 @@ public class ChatManagement extends AbstractChatManagement {
      */
     public void deleteChat(String ChatId) throws ChatException {
         if (Chats.size() > 0 && Chats.get(ChatId) != null) Chats.remove(ChatId);
-        if (getChat(ChatId).isPresent()) throw new ChatException("Chat with Id " + ChatId + " failed to remove!");
+        if (getChat(ChatId).isPresent()) throw new ChatException("Chat mit der ID " + ChatId + " konnte nicht entfernt werden!");
     }
 
     /**
@@ -91,7 +91,7 @@ public class ChatManagement extends AbstractChatManagement {
             chat.get().getMessages().add(message);
             //Keep only the newest Messages
             if (chat.get().getMessages().size() > CHATMESSAGEHISTORYSIZE) chat.get().getMessages().remove(0);
-        } else throw new ChatException("Chat with Id " + chatId + " does not exist!");
+        } else throw new ChatException("Chat mit der ID " + chatId + " existiert nicht!");
     }
 
     /**

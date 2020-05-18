@@ -44,7 +44,7 @@ public class UserService extends AbstractService {
     @Subscribe
     private void onRegisterUserRequest(RegisterUserRequest msg) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Got new registration message with " + msg.getUser());
+            LOG.debug("Neue Registrierungsanfrage mit folgendem User erhalten: " + msg.getUser());
         }
         ResponseMessage returnMessage;
         try {

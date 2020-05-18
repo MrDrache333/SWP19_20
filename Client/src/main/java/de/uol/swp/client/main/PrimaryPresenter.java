@@ -221,7 +221,7 @@ public class PrimaryPresenter extends AbstractPresenter {
     private void onUserLeftLobby(UserLeftLobbyMessage msg) {
         if (games.containsKey(msg.getLobbyID()) && loggedInUser.getUsername().equals(msg.getUser().getUsername())) {
             closeTab(msg.getLobbyID(), false);
-            LOG.info("User " + msg.getUser().getUsername() + " left lobby successfully");
+            LOG.info("User " + msg.getUser().getUsername() + " verließ die Lobby erfolgreich.");
         }
     }
 

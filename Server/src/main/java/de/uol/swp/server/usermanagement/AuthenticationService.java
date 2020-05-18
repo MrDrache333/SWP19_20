@@ -102,7 +102,7 @@ public class AuthenticationService extends AbstractService {
     @Subscribe
     public void onLoginRequest(LoginRequest msg) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Got new auth message with " + msg.getUsername() + " " + msg.getPassword());
+            LOG.debug("Neue Authentifizierung Nachricht erhalten mit " + msg.getUsername() + " " + msg.getPassword());
         }
         ServerInternalMessage returnMessage;
         try {
@@ -184,13 +184,13 @@ public class AuthenticationService extends AbstractService {
         try {
             User user = userManagement.updateUser(msg.getUser(), msg.getOldUser(), msg.getCurrentPassword());
             returnMessage = new UpdatedUserMessage(user, msg.getOldUser());
-            LOG.info("User " + msg.getOldUser().getUsername() + " updated successfully");
+            LOG.info("User " + msg.getOldUser().getUsername() + " erfolreich aktualisiert");
             post(new UpdateLobbiesRequest((UserDTO) user, (UserDTO) msg.getOldUser()));
         } catch (UserUpdateException e) {
             userSessions.replace(msg.getSession().get(), msg.getOldUser());
             msg.getSession().get().updateUser(msg.getOldUser());
             returnMessage = new UpdateUserFailedMessage(msg.getOldUser(), e.getMessage());
-            LOG.info("Update of user " + msg.getOldUser().getUsername() + " failed");
+            LOG.info("Aktualisierung des Users " + msg.getOldUser().getUsername() + " fehlgeschlagen");
         }
         post(returnMessage);
     }
@@ -209,7 +209,7 @@ public class AuthenticationService extends AbstractService {
         if (userToDrop != null ) {
             if (!lobbyManagement.isUserIngame(userToDrop)) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Dropping user " + userToDrop.getUsername());
+                    LOG.debug("Lösche User " + userToDrop.getUsername());
                 }
                 userSessions.remove(msg.getSession().get());
                 userManagement.dropUser(userToDrop);

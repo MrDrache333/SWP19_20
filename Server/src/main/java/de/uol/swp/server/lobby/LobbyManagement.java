@@ -51,7 +51,7 @@ public class LobbyManagement {
             throw new IllegalArgumentException("LobbyID nicht gefunden! ID: " + id);
         }
         lobbies.remove(id);
-        LOG.info("Lobby " + getLobby(id) + "removed");
+        LOG.info("Lobby " + getLobby(id) + "entfernt");
     }
 
     /**
@@ -101,7 +101,7 @@ public class LobbyManagement {
         Optional<Lobby> lobby = this.getLobby(id);
         if (lobby.isPresent()) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("User " + user.getUsername() + " is leaving lobby " + getLobby(id));
+                LOG.debug("User " + user.getUsername() + " verlässt die Lobby " + getLobby(id));
             }
             lobby.get().leaveUser(user);
             if (lobby.get().getPlayers() == 0) {
@@ -161,7 +161,7 @@ public class LobbyManagement {
         Optional<Lobby> lobby = this.getLobby(id);
         if (lobby.isPresent() && lobby.get().getOwner().getUsername().equals(owner.getUsername())) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("User " + userToKick.getUsername() + " is kicked out of the lobby " + getLobby(id));
+                LOG.debug("User " + userToKick.getUsername() + " ist von der Lobby gekickt worden " + getLobby(id));
             }
             lobby.get().leaveUser(userToKick);
             if (lobby.get().getPlayers() == 0) {
