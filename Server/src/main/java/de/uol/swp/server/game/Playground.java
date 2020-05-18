@@ -189,13 +189,13 @@ public class Playground extends AbstractPlayground {
             endTimer();
         } else {
             actualPhase = Phase.Type.Clearphase;
-            User currentPlayer = actualPlayer.getTheUserInThePlayer();
+            Player currentPlayer = actualPlayer;
             compositePhase.executeClearPhase(actualPlayer);
             for (Card card : actualPlayer.getPlayerDeck().getHand()) {
                 theIdsFromTheHand.add(card.getId());
             }
             players.forEach(n -> {
-                StartClearPhaseMessage msg = new StartClearPhaseMessage(currentPlayer, theSpecificLobbyID, getIndexOfPlayer(n), getIndexOfPlayer(actualPlayer), theIdsFromTheHand);
+                StartClearPhaseMessage msg = new StartClearPhaseMessage(currentPlayer.getTheUserInThePlayer(), theSpecificLobbyID, getIndexOfPlayer(currentPlayer), getIndexOfPlayer(n), theIdsFromTheHand);
                 gameService.sendToSpecificPlayer(n, msg);
             });
 
@@ -214,7 +214,7 @@ public class Playground extends AbstractPlayground {
         for (Card card : actualPlayer.getPlayerDeck().getHand()) {
             theIdsFromTheHand.add(card.getId());
         }
-        DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID, (short) getPlayers().size());
+        DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID, (short) 1);
         gameService.sendToSpecificPlayer(actualPlayer, theHandMessage);
     }
 

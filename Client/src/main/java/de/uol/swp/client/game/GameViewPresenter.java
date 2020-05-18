@@ -246,7 +246,7 @@ public class GameViewPresenter extends AbstractPresenter {
          * Aktionszonen = Hellblau
          * Abwerfzonen = Rot
          */
-        /*
+
         handcards.setStyle("-fx-background-color: chartreuse");
         firstEnemyHand.setStyle("-fx-background-color: chartreuse");
         secondEnemyHand.setStyle("-fx-background-color: chartreuse");
@@ -263,7 +263,7 @@ public class GameViewPresenter extends AbstractPresenter {
         firstEnemyDLC.setStyle("-fx-background-color: darkviolet");
         secondEnemyDLC.setStyle("-fx-background-color: darkviolet");
         thirdEnemyDLC.setStyle("-fx-background-color: darkviolet");
-         */
+
     }
 
     /**
@@ -357,24 +357,6 @@ public class GameViewPresenter extends AbstractPresenter {
         }
     }
 
-    /**
-     * Wenn die StartClearPhaseMessage kommt werden die Karten auf der Hand zum Ablagestapel bewegt
-     *
-     * @param msg Die Nachricht
-     * @author Darian
-     * @since Sprint7
-     */
-    /*
-    @Subscribe
-    public void onStartClearPhase(StartClearPhaseMessage msg){
-        if (msg.getGameID().equals(this.lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
-            synchronized (handcards){
-                moveCardsToDiscardPile(handcards.getChildren(), false);
-            }
-            moveCardsToDiscardPile(myPCLC.getChildren(), true);
-        }
-    }
-*/
     /**
      * Aktualisiert den loggedInUser sowie die Liste, falls sich der Username geändert hat
      *
@@ -610,13 +592,16 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     @Subscribe
     public void onStartClearPhaseMesage (StartClearPhaseMessage msg) {
+        System.out.println(msg.getUserPlaceNumber());
+        System.out.println(msg.getEnemyPlaceNumber());
         // Wenn die ClearMessage an den currentPlayer geht werden, seine Handkarten und
         // ausgespielten Karten auf den Ablagestapel getan und fünf neue Karten gezogen.
         if (msg.getGameID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
             Platform.runLater(() -> {
+
                         moveCardsToDiscardPile(handcards.getChildren(), false, myDPLC);
                         moveCardsToDiscardPile(myPCLC.getChildren(), true, myDPLC);
-                    });
+            });
             ArrayList<Short> HandCardID = msg.getCardsToDraw();
             HandCardID.forEach((n) -> {
                 Card card = new Card(n.toString(), handcards.getLayoutX(), handcards.getLayoutY(), handcards.getHeight());
@@ -635,10 +620,11 @@ public class GameViewPresenter extends AbstractPresenter {
             List<Short> playerIndexNumbers = new ArrayList<>(); playerIndexNumbers.add((short) 0); playerIndexNumbers.add((short) 1); playerIndexNumbers.add((short) 2); playerIndexNumbers.add((short) 3);
             playerIndexNumbers.remove(msg.getUserPlaceNumber());
 
+            System.out.println("Hallo: " + playerIndexNumbers.get(0));
             if (playerIndexNumbers.get(0).equals(msg.getEnemyPlaceNumber())) {
                 Platform.runLater(() -> {
-                    moveCardsToDiscardPile(firstEnemyHand.getChildren(), false, firstEnemyDPLC);
-                    moveCardsToDiscardPile(firstEnemyPCLC.getChildren(), true, firstEnemyDPLC);
+                    firstEnemyHand.getChildren().clear();
+                    firstEnemyPCLC.getChildren().clear();
                 });
                 for(int i=0; i<5; i++) {
                     Card card = new Card("card_back", firstEnemyHand.getLayoutX(), firstEnemyHand.getLayoutY(), firstEnemyHand.getHeight());
@@ -737,6 +723,10 @@ public class GameViewPresenter extends AbstractPresenter {
                     }
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                 });
+
+                if (numberOfPlayersInGame == 1) {
+                    return;
+                }
 
                 String pfad = "file:Client/src/main/resources/cards/images/card_back.png";
                 Image picture = new Image(pfad);
@@ -959,7 +949,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     ImageView iv = new ImageView(picture);
                     iv.setPreserveRatio(true);
                     iv.setFitHeight(107);
-                    myDPLC.getChildren().add(iv);
+                    discardPile.getChildren().add(iv);
                 });
             });
         }
