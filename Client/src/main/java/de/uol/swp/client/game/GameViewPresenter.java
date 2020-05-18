@@ -15,6 +15,7 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
+import javafx.animation.PathTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
