@@ -524,9 +524,13 @@ public class SceneManager {
 
 
     /**
-     * EventHandler für Hotkeys während eines Spiels. Momentane Hotkeys:
-     * S: SkipPhase
-     * G: GiveUp
+     * EventHandler für Hotkeys während eines Spiels.
+     * Bestätigungsfenster (Derzeit nur bei GiveUp) kann bei Bedarf auch auf weitere Hotkeys leicht erweitert werden.
+     *
+     * Momentane Hotkeys:
+     * Strg + S: SkipPhase
+     * Strg + G: GiveUp
+     * Strg + L: CreateLobby
      *
      * @author Marvin
      * @since Sprint7
@@ -548,13 +552,14 @@ public class SceneManager {
                             break;
                         case G:
                             LOG.debug("Give Up Hotkey pressed");
-                            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "");
+                            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                             alert.setResizable(false);
                             alert.initModality(Modality.APPLICATION_MODAL);
-                            alert.getDialogPane().setContentText("");
                             alert.getDialogPane().setHeaderText("Möchtest du wirklich aufgeben?");
                             Optional<ButtonType> result = alert.showAndWait();
-                            gameService.giveUp(lobbyID, (UserDTO) user);
+                            if (result.get() == ButtonType.OK) {
+                                gameService.giveUp(lobbyID, (UserDTO) user);
+                            }
                             break;
                     }
                     event.consume();
