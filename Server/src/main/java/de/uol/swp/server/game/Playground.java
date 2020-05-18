@@ -85,18 +85,11 @@ public class Playground extends AbstractPlayground {
                 cardField.put(card.getId(), 8);
             } else cardField.put(card.getId(), 12);
         }
-        while (chosenCards.size() < 10) {
-            for (short i = 7; i < 17; i++) {
-                if (!chosenCards.contains(i)) {
-                    chosenCards.add(i);
-                }
-            }
-            //TODO: die 16 ändern, sobald mehr Karten vorhanden sind, die obere for-Schleife auskommentieren
-            // und den unteren Block dafür entkommentieren
-            /*short random = (short) (Math.random() * 16);
+        while (chosenCards.size() <= 10) {
+            short random = (short) (Math.random() * 31);
             if (!chosenCards.contains(random) && random > 6) {
                 chosenCards.add(random);
-            }*/
+            }
         }
         for (Short chosenCard : chosenCards) {
             cardField.put(chosenCard, 10);
@@ -233,7 +226,7 @@ public class Playground extends AbstractPlayground {
      */
     public int sendCardsDeckSize() {
         int size = actualPlayer.getPlayerDeck().getCardsDeck().size();
-        gameService.sendToSpecificPlayer(actualPlayer, new CardsDeckSizeMessage(theSpecificLobbyID, actualPlayer.getTheUserInThePlayer(), size));
+        gameService.sendToSpecificPlayer(actualPlayer, new CardsDeckSizeMessage(theSpecificLobbyID, actualPlayer.getTheUserInThePlayer(), size, actualPlayer.getPlayerDeck().discardPileWasCleared()));
         return size;
     }
 

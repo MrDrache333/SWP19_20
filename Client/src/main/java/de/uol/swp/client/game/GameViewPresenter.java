@@ -19,7 +19,6 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
-import javafx.animation.PathTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -97,6 +96,10 @@ public class GameViewPresenter extends AbstractPresenter {
     private ImageView cardPlaceholder9;
     @FXML
     private ImageView cardPlaceholder10;
+    @FXML
+    private StackPane countDeckPane;
+    @FXML
+    private Label countDeckLabel;
 
     private final HandcardsLayoutContainer handcards;
     private final HandcardsLayoutContainer firstEnemyHand;
@@ -463,7 +466,7 @@ public class GameViewPresenter extends AbstractPresenter {
      *
      * @param msg die Nachricht die vom server gesendet wird, wenn ein Spieler eine Karte ausspielz.
      * @author Devin
-     * @since Sprint 6,7
+     * @since Sprint 6
      */
     @FXML
     @Subscribe
@@ -712,7 +715,7 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @FXML
     @Subscribe
-    public void omDrawHandMessage (DrawHandMessage message) {
+    public void onDrawHandMessage (DrawHandMessage message) {
         numberOfPlayersInGame = message.getNumberOfPlayers();
         Platform.runLater(() -> {
             if (lobbyID.equals(message.getTheLobbyID())) {
@@ -802,6 +805,27 @@ public class GameViewPresenter extends AbstractPresenter {
                 dialogStage.setResizable(false);
                 dialogStage.showAndWait();
             });
+        }
+    }
+
+    /**
+     * Die Anzahl der Karten auf Deck wird aktualisiert und eventuell die Karten vom Ablegestapel entfernt.
+     *
+     * @param msg die Nachricht
+     * @author Fenja, Anna
+     * @since Sprint 7
+     */
+    @Subscribe
+    public void onCardsDeckSizeMessage(CardsDeckSizeMessage msg) {
+        if (msg.getGameID().equals(lobbyID)) {
+            if (msg.getPlayer().equals(loggedInUser)) {
+                Platform.runLater(() -> {
+                    //countDeckLabel.setText(String.valueOf(msg.getCardsDeckSize()));
+                    //if (msg.getDiscardPileWasCleared()) {
+                    //    discardPilePane.getChildren().clear();
+                    //}
+                });
+            }
         }
     }
 
