@@ -311,7 +311,10 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
-        getInGameUserList(this.lobbyID);
+        if (message.getLobbyID().equals(this.lobbyID)) {
+            getInGameUserList(this.lobbyID);
+            LOG.debug("A User left the Lobby. Updating Users now.");
+        }
     }
 
     /**
