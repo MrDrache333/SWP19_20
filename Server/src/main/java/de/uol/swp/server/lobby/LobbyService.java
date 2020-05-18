@@ -78,7 +78,7 @@ public class LobbyService extends AbstractService {
     public void onCreateLobbyRequest(CreateLobbyRequest msg) {
         if (containsLobbyName(msg.getLobbyName())) {
             LOG.info("Lobby wurde nicht erstellt");
-            ServerMessage returnMessage = new CreateLobbyMessage(null, null, null, null, null);
+            ServerMessage returnMessage = new CreateLobbyMessage(null, null, msg.getUser(), null, null);
             post(returnMessage);
         } else {
             UUID chatID = lobbyManagement.createLobby(msg.getLobbyName(), msg.getLobbyPassword(), new LobbyUser(msg.getOwner()));
