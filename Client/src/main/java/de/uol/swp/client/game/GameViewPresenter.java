@@ -246,7 +246,7 @@ public class GameViewPresenter extends AbstractPresenter {
          * Aktionszonen = Hellblau
          * Abwerfzonen = Rot
          */
-
+        /*
         handcards.setStyle("-fx-background-color: chartreuse");
         firstEnemyHand.setStyle("-fx-background-color: chartreuse");
         secondEnemyHand.setStyle("-fx-background-color: chartreuse");
@@ -263,7 +263,7 @@ public class GameViewPresenter extends AbstractPresenter {
         firstEnemyDLC.setStyle("-fx-background-color: darkviolet");
         secondEnemyDLC.setStyle("-fx-background-color: darkviolet");
         thirdEnemyDLC.setStyle("-fx-background-color: darkviolet");
-
+        */
     }
 
     /**
