@@ -36,7 +36,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -324,6 +323,7 @@ public class GameViewPresenter extends AbstractPresenter {
             }
             moveCardsToDiscardPile(playedCardLayoutContainer.getChildren(), true);
         }
+        onStartPhase(msg.getGameID(), msg.getUser(), msg);
     }
 
     /**
@@ -372,39 +372,32 @@ public class GameViewPresenter extends AbstractPresenter {
     // TODO: Karte wenn sie gekauft wird, von der richtigen Postition einfliegen lassen. ( Weiter nach rechts)
     @Subscribe
     public void onBuyCardMessage(BuyCardMessage msg) {
-        System.out.println(msg.getCounterCard());
         if (msg.getLobbyID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
-            if (msg.isBuyCard()) {
-                ImageView selectedCard = (ImageView) mouseEvent.getSource();
-                String pfad = "file:Client/src/main/resources/cards/images/" + msg.getCardID().toString() + ".png";
-                Image picture = new Image(pfad);
-                ImageView newCardImage = new ImageView(picture);
-                LOG.debug("Der Spieler " + msg.getCurrentUser() + " hat die Karte " + msg.getCardID() + " gekauft.");
-                // fügt ein "neues" Bild an der Stelle des alten Bildes im Shop hinzu
-                newCardImage.setPreserveRatio(true);
-                newCardImage.setFitHeight(107);
-                newCardImage.setFitWidth(Math.round(newCardImage.getBoundsInLocal().getWidth()));
-                newCardImage.setLayoutX(selectedCard.getLayoutX());
-                newCardImage.setLayoutY(selectedCard.getLayoutY());
-                newCardImage.setId(String.valueOf(msg.getCardID()));
-                Platform.runLater(() -> {
-                    gameViewWIP.getChildren().add(newCardImage);
-                    AnimationManagement.buyCard(newCardImage);
-                    gameViewWIP.getChildren().remove(newCardImage);
-                    discardPilePane.getChildren().add(newCardImage);
-                });
-                if (msg.getCounterCard() < 1) {
-                    ColorAdjust makeImageDarker = new ColorAdjust();
-                    makeImageDarker.setBrightness(-0.7);
-                    selectedCard.setEffect(makeImageDarker);
-                }
-                playAllMoneyCardsOnHand();
-            } else {
-                showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht kaufen!", "Fehler");
-                LOG.debug("Der Kauf der Karte " + msg.getCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
+            ImageView selectedCard = (ImageView) mouseEvent.getSource();
+            String pfad = "file:Client/src/main/resources/cards/images/" + msg.getCardID().toString() + ".png";
+            Image picture = new Image(pfad);
+            ImageView newCardImage = new ImageView(picture);
+            LOG.debug("Der Spieler " + msg.getCurrentUser() + " hat die Karte " + msg.getCardID() + " gekauft.");
+            // fügt ein "neues" Bild an der Stelle des alten Bildes im Shop hinzu
+            newCardImage.setPreserveRatio(true);
+            newCardImage.setFitHeight(107);
+            newCardImage.setFitWidth(Math.round(newCardImage.getBoundsInLocal().getWidth()));
+            newCardImage.setLayoutX(selectedCard.getLayoutX());
+            newCardImage.setLayoutY(selectedCard.getLayoutY());
+            newCardImage.setId(String.valueOf(msg.getCardID()));
+            Platform.runLater(() -> {
+                gameViewWIP.getChildren().add(newCardImage);
+                AnimationManagement.buyCard(newCardImage);
+                gameViewWIP.getChildren().remove(newCardImage);
+                discardPilePane.getChildren().add(newCardImage);
+            });
+            if (msg.getCounterCard() < 1) {
+                ColorAdjust makeImageDarker = new ColorAdjust();
+                makeImageDarker.setBrightness(-0.7);
+                selectedCard.setEffect(makeImageDarker);
             }
-            //TODO: die Geldkarten die für den Kauf benötigt wurden, müssen auf den Ablagestapel gelegt werden
         }
+        //TODO: die Geldkarten die für den Kauf benötigt wurden, müssen auf den Ablagestapel gelegt werden
     }
 
     /**
@@ -542,11 +535,6 @@ public class GameViewPresenter extends AbstractPresenter {
         onStartPhase(msg.getGameID(), msg.getUser(), msg);
     }
 
-    @Subscribe
-    public void onStartClearPhaseMessage(StartClearPhaseMessage msg) {
-        onStartPhase(msg.getGameID(), msg.getUser(), msg);
-    }
-
     /**
      * Aktualisiert die Anzeige
      *
@@ -671,27 +659,6 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Hier werden alle Geldkarten, die sich auf der Hand befinden, ausgespielt
-     *
-     * @author Anna
-     * @since Sprint 7
-     */
-    private void playAllMoneyCardsOnHand() {
-        synchronized (handcards) {
-            for (Node c : handcards.getChildren()) {
-                ImageView card = (ImageView) c;
-                if (card.getId().equals("1") || card.getId().equals("2") || card.getId().equals("3")) {
-                    Platform.runLater(() -> {
-                        AnimationManagement.playCard(card, playedCardLayoutContainer.getChildren().size());
-                        handcards.getChildren().remove(c);
-                        playedCardLayoutContainer.getChildren().add(card);
-                    });
-                }
-            }
-        }
-    }
-
-    /**
      * Die Karten werden zum Ablagestapel bewegt
      *
      * @param children Das children von dem Karten Stapel
@@ -807,28 +774,28 @@ public class GameViewPresenter extends AbstractPresenter {
         });
     }
 
-//}
-
     /**
      * Hier werden alle Geldkarten, die sich auf der Hand befinden, ausgespielt
      *
-     * @author Anna
+     * @author Anna, Rike
      * @since Sprint 7
      */
-    public void playAllMoneyCardsOnHand() {
-        for (Node c : handcards.getChildren()) {
-            ImageView card = (ImageView) c;
-            if (card.getId().equals("1") || card.getId().equals("2") || card.getId().equals("3")) {
-                usableMoney += Integer.parseInt(card.getId());
-                Platform.runLater(() -> {
-                    AnimationManagement.playCard(card, playedCardLayoutContainer.getChildren().size());
-                    handcards.getChildren().remove(c);
-                    playedCardLayoutContainer.getChildren().add(card);
-                });
+    private void playAllMoneyCardsOnHand() {
+        synchronized (handcards) {
+            for (Node c : handcards.getChildren()) {
+                ImageView card = (ImageView) c;
+                if (card.getId().equals("1") || card.getId().equals("2") || card.getId().equals("3")) {
+                    usableMoney += Integer.parseInt(card.getId());
+                    Platform.runLater(() -> {
+                        AnimationManagement.playCard(card, playedCardLayoutContainer.getChildren().size());
+                        handcards.getChildren().remove(c);
+                        playedCardLayoutContainer.getChildren().add(card);
+                    });
+                }
             }
+            numberOfMoney.setText(usableMoney + " Geld");
+            playAllMoneyCardsButton.setDisable(true);
         }
-        numberOfMoney.setText(usableMoney + " Geld");
-        playAllMoneyCardsButton.setDisable(true);
     }
 
     /**
