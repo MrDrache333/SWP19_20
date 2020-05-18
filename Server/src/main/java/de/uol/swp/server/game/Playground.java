@@ -11,7 +11,6 @@ import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.lobby.Lobby;
-import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
@@ -71,7 +70,7 @@ public class Playground extends AbstractPlayground {
         this.compositePhase = new CompositePhase(this);
         this.lobbySizeOnStart = (short) lobby.getUsers().size();
         this.cardsPackField = new JsonCardParser().loadPack("Basispack");
-        this.chosenCards = ((LobbyDTO) lobby).getChosenCards();
+        this.chosenCards = lobby.getChosenCards();
         initializeCardField();
     }
 
@@ -127,7 +126,7 @@ public class Playground extends AbstractPlayground {
             //Spieler muss Clearphase durchlaufen haben
             if (actualPhase != Phase.Type.Clearphase) return;
             if (actualPlayer != latestGavedUpPlayer) {
-                sendPlayersHand();
+                //sendPlayersHand();
                 sendCardsDeckSize();
             }
             int index = players.indexOf(nextPlayer);
@@ -195,7 +194,7 @@ public class Playground extends AbstractPlayground {
                 theIdsFromTheHand.add(card.getId());
             }
             players.forEach(n -> {
-                StartClearPhaseMessage msg = new StartClearPhaseMessage(currentPlayer.getTheUserInThePlayer(), theSpecificLobbyID, getIndexOfPlayer(currentPlayer), getIndexOfPlayer(n), theIdsFromTheHand);
+                StartClearPhaseMessage msg = new StartClearPhaseMessage(currentPlayer.getTheUserInThePlayer(), theSpecificLobbyID, getIndexOfPlayer(n), getIndexOfPlayer(currentPlayer), theIdsFromTheHand);
                 gameService.sendToSpecificPlayer(n, msg);
             });
 
