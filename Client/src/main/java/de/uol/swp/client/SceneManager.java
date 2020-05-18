@@ -9,7 +9,6 @@ import de.uol.swp.client.auth.LoginPresenter;
 import de.uol.swp.client.auth.events.ShowLoginViewEvent;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.game.GameService;
-import de.uol.swp.client.game.event.GameQuitEvent;
 import de.uol.swp.client.lobby.CreateLobbyPresenter;
 import de.uol.swp.client.lobby.JoinLobbyPresenter;
 import de.uol.swp.client.lobby.LobbyService;
@@ -179,12 +178,6 @@ public class SceneManager {
         });
     }
 
-    @Subscribe
-    public void onGameQuitEvent(GameQuitEvent event) {
-        showScene(mainScene, "test");
-    }
-
-
     public void showError(String message, String e) {
         Platform.runLater(() -> {
             Alert a = new Alert(Alert.AlertType.ERROR, message + e);
@@ -193,7 +186,7 @@ public class SceneManager {
     }
 
     public void showServerError(String e) {
-        showError("Server returned an error:\n", e);
+        showError("Der Server gab einen Fehler zurück:\n", e);
     }
 
     public void showError(String e) {
@@ -219,14 +212,14 @@ public class SceneManager {
 
     public void showLoginErrorScreen() {
         Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Error logging in to server");
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Fehler beim Einloggen auf den Server!");
             alert.showAndWait();
             showLoginScreen();
         });
     }
 
     public void showMainScreen(User currentUser) {
-        showScene(primaryScene, "Welcome " + currentUser.getUsername());
+        showScene(primaryScene, "Willkommen " + currentUser.getUsername());
     }
 
     public void showLoginScreen() {
@@ -367,11 +360,11 @@ public class SceneManager {
         FXMLLoader loader = injector.getInstance(FXMLLoader.class);
         try {
             URL url = getClass().getResource(fxmlFile);
-            LOG.debug("Loading " + url);
+            LOG.debug("Lade " + url);
             loader.setLocation(url);
             rootPane = loader.load();
         } catch (Exception e) {
-            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
+            throw new RuntimeException("Konnte View nicht laden!" + e.getMessage(), e);
         }
         return rootPane;
     }
@@ -381,12 +374,12 @@ public class SceneManager {
         FXMLLoader loader = injector.getInstance(FXMLLoader.class);
         try {
             URL url = getClass().getResource(fxmlFile);
-            LOG.debug("Loading " + url);
+            LOG.debug("Lade " + url);
             loader.setLocation(url);
             loader.setController(presenter);
             rootPane = loader.load();
         } catch (Exception e) {
-            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
+            throw new RuntimeException("Konnte View nicht laden!" + e.getMessage(), e);
         }
         return rootPane;
     }
@@ -411,12 +404,12 @@ public class SceneManager {
         FXMLLoader loader = injector.getInstance(FXMLLoader.class);
         try {
             URL url = getClass().getResource(SettingsPresenter.fxml);
-            LOG.debug("Loading " + url);
+            LOG.debug("Lade " + url);
             loader.setLocation(url);
             loader.setController(settingsPresenter);
             rootPane = loader.load();
         } catch (Exception e) {
-            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
+            throw new RuntimeException("Konnte View nicht laden!" + e.getMessage(), e);
         }
         return rootPane;
     }
@@ -426,12 +419,12 @@ public class SceneManager {
         FXMLLoader loader = injector.getInstance(FXMLLoader.class);
         try {
             URL url = getClass().getResource(CreateLobbyPresenter.fxml);
-            LOG.debug("Loading " + url);
+            LOG.debug("Lade " + url);
             loader.setLocation(url);
             loader.setController(createLobbyPresenter);
             rootPane = loader.load();
         } catch (Exception e) {
-            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
+            throw new RuntimeException("Konnte View nicht laden!" + e.getMessage(), e);
         }
         return rootPane;
     }
@@ -441,12 +434,12 @@ public class SceneManager {
         FXMLLoader loader = injector.getInstance(FXMLLoader.class);
         try {
             URL url = getClass().getResource(JoinLobbyPresenter.fxml);
-            LOG.debug("Loading " + url);
+            LOG.debug("Lade " + url);
             loader.setLocation(url);
             loader.setController(joinLobbyPresenter);
             rootPane = loader.load();
         } catch (Exception e) {
-            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
+            throw new RuntimeException("Konnte View nicht laden!" + e.getMessage(), e);
         }
         return rootPane;
     }
@@ -456,12 +449,12 @@ public class SceneManager {
         FXMLLoader loader = injector.getInstance(FXMLLoader.class);
         try {
             URL url = getClass().getResource(DeleteAccountPresenter.fxml);
-            LOG.debug("Loading " + url);
+            LOG.debug("Lade " + url);
             loader.setLocation(url);
             loader.setController(deleteAccountPresenter);
             rootPane = loader.load();
         } catch (Exception e) {
-            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
+            throw new RuntimeException("Konnte View nicht laden!" + e.getMessage(), e);
         }
         return rootPane;
     }

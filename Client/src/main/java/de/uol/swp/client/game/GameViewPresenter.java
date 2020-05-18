@@ -287,7 +287,6 @@ public class GameViewPresenter extends AbstractPresenter {
         allImageViews = null;
     }
 
-
     /**
      * Aufgeben Button gedrückt Ereignis.
      *
@@ -352,7 +351,7 @@ public class GameViewPresenter extends AbstractPresenter {
     public void newUser(UserJoinedLobbyMessage userJoinedLobbyMessage) {
         if (userJoinedLobbyMessage.getLobbyID().equals(this.lobbyID)) {
             lobbyService.retrieveAllUsersInLobby(lobbyID);
-            LOG.debug("New user in Lobby, LobbyService is retrieving users");
+            LOG.debug("Neuer User in der Lobby, LobbyService empfängt Nutzer");
         }
     }
 
@@ -385,7 +384,7 @@ public class GameViewPresenter extends AbstractPresenter {
     @Subscribe
     public void userList(AllOnlineUsersInLobbyResponse allOnlineUsersInLobbyResponse) {
         if (allOnlineUsersInLobbyResponse.getLobbyID().equals(this.lobbyID)) {
-            LOG.debug("Update of user list with" + allOnlineUsersInLobbyResponse.getUsers());
+            LOG.debug("Aktualisieren der Userliste mit" + allOnlineUsersInLobbyResponse.getUsers());
             updateUsersList(allOnlineUsersInLobbyResponse.getUsers());
         }
     }
@@ -836,7 +835,7 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Skips die aktuelle Phase des Spielers zur nächsten.
+     * Skipt die aktuelle Phase des Spielers zur nächsten.
      *
      * @author Devin S.
      * @since Sprint6
@@ -847,7 +846,7 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Methode, die beim anklicken einer Handkarte ausgeführt wird.
+     * Methode, die beim Anklicken einer Handkarte ausgeführt wird.
      *
      * @param gameID       Die ID des Spiels
      * @param loggedInUser der User der gerade eingelogt im Spiel ist und die Karte ausgewählt hat.
@@ -866,7 +865,7 @@ public class GameViewPresenter extends AbstractPresenter {
         bigCardImage.setLayoutX(725.0);
         bigCardImage.setLayoutY(205.0);
         gameViewWIP.getChildren().add(bigCardImage);
-        if (id < 6) {
+        if (id > 6) {
             Button play = new Button("auspielen");
             Button back = new Button("zurück");
             play.setLayoutX(732.0);
@@ -957,7 +956,7 @@ public class GameViewPresenter extends AbstractPresenter {
         double mouseX = mouseEvent.getSceneX();
         double mouseY = mouseEvent.getSceneY();
         ImageView cardImage = (ImageView) mouseEvent.getSource();
-        // Überprüdung ob sich die angeklickte Karte innerhalb des Shops befindet und nicht bereits auf dem Ablagestapel
+        // Überprüfung ob sich die angeklickte Karte innerhalb des Shops befindet und nicht bereits auf dem Ablagestapel
         //    if (mouseX > shopTeppich.getLayoutX() && mouseX < (shopTeppich.getLayoutX() + shopTeppich.getWidth()) &&
         //          mouseY > shopTeppich.getLayoutY() && mouseY < (shopTeppich.getLayoutY() + shopTeppich.getHeight()) && cardImage.getEffect() == null) {
         // Karte befindet sich im Shop
@@ -967,7 +966,7 @@ public class GameViewPresenter extends AbstractPresenter {
         }
         String cardID = cardImage.getId();
         String PathCardLargeView = "file:Client/src/main/resources/cards/images/" + cardID + ".png";
-        // ein großes Bild der Karte wird hinzugefügt
+        // Ein großes Bild der Karte wird hinzugefügt
         ImageView bigCardImage = new ImageView(new Image(PathCardLargeView));
         // setzt die Größe und die Position des Bildes. Das Bild ist im Vordergrund. Bild wird hinzugefügt
         bigCardImage.setFitHeight(225.0);
@@ -976,9 +975,9 @@ public class GameViewPresenter extends AbstractPresenter {
         bigCardImage.setLayoutX(725.0);
         bigCardImage.setLayoutY(205.0);
         gameViewWIP.getChildren().add(bigCardImage);
-        // es werden zwei Buttons hinzugefügt (zurück und kaufen)
-        Button buy = new Button("kaufen");
-        Button back = new Button("zurück");
+        // Es werden zwei Buttons hinzugefügt (Zurück und Kaufen)
+        Button buy = new Button("Kaufen");
+        Button back = new Button("Zurück");
         gameViewWIP.getChildren().add(buy);
         gameViewWIP.getChildren().add(back);
         // Position der Buttons wird gesetzt
@@ -997,7 +996,7 @@ public class GameViewPresenter extends AbstractPresenter {
             gameService.buyCard(req);
             this.mouseEvent = mouseEvent;
         });
-        // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt
+        // Aktion hinter dem Zurück-Button -> Buttons und das große Bild werden entfernt
         back.setOnAction(event -> {
             buy.setVisible(false);
             back.setVisible(false);
