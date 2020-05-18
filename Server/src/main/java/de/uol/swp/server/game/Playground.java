@@ -48,6 +48,7 @@ public class Playground extends AbstractPlayground {
     private short lobbySizeOnStart;
     private CardPack cardsPackField;
     private ArrayList<Short> chosenCards;
+    private Integer PlayerNumber = 0;
 
     /**
      * Erstellt ein neues Spielfeld und übergibt die Spieler. Die Reihenfolge der Spieler wird zufällig zusammengestellt.
@@ -60,7 +61,8 @@ public class Playground extends AbstractPlayground {
     @Inject
     Playground(Lobby lobby, GameService gameService) {
         for (User user : lobby.getUsers()) {
-            Player player = new Player(user.getUsername());
+            PlayerNumber++;
+            Player player = new Player(user.getUsername(), PlayerNumber);
             player.setTheUserInThePlayer(user);
             players.add(player);
             playerTurns.put(player, 0);
