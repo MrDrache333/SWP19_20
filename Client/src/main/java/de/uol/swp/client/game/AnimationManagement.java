@@ -1,5 +1,6 @@
 package de.uol.swp.client.game;
 
+import de.uol.swp.client.game.container.DiscardPileLayoutContainer;
 import de.uol.swp.client.game.container.PlayedCardLayoutContainer;
 import javafx.animation.PathTransition;
 import javafx.scene.Parent;
@@ -165,8 +166,8 @@ public class AnimationManagement {
      * @author Darian
      * @since Sprint7
      */
-    public static PathTransition clearCards(ImageView card) {
-        return createLineToPath(card, keepPosition(card), ABLAGE_X, ABLAGE_Y);
+    public static PathTransition clearCards(ImageView card, DiscardPileLayoutContainer discardPile) {
+        return createLineToPath(card, keepPosition(card), discardPile.getLayoutX(), discardPile.getLayoutY());
     }
 
     /**

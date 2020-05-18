@@ -360,6 +360,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * @author Darian
      * @since Sprint7
      */
+    /*
     @Subscribe
     public void onStartClearPhase(StartClearPhaseMessage msg){
         if (msg.getGameID().equals(this.lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
@@ -369,7 +370,7 @@ public class GameViewPresenter extends AbstractPresenter {
             moveCardsToDiscardPile(myPCLC.getChildren(), true);
         }
     }
-
+*/
     /**
      * Aktualisiert den loggedInUser sowie die Liste, falls sich der Username geändert hat
      *
@@ -605,21 +606,12 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     @Subscribe
     public void onStartClearPhaseMesage (StartClearPhaseMessage msg) {
-        System.out.println(msg.getCurrentUser().getUsername());
-        System.out.println(loggedInUser.getUsername());
-        System.out.println(msg.getUserPlaceNumber());
-        System.out.println(msg.getEnemyPlaceNumber());
-
         // Wenn die ClearMessage an den currentPlayer geht werden, seine Handkarten und
         // ausgespielten Karten auf den Ablagestapel getan und fünf neue Karten gezogen.
         if (msg.getGameID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
-            System.out.println("hi");
             Platform.runLater(() -> {
-                        // TODO: Animation für das aufräumen des Feldes muss eingefügt werden.
-                        myDPLC.getChildren().addAll(myPCLC.getChildren());
-                        myPCLC.getChildren().clear();
-                        myDPLC.getChildren().addAll(handcards.getChildren());
-                        handcards.getChildren().clear();
+                        moveCardsToDiscardPile(handcards.getChildren(), false, myDPLC);
+                        moveCardsToDiscardPile(myPCLC.getChildren(), true, myDPLC);
                     });
             ArrayList<Short> HandCardID = msg.getCardsToDraw();
             HandCardID.forEach((n) -> {
@@ -640,12 +632,9 @@ public class GameViewPresenter extends AbstractPresenter {
             playerIndexNumbers.remove(msg.getUserPlaceNumber());
 
             if (playerIndexNumbers.get(0).equals(msg.getEnemyPlaceNumber())) {
-                System.out.println("hhi");
                 Platform.runLater(() -> {
-                    firstEnemyDPLC.getChildren().addAll(firstEnemyHand.getChildren());
-                    firstEnemyHand.getChildren().clear();
-                    firstEnemyDPLC.getChildren().addAll(firstEnemyPCLC.getChildren());
-                    firstEnemyPCLC.getChildren().clear();
+                    moveCardsToDiscardPile(firstEnemyHand.getChildren(), false, firstEnemyDPLC);
+                    moveCardsToDiscardPile(firstEnemyPCLC.getChildren(), true, firstEnemyDPLC);
                 });
                 for(int i=0; i<5; i++) {
                     Card card = new Card("card_back", firstEnemyHand.getLayoutX(), firstEnemyHand.getLayoutY(), firstEnemyHand.getHeight());
@@ -659,12 +648,9 @@ public class GameViewPresenter extends AbstractPresenter {
             }
 
             if (playerIndexNumbers.get(1).equals(msg.getEnemyPlaceNumber())) {
-                System.out.println("hhihi");
                 Platform.runLater(() -> {
-                    secondEnemyDPLC.getChildren().addAll(secondEnemyHand.getChildren());
-                    secondEnemyHand.getChildren().clear();
-                    secondEnemyDPLC.getChildren().addAll(secondEnemyPCLC.getChildren());
-                    secondEnemyPCLC.getChildren().clear();
+                    moveCardsToDiscardPile(secondEnemyHand.getChildren(), false, secondEnemyDPLC);
+                    moveCardsToDiscardPile(secondEnemyPCLC.getChildren(), true, secondEnemyDPLC);
                 });
                 for(int i=0; i<5; i++) {
                     Platform.runLater(() -> {
@@ -677,14 +663,10 @@ public class GameViewPresenter extends AbstractPresenter {
 
                 return;
             }
-
             if (playerIndexNumbers.get(2).equals(msg.getEnemyPlaceNumber())) {
-                System.out.println("hhihihi");
                 Platform.runLater(() -> {
-                    thirdEnemyDPLC.getChildren().addAll(thirdEnemyHand.getChildren());
-                    thirdEnemyHand.getChildren().clear();
-                    thirdEnemyDPLC.getChildren().addAll(thirdEnemyPCLC.getChildren());
-                    thirdEnemyPCLC.getChildren().clear();
+                    moveCardsToDiscardPile(thirdEnemyHand.getChildren(), false, thirdEnemyDPLC);
+                    moveCardsToDiscardPile(thirdEnemyPCLC.getChildren(), true, thirdEnemyDPLC);
                 });
                 for(int i=0; i<5; i++) {
                     Platform.runLater(() -> {
@@ -919,35 +901,14 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Hier werden alle Geldkarten, die sich auf der Hand befinden, ausgespielt
-     *
-     * @author Anna
-     * @since Sprint 7
-     */
-    private void playAllMoneyCardsOnHand() {
-        synchronized (handcards) {
-            for (Node c : handcards.getChildren()) {
-                ImageView card = (ImageView) c;
-                if (card.getId().equals("1") || card.getId().equals("2") || card.getId().equals("3")) {
-                    Platform.runLater(() -> {
-                        AnimationManagement.playCard(card, myPCLC.getChildren().size());
-                        handcards.getChildren().remove(c);
-                        myPCLC.getChildren().add(card);
-                    });
-                }
-            }
-        }
-    }
-
-    /**
      * Die Karten werden zum Ablagestapel bewegt
      *
      * @param children Das children von dem Karten Stapel
-     * @param achtionCards true wenn die Karten in der Aktionszone liegen
+     * @param actionCards true wenn die Karten in der Aktionszone liegen
      * @author Darian
      * @since Sprint7
      */
-    private void moveCardsToDiscardPile(ObservableList<Node> children, boolean achtionCards){
+    private void moveCardsToDiscardPile(ObservableList<Node> children, boolean actionCards, DiscardPileLayoutContainer discardPile){
         for (Node c : children) {
             Platform.runLater(() -> {
                 ImageView card = (ImageView) c;
@@ -958,7 +919,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 newCardImage.setFitHeight(107);
                 newCardImage.setFitWidth(Math.round(newCardImage.getBoundsInLocal().getWidth()));
                 newCardImage.setLayoutX(450 + c.getLayoutX());
-                if (achtionCards) {
+                if (actionCards) {
                     newCardImage.setLayoutY(493);
                 }
                 else{
@@ -967,7 +928,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 newCardImage.setId(String.valueOf(c));
                 children.remove(c);
                 gameViewWIP.getChildren().add(newCardImage);
-                PathTransition pathTransition = AnimationManagement.clearCards(newCardImage);
+                PathTransition pathTransition = AnimationManagement.clearCards(newCardImage, discardPile);
                 pathTransition.setOnFinished(actionEvent -> {
                     gameViewWIP.getChildren().remove(newCardImage);
                     ImageView iv = new ImageView(picture);
@@ -1049,7 +1010,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * @author Anna
      * @since Sprint 7
      */
-    public void playAllMoneyCardsOnHand2() {
+    public void playAllMoneyCardsOnHand() {
         for (Node c : handcards.getChildren()) {
             ImageView card = (ImageView) c;
             if (card.getId().equals("1") || card.getId().equals("2") || card.getId().equals("3")) {

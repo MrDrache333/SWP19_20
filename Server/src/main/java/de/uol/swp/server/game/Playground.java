@@ -186,6 +186,7 @@ public class Playground extends AbstractPlayground {
      * @since Sprint5
      */
     public void nextPhase() {
+        ArrayList<Short> theIdsFromTheHand = new ArrayList<>(5);
         if (actualPhase == Phase.Type.Clearphase) {
             throw new GamePhaseException("Du kannst die Clearphase nicht überspringen!");
         }
