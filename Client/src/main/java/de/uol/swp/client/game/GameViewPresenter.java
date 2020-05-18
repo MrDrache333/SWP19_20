@@ -15,6 +15,7 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
+import javafx.animation.PathTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -292,7 +293,7 @@ public class GameViewPresenter extends AbstractPresenter {
     @Subscribe
     public void onStartClearPhase(StartClearPhaseMessage msg){
         if (msg.getGameID().equals(this.lobbyID) && msg.getUser().equals(loggedInUser)) {
-            synchronized (handcards){
+            synchronized (handcards) {
                 moveCardsToDiscardPile(handcards.getChildren(), false);
             }
             moveCardsToDiscardPile(playedCardLayoutContainer.getChildren(), true);
@@ -625,24 +626,18 @@ public class GameViewPresenter extends AbstractPresenter {
                 newCardImage.setPreserveRatio(true);
                 newCardImage.setFitHeight(107);
                 newCardImage.setFitWidth(Math.round(newCardImage.getBoundsInLocal().getWidth()));
-                newCardImage.setLayoutX(450 + c.getLayoutX());
+                newCardImage.setLayoutX(250 + c.getLayoutX());
                 if (achtionCards) {
-                    newCardImage.setLayoutY(493);
-                }
-                else{
-                    newCardImage.setLayoutY(610);
+                    newCardImage.setLayoutY(433);
+                } else {
+                    newCardImage.setLayoutY(550);
                 }
                 newCardImage.setId(String.valueOf(c));
                 children.remove(c);
                 gameViewWIP.getChildren().add(newCardImage);
-                PathTransition pathTransition = AnimationManagement.clearCards(newCardImage);
-                pathTransition.setOnFinished(actionEvent -> {
-                    gameViewWIP.getChildren().remove(newCardImage);
-                    ImageView iv = new ImageView(picture);
-                    iv.setPreserveRatio(true);
-                    iv.setFitHeight(107);
-                    discardPilePane.getChildren().add(iv);
-                });
+                discardPilePane.getChildren().add(newCardImage);
+                AnimationManagement.clearCards(newCardImage);
+                gameViewWIP.getChildren().remove(newCardImage);
             });
         }
     }
