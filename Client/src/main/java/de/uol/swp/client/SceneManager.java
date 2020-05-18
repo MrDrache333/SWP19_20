@@ -37,6 +37,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -44,6 +45,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -508,7 +510,7 @@ public class SceneManager {
         if (createLobbyScene == null) {
             Parent rootPane = initCreateLobbyPresenter(createLobbyPresenter);
             createLobbyScene = new Scene(rootPane, 400, 255);
-          createLobbyScene.getStylesheets().add(createLobbyPresenter.css);
+            createLobbyScene.getStylesheets().add(createLobbyPresenter.css);
         }
     }
 
@@ -519,7 +521,6 @@ public class SceneManager {
             joinLobbyScene.getStylesheets().add(JoinLobbyPresenter.css);
         }
     }
-
 
 
     /**
@@ -547,13 +548,19 @@ public class SceneManager {
                             break;
                         case G:
                             LOG.debug("Give Up Hotkey pressed");
+                            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "");
+                            alert.setResizable(false);
+                            alert.initModality(Modality.APPLICATION_MODAL);
+                            alert.getDialogPane().setContentText("");
+                            alert.getDialogPane().setHeaderText("Möchtest du wirklich aufgeben?");
+                            Optional<ButtonType> result = alert.showAndWait();
                             gameService.giveUp(lobbyID, (UserDTO) user);
                             break;
                     }
                     event.consume();
                 } else if (focusedTab.equals("Menu")) {
                     switch (event.getCode()) {
-                        case C:
+                        case L:
                             LOG.debug("Create Lobby Hotkey pressed");
                             showCreateLobbyScreen(primaryPresenter.getUser());
                             break;
