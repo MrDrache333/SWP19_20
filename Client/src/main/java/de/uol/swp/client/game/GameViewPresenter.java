@@ -15,7 +15,6 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
-import javafx.animation.PathTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -34,6 +33,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -61,7 +61,7 @@ public class GameViewPresenter extends AbstractPresenter {
     private User loggedInUser;
 
     // @FXML
-    //   private Pane gameView;
+    // private Pane gameView;
 
     @FXML
     private Pane gameViewWIP;
@@ -95,6 +95,10 @@ public class GameViewPresenter extends AbstractPresenter {
     private ImageView cardPlaceholder9;
     @FXML
     private ImageView cardPlaceholder10;
+    @FXML
+    private StackPane countDeckPane;
+    @FXML
+    private Label countDeckLabel;
 
     private final HandcardsLayoutContainer handcards;
     private final PlayedCardLayoutContainer playedCardLayoutContainer;
@@ -105,6 +109,8 @@ public class GameViewPresenter extends AbstractPresenter {
     private final ChatViewPresenter chatViewPresenter;
     private final Injector injector;
     private final GameManagement gameManagement;
+
+    private ArrayList<Short> handCardIDs;
 
     private final EventHandler<MouseEvent> handCardEventHandler = new EventHandler() {
         @Override
@@ -276,6 +282,23 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
+     * Wenn die StartClearPhaseMessage kommt werden die Karten auf der Hand zum Ablagestapel bewegt
+     *
+     * @param msg Die Nachricht
+     * @author Darian
+     * @since Sprint7
+     */
+    @Subscribe
+    public void onStartClearPhase(StartClearPhaseMessage msg){
+        if (msg.getGameID().equals(this.lobbyID) && msg.getUser().equals(loggedInUser)) {
+            synchronized (handcards){
+                moveCardsToDiscardPile(handcards.getChildren(), false);
+            }
+            moveCardsToDiscardPile(playedCardLayoutContainer.getChildren(), true);
+        }
+    }
+
+    /**
      * Aktualisiert den loggedInUser sowie die Liste, falls sich der Username geändert hat
      *
      * @param message
@@ -338,14 +361,9 @@ public class GameViewPresenter extends AbstractPresenter {
                 newCardImage.setId(String.valueOf(msg.getCardID()));
                 Platform.runLater(() -> {
                     gameViewWIP.getChildren().add(newCardImage);
-                    PathTransition pathTransition = AnimationManagement.buyCard(newCardImage);
-                    pathTransition.setOnFinished(actionEvent -> {
-                        gameViewWIP.getChildren().remove(newCardImage);
-                        ImageView iv = new ImageView(picture);
-                        iv.setPreserveRatio(true);
-                        iv.setFitHeight(107);
-                        discardPilePane.getChildren().add(iv);
-                    });
+                    AnimationManagement.buyCard(newCardImage);
+                    gameViewWIP.getChildren().remove(newCardImage);
+                    discardPilePane.getChildren().add(newCardImage);
                 });
                 if (msg.getCounterCard() < 1) {
                     ColorAdjust makeImageDarker = new ColorAdjust();
@@ -370,7 +388,6 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     @Subscribe
     public void onPlayCardMessage(PlayCardMessage msg) {
-
         ImageView card = (ImageView) mouseEvent.getTarget();
         if (msg.getGameID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
             if (msg.getIsPlayed()) {
@@ -390,28 +407,6 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Fügt die Karte aus der DiscardPileLastCardMessage dem Ablagestapel hinzu.
-     *
-     * @param msg Die Nachricht
-     * @author Timo
-     * @Sprint 6
-     */
-    @Subscribe
-    public void onDiscardPileLastCardMessage(DiscardPileLastCardMessage msg) {
-        Platform.runLater(() -> {
-            if (msg.getGameID().equals(this.gameManagement.getID()) && msg.getUser().equals(this.loggedInUser)) {
-                String pfad = "file:Client/src/main/resources/cards/images/" + msg.getCardID() + ".png";
-                Image picture = new Image(pfad);
-                ImageView card = new ImageView(picture);
-                card.setFitHeight(107);
-                card.setPreserveRatio(true);
-                card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
-                discardPilePane.getChildren().add(card);
-            }
-        });
-    }
-
-    /**
      * Zeigt die Karten auf der Hand in der GameView an
      *
      * @author Devin S., Anna
@@ -419,11 +414,11 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @FXML
     @Subscribe
-    public void ShowNewHand(DrawHandMessage message) {
+    public void onDrawHandMessage(DrawHandMessage message) {
         Platform.runLater(() -> {
             if (lobbyID.equals(message.getTheLobbyID())) {
-                ArrayList<Short> HandCardID = message.getCardsOnHand();
-                HandCardID.forEach((n) -> {
+                handCardIDs = message.getCardsOnHand();
+                handCardIDs.forEach((n) -> {
                     String pfad = "file:Client/src/main/resources/cards/images/" + n + ".png";
                     Image picture = new Image(pfad);
                     ImageView card = new ImageView(picture);
@@ -432,9 +427,11 @@ public class GameViewPresenter extends AbstractPresenter {
                     card.setId(n.toString());
                     card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
                     deckPane.getChildren().add(card);
-                    AnimationManagement.addToHand(card, handcards.getChildren().size());
-                    deckPane.getChildren().remove(card);
-                    handcards.getChildren().add(card);
+                    synchronized (handcards) {
+                        AnimationManagement.addToHand(card, handcards.getChildren().size());
+                        deckPane.getChildren().remove(card);
+                        handcards.getChildren().add(card);
+                    }
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                 });
             }
@@ -473,10 +470,31 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
+     * Die Anzahl der Karten auf Deck wird aktualisiert und eventuell die Karten vom Ablegestapel entfernt.
+     *
+     * @param msg die Nachricht
+     * @author Fenja, Anna
+     * @since Sprint 7
+     */
+    @Subscribe
+    public void onCardsDeckSizeMessage(CardsDeckSizeMessage msg) {
+        if (msg.getGameID().equals(lobbyID)) {
+            if (msg.getPlayer().equals(loggedInUser)) {
+                Platform.runLater(() -> {
+                    countDeckLabel.setText(String.valueOf(msg.getCardsDeckSize()));
+                    if (msg.getDiscardPileWasCleared()) {
+                        discardPilePane.getChildren().clear();
+                    }
+                });
+            }
+        }
+    }
+
+    /**
      * Die usersView Liste wird geupdatet.
      * Äquivalent zu MainMenuPresenter.updateUsersList.
      *
-     * @param userList
+     * @param userList die neue Userliste
      * @author Marvin
      * @since Sprint3
      */
@@ -535,7 +553,6 @@ public class GameViewPresenter extends AbstractPresenter {
             back.setMinWidth(52.0);
             gameViewWIP.getChildren().add(play);
             gameViewWIP.getChildren().add(back);
-
             play.setOnAction(event -> {
                 gameViewWIP.getChildren().remove(play);
                 gameViewWIP.getChildren().remove(back);
@@ -556,19 +573,77 @@ public class GameViewPresenter extends AbstractPresenter {
             });
         } else {
             Button back = new Button("Zurück");
-
             back.setLayoutX(516.0);
             back.setLayoutY(385.0);
             back.setMinWidth(52.0);
             gameViewWIP.getChildren().add(back);
-
             // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt
             back.setOnAction(event -> {
                 gameViewWIP.getChildren().remove(back);
                 gameViewWIP.getChildren().remove(bigCardImage);
             });
         }
+    }
 
+    /**
+     * Hier werden alle Geldkarten, die sich auf der Hand befinden, ausgespielt
+     *
+     * @author Anna
+     * @since Sprint 7
+     */
+    private void playAllMoneyCardsOnHand() {
+        synchronized (handcards) {
+            for (Node c : handcards.getChildren()) {
+                ImageView card = (ImageView) c;
+                if (card.getId().equals("1") || card.getId().equals("2") || card.getId().equals("3")) {
+                    Platform.runLater(() -> {
+                        AnimationManagement.playCard(card, playedCardLayoutContainer.getChildren().size());
+                        handcards.getChildren().remove(c);
+                        playedCardLayoutContainer.getChildren().add(card);
+                    });
+                }
+            }
+        }
+    }
+
+    /**
+     * Die Karten werden zum Ablagestapel bewegt
+     *
+     * @param children Das children von dem Karten Stapel
+     * @param achtionCards true wenn die Karten in der Aktionszone liegen
+     * @author Darian
+     * @since Sprint7
+     */
+    private void moveCardsToDiscardPile(ObservableList<Node> children, boolean achtionCards){
+        for (Node c : children) {
+            Platform.runLater(() -> {
+                ImageView card = (ImageView) c;
+                String pfad = "file:Client/src/main/resources/cards/images/" + card.getId() + ".png";
+                Image picture = new Image(pfad);
+                ImageView newCardImage = new ImageView(picture);
+                newCardImage.setPreserveRatio(true);
+                newCardImage.setFitHeight(107);
+                newCardImage.setFitWidth(Math.round(newCardImage.getBoundsInLocal().getWidth()));
+                newCardImage.setLayoutX(450 + c.getLayoutX());
+                if (achtionCards) {
+                    newCardImage.setLayoutY(493);
+                }
+                else{
+                    newCardImage.setLayoutY(610);
+                }
+                newCardImage.setId(String.valueOf(c));
+                children.remove(c);
+                gameViewWIP.getChildren().add(newCardImage);
+                PathTransition pathTransition = AnimationManagement.clearCards(newCardImage);
+                pathTransition.setOnFinished(actionEvent -> {
+                    gameViewWIP.getChildren().remove(newCardImage);
+                    ImageView iv = new ImageView(picture);
+                    iv.setPreserveRatio(true);
+                    iv.setFitHeight(107);
+                    discardPilePane.getChildren().add(iv);
+                });
+            });
+        }
     }
 
     /**
@@ -632,24 +707,5 @@ public class GameViewPresenter extends AbstractPresenter {
             back.setVisible(false);
             bigCardImage.setVisible(false);
         });
-    }
-
-    /**
-     * Hier werden alle Geldkarten, die sich auf der Hand befinden, ausgespielt
-     *
-     * @author Anna
-     * @since Sprint 7
-     */
-    public void playAllMoneyCardsOnHand() {
-        for (Node c : handcards.getChildren()) {
-            ImageView card = (ImageView) c;
-            if (card.getId().equals("1") || card.getId().equals("2") || card.getId().equals("3")) {
-                Platform.runLater(() -> {
-                    AnimationManagement.playCard(card, playedCardLayoutContainer.getChildren().size());
-                    handcards.getChildren().remove(c);
-                    playedCardLayoutContainer.getChildren().add(card);
-                });
-            }
-        }
     }
 }

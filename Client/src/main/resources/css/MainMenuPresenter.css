@@ -28,7 +28,7 @@
     -fx-border-width: 2;
 }
 
-.list-cell, .cell {
+.cell {
     -fx-background-color: rgba(150, 123, 111, 0.65);
 }
 

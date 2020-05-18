@@ -164,7 +164,7 @@ public class PrimaryPresenter extends AbstractPresenter {
     @Subscribe
     private void userLeft(UserLeftLobbyMessage msg) {
         if (games.containsKey(msg.getLobbyID()) && msg.getUser().getUsername().equals(loggedInUser.getUsername())) {
-            closeTab(msg.getLobbyID(), true);
+            closeTab(msg.getLobbyID(), false);
         }
     }
 
