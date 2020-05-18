@@ -104,6 +104,8 @@ public class GameViewPresenter extends AbstractPresenter {
     private final HandcardsLayoutContainer handcards;
     private final PlayedCardLayoutContainer playedCardLayoutContainer;
 
+    private PathTransition pathTransition;
+
     private ObservableList<String> users;
     private final GameService gameService;
     private MouseEvent mouseEvent;
@@ -485,7 +487,9 @@ public class GameViewPresenter extends AbstractPresenter {
                 Platform.runLater(() -> {
                     countDeckLabel.setText(String.valueOf(msg.getCardsDeckSize()));
                     if (msg.getDiscardPileWasCleared()) {
-                        discardPilePane.getChildren().clear();
+                        pathTransition.setOnFinished(actionEvent->{
+                            discardPilePane.getChildren().clear();
+                        });
                     }
                 });
             }
@@ -636,7 +640,8 @@ public class GameViewPresenter extends AbstractPresenter {
                 children.remove(c);
                 gameViewWIP.getChildren().add(newCardImage);
                 discardPilePane.getChildren().add(newCardImage);
-                AnimationManagement.clearCards(newCardImage);
+                pathTransition = AnimationManagement.clearCards(newCardImage);
+
                 gameViewWIP.getChildren().remove(newCardImage);
             });
         }
