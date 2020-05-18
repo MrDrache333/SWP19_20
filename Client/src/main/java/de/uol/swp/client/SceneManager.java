@@ -433,7 +433,7 @@ public class SceneManager {
                     switch (event.getCode()) {
                         case C:
                             LOG.debug("Create Lobby Hotkey pressed");
-                            //Muss noch implementiert werden
+                            primaryPresenter.getUser();
                             break;
                     }
                     event.consume();
