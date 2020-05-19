@@ -925,7 +925,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 newCardImage.setFitHeight(107);
                 newCardImage.setFitWidth(Math.round(newCardImage.getBoundsInLocal().getWidth()));
                 newCardImage.setLayoutX(250 + c.getLayoutX());
-                if (achtionCards) {
+                if (actionCards) {
                     newCardImage.setLayoutY(433);
                 } else {
                     newCardImage.setLayoutY(550);
@@ -934,7 +934,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 children.remove(c);
                 gameViewWIP.getChildren().add(newCardImage);
                 myDPLC.getChildren().add(card);
-                pathTransition = AnimationManagement.clearCards(newCardImage);
+                pathTransition = AnimationManagement.clearCards(newCardImage, myDPLC);
                 gameViewWIP.getChildren().remove(newCardImage);
             });
         }
