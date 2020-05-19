@@ -493,14 +493,18 @@ public class ActionCardExecution {
      */
     private boolean executeMoveAction(Move action, Player player) {
         ArrayList<Short> theIds = new ArrayList<>();
+        ArrayList<Card> cardsToRemoveHand = new ArrayList<>();
         if (action.getCardSource().equals(AbstractPlayground.ZoneType.HAND) && action.getCardDestination().equals(AbstractPlayground.ZoneType.DISCARD)) {
             for (Card card : action.getCardsToMove()) {
                 if (player.getPlayerDeck().getHand().contains(card)) {
-                    player.getPlayerDeck().getHand().remove(card);
+                    cardsToRemoveHand.add(card);
+                    // ConcurrentCardModificatioNException Fix, muss getestet werden. @Julia
+                    // player.getPlayerDeck().getHand().remove(card);
                     player.getPlayerDeck().getDiscardPile().add(card);
                     theIds.add(card.getId());
                 }
             }
+            player.getPlayerDeck().getHand().removeAll(cardsToRemoveHand);
         } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.HAND) && action.getCardDestination().equals(AbstractPlayground.ZoneType.TRASH)) {
             for (Card card : action.getCardsToMove()) {
                 if (player.getPlayerDeck().getHand().contains(card)) {
