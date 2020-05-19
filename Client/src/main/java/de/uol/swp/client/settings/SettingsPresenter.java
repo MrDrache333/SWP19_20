@@ -3,7 +3,9 @@ package de.uol.swp.client.settings;
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.Notifyer;
 import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.settings.event.CloseSettingsEvent;
@@ -14,13 +16,13 @@ import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.util.regex.Pattern;
 
 
@@ -45,6 +47,7 @@ public class SettingsPresenter extends AbstractPresenter {
     private User loggedInUser;
     private LobbyService lobbyService;
     private UserService userService;
+    private Injector injector;
     private EventBus eventBus;
 
     @FXML
@@ -59,14 +62,18 @@ public class SettingsPresenter extends AbstractPresenter {
     private PasswordField password2Field;
     @FXML
     private PasswordField currentPasswordField;
+    @FXML
+    private ImageView chatMuteImage;
+    @FXML
+    private ToggleButton chatMuteToggleButton;
 
-    public SettingsPresenter(User loggedInUser, LobbyService lobbyService, UserService userService, EventBus eventBus) {
+    public SettingsPresenter(User loggedInUser, LobbyService lobbyService, UserService userService, Injector injector, EventBus eventBus) {
         this.loggedInUser = loggedInUser;
         this.lobbyService = lobbyService;
         this.userService = userService;
+        this.injector = injector;
         this.eventBus = eventBus;
     }
-
     /**
      * Überprüft die Benutzereingaben. Falls alle gültig sind, wird im UserService die Methode updateUser aufgerufen,
      * ansonsten wird eine entsprechende Fehlermeldung angezeigt
@@ -148,6 +155,22 @@ public class SettingsPresenter extends AbstractPresenter {
     }
 
     /**
+     * Mutet alle Benachrichtigungen beim Aufruf
+     *
+     * @param actionEvent
+     * @author Keno S.
+     * @since Sprint7
+     */
+    @FXML
+    public void onChatMuteToggleButtonPressed(ActionEvent actionEvent) {
+        Notifyer.setMuteState(chatMuteToggleButton.isSelected());
+        if (chatMuteToggleButton.isSelected())
+            chatMuteImage.setImage(new Image("images/chat_on_icon.png"));
+        else
+            chatMuteImage.setImage(new Image("images/chat_off_icon.png"));
+    }
+
+    /**
      * Aktualisiert den loggedInUser
      *
      * @param message
@@ -174,5 +197,4 @@ public class SettingsPresenter extends AbstractPresenter {
         password2Field.clear();
         currentPasswordField.clear();
     }
-
 }

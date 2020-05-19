@@ -13,6 +13,7 @@ import de.uol.swp.common.lobby.message.KickUserMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
+import de.uol.swp.common.user.message.UpdatedUserMessage;
 import de.uol.swp.common.user.message.UserDroppedMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import de.uol.swp.common.user.request.OpenSettingsRequest;
@@ -283,6 +284,12 @@ public class PrimaryPresenter extends AbstractPresenter {
     private void userLoggedOut(UserLoggedOutMessage msg) {
         if (msg.getUsername().equals(loggedInUser.getUsername())) {
             closeAllTabs();
+        }
+    }
+    @Subscribe
+    public void updatedUser(UpdatedUserMessage message) {
+        if(loggedInUser != null && loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
+            loggedInUser = message.getUser();
         }
     }
 

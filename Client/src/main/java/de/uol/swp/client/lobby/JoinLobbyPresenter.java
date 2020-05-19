@@ -1,6 +1,7 @@
 package de.uol.swp.client.lobby;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.lobby.event.CloseJoinLobbyEvent;
 import de.uol.swp.client.main.MainMenuPresenter;
@@ -9,6 +10,7 @@ import de.uol.swp.common.lobby.request.LobbyJoinUserRequest;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
+import de.uol.swp.common.user.message.UpdatedUserMessage;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -87,6 +89,13 @@ public class JoinLobbyPresenter {
         eventBus.post(new CloseJoinLobbyEvent());
         passwordField.clear();
     }
+    @Subscribe
+    public void updatedUser(UpdatedUserMessage message) {
+        if(loggedInUser != null && loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
+            loggedInUser = message.getUser();
+        }
+    }
+
 }
 
 
