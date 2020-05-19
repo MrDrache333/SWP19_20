@@ -112,12 +112,12 @@ public class PrimaryPresenter extends AbstractPresenter {
     }
 
     /**
-     * Methode fängt ButtonKlick ab, User verlässt alle Lobbies, in denen er angemeldet ist und wird ausgeloggt
+     * Methode fängt Button-Klick ab, User verlässt alle Lobbies, in denen er angemeldet ist und wird ausgeloggt
      *
      * @param actionEvent the action event
      * @author Julia, Paula
      * @Version 1.0
-     * @since sprint3
+     * @since Sprint3
      */
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
@@ -164,10 +164,9 @@ public class PrimaryPresenter extends AbstractPresenter {
     @Subscribe
     private void userLeft(UserLeftLobbyMessage msg) {
         if (games.containsKey(msg.getLobbyID()) && msg.getUser().getUsername().equals(loggedInUser.getUsername())) {
-            closeTab(msg.getLobbyID(), true);
+            closeTab(msg.getLobbyID(), false);
         }
     }
-
 
     /**
      * Die Methode postet ein Request auf den Bus, wenn der Einstellungen-Button gedrückt wird
@@ -206,7 +205,7 @@ public class PrimaryPresenter extends AbstractPresenter {
 
             //Neuen Tab initialisieren, Pane vom GameManagement übernehmen und der TabView hinzufügen
 
-            //Auf schließung des Tabs reagieren
+            //Auf Schließung des Tabs reagieren
             gameManagement.getPrimaryTab().setOnCloseRequest(event -> {
                 games.remove(gameManagement);
                 lobbyService.leaveLobby(gameManagement.getID(), (UserDTO) loggedInUser);
@@ -222,12 +221,12 @@ public class PrimaryPresenter extends AbstractPresenter {
     private void onUserLeftLobby(UserLeftLobbyMessage msg) {
         if (games.containsKey(msg.getLobbyID()) && loggedInUser.getUsername().equals(msg.getUser().getUsername())) {
             closeTab(msg.getLobbyID(), false);
-            LOG.info("User " + msg.getUser().getUsername() + " left lobby successfully");
+            LOG.info("User " + msg.getUser().getUsername() + " verließ die Lobby erfolgreich.");
         }
     }
 
     /**
-     * Sort dafür, das die Lobby CLientseitig geschlossen wird und diese ggf. verlassen wird
+     * Sorgt dafür, dass die Lobby clientseitig geschlossen wird und diese ggf. verlassen wird
      *
      * @param uuid  Die UUID der Lobby
      * @param leave Ob die Lobby Serverseitig noch verlassen werden muss

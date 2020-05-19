@@ -34,6 +34,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -62,7 +63,7 @@ public class GameViewPresenter extends AbstractPresenter {
     private User loggedInUser;
 
     // @FXML
-    //   private Pane gameView;
+    // private Pane gameView;
 
     @FXML
     private Pane gameViewWIP;
@@ -97,6 +98,10 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     private ImageView cardPlaceholder10;
     @FXML
+    private StackPane countDeckPane;
+    @FXML
+    private Label countDeckLabel;
+    @FXML
     private VBox bigCardImageBox;
     private final EventHandler<MouseEvent> closeCard = new EventHandler() {
         @Override
@@ -119,6 +124,8 @@ public class GameViewPresenter extends AbstractPresenter {
     private final ChatViewPresenter chatViewPresenter;
     private final Injector injector;
     private final GameManagement gameManagement;
+
+    private ArrayList<Short> handCardIDs;
 
     private final EventHandler<MouseEvent> handCardEventHandler = new EventHandler() {
         @Override
@@ -156,11 +163,6 @@ public class GameViewPresenter extends AbstractPresenter {
         this.gameService = gameService;
         initializeUserList();
     }
-
-    /*
-        showAlert Methode, um Alert Box zu erstellen
-         */
-
 
     /**
      * Show Alert für den Aufgeben Button
@@ -228,7 +230,6 @@ public class GameViewPresenter extends AbstractPresenter {
         allImageViews = null;
     }
 
-
     /**
      * Aufgeben Button gedrückt Ereignis.
      *
@@ -293,7 +294,24 @@ public class GameViewPresenter extends AbstractPresenter {
     public void newUser(UserJoinedLobbyMessage userJoinedLobbyMessage) {
         if (userJoinedLobbyMessage.getLobbyID().equals(this.lobbyID)) {
             lobbyService.retrieveAllUsersInLobby(lobbyID);
-            LOG.debug("New user in Lobby, LobbyService is retrieving users");
+            LOG.debug("Neuer User in der Lobby, LobbyService empfängt Nutzer");
+        }
+    }
+
+    /**
+     * Wenn die StartClearPhaseMessage kommt werden die Karten auf der Hand zum Ablagestapel bewegt
+     *
+     * @param msg Die Nachricht
+     * @author Darian
+     * @since Sprint7
+     */
+    @Subscribe
+    public void onStartClearPhase(StartClearPhaseMessage msg){
+        if (msg.getGameID().equals(this.lobbyID) && msg.getUser().equals(loggedInUser)) {
+            synchronized (handcards){
+                moveCardsToDiscardPile(handcards.getChildren(), false);
+            }
+            moveCardsToDiscardPile(playedCardLayoutContainer.getChildren(), true);
         }
     }
 
@@ -326,7 +344,7 @@ public class GameViewPresenter extends AbstractPresenter {
     @Subscribe
     public void userList(AllOnlineUsersInLobbyResponse allOnlineUsersInLobbyResponse) {
         if (allOnlineUsersInLobbyResponse.getLobbyID().equals(this.lobbyID)) {
-            LOG.debug("Update of user list with" + allOnlineUsersInLobbyResponse.getUsers());
+            LOG.debug("Aktualisieren der Userliste mit" + allOnlineUsersInLobbyResponse.getUsers());
             updateUsersList(allOnlineUsersInLobbyResponse.getUsers());
         }
     }
@@ -360,14 +378,9 @@ public class GameViewPresenter extends AbstractPresenter {
                 newCardImage.setId(String.valueOf(msg.getCardID()));
                 Platform.runLater(() -> {
                     gameViewWIP.getChildren().add(newCardImage);
-                    PathTransition pathTransition = AnimationManagement.buyCard(newCardImage);
-                    pathTransition.setOnFinished(actionEvent -> {
-                        gameViewWIP.getChildren().remove(newCardImage);
-                        ImageView iv = new ImageView(picture);
-                        iv.setPreserveRatio(true);
-                        iv.setFitHeight(107);
-                        discardPilePane.getChildren().add(iv);
-                    });
+                    AnimationManagement.buyCard(newCardImage);
+                    gameViewWIP.getChildren().remove(newCardImage);
+                    discardPilePane.getChildren().add(newCardImage);
                 });
                 if (msg.getCounterCard() < 1) {
                     ColorAdjust makeImageDarker = new ColorAdjust();
@@ -392,7 +405,6 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     @Subscribe
     public void onPlayCardMessage(PlayCardMessage msg) {
-
         ImageView card = (ImageView) mouseEvent.getTarget();
         if (msg.getGameID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
             if (msg.getIsPlayed()) {
@@ -439,14 +451,13 @@ public class GameViewPresenter extends AbstractPresenter {
      * @author Devin S., Anna
      * @since Sprint5
      */
-
     @FXML
     @Subscribe
-    public void ShowNewHand(DrawHandMessage message) {
+    public void onDrawHandMessage(DrawHandMessage message) {
         Platform.runLater(() -> {
             if (lobbyID.equals(message.getTheLobbyID())) {
-                ArrayList<Short> HandCardID = message.getCardsOnHand();
-                HandCardID.forEach((n) -> {
+                handCardIDs = message.getCardsOnHand();
+                handCardIDs.forEach((n) -> {
                     String pfad = "file:Client/src/main/resources/cards/images/" + n + ".png";
                     Image picture = new Image(pfad);
                     ImageView card = new ImageView(picture);
@@ -455,9 +466,11 @@ public class GameViewPresenter extends AbstractPresenter {
                     card.setId(n.toString());
                     card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
                     deckPane.getChildren().add(card);
-                    AnimationManagement.addToHand(card, handcards.getChildren().size());
-                    deckPane.getChildren().remove(card);
-                    handcards.getChildren().add(card);
+                    synchronized (handcards) {
+                        AnimationManagement.addToHand(card, handcards.getChildren().size());
+                        deckPane.getChildren().remove(card);
+                        handcards.getChildren().add(card);
+                    }
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                 });
             }
@@ -496,10 +509,31 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
+     * Die Anzahl der Karten auf Deck wird aktualisiert und eventuell die Karten vom Ablegestapel entfernt.
+     *
+     * @param msg die Nachricht
+     * @author Fenja, Anna
+     * @since Sprint 7
+     */
+    @Subscribe
+    public void onCardsDeckSizeMessage(CardsDeckSizeMessage msg) {
+        if (msg.getGameID().equals(lobbyID)) {
+            if (msg.getPlayer().equals(loggedInUser)) {
+                Platform.runLater(() -> {
+                    countDeckLabel.setText(String.valueOf(msg.getCardsDeckSize()));
+                    if (msg.getDiscardPileWasCleared()) {
+                        discardPilePane.getChildren().clear();
+                    }
+                });
+            }
+        }
+    }
+
+    /**
      * Die usersView Liste wird geupdatet.
      * Äquivalent zu MainMenuPresenter.updateUsersList.
      *
-     * @param userList
+     * @param userList die neue Userliste
      * @author Marvin
      * @since Sprint3
      */
@@ -518,7 +552,7 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Skips die aktuelle Phase des Spielers zur nächsten.
+     * Skipt die aktuelle Phase des Spielers zur nächsten.
      *
      * @author Devin S.
      * @since Sprint6
@@ -529,7 +563,7 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Methode, die beim anklicken einer Handkarte ausgeführt wird.
+     * Methode, die beim Anklicken einer Handkarte ausgeführt wird.
      *
      * @param gameID       Die ID des Spiels
      * @param loggedInUser der User der gerade eingelogt im Spiel ist und die Karte ausgewählt hat.
@@ -540,7 +574,6 @@ public class GameViewPresenter extends AbstractPresenter {
      * @author Devin
      * @since Sprint 6
      */
-
     private void playChoosenCard(UUID gameID, User loggedInUser, String pfad, Short id, ImageView card, MouseEvent e) {
         ImageView bigCardImage = new ImageView(new Image(pfad));
         bigCardImage.setFitHeight(225.0);
@@ -559,7 +592,6 @@ public class GameViewPresenter extends AbstractPresenter {
             back.setMinWidth(52.0);
             gameViewWIP.getChildren().add(play);
             gameViewWIP.getChildren().add(back);
-
             play.setOnAction(event -> {
                 gameViewWIP.getChildren().remove(play);
                 gameViewWIP.getChildren().remove(back);
@@ -585,14 +617,73 @@ public class GameViewPresenter extends AbstractPresenter {
             back.setLayoutY(385.0);
             back.setMinWidth(52.0);
             gameViewWIP.getChildren().add(back);
-
             // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt
             back.setOnAction(event -> {
                 gameViewWIP.getChildren().remove(back);
                 gameViewWIP.getChildren().remove(bigCardImage);
             });
         }
+    }
 
+    /**
+     * Hier werden alle Geldkarten, die sich auf der Hand befinden, ausgespielt
+     *
+     * @author Anna
+     * @since Sprint 7
+     */
+    private void playAllMoneyCardsOnHand() {
+        synchronized (handcards) {
+            for (Node c : handcards.getChildren()) {
+                ImageView card = (ImageView) c;
+                if (card.getId().equals("1") || card.getId().equals("2") || card.getId().equals("3")) {
+                    Platform.runLater(() -> {
+                        AnimationManagement.playCard(card, playedCardLayoutContainer.getChildren().size());
+                        handcards.getChildren().remove(c);
+                        playedCardLayoutContainer.getChildren().add(card);
+                    });
+                }
+            }
+        }
+    }
+
+    /**
+     * Die Karten werden zum Ablagestapel bewegt
+     *
+     * @param children Das children von dem Karten Stapel
+     * @param achtionCards true wenn die Karten in der Aktionszone liegen
+     * @author Darian
+     * @since Sprint7
+     */
+    private void moveCardsToDiscardPile(ObservableList<Node> children, boolean achtionCards){
+        for (Node c : children) {
+            Platform.runLater(() -> {
+                ImageView card = (ImageView) c;
+                String pfad = "file:Client/src/main/resources/cards/images/" + card.getId() + ".png";
+                Image picture = new Image(pfad);
+                ImageView newCardImage = new ImageView(picture);
+                newCardImage.setPreserveRatio(true);
+                newCardImage.setFitHeight(107);
+                newCardImage.setFitWidth(Math.round(newCardImage.getBoundsInLocal().getWidth()));
+                newCardImage.setLayoutX(450 + c.getLayoutX());
+                if (achtionCards) {
+                    newCardImage.setLayoutY(493);
+                }
+                else{
+                    newCardImage.setLayoutY(610);
+                }
+                newCardImage.setId(String.valueOf(c));
+                children.remove(c);
+                gameViewWIP.getChildren().add(newCardImage);
+                PathTransition pathTransition = AnimationManagement.clearCards(newCardImage);
+                pathTransition.setOnFinished(actionEvent -> {
+                    gameViewWIP.getChildren().remove(newCardImage);
+                    ImageView iv = new ImageView(picture);
+                    iv.setPreserveRatio(true);
+                    iv.setFitHeight(107);
+                    discardPilePane.getChildren().add(iv);
+                });
+            });
+        }
     }
 
     /**
@@ -610,7 +701,7 @@ public class GameViewPresenter extends AbstractPresenter {
         double mouseX = mouseEvent.getSceneX();
         double mouseY = mouseEvent.getSceneY();
         ImageView cardImage = (ImageView) mouseEvent.getSource();
-        // Überprüdung ob sich die angeklickte Karte innerhalb des Shops befindet und nicht bereits auf dem Ablagestapel
+        // Überprüfung ob sich die angeklickte Karte innerhalb des Shops befindet und nicht bereits auf dem Ablagestapel
         //    if (mouseX > shopTeppich.getLayoutX() && mouseX < (shopTeppich.getLayoutX() + shopTeppich.getWidth()) &&
         //          mouseY > shopTeppich.getLayoutY() && mouseY < (shopTeppich.getLayoutY() + shopTeppich.getHeight()) && cardImage.getEffect() == null) {
         // Karte befindet sich im Shop
@@ -639,26 +730,5 @@ public class GameViewPresenter extends AbstractPresenter {
         }
 
         bigCardImageBox.setVisible(true);
-    }
-
-//}
-
-    /**
-     * Hier werden alle Geldkarten, die sich auf der Hand befinden, ausgespielt
-     *
-     * @author Anna
-     * @since Sprint 7
-     */
-    public void playAllMoneyCardsOnHand() {
-        for (Node c : handcards.getChildren()) {
-            ImageView card = (ImageView) c;
-            if (card.getId().equals("1") || card.getId().equals("2") || card.getId().equals("3")) {
-                Platform.runLater(() -> {
-                    AnimationManagement.playCard(card, playedCardLayoutContainer.getChildren().size());
-                    handcards.getChildren().remove(c);
-                    playedCardLayoutContainer.getChildren().add(card);
-                });
-            }
-        }
     }
 }

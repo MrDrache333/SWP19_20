@@ -41,7 +41,6 @@ public class Playground extends AbstractPlayground {
     private Player nextPlayer;
     private Player latestGavedUpPlayer;
     private Phase.Type actualPhase;
-    private ArrayList<Short> theIdsFromTheHand = new ArrayList<>(5);
     private GameService gameService;
     private UUID theSpecificLobbyID;
     private CompositePhase compositePhase;
@@ -104,7 +103,7 @@ public class Playground extends AbstractPlayground {
             if (i == 0) cardField.put(card.getId(), 60);
             else if (i == 1) cardField.put(card.getId(), 40);
             else if (i == 2) cardField.put(card.getId(), 30);
-            else LOG.debug("Komisch: @ initializeCardField- Else Methode in 104 ausgeschlagen.... @ @ @");
+            else LOG.debug("Komisch: @ initializeCardField- Else Methode in 104 ausgeschlagen.");
         }
         gameService.sendCardField(theSpecificLobbyID, cardField);
     }
@@ -183,7 +182,6 @@ public class Playground extends AbstractPlayground {
         if (actualPhase == Phase.Type.Clearphase) {
             throw new GamePhaseException("Du kannst die Clearphase nicht überspringen!");
         }
-
         if (actualPhase == Phase.Type.ActionPhase) {
             actualPhase = Phase.Type.Buyphase;
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartBuyPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
@@ -203,6 +201,7 @@ public class Playground extends AbstractPlayground {
      * @since Sprint5
      */
     public void sendPlayersHand() {
+        ArrayList<Short> theIdsFromTheHand = new ArrayList<>(5);
         for (Card card : actualPlayer.getPlayerDeck().getHand()) {
             theIdsFromTheHand.add(card.getId());
         }
@@ -218,7 +217,7 @@ public class Playground extends AbstractPlayground {
      */
     public int sendCardsDeckSize() {
         int size = actualPlayer.getPlayerDeck().getCardsDeck().size();
-        gameService.sendToSpecificPlayer(actualPlayer, new CardsDeckSizeMessage(theSpecificLobbyID, actualPlayer.getTheUserInThePlayer(), size));
+        gameService.sendToSpecificPlayer(actualPlayer, new CardsDeckSizeMessage(theSpecificLobbyID, actualPlayer.getTheUserInThePlayer(), size, actualPlayer.getPlayerDeck().discardPileWasCleared()));
         return size;
     }
 

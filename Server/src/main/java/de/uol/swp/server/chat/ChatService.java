@@ -49,7 +49,7 @@ public class ChatService extends AbstractService {
      */
     @Subscribe
     private void onNewChatMessageRequest(NewChatMessageRequest request) {
-        LOG.debug("New Message from " + request.getMessage().getSender().getUsername() + " in Chat " + request.getChatid());
+        LOG.debug("Neue Nachricht von " + request.getMessage().getSender().getUsername() + " in Chat " + request.getChatid());
         AbstractResponseMessage returnMessage;
         if (request.getMessage().getMessage().equals("")) return;
         try {
@@ -82,7 +82,7 @@ public class ChatService extends AbstractService {
     @Subscribe
     private void onChatHistoryRequest(ChatHistoryRequest request) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("New ChatHistoryRequest from " + request.getSender().getUsername() + " for Chat " + request.getChatId());
+            LOG.debug("Neue ChatHistoryRequest von  " + request.getSender().getUsername() + " für Chat " + request.getChatId());
         }
         ResponseMessage returnMessage;
         try {

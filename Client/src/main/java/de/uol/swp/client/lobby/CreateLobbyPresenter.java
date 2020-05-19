@@ -31,7 +31,6 @@ public class CreateLobbyPresenter extends AbstractPresenter {
 
     private User loggedInUser;
     private EventBus eventBus;
-    
 
     @FXML
     private Button cancelButton;
@@ -42,14 +41,12 @@ public class CreateLobbyPresenter extends AbstractPresenter {
     @FXML
     private PasswordField passwordField;
 
-
     public CreateLobbyPresenter(User loggedInUser, LobbyService lobbyService, UserService userService, EventBus eventBus) {
         this.loggedInUser = loggedInUser;
         this.lobbyService = lobbyService;
         this.userService = userService;
         this.eventBus = eventBus;
     }
-
 
     /**
      * Sobald der Lobby erstellen Button gedrückt wird, öffnet sich ein Dialog. Hier wird man aufgefordert einen Namen für die Lobby anzugeben. Das Passwortfeld ist optional
@@ -68,9 +65,9 @@ public class CreateLobbyPresenter extends AbstractPresenter {
         if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName)) {
             CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), lobbyPassword);
             eventBus.post(msg);
-            LOG.info("Request wurde gesendet.");
+            LOG.info("CreateLobbyRequest wurde gesendet.");
         } else {
-            SceneManager.showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden", "Fehler");
+            SceneManager.showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden.", "Fehler");
         }
         lobbynameField.clear();
         passwordField.clear();
@@ -81,7 +78,7 @@ public class CreateLobbyPresenter extends AbstractPresenter {
 
     /**
      *
-     *Bei Drücken auf den Abbrechen Button schließt sich das Fenster.
+     * Beim Drücken auf den Abbrechen Button schließt sich das Fenster.
      *
      * @param actionEvent
      * @author Paula
