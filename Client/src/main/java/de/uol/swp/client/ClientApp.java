@@ -218,12 +218,13 @@ public class ClientApp extends Application implements ConnectionListener {
     @Subscribe
     public void onCreateLobbyMessage(CreateLobbyMessage message) {
         if (message.getUser() != null && user != null && message.getUser().getUsername().equals(user.getUsername())) {
-            sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getChatID(), message.getUser());
-            sceneManager.closeCreateLobby();
-            LOG.debug("CreateLobbyMessage vom Server erfolgreich angekommen");
-        } else if (message.getLobbyName() == null )
-        {
-            SceneManager.showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden. Zudem darf er noch nicht vorhanden sein.", "Fehler");
+            if (message.getLobbyName() != null) {
+                sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getChatID(), message.getUser());
+                sceneManager.closeCreateLobby();
+                LOG.debug("CreateLobbyMessage vom Server erfolgreich angekommen");
+            } else {
+                SceneManager.showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden. Zudem darf er noch nicht vorhanden sein.", "Fehler");
+            }
         }
     }
 
@@ -237,15 +238,17 @@ public class ClientApp extends Application implements ConnectionListener {
      */
     @Subscribe
     public void onUserJoinedLobbyMessage(UserJoinedLobbyMessage message) {
-
         if (user != null && message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showLobbyScreen(message.getUser(), message.getLobby().getName(), message.getLobbyID(), message.getGameOwner());
-            sceneManager.closeJoinLobby();
+            if (message.getLobby().getLobbyPassword() != null) {
+                sceneManager.closeJoinLobby();
+            }
             LOG.info("User " + message.getUser().getUsername() + " joined lobby successfully");
-        } else if (message.getLobby().getLobbyPassword() == null) {
+        }
+       else if (message.getLobby().getLobbyPassword() == null) {
             SceneManager.showAlert(Alert.AlertType.WARNING, "Das Passwort ist falsch!", "Fehler");
         }
-        }
+    }
 
 
     /**
@@ -281,6 +284,7 @@ public class ClientApp extends Application implements ConnectionListener {
 
     /**
      * Empfängt Nachricht, dass das Lobby erstellen Fenster geöffnet werden soll
+     *
      * @param message
      * @author Paula
      * @since Sprint4
@@ -294,14 +298,16 @@ public class ClientApp extends Application implements ConnectionListener {
 
         }
     }
-        @Subscribe
-        public void onOpenJoinLobby (OpenJoinLobbyRequest message){
-            if (message.getUser().getUsername().equals(user.getUsername())) {
-                sceneManager.showJoinLobbyScreen(message.getUser(), message.getLobby());
+
+    @Subscribe
+    public void onOpenJoinLobby(OpenJoinLobbyRequest message) {
+        if (message.getUser().getUsername().equals(user.getUsername())) {
+            sceneManager.showJoinLobbyScreen(message.getUser(), message.getLobby());
 
 
         }
     }
+
     /**
      * Aktualisiert den User und schließt das Einstellungsfenster.
      *
