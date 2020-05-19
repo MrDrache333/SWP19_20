@@ -473,10 +473,13 @@ public class LobbyPresenter extends AbstractPresenter {
             if (!chooseMaxPlayer.getValue().equals(msg.getMaxPlayer())) {
                 chooseMaxPlayer.setValue(msg.getMaxPlayer());
             }
-            if (!msg.getOwner().equals(loggedInUser)) {
+            if (!msg.getOwner().equals(loggedInUser) && lobbyID == msg.getLobbyID()) {
                 chooseMaxPlayer.setDisable(true);
-            } else {
+            } else if (msg.getOwner().equals(loggedInUser)) {
                 chooseMaxPlayer.setDisable(false);
+            }
+            else {
+                chooseMaxPlayer.setDisable(true);
             }
         });
     }

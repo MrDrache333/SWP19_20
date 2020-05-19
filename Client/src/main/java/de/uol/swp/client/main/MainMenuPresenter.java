@@ -216,7 +216,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     @Subscribe
     public void newLobbyCreated(CreateLobbyMessage message) {
         LOG.debug("Neue Lobby " + message.getLobbyName() + " erstellt");
-        if (message.getLobbyName() != null){
+        if (message.getLobbyName() != null) {
             Platform.runLater(() -> {
                 lobbies.add(0, message.getLobby());
             });
@@ -503,7 +503,6 @@ public class MainMenuPresenter extends AbstractPresenter {
         };
         joinLobby.setCellFactory(cellFactory);
     }
-
 
 
     /**
