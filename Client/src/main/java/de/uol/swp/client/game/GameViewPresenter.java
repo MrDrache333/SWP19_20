@@ -19,7 +19,6 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
-import javafx.animation.PathTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -39,7 +38,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -177,8 +175,8 @@ public class GameViewPresenter extends AbstractPresenter {
         this.gameManagement = gameManagement;
         // Die Hände für jeden Spieler
         handcards = new HandcardsLayoutContainer(575, 630, 110, 420, "My.HCLC");
-        firstEnemyHand = new HandcardsLayoutContainer(575, 0, 110, 420,"1.HCLC");
-        secondEnemyHand = new HandcardsLayoutContainer(250, 308, 105, 215,"2.HCLC");
+        firstEnemyHand = new HandcardsLayoutContainer(700, 0, 110, 200, "1.HCLC");
+        secondEnemyHand = new HandcardsLayoutContainer(250, 308, 105, 215, "2.HCLC");
         thirdEnemyHand = new HandcardsLayoutContainer(1120, 308, 105, 215,"3.HCLC");
         // Die Aktion-Zonen für jeden Spieler
         myPCLC = new PlayedCardLayoutContainer(960, 480, 100, 200, "My.PCLC");
@@ -186,14 +184,14 @@ public class GameViewPresenter extends AbstractPresenter {
         secondEnemyPCLC = new PlayedCardLayoutContainer(360, 308,107, 215, "2.PCLC");
         thirdEnemyPCLC = new PlayedCardLayoutContainer(1012, 308, 105, 215,"3.PCLC");
         // Die Abwerf-Zonen für jeden Spieler
-        myDPLC = new DiscardPileLayoutContainer(997, 630, 110,60, "My.DPLC");
-        firstEnemyDPLC = new DiscardPileLayoutContainer(513,0,110,60,"1.DPLC");
-        secondEnemyDPLC = new DiscardPileLayoutContainer(328,447,104,60,"2.DPLC");
+        myDPLC = new DiscardPileLayoutContainer(997, 630, 110, 60, "My.DPLC");
+        firstEnemyDPLC = new DiscardPileLayoutContainer(630, 0, 110, 60, "1.DPLC");
+        secondEnemyDPLC = new DiscardPileLayoutContainer(328, 447, 104, 60, "2.DPLC");
         thirdEnemyDPLC = new DiscardPileLayoutContainer(1198,169,106,60,"3.DPLC");
         // Die Decks für jeden Spieler
-        myDLC = new DeckLayoutContainer(513,630,110,60,"My.DLC");
-        firstEnemyDLC = new DeckLayoutContainer(997,0,110,60,"1.DLC");
-        secondEnemyDLC = new DeckLayoutContainer(328,169,104,60,"2.DLC");
+        myDLC = new DeckLayoutContainer(513, 630, 110, 60, "My.DLC");
+        firstEnemyDLC = new DeckLayoutContainer(900, 0, 110, 60, "1.DLC");
+        secondEnemyDLC = new DeckLayoutContainer(328, 169, 104, 60, "2.DLC");
         thirdEnemyDLC = new DeckLayoutContainer(1198,446,106,60,"3.DLC");
 
         this.gameService = gameService;
@@ -265,7 +263,7 @@ public class GameViewPresenter extends AbstractPresenter {
          * Aktionszonen = Hellblau
          * Abwerfzonen = Rot
          */
-        /*
+/*
         handcards.setStyle("-fx-background-color: chartreuse");
         firstEnemyHand.setStyle("-fx-background-color: chartreuse");
         secondEnemyHand.setStyle("-fx-background-color: chartreuse");
@@ -282,7 +280,7 @@ public class GameViewPresenter extends AbstractPresenter {
         firstEnemyDLC.setStyle("-fx-background-color: darkviolet");
         secondEnemyDLC.setStyle("-fx-background-color: darkviolet");
         thirdEnemyDLC.setStyle("-fx-background-color: darkviolet");
-        */
+*/
         gameViewWIP.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
                 bigCardImageBox.setVisible(false);
@@ -394,22 +392,6 @@ public class GameViewPresenter extends AbstractPresenter {
         }
     }
 
-    /**
-     * Wenn die StartClearPhaseMessage kommt werden die Karten auf der Hand zum Ablagestapel bewegt
-     *
-     * @param msg Die Nachricht
-     * @author Darian
-     * @since Sprint7
-     */
-    @Subscribe
-    public void onStartClearPhase(StartClearPhaseMessage msg){
-        if (msg.getGameID().equals(this.lobbyID) && msg.getUser().equals(loggedInUser)) {
-            synchronized (handcards){
-                moveCardsToDiscardPile(handcards.getChildren(), false);
-            }
-            moveCardsToDiscardPile(playedCardLayoutContainer.getChildren(), true);
-        }
-    }
 
     /**
      * Aktualisiert den loggedInUser sowie die Liste, falls sich der Username geändert hat
@@ -482,7 +464,7 @@ public class GameViewPresenter extends AbstractPresenter {
                         gameViewWIP.getChildren().add(newCardImage);
                         AnimationManagement.buyCard(newCardImage);
                         gameViewWIP.getChildren().remove(newCardImage);
-                        discardPilePane.getChildren().add(newCardImage);
+                        myDPLC.getChildren().add(newCardImage);
                     });
                     if (msg.getCounterCard() < 1) {
                         ColorAdjust makeImageDarker = new ColorAdjust();
@@ -587,7 +569,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 card.setFitHeight(107);
                 card.setPreserveRatio(true);
                 card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
-                discardPilePane.getChildren().add(card);
+                myDPLC.getChildren().add(card);
             }
         });
     }
@@ -745,28 +727,6 @@ public class GameViewPresenter extends AbstractPresenter {
 
 
     /**
-     * Fügt die Karte aus der DiscardPileLastCardMessage dem Ablagestapel hinzu.
-     *
-     * @param msg Die Nachricht
-     * @author Timo
-     * @Sprint 6
-     */
-    @Subscribe
-    public void onDiscardPileLastCardMessage(DiscardPileLastCardMessage msg) {
-        Platform.runLater(() -> {
-            if (msg.getGameID().equals(this.gameManagement.getID()) && msg.getUser().equals(this.loggedInUser)) {
-                String pfad = "file:Client/src/main/resources/cards/images/" + msg.getCardID() + ".png";
-                Image picture = new Image(pfad);
-                ImageView card = new ImageView(picture);
-                card.setFitHeight(107);
-                card.setPreserveRatio(true);
-                card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
-                myDPLC.getChildren().add(card);
-            }
-        });
-    }
-
-    /**
      * Zeigt die Karten auf der Hand in der GameView an
      *
      * @author Devin S., Anna
@@ -806,7 +766,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     ImageView card = new ImageView(picture);
                     ImageView card2 = new ImageView(picture);
                     ImageView card3 = new ImageView(picture);
-                    card.setFitHeight(107);
+                    card.setFitHeight(80);
                     card.setPreserveRatio(true);
                     card.setId("back");
                     card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
@@ -965,9 +925,9 @@ public class GameViewPresenter extends AbstractPresenter {
                 ImageView card = (ImageView) c;
                 if (card.getId().equals("1") || card.getId().equals("2") || card.getId().equals("3")) {
                     Platform.runLater(() -> {
-                        AnimationManagement.playCard(card, playedCardLayoutContainer.getChildren().size());
+                        AnimationManagement.playCard(card, myPCLC.getChildren().size(), myPCLC);
                         handcards.getChildren().remove(c);
-                        playedCardLayoutContainer.getChildren().add(card);
+                        myPCLC.getChildren().add(card);
                     });
                 }
             }
@@ -1045,6 +1005,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 this.mouseEvent = mouseEvent;
             });
             bigCardImageBox.setVisible(true);
+            bigCardImageBox.toFront();
         } else {
             String cardID = cardImage.getId();
             bigCardImageBox.setVisible(false);
