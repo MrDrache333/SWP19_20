@@ -39,7 +39,7 @@ class ClientHandler extends ChannelInboundHandlerAdapter {
      */
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-        LOG.debug("Connected to server " + ctx);
+        LOG.debug("Verbunden mit Server " + ctx);
         clientConnection.fireConnectionEstablished(ctx.channel());
     }
 
@@ -58,7 +58,7 @@ class ClientHandler extends ChannelInboundHandlerAdapter {
         if (in instanceof Message) {
             clientConnection.receivedMessage((Message) in);
         } else {
-            LOG.error("Illegal Object read from channel. Ignored!");
+            LOG.error("Illegales Objekt aus dem Channel gelesen. Ignoriert!");
         }
     }
 
