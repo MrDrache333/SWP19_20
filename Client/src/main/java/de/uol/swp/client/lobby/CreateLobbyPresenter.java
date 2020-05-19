@@ -92,13 +92,20 @@ public class CreateLobbyPresenter extends AbstractPresenter {
         passwordField.clear();
         lobbynameField.clear();
     }
+    /**
+     *
+     * Benutzer wird geupdated.
+     *
+     * @param message
+     * @author Paula
+     * @since Sprint7
+     */
     @Subscribe
     public void updatedUser(UpdatedUserMessage message) {
         if(loggedInUser != null && loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
             loggedInUser = message.getUser();
         }
     }
-
 }
 
 
