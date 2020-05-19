@@ -347,7 +347,7 @@ public class SceneManager {
     }
 
     public void closeJoinLobby() {
-
+        if (joinLobbyStage != null)
         Platform.runLater(() -> joinLobbyStage.close());
     }
 
