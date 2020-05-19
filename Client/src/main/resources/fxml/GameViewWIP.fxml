@@ -4,8 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.Circle?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.shape.*?>
 <?import javafx.scene.text.Font?>
 <AnchorPane fx:id="gameViewWIP" prefHeight="750.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/10.0.2-internal"
             xmlns:fx="http://javafx.com/fxml/1">
@@ -218,15 +217,97 @@
                 </HBox>
             </children>
         </VBox>
-        <VBox fx:id="bigCardImageBox" prefWidth="200.0" prefHeight="350" layoutY="20" layoutX="325" visible="false">
+        <VBox fx:id="bigCardImageBox" prefWidth="200.0" prefHeight="350" layoutY="20" layoutX="325" visible="false"
+              nodeOrientation="RIGHT_TO_LEFT">
             <children>
                 <ImageView fx:id="bigCardImage" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                     <image>
                         <Image url="@../cards/images/card_back.png"/>
                     </image>
                 </ImageView>
-                <Button fx:id="buyCardButton" text="kaufen" minWidth="70.0"/>
+                <Button fx:id="buyCardButton" text="kaufen" minWidth="70.0" visible="false"/>
             </children>
         </VBox>
+        <Pane fx:id="valueCardsBox" prefHeight="200" prefWidth="200" layoutX="1050" layoutY="20">
+            <children>
+                <ImageView fx:id="1" fitHeight="70.0" fitWidth="70.0"
+                           layoutX="-30.0" layoutY="0.0"
+                           onMouseClicked="#onBuyableCardClicked" pickOnBounds="true"
+                           preserveRatio="true">
+                    <image>
+                        <Image url="@../cards/images/1_sm.png"/>
+                    </image>
+                </ImageView>
+                <ImageView fx:id="2" fitHeight="70.0" fitWidth="70.0"
+                           layoutX="50.0" layoutY="0.0"
+                           onMouseClicked="#onBuyableCardClicked" pickOnBounds="true"
+                           preserveRatio="true">
+                    <image>
+                        <Image url="@../cards/images/2_sm.png"/>
+                    </image>
+                </ImageView>
+                <ImageView fx:id="3" fitHeight="70.0" fitWidth="70.0"
+                           layoutX="130.0" layoutY="0.0"
+                           onMouseClicked="#onBuyableCardClicked" pickOnBounds="true"
+                           preserveRatio="true">
+                    <image>
+                        <Image url="@../cards/images/3_sm.png"/>
+                    </image>
+                </ImageView>
+                <ImageView fx:id="4" fitHeight="70.0" fitWidth="70.0"
+                           layoutX="-30.0" layoutY="80.0"
+                           onMouseClicked="#onBuyableCardClicked" pickOnBounds="true"
+                           preserveRatio="true">
+                    <image>
+                        <Image url="@../cards/images/4_sm.png"/>
+                    </image>
+                </ImageView>
+                <ImageView fx:id="5" fitHeight="70.0" fitWidth="70.0"
+                           layoutX="50.0" layoutY="80.0"
+                           onMouseClicked="#onBuyableCardClicked" pickOnBounds="true"
+                           preserveRatio="true">
+                    <image>
+                        <Image url="@../cards/images/5_sm.png"/>
+                    </image>
+                </ImageView>
+                <ImageView fx:id="6" fitHeight="70.0" fitWidth="70.0"
+                           layoutX="130.0" layoutY="80.0"
+                           onMouseClicked="#onBuyableCardClicked" pickOnBounds="true"
+                           preserveRatio="true">
+                    <image>
+                        <Image url="@../cards/images/6_sm.png"/>
+                    </image>
+                </ImageView>
+                <ImageView fx:id="7" fitHeight="70.0" fitWidth="70.0"
+                           layoutX="50.0" layoutY="160.0"
+                           onMouseClicked="#onBuyableCardClicked" pickOnBounds="true"
+                           preserveRatio="true">
+                    <image>
+                        <Image url="@../cards/images/38_sm.png"/>
+                    </image>
+                </ImageView>
+                <StackPane fx:id="countEstateCard" layoutX="25" layoutY="75" prefWidth="20">
+                    <Circle fx:id="countEstateCardCircle" fill="darkred" radius="12"/>
+                    <Label fx:id="countEstateCardLabel" style="-fx-font-style: Bold; -fx-font-size: 14"
+                           text="" textFill="white"/>
+                </StackPane>
+                <StackPane fx:id="countDuchiesCard" layoutX="105" layoutY="75" prefWidth="20">
+                    <Circle fx:id="countDuchiesCardCircle" fill="darkred" radius="12"/>
+                    <Label fx:id="countDuchiesCardLabel" style="-fx-font-style: Bold; -fx-font-size: 14"
+                           text="" textFill="white"/>
+                </StackPane>
+                <StackPane fx:id="countProvinceCard" layoutX="185" layoutY="75" prefWidth="20">
+                    <Circle fx:id="countProvinceCardCircle" fill="darkred" radius="12"/>
+                    <Label fx:id="countProvinceCardLabel" style="-fx-font-style: Bold; -fx-font-size: 14"
+                           text="" textFill="white"/>
+                </StackPane>
+                <StackPane fx:id="countCurseCard" layoutX="105" layoutY="155" prefWidth="20">
+                    <Circle fx:id="countCurseCardCircle" fill="darkred" radius="12"/>
+                    <Label fx:id="countCurseCardLabel" style="-fx-font-style: Bold; -fx-font-size: 14"
+                           text="10" textFill="white"/>
+                </StackPane>
+
+            </children>
+        </Pane>
     </children>
 </AnchorPane>
