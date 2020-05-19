@@ -90,6 +90,6 @@ public class CreateLobbyPresenter extends AbstractPresenter {
         passwordField.clear();
         lobbynameField.clear();
     }
-    }
+}
 
 
