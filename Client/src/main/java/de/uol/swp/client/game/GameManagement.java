@@ -390,4 +390,7 @@ public class GameManagement {
         return lobbyName;
     }
 
+    public User getLoggedInUser() {
+        return loggedInUser;
+    }
 }

@@ -8,6 +8,7 @@ import com.google.inject.assistedinject.Assisted;
 import de.uol.swp.client.auth.LoginPresenter;
 import de.uol.swp.client.auth.events.ShowLoginViewEvent;
 import de.uol.swp.client.chat.ChatService;
+import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.client.game.GameService;
 import de.uol.swp.client.lobby.CreateLobbyPresenter;
 import de.uol.swp.client.lobby.JoinLobbyPresenter;
@@ -30,16 +31,20 @@ import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -52,7 +57,6 @@ public class SceneManager {
 
     static final Logger LOG = LogManager.getLogger(SceneManager.class);
     static final String styleSheet = "css/global.css";
-
 
     final private Stage primaryStage;
     final private EventBus eventBus;
@@ -115,7 +119,6 @@ public class SceneManager {
             alert.show();
         });
     }
-
 
     @Subscribe
     public void onShowRegistrationViewEvent(ShowRegistrationViewEvent event) {
@@ -221,6 +224,7 @@ public class SceneManager {
     public void showMainScreen(User currentUser) {
         showScene(primaryScene, "Willkommen " + currentUser.getUsername());
     }
+
 
     public void showLoginScreen() {
         showScene(loginScene, "Login");
@@ -396,6 +400,7 @@ public class SceneManager {
                 userService.logout(currentUser);
             });
             eventBus.register(primaryPresenter);
+            primaryScene.setOnKeyPressed(hotkeyEventHandler);
         }
     }
 
@@ -473,6 +478,7 @@ public class SceneManager {
             Parent rootPane = initPresenter(RegistrationPresenter.fxml);
             registrationScene = new Scene(rootPane, 1280, 750);
             registrationScene.getStylesheets().add(styleSheet);
+            registrationScene.getStylesheets().add(RegistrationPresenter.css);
         }
     }
 
@@ -497,7 +503,7 @@ public class SceneManager {
         if (createLobbyScene == null) {
             Parent rootPane = initCreateLobbyPresenter(createLobbyPresenter);
             createLobbyScene = new Scene(rootPane, 400, 255);
-          createLobbyScene.getStylesheets().add(createLobbyPresenter.css);
+            createLobbyScene.getStylesheets().add(createLobbyPresenter.css);
         }
     }
 
@@ -510,4 +516,56 @@ public class SceneManager {
     }
 
 
+    /**
+     * EventHandler für Hotkeys während eines Spiels.
+     * Bestätigungsfenster (Derzeit nur bei GiveUp) kann bei Bedarf auch auf weitere Hotkeys leicht erweitert werden.
+     *
+     * Momentane Hotkeys:
+     * Strg + S: SkipPhase
+     * Strg + G: GiveUp
+     * Strg + L: CreateLobby
+     *
+     * @author Marvin
+     * @since Sprint7
+     */
+
+    private EventHandler<KeyEvent> hotkeyEventHandler = new EventHandler<>() {
+        @Override
+        public void handle(KeyEvent event) {
+            if (event.isControlDown()) {
+                String focusedTab = primaryPresenter.getFocusedTab();
+                if (focusedTab.matches("^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")) {
+                    GameManagement gameManagement = primaryPresenter.getGameManagement(UUID.fromString(focusedTab));
+                    User user = gameManagement.getLoggedInUser();
+                    UUID lobbyID = gameManagement.getID();
+                    switch (event.getCode()) {
+                        case S:
+                            LOG.debug("Skip Phase Hotkey pressed");
+                            gameService.skipPhase(user, lobbyID);
+                            break;
+                        case G:
+                            LOG.debug("Give Up Hotkey pressed");
+                            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                            alert.setResizable(false);
+                            alert.initModality(Modality.APPLICATION_MODAL);
+                            alert.getDialogPane().setHeaderText("Möchtest du wirklich aufgeben?");
+                            Optional<ButtonType> result = alert.showAndWait();
+                            if (result.get() == ButtonType.OK) {
+                                gameService.giveUp(lobbyID, (UserDTO) user);
+                            }
+                            break;
+                    }
+                    event.consume();
+                } else if (focusedTab.equals("Menu")) {
+                    switch (event.getCode()) {
+                        case L:
+                            LOG.debug("Create Lobby Hotkey pressed");
+                            showCreateLobbyScreen(primaryPresenter.getUser());
+                            break;
+                    }
+                    event.consume();
+                }
+            }
+        }
+    };
 }
