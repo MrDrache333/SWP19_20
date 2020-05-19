@@ -418,14 +418,9 @@ public class GameViewPresenter extends AbstractPresenter {
                 newCardImage.setId(String.valueOf(msg.getCardID()));
                 Platform.runLater(() -> {
                     gameViewWIP.getChildren().add(newCardImage);
-                    PathTransition pathTransition = AnimationManagement.buyCard(newCardImage);
-                    pathTransition.setOnFinished(actionEvent -> {
-                        gameViewWIP.getChildren().remove(newCardImage);
-                        ImageView iv = new ImageView(picture);
-                        iv.setPreserveRatio(true);
-                        iv.setFitHeight(107);
-                        myDPLC.getChildren().add(iv);
-                    });
+                    AnimationManagement.buyCard(newCardImage);
+                    gameViewWIP.getChildren().remove(newCardImage);
+                    myDPLC.getChildren().add(newCardImage);
                 });
                 if (msg.getCounterCard() < 1) {
                     ColorAdjust makeImageDarker = new ColorAdjust();
