@@ -249,7 +249,15 @@ public class GameService extends AbstractService {
                     playground.endTimer();
                     // Karte wird an die ActionPhase zum Handling übergeben.
                     playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), cardID);
-                    sendToSpecificPlayer(playground.getActualPlayer(), new PlayCardMessage(gameID, player, cardID, true));
+                    //sendToSpecificPlayer(playground.getActualPlayer(), new PlayCardMessage(gameID, player, cardID, true));
+
+                    playground.getPlayers().forEach(n -> {
+                        PlayCardMessage msg = new PlayCardMessage(gameID, playground.getActualPlayer().getTheUserInThePlayer(), cardID, true,
+                                playground.getIndexOfPlayer(n), playground.getIndexOfPlayer(playground.getActualPlayer()));
+                        sendToSpecificPlayer(n, msg);
+                    });
+
+
                     /*
                      TODO: Nachdem das gegnerische Feld und ein Text-Feld für den generellem Spiel ablauf hinzugefügt wurde, muss allen Gegnern das ausspielen der Karte mitgeteilt werden.
                      */

@@ -1,5 +1,7 @@
 package de.uol.swp.client.game;
 
+import de.uol.swp.client.game.container.DiscardPileLayoutContainer;
+import de.uol.swp.client.game.container.PlayedCardLayoutContainer;
 import javafx.animation.PathTransition;
 import javafx.scene.Parent;
 import javafx.scene.image.ImageView;
@@ -124,12 +126,14 @@ public class AnimationManagement {
      *
      * @param card  die Karte
      * @param count gibt an, die wievielte Karte eines Zuges gerade gespielt wird.
+     * @param action_zone  Die Zielzone wo die Karte sich hinbewegen soll
      * @return boolean ob die Bewegung durchgeführt wurde
      * @author Anna
      * @since Sprint5
      */
-    public static Boolean playCard(ImageView card, int count) {
-        return createArcToPath(card, keepPosition(card), ACTION_ZONE_X, ACTION_ZONE_Y, count, true);
+
+    public static Boolean playCard(ImageView card, int count, PlayedCardLayoutContainer action_zone) {
+        return createArcToPath(card, keepPosition(card), action_zone.getLayoutX(), action_zone.getLayoutY(), count, true);
     }
 
     /**
@@ -166,8 +170,8 @@ public class AnimationManagement {
      * @author Darian
      * @since Sprint7
      */
-    public static PathTransition clearCards(ImageView card) {
-        return createLineToPath(card, keepPosition(card), ABLAGE_X, ABLAGE_Y);
+    public static PathTransition clearCards(ImageView card, DiscardPileLayoutContainer discardPile) {
+        return createLineToPath(card, keepPosition(card), discardPile.getLayoutX(), discardPile.getLayoutY());
     }
 
     /**
