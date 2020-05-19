@@ -5,6 +5,10 @@ import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
+import de.uol.swp.client.game.container.DeckLayoutContainer;
+import de.uol.swp.client.game.container.DiscardPileLayoutContainer;
+import de.uol.swp.client.game.container.HandcardsLayoutContainer;
+import de.uol.swp.client.game.container.PlayedCardLayoutContainer;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.common.game.messages.*;
@@ -34,7 +38,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -60,6 +63,7 @@ public class GameViewPresenter extends AbstractPresenter {
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
     private final UUID lobbyID;
     private User loggedInUser;
+    private Short numberOfPlayersInGame;
 
     // @FXML
     // private Pane gameView;
@@ -72,10 +76,6 @@ public class GameViewPresenter extends AbstractPresenter {
     private Pane shopTeppich;
     @FXML
     private ListView<String> usersView;
-    @FXML
-    private StackPane deckPane;
-    @FXML
-    private StackPane discardPilePane;
     @FXML
     private ImageView cardPlaceholder1;
     @FXML
@@ -102,8 +102,21 @@ public class GameViewPresenter extends AbstractPresenter {
     private Label countDeckLabel;
 
     private final HandcardsLayoutContainer handcards;
-    private final PlayedCardLayoutContainer playedCardLayoutContainer;
-
+    private final HandcardsLayoutContainer firstEnemyHand;
+    private final HandcardsLayoutContainer secondEnemyHand;
+    private final HandcardsLayoutContainer thirdEnemyHand;
+    private final PlayedCardLayoutContainer myPCLC;
+    private final PlayedCardLayoutContainer firstEnemyPCLC;
+    private final PlayedCardLayoutContainer secondEnemyPCLC;
+    private final PlayedCardLayoutContainer thirdEnemyPCLC;
+    private final DiscardPileLayoutContainer myDPLC;
+    private final DiscardPileLayoutContainer firstEnemyDPLC;
+    private final DiscardPileLayoutContainer secondEnemyDPLC;
+    private final DiscardPileLayoutContainer thirdEnemyDPLC;
+    private final DeckLayoutContainer myDLC;
+    private final DeckLayoutContainer firstEnemyDLC;
+    private final DeckLayoutContainer secondEnemyDLC;
+    private final DeckLayoutContainer thirdEnemyDLC;
     private ObservableList<String> users;
     private final GameService gameService;
     private MouseEvent mouseEvent;
@@ -142,8 +155,27 @@ public class GameViewPresenter extends AbstractPresenter {
         this.chatViewPresenter = chatViewPresenter;
         this.injector = injector;
         this.gameManagement = gameManagement;
-        handcards = new HandcardsLayoutContainer(460, 618, 160, 650);
-        playedCardLayoutContainer = new PlayedCardLayoutContainer(500, 500, 160, 100);
+        // Die Hände für jeden Spieler
+        handcards = new HandcardsLayoutContainer(575, 630, 110, 420, "My.HCLC");
+        firstEnemyHand = new HandcardsLayoutContainer(575, 0, 110, 420,"1.HCLC");
+        secondEnemyHand = new HandcardsLayoutContainer(250, 308, 105, 215,"2.HCLC");
+        thirdEnemyHand = new HandcardsLayoutContainer(1120, 308, 105, 215,"3.HCLC");
+        // Die Aktion-Zonen für jeden Spieler
+        myPCLC = new PlayedCardLayoutContainer(960, 480, 100, 200, "My.PCLC");
+        firstEnemyPCLC = new PlayedCardLayoutContainer(700, 150,100, 200,"1.PCLC");
+        secondEnemyPCLC = new PlayedCardLayoutContainer(360, 308,107, 215, "2.PCLC");
+        thirdEnemyPCLC = new PlayedCardLayoutContainer(1012, 308, 105, 215,"3.PCLC");
+        // Die Abwerf-Zonen für jeden Spieler
+        myDPLC = new DiscardPileLayoutContainer(997, 630, 110,60, "My.DPLC");
+        firstEnemyDPLC = new DiscardPileLayoutContainer(513,0,110,60,"1.DPLC");
+        secondEnemyDPLC = new DiscardPileLayoutContainer(328,447,104,60,"2.DPLC");
+        thirdEnemyDPLC = new DiscardPileLayoutContainer(1198,169,106,60,"3.DPLC");
+        // Die Decks für jeden Spieler
+        myDLC = new DeckLayoutContainer(513,630,110,60,"My.DLC");
+        firstEnemyDLC = new DeckLayoutContainer(997,0,110,60,"1.DLC");
+        secondEnemyDLC = new DeckLayoutContainer(328,169,104,60,"2.DLC");
+        thirdEnemyDLC = new DeckLayoutContainer(1198,446,106,60,"3.DLC");
+
         this.gameService = gameService;
         initializeUserList();
     }
@@ -188,8 +220,49 @@ public class GameViewPresenter extends AbstractPresenter {
         chatView.getChildren().add(loader.load());
         ((Pane) chatView.getChildren().get(0)).setPrefHeight(chatView.getPrefHeight());
         ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getPrefWidth());
-        gameViewWIP.getChildren().add(playedCardLayoutContainer);
+        // Die Bestandteile des Spiels wie Hände, Aktionzonen usw. werden dem GameViewWIP hinzugefügt
         gameViewWIP.getChildren().add(handcards);
+        gameViewWIP.getChildren().add(firstEnemyHand);
+        gameViewWIP.getChildren().add(secondEnemyHand);
+        gameViewWIP.getChildren().add(thirdEnemyHand);
+        gameViewWIP.getChildren().add(myPCLC);
+        gameViewWIP.getChildren().add(firstEnemyPCLC);
+        gameViewWIP.getChildren().add(secondEnemyPCLC);
+        gameViewWIP.getChildren().add(thirdEnemyPCLC);
+        gameViewWIP.getChildren().add(myDPLC);
+        gameViewWIP.getChildren().add(firstEnemyDPLC);
+        gameViewWIP.getChildren().add(secondEnemyDPLC);
+        gameViewWIP.getChildren().add(thirdEnemyDPLC);
+        gameViewWIP.getChildren().add(myDLC);
+        gameViewWIP.getChildren().add(firstEnemyDLC);
+        gameViewWIP.getChildren().add(secondEnemyDLC);
+        gameViewWIP.getChildren().add(thirdEnemyDLC);
+        /*
+         * Gibt den einzelnen Elementen des Spielfelds eine Farbe,
+         * zur vorübergehend besseren Orientierung mit dem allgemeinen Layout
+         *
+         * Handkarten = Hellgrün
+         * Aktionszonen = Hellblau
+         * Abwerfzonen = Rot
+         */
+        /*
+        handcards.setStyle("-fx-background-color: chartreuse");
+        firstEnemyHand.setStyle("-fx-background-color: chartreuse");
+        secondEnemyHand.setStyle("-fx-background-color: chartreuse");
+        thirdEnemyHand.setStyle("-fx-background-color: chartreuse");
+        myPCLC.setStyle("-fx-background-color: aqua");
+        firstEnemyPCLC.setStyle("-fx-background-color: aqua");
+        secondEnemyPCLC.setStyle("-fx-background-color: aqua");
+        thirdEnemyPCLC.setStyle("-fx-background-color: aqua");
+        myDPLC.setStyle("-fx-background-color: crimson");
+        firstEnemyDPLC.setStyle("-fx-background-color: crimson");
+        secondEnemyDPLC.setStyle("-fx-background-color: crimson");
+        thirdEnemyDPLC.setStyle("-fx-background-color: crimson");
+        myDLC.setStyle("-fx-background-color: darkviolet");
+        firstEnemyDLC.setStyle("-fx-background-color: darkviolet");
+        secondEnemyDLC.setStyle("-fx-background-color: darkviolet");
+        thirdEnemyDLC.setStyle("-fx-background-color: darkviolet");
+        */
     }
 
     /**
@@ -283,23 +356,6 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Wenn die StartClearPhaseMessage kommt werden die Karten auf der Hand zum Ablagestapel bewegt
-     *
-     * @param msg Die Nachricht
-     * @author Darian
-     * @since Sprint7
-     */
-    @Subscribe
-    public void onStartClearPhase(StartClearPhaseMessage msg){
-        if (msg.getGameID().equals(this.lobbyID) && msg.getUser().equals(loggedInUser)) {
-            synchronized (handcards){
-                moveCardsToDiscardPile(handcards.getChildren(), false);
-            }
-            moveCardsToDiscardPile(playedCardLayoutContainer.getChildren(), true);
-        }
-    }
-
-    /**
      * Aktualisiert den loggedInUser sowie die Liste, falls sich der Username geändert hat
      *
      * @param message
@@ -364,7 +420,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     gameViewWIP.getChildren().add(newCardImage);
                     AnimationManagement.buyCard(newCardImage);
                     gameViewWIP.getChildren().remove(newCardImage);
-                    discardPilePane.getChildren().add(newCardImage);
+                    myDPLC.getChildren().add(newCardImage);
                 });
                 if (msg.getCounterCard() < 1) {
                     ColorAdjust makeImageDarker = new ColorAdjust();
@@ -380,23 +436,26 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Die Nachricht die angibt ob die Karte gespielt werden konnte
+     * Die Nachricht die angibt ob die Karte gespielt werden konnte.
+     * Wenn currentPlayer eine Karte ausspielt, wird die ausgewählte Karte auf das Ausspielfeld gelegt.
+     * Wenn ein anderer Spieler eine Karte ausspielt, bekommen wird das für dei anderen Spieler angezeigt.
      *
-     * @param msg die Nachricht
+     * @param msg die Nachricht die vom server gesendet wird, wenn ein Spieler eine Karte ausspielz.
      * @author Devin
      * @since Sprint 6
      */
     @FXML
     @Subscribe
     public void onPlayCardMessage(PlayCardMessage msg) {
-        ImageView card = (ImageView) mouseEvent.getTarget();
+        // Falls diese Message an den currentPlayer geschickt wird, wird das ausspielen der Karte angezeigt.
         if (msg.getGameID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
+            ImageView card = (ImageView) mouseEvent.getTarget();
             if (msg.getIsPlayed()) {
                 Platform.runLater(() -> {
                     if (handcards.getChildren().contains(card)) {
-                        AnimationManagement.playCard(card, playedCardLayoutContainer.getChildren().size());
+                        AnimationManagement.playCard(card, myPCLC.getChildren().size(), myPCLC);
                         handcards.getChildren().remove(card);
-                        playedCardLayoutContainer.getChildren().add(card);
+                        myPCLC.getChildren().add(card);
                         card.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                     }
                 });
@@ -405,6 +464,221 @@ public class GameViewPresenter extends AbstractPresenter {
                 LOG.debug("Das Spielen der Karte " + msg.getHandCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
             }
         }
+        // Falls die Message bei anderen Spielern ankommt, wird ihnen angezeigt, dass ihr Gegner eine Karte spiet.
+        if (msg.getGameID().equals(lobbyID) && !msg.getCurrentUser().equals(loggedInUser)) {
+            if (msg.getIsPlayed()) {
+                List<Short> playerIndexNumbers = new ArrayList<>();
+                playerIndexNumbers.add((short) 0);
+                playerIndexNumbers.add((short) 1);
+                playerIndexNumbers.add((short) 2);
+                playerIndexNumbers.add((short) 3);
+                if (msg.getGameID().equals(lobbyID) && !msg.getCurrentUser().equals(loggedInUser)) {
+                    playerIndexNumbers.remove(msg.getUserPlaceNumber());
+                    Card card = new Card(msg.getHandCardID(), firstEnemyPCLC.getLayoutX(), firstEnemyPCLC.getLayoutY(), firstEnemyPCLC.getHeight());
+                    if (playerIndexNumbers.get(0).equals(msg.getEnemyPlaceNumber())) {
+                        Platform.runLater(() -> {
+                            AnimationManagement.playCard((ImageView)firstEnemyHand.getChildren().get(0),  firstEnemyPCLC.getChildren().size(), firstEnemyPCLC);
+                            firstEnemyHand.getChildren().remove(0);
+                            firstEnemyPCLC.getChildren().add(card);
+                            return;
+                        });
+                    }
+
+                    if (playerIndexNumbers.get(1).equals(msg.getEnemyPlaceNumber())) {
+                        Platform.runLater(() -> {
+                            AnimationManagement.playCard((ImageView)secondEnemyHand.getChildren().get(0),  secondEnemyPCLC.getChildren().size(), secondEnemyPCLC);
+                            secondEnemyHand.getChildren().remove(0);
+                            secondEnemyPCLC.getChildren().add(card);
+                            return;});
+                    }
+
+                    if (playerIndexNumbers.get(2).equals(msg.getEnemyPlaceNumber())) {
+                        Platform.runLater(() -> {
+                            AnimationManagement.playCard((ImageView)thirdEnemyHand.getChildren().get(0),  thirdEnemyPCLC.getChildren().size(), thirdEnemyPCLC);
+                            thirdEnemyHand.getChildren().remove(0);
+                            thirdEnemyPCLC.getChildren().add(card);
+                            return;});
+                    }
+                }
+            } else {
+                showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht spielen!", "Fehler");
+                LOG.debug("Das Spielen der Karte " + msg.getHandCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
+            }
+        }
+    }
+
+    /**
+     * Wenn ein anderer Spieler eine Karte von der Hand entsorgt, wird dies den anderen Spielern angezeigt.
+     *
+     * @param msg       Die Message die vom server gesendet wird, wenn ein anderer Spieler eine Karte entsorgt.
+     * @author Devin
+     * @since Sprint 7
+     */
+    @FXML
+    @Subscribe
+    public void onDiscardCardMessage (DiscardCardMessage msg) {
+        if (msg.getGameID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
+            //TODO: Aussuchverfahren zum abwerfen von Karten implementieren
+        }
+
+        List<Short> playerIndexNumbers = new ArrayList<>(); playerIndexNumbers.add((short) 0); playerIndexNumbers.add((short) 1); playerIndexNumbers.add((short) 2); playerIndexNumbers.add((short) 3);
+        if (msg.getGameID().equals(lobbyID) && !msg.getCurrentUser().equals(loggedInUser)) {
+            playerIndexNumbers.remove(msg.getUserPlaceNumber());
+            if (playerIndexNumbers.get(0).equals(msg.getEnemyPlaceNumber())) {
+                int numberOfCardsInHand = firstEnemyHand.getChildren().size();
+                for (Short id: msg.getCardID()) {
+                    Card card = new Card (id.toString(),328,447,104);
+                    if(numberOfCardsInHand==0) {
+                        LOG.debug("Die Hand hat keine Karten mehr zum entsorgen");
+                        return;
+                    }
+                    Platform.runLater(() -> {
+                    firstEnemyHand.getChildren().remove(0);
+                    // TODO: Animation Management zum entsorgen einer Karte
+                    firstEnemyDPLC.getChildren().add(card);
+                    });
+                }
+                return;
+            }
+            if (playerIndexNumbers.get(1).equals(msg.getEnemyPlaceNumber())) {
+                int numberOfCardsInHand = secondEnemyHand.getChildren().size();
+                for (Short id: msg.getCardID()) {
+                    Card card = new Card (id.toString(),0,0,104);
+                    if(numberOfCardsInHand==0) {
+                        LOG.debug("Die Hand hat keine Karten mehr zum entsorgen");
+                        return;
+                    }
+                    Platform.runLater(() -> {
+                        secondEnemyHand.getChildren().remove(0);
+                        // TODO: Animation Management zum entsorgen einer Karte
+                        secondEnemyDPLC.getChildren().add(card);
+                    });
+                }
+                return;
+            }
+            if (playerIndexNumbers.get(2).equals(msg.getEnemyPlaceNumber())) {
+                int numberOfCardsInHand = thirdEnemyHand.getChildren().size();
+                for (Short id: msg.getCardID()) {
+                    Card card = new Card (id.toString(),328,447,104);
+                    if(numberOfCardsInHand==0) {
+                        LOG.debug("Die Hand hat keine Karten mehr zum entsorgen");
+                        return;
+                    }
+                    Platform.runLater(() -> {
+                        thirdEnemyHand.getChildren().remove(0);
+                        // TODO: Animation Management zum entsorgen einer Karte
+                        thirdEnemyDPLC.getChildren().add(card);
+                    });
+                }
+                return;
+            }
+        }
+    }
+
+    /**
+     * Wenn ein anderer Spieler sich in der ClearPhase befindet, wird das Entsorgen dessen Handkarten und ausgespielten Karten den anderen Spielern angezeigt
+     *
+     * @param msg       Die Message die vom server gesendet wird, wenn ein anderer Spieler eine Karte sich in der ClearPhase befindet.
+     * @author Devin
+     * @since Sprint 7
+     */
+    @FXML
+    @Subscribe
+    public void onStartClearPhaseMesage (StartClearPhaseMessage msg) {
+        System.out.println(msg.getUserPlaceNumber());
+        System.out.println(msg.getEnemyPlaceNumber());
+        // Wenn die ClearMessage an den currentPlayer geht werden, seine Handkarten und
+        // ausgespielten Karten auf den Ablagestapel getan und fünf neue Karten gezogen.
+        if (msg.getGameID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
+            Platform.runLater(() -> {
+
+                        moveCardsToDiscardPile(handcards.getChildren(), false, myDPLC);
+                        moveCardsToDiscardPile(myPCLC.getChildren(), true, myDPLC);
+            });
+            ArrayList<Short> HandCardID = msg.getCardsToDraw();
+            HandCardID.forEach((n) -> {
+                Card card = new Card(n.toString(), handcards.getLayoutX(), handcards.getLayoutY(), handcards.getHeight());
+                Platform.runLater(() -> {
+                    myDLC.getChildren().add(card);
+                    myDLC.getChildren().remove(card);
+                    handcards.getChildren().add(card);
+                    card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+                });
+            });
+
+        }
+        // Wenn ein anderer Spieler eine ClearPhaseMessage erhählt wird dies den anderen Spielern
+        // angezeigt, indem deren Repräsentation des Spieler seine Handkarten und ausgespielten Karten auf den Ablagestapel legt.
+        if (msg.getGameID().equals(lobbyID) && !msg.getCurrentUser().equals(loggedInUser)) {
+            List<Short> playerIndexNumbers = new ArrayList<>(); playerIndexNumbers.add((short) 0); playerIndexNumbers.add((short) 1); playerIndexNumbers.add((short) 2); playerIndexNumbers.add((short) 3);
+            playerIndexNumbers.remove(msg.getUserPlaceNumber());
+
+            System.out.println("Hallo: " + playerIndexNumbers.get(0));
+            if (playerIndexNumbers.get(0).equals(msg.getEnemyPlaceNumber())) {
+                Platform.runLater(() -> {
+                    firstEnemyHand.getChildren().clear();
+                    firstEnemyPCLC.getChildren().clear();
+                });
+                for(int i=0; i<5; i++) {
+                    Card card = new Card("card_back", firstEnemyHand.getLayoutX(), firstEnemyHand.getLayoutY(), firstEnemyHand.getHeight());
+                    Platform.runLater(() -> {
+                        firstEnemyHand.getChildren().add(card);
+                            });
+                        }
+                return;
+            }
+
+            if (playerIndexNumbers.get(1).equals(msg.getEnemyPlaceNumber())) {
+                Platform.runLater(() -> {
+                    secondEnemyHand.getChildren().clear();
+                    secondEnemyPCLC.getChildren().clear();
+                });
+                for(int i=0; i<5; i++) {
+                    Platform.runLater(() -> {
+                        Card card = new Card("card_back", secondEnemyHand.getLayoutX(), secondEnemyHand.getLayoutY(), secondEnemyHand.getHeight());
+                        secondEnemyHand.getChildren().add(card);
+                    });
+                }
+
+                return;
+            }
+            if (playerIndexNumbers.get(2).equals(msg.getEnemyPlaceNumber())) {
+                Platform.runLater(() -> {
+                    thirdEnemyHand.getChildren().clear();
+                    thirdEnemyPCLC.getChildren().clear();
+                });
+                for(int i=0; i<5; i++) {
+                    Platform.runLater(() -> {
+                        Card card = new Card("card_back", thirdEnemyHand.getLayoutX(), thirdEnemyHand.getLayoutY(), thirdEnemyHand.getHeight());
+                        thirdEnemyHand.getChildren().add(card);
+                    });
+                }
+                return;
+            }
+        }
+    }
+
+
+    /**
+     * Fügt die Karte aus der DiscardPileLastCardMessage dem Ablagestapel hinzu.
+     *
+     * @param msg Die Nachricht
+     * @author Timo
+     * @Sprint 6
+     */
+    @Subscribe
+    public void onDiscardPileLastCardMessage(DiscardPileLastCardMessage msg) {
+        Platform.runLater(() -> {
+            if (msg.getGameID().equals(this.gameManagement.getID()) && msg.getUser().equals(this.loggedInUser)) {
+                String pfad = "file:Client/src/main/resources/cards/images/" + msg.getCardID() + ".png";
+                Image picture = new Image(pfad);
+                ImageView card = new ImageView(picture);
+                card.setFitHeight(107);
+                card.setPreserveRatio(true);
+                card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
+                myDPLC.getChildren().add(card);
+            }
+        });
     }
 
     /**
@@ -415,7 +689,8 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @FXML
     @Subscribe
-    public void onDrawHandMessage(DrawHandMessage message) {
+    public void onDrawHandMessage (DrawHandMessage message) {
+        numberOfPlayersInGame = message.getNumberOfPlayers();
         Platform.runLater(() -> {
             if (lobbyID.equals(message.getTheLobbyID())) {
                 handCardIDs = message.getCardsOnHand();
@@ -427,14 +702,55 @@ public class GameViewPresenter extends AbstractPresenter {
                     card.setPreserveRatio(true);
                     card.setId(n.toString());
                     card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
-                    deckPane.getChildren().add(card);
+                    myDLC.getChildren().add(card);
                     synchronized (handcards) {
-                        AnimationManagement.addToHand(card, handcards.getChildren().size());
-                        deckPane.getChildren().remove(card);
+                        // AnimationManagement.addToHand(card, handcards.getChildren().size());
+                        myDLC.getChildren().remove(card);
                         handcards.getChildren().add(card);
                     }
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                 });
+
+                if (numberOfPlayersInGame == 1) {
+                    return;
+                }
+
+                String pfad = "file:Client/src/main/resources/cards/images/card_back.png";
+                Image picture = new Image(pfad);
+                for(int i=0; i<5; i++) {
+                    ImageView card = new ImageView(picture);
+                    ImageView card2 = new ImageView(picture);
+                    ImageView card3 = new ImageView(picture);
+                    card.setFitHeight(107);
+                    card.setPreserveRatio(true);
+                    card.setId("back");
+                    card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
+                    card2.setFitHeight(card.getFitWidth());
+                    card2.setPreserveRatio(true);
+                    card2.setId("back");
+                    card2.setFitWidth(card.getFitHeight());
+                    card3.setFitHeight(card.getFitWidth());
+                    card3.setPreserveRatio(true);
+                    card3.setId("back");
+                    card3.setFitWidth(card.getFitHeight());
+                    firstEnemyDLC.getChildren().add(card);
+                    // AnimationManagement.addToHand(card, firstEnemyHand.getChildren().size());
+                    firstEnemyDLC.getChildren().remove(card);
+                    firstEnemyHand.getChildren().add(card);
+                    if(numberOfPlayersInGame >= 3) {
+                        secondEnemyDLC.getChildren().add(card2);
+                        // AnimationManagement.addToHand(card2, secondEnemyHand.getChildren().size());
+                        secondEnemyDLC.getChildren().remove(card2);
+                        secondEnemyHand.getChildren().add(card2);
+                        if (numberOfPlayersInGame == 4){
+                            thirdEnemyDLC.getChildren().add(card3);
+                            // AnimationManagement.addToHand(card3, thirdEnemyHand.getChildren().size());
+                            thirdEnemyDLC.getChildren().remove(card3);
+                            thirdEnemyHand.getChildren().add(card3);
+                        }
+                    }
+                }
+
             }
         });
     }
@@ -484,7 +800,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 Platform.runLater(() -> {
                     countDeckLabel.setText(String.valueOf(msg.getCardsDeckSize()));
                     if (msg.getDiscardPileWasCleared()) {
-                        discardPilePane.getChildren().clear();
+                        myDPLC.getChildren().clear();
                     }
                 });
             }
@@ -541,16 +857,16 @@ public class GameViewPresenter extends AbstractPresenter {
         bigCardImage.setFitHeight(225.0);
         bigCardImage.setFitWidth(150.0);
         bigCardImage.toFront();
-        bigCardImage.setLayoutX(425.0);
-        bigCardImage.setLayoutY(155.0);
+        bigCardImage.setLayoutX(725.0);
+        bigCardImage.setLayoutY(205.0);
         gameViewWIP.getChildren().add(bigCardImage);
         if (id > 6) {
-            Button play = new Button("Auspielen");
-            Button back = new Button("Zurück");
-            play.setLayoutX(432.0);
-            play.setLayoutY(385.0);
-            back.setLayoutX(516.0);
-            back.setLayoutY(385.0);
+            Button play = new Button("auspielen");
+            Button back = new Button("zurück");
+            play.setLayoutX(732.0);
+            play.setLayoutY(435.0);
+            back.setLayoutX(816.0);
+            back.setLayoutY(435.0);
             back.setMinWidth(52.0);
             gameViewWIP.getChildren().add(play);
             gameViewWIP.getChildren().add(back);
@@ -573,9 +889,9 @@ public class GameViewPresenter extends AbstractPresenter {
                 gameViewWIP.getChildren().remove(bigCardImage);
             });
         } else {
-            Button back = new Button("Zurück");
-            back.setLayoutX(516.0);
-            back.setLayoutY(385.0);
+            Button back = new Button("zurück");
+            back.setLayoutX(816.0);
+            back.setLayoutY(435.0);
             back.setMinWidth(52.0);
             gameViewWIP.getChildren().add(back);
             // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt
@@ -587,35 +903,14 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Hier werden alle Geldkarten, die sich auf der Hand befinden, ausgespielt
-     *
-     * @author Anna
-     * @since Sprint 7
-     */
-    private void playAllMoneyCardsOnHand() {
-        synchronized (handcards) {
-            for (Node c : handcards.getChildren()) {
-                ImageView card = (ImageView) c;
-                if (card.getId().equals("1") || card.getId().equals("2") || card.getId().equals("3")) {
-                    Platform.runLater(() -> {
-                        AnimationManagement.playCard(card, playedCardLayoutContainer.getChildren().size());
-                        handcards.getChildren().remove(c);
-                        playedCardLayoutContainer.getChildren().add(card);
-                    });
-                }
-            }
-        }
-    }
-
-    /**
      * Die Karten werden zum Ablagestapel bewegt
      *
      * @param children Das children von dem Karten Stapel
-     * @param achtionCards true wenn die Karten in der Aktionszone liegen
+     * @param actionCards true wenn die Karten in der Aktionszone liegen
      * @author Darian
      * @since Sprint7
      */
-    private void moveCardsToDiscardPile(ObservableList<Node> children, boolean achtionCards){
+    private void moveCardsToDiscardPile(ObservableList<Node> children, boolean actionCards, DiscardPileLayoutContainer discardPile){
         for (Node c : children) {
             Platform.runLater(() -> {
                 ImageView card = (ImageView) c;
@@ -626,23 +921,17 @@ public class GameViewPresenter extends AbstractPresenter {
                 newCardImage.setFitHeight(107);
                 newCardImage.setFitWidth(Math.round(newCardImage.getBoundsInLocal().getWidth()));
                 newCardImage.setLayoutX(450 + c.getLayoutX());
-                if (achtionCards) {
-                    newCardImage.setLayoutY(493);
-                }
-                else{
-                    newCardImage.setLayoutY(610);
+                if (actionCards) {
+                    newCardImage.setLayoutY(433);
+                } else {
+                    newCardImage.setLayoutY(550);
                 }
                 newCardImage.setId(String.valueOf(c));
-                children.remove(c);
-                gameViewWIP.getChildren().add(newCardImage);
-                PathTransition pathTransition = AnimationManagement.clearCards(newCardImage);
-                pathTransition.setOnFinished(actionEvent -> {
-                    gameViewWIP.getChildren().remove(newCardImage);
-                    ImageView iv = new ImageView(picture);
-                    iv.setPreserveRatio(true);
-                    iv.setFitHeight(107);
-                    discardPilePane.getChildren().add(iv);
-                });
+                //gameViewWIP.getChildren().add(newCardImage);
+                AnimationManagement.clearCards(card, myDPLC);
+                children.remove(card);
+                //gameViewWIP.getChildren().remove(newCardImage);
+                myDPLC.getChildren().add(card);
             });
         }
     }
@@ -674,12 +963,12 @@ public class GameViewPresenter extends AbstractPresenter {
         String PathCardLargeView = "file:Client/src/main/resources/cards/images/" + cardID + ".png";
         // Ein großes Bild der Karte wird hinzugefügt
         ImageView bigCardImage = new ImageView(new Image(PathCardLargeView));
-        // Setzt die Größe und die Position des Bildes. Das Bild ist im Vordergrund. Bild wird hinzugefügt
-        bigCardImage.setFitHeight(240.0);
+        // setzt die Größe und die Position des Bildes. Das Bild ist im Vordergrund. Bild wird hinzugefügt
+        bigCardImage.setFitHeight(225.0);
         bigCardImage.setFitWidth(150.0);
         bigCardImage.toFront();
-        bigCardImage.setLayoutX(325.0);
-        bigCardImage.setLayoutY(20.0);
+        bigCardImage.setLayoutX(725.0);
+        bigCardImage.setLayoutY(205.0);
         gameViewWIP.getChildren().add(bigCardImage);
         // Es werden zwei Buttons hinzugefügt (Zurück und Kaufen)
         Button buy = new Button("Kaufen");
@@ -687,11 +976,11 @@ public class GameViewPresenter extends AbstractPresenter {
         gameViewWIP.getChildren().add(buy);
         gameViewWIP.getChildren().add(back);
         // Position der Buttons wird gesetzt
-        buy.setLayoutX(325.0);
-        buy.setLayoutY(255.0);
+        buy.setLayoutX(732.0);
+        buy.setLayoutY(435.0);
         buy.setMinWidth(70.0);
-        back.setLayoutX(405.0);
-        back.setLayoutY(255.0);
+        back.setLayoutX(816.0);
+        back.setLayoutY(435.0);
         back.setMinWidth(70.0);
         // Aktion hinter dem Kauf-Button
         buy.setOnAction(event -> {
@@ -708,5 +997,25 @@ public class GameViewPresenter extends AbstractPresenter {
             back.setVisible(false);
             bigCardImage.setVisible(false);
         });
+    }
+
+
+    /**
+     * Hier werden alle Geldkarten, die sich auf der Hand befinden, ausgespielt
+     *
+     * @author Anna
+     * @since Sprint 7
+     */
+    public void playAllMoneyCardsOnHand() {
+        for (Node c : handcards.getChildren()) {
+            ImageView card = (ImageView) c;
+            if (card.getId().equals("1") || card.getId().equals("2") || card.getId().equals("3")) {
+                Platform.runLater(() -> {
+                    AnimationManagement.playCard(card, myPCLC.getChildren().size(), myPCLC);
+                    handcards.getChildren().remove(c);
+                    myPCLC.getChildren().add(card);
+                });
+            }
+        }
     }
 }
