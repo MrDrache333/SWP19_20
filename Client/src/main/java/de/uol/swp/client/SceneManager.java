@@ -341,7 +341,10 @@ public class SceneManager {
     }
 
     public void closeJoinLobby() {
-        Platform.runLater(() -> joinLobbyStage.close());
+        Platform.runLater(() -> {
+            if (joinLobbyStage != null)
+                joinLobbyStage.close();
+        });
     }
 
 
@@ -497,7 +500,7 @@ public class SceneManager {
         if (createLobbyScene == null) {
             Parent rootPane = initCreateLobbyPresenter(createLobbyPresenter);
             createLobbyScene = new Scene(rootPane, 400, 255);
-          createLobbyScene.getStylesheets().add(createLobbyPresenter.css);
+            createLobbyScene.getStylesheets().add(CreateLobbyPresenter.css);
         }
     }
 
