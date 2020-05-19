@@ -843,7 +843,8 @@ public class GameViewPresenter extends AbstractPresenter {
                     }
                     if (msg instanceof StartBuyPhaseMessage) {
                         infoActualPhase.setText("Du darfst Karten kaufen.");
-                    } else {
+                    }
+                    if (msg instanceof StartClearPhaseMessage) {
                         infoActualPhase.setText("Clearphase");
                     }
                 } else {
