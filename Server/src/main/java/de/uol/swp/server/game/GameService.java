@@ -204,7 +204,7 @@ public class GameService extends AbstractService {
      * Versuch eine Karte zu kaufen
      *
      * @param request BuyCardRequest wird hier vom Client empfangen
-     * @author Paula
+     * @author Paula, Rike
      * @since Sprint6
      */
     @Subscribe
@@ -240,7 +240,7 @@ public class GameService extends AbstractService {
      * Versuch eine Karte zu spielen
      *
      * @param rqs PlayCardRequest wird hier vom Client empfangen
-     * @author Devin
+     * @author Devin, Rike
      * @since Sprint6
      */
     @Subscribe

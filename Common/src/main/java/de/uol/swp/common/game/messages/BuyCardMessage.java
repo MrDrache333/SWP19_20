@@ -15,7 +15,7 @@ public class BuyCardMessage extends AbstractServerMessage {
      * @param cardID        die ID der Karte (String)
      * @param cardImage     die ImageView der Karte
      * @param counterCard   Anzahl der Karten (die die selbe ID haben) die man noch kaufen kann
-     * @param costCard      die Kosten der Karte
+     * @param costCard      die Kosten der zu kaufenden Karte
      * @author Rike
      * @since Sprint 5
      */

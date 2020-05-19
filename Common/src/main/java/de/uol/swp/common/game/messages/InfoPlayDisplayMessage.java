@@ -9,7 +9,7 @@ import java.util.UUID;
 public class InfoPlayDisplayMessage extends AbstractServerMessage {
 
     /**
-     * Aktuallisiert die Anzeige, zur Wiedergabe von den verfügbaren Käufen/Aktionen/Geld und den Phasen
+     * Aktuallisiert die Anzeige, zur Wiedergabe der verfügbaren Käufen/Aktionen/Geld
      *
      * @param lobbyID           die LobbyID
      * @param currentUser       der User der die Request gestellt hat

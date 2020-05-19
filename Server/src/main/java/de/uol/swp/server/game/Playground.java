@@ -11,7 +11,6 @@ import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.lobby.Lobby;
-import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
@@ -71,7 +70,7 @@ public class Playground extends AbstractPlayground {
         this.compositePhase = new CompositePhase(this);
         this.lobbySizeOnStart = (short) lobby.getUsers().size();
         this.cardsPackField = new JsonCardParser().loadPack("Basispack");
-        this.chosenCards = ((LobbyDTO) lobby).getChosenCards();
+        this.chosenCards = lobby.getChosenCards();
         initializeCardField();
     }
 
@@ -195,8 +194,9 @@ public class Playground extends AbstractPlayground {
 
     /**
      * Methode, welche vom aktuellen Player die Hand versendet. Holt sich von der aktuellen Hand des Spielers die Karten und speichert die IDs dieser in einer ArrayList.
+     * sendet eine InfoPlayDisplayMessage zum aktualisieren der Anzeige von Aktion/Kauf/Geld
      *
-     * @author Ferit
+     * @author Ferit, Rike
      * @version 1
      * @since Sprint5
      */
@@ -302,8 +302,9 @@ public class Playground extends AbstractPlayground {
 
     /**
      * Sendet die Initiale Hand an jeden Spieler spezifisch. Überprüfung via SessionID.
+     * sendet eine InfoPlayDisplayMessage zum aktualisieren der Anzeige von Aktion/Kauf/Geld
      *
-     * @author Ferit
+     * @author Ferit, Rike
      * @since Sprint6
      */
     public void sendInitialHands() {

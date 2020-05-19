@@ -248,10 +248,18 @@ public class GameViewPresenter extends AbstractPresenter {
         showGiveUpAlert(Alert.AlertType.CONFIRMATION, " ", "Möchtest du wirklich aufgeben?");
     }
 
+    /**
+     * Ereignis das ausgeführt wird, wenn der User den Button "Alle Geldkarten spielen" drückt
+     *
+     * @param actionEvent
+     * @author Rike
+     * @since Sprint 7
+     */
     @FXML
     public void onPlayAllMoneyCardsButtonPressed(ActionEvent actionEvent) {
         playAllMoneyCardsOnHand();
     }
+
     /**
      * Ereignis das ausgeführt wird, wenn auf eine Karte im Shop angeklickt wird.
      * ruft die chosenBuyableCard()-Methode auf
@@ -310,9 +318,10 @@ public class GameViewPresenter extends AbstractPresenter {
 
     /**
      * Wenn die StartClearPhaseMessage kommt werden die Karten auf der Hand zum Ablagestapel bewegt
+     * Die Anzeige für die jeweilige Phase wird für den Spieler aktualisiert
      *
      * @param msg Die Nachricht
-     * @author Darian
+     * @author Darian, Rike
      * @since Sprint7
      */
     @Subscribe
@@ -366,7 +375,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * Überprüft ob die Spieler noch Karten der gekauften Art kaufen können und fügt ggf. das ImageView (kleines Bild) wieder hinzu
      *
      * @param msg die Nachricht
-     * @author Rike, Devin, Anna
+     * @author Devin, Anna, Rike
      * @since Sprint 5
      */
     // TODO: Karte wenn sie gekauft wird, von der richtigen Postition einfliegen lassen. ( Weiter nach rechts)
@@ -396,6 +405,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 makeImageDarker.setBrightness(-0.7);
                 selectedCard.setEffect(makeImageDarker);
             }
+            // entfernt die genutzen Geldkarten aus der Aktionszone (wichtig, wenn der User mehr als 1 Kauf hat)
             Platform.runLater(() -> {
                 int money = 0;
                 int playedCardLayoutContainerSize = playedCardLayoutContainer.getChildren().size();
@@ -414,7 +424,6 @@ public class GameViewPresenter extends AbstractPresenter {
                 moveCardsToDiscardPile(removeMoneyCardList, false);
             });
         }
-        //TODO: die Geldkarten die für den Kauf benötigt wurden, müssen auf den Ablagestapel gelegt werden
     }
 
     /**
@@ -448,8 +457,9 @@ public class GameViewPresenter extends AbstractPresenter {
 
     /**
      * Zeigt die Karten auf der Hand in der GameView an
+     * setzt den Zustand des "Alle Geldkarten spielen" auf anklickbar, wenn der User Geldkarten auf die hand bekommt
      *
-     * @author Devin S., Anna
+     * @author Devin S., Anna, Rike
      * @since Sprint5
      */
     @FXML
@@ -534,7 +544,7 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Impelemntiert das Verhalten bei erhalten einer StartActionPhaseMessage, StartBuyPhaseMessage und StartClearPhaseMessage
+     * Impelemntiert das Verhalten bei erhalten einer StartActionPhaseMessage und StartBuyPhaseMessage
      * die onStartPhase Methode wird aufgerufen
      *
      * @param msg
@@ -553,7 +563,7 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Aktualisiert die Anzeige
+     * Aktualisiert die Anzeige für Aktion, Kauf und Geld
      *
      * @param msg
      * @author Rike
@@ -719,9 +729,11 @@ public class GameViewPresenter extends AbstractPresenter {
      * Es werden zwei Buttons("kaufen"/"zurück") hinzugefügt.
      * kauf-Button -> BuyCardRequest wird gestellt
      * zurück-Button -> Buttons und große Ansicht der Karte werden entfernt
+     * Request wird erst gesendet, wenn der User die Geldkarten ausgespielt hat & dran ist (abfrage über Zustand des "Geldkarten spielen"-Buttons
+     * ansonst gibt es einen Alert
      *
      * @param mouseEvent das Event
-     * @author Rike, Fenja, Anna
+     * @author Fenja, Anna, Rike
      * @since Sprint 5
      */
     private void chosenBuyableCard(MouseEvent mouseEvent) {
@@ -777,8 +789,6 @@ public class GameViewPresenter extends AbstractPresenter {
                 } else {
                     showAlert(Alert.AlertType.INFORMATION, "Du musst erst deine Geldkarten ausspielen!", "Fehler");
                 }
-
-
             }
         });
         // Aktion hinter dem Zurück-Button -> Buttons und das große Bild werden entfernt
@@ -791,6 +801,7 @@ public class GameViewPresenter extends AbstractPresenter {
 
     /**
      * Hier werden alle Geldkarten, die sich auf der Hand befinden, ausgespielt
+     * der playAllMoneyCardsButton wird anschließend auf nicht anklcikbar gesetzt
      *
      * @author Anna, Rike
      * @since Sprint 7
@@ -814,7 +825,7 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Hilfsmethode für die onStartActionPhaseMessage, onStartBuyPhaseMessage und onStartClearPhaseMessage
+     * Hilfsmethode für die onStartActionPhaseMessage, onStartBuyPhaseMessage und onStartClearPhase
      *
      * @param gameID die ID des Spieles
      * @param user   der User
