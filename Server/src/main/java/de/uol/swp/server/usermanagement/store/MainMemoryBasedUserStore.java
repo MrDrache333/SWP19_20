@@ -66,7 +66,7 @@ public class MainMemoryBasedUserStore extends AbstractUserStore implements UserS
     @Override
     public User createUser(String username, String password, String eMail) {
         if (Strings.isNullOrEmpty(username)) {
-            throw new IllegalArgumentException("Username must not be null");
+            throw new IllegalArgumentException("Benutzername darf nicht NULL sein");
         }
         User usr = new UserDTO(username, hash(password), eMail);
         users.put(username, usr);

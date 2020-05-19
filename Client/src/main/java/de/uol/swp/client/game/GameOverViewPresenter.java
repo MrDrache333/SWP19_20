@@ -164,7 +164,7 @@ public class GameOverViewPresenter extends AbstractPresenter {
      */
     @FXML
     public void onAgainButtonPressed(ActionEvent actionEvent) {
-        LOG.debug("Player " + loggedInUser.getUsername() + " wants to play again.");
+        LOG.debug("Spieler " + loggedInUser.getUsername() + " möchte noch einmal spielen.");
         gameManagement.showLobbyView();
         gameManagement.closeGameOverView();
     }
@@ -179,7 +179,7 @@ public class GameOverViewPresenter extends AbstractPresenter {
      */
     @FXML
     public void onReturnButtonPressed(ActionEvent actionEvent) {
-        LOG.debug("Player " + loggedInUser.getUsername() + " wants to return to the MainMenu.");
+        LOG.debug("Spieler " + loggedInUser.getUsername() + " möchte zum Hauptmenü zurückkehren.");
         gameManagement.closeGameOverViewAndLeaveLobby();
     }
 }

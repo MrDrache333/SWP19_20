@@ -32,7 +32,6 @@ public class JoinLobbyPresenter {
     private EventBus eventBus;
     private Lobby lobby;
 
-
     @FXML
     private Button cancelButton;
     @FXML
@@ -56,7 +55,6 @@ public class JoinLobbyPresenter {
      * @author Paula
      * @since Sprint7
      */
-
     @FXML
     public void onJoinButtonPressed(javafx.event.ActionEvent actionEvent) {
         // Passwörter stimmen überein
@@ -64,7 +62,7 @@ public class JoinLobbyPresenter {
             lobbyService.joinLobby(lobby.getLobbyID(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
             LobbyJoinUserRequest msg = new LobbyJoinUserRequest(lobby.getLobbyID(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
             eventBus.post(msg);
-            LOG.info("Request wurde gesendet.");
+            LOG.info("LobbyJoinUserRequest wurde gesendet.");
 
         }
         //Passwörter stimmen nicht überein
@@ -78,7 +76,7 @@ public class JoinLobbyPresenter {
     }
 
     /**
-     * Bei Drücken auf den Abbrechen Button schließt sich das Fenster.
+     * Beim Drücken auf den Abbrechen Button schließt sich das Fenster.
      *
      * @param actionEvent
      * @since Sprint7

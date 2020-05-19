@@ -41,7 +41,6 @@ public class Playground extends AbstractPlayground {
     private Player nextPlayer;
     private Player latestGavedUpPlayer;
     private Phase.Type actualPhase;
-    private ArrayList<Short> theIdsFromTheHand = new ArrayList<>(5);
     private GameService gameService;
     private UUID theSpecificLobbyID;
     private CompositePhase compositePhase;
@@ -86,18 +85,11 @@ public class Playground extends AbstractPlayground {
                 cardField.put(card.getId(), 8);
             } else cardField.put(card.getId(), 12);
         }
-        while (chosenCards.size() < 10) {
-            for (short i = 7; i < 17; i++) {
-                if (!chosenCards.contains(i)) {
-                    chosenCards.add(i);
-                }
-            }
-            //TODO: die 16 ändern, sobald mehr Karten vorhanden sind, die obere for-Schleife auskommentieren
-            // und den unteren Block dafür entkommentieren
-            /*short random = (short) (Math.random() * 16);
+        while (chosenCards.size() <= 10) {
+            short random = (short) (Math.random() * 31);
             if (!chosenCards.contains(random) && random > 6) {
                 chosenCards.add(random);
-            }*/
+            }
         }
         for (Short chosenCard : chosenCards) {
             cardField.put(chosenCard, 10);
@@ -111,7 +103,7 @@ public class Playground extends AbstractPlayground {
             if (i == 0) cardField.put(card.getId(), 60);
             else if (i == 1) cardField.put(card.getId(), 40);
             else if (i == 2) cardField.put(card.getId(), 30);
-            else LOG.debug("Komisch: @ initializeCardField- Else Methode in 104 ausgeschlagen.... @ @ @");
+            else LOG.debug("Komisch: @ initializeCardField- Else Methode in 104 ausgeschlagen.");
         }
         gameService.sendCardField(theSpecificLobbyID, cardField);
     }
@@ -190,7 +182,6 @@ public class Playground extends AbstractPlayground {
         if (actualPhase == Phase.Type.Clearphase) {
             throw new GamePhaseException("Du kannst die Clearphase nicht überspringen!");
         }
-
         if (actualPhase == Phase.Type.ActionPhase) {
             actualPhase = Phase.Type.Buyphase;
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartBuyPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
@@ -210,6 +201,7 @@ public class Playground extends AbstractPlayground {
      * @since Sprint5
      */
     public void sendPlayersHand() {
+        ArrayList<Short> theIdsFromTheHand = new ArrayList<>(5);
         for (Card card : actualPlayer.getPlayerDeck().getHand()) {
             theIdsFromTheHand.add(card.getId());
         }
@@ -225,7 +217,7 @@ public class Playground extends AbstractPlayground {
      */
     public int sendCardsDeckSize() {
         int size = actualPlayer.getPlayerDeck().getCardsDeck().size();
-        gameService.sendToSpecificPlayer(actualPlayer, new CardsDeckSizeMessage(theSpecificLobbyID, actualPlayer.getTheUserInThePlayer(), size));
+        gameService.sendToSpecificPlayer(actualPlayer, new CardsDeckSizeMessage(theSpecificLobbyID, actualPlayer.getTheUserInThePlayer(), size, actualPlayer.getPlayerDeck().discardPileWasCleared()));
         return size;
     }
 

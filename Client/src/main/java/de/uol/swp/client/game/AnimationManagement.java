@@ -14,8 +14,8 @@ public class AnimationManagement {
 
     private static final double HAND_X = 460;
 
-    private static final double ABLAGE_X = 1156;
-    private static final double ABLAGE_Y = 590;
+    private static final double ABLAGE_X = 1170;
+    private static final double ABLAGE_Y = 610;
 
     private static final double ACTION_ZONE_X = 510;
     private static final double ACTION_ZONE_Y = 600;
@@ -57,12 +57,15 @@ public class AnimationManagement {
     public static PathTransition createLineToPath(ImageView card, MoveTo moveTo, double EndPointX, double EndPointY) {
         double x = card.getLayoutX();
         double y = card.getLayoutY();
-        double w = card.getFitWidth() / 2;
-        double h = card.getFitHeight() / 2;
+        double w = card.getFitWidth();
+        double h = card.getFitHeight();
+        Parent parent = card.getParent();
+        double startPointX = parent.getLayoutX() + parent.getBoundsInLocal().getWidth() / 2 - w - EndPointX + x;
+        double startPointY = parent.getLayoutY() + parent.getBoundsInLocal().getHeight() / 2 - 2 * h - EndPointY + y;
         if (x != EndPointX || y != EndPointY) {
             Path path = new Path();
-            path.getElements().add(moveTo);
-            path.getElements().add(new LineTo(EndPointX - x + w, EndPointY - y + h));
+            path.getElements().add(new MoveTo(startPointX, startPointY));
+            path.getElements().add(new LineTo(w / 2, h / 2));
             PathTransition pathTransition = new PathTransition();
             pathTransition.setDuration(Duration.millis(1000));
             pathTransition.setNode(card);
@@ -70,6 +73,7 @@ public class AnimationManagement {
             pathTransition.setCycleCount(1);
             card.toFront();
             pathTransition.play();
+            setNewCoordinates(card, pathTransition);
             return pathTransition;
         }
         return null;
@@ -151,6 +155,18 @@ public class AnimationManagement {
      * @since Sprint5
      */
     public static PathTransition buyCard(ImageView card) {
+        return createLineToPath(card, keepPosition(card), ABLAGE_X, ABLAGE_Y);
+    }
+
+    /**
+     * Wenn die Clearphase ist gehen die Karten auf den Ablagestapel
+     * Die neuen Koordinaten werden übernommen.
+     *
+     * @param card die Karte
+     * @author Darian
+     * @since Sprint7
+     */
+    public static PathTransition clearCards(ImageView card) {
         return createLineToPath(card, keepPosition(card), ABLAGE_X, ABLAGE_Y);
     }
 
