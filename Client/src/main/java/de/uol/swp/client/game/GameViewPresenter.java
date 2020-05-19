@@ -261,7 +261,7 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Ereignis das ausgeführt wird, wenn auf eine Karte im Shop angeklickt wird.
+     * Ereignis das ausgeführt wird, wenn eine Karte im Shop angeklickt wird.
      * ruft die chosenBuyableCard()-Methode auf
      *
      * @param mouseEvent
@@ -317,7 +317,7 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Wenn die StartClearPhaseMessage kommt werden die Karten auf der Hand zum Ablagestapel bewegt
+     * Wenn die StartClearPhaseMessage ankommt, werden die Karten auf der Hand zum Ablagestapel bewegt
      * Die Anzeige für die jeweilige Phase wird für den Spieler aktualisiert
      *
      * @param msg Die Nachricht
@@ -370,9 +370,9 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Die Nachricht die angibt, ob der Kauf einer Karte erfolgreich war oder nicht.
-     * War der Kauf erfolgreich wandert die Karte auf den Ablagestapel (Animation)
-     * Überprüft ob die Spieler noch Karten der gekauften Art kaufen können und fügt ggf. das ImageView (kleines Bild) wieder hinzu
+     * Die Nachricht die gesendet wird, wenn der Kauf einer Karte erfolgreich war
+     * die Karte, sowie die gebrauchten Geldkarten wandert auf den Ablagestapel (Animation)
+     * Überprüft ob der Spieler noch Karten der gekauften Art kaufen kann und fügt ggf. das ImageView (kleines Bild) wieder hinzu
      *
      * @param msg die Nachricht
      * @author Devin, Anna, Rike
@@ -457,7 +457,7 @@ public class GameViewPresenter extends AbstractPresenter {
 
     /**
      * Zeigt die Karten auf der Hand in der GameView an
-     * setzt den Zustand des "Alle Geldkarten spielen" auf anklickbar, wenn der User Geldkarten auf die hand bekommt
+     * setzt den Zustand des "Alle Geldkarten spielen" auf anklickbar, wenn der User Geldkarten auf die Hand bekommt
      *
      * @author Devin S., Anna, Rike
      * @since Sprint5
@@ -544,7 +544,7 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Impelemntiert das Verhalten bei erhalten einer StartActionPhaseMessage und StartBuyPhaseMessage
+     * Impelemntiert das Verhalten bei Erhalten einer StartActionPhaseMessage und StartBuyPhaseMessage
      * die onStartPhase Methode wird aufgerufen
      *
      * @param msg
@@ -573,8 +573,10 @@ public class GameViewPresenter extends AbstractPresenter {
     public void onInfoPlayDisplayMessage(InfoPlayDisplayMessage msg) {
         if (msg.getLobbyID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
             Platform.runLater(() -> {
-                numberOfBuy.setText(msg.getAvailableBuy() + " Kauf");
-                numberOfAction.setText(msg.getAvailableAction() + " Aktion");
+                if (msg.getAvailableBuy() == 1){ numberOfBuy.setText(msg.getAvailableBuy() + " Kauf"); }
+                if (msg.getAvailableBuy() != 1) { numberOfBuy.setText(msg.getAvailableBuy() + " Käufe"); }
+                if (msg.getAvailableAction() == 1){ numberOfAction.setText(msg.getAvailableAction() + " Aktion"); }
+                if (msg.getAvailableAction() != 1){ numberOfAction.setText(msg.getAvailableAction() + " Aktionen"); }
                 if (msg.getSourceMessage() == Phase.Type.ActionPhase || msg.getSourceMessage() == Phase.Type.Clearphase) {
                     usableMoney = msg.getAdditionalMoney();
                 }
@@ -801,7 +803,7 @@ public class GameViewPresenter extends AbstractPresenter {
 
     /**
      * Hier werden alle Geldkarten, die sich auf der Hand befinden, ausgespielt
-     * der playAllMoneyCardsButton wird anschließend auf nicht anklcikbar gesetzt
+     * der playAllMoneyCardsButton wird anschließend auf nicht anklickbar gesetzt
      *
      * @author Anna, Rike
      * @since Sprint 7
