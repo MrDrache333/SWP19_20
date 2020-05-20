@@ -119,6 +119,16 @@ public class GameViewPresenter extends AbstractPresenter {
     private VBox bigCardImageBox;
     @FXML
     private ImageView bigCardImage;
+    @FXML
+    private Button buyCardButton;
+    @FXML
+    private Label countEstateCardLabel;
+    @FXML
+    private Label countDuchiesCardLabel;
+    @FXML
+    private Label countProvinceCardLabel;
+    @FXML
+    private Label countCurseCardLabel;
 
     private final HandcardsLayoutContainer handcards;
     private final HandcardsLayoutContainer firstEnemyHand;
@@ -146,6 +156,7 @@ public class GameViewPresenter extends AbstractPresenter {
 
     private PathTransition pathTransition;
     private ArrayList<Short> handCardIDs;
+    private Map<Short, Label> valuecardLabels = new HashMap<>();
 
     private final EventHandler<MouseEvent> handCardEventHandler = new EventHandler() {
         @Override
@@ -154,18 +165,7 @@ public class GameViewPresenter extends AbstractPresenter {
             playChoosenCard(lobbyID, loggedInUser, card.getImage().getUrl(), Short.valueOf(card.getId()), card, (MouseEvent) event);
         }
     };
-    @FXML
-    private Button buyCardButton;
-    @FXML
-    private Label countEstateCardLabel;
-    @FXML
-    private Label countDuchiesCardLabel;
-    @FXML
-    private Label countProvinceCardLabel;
-    @FXML
-    private Label countCurseCardLabel;
 
-    private Map<Short, Label> valuecardLabels = new HashMap<>();
 
 
     /**
@@ -282,8 +282,10 @@ public class GameViewPresenter extends AbstractPresenter {
 
     /**
      * Die Aktionskarten werden erstellt und auf dem Spielfeld angezeigt.
+     * Die Anzahl der Wertkarten wird angezeigt.
      *
-     * @param theList die IDs der Aktionskarten
+     * @param theList    die IDs der Aktionskarten
+     * @param valueCards Die Anzahl der Wertkarten, mit der ID der Karte als Schlüssel
      * @author Ferit, Fenja, Anna
      * @since Sprint 7
      */
@@ -294,14 +296,16 @@ public class GameViewPresenter extends AbstractPresenter {
         valuecardLabels.put((short) 5, countDuchiesCardLabel);
         valuecardLabels.put((short) 6, countProvinceCardLabel);
         valuecardLabels.put((short) 38, countCurseCardLabel);
+        //Initialisieren der AKtionskarten
         for (ImageView imageView : allImageViews) {
             String theIdInString = String.valueOf(theList.get(index));
-            String imageUrl = "/cards/images/" + theIdInString + "_sm.png";
+            String imageUrl = "cards/images/" + theIdInString + "_sm.png";
             Image theImage = new Image(imageUrl);
             imageView.setImage(theImage);
             imageView.setId(theIdInString);
             index++;
         }
+        //Initialiseren der Anzahl der Wertkarten
         Platform.runLater(() -> {
             for (Short key : valuecardLabels.keySet()) {
                 Label l = valuecardLabels.get(key);
@@ -336,7 +340,8 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Die IDs der gesendeten Aktionskarten werden initilaisiert
+     * Die IDs der gesendeten Aktionskarten werden initilaisiert.
+     * Die Anzahl der Wertkarten wird in einer Map gespeichert, mit der ID der jeweiligen Karte als Schlüssel.
      *
      * @param msg die Nachricht mit den IDs und der jeweiligen Azahl der Spielkarten
      * @author Anna, Fenja
@@ -347,9 +352,9 @@ public class GameViewPresenter extends AbstractPresenter {
         ArrayList<Short> list = new ArrayList<>();
         Map<Short, Integer> valuecards = new HashMap<>();
         for (Short key : msg.getCardField().keySet()) {
-            if (key > 6 && key != 38) {
+            if (key > 6 && key != 38) { //Aktionskarten, ohne Fluchkarte
                 list.add(key);
-            } else if (key <= 6 && key > 3 || key == 38) {
+            } else if (key <= 6 && key > 3 || key == 38) { //Wertkarten und Fluchkarte
                 valuecards.put(key, msg.getCardField().get(key));
             }
         }
@@ -443,6 +448,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * Die Nachricht die angibt, ob der Kauf einer Karte erfolgreich war oder nicht.
      * War der Kauf erfolgreich wandert die Karte auf den Ablagestapel (Animation)
      * Überprüft ob die Spieler noch Karten der gekauften Art kaufen können und fügt ggf. das ImageView (kleines Bild) wieder hinzu
+     * Wenn die gekauft Karte eine Wertkarte war, wird dessen Anzahl aktualisiert.
      *
      * @param msg die Nachricht
      * @author Rike, Devin, Anna
@@ -451,7 +457,6 @@ public class GameViewPresenter extends AbstractPresenter {
     // TODO: Karte wenn sie gekauft wird, von der richtigen Postition einfliegen lassen. ( Weiter nach rechts)
     @Subscribe
     public void onBuyCardMessage(BuyCardMessage msg) {
-        System.out.println(msg.getCounterCard());
         if (msg.getLobbyID().equals(lobbyID)) {
             if (valuecardLabels.containsKey(msg.getCardID())) {
                 Platform.runLater(() -> {
