@@ -309,4 +309,8 @@ public class PrimaryPresenter extends AbstractPresenter {
         }));
     }
 
+    public User getUser() {
+        return loggedInUser;
+    }
+
 }
