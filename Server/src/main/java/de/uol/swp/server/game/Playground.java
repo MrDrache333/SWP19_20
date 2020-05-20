@@ -126,7 +126,7 @@ public class Playground extends AbstractPlayground {
             //Spieler muss Clearphase durchlaufen haben
             if (actualPhase != Phase.Type.Clearphase) return;
             if (actualPlayer != latestGavedUpPlayer) {
-                sendPlayersHand();
+                //sendPlayersHand();
                 sendCardsDeckSize();
             }
             int index = players.indexOf(nextPlayer);
@@ -178,6 +178,7 @@ public class Playground extends AbstractPlayground {
      * @since Sprint5
      */
     public void nextPhase() {
+        ArrayList<Short> theIdsFromTheHand = new ArrayList<>(5);
         if (actualPhase == Phase.Type.Clearphase) {
             throw new GamePhaseException("Du kannst die Clearphase nicht überspringen!");
         }
@@ -187,8 +188,16 @@ public class Playground extends AbstractPlayground {
             endTimer();
         } else {
             actualPhase = Phase.Type.Clearphase;
-            gameService.sendToAllPlayers(theSpecificLobbyID, new StartClearPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
+            Player currentPlayer = actualPlayer;
             compositePhase.executeClearPhase(actualPlayer);
+            for (Card card : currentPlayer.getPlayerDeck().getHand()) {
+                theIdsFromTheHand.add(card.getId());
+            }
+            players.forEach(n -> {
+                StartClearPhaseMessage msg = new StartClearPhaseMessage(currentPlayer.getTheUserInThePlayer(), theSpecificLobbyID, getIndexOfPlayer(n), getIndexOfPlayer(currentPlayer), theIdsFromTheHand);
+                gameService.sendToSpecificPlayer(n, msg);
+            });
+
         }
     }
 
@@ -205,7 +214,7 @@ public class Playground extends AbstractPlayground {
         for (Card card : actualPlayer.getPlayerDeck().getHand()) {
             theIdsFromTheHand.add(card.getId());
         }
-        DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID);
+        DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID, (short) 1);
         gameService.sendToSpecificPlayer(actualPlayer, theHandMessage);
         int availableAction = actualPlayer.getAvailableActions();
         int availableBuy = actualPlayer.getAvailableBuys();
@@ -313,7 +322,7 @@ public class Playground extends AbstractPlayground {
             for (Card card : playerhand.getPlayerDeck().getHand()) {
                 theIdsFromInitalPlayerDeck.add(card.getId());
             }
-            DrawHandMessage initialHandFromPlayer = new DrawHandMessage(theIdsFromInitalPlayerDeck, theSpecificLobbyID);
+            DrawHandMessage initialHandFromPlayer = new DrawHandMessage(theIdsFromInitalPlayerDeck, theSpecificLobbyID, (short) getPlayers().size());
             gameService.sendToSpecificPlayer(playerhand, initialHandFromPlayer);
             int availableAction = playerhand.getAvailableActions();
             int availableBuy = playerhand.getAvailableBuys();
@@ -396,6 +405,10 @@ public class Playground extends AbstractPlayground {
 
     public List<Player> getPlayers() {
         return players;
+    }
+
+    public Short getIndexOfPlayer(Player player) {
+        return (short) players.indexOf(player);
     }
 
     public Player getActualPlayer() {

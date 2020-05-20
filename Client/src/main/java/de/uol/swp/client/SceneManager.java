@@ -33,13 +33,16 @@ import de.uol.swp.common.user.UserDTO;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.text.Text;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -114,7 +117,11 @@ public class SceneManager {
             Alert alert = new Alert(type, "");
             alert.setResizable(false);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.getDialogPane().setContentText(message);
+            Text text = new Text(message);
+            text.setWrappingWidth(390);
+            alert.getDialogPane().setMaxWidth(400);
+            alert.getDialogPane().setContent(text);
+            alert.getDialogPane().setPadding(new Insets(10, 10, 10, 10));
             alert.getDialogPane().setHeaderText(title);
             alert.show();
         });
@@ -225,7 +232,6 @@ public class SceneManager {
         showScene(primaryScene, "Willkommen " + currentUser.getUsername());
     }
 
-
     public void showLoginScreen() {
         showScene(loginScene, "Login");
     }
@@ -263,9 +269,10 @@ public class SceneManager {
      */
     public void showSettingsScreen(User loggedInUser) {
         Platform.runLater(() -> {
-            settingsPresenter = new SettingsPresenter(loggedInUser, lobbyService, userService, eventBus);
+            settingsPresenter = new SettingsPresenter(loggedInUser, lobbyService, userService, injector, eventBus);
             initSettingsView(settingsPresenter);
             settingsStage = new Stage();
+            settingsStage.initStyle(StageStyle.UNDECORATED);
             settingsStage.setTitle("Einstellungen");
             settingsStage.setScene(settingsScene);
             settingsStage.setResizable(false);
@@ -310,7 +317,7 @@ public class SceneManager {
             joinLobbyPresenter = new JoinLobbyPresenter(loggedInUser, lobbyService, userService, eventBus, lobby);
             initJoinLobbyView(joinLobbyPresenter);
             joinLobbyStage = new Stage();
-            joinLobbyStage.setTitle("Lobby beitreten");
+            joinLobbyStage.setTitle("Lobby: " + lobby.getName()+ " beitreten ");
             joinLobbyStage.setScene(joinLobbyScene);
             joinLobbyStage.setResizable(false);
             joinLobbyStage.initModality(Modality.APPLICATION_MODAL);
@@ -345,6 +352,7 @@ public class SceneManager {
     }
 
     public void closeJoinLobby() {
+        if (joinLobbyStage != null)
         Platform.runLater(() -> joinLobbyStage.close());
     }
 
@@ -478,14 +486,13 @@ public class SceneManager {
             Parent rootPane = initPresenter(RegistrationPresenter.fxml);
             registrationScene = new Scene(rootPane, 1280, 750);
             registrationScene.getStylesheets().add(styleSheet);
-            registrationScene.getStylesheets().add(RegistrationPresenter.css);
         }
     }
 
     private void initSettingsView(SettingsPresenter settingsPresenter) {
         if (settingsScene == null) {
             Parent rootPane = initSettingsPresenter(settingsPresenter);
-            settingsScene = new Scene(rootPane, 400, 255);
+            settingsScene = new Scene(rootPane, 400, 420);
             settingsScene.getStylesheets().add(SettingsPresenter.css);
         }
     }
@@ -503,16 +510,15 @@ public class SceneManager {
         if (createLobbyScene == null) {
             Parent rootPane = initCreateLobbyPresenter(createLobbyPresenter);
             createLobbyScene = new Scene(rootPane, 400, 255);
-            createLobbyScene.getStylesheets().add(createLobbyPresenter.css);
+            createLobbyScene.getStylesheets().add(CreateLobbyPresenter.css);
         }
     }
 
     private void initJoinLobbyView(JoinLobbyPresenter joinLobbyPresenter) {
-        if (joinLobbyScene == null) {
-            Parent rootPane = initJoinLobbyPresenter(joinLobbyPresenter);
-            joinLobbyScene = new Scene(rootPane, 400, 255);
-            joinLobbyScene.getStylesheets().add(JoinLobbyPresenter.css);
-        }
+        Parent rootPane = initJoinLobbyPresenter(joinLobbyPresenter);
+        joinLobbyScene = new Scene(rootPane, 400, 255);
+        joinLobbyScene.getStylesheets().add(JoinLobbyPresenter.css);
+
     }
 
 

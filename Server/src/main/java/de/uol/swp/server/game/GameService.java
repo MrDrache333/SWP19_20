@@ -256,6 +256,15 @@ public class GameService extends AbstractService {
                     playground.endTimer();
                     // Karte wird an die ActionPhase zum Handling übergeben.
                     playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), cardID);
+                    //sendToSpecificPlayer(playground.getActualPlayer(), new PlayCardMessage(gameID, player, cardID, true));
+
+                    playground.getPlayers().forEach(n -> {
+                        PlayCardMessage msg = new PlayCardMessage(gameID, playground.getActualPlayer().getTheUserInThePlayer(), cardID, true,
+                                playground.getIndexOfPlayer(n), playground.getIndexOfPlayer(playground.getActualPlayer()));
+                        sendToSpecificPlayer(n, msg);
+                    });
+
+
                     sendToSpecificPlayer(playground.getActualPlayer(), new PlayCardMessage(gameID, player, cardID, true));
                     int availableAction = playground.getActualPlayer().getAvailableActions();
                     int availableBuy = playground.getActualPlayer().getAvailableBuys();
