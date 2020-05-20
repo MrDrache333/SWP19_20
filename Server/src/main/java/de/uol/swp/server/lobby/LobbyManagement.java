@@ -201,6 +201,7 @@ public class LobbyManagement {
      * @since Sprint 3
      */
     public User getLobbyOwner(UUID lobbyID) {
+
         return lobbies.get(lobbyID).getOwner();
     }
 

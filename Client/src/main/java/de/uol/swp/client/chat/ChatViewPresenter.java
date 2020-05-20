@@ -253,6 +253,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      */
     @Subscribe
     private void onNewChatMessage(NewChatMessage msg) {
+        if (loggedInUser == null) return;
         if (!chatId.equals("") && msg.getChatId().equals(chatId) && (lastMessage == null || !(msg.getMessage().getSender().getUsername().equals("server") && lastMessage.getSender().getUsername().equals("server") && msg.getMessage().getMessage().equals(lastMessage.getMessage())))) {
             if (lastMessage != null && !loggedInUser.getUsername().equals(msg.getMessage().getSender().getUsername()) && ((gameManagement != null && !gameManagement.hasFocus()) || (gameManagement == null && !ClientApp.getSceneManager().hasFocus())))
                 try {
@@ -300,7 +301,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void updatedUser(UpdatedUserMessage message) {
-        if (loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
+        if (loggedInUser != null && loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
             loggedInUser = message.getUser();
         }
     }
