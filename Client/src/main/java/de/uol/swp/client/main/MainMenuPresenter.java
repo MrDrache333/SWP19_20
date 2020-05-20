@@ -505,15 +505,9 @@ public class MainMenuPresenter extends AbstractPresenter {
                             setGraphic(joinLobbyButton);
                         }
                     }
-                    }
-
-                    ;
-                }
+                };
             }
-
-            ;
-
-
+        };
         joinLobby.setCellFactory(cellFactory);
     }
 

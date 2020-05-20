@@ -117,6 +117,7 @@ public class GameViewPresenter extends AbstractPresenter {
     private final DeckLayoutContainer firstEnemyDLC;
     private final DeckLayoutContainer secondEnemyDLC;
     private final DeckLayoutContainer thirdEnemyDLC;
+
     private ObservableList<String> users;
     private final GameService gameService;
     private MouseEvent mouseEvent;
@@ -124,6 +125,7 @@ public class GameViewPresenter extends AbstractPresenter {
     private final Injector injector;
     private final GameManagement gameManagement;
 
+    private PathTransition pathTransition;
     private ArrayList<Short> handCardIDs;
 
     private final EventHandler<MouseEvent> handCardEventHandler = new EventHandler() {
@@ -171,7 +173,8 @@ public class GameViewPresenter extends AbstractPresenter {
         secondEnemyDPLC = new DiscardPileLayoutContainer(328,447,104,60,"2.DPLC");
         thirdEnemyDPLC = new DiscardPileLayoutContainer(1198,169,106,60,"3.DPLC");
         // Die Decks für jeden Spieler
-        myDLC = new DeckLayoutContainer(513,630,110,60,"My.DLC");
+        //myDLC = new DeckLayoutContainer(513,630,110,60,"My.DLC");
+        myDLC = new DeckLayoutContainer(0,630,110,60,"My.DLC");
         firstEnemyDLC = new DeckLayoutContainer(997,0,110,60,"1.DLC");
         secondEnemyDLC = new DeckLayoutContainer(328,169,104,60,"2.DLC");
         thirdEnemyDLC = new DeckLayoutContainer(1198,446,106,60,"3.DLC");
@@ -237,32 +240,6 @@ public class GameViewPresenter extends AbstractPresenter {
         gameViewWIP.getChildren().add(firstEnemyDLC);
         gameViewWIP.getChildren().add(secondEnemyDLC);
         gameViewWIP.getChildren().add(thirdEnemyDLC);
-        /*
-         * Gibt den einzelnen Elementen des Spielfelds eine Farbe,
-         * zur vorübergehend besseren Orientierung mit dem allgemeinen Layout
-         *
-         * Handkarten = Hellgrün
-         * Aktionszonen = Hellblau
-         * Abwerfzonen = Rot
-         */
-        /*
-        handcards.setStyle("-fx-background-color: chartreuse");
-        firstEnemyHand.setStyle("-fx-background-color: chartreuse");
-        secondEnemyHand.setStyle("-fx-background-color: chartreuse");
-        thirdEnemyHand.setStyle("-fx-background-color: chartreuse");
-        myPCLC.setStyle("-fx-background-color: aqua");
-        firstEnemyPCLC.setStyle("-fx-background-color: aqua");
-        secondEnemyPCLC.setStyle("-fx-background-color: aqua");
-        thirdEnemyPCLC.setStyle("-fx-background-color: aqua");
-        myDPLC.setStyle("-fx-background-color: crimson");
-        firstEnemyDPLC.setStyle("-fx-background-color: crimson");
-        secondEnemyDPLC.setStyle("-fx-background-color: crimson");
-        thirdEnemyDPLC.setStyle("-fx-background-color: crimson");
-        myDLC.setStyle("-fx-background-color: darkviolet");
-        firstEnemyDLC.setStyle("-fx-background-color: darkviolet");
-        secondEnemyDLC.setStyle("-fx-background-color: darkviolet");
-        thirdEnemyDLC.setStyle("-fx-background-color: darkviolet");
-        */
     }
 
     /**
@@ -283,8 +260,6 @@ public class GameViewPresenter extends AbstractPresenter {
             imageView.setId(theIdInString);
             index++;
         }
-        theList = null;
-        allImageViews = null;
     }
 
     /**
@@ -401,11 +376,10 @@ public class GameViewPresenter extends AbstractPresenter {
     // TODO: Karte wenn sie gekauft wird, von der richtigen Postition einfliegen lassen. ( Weiter nach rechts)
     @Subscribe
     public void onBuyCardMessage(BuyCardMessage msg) {
-        System.out.println(msg.getCounterCard());
         if (msg.getLobbyID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
             if (msg.isBuyCard()) {
                 ImageView selectedCard = (ImageView) mouseEvent.getSource();
-                String pfad = "file:Client/src/main/resources/cards/images/" + msg.getCardID().toString() + ".png";
+                String pfad = "cards/images/" + msg.getCardID().toString() + ".png";
                 Image picture = new Image(pfad);
                 ImageView newCardImage = new ImageView(picture);
                 LOG.debug("Der Spieler " + msg.getCurrentUser() + " hat die Karte " + msg.getCardID() + " gekauft.");
@@ -489,15 +463,16 @@ public class GameViewPresenter extends AbstractPresenter {
                             AnimationManagement.playCard((ImageView)secondEnemyHand.getChildren().get(0),  secondEnemyPCLC.getChildren().size(), secondEnemyPCLC);
                             secondEnemyHand.getChildren().remove(0);
                             secondEnemyPCLC.getChildren().add(card);
-                            return;});
+                            return;
+                        });
                     }
-
                     if (playerIndexNumbers.get(2).equals(msg.getEnemyPlaceNumber())) {
                         Platform.runLater(() -> {
                             AnimationManagement.playCard((ImageView)thirdEnemyHand.getChildren().get(0),  thirdEnemyPCLC.getChildren().size(), thirdEnemyPCLC);
                             thirdEnemyHand.getChildren().remove(0);
                             thirdEnemyPCLC.getChildren().add(card);
-                            return;});
+                            return;
+                        });
                     }
                 }
             } else {
@@ -520,7 +495,6 @@ public class GameViewPresenter extends AbstractPresenter {
         if (msg.getGameID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
             //TODO: Aussuchverfahren zum abwerfen von Karten implementieren
         }
-
         List<Short> playerIndexNumbers = new ArrayList<>(); playerIndexNumbers.add((short) 0); playerIndexNumbers.add((short) 1); playerIndexNumbers.add((short) 2); playerIndexNumbers.add((short) 3);
         if (msg.getGameID().equals(lobbyID) && !msg.getCurrentUser().equals(loggedInUser)) {
             playerIndexNumbers.remove(msg.getUserPlaceNumber());
@@ -584,36 +558,31 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @FXML
     @Subscribe
-    public void onStartClearPhaseMesage (StartClearPhaseMessage msg) {
-        System.out.println(msg.getUserPlaceNumber());
-        System.out.println(msg.getEnemyPlaceNumber());
+    public void onStartClearPhaseMessage (StartClearPhaseMessage msg) {
         // Wenn die ClearMessage an den currentPlayer geht werden, seine Handkarten und
         // ausgespielten Karten auf den Ablagestapel getan und fünf neue Karten gezogen.
         if (msg.getGameID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
             Platform.runLater(() -> {
-
-                        moveCardsToDiscardPile(handcards.getChildren(), false, myDPLC);
-                        moveCardsToDiscardPile(myPCLC.getChildren(), true, myDPLC);
+                moveCardsToDiscardPile(handcards.getChildren(), false);
+                moveCardsToDiscardPile(myPCLC.getChildren(), true);
             });
-            ArrayList<Short> HandCardID = msg.getCardsToDraw();
-            HandCardID.forEach((n) -> {
+            ArrayList<Short> handCardID = msg.getCardsToDraw();
+            handCardID.forEach((n) -> {
                 Card card = new Card(n.toString(), handcards.getLayoutX(), handcards.getLayoutY(), handcards.getHeight());
                 Platform.runLater(() -> {
                     myDLC.getChildren().add(card);
-                    myDLC.getChildren().remove(card);
+                    AnimationManagement.addToHand(card, msg.getCardsToDraw().size());
                     handcards.getChildren().add(card);
+                    myDLC.getChildren().remove(card);
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                 });
             });
-
         }
         // Wenn ein anderer Spieler eine ClearPhaseMessage erhählt wird dies den anderen Spielern
         // angezeigt, indem deren Repräsentation des Spieler seine Handkarten und ausgespielten Karten auf den Ablagestapel legt.
         if (msg.getGameID().equals(lobbyID) && !msg.getCurrentUser().equals(loggedInUser)) {
             List<Short> playerIndexNumbers = new ArrayList<>(); playerIndexNumbers.add((short) 0); playerIndexNumbers.add((short) 1); playerIndexNumbers.add((short) 2); playerIndexNumbers.add((short) 3);
             playerIndexNumbers.remove(msg.getUserPlaceNumber());
-
-            System.out.println("Hallo: " + playerIndexNumbers.get(0));
             if (playerIndexNumbers.get(0).equals(msg.getEnemyPlaceNumber())) {
                 Platform.runLater(() -> {
                     firstEnemyHand.getChildren().clear();
@@ -623,11 +592,10 @@ public class GameViewPresenter extends AbstractPresenter {
                     Card card = new Card("card_back", firstEnemyHand.getLayoutX(), firstEnemyHand.getLayoutY(), firstEnemyHand.getHeight());
                     Platform.runLater(() -> {
                         firstEnemyHand.getChildren().add(card);
-                            });
-                        }
+                    });
+                }
                 return;
             }
-
             if (playerIndexNumbers.get(1).equals(msg.getEnemyPlaceNumber())) {
                 Platform.runLater(() -> {
                     secondEnemyHand.getChildren().clear();
@@ -639,7 +607,6 @@ public class GameViewPresenter extends AbstractPresenter {
                         secondEnemyHand.getChildren().add(card);
                     });
                 }
-
                 return;
             }
             if (playerIndexNumbers.get(2).equals(msg.getEnemyPlaceNumber())) {
@@ -670,7 +637,7 @@ public class GameViewPresenter extends AbstractPresenter {
     public void onDiscardPileLastCardMessage(DiscardPileLastCardMessage msg) {
         Platform.runLater(() -> {
             if (msg.getGameID().equals(this.gameManagement.getID()) && msg.getUser().equals(this.loggedInUser)) {
-                String pfad = "file:Client/src/main/resources/cards/images/" + msg.getCardID() + ".png";
+                String pfad = "cards/images/" + msg.getCardID() + ".png";
                 Image picture = new Image(pfad);
                 ImageView card = new ImageView(picture);
                 card.setFitHeight(107);
@@ -689,13 +656,13 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @FXML
     @Subscribe
-    public void onDrawHandMessage (DrawHandMessage message) {
+    public void onDrawHandMessage(DrawHandMessage message) {
         numberOfPlayersInGame = message.getNumberOfPlayers();
         Platform.runLater(() -> {
             if (lobbyID.equals(message.getTheLobbyID())) {
                 handCardIDs = message.getCardsOnHand();
                 handCardIDs.forEach((n) -> {
-                    String pfad = "file:Client/src/main/resources/cards/images/" + n + ".png";
+                    String pfad = "cards/images/" + n + ".png";
                     Image picture = new Image(pfad);
                     ImageView card = new ImageView(picture);
                     card.setFitHeight(107);
@@ -704,18 +671,16 @@ public class GameViewPresenter extends AbstractPresenter {
                     card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
                     myDLC.getChildren().add(card);
                     synchronized (handcards) {
-                        // AnimationManagement.addToHand(card, handcards.getChildren().size());
+                        //AnimationManagement.addToHand(card, handcards.getChildren().size());
                         myDLC.getChildren().remove(card);
                         handcards.getChildren().add(card);
                     }
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                 });
-
-                if (numberOfPlayersInGame == 1) {
+                if (numberOfPlayersInGame == 1){
                     return;
                 }
-
-                String pfad = "file:Client/src/main/resources/cards/images/card_back.png";
+                String pfad = "cards/images/card_back.png";
                 Image picture = new Image(pfad);
                 for(int i=0; i<5; i++) {
                     ImageView card = new ImageView(picture);
@@ -750,7 +715,6 @@ public class GameViewPresenter extends AbstractPresenter {
                         }
                     }
                 }
-
             }
         });
     }
@@ -910,28 +874,22 @@ public class GameViewPresenter extends AbstractPresenter {
      * @author Darian
      * @since Sprint7
      */
-    private void moveCardsToDiscardPile(ObservableList<Node> children, boolean actionCards, DiscardPileLayoutContainer discardPile){
+    private void moveCardsToDiscardPile(ObservableList<Node> children, boolean actionCards){
         for (Node c : children) {
             Platform.runLater(() -> {
                 ImageView card = (ImageView) c;
-                String pfad = "file:Client/src/main/resources/cards/images/" + card.getId() + ".png";
-                Image picture = new Image(pfad);
-                ImageView newCardImage = new ImageView(picture);
-                newCardImage.setPreserveRatio(true);
-                newCardImage.setFitHeight(107);
-                newCardImage.setFitWidth(Math.round(newCardImage.getBoundsInLocal().getWidth()));
-                newCardImage.setLayoutX(450 + c.getLayoutX());
-                if (actionCards) {
-                    newCardImage.setLayoutY(433);
+                String pfad = "cards/images/" + card.getId() + ".png";
+                if(actionCards) {
+                    card.setLayoutX(c.getLayoutX()-400);
+                    card.setLayoutY(0);//433);
                 } else {
-                    newCardImage.setLayoutY(550);
+                    card.setLayoutX(c.getLayoutX()-845);
+                    card.setLayoutY(145);
                 }
-                newCardImage.setId(String.valueOf(c));
-                //gameViewWIP.getChildren().add(newCardImage);
-                AnimationManagement.clearCards(card, myDPLC);
-                children.remove(card);
-                //gameViewWIP.getChildren().remove(newCardImage);
+                card.setId(String.valueOf(c));
                 myDPLC.getChildren().add(card);
+                AnimationManagement.clearCards(card, myDPLC);
+                children.remove(c);
             });
         }
     }
@@ -998,7 +956,6 @@ public class GameViewPresenter extends AbstractPresenter {
             bigCardImage.setVisible(false);
         });
     }
-
 
     /**
      * Hier werden alle Geldkarten, die sich auf der Hand befinden, ausgespielt

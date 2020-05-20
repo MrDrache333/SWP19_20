@@ -11,6 +11,8 @@ import java.awt.*;
  */
 public class Notifyer {
 
+    private static boolean muteState = false;
+
     /**
      * Überprüft ob Benachrichtigungen unterstützt werden.
      *
@@ -33,7 +35,7 @@ public class Notifyer {
      * @param message     die Nachricht
      */
     public void notify(MessageType messageType, String title, String message) {
-        if (isSupported())
+        if (isSupported() && !muteState)
             try {
                 final SystemTray systemTray = SystemTray.getSystemTray();
                 String imageName = "/images/info.png";
@@ -52,6 +54,18 @@ public class Notifyer {
             } catch (Exception e) {
                 throw new UnableToNotifyException("Unable to notify with java", e);
             }
+    }
+
+    /**
+     * Getter und Setter für die Mute Funktion von Benachrichtigungen.
+     *
+     */
+    public static void setMuteState (boolean muteState){
+        Notifyer.muteState = muteState;
+    }
+
+    public static boolean getMuteState () {
+        return muteState;
     }
 
     /**

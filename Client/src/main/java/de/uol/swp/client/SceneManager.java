@@ -38,6 +38,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -265,9 +266,10 @@ public class SceneManager {
      */
     public void showSettingsScreen(User loggedInUser) {
         Platform.runLater(() -> {
-            settingsPresenter = new SettingsPresenter(loggedInUser, lobbyService, userService, eventBus);
+            settingsPresenter = new SettingsPresenter(loggedInUser, lobbyService, userService, injector, eventBus);
             initSettingsView(settingsPresenter);
             settingsStage = new Stage();
+            settingsStage.initStyle(StageStyle.UNDECORATED);
             settingsStage.setTitle("Einstellungen");
             settingsStage.setScene(settingsScene);
             settingsStage.setResizable(false);
@@ -347,10 +349,8 @@ public class SceneManager {
     }
 
     public void closeJoinLobby() {
-        Platform.runLater(() -> {
-            if (joinLobbyStage != null)
-                joinLobbyStage.close();
-        });
+        if (joinLobbyStage != null)
+        Platform.runLater(() -> joinLobbyStage.close());
     }
 
 
@@ -488,7 +488,7 @@ public class SceneManager {
     private void initSettingsView(SettingsPresenter settingsPresenter) {
         if (settingsScene == null) {
             Parent rootPane = initSettingsPresenter(settingsPresenter);
-            settingsScene = new Scene(rootPane, 400, 255);
+            settingsScene = new Scene(rootPane, 400, 420);
             settingsScene.getStylesheets().add(SettingsPresenter.css);
         }
     }
