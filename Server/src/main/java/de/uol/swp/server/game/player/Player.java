@@ -10,16 +10,14 @@ public class Player {
     private String playerName;
     private User theUserInThePlayer;
     private Deck playerDeck = new Deck();
-    private Integer playerNumber;
 
     /**
      * Erstellt einen neuen Spieler
      *
      * @param playerName Der Spielername
      */
-    public Player(String playerName, Integer playerNumber) {
+    public Player(String playerName) {
         this.playerName = playerName;
-        this.playerNumber = playerNumber;
     }
 
     /*
