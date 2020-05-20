@@ -24,10 +24,7 @@ import de.uol.swp.server.usermanagement.AuthenticationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Die Klasse LobbyService, welche eine Lobby erstellt
@@ -79,14 +76,14 @@ public class LobbyService extends AbstractService {
         if (containsLobbyName(msg.getLobbyName())) {
             LOG.info("Lobby wurde nicht erstellt");
             ServerMessage returnMessage = new CreateLobbyMessage(null, null, msg.getUser(), null, null);
-            post(returnMessage);
+            authenticationService.sendToLoggedInPlayers(returnMessage);
         } else {
             UUID chatID = lobbyManagement.createLobby(msg.getLobbyName(), msg.getLobbyPassword(), new LobbyUser(msg.getOwner()));
             chatManagement.createChat(chatID.toString());
             LOG.info("Der Chat mit der UUID " + chatID + " wurde erfolgreich erstellt!");
             Optional<Lobby> lobby = lobbyManagement.getLobby(chatID);
             ServerMessage returnMessage = new CreateLobbyMessage(msg.getLobbyName(), msg.getLobbyPassword(), msg.getUser(), chatID, (LobbyDTO) lobby.get());
-            post(returnMessage);
+            authenticationService.sendToLoggedInPlayers(returnMessage);
             LOG.info("onCreateLobbyRequest wird auf dem Server aufgerufen.");
 
         }
@@ -108,7 +105,7 @@ public class LobbyService extends AbstractService {
             LOG.info("User " + msg.getUser().getUsername() + " is joining lobby " + lobby.get().getName());
             lobby.get().joinUser(new LobbyUser(msg.getUser()));
             ServerMessage returnMessage = new UserJoinedLobbyMessage(msg.getLobbyID(), msg.getUser(), (UserDTO) lobby.get().getOwner(), (LobbyDTO) lobby.get());
-            post(returnMessage);
+            authenticationService.sendToLoggedInPlayers(returnMessage);
         } else {
             LOG.error("Beitreten der Lobby mit der ID " + msg.getLobbyID() + " fehlgeschlagen");
         }
@@ -138,7 +135,7 @@ public class LobbyService extends AbstractService {
             } else {
                 returnMessage = new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), null, null);
             }
-            post(returnMessage);
+            authenticationService.sendToLoggedInPlayers(returnMessage);
         } else {
             LOG.error("Verlassen der Lobby mit der ID " + msg.getLobbyID() + " fehlgeschlagen");
         }
@@ -165,7 +162,7 @@ public class LobbyService extends AbstractService {
         toLeave.clear();
         lobbyManagement.getLobbies().forEach(lobby -> toLeave.add((LobbyDTO) lobby));
         ServerMessage returnMessage = new UserLeftAllLobbiesMessage(msg.getUser(), toLeave);
-        post(returnMessage);
+        authenticationService.sendToLoggedInPlayers(returnMessage);
     }
 
     /**
@@ -203,7 +200,7 @@ public class LobbyService extends AbstractService {
             LOG.info("Spiel in Lobby " + request.getLobbyID() + " beendet.");
             lobby.get().setInGame(false);
             ServerMessage msg = new UpdatedInGameMessage(request.getLobbyID());
-            post(msg);
+            authenticationService.sendToLoggedInPlayers(msg);
         } else
             LOG.debug("Lobby nicht gefunden! ID: " + request.getLobbyID());
     }
@@ -265,7 +262,7 @@ public class LobbyService extends AbstractService {
         if (lobbyManagement.kickUser(msg.getLobbyID(), msg.getUserToKick(), msg.getUser())) {
             LOG.info("User " + msg.getUser().getUsername() + " wurde von der Lobby mit folgender ID " + msg.getLobbyID() + " gekickt!");
             ServerMessage returnMessage = new KickUserMessage(msg.getLobbyID(), msg.getUserToKick(), (LobbyDTO) lobbyManagement.getLobby(msg.getLobbyID()).get());
-            post(returnMessage);
+            authenticationService.sendToLoggedInPlayers(returnMessage);
         } else {
             LOG.error("Kicken des Users " + msg.getUserToKick() + " von Lobby mit der ID " + msg.getLobbyID() + " ist fehlgeschlagen");
         }
@@ -281,8 +278,8 @@ public class LobbyService extends AbstractService {
     public void onSetMaxPlayerRequest(SetMaxPlayerRequest msg) {
         boolean setMaxPlayerSet = lobbyManagement.setMaxPlayer(msg.getLobbyID(), msg.getUser(), msg.getMaxPlayerValue());
         LobbyDTO lobby = (LobbyDTO) lobbyManagement.getLobby(msg.getLobbyID()).get();
-        SetMaxPlayerMessage returnMessage = new SetMaxPlayerMessage(msg.getMaxPlayerValue(), msg.getLobbyID(), setMaxPlayerSet, lobbyManagement.getLobbyOwner(msg.getLobbyID()), lobby);
-        post(returnMessage);
+        ServerMessage returnMessage = new SetMaxPlayerMessage(msg.getMaxPlayerValue(), msg.getLobbyID(), setMaxPlayerSet, lobbyManagement.getLobbyOwner(msg.getLobbyID()), lobby);
+        authenticationService.sendToLoggedInPlayers(returnMessage);
 
     }
 
@@ -344,9 +341,11 @@ public class LobbyService extends AbstractService {
         //Lobby starten
         LOG.debug("Spiel in Lobby: " + lobby.getName() + " startet.");
         lobby.setInGame(true);
+
         StartGameMessage msg = new StartGameMessage(lobby.getLobbyID());
-        post(msg);
-        // Sendet eine interne-Nachricht, welche die Erstellung des Games initiiert.
+        authenticationService.sendToLoggedInPlayers(msg);
+
+        // Sendet eine interne Nachricht, welche die Erstellung des Games initiiert.
         StartGameInternalMessage internalMessage = new StartGameInternalMessage(lobby.getLobbyID());
         post(internalMessage);
     }
