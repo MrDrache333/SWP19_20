@@ -191,25 +191,25 @@ public class GameViewPresenter extends AbstractPresenter {
         this.gameManagement = gameManagement;
         // Die Hände für jeden Spieler
         handcards = new HandcardsLayoutContainer(575, 630, 110, 420, "My.HCLC");
-        firstEnemyHand = new HandcardsLayoutContainer(575, 110, 110, 420,"1.HCLC");
-        secondEnemyHand = new HandcardsLayoutContainer(300, 308, 105, 215,"2.HCLC");
-        thirdEnemyHand = new HandcardsLayoutContainer(1070, 308, 105, 215,"3.HCLC");
+        firstEnemyHand = new HandcardsLayoutContainer(700, 110, 110, 215, "1.HCLC");
+        secondEnemyHand = new HandcardsLayoutContainer(300, 308, 105, 215, "2.HCLC");
+        thirdEnemyHand = new HandcardsLayoutContainer(1070, 308, 105, 215, "3.HCLC");
         // Die Aktion-Zonen für jeden Spieler
         myPCLC = new PlayedCardLayoutContainer(960, 480, 100, 200, "My.PCLC");
-        firstEnemyPCLC = new PlayedCardLayoutContainer(700, 150,100, 200,"1.PCLC");
-        secondEnemyPCLC = new PlayedCardLayoutContainer(360, 308,107, 215, "2.PCLC");
-        thirdEnemyPCLC = new PlayedCardLayoutContainer(1012, 308, 105, 215,"3.PCLC");
+        firstEnemyPCLC = new PlayedCardLayoutContainer(700, 150, 100, 200, "1.PCLC");
+        secondEnemyPCLC = new PlayedCardLayoutContainer(360, 308, 107, 215, "2.PCLC");
+        thirdEnemyPCLC = new PlayedCardLayoutContainer(1012, 308, 105, 215, "3.PCLC");
         // Die Abwerf-Zonen für jeden Spieler
-        myDPLC = new DiscardPileLayoutContainer(997, 630, 110,60, "My.DPLC");
-        firstEnemyDPLC = new DiscardPileLayoutContainer(513,0,110,60,"1.DPLC");
-        secondEnemyDPLC = new DiscardPileLayoutContainer(328,447,104,60,"2.DPLC");
-        thirdEnemyDPLC = new DiscardPileLayoutContainer(1198,169,106,60,"3.DPLC");
+        myDPLC = new DiscardPileLayoutContainer(1050, 630, 110, 60, "My.DPLC");
+        firstEnemyDPLC = new DiscardPileLayoutContainer(640, 0, 110, 60, "1.DPLC");
+        secondEnemyDPLC = new DiscardPileLayoutContainer(328, 447, 104, 60, "2.DPLC");
+        thirdEnemyDPLC = new DiscardPileLayoutContainer(1198, 169, 106, 60, "3.DPLC");
         // Die Decks für jeden Spieler
         //myDLC = new DeckLayoutContainer(513,630,110,60,"My.DLC");
-        myDLC = new DeckLayoutContainer(0,630,110,60,"My.DLC");
-        firstEnemyDLC = new DeckLayoutContainer(997,0,110,60,"1.DLC");
-        secondEnemyDLC = new DeckLayoutContainer(328,169,104,60,"2.DLC");
-        thirdEnemyDLC = new DeckLayoutContainer(1198,446,106,60,"3.DLC");
+        myDLC = new DeckLayoutContainer(0, 630, 110, 60, "My.DLC");
+        firstEnemyDLC = new DeckLayoutContainer(915, 0, 110, 60, "1.DLC");
+        secondEnemyDLC = new DeckLayoutContainer(328, 169, 104, 60, "2.DLC");
+        thirdEnemyDLC = new DeckLayoutContainer(1198, 446, 106, 60, "3.DLC");
 
         this.gameService = gameService;
     }
@@ -271,7 +271,14 @@ public class GameViewPresenter extends AbstractPresenter {
         gameViewWIP.getChildren().add(firstEnemyDLC);
         gameViewWIP.getChildren().add(secondEnemyDLC);
         gameViewWIP.getChildren().add(thirdEnemyDLC);
+
+        gameViewWIP.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                bigCardImageBox.setVisible(false);
+            }
+        });
     }
+
 
     /**
      * Die Aktionskarten werden erstellt und auf dem Spielfeld angezeigt.
@@ -283,7 +290,6 @@ public class GameViewPresenter extends AbstractPresenter {
     private void initalizeCardFieldImages(ArrayList<Short> theList, Map<Short, Integer> valueCards) {
         ArrayList<ImageView> allImageViews = new ArrayList<>(Arrays.asList(cardPlaceholder1, cardPlaceholder2, cardPlaceholder3, cardPlaceholder4, cardPlaceholder5, cardPlaceholder6, cardPlaceholder7, cardPlaceholder8, cardPlaceholder9, cardPlaceholder10));
         int index = 0;
-        //ArrayList<Label> labels = new ArrayList<>(Arrays.asList(countEstateCardLabel, countDuchiesCardLabel, countProvinceCardLabel, countCurseCardLabel));
         valuecardLabels.put((short) 4, countEstateCardLabel);
         valuecardLabels.put((short) 5, countDuchiesCardLabel);
         valuecardLabels.put((short) 6, countProvinceCardLabel);
@@ -302,8 +308,6 @@ public class GameViewPresenter extends AbstractPresenter {
                 l.setText(String.valueOf(valueCards.get(key)));
             }
         });
-        theList = null;
-        allImageViews = null;
     }
 
     /**
@@ -562,28 +566,6 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Fügt die Karte aus der DiscardPileLastCardMessage dem Ablagestapel hinzu.
-     *
-     * @param msg Die Nachricht
-     * @author Timo
-     * @Sprint 6
-     */
-    @Subscribe
-    public void onDiscardPileLastCardMessage(DiscardPileLastCardMessage msg) {
-        Platform.runLater(() -> {
-            if (msg.getGameID().equals(this.gameManagement.getID()) && msg.getUser().equals(this.loggedInUser)) {
-                String pfad = "file:Client/src/main/resources/cards/images/" + msg.getCardID() + ".png";
-                Image picture = new Image(pfad);
-                ImageView card = new ImageView(picture);
-                card.setFitHeight(107);
-                card.setPreserveRatio(true);
-                card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
-                myDPLC.getChildren().add(card);
-            }
-        });
-    }
-
-    /**
      * Wenn ein anderer Spieler eine Karte von der Hand entsorgt, wird dies den anderen Spielern angezeigt.
      *
      * @param msg       Die Message die vom server gesendet wird, wenn ein anderer Spieler eine Karte entsorgt.
@@ -690,7 +672,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     firstEnemyPCLC.getChildren().clear();
                 });
                 for(int i=0; i<5; i++) {
-                    Card card = new Card("card_back", firstEnemyHand.getLayoutX(), firstEnemyHand.getLayoutY(), firstEnemyHand.getHeight());
+                    Card card = new Card("card_back", firstEnemyHand.getLayoutX(), firstEnemyHand.getLayoutY(), 80);
                     Platform.runLater(() -> {
                         firstEnemyHand.getChildren().add(card);
                     });
@@ -704,7 +686,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 });
                 for(int i=0; i<5; i++) {
                     Platform.runLater(() -> {
-                        Card card = new Card("card_back", secondEnemyHand.getLayoutX(), secondEnemyHand.getLayoutY(), secondEnemyHand.getHeight());
+                        Card card = new Card("card_back", secondEnemyHand.getLayoutX(), secondEnemyHand.getLayoutY(), 80);
                         secondEnemyHand.getChildren().add(card);
                     });
                 }
@@ -717,7 +699,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 });
                 for(int i=0; i<5; i++) {
                     Platform.runLater(() -> {
-                        Card card = new Card("card_back", thirdEnemyHand.getLayoutX(), thirdEnemyHand.getLayoutY(), thirdEnemyHand.getHeight());
+                        Card card = new Card("card_back", thirdEnemyHand.getLayoutX(), thirdEnemyHand.getLayoutY(), 80);
                         thirdEnemyHand.getChildren().add(card);
                     });
                 }
@@ -968,6 +950,8 @@ public class GameViewPresenter extends AbstractPresenter {
 
     /**
      * Methode, die beim Anklicken einer Handkarte ausgeführt wird.
+     * Rechtsklick -> großes Bild
+     * Linksklick -> playCardRequest wird gestellt
      *
      * @param gameID       Die ID des Spiels
      * @param loggedInUser der User der gerade eingelogt im Spiel ist und die Karte ausgewählt hat.
@@ -975,7 +959,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * @param id           Die ID der Karte
      * @param card         Die ImageView der ausgewählten Karte
      * @param e            Das MouseEvent, das zum anlicken der Karte zuständig ist.
-     * @author Devin
+     * @author Devin, Fenja, Anna
      * @since Sprint 6
      */
     private void playChoosenCard(UUID gameID, User loggedInUser, String pfad, Short id, ImageView card, MouseEvent e) {
@@ -984,6 +968,7 @@ public class GameViewPresenter extends AbstractPresenter {
             buyCardButton.setVisible(false);
             bigCardImageBox.setVisible(true);
         } else {
+            bigCardImageBox.setVisible(false);
             for (Node a : handcards.getChildren()) {
                 ImageView b = (ImageView) a;
                 if (b.equals(card)) {
@@ -1045,10 +1030,9 @@ public class GameViewPresenter extends AbstractPresenter {
 
     /**
      * Hilfsmethode für onBuyableCardClicked() und onBuyCardMessage()
-     * Großes Bild der Karte wird angezeigt.
-     * Es werden zwei Buttons("kaufen"/"zurück") hinzugefügt.
-     * kauf-Button -> BuyCardRequest wird gestellt
-     * zurück-Button -> Buttons und große Ansicht der Karte werden entfernt
+     * Rechtsklick auf Karte -> Großes Bild der Karte wird angezeigt.
+     * kauf-Button wird hinzugefügt -> BuyCardRequest wird gestellt
+     * Linksklick auf Karte -> BuyCardRequest wird gestellt
      *
      * @param mouseEvent das Event
      * @author Rike, Fenja, Anna
@@ -1068,7 +1052,7 @@ public class GameViewPresenter extends AbstractPresenter {
         }
         if (mouseEvent.getButton() != MouseButton.PRIMARY) {
             String cardID = cardImage.getId();
-            String PathCardLargeView = "file:Client/src/main/resources/cards/images/" + cardID + ".png";
+            String PathCardLargeView = "cards/images/" + cardID + ".png";
             // ein großes Bild der Karte wird hinzugefügt
             bigCardImage.setImage(new Image(PathCardLargeView));
             // Aktion hinter dem Kauf-Button

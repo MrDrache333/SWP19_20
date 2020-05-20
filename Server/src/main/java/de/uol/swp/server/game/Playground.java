@@ -190,7 +190,7 @@ public class Playground extends AbstractPlayground {
             actualPhase = Phase.Type.Clearphase;
             Player currentPlayer = actualPlayer;
             compositePhase.executeClearPhase(actualPlayer);
-            for (Card card : actualPlayer.getPlayerDeck().getHand()) {
+            for (Card card : currentPlayer.getPlayerDeck().getHand()) {
                 theIdsFromTheHand.add(card.getId());
             }
             players.forEach(n -> {
