@@ -37,9 +37,11 @@ import javafx.scene.control.*;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -113,6 +115,20 @@ public class GameViewPresenter extends AbstractPresenter {
     private StackPane countDeckPane;
     @FXML
     private Label countDeckLabel;
+    @FXML
+    private VBox bigCardImageBox;
+    @FXML
+    private ImageView bigCardImage;
+    @FXML
+    private Button buyCardButton;
+    @FXML
+    private Label countEstateCardLabel;
+    @FXML
+    private Label countDuchiesCardLabel;
+    @FXML
+    private Label countProvinceCardLabel;
+    @FXML
+    private Label countCurseCardLabel;
 
     private final HandcardsLayoutContainer handcards;
     private final HandcardsLayoutContainer firstEnemyHand;
@@ -140,6 +156,7 @@ public class GameViewPresenter extends AbstractPresenter {
 
     private PathTransition pathTransition;
     private ArrayList<Short> handCardIDs;
+    private Map<Short, Label> valuecardLabels = new HashMap<>();
 
     private final EventHandler<MouseEvent> handCardEventHandler = new EventHandler() {
         @Override
@@ -148,6 +165,8 @@ public class GameViewPresenter extends AbstractPresenter {
             playChoosenCard(lobbyID, loggedInUser, card.getImage().getUrl(), Short.valueOf(card.getId()), card, (MouseEvent) event);
         }
     };
+
+
 
     /**
      * Instantiiert einen neuen GameView Presenter.
@@ -172,25 +191,25 @@ public class GameViewPresenter extends AbstractPresenter {
         this.gameManagement = gameManagement;
         // Die Hände für jeden Spieler
         handcards = new HandcardsLayoutContainer(575, 630, 110, 420, "My.HCLC");
-        firstEnemyHand = new HandcardsLayoutContainer(575, 110, 110, 420,"1.HCLC");
-        secondEnemyHand = new HandcardsLayoutContainer(300, 308, 105, 215,"2.HCLC");
-        thirdEnemyHand = new HandcardsLayoutContainer(1070, 308, 105, 215,"3.HCLC");
+        firstEnemyHand = new HandcardsLayoutContainer(700, 110, 110, 215, "1.HCLC");
+        secondEnemyHand = new HandcardsLayoutContainer(300, 308, 105, 215, "2.HCLC");
+        thirdEnemyHand = new HandcardsLayoutContainer(1070, 308, 105, 215, "3.HCLC");
         // Die Aktion-Zonen für jeden Spieler
         myPCLC = new PlayedCardLayoutContainer(960, 480, 100, 200, "My.PCLC");
-        firstEnemyPCLC = new PlayedCardLayoutContainer(700, 150,100, 200,"1.PCLC");
-        secondEnemyPCLC = new PlayedCardLayoutContainer(360, 308,107, 215, "2.PCLC");
-        thirdEnemyPCLC = new PlayedCardLayoutContainer(1012, 308, 105, 215,"3.PCLC");
+        firstEnemyPCLC = new PlayedCardLayoutContainer(700, 150, 100, 200, "1.PCLC");
+        secondEnemyPCLC = new PlayedCardLayoutContainer(360, 308, 107, 215, "2.PCLC");
+        thirdEnemyPCLC = new PlayedCardLayoutContainer(1012, 308, 105, 215, "3.PCLC");
         // Die Abwerf-Zonen für jeden Spieler
-        myDPLC = new DiscardPileLayoutContainer(997, 630, 110,60, "My.DPLC");
-        firstEnemyDPLC = new DiscardPileLayoutContainer(513,0,110,60,"1.DPLC");
-        secondEnemyDPLC = new DiscardPileLayoutContainer(328,447,104,60,"2.DPLC");
-        thirdEnemyDPLC = new DiscardPileLayoutContainer(1198,169,106,60,"3.DPLC");
+        myDPLC = new DiscardPileLayoutContainer(1050, 630, 110, 60, "My.DPLC");
+        firstEnemyDPLC = new DiscardPileLayoutContainer(640, 0, 110, 60, "1.DPLC");
+        secondEnemyDPLC = new DiscardPileLayoutContainer(328, 447, 104, 60, "2.DPLC");
+        thirdEnemyDPLC = new DiscardPileLayoutContainer(1198, 169, 106, 60, "3.DPLC");
         // Die Decks für jeden Spieler
         //myDLC = new DeckLayoutContainer(513,630,110,60,"My.DLC");
-        myDLC = new DeckLayoutContainer(0,630,110,60,"My.DLC");
-        firstEnemyDLC = new DeckLayoutContainer(997,0,110,60,"1.DLC");
-        secondEnemyDLC = new DeckLayoutContainer(328,169,104,60,"2.DLC");
-        thirdEnemyDLC = new DeckLayoutContainer(1198,446,106,60,"3.DLC");
+        myDLC = new DeckLayoutContainer(0, 630, 110, 60, "My.DLC");
+        firstEnemyDLC = new DeckLayoutContainer(915, 0, 110, 60, "1.DLC");
+        secondEnemyDLC = new DeckLayoutContainer(328, 169, 104, 60, "2.DLC");
+        thirdEnemyDLC = new DeckLayoutContainer(1198, 446, 106, 60, "3.DLC");
 
         this.gameService = gameService;
     }
@@ -252,26 +271,47 @@ public class GameViewPresenter extends AbstractPresenter {
         gameViewWIP.getChildren().add(firstEnemyDLC);
         gameViewWIP.getChildren().add(secondEnemyDLC);
         gameViewWIP.getChildren().add(thirdEnemyDLC);
+
+        gameViewWIP.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                bigCardImageBox.setVisible(false);
+            }
+        });
     }
+
 
     /**
      * Die Aktionskarten werden erstellt und auf dem Spielfeld angezeigt.
+     * Die Anzahl der Wertkarten wird angezeigt.
      *
-     * @param theList die IDs der Aktionskarten
+     * @param theList    die IDs der Aktionskarten
+     * @param valueCards Die Anzahl der Wertkarten, mit der ID der Karte als Schlüssel
      * @author Ferit, Fenja, Anna
      * @since Sprint 7
      */
-    private void initalizeCardFieldImages(ArrayList<Short> theList) {
+    private void initalizeCardFieldImages(ArrayList<Short> theList, Map<Short, Integer> valueCards) {
         ArrayList<ImageView> allImageViews = new ArrayList<>(Arrays.asList(cardPlaceholder1, cardPlaceholder2, cardPlaceholder3, cardPlaceholder4, cardPlaceholder5, cardPlaceholder6, cardPlaceholder7, cardPlaceholder8, cardPlaceholder9, cardPlaceholder10));
         int index = 0;
+        valuecardLabels.put((short) 4, countEstateCardLabel);
+        valuecardLabels.put((short) 5, countDuchiesCardLabel);
+        valuecardLabels.put((short) 6, countProvinceCardLabel);
+        valuecardLabels.put((short) 38, countCurseCardLabel);
+        //Initialisieren der AKtionskarten
         for (ImageView imageView : allImageViews) {
             String theIdInString = String.valueOf(theList.get(index));
-            String imageUrl = "/cards/images/" + theIdInString + "_sm.png";
+            String imageUrl = "cards/images/" + theIdInString + "_sm.png";
             Image theImage = new Image(imageUrl);
             imageView.setImage(theImage);
             imageView.setId(theIdInString);
             index++;
         }
+        //Initialiseren der Anzahl der Wertkarten
+        Platform.runLater(() -> {
+            for (Short key : valuecardLabels.keySet()) {
+                Label l = valuecardLabels.get(key);
+                l.setText(String.valueOf(valueCards.get(key)));
+            }
+        });
     }
 
     /**
@@ -300,7 +340,8 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Die IDs der gesendeten Aktionskarten werden initilaisiert
+     * Die IDs der gesendeten Aktionskarten werden initilaisiert.
+     * Die Anzahl der Wertkarten wird in einer Map gespeichert, mit der ID der jeweiligen Karte als Schlüssel.
      *
      * @param msg die Nachricht mit den IDs und der jeweiligen Azahl der Spielkarten
      * @author Anna, Fenja
@@ -309,12 +350,15 @@ public class GameViewPresenter extends AbstractPresenter {
     @Subscribe
     public void onSendCardFieldMessage(SendCardFieldMessage msg) {
         ArrayList<Short> list = new ArrayList<>();
+        Map<Short, Integer> valuecards = new HashMap<>();
         for (Short key : msg.getCardField().keySet()) {
-            if (key > 6) {
+            if (key > 6 && key != 38) { //Aktionskarten, ohne Fluchkarte
                 list.add(key);
+            } else if (key <= 6 && key > 3 || key == 38) { //Wertkarten und Fluchkarte
+                valuecards.put(key, msg.getCardField().get(key));
             }
         }
-        initalizeCardFieldImages(list);
+        initalizeCardFieldImages(list, valuecards);
     }
 
     /**
@@ -331,7 +375,6 @@ public class GameViewPresenter extends AbstractPresenter {
             LOG.debug("Neuer User in der Lobby, LobbyService empfängt Nutzer");
         }
     }
-
 
     /**
      * Aktualisiert den loggedInUser sowie die Liste, falls sich der Username geändert hat
@@ -405,6 +448,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * Die Nachricht die angibt, ob der Kauf einer Karte erfolgreich war oder nicht.
      * War der Kauf erfolgreich wandert die Karte auf den Ablagestapel (Animation)
      * Überprüft ob die Spieler noch Karten der gekauften Art kaufen können und fügt ggf. das ImageView (kleines Bild) wieder hinzu
+     * Wenn die gekauft Karte eine Wertkarte war, wird dessen Anzahl aktualisiert.
      *
      * @param msg die Nachricht
      * @author Rike, Devin, Anna
@@ -413,35 +457,42 @@ public class GameViewPresenter extends AbstractPresenter {
     // TODO: Karte wenn sie gekauft wird, von der richtigen Postition einfliegen lassen. ( Weiter nach rechts)
     @Subscribe
     public void onBuyCardMessage(BuyCardMessage msg) {
-        if (msg.getLobbyID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
-            if (msg.isBuyCard()) {
-                ImageView selectedCard = (ImageView) mouseEvent.getSource();
-                String pfad = "cards/images/" + msg.getCardID().toString() + ".png";
-                Image picture = new Image(pfad);
-                ImageView newCardImage = new ImageView(picture);
-                LOG.debug("Der Spieler " + msg.getCurrentUser() + " hat die Karte " + msg.getCardID() + " gekauft.");
-                // fügt ein "neues" Bild an der Stelle des alten Bildes im Shop hinzu
-                newCardImage.setPreserveRatio(true);
-                newCardImage.setFitHeight(107);
-                newCardImage.setFitWidth(Math.round(newCardImage.getBoundsInLocal().getWidth()));
-                newCardImage.setLayoutX(selectedCard.getLayoutX());
-                newCardImage.setLayoutY(selectedCard.getLayoutY());
-                newCardImage.setId(String.valueOf(msg.getCardID()));
+        if (msg.getLobbyID().equals(lobbyID)) {
+            if (valuecardLabels.containsKey(msg.getCardID())) {
                 Platform.runLater(() -> {
-                    gameViewWIP.getChildren().add(newCardImage);
-                    AnimationManagement.buyCard(newCardImage);
-                    gameViewWIP.getChildren().remove(newCardImage);
-                    myDPLC.getChildren().add(newCardImage);
+                    valuecardLabels.get(msg.getCardID()).setText(String.valueOf(msg.getCounterCard()));
                 });
-                if (msg.getCounterCard() < 1) {
-                    ColorAdjust makeImageDarker = new ColorAdjust();
-                    makeImageDarker.setBrightness(-0.7);
-                    selectedCard.setEffect(makeImageDarker);
+            }
+            if (msg.getCurrentUser().equals(loggedInUser)) {
+                if (msg.isBuyCard()) {
+                    ImageView selectedCard = (ImageView) mouseEvent.getSource();
+                    String pfad = "cards/images/" + msg.getCardID().toString() + ".png";
+                    Image picture = new Image(pfad);
+                    ImageView newCardImage = new ImageView(picture);
+                    LOG.debug("Der Spieler " + msg.getCurrentUser() + " hat die Karte " + msg.getCardID() + " gekauft.");
+                    // fügt ein "neues" Bild an der Stelle des alten Bildes im Shop hinzu
+                    newCardImage.setPreserveRatio(true);
+                    newCardImage.setFitHeight(107);
+                    newCardImage.setFitWidth(Math.round(newCardImage.getBoundsInLocal().getWidth()));
+                    newCardImage.setLayoutX(selectedCard.getLayoutX());
+                    newCardImage.setLayoutY(selectedCard.getLayoutY());
+                    newCardImage.setId(String.valueOf(msg.getCardID()));
+                    Platform.runLater(() -> {
+                        gameViewWIP.getChildren().add(newCardImage);
+                        AnimationManagement.buyCard(newCardImage);
+                        gameViewWIP.getChildren().remove(newCardImage);
+                        myDPLC.getChildren().add(newCardImage);
+                    });
+                    if (msg.getCounterCard() < 1) {
+                        ColorAdjust makeImageDarker = new ColorAdjust();
+                        makeImageDarker.setBrightness(-0.7);
+                        selectedCard.setEffect(makeImageDarker);
+                    }
+                    playAllMoneyCardsOnHand();
+                } else {
+                    showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht kaufen!", "Fehler");
+                    LOG.debug("Der Kauf der Karte " + msg.getCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
                 }
-                playAllMoneyCardsOnHand();
-            } else {
-                showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht kaufen!", "Fehler");
-                LOG.debug("Der Kauf der Karte " + msg.getCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
             }
         }
     }
@@ -626,7 +677,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     firstEnemyPCLC.getChildren().clear();
                 });
                 for(int i=0; i<5; i++) {
-                    Card card = new Card("card_back", firstEnemyHand.getLayoutX(), firstEnemyHand.getLayoutY(), firstEnemyHand.getHeight());
+                    Card card = new Card("card_back", firstEnemyHand.getLayoutX(), firstEnemyHand.getLayoutY(), 80);
                     Platform.runLater(() -> {
                         firstEnemyHand.getChildren().add(card);
                     });
@@ -640,7 +691,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 });
                 for(int i=0; i<5; i++) {
                     Platform.runLater(() -> {
-                        Card card = new Card("card_back", secondEnemyHand.getLayoutX(), secondEnemyHand.getLayoutY(), secondEnemyHand.getHeight());
+                        Card card = new Card("card_back", secondEnemyHand.getLayoutX(), secondEnemyHand.getLayoutY(), 80);
                         secondEnemyHand.getChildren().add(card);
                     });
                 }
@@ -653,7 +704,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 });
                 for(int i=0; i<5; i++) {
                     Platform.runLater(() -> {
-                        Card card = new Card("card_back", thirdEnemyHand.getLayoutX(), thirdEnemyHand.getLayoutY(), thirdEnemyHand.getHeight());
+                        Card card = new Card("card_back", thirdEnemyHand.getLayoutX(), thirdEnemyHand.getLayoutY(), 80);
                         thirdEnemyHand.getChildren().add(card);
                     });
                 }
@@ -723,7 +774,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     ImageView card = new ImageView(picture);
                     ImageView card2 = new ImageView(picture);
                     ImageView card3 = new ImageView(picture);
-                    card.setFitHeight(107);
+                    card.setFitHeight(80);
                     card.setPreserveRatio(true);
                     card.setId("back");
                     card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
@@ -904,6 +955,8 @@ public class GameViewPresenter extends AbstractPresenter {
 
     /**
      * Methode, die beim Anklicken einer Handkarte ausgeführt wird.
+     * Rechtsklick -> großes Bild
+     * Linksklick -> playCardRequest wird gestellt
      *
      * @param gameID       Die ID des Spiels
      * @param loggedInUser der User der gerade eingelogt im Spiel ist und die Karte ausgewählt hat.
@@ -911,56 +964,44 @@ public class GameViewPresenter extends AbstractPresenter {
      * @param id           Die ID der Karte
      * @param card         Die ImageView der ausgewählten Karte
      * @param e            Das MouseEvent, das zum anlicken der Karte zuständig ist.
-     * @author Devin
+     * @author Devin, Fenja, Anna
      * @since Sprint 6
      */
     private void playChoosenCard(UUID gameID, User loggedInUser, String pfad, Short id, ImageView card, MouseEvent e) {
-        ImageView bigCardImage = new ImageView(new Image(pfad));
-        bigCardImage.setFitHeight(225.0);
-        bigCardImage.setFitWidth(150.0);
-        bigCardImage.toFront();
-        bigCardImage.setLayoutX(725.0);
-        bigCardImage.setLayoutY(205.0);
-        gameViewWIP.getChildren().add(bigCardImage);
-        if (id > 6) {
-            Button play = new Button("auspielen");
-            Button back = new Button("zurück");
-            play.setLayoutX(732.0);
-            play.setLayoutY(435.0);
-            back.setLayoutX(816.0);
-            back.setLayoutY(435.0);
-            back.setMinWidth(52.0);
-            gameViewWIP.getChildren().add(play);
-            gameViewWIP.getChildren().add(back);
-            play.setOnAction(event -> {
-                gameViewWIP.getChildren().remove(play);
-                gameViewWIP.getChildren().remove(back);
-                gameViewWIP.getChildren().remove(bigCardImage);
-                for (Node a : handcards.getChildren()) {
-                    ImageView b = (ImageView) a;
-                    if (b.equals(card)) {
-                        mouseEvent = e;
-                        gameManagement.getGameService().playCard(gameID, loggedInUser, id);
-                    }
-                }
-            });
-            // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt
-            back.setOnAction(event -> {
-                gameViewWIP.getChildren().remove(play);
-                gameViewWIP.getChildren().remove(back);
-                gameViewWIP.getChildren().remove(bigCardImage);
-            });
+        if (e.getButton() != MouseButton.PRIMARY) {
+            bigCardImage.setImage(new Image(pfad));
+            buyCardButton.setVisible(false);
+            bigCardImageBox.setVisible(true);
         } else {
-            Button back = new Button("zurück");
-            back.setLayoutX(816.0);
-            back.setLayoutY(435.0);
-            back.setMinWidth(52.0);
-            gameViewWIP.getChildren().add(back);
-            // Aktion hinter dem Zurück Button -> Buttons und das große Bild werden entfernt
-            back.setOnAction(event -> {
-                gameViewWIP.getChildren().remove(back);
-                gameViewWIP.getChildren().remove(bigCardImage);
-            });
+            bigCardImageBox.setVisible(false);
+            for (Node a : handcards.getChildren()) {
+                ImageView b = (ImageView) a;
+                if (b.equals(card)) {
+                    mouseEvent = e;
+                    gameManagement.getGameService().playCard(gameID, loggedInUser, id);
+                }
+            }
+        }
+    }
+
+    /**
+     * Hier werden alle Geldkarten, die sich auf der Hand befinden, ausgespielt
+     *
+     * @author Anna
+     * @since Sprint 7
+     */
+    private void playAllMoneyCardsOnHand() {
+        synchronized (handcards) {
+            for (Node c : handcards.getChildren()) {
+                ImageView card = (ImageView) c;
+                if (card.getId().equals("1") || card.getId().equals("2") || card.getId().equals("3")) {
+                    Platform.runLater(() -> {
+                        AnimationManagement.playCard(card, myPCLC.getChildren().size(), myPCLC);
+                        handcards.getChildren().remove(c);
+                        myPCLC.getChildren().add(card);
+                    });
+                }
+            }
         }
     }
 
@@ -994,10 +1035,9 @@ public class GameViewPresenter extends AbstractPresenter {
 
     /**
      * Hilfsmethode für onBuyableCardClicked() und onBuyCardMessage()
-     * Großes Bild der Karte wird angezeigt.
-     * Es werden zwei Buttons("kaufen"/"zurück") hinzugefügt.
-     * kauf-Button -> BuyCardRequest wird gestellt
-     * zurück-Button -> Buttons und große Ansicht der Karte werden entfernt
+     * Rechtsklick auf Karte -> Großes Bild der Karte wird angezeigt.
+     * kauf-Button wird hinzugefügt -> BuyCardRequest wird gestellt
+     * Linksklick auf Karte -> BuyCardRequest wird gestellt
      *
      * @param mouseEvent das Event
      * @author Rike, Fenja, Anna
@@ -1015,62 +1055,27 @@ public class GameViewPresenter extends AbstractPresenter {
         if (cardImage.getEffect() != null) {
             return;
         }
-        String cardID = cardImage.getId();
-        String PathCardLargeView = "file:Client/src/main/resources/cards/images/" + cardID + ".png";
-        // Ein großes Bild der Karte wird hinzugefügt
-        ImageView bigCardImage = new ImageView(new Image(PathCardLargeView));
-        // setzt die Größe und die Position des Bildes. Das Bild ist im Vordergrund. Bild wird hinzugefügt
-        bigCardImage.setFitHeight(225.0);
-        bigCardImage.setFitWidth(150.0);
-        bigCardImage.toFront();
-        bigCardImage.setLayoutX(725.0);
-        bigCardImage.setLayoutY(205.0);
-        gameViewWIP.getChildren().add(bigCardImage);
-        // Es werden zwei Buttons hinzugefügt (Zurück und Kaufen)
-        Button buy = new Button("Kaufen");
-        Button back = new Button("Zurück");
-        gameViewWIP.getChildren().add(buy);
-        gameViewWIP.getChildren().add(back);
-        // Position der Buttons wird gesetzt
-        buy.setLayoutX(732.0);
-        buy.setLayoutY(435.0);
-        buy.setMinWidth(70.0);
-        back.setLayoutX(816.0);
-        back.setLayoutY(435.0);
-        back.setMinWidth(70.0);
-        // Aktion hinter dem Kauf-Button
-        buy.setOnAction(event -> {
-            buy.setVisible(false);
-            back.setVisible(false);
-            bigCardImage.setVisible(false);
+        if (mouseEvent.getButton() != MouseButton.PRIMARY) {
+            String cardID = cardImage.getId();
+            String PathCardLargeView = "cards/images/" + cardID + ".png";
+            // ein großes Bild der Karte wird hinzugefügt
+            bigCardImage.setImage(new Image(PathCardLargeView));
+            // Aktion hinter dem Kauf-Button
+            buyCardButton.setVisible(true);
+            buyCardButton.setOnAction(event -> {
+                bigCardImageBox.setVisible(false);
+                BuyCardRequest req = new BuyCardRequest(lobbyID, loggedInUser, Short.valueOf(cardID));
+                gameService.buyCard(req);
+                this.mouseEvent = mouseEvent;
+            });
+            bigCardImageBox.setVisible(true);
+            bigCardImageBox.toFront();
+        } else {
+            String cardID = cardImage.getId();
+            bigCardImageBox.setVisible(false);
             BuyCardRequest req = new BuyCardRequest(lobbyID, loggedInUser, Short.valueOf(cardID));
             gameService.buyCard(req);
             this.mouseEvent = mouseEvent;
-        });
-        // Aktion hinter dem Zurück-Button -> Buttons und das große Bild werden entfernt
-        back.setOnAction(event -> {
-            buy.setVisible(false);
-            back.setVisible(false);
-            bigCardImage.setVisible(false);
-        });
-    }
-
-    /**
-     * Hier werden alle Geldkarten, die sich auf der Hand befinden, ausgespielt
-     *
-     * @author Anna
-     * @since Sprint 7
-     */
-    public void playAllMoneyCardsOnHand() {
-        for (Node c : handcards.getChildren()) {
-            ImageView card = (ImageView) c;
-            if (card.getId().equals("1") || card.getId().equals("2") || card.getId().equals("3")) {
-                Platform.runLater(() -> {
-                    AnimationManagement.playCard(card, myPCLC.getChildren().size(), myPCLC);
-                    handcards.getChildren().remove(c);
-                    myPCLC.getChildren().add(card);
-                });
-            }
         }
     }
 }
