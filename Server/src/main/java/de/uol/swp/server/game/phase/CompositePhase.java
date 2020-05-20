@@ -35,8 +35,6 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         this.playground = playground;
     }
 
-    private static final Logger LOG = LogManager.getLogger(GameService.class);
-
 
     @Override
     public void executeActionPhase(Player player, short cardId) {
@@ -63,8 +61,9 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
 
     public void finishedActionCardExecution(Player player, ArrayList<Short> newHandCards) {
         if (!newHandCards.isEmpty()) {
-            playground.getGameService().sendToSpecificPlayer(player, new DrawHandMessage(newHandCards, playground.getID()));
+            playground.getGameService().sendToSpecificPlayer(player, new DrawHandMessage(newHandCards, playground.getID(), (short) 1));
         }
+        playground.sendCardsDeckSize();
         player.setAvailableActions(player.getAvailableActions() - 1);
         if (player.getAvailableActions() == 0) {
             playground.nextPhase();

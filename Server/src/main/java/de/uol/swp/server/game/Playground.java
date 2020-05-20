@@ -127,7 +127,7 @@ public class Playground extends AbstractPlayground {
             //Spieler muss Clearphase durchlaufen haben
             if (actualPhase != Phase.Type.Clearphase) return;
             if (actualPlayer != latestGavedUpPlayer) {
-                //sendPlayersHand();
+                sendPlayersHand();
                 sendCardsDeckSize();
             }
             int index = players.indexOf(nextPlayer);
@@ -188,17 +188,12 @@ public class Playground extends AbstractPlayground {
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartBuyPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
             endTimer();
         } else {
-            actualPhase = Phase.Type.Clearphase;
-            Player currentPlayer = actualPlayer;
-            compositePhase.executeClearPhase(actualPlayer);
-            for (Card card : currentPlayer.getPlayerDeck().getHand()) {
-                theIdsFromTheHand.add(card.getId());
-            }
             players.forEach(n -> {
-                StartClearPhaseMessage msg = new StartClearPhaseMessage(currentPlayer.getTheUserInThePlayer(), theSpecificLobbyID, getIndexOfPlayer(n), getIndexOfPlayer(currentPlayer), theIdsFromTheHand);
+                StartClearPhaseMessage msg = new StartClearPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID, getIndexOfPlayer(n), getIndexOfPlayer(actualPlayer), theIdsFromTheHand);
                 gameService.sendToSpecificPlayer(n, msg);
             });
-
+            actualPhase = Phase.Type.Clearphase;
+            compositePhase.executeClearPhase(actualPlayer);
         }
     }
 
