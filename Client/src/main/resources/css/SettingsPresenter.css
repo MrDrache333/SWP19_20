@@ -18,3 +18,14 @@
 .label {
     -fx-font-family: "Trattatello";
 }
+
+.toggle-button {
+    /*-fx-graphic: url('../images/chat_off_icon.png');*/
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+    -fx-font-family:"Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-size: 1em; /* 12 */
+    -fx-text-fill: #828282;
+}
