@@ -1,6 +1,7 @@
 package de.uol.swp.client.lobby;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.lobby.event.CloseCreateLobbyEvent;
@@ -9,6 +10,7 @@ import de.uol.swp.common.lobby.request.CreateLobbyRequest;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
+import de.uol.swp.common.user.message.UpdatedUserMessage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -31,7 +33,6 @@ public class CreateLobbyPresenter extends AbstractPresenter {
 
     private User loggedInUser;
     private EventBus eventBus;
-    
 
     @FXML
     private Button cancelButton;
@@ -42,14 +43,12 @@ public class CreateLobbyPresenter extends AbstractPresenter {
     @FXML
     private PasswordField passwordField;
 
-
     public CreateLobbyPresenter(User loggedInUser, LobbyService lobbyService, UserService userService, EventBus eventBus) {
         this.loggedInUser = loggedInUser;
         this.lobbyService = lobbyService;
         this.userService = userService;
         this.eventBus = eventBus;
     }
-
 
     /**
      * Sobald der Lobby erstellen Button gedrückt wird, öffnet sich ein Dialog. Hier wird man aufgefordert einen Namen für die Lobby anzugeben. Das Passwortfeld ist optional
@@ -68,9 +67,9 @@ public class CreateLobbyPresenter extends AbstractPresenter {
         if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName)) {
             CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), lobbyPassword);
             eventBus.post(msg);
-            LOG.info("Request wurde gesendet.");
+            LOG.info("CreateLobbyRequest wurde gesendet.");
         } else {
-            SceneManager.showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden", "Fehler");
+            SceneManager.showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden.", "Fehler");
         }
         lobbynameField.clear();
         passwordField.clear();
@@ -81,7 +80,7 @@ public class CreateLobbyPresenter extends AbstractPresenter {
 
     /**
      *
-     *Bei Drücken auf den Abbrechen Button schließt sich das Fenster.
+     * Beim Drücken auf den Abbrechen Button schließt sich das Fenster.
      *
      * @param actionEvent
      * @author Paula
@@ -93,6 +92,20 @@ public class CreateLobbyPresenter extends AbstractPresenter {
         passwordField.clear();
         lobbynameField.clear();
     }
+    /**
+     *
+     * Benutzer wird geupdated.
+     *
+     * @param message
+     * @author Paula
+     * @since Sprint7
+     */
+    @Subscribe
+    public void updatedUser(UpdatedUserMessage message) {
+        if(loggedInUser != null && loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
+            loggedInUser = message.getUser();
+        }
     }
+}
 
 

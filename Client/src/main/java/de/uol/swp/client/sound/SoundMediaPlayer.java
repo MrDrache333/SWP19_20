@@ -102,7 +102,7 @@ public class SoundMediaPlayer implements MediaPlayer {
                     clip.start();
                 } catch (Exception e) {
                     e.printStackTrace();
-                    LOG.debug("Fehler beim abspielen von " + sound.getPath());
+                    LOG.debug("Fehler beim Abspielen von " + sound.getPath());
                 }
             });
     }
@@ -140,7 +140,7 @@ public class SoundMediaPlayer implements MediaPlayer {
 
     @Override
     public void unMute() {
-        setMuted(true);
+        setMuted(false);
     }
 
     /**

@@ -96,7 +96,7 @@ public class Server implements ServerHandlerDelegate {
     // Wird vom ServerHandler aufgerufen
     @Override
     public void process(ChannelHandlerContext ctx, RequestMessage msg) {
-        LOG.debug("Received new message from client " + msg);
+        LOG.debug("Neue Nachricht von Client empfangen " + msg);
         try {
             msg.setMessageContext(new NettyMessageContext(ctx));
             checkIfMessageNeedsAuthorization(ctx, msg);
@@ -110,7 +110,7 @@ public class Server implements ServerHandlerDelegate {
     private void checkIfMessageNeedsAuthorization(ChannelHandlerContext ctx, RequestMessage msg) {
         if (msg.authorizationNeeded()) {
             if (getSession(ctx).isEmpty()) {
-                throw new SecurityException("Authorization required. Client not logged in!");
+                throw new SecurityException("Autorisierung erforderlich. Client nicht angemeldet!");
             }
             msg.setSession(getSession(ctx).get());
         }
@@ -134,7 +134,7 @@ public class Server implements ServerHandlerDelegate {
     // -------------------------------------------------------------------------------
     @Override
     public void newClientConnected(ChannelHandlerContext ctx) {
-        LOG.debug("New client " + ctx + " connected");
+        LOG.debug("Neuer Client " + ctx + " verbunden");
         connectedClients.add(ctx);
     }
 
@@ -183,7 +183,7 @@ public class Server implements ServerHandlerDelegate {
         if (ctx.isPresent()) {
             msg.setSession(null);
             msg.setMessageContext(null);
-            LOG.debug("Send to client " + ctx.get() + " message " + msg);
+            LOG.debug("Sende zu Client " + ctx.get() + " Nachricht " + msg);
             sendToClient(ctx.get(), msg);
         }
     }
@@ -197,7 +197,7 @@ public class Server implements ServerHandlerDelegate {
         msg.setSession(null);
         msg.setMessageContext(null);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Send " + msg + " to " + (msg.getReceiver().isEmpty() ? "all" : msg.getReceiver()));
+            LOG.debug("Sende " + msg + " zu " + (msg.getReceiver().isEmpty() ? "allen" : msg.getReceiver()));
         }
         sendMessage(msg);
     }

@@ -1,6 +1,7 @@
 package de.uol.swp.client.lobby;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.lobby.event.CloseJoinLobbyEvent;
 import de.uol.swp.client.main.MainMenuPresenter;
@@ -9,6 +10,7 @@ import de.uol.swp.common.lobby.request.LobbyJoinUserRequest;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
+import de.uol.swp.common.user.message.UpdatedUserMessage;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -31,7 +33,6 @@ public class JoinLobbyPresenter {
     private UserService userService;
     private EventBus eventBus;
     private Lobby lobby;
-
 
     @FXML
     private Button cancelButton;
@@ -56,7 +57,6 @@ public class JoinLobbyPresenter {
      * @author Paula
      * @since Sprint7
      */
-
     @FXML
     public void onJoinButtonPressed(javafx.event.ActionEvent actionEvent) {
         // Passwörter stimmen überein
@@ -64,7 +64,7 @@ public class JoinLobbyPresenter {
             lobbyService.joinLobby(lobby.getLobbyID(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
             LobbyJoinUserRequest msg = new LobbyJoinUserRequest(lobby.getLobbyID(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
             eventBus.post(msg);
-            LOG.info("Request wurde gesendet.");
+            LOG.info("LobbyJoinUserRequest wurde gesendet.");
 
         }
         //Passwörter stimmen nicht überein
@@ -78,7 +78,7 @@ public class JoinLobbyPresenter {
     }
 
     /**
-     * Bei Drücken auf den Abbrechen Button schließt sich das Fenster.
+     * Beim Drücken auf den Abbrechen Button schließt sich das Fenster.
      *
      * @param actionEvent
      * @since Sprint7
@@ -89,6 +89,13 @@ public class JoinLobbyPresenter {
         eventBus.post(new CloseJoinLobbyEvent());
         passwordField.clear();
     }
+    @Subscribe
+    public void updatedUser(UpdatedUserMessage message) {
+        if(loggedInUser != null && loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
+            loggedInUser = message.getUser();
+        }
+    }
+
 }
 
 

@@ -319,12 +319,12 @@ public class GameManagement {
         FXMLLoader loader = injector.getInstance(FXMLLoader.class);
         try {
             URL url = getClass().getResource(fxml);
-            LOG.debug("Loading " + url);
+            LOG.debug("Lade " + url);
             loader.setLocation(url);
             loader.setController(presenter);
             rootPane = loader.load();
         } catch (Exception e) {
-            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
+            throw new RuntimeException("View konnte nicht geladen werden!" + e.getMessage(), e);
         }
 
         return rootPane;

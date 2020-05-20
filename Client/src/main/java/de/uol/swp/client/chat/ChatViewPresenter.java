@@ -230,10 +230,10 @@ public class ChatViewPresenter extends AbstractPresenter {
         //Nötige Styles laden und übernehmen
         chatViewAnchorPane.getStylesheets().add(styleSheet);
         if (CHATTHEME.equals(ChatViewPresenter.THEME.Light)) {
-            LOG.debug("Loading Light Theme");
+            LOG.debug("Lade Light Theme");
             chatViewAnchorPane.getStylesheets().add(styleSheet_light);
         } else if (CHATTHEME.equals(THEME.Dark)) {
-            LOG.debug("Loading Dark Theme");
+            LOG.debug("Lade Dark Theme");
             chatViewAnchorPane.getStylesheets().add(styleSheet_dark);
         }
 
@@ -258,7 +258,7 @@ public class ChatViewPresenter extends AbstractPresenter {
                 try {
                     new Notifyer().notify(Notifyer.MessageType.INFO, "Nachricht von " + msg.getMessage().getSender().getUsername() + " in " + (chatId.equals("global") ? "GLOBAL" : chatTitle), msg.getMessage().getMessage());
                 } catch (Exception e) {
-                    LOG.debug("Failed to Show Notification");
+                    LOG.debug("Nachricht konnte nicht angezeigt werden");
                 }
             if (!loggedInUser.getUsername().equals(msg.getMessage().getSender().getUsername()) && msg.getMessage().getSender().equals("server"))
                 new SoundMediaPlayer(SoundMediaPlayer.Sound.Message_Receive, SoundMediaPlayer.Type.Sound).play();
@@ -364,10 +364,10 @@ public class ChatViewPresenter extends AbstractPresenter {
         message = chatTextField.getText();
         //Prüfe auf leere Nachricht
         if (!message.equals("")) {
-            LOG.debug("Sending new Chat message: User= " + loggedInUser.getUsername() + " Msg= " + message + " ChatID= " + chatId);
+            LOG.debug("Sende neue Chatnachricht: User= " + loggedInUser.getUsername() + " Msg= " + message + " ChatID= " + chatId);
             ChatMessage newChatMessage = new ChatMessage(loggedInUser, message);
 
-            LOG.debug("new Message to send: " + message);
+            LOG.debug("Neue Nachricht zum Senden: " + message);
 
             chatTextField.clear();
             this.chatService.sendMessage(chatId, newChatMessage);
