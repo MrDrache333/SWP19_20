@@ -1,5 +1,7 @@
 package de.uol.swp.client.game;
 
+import de.uol.swp.client.game.container.DiscardPileLayoutContainer;
+import de.uol.swp.client.game.container.PlayedCardLayoutContainer;
 import javafx.animation.PathTransition;
 import javafx.scene.Parent;
 import javafx.scene.image.ImageView;
@@ -14,8 +16,8 @@ public class AnimationManagement {
 
     private static final double HAND_X = 460;
 
-    private static final double ABLAGE_X = 1156;
-    private static final double ABLAGE_Y = 590;
+    private static final double ABLAGE_X = 1170;
+    private static final double ABLAGE_Y = 610;
 
     private static final double ACTION_ZONE_X = 510;
     private static final double ACTION_ZONE_Y = 600;
@@ -57,12 +59,15 @@ public class AnimationManagement {
     public static PathTransition createLineToPath(ImageView card, MoveTo moveTo, double EndPointX, double EndPointY) {
         double x = card.getLayoutX();
         double y = card.getLayoutY();
-        double w = card.getFitWidth() / 2;
-        double h = card.getFitHeight() / 2;
+        double w = card.getFitWidth();
+        double h = card.getFitHeight();
+        Parent parent = card.getParent();
+        double startPointX = parent.getLayoutX() + parent.getBoundsInLocal().getWidth() / 2 - w - EndPointX + x;
+        double startPointY = parent.getLayoutY() + parent.getBoundsInLocal().getHeight() / 2 - 2 * h - EndPointY + y;
         if (x != EndPointX || y != EndPointY) {
             Path path = new Path();
-            path.getElements().add(moveTo);
-            path.getElements().add(new LineTo(EndPointX - x + w, EndPointY - y + h));
+            path.getElements().add(new MoveTo(startPointX, startPointY));
+            path.getElements().add(new LineTo(w / 2, h / 2));
             PathTransition pathTransition = new PathTransition();
             pathTransition.setDuration(Duration.millis(1000));
             pathTransition.setNode(card);
@@ -70,6 +75,7 @@ public class AnimationManagement {
             pathTransition.setCycleCount(1);
             card.toFront();
             pathTransition.play();
+            setNewCoordinates(card, pathTransition);
             return pathTransition;
         }
         return null;
@@ -95,23 +101,24 @@ public class AnimationManagement {
         double y = card.getBoundsInParent().getMinY();
         double w = card.getFitWidth() / 2;
         double h = card.getFitHeight() / 2;
-        EndPointX = EndPointX + w + count * w;
-        EndPointY = EndPointY + h;
+        Parent parent = card.getParent();
+        double startPointX = parent.getLayoutX() + parent.getBoundsInLocal().getWidth() / 2 - w - EndPointX - w * 2 * count + 300;
+        double startPointY = parent.getLayoutY() + parent.getBoundsInLocal().getHeight() / 2 - h - EndPointY;
         Path path = new Path();
-        if (moveTo.getX() != EndPointX || moveTo.getY() != EndPointY) {
-            path.getElements().add(moveTo);
-            path.getElements().add(new ArcTo(30, 30, 0, EndPointX - x, EndPointY - y, largeArc, !largeArc));
-            PathTransition pathTransition = new PathTransition();
-            pathTransition.setDuration(Duration.millis(1000));
-            pathTransition.setNode(card);
-            pathTransition.setPath(path);
-            pathTransition.setCycleCount(1);
-            card.toFront();
-            pathTransition.play();
-            setNewCoordinates(card, pathTransition);
-            return true;
-        }
-        return false;
+        //if (moveTo.getX() != EndPointX || moveTo.getY() != EndPointY) {
+        path.getElements().add(new MoveTo(startPointX, startPointY));
+        path.getElements().add(new ArcTo(30, 20, 0, w, h, largeArc, !largeArc));
+        PathTransition pathTransition = new PathTransition();
+        pathTransition.setDuration(Duration.millis(1000));
+        pathTransition.setNode(card);
+        pathTransition.setPath(path);
+        pathTransition.setCycleCount(1);
+        card.toFront();
+        pathTransition.play();
+        setNewCoordinates(card, pathTransition);
+        return true;
+        //}
+        //return false;
     }
 
     /**
@@ -119,12 +126,14 @@ public class AnimationManagement {
      *
      * @param card  die Karte
      * @param count gibt an, die wievielte Karte eines Zuges gerade gespielt wird.
+     * @param action_zone  Die Zielzone wo die Karte sich hinbewegen soll
      * @return boolean ob die Bewegung durchgeführt wurde
      * @author Anna
      * @since Sprint5
      */
-    public static Boolean playCard(ImageView card, int count) {
-        return createArcToPath(card, keepPosition(card), ACTION_ZONE_X, ACTION_ZONE_Y, count, true);
+
+    public static Boolean playCard(ImageView card, int count, PlayedCardLayoutContainer action_zone) {
+        return createArcToPath(card, keepPosition(card), action_zone.getLayoutX(), action_zone.getLayoutY(), count, true);
     }
 
     /**
@@ -151,6 +160,18 @@ public class AnimationManagement {
      */
     public static PathTransition buyCard(ImageView card) {
         return createLineToPath(card, keepPosition(card), ABLAGE_X, ABLAGE_Y);
+    }
+
+    /**
+     * Wenn die Clearphase ist gehen die Karten auf den Ablagestapel
+     * Die neuen Koordinaten werden übernommen.
+     *
+     * @param card die Karte
+     * @author Darian
+     * @since Sprint7
+     */
+    public static PathTransition clearCards(ImageView card, DiscardPileLayoutContainer discardPile) {
+        return createLineToPath(card, keepPosition(card), discardPile.getLayoutX(), discardPile.getLayoutY());
     }
 
     /**
@@ -191,12 +212,12 @@ public class AnimationManagement {
         Parent parent = card.getParent();
         double w = card.getFitWidth() / 2;
         double h = card.getFitHeight() / 2;
-        double endPointX = parent.getLayoutX() + parent.getBoundsInLocal().getWidth() / 2 - w - HAND_X - w * 2 * count;
-        endPointX += 350;
+        double startPointX = parent.getLayoutX() + parent.getBoundsInLocal().getWidth() / 2 - w - HAND_X - w * 2 * count;
+        startPointX += 350;
         parent.toBack();
-        if (HAND_X + count * w != endPointX) {
+        if (HAND_X + count * w != startPointX) {
             Path path = new Path();
-            path.getElements().add(new MoveTo(endPointX, h));
+            path.getElements().add(new MoveTo(startPointX, h));
             card.toFront();
             path.getElements().add(new LineTo(w, h));
             PathTransition pathTransition = new PathTransition();

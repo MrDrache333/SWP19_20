@@ -8,6 +8,7 @@ import java.util.UUID;
 public class DrawHandMessage extends AbstractServerMessage {
     private ArrayList<Short> cardsOnHand;
     private UUID theLobbyID;
+    private Short numberOfPlayers;
 
     /**
      * Konstruktor, welcher die ArrayList mit den IDs der Hand übergeben bekommt. Entweder die Standart-Hand mit Größe 5 oder wenn er Karten
@@ -18,9 +19,10 @@ public class DrawHandMessage extends AbstractServerMessage {
      * @version 1.0
      * @since Sprint5
      */
-    public DrawHandMessage(ArrayList<Short> theIDsFromTheCards, UUID specificLobbyID) {
+    public DrawHandMessage(ArrayList<Short> theIDsFromTheCards, UUID specificLobbyID, Short numberOfPlayers) {
         this.cardsOnHand = theIDsFromTheCards;
         this.theLobbyID = specificLobbyID;
+        this.numberOfPlayers = numberOfPlayers;
     }
 
     // Getter
@@ -31,4 +33,6 @@ public class DrawHandMessage extends AbstractServerMessage {
     public UUID getTheLobbyID() {
         return theLobbyID;
     }
+
+    public Short getNumberOfPlayers() {return numberOfPlayers;}
 }

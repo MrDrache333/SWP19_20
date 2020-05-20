@@ -1,42 +1,54 @@
-package de.uol.swp.client.game;
+package de.uol.swp.client.game.container;
 
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 
 /**
- * Layoutcontainer für die Karten, die von der Hand ausgespielt worden sind.
+ * Layoutcontainer für die Karten, die verworfen wurden.
  *
  * @author Devin
- * @since Sprint6
+ * @since Sprint7
  */
 
-public class PlayedCardLayoutContainer extends Region {
+public class DiscardPileLayoutContainer extends StackPane {
 
     /**
-     * Instantiiert einen neuen PlayedCardLayoutContainer.
+     * Instanziiert einen neuen PlayedCardLayoutContainer.
      *
-     * @author Anna
-     * @since Sprint6
+     * @author Devin
+     * @since Sprint7
      */
-    public PlayedCardLayoutContainer() {
+    public DiscardPileLayoutContainer() {
     }
 
+
     /**
      * Instantiiert einen neuen PlayedCardLayoutContainer.
      *
-     * @param layoutX x-Koordinate
-     * @param layoutY y-Koordinate
-     * @param height  Höhe
-     * @param width   Breite
+     * @param layoutX x-Koordinate des Containers
+     * @param layoutY y-Koordinate des Containers
+     * @param height  Höhe des Containers
+     * @param width   Breite des Containers
+     * @param id   ID des Containers
      * @author Devin
-     * @since Sprint6
+     * @since Sprint7
      */
-    public PlayedCardLayoutContainer(double layoutX, double layoutY, double height, double width) {
+    public DiscardPileLayoutContainer(double layoutX, double layoutY, double height, double width, String id) {
         this.setLayoutX(layoutX);
         this.setLayoutY(layoutY);
         this.setPrefHeight(height);
         this.setPrefWidth(width);
+        this.setId(id);
+        if (this.getId().equals("1.DPLC")) {
+            this.setRotate(180);
+        } else {
+            if (this.getId().equals("2.DPLC")) {
+                this.setRotate(90);
+            } else if (this.getId().equals("3.DPLC")) {
+                this.setRotate(270);
+            }
+        }
     }
 
     /**
@@ -86,4 +98,3 @@ public class PlayedCardLayoutContainer extends Region {
     }
 
 }
-

@@ -8,9 +8,13 @@ import com.google.inject.assistedinject.Assisted;
 import de.uol.swp.client.auth.LoginPresenter;
 import de.uol.swp.client.auth.events.ShowLoginViewEvent;
 import de.uol.swp.client.chat.ChatService;
+import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.client.game.GameService;
-import de.uol.swp.client.game.event.GameQuitEvent;
+import de.uol.swp.client.lobby.CreateLobbyPresenter;
+import de.uol.swp.client.lobby.JoinLobbyPresenter;
 import de.uol.swp.client.lobby.LobbyService;
+import de.uol.swp.client.lobby.event.CloseCreateLobbyEvent;
+import de.uol.swp.client.lobby.event.CloseJoinLobbyEvent;
 import de.uol.swp.client.main.PrimaryPresenter;
 import de.uol.swp.client.register.RegistrationPresenter;
 import de.uol.swp.client.register.event.RegistrationCanceledEvent;
@@ -23,19 +27,27 @@ import de.uol.swp.client.settings.event.CloseSettingsEvent;
 import de.uol.swp.client.settings.event.DeleteAccountEvent;
 import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.client.user.UserService;
+import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.text.Text;
+import javafx.scene.control.ButtonType;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -57,6 +69,12 @@ public class SceneManager {
     final private ChatService chatService;
     private final Injector injector;
     private SettingsPresenter settingsPresenter;
+    private CreateLobbyPresenter createLobbyPresenter;
+    private JoinLobbyPresenter joinLobbyPresenter;
+    private Stage joinLobbyStage;
+    private Scene joinLobbyScene;
+    private Stage createLobbyStage;
+    private Scene createLobbyScene;
     private Stage settingsStage;
     private Stage deleteAccountStage;
     private Scene loginScene;
@@ -99,7 +117,11 @@ public class SceneManager {
             Alert alert = new Alert(type, "");
             alert.setResizable(false);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.getDialogPane().setContentText(message);
+            Text text = new Text(message);
+            text.setWrappingWidth(390);
+            alert.getDialogPane().setMaxWidth(400);
+            alert.getDialogPane().setContent(text);
+            alert.getDialogPane().setPadding(new Insets(10, 10, 10, 10));
             alert.getDialogPane().setHeaderText(title);
             alert.show();
         });
@@ -135,6 +157,15 @@ public class SceneManager {
         closeDeleteAccount();
     }
 
+    @Subscribe
+    public void onCloseCreateLobbyEvent(CloseCreateLobbyEvent event) {
+        closeCreateLobby();
+    }
+
+    @Subscribe
+    public void onCloseJoinLobbyEvent(CloseJoinLobbyEvent event) {
+        closeJoinLobby();
+    }
 
     /**
      * Wenn in den Einstellungen auf den Button "Account löschen" geklickt wird, wird ein neues Fenster geöffnet,
@@ -157,12 +188,6 @@ public class SceneManager {
         });
     }
 
-    @Subscribe
-    public void onGameQuitEvent(GameQuitEvent event) {
-        showScene(mainScene, "test");
-    }
-
-
     public void showError(String message, String e) {
         Platform.runLater(() -> {
             Alert a = new Alert(Alert.AlertType.ERROR, message + e);
@@ -171,7 +196,7 @@ public class SceneManager {
     }
 
     public void showServerError(String e) {
-        showError("Server returned an error:\n", e);
+        showError("Der Server gab einen Fehler zurück:\n", e);
     }
 
     public void showError(String e) {
@@ -197,16 +222,15 @@ public class SceneManager {
 
     public void showLoginErrorScreen() {
         Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Error logging in to server");
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Fehler beim Einloggen auf den Server!");
             alert.showAndWait();
             showLoginScreen();
         });
     }
 
     public void showMainScreen(User currentUser) {
-        showScene(primaryScene, "Welcome " + currentUser.getUsername());
+        showScene(primaryScene, "Willkommen " + currentUser.getUsername());
     }
-
 
     public void showLoginScreen() {
         showScene(loginScene, "Login");
@@ -245,14 +269,60 @@ public class SceneManager {
      */
     public void showSettingsScreen(User loggedInUser) {
         Platform.runLater(() -> {
-            settingsPresenter = new SettingsPresenter(loggedInUser, lobbyService, userService, eventBus);
+            settingsPresenter = new SettingsPresenter(loggedInUser, lobbyService, userService, injector, eventBus);
             initSettingsView(settingsPresenter);
             settingsStage = new Stage();
+            settingsStage.initStyle(StageStyle.UNDECORATED);
             settingsStage.setTitle("Einstellungen");
             settingsStage.setScene(settingsScene);
             settingsStage.setResizable(false);
+            settingsStage.initModality(Modality.APPLICATION_MODAL);
             settingsStage.show();
             eventBus.register(settingsPresenter);
+        });
+    }
+
+    /**
+     * Öffnet das Lobby-erstellen Fenster
+     *
+     * @param loggedInUser der eingeloggte User
+     * @author Paula
+     * @since Sprint7
+     */
+
+    public void showCreateLobbyScreen(User loggedInUser) {
+        Platform.runLater(() -> {
+            createLobbyPresenter = new CreateLobbyPresenter(loggedInUser, lobbyService, userService, eventBus);
+            initCreateLobbyView(createLobbyPresenter);
+            createLobbyStage = new Stage();
+            createLobbyStage.setTitle("Lobby");
+            createLobbyStage.setScene(createLobbyScene);
+            createLobbyStage.setResizable(false);
+            createLobbyStage.initModality(Modality.APPLICATION_MODAL);
+            createLobbyStage.show();
+            eventBus.register(createLobbyPresenter);
+        });
+    }
+
+    /**
+     * Öffnet das Lobby beitreten Fenster,falls man aufgefordert wird sein Passwort anzugeben
+     *
+     * @param loggedInUser
+     * @author Paula
+     * @since Sprint7
+     */
+
+    public void showJoinLobbyScreen(User loggedInUser, Lobby lobby) {
+        Platform.runLater(() -> {
+            joinLobbyPresenter = new JoinLobbyPresenter(loggedInUser, lobbyService, userService, eventBus, lobby);
+            initJoinLobbyView(joinLobbyPresenter);
+            joinLobbyStage = new Stage();
+            joinLobbyStage.setTitle("Lobby: " + lobby.getName()+ " beitreten ");
+            joinLobbyStage.setScene(joinLobbyScene);
+            joinLobbyStage.setResizable(false);
+            joinLobbyStage.initModality(Modality.APPLICATION_MODAL);
+            joinLobbyStage.show();
+            eventBus.register(joinLobbyPresenter);
         });
     }
 
@@ -277,6 +347,16 @@ public class SceneManager {
         Platform.runLater(() -> settingsStage.close());
     }
 
+    public void closeCreateLobby() {
+        Platform.runLater(() -> createLobbyStage.close());
+    }
+
+    public void closeJoinLobby() {
+        if (joinLobbyStage != null)
+        Platform.runLater(() -> joinLobbyStage.close());
+    }
+
+
     //-----------------
     // PRIVATE METHODS
     //-----------------
@@ -292,11 +372,11 @@ public class SceneManager {
         FXMLLoader loader = injector.getInstance(FXMLLoader.class);
         try {
             URL url = getClass().getResource(fxmlFile);
-            LOG.debug("Loading " + url);
+            LOG.debug("Lade " + url);
             loader.setLocation(url);
             rootPane = loader.load();
         } catch (Exception e) {
-            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
+            throw new RuntimeException("Konnte View nicht laden!" + e.getMessage(), e);
         }
         return rootPane;
     }
@@ -306,12 +386,12 @@ public class SceneManager {
         FXMLLoader loader = injector.getInstance(FXMLLoader.class);
         try {
             URL url = getClass().getResource(fxmlFile);
-            LOG.debug("Loading " + url);
+            LOG.debug("Lade " + url);
             loader.setLocation(url);
             loader.setController(presenter);
             rootPane = loader.load();
         } catch (Exception e) {
-            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
+            throw new RuntimeException("Konnte View nicht laden!" + e.getMessage(), e);
         }
         return rootPane;
     }
@@ -328,6 +408,7 @@ public class SceneManager {
                 userService.logout(currentUser);
             });
             eventBus.register(primaryPresenter);
+            primaryScene.setOnKeyPressed(hotkeyEventHandler);
         }
     }
 
@@ -336,12 +417,42 @@ public class SceneManager {
         FXMLLoader loader = injector.getInstance(FXMLLoader.class);
         try {
             URL url = getClass().getResource(SettingsPresenter.fxml);
-            LOG.debug("Loading " + url);
+            LOG.debug("Lade " + url);
             loader.setLocation(url);
             loader.setController(settingsPresenter);
             rootPane = loader.load();
         } catch (Exception e) {
-            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
+            throw new RuntimeException("Konnte View nicht laden!" + e.getMessage(), e);
+        }
+        return rootPane;
+    }
+
+    private Parent initCreateLobbyPresenter(CreateLobbyPresenter createLobbyPresenter) {
+        Parent rootPane;
+        FXMLLoader loader = injector.getInstance(FXMLLoader.class);
+        try {
+            URL url = getClass().getResource(CreateLobbyPresenter.fxml);
+            LOG.debug("Lade " + url);
+            loader.setLocation(url);
+            loader.setController(createLobbyPresenter);
+            rootPane = loader.load();
+        } catch (Exception e) {
+            throw new RuntimeException("Konnte View nicht laden!" + e.getMessage(), e);
+        }
+        return rootPane;
+    }
+
+    private Parent initJoinLobbyPresenter(JoinLobbyPresenter joinLobbyPresenter) {
+        Parent rootPane;
+        FXMLLoader loader = injector.getInstance(FXMLLoader.class);
+        try {
+            URL url = getClass().getResource(JoinLobbyPresenter.fxml);
+            LOG.debug("Lade " + url);
+            loader.setLocation(url);
+            loader.setController(joinLobbyPresenter);
+            rootPane = loader.load();
+        } catch (Exception e) {
+            throw new RuntimeException("Konnte View nicht laden!" + e.getMessage(), e);
         }
         return rootPane;
     }
@@ -351,12 +462,12 @@ public class SceneManager {
         FXMLLoader loader = injector.getInstance(FXMLLoader.class);
         try {
             URL url = getClass().getResource(DeleteAccountPresenter.fxml);
-            LOG.debug("Loading " + url);
+            LOG.debug("Lade " + url);
             loader.setLocation(url);
             loader.setController(deleteAccountPresenter);
             rootPane = loader.load();
         } catch (Exception e) {
-            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
+            throw new RuntimeException("Konnte View nicht laden!" + e.getMessage(), e);
         }
         return rootPane;
     }
@@ -375,14 +486,13 @@ public class SceneManager {
             Parent rootPane = initPresenter(RegistrationPresenter.fxml);
             registrationScene = new Scene(rootPane, 1280, 750);
             registrationScene.getStylesheets().add(styleSheet);
-            registrationScene.getStylesheets().add(RegistrationPresenter.css);
         }
     }
 
     private void initSettingsView(SettingsPresenter settingsPresenter) {
         if (settingsScene == null) {
             Parent rootPane = initSettingsPresenter(settingsPresenter);
-            settingsScene = new Scene(rootPane, 400, 255);
+            settingsScene = new Scene(rootPane, 400, 420);
             settingsScene.getStylesheets().add(SettingsPresenter.css);
         }
     }
@@ -395,4 +505,73 @@ public class SceneManager {
 
         }
     }
+
+    private void initCreateLobbyView(CreateLobbyPresenter createLobbyPresenter) {
+        if (createLobbyScene == null) {
+            Parent rootPane = initCreateLobbyPresenter(createLobbyPresenter);
+            createLobbyScene = new Scene(rootPane, 400, 255);
+            createLobbyScene.getStylesheets().add(CreateLobbyPresenter.css);
+        }
+    }
+
+    private void initJoinLobbyView(JoinLobbyPresenter joinLobbyPresenter) {
+        Parent rootPane = initJoinLobbyPresenter(joinLobbyPresenter);
+        joinLobbyScene = new Scene(rootPane, 400, 255);
+        joinLobbyScene.getStylesheets().add(JoinLobbyPresenter.css);
+
+    }
+
+
+    /**
+     * EventHandler für Hotkeys während eines Spiels.
+     * Bestätigungsfenster (Derzeit nur bei GiveUp) kann bei Bedarf auch auf weitere Hotkeys leicht erweitert werden.
+     *
+     * Momentane Hotkeys:
+     * Strg + S: SkipPhase
+     * Strg + G: GiveUp
+     * Strg + L: CreateLobby
+     *
+     * @author Marvin
+     * @since Sprint7
+     */
+
+    private EventHandler<KeyEvent> hotkeyEventHandler = new EventHandler<>() {
+        @Override
+        public void handle(KeyEvent event) {
+            if (event.isControlDown()) {
+                String focusedTab = primaryPresenter.getFocusedTab();
+                if (focusedTab.matches("^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")) {
+                    GameManagement gameManagement = primaryPresenter.getGameManagement(UUID.fromString(focusedTab));
+                    User user = gameManagement.getLoggedInUser();
+                    UUID lobbyID = gameManagement.getID();
+                    switch (event.getCode()) {
+                        case S:
+                            LOG.debug("Skip Phase Hotkey pressed");
+                            gameService.skipPhase(user, lobbyID);
+                            break;
+                        case G:
+                            LOG.debug("Give Up Hotkey pressed");
+                            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                            alert.setResizable(false);
+                            alert.initModality(Modality.APPLICATION_MODAL);
+                            alert.getDialogPane().setHeaderText("Möchtest du wirklich aufgeben?");
+                            Optional<ButtonType> result = alert.showAndWait();
+                            if (result.get() == ButtonType.OK) {
+                                gameService.giveUp(lobbyID, (UserDTO) user);
+                            }
+                            break;
+                    }
+                    event.consume();
+                } else if (focusedTab.equals("Menu")) {
+                    switch (event.getCode()) {
+                        case L:
+                            LOG.debug("Create Lobby Hotkey pressed");
+                            showCreateLobbyScreen(primaryPresenter.getUser());
+                            break;
+                    }
+                    event.consume();
+                }
+            }
+        }
+    };
 }

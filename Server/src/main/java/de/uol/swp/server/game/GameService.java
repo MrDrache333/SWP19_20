@@ -117,6 +117,19 @@ public class GameService extends AbstractService {
     }
 
     /**
+     * Das Kartfeld wird geschickt.
+     *
+     * @param gameID    die ID des Spiels
+     * @param cardField das Kartenfeld
+     * @author Anna, Fenja
+     * @since Sprint 7
+     */
+    public void sendCardField(UUID gameID, Map<Short, Integer> cardField) {
+        SendCardFieldMessage message = new SendCardFieldMessage(gameID, cardField);
+        post(message);
+    }
+
+    /**
      * Startet das Spiel wenn die StartGameInternalMessage ankommt.
      * Sendet außerdem eine Nachricht mit dem ersten Spieler in den Chat.
      *
@@ -204,10 +217,8 @@ public class GameService extends AbstractService {
                     int count = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), request.getCardID());
                     BuyCardMessage buyCard = new BuyCardMessage(request.getLobbyID(), request.getCurrentUser(), request.getCardID(), true, count);
                     sendToAllPlayers(request.getLobbyID(), buyCard);
-
                 } catch (NotEnoughMoneyException notEnoughMoney) {
                     sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(request.getLobbyID(), notEnoughMoney.getMessage()));
-
                 }
             }
             else {
@@ -238,7 +249,15 @@ public class GameService extends AbstractService {
                     playground.endTimer();
                     // Karte wird an die ActionPhase zum Handling übergeben.
                     playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), cardID);
-                    sendToSpecificPlayer(playground.getActualPlayer(), new PlayCardMessage(gameID, player, cardID, true));
+                    //sendToSpecificPlayer(playground.getActualPlayer(), new PlayCardMessage(gameID, player, cardID, true));
+
+                    playground.getPlayers().forEach(n -> {
+                        PlayCardMessage msg = new PlayCardMessage(gameID, playground.getActualPlayer().getTheUserInThePlayer(), cardID, true,
+                                playground.getIndexOfPlayer(n), playground.getIndexOfPlayer(playground.getActualPlayer()));
+                        sendToSpecificPlayer(n, msg);
+                    });
+
+
                     /*
                      TODO: Nachdem das gegnerische Feld und ein Text-Feld für den generellem Spiel ablauf hinzugefügt wurde, muss allen Gegnern das ausspielen der Karte mitgeteilt werden.
                      */
@@ -248,7 +267,7 @@ public class GameService extends AbstractService {
                 }
             }
         } else {
-            LOG.error("Irgendwas ist bei der onSelectCardRequest im GameService falsch gelaufen..Folgende ID: " + gameID);
+            LOG.error("Irgendwas ist bei der onSelectCardRequest im GameService falsch gelaufen. Folgende ID: " + gameID);
         }
     }
 

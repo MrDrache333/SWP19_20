@@ -13,6 +13,7 @@ import de.uol.swp.common.lobby.message.KickUserMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
+import de.uol.swp.common.user.message.UpdatedUserMessage;
 import de.uol.swp.common.user.message.UserDroppedMessage;
 import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import de.uol.swp.common.user.request.OpenSettingsRequest;
@@ -112,12 +113,12 @@ public class PrimaryPresenter extends AbstractPresenter {
     }
 
     /**
-     * Methode fängt ButtonKlick ab, User verlässt alle Lobbies, in denen er angemeldet ist und wird ausgeloggt
+     * Methode fängt Button-Klick ab, User verlässt alle Lobbies, in denen er angemeldet ist und wird ausgeloggt
      *
      * @param actionEvent the action event
      * @author Julia, Paula
      * @Version 1.0
-     * @since sprint3
+     * @since Sprint3
      */
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
@@ -164,10 +165,9 @@ public class PrimaryPresenter extends AbstractPresenter {
     @Subscribe
     private void userLeft(UserLeftLobbyMessage msg) {
         if (games.containsKey(msg.getLobbyID()) && msg.getUser().getUsername().equals(loggedInUser.getUsername())) {
-            closeTab(msg.getLobbyID(), true);
+            closeTab(msg.getLobbyID(), false);
         }
     }
-
 
     /**
      * Die Methode postet ein Request auf den Bus, wenn der Einstellungen-Button gedrückt wird
@@ -206,7 +206,7 @@ public class PrimaryPresenter extends AbstractPresenter {
 
             //Neuen Tab initialisieren, Pane vom GameManagement übernehmen und der TabView hinzufügen
 
-            //Auf schließung des Tabs reagieren
+            //Auf Schließung des Tabs reagieren
             gameManagement.getPrimaryTab().setOnCloseRequest(event -> {
                 games.remove(gameManagement);
                 lobbyService.leaveLobby(gameManagement.getID(), (UserDTO) loggedInUser);
@@ -222,12 +222,12 @@ public class PrimaryPresenter extends AbstractPresenter {
     private void onUserLeftLobby(UserLeftLobbyMessage msg) {
         if (games.containsKey(msg.getLobbyID()) && loggedInUser.getUsername().equals(msg.getUser().getUsername())) {
             closeTab(msg.getLobbyID(), false);
-            LOG.info("User " + msg.getUser().getUsername() + " left lobby successfully");
+            LOG.info("User " + msg.getUser().getUsername() + " verließ die Lobby erfolgreich.");
         }
     }
 
     /**
-     * Sort dafür, das die Lobby CLientseitig geschlossen wird und diese ggf. verlassen wird
+     * Sorgt dafür, dass die Lobby clientseitig geschlossen wird und diese ggf. verlassen wird
      *
      * @param uuid  Die UUID der Lobby
      * @param leave Ob die Lobby Serverseitig noch verlassen werden muss
@@ -286,6 +286,12 @@ public class PrimaryPresenter extends AbstractPresenter {
             closeAllTabs();
         }
     }
+    @Subscribe
+    public void updatedUser(UpdatedUserMessage message) {
+        if(loggedInUser != null && loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
+            loggedInUser = message.getUser();
+        }
+    }
 
     /**
      * Schließt alle GameManagement Stages
@@ -301,6 +307,10 @@ public class PrimaryPresenter extends AbstractPresenter {
             } catch (ConcurrentModificationException ignored) {
             }
         }));
+    }
+
+    public User getUser() {
+        return loggedInUser;
     }
 
 }

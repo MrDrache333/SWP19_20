@@ -35,6 +35,9 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         this.playground = playground;
     }
 
+    private static final Logger LOG = LogManager.getLogger(GameService.class);
+
+
     @Override
     public void executeActionPhase(Player player, short cardId) {
         CardPack cardsPackField = playground.getCardsPackField();

@@ -12,7 +12,6 @@ import de.uol.swp.client.main.PrimaryPresenter;
 import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.game.messages.GameOverMessage;
 import de.uol.swp.common.game.messages.UserGaveUpMessage;
-import de.uol.swp.common.lobby.message.CreateLobbyMessage;
 import de.uol.swp.common.lobby.message.UserLeftAllLobbiesMessage;
 import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.user.User;
@@ -144,13 +143,15 @@ public class GameManagement {
             primaryPresenter.closeAllTabs();
         }
     }
-
+/*
     @Subscribe
     private void lobbyCreated(CreateLobbyMessage msg) {
         if (msg.getUser().getUsername().equals(loggedInUser.getUsername())) {
             primaryPresenter.showTab(msg.getChatID());
         }
     }
+
+ */
 
     /**
      * Aktualisiert den loggedInUser, wenn dieser seine Daten geändert hat
@@ -211,6 +212,7 @@ public class GameManagement {
     public void showGameView() {
         initGameView();
         showView(gamePane, lobbyName);
+        gameViewPresenter.getInGameUserList(this.id);
     }
 
     /**
@@ -317,12 +319,12 @@ public class GameManagement {
         FXMLLoader loader = injector.getInstance(FXMLLoader.class);
         try {
             URL url = getClass().getResource(fxml);
-            LOG.debug("Loading " + url);
+            LOG.debug("Lade " + url);
             loader.setLocation(url);
             loader.setController(presenter);
             rootPane = loader.load();
         } catch (Exception e) {
-            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
+            throw new RuntimeException("View konnte nicht geladen werden!" + e.getMessage(), e);
         }
 
         return rootPane;
@@ -389,4 +391,7 @@ public class GameManagement {
         return lobbyName;
     }
 
+    public User getLoggedInUser() {
+        return loggedInUser;
+    }
 }

@@ -15,6 +15,7 @@ import de.uol.swp.server.usermanagement.store.MainMemoryBasedUserStore;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -30,6 +31,7 @@ public class CompositePhaseTest {
     static final GameManagement gameManagement = new GameManagement(chatManagement, lobbyManagement);
     static final AuthenticationService authenticationService = new AuthenticationService(bus, new UserManagement(new MainMemoryBasedUserStore()), lobbyManagement);
     static final GameService gameService = new GameService(bus, gameManagement, authenticationService);
+    private static ArrayList<Short> chosenCards = new ArrayList<Short>();
 
     static UUID gameID;
 
@@ -39,6 +41,11 @@ public class CompositePhaseTest {
         chatManagement.createChat(gameID.toString());
         lobbyManagement.getLobby(gameID).get().joinUser(secondPlayer);
         lobbyManagement.getLobby(gameID).get().joinUser(thirdPlayer);
+        chosenCards.add((short) 7);
+        chosenCards.add((short) 8);
+        chosenCards.add((short) 9);
+
+        lobbyManagement.getLobby(gameID).get().setChosenCards(chosenCards);
         bus.post(new StartGameInternalMessage(gameID));
     }
 
@@ -50,6 +57,7 @@ public class CompositePhaseTest {
         playground.getCardField().replace((short) 6, 0);
         assertTrue(playground.getCompositePhase().checkIfGameIsFinished());
         playground.getCardField().replace((short) 6, 10);
+        assertFalse(playground.getCompositePhase().checkIfGameIsFinished());
         for (int i = 0; i < 3; i++) {
             playground.getCardField().replace(playground.getCardsPackField().getCards().getActionCards().get(i).getId(), 0);
         }

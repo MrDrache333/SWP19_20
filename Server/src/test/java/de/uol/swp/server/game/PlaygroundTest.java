@@ -22,6 +22,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
@@ -43,6 +44,8 @@ public class PlaygroundTest {
     static final GameService gameService = new GameService(bus, gameManagement, authService);
     static UUID id;
     private final CountDownLatch lock = new CountDownLatch(1);
+    private static ArrayList<Short> chosenCards = new ArrayList<Short>();
+
 
 
     static UUID gameID;
@@ -54,6 +57,7 @@ public class PlaygroundTest {
         chatManagement.createChat(gameID.toString());
         lobbyManagement.getLobby(gameID).get().joinUser(secondPlayer);
         lobbyManagement.getLobby(gameID).get().joinUser(thirdPlayer);
+        lobbyManagement.getLobby(gameID).get().setChosenCards(chosenCards);
         bus.post(new StartGameInternalMessage(gameID));
     }
 
@@ -234,4 +238,24 @@ public class PlaygroundTest {
         assertEquals(1, winners.size());
         assertTrue(winners.contains(playground.getNextPlayer().getPlayerName()));
     }
+
+    /**
+     * Testet ob die korrekte Anzahl an Karten auf dem Nachziehstapel gesendet wird
+     *
+     * @author Julia
+     * @since Sprint7
+     */
+    @Test
+    void cardsDeckSizeTest() {
+        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
+        int size = playground.sendCardsDeckSize();
+        assertEquals(5, size);
+        playground.getCompositePhase().executeClearPhase(playground.getActualPlayer());
+        size = playground.sendCardsDeckSize();
+        assertEquals(0, size);
+        playground.getCompositePhase().executeClearPhase(playground.getActualPlayer());
+        size = playground.sendCardsDeckSize();
+        assertEquals(5, size);
+    }
+
 }
