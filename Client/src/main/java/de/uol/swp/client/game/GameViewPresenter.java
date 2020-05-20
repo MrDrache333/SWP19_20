@@ -172,9 +172,9 @@ public class GameViewPresenter extends AbstractPresenter {
         this.gameManagement = gameManagement;
         // Die Hände für jeden Spieler
         handcards = new HandcardsLayoutContainer(575, 630, 110, 420, "My.HCLC");
-        firstEnemyHand = new HandcardsLayoutContainer(575, 0, 110, 420,"1.HCLC");
-        secondEnemyHand = new HandcardsLayoutContainer(250, 308, 105, 215,"2.HCLC");
-        thirdEnemyHand = new HandcardsLayoutContainer(1120, 308, 105, 215,"3.HCLC");
+        firstEnemyHand = new HandcardsLayoutContainer(575, 110, 110, 420,"1.HCLC");
+        secondEnemyHand = new HandcardsLayoutContainer(300, 308, 105, 215,"2.HCLC");
+        thirdEnemyHand = new HandcardsLayoutContainer(1070, 308, 105, 215,"3.HCLC");
         // Die Aktion-Zonen für jeden Spieler
         myPCLC = new PlayedCardLayoutContainer(960, 480, 100, 200, "My.PCLC");
         firstEnemyPCLC = new PlayedCardLayoutContainer(700, 150,100, 200,"1.PCLC");
