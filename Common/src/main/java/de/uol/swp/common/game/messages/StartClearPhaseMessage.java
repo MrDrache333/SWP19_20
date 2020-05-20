@@ -3,7 +3,6 @@ package de.uol.swp.common.game.messages;
 import de.uol.swp.common.message.AbstractServerMessage;
 import de.uol.swp.common.user.User;
 
-import java.util.ArrayList;
 import java.util.UUID;
 
 
@@ -24,14 +23,12 @@ public class StartClearPhaseMessage extends AbstractServerMessage {
     private User currentUser;
     private Short userPlaceNumber;
     private Short enemyPlaceNumber;
-    private ArrayList<Short> cardsToDraw;
 
-    public StartClearPhaseMessage(User currentUser, UUID gameID, Short userPlaceNumber, Short enemyPlaceNumber, ArrayList<Short> cardsToDraw) {
+    public StartClearPhaseMessage(User currentUser, UUID gameID, Short userPlaceNumber, Short enemyPlaceNumber) {
         this.gameID = gameID;
         this.currentUser = currentUser;
         this.userPlaceNumber = userPlaceNumber;
         this.enemyPlaceNumber = enemyPlaceNumber;
-        this.cardsToDraw = cardsToDraw;
     }
 
     public UUID getGameID() {
@@ -50,7 +47,4 @@ public class StartClearPhaseMessage extends AbstractServerMessage {
         return userPlaceNumber;
     }
 
-    public ArrayList<Short> getCardsToDraw() {
-        return cardsToDraw;
-    }
 }

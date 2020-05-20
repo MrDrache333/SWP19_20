@@ -700,17 +700,6 @@ public class GameViewPresenter extends AbstractPresenter {
                 moveCardsToDiscardPile(handcards.getChildren(), false);
                 moveCardsToDiscardPile(myPCLC.getChildren(), true);
             });
-            ArrayList<Short> handCardID = msg.getCardsToDraw();
-            handCardID.forEach((n) -> {
-                Card card = new Card(n.toString(), handcards.getLayoutX(), handcards.getLayoutY(), handcards.getHeight());
-                Platform.runLater(() -> {
-                    myDLC.getChildren().add(card);
-                    AnimationManagement.addToHand(card, msg.getCardsToDraw().size());
-                    handcards.getChildren().add(card);
-                    myDLC.getChildren().remove(card);
-                    card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
-                });
-            });
         }
         // Wenn ein anderer Spieler eine ClearPhaseMessage erhählt wird dies den anderen Spielern
         // angezeigt, indem deren Repräsentation des Spieler seine Handkarten und ausgespielten Karten auf den Ablagestapel legt.
