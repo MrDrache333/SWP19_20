@@ -155,7 +155,7 @@ public class MainMenuPresenter extends AbstractPresenter {
         loggedInUser = message.getUser();
         chatViewPresenter.setloggedInUser(loggedInUser);
         chatViewPresenter.userJoined(loggedInUser.getUsername());
-        LOG.debug("Logged in user: " + loggedInUser.getUsername());
+        LOG.debug("Angemeldeter User: " + loggedInUser.getUsername());
         userService.retrieveAllUsers();
         lobbyService.retrieveAllLobbies();
     }
@@ -169,7 +169,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void newUser(UserLoggedInMessage message) {
-        LOG.debug("New user " + message.getUsername() + " logged in");
+        LOG.debug("Neuer User " + message.getUsername() + " hat sich eingeloggt");
         Platform.runLater(() -> {
             if (users != null && loggedInUser != null && !loggedInUser.getUsername().equals(message.getUsername())) {
                 chatViewPresenter.userJoined(message.getUsername());
@@ -202,7 +202,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void userDropped(UserDroppedMessage message) {
-        LOG.debug("User " + message.getUser().getUsername() + " deleted his account");
+        LOG.debug("User " + message.getUser().getUsername() + " löschte seinen Account");
         userLeft(message.getUser().getUsername());
     }
 
@@ -215,7 +215,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void newLobbyCreated(CreateLobbyMessage message) {
-        LOG.debug("New lobby " + message.getLobbyName() + " created");
+        LOG.debug("Neue Lobby " + message.getLobbyName() + " erstellt");
         if (message.getLobbyName() != null){
             Platform.runLater(() -> {
                 lobbies.add(0, message.getLobby());
@@ -233,7 +233,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void userJoinedLobby(UserJoinedLobbyMessage message) {
-        LOG.debug("User " + message.getUser().getUsername() + " joined lobby " + message.getLobby().getName());
+        LOG.debug("User " + message.getUser().getUsername() + " trat der Lobby " + message.getLobby().getName() + " bei.");
         Platform.runLater(() -> {
             lobbies.removeIf(lobby -> lobby.getLobbyID().equals(message.getLobbyID()));
             lobbies.add(0, message.getLobby());
@@ -250,7 +250,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     @Subscribe
     public void userLeftLobby(UserLeftLobbyMessage message) {
         if (message.getLobby() != null) {
-            LOG.debug("User " + message.getUser().getUsername() + " left lobby " + message.getLobby().getName());
+            LOG.debug("User " + message.getUser().getUsername() + " verließ Lobby  " + message.getLobby().getName());
             Platform.runLater(() -> {
                 lobbies.removeIf(lobby -> lobby.getLobbyID().equals(message.getLobbyID()));
                 lobbies.add(0, message.getLobby());
@@ -284,7 +284,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void userKicked(KickUserMessage message) {
-        LOG.debug("User " + message.getUser().getUsername() + " kicked from lobby " + message.getLobby().getName());
+        LOG.debug("User " + message.getUser().getUsername() + " wurde von der Lobby " + message.getLobby().getName() + " gekickt.");
         Platform.runLater(() -> {
             lobbies.removeIf(lobby -> lobby.getLobbyID().equals(message.getLobbyID()));
             lobbies.add(0, message.getLobby());
@@ -365,7 +365,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void updatedUser(UpdatedUserMessage message) {
-        LOG.debug("User " + message.getOldUser().getUsername() + " updated his data. Updating lobby table and user list");
+        LOG.debug("User " + message.getOldUser().getUsername() + " hat seine Daten aktualisiert. Aktualisierung von Lobby-Tabelle und Benutzerliste");
         if (loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
             loggedInUser = message.getUser();
         }
@@ -411,7 +411,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void userList(AllOnlineUsersResponse allUsersResponse) {
-        LOG.debug("Update of user list " + allUsersResponse.getUsers());
+        LOG.debug("Aktualisierung der Benutzerliste " + allUsersResponse.getUsers());
         updateUsersList(allUsersResponse.getUsers());
     }
 
@@ -424,7 +424,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void lobbyTable(AllOnlineLobbiesResponse allLobbiesResponse) {
-        LOG.debug("Updating of lobbies list" + allLobbiesResponse.getLobbies());
+        LOG.debug("Aktualisierung der Lobbyliste " + allLobbiesResponse.getLobbies());
         updateLobbiesTable(allLobbiesResponse.getLobbies());
     }
 
@@ -498,15 +498,9 @@ public class MainMenuPresenter extends AbstractPresenter {
                             setGraphic(joinLobbyButton);
                         }
                     }
-                    }
-
-                    ;
-                }
+                };
             }
-
-            ;
-
-
+        };
         joinLobby.setCellFactory(cellFactory);
     }
 

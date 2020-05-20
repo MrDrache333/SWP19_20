@@ -48,7 +48,7 @@ class ServerApp {
         if (port < 0) {
             port = 8889;
         }
-        LOG.info("Starting Server on port " + port);
+        LOG.info("Starte Server auf Port " + port);
 
         // Komponenten erstellen
         Injector injector = Guice.createInjector(new ServerModule());

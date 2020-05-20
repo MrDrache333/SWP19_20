@@ -23,3 +23,13 @@
 .scroll-bar:vertical .thumb:pressed {
     -fx-background-color: grey;
 }
+
+.list-view .list-cell:even:selected {
+    -fx-background: -fx-control-inner-background ;
+    -fx-background-color: -fx-table-cell-border-color, -fx-background ;
+    -fx-background-insets: 0, 0 0 1 0 ;
+    -fx-table-cell-border-color: derive(-fx-color, 5%);
+}
+.list-view .list-cell:odd:filled:selected {
+    -fx-background: -fx-control-inner-background-alt ;
+}

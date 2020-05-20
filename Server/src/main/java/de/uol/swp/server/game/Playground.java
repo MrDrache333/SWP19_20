@@ -11,7 +11,6 @@ import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.lobby.Lobby;
-import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
@@ -41,7 +40,6 @@ public class Playground extends AbstractPlayground {
     private Player nextPlayer;
     private Player latestGavedUpPlayer;
     private Phase.Type actualPhase;
-    private ArrayList<Short> theIdsFromTheHand = new ArrayList<>(5);
     private GameService gameService;
     private UUID theSpecificLobbyID;
     private CompositePhase compositePhase;
@@ -72,7 +70,7 @@ public class Playground extends AbstractPlayground {
         this.compositePhase = new CompositePhase(this);
         this.lobbySizeOnStart = (short) lobby.getUsers().size();
         this.cardsPackField = new JsonCardParser().loadPack("Basispack");
-        this.chosenCards = ((LobbyDTO) lobby).getChosenCards();
+        this.chosenCards = lobby.getChosenCards();
         initializeCardField();
     }
 
@@ -86,18 +84,11 @@ public class Playground extends AbstractPlayground {
                 cardField.put(card.getId(), 8);
             } else cardField.put(card.getId(), 12);
         }
-        while (chosenCards.size() < 10) {
-            for (short i = 7; i < 17; i++) {
-                if (!chosenCards.contains(i)) {
-                    chosenCards.add(i);
-                }
-            }
-            //TODO: die 16 ändern, sobald mehr Karten vorhanden sind, die obere for-Schleife auskommentieren
-            // und den unteren Block dafür entkommentieren
-            /*short random = (short) (Math.random() * 16);
+        while (chosenCards.size() <= 10) {
+            short random = (short) (Math.random() * 31);
             if (!chosenCards.contains(random) && random > 6) {
                 chosenCards.add(random);
-            }*/
+            }
         }
         for (Short chosenCard : chosenCards) {
             cardField.put(chosenCard, 10);
@@ -111,7 +102,7 @@ public class Playground extends AbstractPlayground {
             if (i == 0) cardField.put(card.getId(), 60);
             else if (i == 1) cardField.put(card.getId(), 40);
             else if (i == 2) cardField.put(card.getId(), 30);
-            else LOG.debug("Komisch: @ initializeCardField- Else Methode in 104 ausgeschlagen.... @ @ @");
+            else LOG.debug("Komisch: @ initializeCardField- Else Methode in 104 ausgeschlagen.");
         }
         gameService.sendCardField(theSpecificLobbyID, cardField);
     }
@@ -135,7 +126,7 @@ public class Playground extends AbstractPlayground {
             //Spieler muss Clearphase durchlaufen haben
             if (actualPhase != Phase.Type.Clearphase) return;
             if (actualPlayer != latestGavedUpPlayer) {
-                sendPlayersHand();
+                //sendPlayersHand();
                 sendCardsDeckSize();
             }
             int index = players.indexOf(nextPlayer);
@@ -187,18 +178,26 @@ public class Playground extends AbstractPlayground {
      * @since Sprint5
      */
     public void nextPhase() {
+        ArrayList<Short> theIdsFromTheHand = new ArrayList<>(5);
         if (actualPhase == Phase.Type.Clearphase) {
             throw new GamePhaseException("Du kannst die Clearphase nicht überspringen!");
         }
-
         if (actualPhase == Phase.Type.ActionPhase) {
             actualPhase = Phase.Type.Buyphase;
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartBuyPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
             endTimer();
         } else {
             actualPhase = Phase.Type.Clearphase;
-            gameService.sendToAllPlayers(theSpecificLobbyID, new StartClearPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
+            Player currentPlayer = actualPlayer;
             compositePhase.executeClearPhase(actualPlayer);
+            for (Card card : currentPlayer.getPlayerDeck().getHand()) {
+                theIdsFromTheHand.add(card.getId());
+            }
+            players.forEach(n -> {
+                StartClearPhaseMessage msg = new StartClearPhaseMessage(currentPlayer.getTheUserInThePlayer(), theSpecificLobbyID, getIndexOfPlayer(n), getIndexOfPlayer(currentPlayer), theIdsFromTheHand);
+                gameService.sendToSpecificPlayer(n, msg);
+            });
+
         }
     }
 
@@ -210,10 +209,11 @@ public class Playground extends AbstractPlayground {
      * @since Sprint5
      */
     public void sendPlayersHand() {
+        ArrayList<Short> theIdsFromTheHand = new ArrayList<>(5);
         for (Card card : actualPlayer.getPlayerDeck().getHand()) {
             theIdsFromTheHand.add(card.getId());
         }
-        DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID);
+        DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID, (short) 1);
         gameService.sendToSpecificPlayer(actualPlayer, theHandMessage);
     }
 
@@ -225,7 +225,7 @@ public class Playground extends AbstractPlayground {
      */
     public int sendCardsDeckSize() {
         int size = actualPlayer.getPlayerDeck().getCardsDeck().size();
-        gameService.sendToSpecificPlayer(actualPlayer, new CardsDeckSizeMessage(theSpecificLobbyID, actualPlayer.getTheUserInThePlayer(), size));
+        gameService.sendToSpecificPlayer(actualPlayer, new CardsDeckSizeMessage(theSpecificLobbyID, actualPlayer.getTheUserInThePlayer(), size, actualPlayer.getPlayerDeck().discardPileWasCleared()));
         return size;
     }
 
@@ -314,7 +314,7 @@ public class Playground extends AbstractPlayground {
             for (Card card : playerhand.getPlayerDeck().getHand()) {
                 theIdsFromInitalPlayerDeck.add(card.getId());
             }
-            DrawHandMessage initialHandFromPlayer = new DrawHandMessage(theIdsFromInitalPlayerDeck, theSpecificLobbyID);
+            DrawHandMessage initialHandFromPlayer = new DrawHandMessage(theIdsFromInitalPlayerDeck, theSpecificLobbyID, (short) getPlayers().size());
             gameService.sendToSpecificPlayer(playerhand, initialHandFromPlayer);
             // TODO: Bessere Logging Message irgendwann später implementieren..
             LOG.debug("All OK with sending initial Hands...");
@@ -392,6 +392,10 @@ public class Playground extends AbstractPlayground {
 
     public List<Player> getPlayers() {
         return players;
+    }
+
+    public Short getIndexOfPlayer(Player player) {
+        return (short) players.indexOf(player);
     }
 
     public Player getActualPlayer() {

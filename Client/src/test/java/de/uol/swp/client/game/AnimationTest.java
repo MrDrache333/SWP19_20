@@ -1,5 +1,7 @@
 package de.uol.swp.client.game;
 
+import de.uol.swp.client.game.container.HandcardsLayoutContainer;
+import de.uol.swp.client.game.container.PlayedCardLayoutContainer;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -171,8 +173,11 @@ public class AnimationTest extends Application {
         });
 
         //Wenn auf die Karte geklickt wird, spielt der Spieler sie aus
+
+        PlayedCardLayoutContainer pclc = new PlayedCardLayoutContainer(700, 500, 100, 200, "My.PCLC");
+
         cardToPlay.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            AnimationManagement.playCard(cardToPlay, 0);
+            AnimationManagement.playCard(cardToPlay, 0, pclc );
             if (cards.contains(cardToPlay)) {
                 cards.remove(cardToPlay);
                 handcards.getChildren().remove(cardToPlay);

@@ -10,7 +10,6 @@ import de.uol.swp.client.auth.events.ShowLoginViewEvent;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.client.game.GameService;
-import de.uol.swp.client.game.event.GameQuitEvent;
 import de.uol.swp.client.lobby.CreateLobbyPresenter;
 import de.uol.swp.client.lobby.JoinLobbyPresenter;
 import de.uol.swp.client.lobby.LobbyService;
@@ -34,13 +33,16 @@ import de.uol.swp.common.user.UserDTO;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.text.Text;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -115,7 +117,11 @@ public class SceneManager {
             Alert alert = new Alert(type, "");
             alert.setResizable(false);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.getDialogPane().setContentText(message);
+            Text text = new Text(message);
+            text.setWrappingWidth(390);
+            alert.getDialogPane().setMaxWidth(400);
+            alert.getDialogPane().setContent(text);
+            alert.getDialogPane().setPadding(new Insets(10, 10, 10, 10));
             alert.getDialogPane().setHeaderText(title);
             alert.show();
         });
@@ -182,12 +188,6 @@ public class SceneManager {
         });
     }
 
-    @Subscribe
-    public void onGameQuitEvent(GameQuitEvent event) {
-        showScene(mainScene, "test");
-    }
-
-
     public void showError(String message, String e) {
         Platform.runLater(() -> {
             Alert a = new Alert(Alert.AlertType.ERROR, message + e);
@@ -196,7 +196,7 @@ public class SceneManager {
     }
 
     public void showServerError(String e) {
-        showError("Server returned an error:\n", e);
+        showError("Der Server gab einen Fehler zurück:\n", e);
     }
 
     public void showError(String e) {
@@ -222,16 +222,15 @@ public class SceneManager {
 
     public void showLoginErrorScreen() {
         Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Error logging in to server");
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Fehler beim Einloggen auf den Server!");
             alert.showAndWait();
             showLoginScreen();
         });
     }
 
     public void showMainScreen(User currentUser) {
-        showScene(primaryScene, "Welcome " + currentUser.getUsername());
+        showScene(primaryScene, "Willkommen " + currentUser.getUsername());
     }
-
 
     public void showLoginScreen() {
         showScene(loginScene, "Login");
@@ -270,9 +269,10 @@ public class SceneManager {
      */
     public void showSettingsScreen(User loggedInUser) {
         Platform.runLater(() -> {
-            settingsPresenter = new SettingsPresenter(loggedInUser, lobbyService, userService, eventBus);
+            settingsPresenter = new SettingsPresenter(loggedInUser, lobbyService, userService, injector, eventBus);
             initSettingsView(settingsPresenter);
             settingsStage = new Stage();
+            settingsStage.initStyle(StageStyle.UNDECORATED);
             settingsStage.setTitle("Einstellungen");
             settingsStage.setScene(settingsScene);
             settingsStage.setResizable(false);
@@ -317,7 +317,7 @@ public class SceneManager {
             joinLobbyPresenter = new JoinLobbyPresenter(loggedInUser, lobbyService, userService, eventBus, lobby);
             initJoinLobbyView(joinLobbyPresenter);
             joinLobbyStage = new Stage();
-            joinLobbyStage.setTitle("Lobby beitreten");
+            joinLobbyStage.setTitle("Lobby: " + lobby.getName()+ " beitreten ");
             joinLobbyStage.setScene(joinLobbyScene);
             joinLobbyStage.setResizable(false);
             joinLobbyStage.initModality(Modality.APPLICATION_MODAL);
@@ -352,6 +352,7 @@ public class SceneManager {
     }
 
     public void closeJoinLobby() {
+        if (joinLobbyStage != null)
         Platform.runLater(() -> joinLobbyStage.close());
     }
 
@@ -371,11 +372,11 @@ public class SceneManager {
         FXMLLoader loader = injector.getInstance(FXMLLoader.class);
         try {
             URL url = getClass().getResource(fxmlFile);
-            LOG.debug("Loading " + url);
+            LOG.debug("Lade " + url);
             loader.setLocation(url);
             rootPane = loader.load();
         } catch (Exception e) {
-            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
+            throw new RuntimeException("Konnte View nicht laden!" + e.getMessage(), e);
         }
         return rootPane;
     }
@@ -385,12 +386,12 @@ public class SceneManager {
         FXMLLoader loader = injector.getInstance(FXMLLoader.class);
         try {
             URL url = getClass().getResource(fxmlFile);
-            LOG.debug("Loading " + url);
+            LOG.debug("Lade " + url);
             loader.setLocation(url);
             loader.setController(presenter);
             rootPane = loader.load();
         } catch (Exception e) {
-            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
+            throw new RuntimeException("Konnte View nicht laden!" + e.getMessage(), e);
         }
         return rootPane;
     }
@@ -416,12 +417,12 @@ public class SceneManager {
         FXMLLoader loader = injector.getInstance(FXMLLoader.class);
         try {
             URL url = getClass().getResource(SettingsPresenter.fxml);
-            LOG.debug("Loading " + url);
+            LOG.debug("Lade " + url);
             loader.setLocation(url);
             loader.setController(settingsPresenter);
             rootPane = loader.load();
         } catch (Exception e) {
-            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
+            throw new RuntimeException("Konnte View nicht laden!" + e.getMessage(), e);
         }
         return rootPane;
     }
@@ -431,12 +432,12 @@ public class SceneManager {
         FXMLLoader loader = injector.getInstance(FXMLLoader.class);
         try {
             URL url = getClass().getResource(CreateLobbyPresenter.fxml);
-            LOG.debug("Loading " + url);
+            LOG.debug("Lade " + url);
             loader.setLocation(url);
             loader.setController(createLobbyPresenter);
             rootPane = loader.load();
         } catch (Exception e) {
-            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
+            throw new RuntimeException("Konnte View nicht laden!" + e.getMessage(), e);
         }
         return rootPane;
     }
@@ -446,12 +447,12 @@ public class SceneManager {
         FXMLLoader loader = injector.getInstance(FXMLLoader.class);
         try {
             URL url = getClass().getResource(JoinLobbyPresenter.fxml);
-            LOG.debug("Loading " + url);
+            LOG.debug("Lade " + url);
             loader.setLocation(url);
             loader.setController(joinLobbyPresenter);
             rootPane = loader.load();
         } catch (Exception e) {
-            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
+            throw new RuntimeException("Konnte View nicht laden!" + e.getMessage(), e);
         }
         return rootPane;
     }
@@ -461,12 +462,12 @@ public class SceneManager {
         FXMLLoader loader = injector.getInstance(FXMLLoader.class);
         try {
             URL url = getClass().getResource(DeleteAccountPresenter.fxml);
-            LOG.debug("Loading " + url);
+            LOG.debug("Lade " + url);
             loader.setLocation(url);
             loader.setController(deleteAccountPresenter);
             rootPane = loader.load();
         } catch (Exception e) {
-            throw new RuntimeException("Could not load View!" + e.getMessage(), e);
+            throw new RuntimeException("Konnte View nicht laden!" + e.getMessage(), e);
         }
         return rootPane;
     }
@@ -485,14 +486,13 @@ public class SceneManager {
             Parent rootPane = initPresenter(RegistrationPresenter.fxml);
             registrationScene = new Scene(rootPane, 1280, 750);
             registrationScene.getStylesheets().add(styleSheet);
-            registrationScene.getStylesheets().add(RegistrationPresenter.css);
         }
     }
 
     private void initSettingsView(SettingsPresenter settingsPresenter) {
         if (settingsScene == null) {
             Parent rootPane = initSettingsPresenter(settingsPresenter);
-            settingsScene = new Scene(rootPane, 400, 255);
+            settingsScene = new Scene(rootPane, 400, 420);
             settingsScene.getStylesheets().add(SettingsPresenter.css);
         }
     }
@@ -510,16 +510,15 @@ public class SceneManager {
         if (createLobbyScene == null) {
             Parent rootPane = initCreateLobbyPresenter(createLobbyPresenter);
             createLobbyScene = new Scene(rootPane, 400, 255);
-            createLobbyScene.getStylesheets().add(createLobbyPresenter.css);
+            createLobbyScene.getStylesheets().add(CreateLobbyPresenter.css);
         }
     }
 
     private void initJoinLobbyView(JoinLobbyPresenter joinLobbyPresenter) {
-        if (joinLobbyScene == null) {
-            Parent rootPane = initJoinLobbyPresenter(joinLobbyPresenter);
-            joinLobbyScene = new Scene(rootPane, 400, 255);
-            joinLobbyScene.getStylesheets().add(JoinLobbyPresenter.css);
-        }
+        Parent rootPane = initJoinLobbyPresenter(joinLobbyPresenter);
+        joinLobbyScene = new Scene(rootPane, 400, 255);
+        joinLobbyScene.getStylesheets().add(JoinLobbyPresenter.css);
+
     }
 
 
