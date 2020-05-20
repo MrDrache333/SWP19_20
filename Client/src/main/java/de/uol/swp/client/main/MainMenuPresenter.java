@@ -290,10 +290,11 @@ public class MainMenuPresenter extends AbstractPresenter {
     @Subscribe
     public void userKicked(KickUserMessage message) {
         LOG.debug("User " + message.getUser().getUsername() + " wurde von der Lobby " + message.getLobby().getName() + " gekickt.");
-        Platform.runLater(() -> {
-            lobbies.removeIf(lobby -> lobby.getLobbyID().equals(message.getLobbyID()));
-            lobbies.add(0, message.getLobby());
-        });
+        if (lobbies != null)
+            Platform.runLater(() -> {
+                lobbies.removeIf(lobby -> lobby.getLobbyID().equals(message.getLobbyID()));
+                lobbies.add(0, message.getLobby());
+            });
     }
 
     /**
@@ -348,19 +349,20 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void onGameEnd(UpdatedInGameMessage message) {
-        Platform.runLater(() -> {
-            Lobby updatedLobby = null;
-            for (Lobby lobby : lobbies) {
-                if (lobby.getLobbyID().equals(message.getLobbyID())) {
-                    updatedLobby = lobby;
-                    break;
+        if (lobbies != null)
+            Platform.runLater(() -> {
+                Lobby updatedLobby = null;
+                for (Lobby lobby : lobbies) {
+                    if (lobby.getLobbyID().equals(message.getLobbyID())) {
+                        updatedLobby = lobby;
+                        break;
+                    }
                 }
-            }
-            lobbies.remove(updatedLobby);
-            updatedLobby.setInGame(false);
-            lobbies.add(0, updatedLobby);
-            lobbiesView.refresh();
-        });
+                lobbies.remove(updatedLobby);
+                updatedLobby.setInGame(false);
+                lobbies.add(0, updatedLobby);
+                lobbiesView.refresh();
+            });
     }
 
     /**
@@ -373,40 +375,42 @@ public class MainMenuPresenter extends AbstractPresenter {
     @Subscribe
     public void updatedUser(UpdatedUserMessage message) {
         LOG.debug("User " + message.getOldUser().getUsername() + " hat seine Daten aktualisiert. Aktualisierung von Lobby-Tabelle und Benutzerliste");
-        if (loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
-            loggedInUser = message.getUser();
-        }
-        Platform.runLater(() -> {
-            List<Lobby> toRemove = new ArrayList<>();
-            List<Lobby> toAdd = new ArrayList<>();
-            for (Lobby lobby : lobbies) {
-                if (lobby.getUsers().contains(message.getOldUser())) {
-                    User updatedOwner = lobby.getOwner();
-                    //ggf. Owner aktualisieren
-                    if (lobby.getOwner().getUsername().equals(message.getOldUser().getUsername())) {
-                        updatedOwner = message.getUser();
+        if (loggedInUser != null) {
+            if (loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
+                loggedInUser = message.getUser();
+            }
+            Platform.runLater(() -> {
+                List<Lobby> toRemove = new ArrayList<>();
+                List<Lobby> toAdd = new ArrayList<>();
+                for (Lobby lobby : lobbies) {
+                    if (lobby.getUsers().contains(message.getOldUser())) {
+                        User updatedOwner = lobby.getOwner();
+                        //ggf. Owner aktualisieren
+                        if (lobby.getOwner().getUsername().equals(message.getOldUser().getUsername())) {
+                            updatedOwner = message.getUser();
+                        }
+                        //Userliste der Lobby aktualisieren
+                        List<User> updatedUsers = new ArrayList<>(lobby.getUsers());
+                        updatedUsers.remove(message.getOldUser());
+                        updatedUsers.add(message.getUser());
+                        Set<User> newUsers = new TreeSet<>(updatedUsers);
+                        Lobby lobbyToUpdate = new LobbyDTO(lobby.getName(), updatedOwner, lobby.getLobbyID(), lobby.getLobbyPassword(), newUsers, lobby.getPlayers(), lobby.getMaxPlayer(), lobby.getInGame());
+                        toRemove.add(lobby);
+                        toAdd.add(lobbyToUpdate);
                     }
-                    //Userliste der Lobby aktualisieren
-                    List<User> updatedUsers = new ArrayList<>(lobby.getUsers());
-                    updatedUsers.remove(message.getOldUser());
-                    updatedUsers.add(message.getUser());
-                    Set<User> newUsers = new TreeSet<>(updatedUsers);
-                    Lobby lobbyToUpdate = new LobbyDTO(lobby.getName(), updatedOwner, lobby.getLobbyID(), lobby.getLobbyPassword(), newUsers, lobby.getPlayers(), lobby.getMaxPlayer(), lobby.getInGame());
-                    toRemove.add(lobby);
-                    toAdd.add(lobbyToUpdate);
                 }
-            }
 
-            //Lobbytabelle aktualisieren
-            lobbies.removeAll(toRemove);
-            lobbies.addAll(toAdd);
+                //Lobbytabelle aktualisieren
+                lobbies.removeAll(toRemove);
+                lobbies.addAll(toAdd);
 
-            //Userliste nur aktualisieren, wenn sich der Username geändert hat
-            if (!message.getUser().getUsername().equals(message.getOldUser().getUsername())) {
-                users.removeIf(user -> user.equals(message.getOldUser().getUsername()));
-                users.add(message.getUser().getUsername());
-            }
-        });
+                //Userliste nur aktualisieren, wenn sich der Username geändert hat
+                if (!message.getUser().getUsername().equals(message.getOldUser().getUsername())) {
+                    users.removeIf(user -> user.equals(message.getOldUser().getUsername()));
+                    users.add(message.getUser().getUsername());
+                }
+            });
+        }
     }
 
     /**
