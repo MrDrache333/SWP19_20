@@ -218,13 +218,7 @@ public class GameService extends AbstractService {
                     Short costCard = playground.getCompositePhase().getCardFromId(playground.getCardsPackField().getCards(), request.getCardID()).getCosts();
                     BuyCardMessage buyCard = new BuyCardMessage(request.getLobbyID(), request.getCurrentUser(), request.getCardID(), count, costCard);
                     sendToAllPlayers(request.getLobbyID(), buyCard);
-                    int availableAction = playground.getActualPlayer().getAvailableActions();
-                    int availableBuy = playground.getActualPlayer().getAvailableBuys();
-                    int additionalMoney = playground.getActualPlayer().getAdditionalMoney();
-                    int moneyOnHand = playground.getActualPlayer().getPlayerDeck().actualMoneyFromPlayer();
-                    sendToSpecificPlayer(playground.getActualPlayer(), new InfoPlayDisplayMessage(request.getLobbyID(), request.getCurrentUser(), availableAction, availableBuy, additionalMoney, moneyOnHand, playground.getActualPhase()));
-
-                } catch (NotEnoughMoneyException notEnoughMoney) {
+                    } catch (NotEnoughMoneyException notEnoughMoney) {
                     sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(request.getLobbyID(), notEnoughMoney.getMessage()));
                 }
             }
@@ -257,24 +251,13 @@ public class GameService extends AbstractService {
                     // Karte wird an die ActionPhase zum Handling übergeben.
                     playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), cardID);
                     //sendToSpecificPlayer(playground.getActualPlayer(), new PlayCardMessage(gameID, player, cardID, true));
-
                     playground.getPlayers().forEach(n -> {
                         PlayCardMessage msg = new PlayCardMessage(gameID, playground.getActualPlayer().getTheUserInThePlayer(), cardID, true,
                                 playground.getIndexOfPlayer(n), playground.getIndexOfPlayer(playground.getActualPlayer()));
                         sendToSpecificPlayer(n, msg);
-                    });
-
-
-                    sendToSpecificPlayer(playground.getActualPlayer(), new PlayCardMessage(gameID, player, cardID, true));
-                    int availableAction = playground.getActualPlayer().getAvailableActions();
-                    int availableBuy = playground.getActualPlayer().getAvailableBuys();
-                    int additionalMoney = playground.getActualPlayer().getAdditionalMoney();
-                    int moneyOnHand = playground.getActualPlayer().getPlayerDeck().actualMoneyFromPlayer();
-                    sendToSpecificPlayer(playground.getActualPlayer(), new InfoPlayDisplayMessage(gameID, player, availableAction, availableBuy, additionalMoney, moneyOnHand, playground.getActualPhase()));
-                    /*
+                    });/*
                      TODO: Nachdem das gegnerische Feld und ein Text-Feld für den generellem Spiel ablauf hinzugefügt wurde, muss allen Gegnern das ausspielen der Karte mitgeteilt werden.
                      */
-
                 } catch (IllegalArgumentException e) {
                     sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(gameID, e.getMessage()));
                 }

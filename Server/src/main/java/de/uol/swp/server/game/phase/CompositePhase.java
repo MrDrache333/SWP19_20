@@ -5,6 +5,7 @@ import de.uol.swp.common.game.card.parser.components.CardPack;
 import de.uol.swp.common.game.card.parser.components.CardStack;
 import de.uol.swp.common.game.exception.NotEnoughMoneyException;
 import de.uol.swp.common.game.messages.GameOverMessage;
+import de.uol.swp.common.game.messages.InfoPlayDisplayMessage;
 import de.uol.swp.server.game.GameService;
 import de.uol.swp.server.game.Playground;
 import de.uol.swp.server.game.player.Deck;
@@ -78,6 +79,12 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
             playground.getCardField().put(cardId, --count);
         }
         player.setAvailableBuys(player.getAvailableBuys() - 1);
+        int availableAction = player.getAvailableActions();
+        int availableBuy = player.getAvailableBuys();
+        int additionalMoney = player.getAdditionalMoney();
+        int moneyOnHand = player.getPlayerDeck().actualMoneyFromPlayer();
+        playground.getGameService().sendToSpecificPlayer(player, new InfoPlayDisplayMessage(playground.getID(), player.getTheUserInThePlayer(), availableAction, availableBuy, additionalMoney, moneyOnHand, playground.getActualPhase()));
+
         if (player.getAvailableBuys() == 0) {
             playground.nextPhase();
         }
@@ -104,6 +111,12 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         player.setAdditionalMoney(0);
         player.setAvailableBuys(1);
         player.setAvailableActions(1);
+        int availableAction = player.getAvailableActions();
+        int availableBuy = player.getAvailableBuys();
+        int additionalMoney = player.getAdditionalMoney();
+        int moneyOnHand = player.getPlayerDeck().actualMoneyFromPlayer();
+        playground.getGameService().sendToSpecificPlayer(player, new InfoPlayDisplayMessage(playground.getID(), player.getTheUserInThePlayer(), availableAction, availableBuy, additionalMoney, moneyOnHand, playground.getActualPhase()));
+
         if (checkIfGameIsFinished()) {
             List<String> winners = playground.calculateWinners();
             playground.endGame(playground.getID(), new GameOverMessage(playground.getID(), winners, playground.getResultsGame()));
@@ -135,6 +148,12 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
             // TODO: Die Aktion der Karte muss noch ausgeführt werden
 
         playground.sendCardsDeckSize();
+        int availableAction = player.getAvailableActions();
+        int availableBuy = player.getAvailableBuys();
+        int additionalMoney = player.getAdditionalMoney();
+        int moneyOnHand = player.getPlayerDeck().actualMoneyFromPlayer();
+        playground.getGameService().sendToSpecificPlayer(player, new InfoPlayDisplayMessage(playground.getID(), player.getTheUserInThePlayer(), availableAction, availableBuy, additionalMoney, moneyOnHand, playground.getActualPhase()));
+
     }
 
 

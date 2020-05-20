@@ -482,4 +482,7 @@ public class Playground extends AbstractPlayground {
         return cardField;
     }
 
+    public GameService getGameService() {
+        return gameService;
+    }
 }

@@ -480,6 +480,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * Die Nachricht die gesendet wird, wenn der Kauf einer Karte erfolgreich war
      * die Karte, sowie die gebrauchten Geldkarten wandert auf den Ablagestapel (Animation)
      * Überprüft ob der Spieler noch Karten der gekauften Art kaufen kann und fügt ggf. das ImageView (kleines Bild) wieder hinzu
+     * Wenn die gekauft Karte eine Wertkarte war, wird dessen Anzahl aktualisiert.
      *
      * @param msg die Nachricht
      * @author Devin, Anna, Rike
@@ -488,48 +489,55 @@ public class GameViewPresenter extends AbstractPresenter {
     // TODO: Karte wenn sie gekauft wird, von der richtigen Postition einfliegen lassen. ( Weiter nach rechts)
     @Subscribe
     public void onBuyCardMessage(BuyCardMessage msg) {
-        if (msg.getLobbyID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
-            ImageView selectedCard = (ImageView) mouseEvent.getSource();
-            String pfad = "file:Client/src/main/resources/cards/images/" + msg.getCardID().toString() + ".png";
-            Image picture = new Image(pfad);
-            ImageView newCardImage = new ImageView(picture);
-            LOG.debug("Der Spieler " + msg.getCurrentUser() + " hat die Karte " + msg.getCardID() + " gekauft.");
-            // fügt ein "neues" Bild an der Stelle des alten Bildes im Shop hinzu
-            newCardImage.setPreserveRatio(true);
-            newCardImage.setFitHeight(107);
-            newCardImage.setFitWidth(Math.round(newCardImage.getBoundsInLocal().getWidth()));
-            newCardImage.setLayoutX(selectedCard.getLayoutX());
-            newCardImage.setLayoutY(selectedCard.getLayoutY());
-            newCardImage.setId(String.valueOf(msg.getCardID()));
-            Platform.runLater(() -> {
-                gameViewWIP.getChildren().add(newCardImage);
-                AnimationManagement.buyCard(newCardImage);
-                gameViewWIP.getChildren().remove(newCardImage);
-                discardPilePane.getChildren().add(newCardImage);
-            });
-            if (msg.getCounterCard() < 1) {
-                ColorAdjust makeImageDarker = new ColorAdjust();
-                makeImageDarker.setBrightness(-0.7);
-                selectedCard.setEffect(makeImageDarker);
+        if (msg.getLobbyID().equals(lobbyID)){
+            if (valuecardLabels.containsKey(msg.getCardID())) {
+                Platform.runLater(() -> {
+                    valuecardLabels.get(msg.getCardID()).setText(String.valueOf(msg.getCounterCard()));
+                });
             }
-            // entfernt die genutzen Geldkarten aus der Aktionszone (wichtig, wenn der User mehr als 1 Kauf hat)
-            Platform.runLater(() -> {
-                int money = 0;
-                int playedCardLayoutContainerSize = playedCardLayoutContainer.getChildren().size();
-                ObservableList<Node> removeMoneyCardList = FXCollections.observableArrayList();
-                for (int i = 0; i < playedCardLayoutContainerSize; i++) {
-                    Node removeCards = playedCardLayoutContainer.getChildren().get(i);
-                    if (removeCards.getId().equals("1") || removeCards.getId().equals("2") || removeCards.getId().equals("3")) {
-                        money += Integer.parseInt(removeCards.getId());
-                        removeMoneyCardList.add(removeCards);
-                        playedCardLayoutContainer.getChildren().remove(i);
-                        if (money >= msg.getCostCard()) {
-                            break;
+            if(msg.getCurrentUser().equals(loggedInUser)) {
+                ImageView selectedCard = (ImageView) mouseEvent.getSource();
+                String pfad = "cards/images/" + msg.getCardID().toString() + ".png";
+                Image picture = new Image(pfad);
+                ImageView newCardImage = new ImageView(picture);
+                LOG.debug("Der Spieler " + msg.getCurrentUser() + " hat die Karte " + msg.getCardID() + " gekauft.");
+                // fügt ein "neues" Bild an der Stelle des alten Bildes im Shop hinzu
+                newCardImage.setPreserveRatio(true);
+                newCardImage.setFitHeight(107);
+                newCardImage.setFitWidth(Math.round(newCardImage.getBoundsInLocal().getWidth()));
+                newCardImage.setLayoutX(selectedCard.getLayoutX());
+                newCardImage.setLayoutY(selectedCard.getLayoutY());
+                newCardImage.setId(String.valueOf(msg.getCardID()));
+                Platform.runLater(() -> {
+                    gameViewWIP.getChildren().add(newCardImage);
+                    AnimationManagement.buyCard(newCardImage);
+                    gameViewWIP.getChildren().remove(newCardImage);
+                    myDPLC.getChildren().add(newCardImage);
+                });
+                if (msg.getCounterCard() < 1) {
+                    ColorAdjust makeImageDarker = new ColorAdjust();
+                    makeImageDarker.setBrightness(-0.7);
+                    selectedCard.setEffect(makeImageDarker);
+                }
+                // entfernt die genutzen Geldkarten aus der Aktionszone (wichtig, wenn der User mehr als 1 Kauf hat)
+                Platform.runLater(() -> {
+                    int money = 0;
+                    int playedCardLayoutContainerSize = myPCLC.getChildren().size();
+                    ObservableList<Node> removeMoneyCardList = FXCollections.observableArrayList();
+                    for (int i = 0; i < playedCardLayoutContainerSize; i++) {
+                        Node removeCards = myPCLC.getChildren().get(i);
+                        if (removeCards.getId().equals("1") || removeCards.getId().equals("2") || removeCards.getId().equals("3")) {
+                            money += Integer.parseInt(removeCards.getId());
+                            removeMoneyCardList.add(removeCards);
+                            myPCLC.getChildren().remove(i);
+                            if (money >= msg.getCostCard()) {
+                                break;
+                            }
                         }
                     }
-                }
-                moveCardsToDiscardPile(removeMoneyCardList, false);
-            });
+                    moveCardsToDiscardPile(removeMoneyCardList, false);
+                });
+            }
         }
     }
 
@@ -686,6 +694,7 @@ public class GameViewPresenter extends AbstractPresenter {
     public void onStartClearPhaseMessage (StartClearPhaseMessage msg) {
         // Wenn die ClearMessage an den currentPlayer geht werden, seine Handkarten und
         // ausgespielten Karten auf den Ablagestapel getan und fünf neue Karten gezogen.
+        onStartPhase(msg.getGameID(), msg.getCurrentUser(), msg);
         if (msg.getGameID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
             Platform.runLater(() -> {
                 moveCardsToDiscardPile(handcards.getChildren(), false);
@@ -1111,8 +1120,8 @@ public class GameViewPresenter extends AbstractPresenter {
      * @since Sprint 5
      */
     private void chosenBuyableCard(MouseEvent mouseEvent) {
-        double mouseX = mouseEvent.getSceneX();
-        double mouseY = mouseEvent.getSceneY();
+        //double mouseX = mouseEvent.getSceneX();
+        //double mouseY = mouseEvent.getSceneY();
         ImageView cardImage = (ImageView) mouseEvent.getSource();
         // Überprüfung ob sich die angeklickte Karte innerhalb des Shops befindet und nicht bereits auf dem Ablagestapel
         //    if (mouseX > shopTeppich.getLayoutX() && mouseX < (shopTeppich.getLayoutX() + shopTeppich.getWidth()) &&
@@ -1131,18 +1140,38 @@ public class GameViewPresenter extends AbstractPresenter {
             buyCardButton.setVisible(true);
             buyCardButton.setOnAction(event -> {
                 bigCardImageBox.setVisible(false);
-                BuyCardRequest req = new BuyCardRequest(lobbyID, loggedInUser, Short.valueOf(cardID));
-                gameService.buyCard(req);
-                this.mouseEvent = mouseEvent;
+                if (playAllMoneyCardsButton.isDisable() && playAllMoneyCardsButton.isVisible()){
+                    BuyCardRequest req = new BuyCardRequest(lobbyID, loggedInUser, Short.valueOf(cardID));
+                    gameService.buyCard(req);
+                    this.mouseEvent = mouseEvent;
+                }
+                else {
+                    if (!playAllMoneyCardsButton.isVisible()) {
+                        showAlert(Alert.AlertType.INFORMATION, "Du bist nicht dran!", "Fehler");
+                    } else {
+                        //TODO: ggf. anpassen, wenn man auch Karten kaufen kann ohne sein Geld vorher gespielt zu haben
+                        showAlert(Alert.AlertType.INFORMATION, "Du musst erst deine Geldkarten ausspielen!", "Fehler");
+                    }
+                }
             });
             bigCardImageBox.setVisible(true);
             bigCardImageBox.toFront();
         } else {
             String cardID = cardImage.getId();
             bigCardImageBox.setVisible(false);
-            BuyCardRequest req = new BuyCardRequest(lobbyID, loggedInUser, Short.valueOf(cardID));
-            gameService.buyCard(req);
-            this.mouseEvent = mouseEvent;
+            if (playAllMoneyCardsButton.isDisable() && playAllMoneyCardsButton.isVisible()){
+                BuyCardRequest req = new BuyCardRequest(lobbyID, loggedInUser, Short.valueOf(cardID));
+                gameService.buyCard(req);
+                this.mouseEvent = mouseEvent;
+            }
+            else {
+                if (!playAllMoneyCardsButton.isVisible()) {
+                    showAlert(Alert.AlertType.INFORMATION, "Du bist nicht dran!", "Fehler");
+                } else {
+                    //TODO: ggf. anpassen, wenn man auch Karten kaufen kann ohne sein Geld vorher gespielt zu haben
+                    showAlert(Alert.AlertType.INFORMATION, "Du musst erst deine Geldkarten ausspielen!", "Fehler");
+                }
+            }
         }
     }
 
@@ -1160,9 +1189,9 @@ public class GameViewPresenter extends AbstractPresenter {
                 if (card.getId().equals("1") || card.getId().equals("2") || card.getId().equals("3")) {
                     usableMoney += Integer.parseInt(card.getId());
                     Platform.runLater(() -> {
-                        AnimationManagement.playCard(card, playedCardLayoutContainer.getChildren().size());
+                        AnimationManagement.playCard(card, myPCLC.getChildren().size(), myPCLC);
                         handcards.getChildren().remove(c);
-                        playedCardLayoutContainer.getChildren().add(card);
+                        myPCLC.getChildren().add(card);
                     });
                 }
             }
