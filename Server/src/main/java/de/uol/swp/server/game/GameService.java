@@ -126,7 +126,7 @@ public class GameService extends AbstractService {
      */
     public void sendCardField(UUID gameID, Map<Short, Integer> cardField) {
         SendCardFieldMessage message = new SendCardFieldMessage(gameID, cardField);
-        post(message);
+        sendToAllPlayers(gameID, message);
     }
 
     /**

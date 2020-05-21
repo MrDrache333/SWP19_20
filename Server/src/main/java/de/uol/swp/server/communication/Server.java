@@ -40,7 +40,7 @@ public class Server implements ServerHandlerDelegate {
     final private List<ChannelHandlerContext> connectedClients = new CopyOnWriteArrayList<>();
 
     /**
-     * Client mit einer eingelogten Session
+     * Client mit einer eingeloggten Session
      */
     final private Map<ChannelHandlerContext, Session> activeSessions = new HashMap<>();
 
@@ -50,7 +50,7 @@ public class Server implements ServerHandlerDelegate {
     final private EventBus eventBus;
 
     /**
-     * Erstellt einen neuen Server(Objekt)
+     * Erstellt einen neuen Server (Objekt)
      */
     @Inject
     public Server(EventBus eventBus) {
@@ -59,7 +59,7 @@ public class Server implements ServerHandlerDelegate {
     }
 
     /**
-     * Starten einen neuen Server an einen gegebenen Port
+     * Starten einen neuen Server an einem gegebenen Port
      *
      * @throws Exception
      */
@@ -160,7 +160,11 @@ public class Server implements ServerHandlerDelegate {
         if (ctx.isPresent() && msg.getSession().isPresent()) {
             putSession(ctx.get(), msg.getSession().get());
             sendToClient(ctx.get(), new LoginSuccessfulResponse(msg.getUser()));
-            sendMessage(new UserLoggedInMessage(msg.getUser().getUsername()));
+
+            UserLoggedInMessage message = new UserLoggedInMessage(msg.getUser().getUsername());
+            message.setReceiver(new ArrayList<>(activeSessions.values()));
+            sendMessage(message);
+
         } else {
             LOG.warn("No context for " + msg);
         }
@@ -170,11 +174,12 @@ public class Server implements ServerHandlerDelegate {
     private void onUserLoggedOutMessage(UserLoggedOutMessage msg) {
         Optional<ChannelHandlerContext> ctx = getCtx(msg);
         ctx.ifPresent(this::removeSession);
+        msg.setReceiver(new ArrayList<>(activeSessions.values()));
         sendMessage(msg);
     }
 
     // -------------------------------------------------------------------------------
-    // AntwortEvents
+    // Antwort Events
     // -------------------------------------------------------------------------------
 
     @Subscribe
@@ -196,6 +201,8 @@ public class Server implements ServerHandlerDelegate {
     private void onServerMessage(ServerMessage msg) {
         msg.setSession(null);
         msg.setMessageContext(null);
+        msg.setReceiver(new ArrayList<>(activeSessions.values()));
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Sende " + msg + " zu " + (msg.getReceiver().isEmpty() ? "allen" : msg.getReceiver()));
         }
