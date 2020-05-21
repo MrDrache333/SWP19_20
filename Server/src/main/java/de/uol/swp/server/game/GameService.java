@@ -37,6 +37,7 @@ public class GameService extends AbstractService {
 
     private final GameManagement gameManagement;
     private final AuthenticationService authenticationService;
+    private final UserDTO infoUser = new UserDTO("infoUser", "", "");
 
     /**
      * Erstellt einen neuen GameService
@@ -133,7 +134,7 @@ public class GameService extends AbstractService {
      * Startet das Spiel wenn die StartGameInternalMessage ankommt.
      * Sendet außerdem eine Nachricht mit dem ersten Spieler in den Chat.
      *
-     * @param msg InterneMessage mit der LobbyId um das Game zu starten.
+     * @param msg Interne Message mit der LobbyId um das Game zu starten.
      * @author Ferit, Julia, Marvin
      * @since Sprint5
      */
@@ -143,8 +144,6 @@ public class GameService extends AbstractService {
             gameManagement.createGame(msg.getLobbyID());
             Game game = gameManagement.getGame(msg.getLobbyID()).get();
             game.getPlayground().newTurn();
-            Player first = game.getPlayground().getPlayers().get(0);
-            post(new NewChatMessageRequest(msg.getLobbyID().toString(), new ChatMessage(new UserDTO("server", "", ""), first.getPlayerName() + " beginnt")));
         } catch (GameManagementException e) {
             LOG.error("Es wurde eine GameManagementException geworfen: " + e.getMessage());
             // TODO: In späteren Sprints hier ggf. weiteres Handling?
@@ -189,6 +188,10 @@ public class GameService extends AbstractService {
         if (userRemovedSuccesfully) {
             UserGaveUpMessage gaveUp = new UserGaveUpMessage(msg.getTheSpecificLobbyID(), msg.getGivingUpUSer(), true);
             sendToAllPlayers(msg.getTheSpecificLobbyID(), gaveUp);
+
+            ChatMessage infoMessage = new ChatMessage(infoUser, msg.getGivingUpUSer() + " gab auf!");
+            post(new NewChatMessageRequest(msg.getTheSpecificLobbyID().toString(), infoMessage));
+
         } else {
             // TODO: Implementierung: Was passiert wenn der User nicht entfernt werden kann? Welche Fälle gibt es?
         }
@@ -218,7 +221,11 @@ public class GameService extends AbstractService {
                     Short costCard = playground.getCompositePhase().getCardFromId(playground.getCardsPackField().getCards(), request.getCardID()).getCosts();
                     BuyCardMessage buyCard = new BuyCardMessage(request.getLobbyID(), request.getCurrentUser(), request.getCardID(), count, costCard);
                     sendToAllPlayers(request.getLobbyID(), buyCard);
-                    } catch (NotEnoughMoneyException notEnoughMoney) {
+
+                    ChatMessage infoMessage = new ChatMessage(infoUser, request.getCurrentUser().getUsername() + " kaufte Karte " + buyCard.getCardID() + "!");
+                    post(new NewChatMessageRequest(request.getLobbyID().toString(), infoMessage));
+
+                } catch (NotEnoughMoneyException notEnoughMoney) {
                     sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(request.getLobbyID(), notEnoughMoney.getMessage()));
                 }
             }
@@ -255,9 +262,11 @@ public class GameService extends AbstractService {
                         PlayCardMessage msg = new PlayCardMessage(gameID, playground.getActualPlayer().getTheUserInThePlayer(), cardID, true,
                                 playground.getIndexOfPlayer(n), playground.getIndexOfPlayer(playground.getActualPlayer()));
                         sendToSpecificPlayer(n, msg);
-                    });/*
-                     TODO: Nachdem das gegnerische Feld und ein Text-Feld für den generellem Spiel ablauf hinzugefügt wurde, muss allen Gegnern das ausspielen der Karte mitgeteilt werden.
-                     */
+                    });
+
+                    ChatMessage infoMessage = new ChatMessage(infoUser, playground.getActualPlayer().getTheUserInThePlayer().getUsername() + " spielte Karte " + cardID);
+                    post(new NewChatMessageRequest(gameID.toString(), infoMessage));
+
                 } catch (IllegalArgumentException e) {
                     sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(gameID, e.getMessage()));
                 }

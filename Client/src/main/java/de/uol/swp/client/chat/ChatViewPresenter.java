@@ -67,8 +67,8 @@ public class ChatViewPresenter extends AbstractPresenter {
     private final int MAXCHATMESSAGEHISTORY = 100;
 
     //Farbe der Nachrichten Label (eigene Nachrichten) (Hintergrund und Text) bei beiden Themen
-    private final String ChatMessageBubbleBackgroundColor_Me_LIGHT = "#1C6FEE";
-    private final String ChatMessageBubbleBackgroundColor_Me_DARK = "#1C6FEE";
+    private final String ChatMessageBubbleBackgroundColor_Me_LIGHT = "#3D3D3D";
+    private final String ChatMessageBubbleBackgroundColor_Me_DARK = "#3D3D3D";
     private final String ChatMessageBubbleTextColor_Me_LIGHT = "white";
     private final String ChatMessageBubbleTextColor_Me_DARK = "white";
 
@@ -401,10 +401,10 @@ public class ChatViewPresenter extends AbstractPresenter {
         pb.setImage(new Image("/images/pb_template.png"));
         pb.setFitHeight(25);
         pb.setFitWidth(25);
-        if (!msg.getSender().getUsername().equals("server")) {
+        if (!msg.getSender().getUsername().equals("server") && !msg.getSender().getUsername().equals("infoUser")) {
             if (msg.getSender().getUsername().equals(loggedInUser.getUsername())) {
                 //Wenn die Nachricht mehrere Zeilen umfasst, dann aendere den Radius der Ecken
-                message.setStyle("-fx-background-radius: " + (plainMessage.length() > message.getMaxWidth() / 10 ? "15" : "90") + ";-fx-background-color: " + ChatMessageBubbleBackgroundColor_Me + ";-fx-text-fill: " + ChatMessageBubbleTextColor_Me + "; -fx-font-size: 16");
+                message.setStyle("-fx-background-radius: " + (plainMessage.length() > message.getMaxWidth() / 10 ? "15" : "90") + ";-fx-background-color: " + ChatMessageBubbleBackgroundColor_Me + ";-fx-text-fill: " + ChatMessageBubbleTextColor_Me + "; -fx-font-size: 16" + ";-fx-opacity: 0.73");
                 sender.setText("Du");
                 sender.setAlignment(Pos.BOTTOM_RIGHT);
                 message.setAlignment(Pos.BOTTOM_RIGHT);
@@ -457,6 +457,11 @@ public class ChatViewPresenter extends AbstractPresenter {
                 box.alignmentProperty().setValue(Pos.BOTTOM_LEFT);
                 hbox.alignmentProperty().setValue(Pos.BOTTOM_LEFT);
             }
+        } else if (msg.getSender().getUsername().equals("infoUser")) {
+            // Wenn die empfangene Nachricht eine Info-Nachricht ist
+            message.setStyle("-fx-text-fill: blue; -fx-background-color: transparent; -fx-font-size: 16");
+            hbox.setAlignment(Pos.CENTER);
+            hbox.getChildren().add(message);
         } else {
             //Wenn die empfangene Nachricht eine ServerMessage ist
             message.setStyle("-fx-text-fill: black; -fx-background-color: transparent; -fx-font-size: 14");
