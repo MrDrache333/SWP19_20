@@ -61,7 +61,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
 
     public void finishedActionCardExecution(Player player, ArrayList<Short> newHandCards) {
         if (!newHandCards.isEmpty()) {
-            playground.getGameService().sendToSpecificPlayer(player, new DrawHandMessage(newHandCards, playground.getID(), (short) 1));
+            playground.getGameService().sendToSpecificPlayer(player, new DrawHandMessage(newHandCards, playground.getID(), (short) playground.getPlayers().size()));
         }
         playground.sendCardsDeckSize();
         player.setAvailableActions(player.getAvailableActions() - 1);

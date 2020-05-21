@@ -344,6 +344,17 @@ public class ActionCardExecution {
                     break;
                 case DRAW:
                     action.setCards(player.getPlayerDeck().getCardsDeck());
+                    if(action.getCards().size() < action.getCount() && action.getCount() < 254) {
+                        int missingCards = action.getCount() - action.getCards().size();
+                        List<Card> discard = player.getPlayerDeck().getDiscardPile();
+                        Collections.shuffle(discard);
+                        player.getPlayerDeck().getDiscardPile().clear();
+                        player.getPlayerDeck().getCardsDeck().addAll(0, discard);
+                        int i = 0;
+                        while(i < missingCards && i < discard.size()) {
+                            action.addCard(player.getPlayerDeck().getCardsDeck().get(i));
+                        }
+                    }
                     break;
                 case DISCARD:
                     action.setCards(player.getPlayerDeck().getDiscardPile());
