@@ -564,6 +564,20 @@ public class GameViewPresenter extends AbstractPresenter {
                         myPCLC.getChildren().add(card);
                         card.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                     }
+                    if (msg.getHandCardID().equals("1") || msg.getHandCardID().equals("2") || msg.getHandCardID().equals("3")) {
+                        usableMoney += Integer.parseInt(msg.getHandCardID());
+                        numberOfMoney.setText(usableMoney + " Geld");
+                    }
+                    for (Node c : handcards.getChildren()) {
+                        ImageView cardToBeChecked = (ImageView) c;
+                        if (cardToBeChecked.getId().equals("1") || cardToBeChecked.getId().equals("2") || cardToBeChecked.getId().equals("3")) {
+                            playAllMoneyCardsButton.setDisable(false);
+                            break;
+                        }
+                        else {
+                            playAllMoneyCardsButton.setDisable(true);
+                        }
+                    }
                 });
             } else {
                 showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht spielen!", "Fehler");
