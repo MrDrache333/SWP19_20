@@ -113,6 +113,32 @@
                                         <ImageView fx:id="cardPlaceholder8" fitHeight="100.0" fitWidth="100.0" layoutX="235.0" layoutY="224.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true" />
                                         <ImageView fx:id="cardPlaceholder9" fitHeight="100.0" fitWidth="100.0" layoutX="345.5" layoutY="224.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true" />
                                         <ImageView fx:id="cardPlaceholder10" fitHeight="100.0" fitWidth="100.0" layoutX="456.0" layoutY="224.0" onMouseClicked="#onBuyableCardClicked" pickOnBounds="true" preserveRatio="true" />
+                                        <Pane layoutX="122.0" layoutY="342.0" opacity="0.73" prefHeight="79.0" prefWidth="326.0" style="-fx-background-color: #3D3D3D;">
+                                            <children>
+                                                <Label fx:id="numberOfAction" alignment="TOP_CENTER" layoutY="7.0" prefHeight="27.0" prefWidth="110.0" textFill="WHITE">
+                                                    <font>
+                                                        <Font name="System Bold" size="18.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="numberOfMoney" alignment="TOP_CENTER" layoutX="218.0" layoutY="7.0" prefHeight="27.0" prefWidth="96.0" textFill="WHITE">
+                                                    <font>
+                                                        <Font name="System Bold" size="18.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="numberOfBuy" alignment="TOP_CENTER" layoutX="115.0" layoutY="7.0" prefHeight="27.0" prefWidth="96.0" textFill="WHITE">
+                                                    <font>
+                                                        <Font name="System Bold" size="18.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="infoActualPhase" alignment="TOP_CENTER" layoutX="13.0" layoutY="42.0" prefHeight="27.0" prefWidth="300.0" textFill="WHITE">
+                                                    <font>
+                                                        <Font name="System Bold" size="18.0" />
+                                                    </font>
+                                                </Label>
+                                                <Line endY="27.0" layoutX="112.0" layoutY="9.0" stroke="WHITE" />
+                                                <Line endY="27.0" layoutX="214.0" layoutY="9.0" stroke="WHITE" />
+                                            </children>
+                                        </Pane>
                                     </children>
                                 </Pane>
                             </children>
@@ -159,6 +185,9 @@
                             <padding>
                                 <Insets bottom="7.0" left="5.0" right="5.0" top="7.0" />
                             </padding>
+                            <children>
+                                <Button fx:id="playAllMoneyCardsButton" disable="true" layoutX="262.0" layoutY="2.0" mnemonicParsing="false" onAction="#onPlayAllMoneyCardsButtonPressed" text="Alle Geldkarten ausspielen" />
+                            </children>
                         </Pane>
                         <Pane prefHeight="200.0" prefWidth="150.0">
                             <HBox.margin>

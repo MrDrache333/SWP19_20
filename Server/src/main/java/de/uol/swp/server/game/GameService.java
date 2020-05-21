@@ -204,7 +204,7 @@ public class GameService extends AbstractService {
      * Versuch eine Karte zu kaufen
      *
      * @param request BuyCardRequest wird hier vom Client empfangen
-     * @author Paula
+     * @author Paula, Rike
      * @since Sprint6
      */
     @Subscribe
@@ -215,9 +215,10 @@ public class GameService extends AbstractService {
             if (request.getCurrentUser().equals(playground.getActualPlayer().getTheUserInThePlayer())) {
                 try {
                     int count = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), request.getCardID());
-                    BuyCardMessage buyCard = new BuyCardMessage(request.getLobbyID(), request.getCurrentUser(), request.getCardID(), true, count);
+                    Short costCard = playground.getCompositePhase().getCardFromId(playground.getCardsPackField().getCards(), request.getCardID()).getCosts();
+                    BuyCardMessage buyCard = new BuyCardMessage(request.getLobbyID(), request.getCurrentUser(), request.getCardID(), count, costCard);
                     sendToAllPlayers(request.getLobbyID(), buyCard);
-                } catch (NotEnoughMoneyException notEnoughMoney) {
+                    } catch (NotEnoughMoneyException notEnoughMoney) {
                     sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(request.getLobbyID(), notEnoughMoney.getMessage()));
                 }
             }
@@ -233,7 +234,7 @@ public class GameService extends AbstractService {
      * Versuch eine Karte zu spielen
      *
      * @param rqs PlayCardRequest wird hier vom Client empfangen
-     * @author Devin
+     * @author Devin, Rike
      * @since Sprint6
      */
     @Subscribe
@@ -250,18 +251,13 @@ public class GameService extends AbstractService {
                     // Karte wird an die ActionPhase zum Handling übergeben.
                     playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), cardID);
                     //sendToSpecificPlayer(playground.getActualPlayer(), new PlayCardMessage(gameID, player, cardID, true));
-
                     playground.getPlayers().forEach(n -> {
                         PlayCardMessage msg = new PlayCardMessage(gameID, playground.getActualPlayer().getTheUserInThePlayer(), cardID, true,
                                 playground.getIndexOfPlayer(n), playground.getIndexOfPlayer(playground.getActualPlayer()));
                         sendToSpecificPlayer(n, msg);
-                    });
-
-
-                    /*
+                    });/*
                      TODO: Nachdem das gegnerische Feld und ein Text-Feld für den generellem Spiel ablauf hinzugefügt wurde, muss allen Gegnern das ausspielen der Karte mitgeteilt werden.
                      */
-
                 } catch (IllegalArgumentException e) {
                     sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(gameID, e.getMessage()));
                 }

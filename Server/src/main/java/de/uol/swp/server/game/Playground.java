@@ -126,7 +126,7 @@ public class Playground extends AbstractPlayground {
             //Spieler muss Clearphase durchlaufen haben
             if (actualPhase != Phase.Type.Clearphase) return;
             if (actualPlayer != latestGavedUpPlayer) {
-                //sendPlayersHand();
+                sendPlayersHand();
                 sendCardsDeckSize();
             }
             int index = players.indexOf(nextPlayer);
@@ -140,7 +140,7 @@ public class Playground extends AbstractPlayground {
         if (checkForActionCard()) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartActionPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID, timestamp));
-            phaseTimer();
+            //phaseTimer();
         } else {
             nextPhase();
         }
@@ -189,22 +189,19 @@ public class Playground extends AbstractPlayground {
         } else {
             actualPhase = Phase.Type.Clearphase;
             Player currentPlayer = actualPlayer;
-            compositePhase.executeClearPhase(actualPlayer);
-            for (Card card : currentPlayer.getPlayerDeck().getHand()) {
-                theIdsFromTheHand.add(card.getId());
-            }
             players.forEach(n -> {
-                StartClearPhaseMessage msg = new StartClearPhaseMessage(currentPlayer.getTheUserInThePlayer(), theSpecificLobbyID, getIndexOfPlayer(n), getIndexOfPlayer(currentPlayer), theIdsFromTheHand);
+                StartClearPhaseMessage msg = new StartClearPhaseMessage(currentPlayer.getTheUserInThePlayer(), theSpecificLobbyID, getIndexOfPlayer(n), getIndexOfPlayer(currentPlayer));
                 gameService.sendToSpecificPlayer(n, msg);
             });
-
+            compositePhase.executeClearPhase(actualPlayer);
         }
     }
 
     /**
      * Methode, welche vom aktuellen Player die Hand versendet. Holt sich von der aktuellen Hand des Spielers die Karten und speichert die IDs dieser in einer ArrayList.
+     * sendet eine InfoPlayDisplayMessage zum aktualisieren der Anzeige von Aktion/Kauf/Geld
      *
-     * @author Ferit
+     * @author Ferit, Rike
      * @version 1
      * @since Sprint5
      */
@@ -213,7 +210,7 @@ public class Playground extends AbstractPlayground {
         for (Card card : actualPlayer.getPlayerDeck().getHand()) {
             theIdsFromTheHand.add(card.getId());
         }
-        DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID, (short) 1);
+        DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID, (short) getPlayers().size());
         gameService.sendToSpecificPlayer(actualPlayer, theHandMessage);
     }
 
@@ -304,8 +301,9 @@ public class Playground extends AbstractPlayground {
 
     /**
      * Sendet die Initiale Hand an jeden Spieler spezifisch. Überprüfung via SessionID.
+     * sendet eine InfoPlayDisplayMessage zum aktualisieren der Anzeige von Aktion/Kauf/Geld
      *
-     * @author Ferit
+     * @author Ferit, Rike
      * @since Sprint6
      */
     public void sendInitialHands() {
@@ -316,6 +314,11 @@ public class Playground extends AbstractPlayground {
             }
             DrawHandMessage initialHandFromPlayer = new DrawHandMessage(theIdsFromInitalPlayerDeck, theSpecificLobbyID, (short) getPlayers().size());
             gameService.sendToSpecificPlayer(playerhand, initialHandFromPlayer);
+            int availableAction = playerhand.getAvailableActions();
+            int availableBuy = playerhand.getAvailableBuys();
+            int additionalMoney = playerhand.getAdditionalMoney();
+            int moneyOnHand = playerhand.getPlayerDeck().actualMoneyFromPlayer();
+            gameService.sendToSpecificPlayer(playerhand, new InfoPlayDisplayMessage(theSpecificLobbyID, playerhand.getTheUserInThePlayer(), availableAction, availableBuy, additionalMoney, moneyOnHand, actualPhase));
             // TODO: Bessere Logging Message irgendwann später implementieren..
             LOG.debug("All OK with sending initial Hands...");
         }
@@ -469,4 +472,7 @@ public class Playground extends AbstractPlayground {
         return cardField;
     }
 
+    public GameService getGameService() {
+        return gameService;
+    }
 }
