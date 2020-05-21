@@ -353,6 +353,7 @@ public class ActionCardExecution {
                         int i = 0;
                         while(i < missingCards && i < discard.size()) {
                             action.addCard(player.getPlayerDeck().getCardsDeck().get(i));
+                            i++;
                         }
                     }
                     break;
