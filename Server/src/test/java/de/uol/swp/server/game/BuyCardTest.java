@@ -106,7 +106,6 @@ public class BuyCardTest {
     @Test
     void testIfCardIsAddedToDiscardPile() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
-
         playground.getActualPlayer().setAvailableBuys(2);
         int CardsOnDiscardPile = playground.getActualPlayer().getPlayerDeck().getDiscardPile().size();
         int BuyingCard = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), (short) 10);

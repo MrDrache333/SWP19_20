@@ -188,19 +188,21 @@ public class Playground extends AbstractPlayground {
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartBuyPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
             endTimer();
         } else {
+            actualPhase = Phase.Type.Clearphase;
+            Player currentPlayer = actualPlayer;
             players.forEach(n -> {
-                StartClearPhaseMessage msg = new StartClearPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID, getIndexOfPlayer(n), getIndexOfPlayer(actualPlayer), theIdsFromTheHand);
+                StartClearPhaseMessage msg = new StartClearPhaseMessage(currentPlayer.getTheUserInThePlayer(), theSpecificLobbyID, getIndexOfPlayer(n), getIndexOfPlayer(currentPlayer));
                 gameService.sendToSpecificPlayer(n, msg);
             });
-            actualPhase = Phase.Type.Clearphase;
             compositePhase.executeClearPhase(actualPlayer);
         }
     }
 
     /**
      * Methode, welche vom aktuellen Player die Hand versendet. Holt sich von der aktuellen Hand des Spielers die Karten und speichert die IDs dieser in einer ArrayList.
+     * sendet eine InfoPlayDisplayMessage zum aktualisieren der Anzeige von Aktion/Kauf/Geld
      *
-     * @author Ferit
+     * @author Ferit, Rike
      * @version 1
      * @since Sprint5
      */
@@ -209,7 +211,7 @@ public class Playground extends AbstractPlayground {
         for (Card card : actualPlayer.getPlayerDeck().getHand()) {
             theIdsFromTheHand.add(card.getId());
         }
-        DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID, (short) 1);
+        DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID, (short) getPlayers().size());
         gameService.sendToSpecificPlayer(actualPlayer, theHandMessage);
     }
 
@@ -300,8 +302,9 @@ public class Playground extends AbstractPlayground {
 
     /**
      * Sendet die Initiale Hand an jeden Spieler spezifisch. Überprüfung via SessionID.
+     * sendet eine InfoPlayDisplayMessage zum aktualisieren der Anzeige von Aktion/Kauf/Geld
      *
-     * @author Ferit
+     * @author Ferit, Rike
      * @since Sprint6
      */
     public void sendInitialHands() {
@@ -312,6 +315,11 @@ public class Playground extends AbstractPlayground {
             }
             DrawHandMessage initialHandFromPlayer = new DrawHandMessage(theIdsFromInitalPlayerDeck, theSpecificLobbyID, (short) getPlayers().size());
             gameService.sendToSpecificPlayer(playerhand, initialHandFromPlayer);
+            int availableAction = playerhand.getAvailableActions();
+            int availableBuy = playerhand.getAvailableBuys();
+            int additionalMoney = playerhand.getAdditionalMoney();
+            int moneyOnHand = playerhand.getPlayerDeck().actualMoneyFromPlayer();
+            gameService.sendToSpecificPlayer(playerhand, new InfoPlayDisplayMessage(theSpecificLobbyID, playerhand.getTheUserInThePlayer(), availableAction, availableBuy, additionalMoney, moneyOnHand, actualPhase));
             // TODO: Bessere Logging Message irgendwann später implementieren..
             LOG.debug("All OK with sending initial Hands...");
         }

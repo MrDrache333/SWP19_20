@@ -9,11 +9,11 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="255.0" prefWidth="400.0" stylesheets="@../css/SettingsPresenter.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="255.0" prefWidth="400.0" stylesheets="@../css/CreateLobbyView.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <ImageView fitHeight="255.0" fitWidth="475.0" opacity="0.9" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <image>
-                <Image url="@../images/settings_background.png" />
+                <Image url="@../images/createlobby_background.png" />
             </image>
         </ImageView>
         <TextField fx:id="lobbynameField" layoutX="23.0" layoutY="80.0" prefHeight="29.0" prefWidth="272.0" promptText="Lobbyname" />

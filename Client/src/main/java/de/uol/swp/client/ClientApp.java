@@ -217,7 +217,7 @@ public class ClientApp extends Application implements ConnectionListener {
      */
     @Subscribe
     public void onCreateLobbyMessage(CreateLobbyMessage message) {
-        if (message.getUser() != null && message.getUser().getUsername().equals(user.getUsername())) {
+        if (message.getUser() != null && user != null && message.getUser().getUsername().equals(user.getUsername())) {
             if (message.getLobbyName() != null) {
                 sceneManager.showLobbyScreen(message.getUser(), message.getLobbyName(), message.getChatID(), message.getUser());
                 sceneManager.closeCreateLobby();
@@ -238,7 +238,7 @@ public class ClientApp extends Application implements ConnectionListener {
      */
     @Subscribe
     public void onUserJoinedLobbyMessage(UserJoinedLobbyMessage message) {
-        if (message.getUser().getUsername().equals(user.getUsername())) {
+        if (user != null && message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showLobbyScreen(message.getUser(), message.getLobby().getName(), message.getLobbyID(), message.getGameOwner());
             if (message.getLobby().getLobbyPassword() != null) {
                 sceneManager.closeJoinLobby();
@@ -261,7 +261,7 @@ public class ClientApp extends Application implements ConnectionListener {
      */
     @Subscribe
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
-        if (message.getUser().getUsername().equals(user.getUsername())) {
+        if (user != null && message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showMainScreen(user);
             LOG.info("User " + message.getUser().getUsername() + " verließ die Lobby erfolgreich");
         }
@@ -317,7 +317,7 @@ public class ClientApp extends Application implements ConnectionListener {
      */
     @Subscribe
     public void onUpdatedUserMessage(UpdatedUserMessage message) {
-        if (user.getUsername().equals(message.getOldUser().getUsername())) {
+        if (user != null && user.getUsername().equals(message.getOldUser().getUsername())) {
             user = message.getUser();
             sceneManager.closeSettings();
             sceneManager.showMainScreen(user);
@@ -332,7 +332,7 @@ public class ClientApp extends Application implements ConnectionListener {
      */
     @Subscribe
     public void onUpdateUserFailedMessage(UpdateUserFailedMessage message) {
-        if (user.getUsername().equals(message.getUser().getUsername())) {
+        if (user != null && user.getUsername().equals(message.getUser().getUsername())) {
             sceneManager.showError(message.getMessage());
         }
     }
@@ -347,7 +347,7 @@ public class ClientApp extends Application implements ConnectionListener {
      */
     @Subscribe
     public void onKickUserMessage(KickUserMessage message) {
-        if (message.getUser().getUsername().equals(user.getUsername())) {
+        if (user != null && message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showMainScreen(user);
             LOG.info("User " + message.getUser().getUsername() + " wurde erfolgreich von der Lobby gekickt.");
         }
@@ -369,7 +369,7 @@ public class ClientApp extends Application implements ConnectionListener {
     public void onUserLoggedOutMessage(UserLoggedOutMessage message) {
         LOG.info("Abmeldung und Verlassen aller Lobbys erfolgreich.");
 
-        if (message.getUsername().equals(user.getUsername())) {
+        if (user != null && message.getUsername().equals(user.getUsername())) {
             sceneManager.closeAllStages();
             sceneManager.showLoginScreen();
         }
@@ -404,7 +404,7 @@ public class ClientApp extends Application implements ConnectionListener {
     @Subscribe
     public void onUserDroppedMessage(UserDroppedMessage message) {
         LOG.info("Löschung des Accounts und Verlassen aller Lobbys erfolgreich.");
-        if (message.getUser().getUsername().equals(user.getUsername())) {
+        if (user != null && message.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.closeAllStages();
             sceneManager.showLoginScreen();
         }
