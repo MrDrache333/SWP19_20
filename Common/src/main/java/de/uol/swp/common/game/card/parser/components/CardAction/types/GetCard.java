@@ -33,6 +33,10 @@ public class GetCard extends ComplexCardAction {
         setCardSource(source);
     }
 
+    public void addCard(Card card) {
+        cards.add(card);
+    }
+
     /**
      * Gibt die "geholten" Karten zurück
      *
