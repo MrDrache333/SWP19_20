@@ -304,9 +304,7 @@ public class LobbyPresenter extends AbstractPresenter {
                         {
                             if (event.getButton() == MouseButton.PRIMARY) {
                                 if (chosenCards.getChildren().size() < 10) {
-                                    if (chosenCards.getChildren().contains(textFlow)) {
-                                        chosenCards.getChildren().remove(textFlow);
-                                    }
+                                    chosenCards.getChildren().remove(textFlow);
                                     tilePane.getChildren().remove(card);
                                     ImageView chosenCard = new ImageView(picture);
                                     chosenCard.setPreserveRatio(true);
@@ -553,7 +551,7 @@ public class LobbyPresenter extends AbstractPresenter {
     @Subscribe
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
         if (!message.getLobbyID().equals(lobbyID)) return;
-        LOG.debug("User " + message.getUser().getUsername() + " left the Lobby");
+        LOG.debug("User " + message.getUser().getUsername() + " hat die Lobby verlassen!");
         if (message.getLobby() != null) {
             gameOwner = message.getGameOwner();
             userLeftLobby(message.getUser().getUsername(), false);
@@ -574,7 +572,7 @@ public class LobbyPresenter extends AbstractPresenter {
     @Subscribe
     public void onKickUserMessage(KickUserMessage message) {
         if (!message.getLobbyID().equals(lobbyID)) return;
-        LOG.debug("User " + message.getLobby().getName() + " kicked out of the Lobby");
+        LOG.debug("User " + message.getLobby().getName() + " wurde aus der Lobby gekickt!");
         userLeftLobby(message.getUser().getUsername(), true);
     }
 

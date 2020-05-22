@@ -102,6 +102,13 @@ public class ChatViewPresenter extends AbstractPresenter {
 
     private Injector injector;
 
+    // infoUser für Chatinformationen
+    private final UserDTO infoUser = new UserDTO("infoUser", "", "");
+
+    // serverUser für Chatnachrichten
+    private final UserDTO serverUser = new UserDTO("server", "", "");
+
+
     //Farben des aktuellen Chats
     private String ChatMessageBubbleBackgroundColor_Me;
     private String ChatMessageBubbleTextColor_Me;
@@ -315,13 +322,13 @@ public class ChatViewPresenter extends AbstractPresenter {
      * Die Methode userJoined gibt eine Nachricht, wenn ein User dem Chat beitritt.
      *
      * @param username the username
-     * @author KenoO
+     * @author KenoO, Fenja, Timo
      * @since Sprint 2
      */
 
     public void userJoined(String username) {
         if (!chatId.equals(""))
-            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(new UserDTO("server", "", ""), username + " ist " + (chatId.equals("global") ? "dem Chat" : "der Lobby") + " beigereten")));
+            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(chatId.equals("global") ? serverUser : infoUser, username + " ist " + (chatId.equals("global") ? "dem Chat" : "der Lobby") + " beigereten")));
     }
 
     /**
@@ -329,25 +336,25 @@ public class ChatViewPresenter extends AbstractPresenter {
      * Ausgabe einer Nachricht, wenn ein User einen Chat verlassen hat.
      *
      * @param username the username
-     * @author KenoO
+     * @author KenoO, Fenja, Timo
      * @since Sprint 2
      */
 
     public void userLeft(String username) {
         if (!chatId.equals(""))
-            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(new UserDTO("server", "", ""), username + " hat " + (chatId.equals("global") ? "den Chat" : "die Lobby") + " verlassen")));
+            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(chatId.equals("global") ? serverUser : infoUser, username + " hat " + (chatId.equals("global") ? "den Chat" : "die Lobby") + " verlassen!")));
     }
 
     /**
      * Nachricht, dass der Spieler gekickt wurde, wird im Chat angezeigt.
      *
      * @param username Benutzername des gekickten Spielers
-     * @author Darian
+     * @author Darian, Fenja, Timo
      * @since sprint4
      */
     public void userKicked(String username) {
         if (!chatId.equals(""))
-            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(new UserDTO("server", "", ""), username + " wurde aus der Lobby entfernt")));
+            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(chatId.equals("global") ? serverUser : infoUser, username + " wurde aus der Lobby entfernt!")));
     }
 
     /**
@@ -496,7 +503,7 @@ public class ChatViewPresenter extends AbstractPresenter {
 
     //Aktualisiert die ListView indem alle übergebenen Nachrichten dieser hinzugefügt werden
     private void updateChatMessages(List<ChatMessage> chatMessageList) {
-        // Warung: Das muss auf dem FX Thread passieren!
+        // Warnung: Das muss auf dem FX Thread passieren!
         Platform.runLater(() -> {
             if (chatMessages == null) {
                 chatMessages = FXCollections.observableArrayList();

@@ -5,6 +5,7 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import de.uol.swp.common.chat.ChatMessage;
 import de.uol.swp.common.chat.request.NewChatMessageRequest;
+import de.uol.swp.common.game.card.Card;
 import de.uol.swp.common.game.exception.GameManagementException;
 import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.exception.NotEnoughMoneyException;
@@ -176,7 +177,7 @@ public class GameService extends AbstractService {
     }
 
     /**
-     * Handling das der User aufgegeben hat und aus dem Playground entfernt wird. Ggf später auf null gesetzt wird o.ä.
+     * Handling, dass der User aufgegeben hat und aus dem Playground entfernt wird. Ggf später auf null gesetzt wird o.ä.
      *
      * @param msg Request zum Aufgeben
      * @author Haschem, Ferit
@@ -188,10 +189,8 @@ public class GameService extends AbstractService {
         if (userRemovedSuccesfully) {
             UserGaveUpMessage gaveUp = new UserGaveUpMessage(msg.getTheSpecificLobbyID(), msg.getGivingUpUSer(), true);
             sendToAllPlayers(msg.getTheSpecificLobbyID(), gaveUp);
-
-            ChatMessage infoMessage = new ChatMessage(infoUser, msg.getGivingUpUSer() + " gab auf!");
+            ChatMessage infoMessage = new ChatMessage(infoUser, msg.getGivingUpUSer().getUsername() + " gab auf!");
             post(new NewChatMessageRequest(msg.getTheSpecificLobbyID().toString(), infoMessage));
-
         } else {
             // TODO: Implementierung: Was passiert wenn der User nicht entfernt werden kann? Welche Fälle gibt es?
         }
@@ -217,14 +216,13 @@ public class GameService extends AbstractService {
             Playground playground = game.get().getPlayground();
             if (request.getCurrentUser().equals(playground.getActualPlayer().getTheUserInThePlayer())) {
                 try {
+                    Card card = playground.getCardsPackField().getCards().getCardById(request.getCardID());
+                    ChatMessage infoMessage = new ChatMessage(infoUser, request.getCurrentUser().getUsername() + " kauft Karte " + (card != null ? card.getName() : "Undefiniert") + "!");
+                    post(new NewChatMessageRequest(request.getLobbyID().toString(), infoMessage));
                     int count = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), request.getCardID());
                     Short costCard = playground.getCompositePhase().getCardFromId(playground.getCardsPackField().getCards(), request.getCardID()).getCosts();
                     BuyCardMessage buyCard = new BuyCardMessage(request.getLobbyID(), request.getCurrentUser(), request.getCardID(), count, costCard);
                     sendToAllPlayers(request.getLobbyID(), buyCard);
-
-                    ChatMessage infoMessage = new ChatMessage(infoUser, request.getCurrentUser().getUsername() + " kaufte Karte " + buyCard.getCardID() + "!");
-                    post(new NewChatMessageRequest(request.getLobbyID().toString(), infoMessage));
-
                 } catch (NotEnoughMoneyException notEnoughMoney) {
                     sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(request.getLobbyID(), notEnoughMoney.getMessage()));
                 }
@@ -263,10 +261,9 @@ public class GameService extends AbstractService {
                                 playground.getIndexOfPlayer(n), playground.getIndexOfPlayer(playground.getActualPlayer()));
                         sendToSpecificPlayer(n, msg);
                     });
-
-                    ChatMessage infoMessage = new ChatMessage(infoUser, playground.getActualPlayer().getTheUserInThePlayer().getUsername() + " spielte Karte " + cardID);
+                    Card card = playground.getCardsPackField().getCards().getCardById(cardID);
+                    ChatMessage infoMessage = new ChatMessage(infoUser, playground.getActualPlayer().getTheUserInThePlayer().getUsername() + " spielt Karte " + (card != null ? card.getName() : "Undefiniert") + "!");
                     post(new NewChatMessageRequest(gameID.toString(), infoMessage));
-
                 } catch (IllegalArgumentException e) {
                     sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(gameID, e.getMessage()));
                 }

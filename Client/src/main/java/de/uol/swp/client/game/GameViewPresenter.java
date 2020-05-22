@@ -999,7 +999,7 @@ public class GameViewPresenter extends AbstractPresenter {
             int enemyCounter = 0;
             for( User u : usersList)
             {
-                if (u.getUsername().equals(loggedInUser.getUsername())) {
+                if (loggedInUser != null && u.getUsername().equals(loggedInUser.getUsername())) {
                     //skip self
                 } else {
                     enemyCounter++;
