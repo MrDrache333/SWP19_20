@@ -21,6 +21,7 @@ import java.util.List;
 public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
 
     private final Playground playground;
+    private static final Logger LOG = LogManager.getLogger(GameService.class);
 
     /**
      * Der Konstruktor
@@ -33,7 +34,37 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         this.playground = playground;
     }
 
-    private static final Logger LOG = LogManager.getLogger(GameService.class);
+    @Override
+    public void executeActionPhase(Player player, short cardId) {
+        CardPack cardsPackField = playground.getCardsPackField();
+        Card currentCard = getCardFromId(cardsPackField.getCards(), cardId);
+        player.getPlayerDeck().getHand().add(currentCard);
+        // 1. Verifiziere, dass Karte existiert
+
+        if (currentCard == null) {
+            throw new IllegalArgumentException("CardID wurde nicht gefunden");
+        }
+        // 2. Überprüfe, ob Spieler diese Karte in der Hand hat
+        if (!player.getPlayerDeck().getHand().contains(currentCard)) {
+            throw new IllegalArgumentException("Die Hand enthält die gesuchte Karte nicht");
+        }
+        /*
+        3. Führe die auf der Karte befindlichen Aktionen aus
+        3.1 Die Karte wird auf den ActionPile gelegt und aus der Hand entfernt.
+         */
+        player.getPlayerDeck().getActionPile().add(currentCard);
+        player.getPlayerDeck().getHand().remove(currentCard);
+        // TODO: Die Aktion der Karte muss noch ausgeführt werden
+
+        playground.sendCardsDeckSize();
+        player.setAvailableActions(player.getAvailableActions() - 1);
+        int availableAction = player.getAvailableActions();
+        int availableBuy = player.getAvailableBuys();
+        int additionalMoney = player.getAdditionalMoney();
+        int moneyOnHand = player.getPlayerDeck().actualMoneyFromPlayer();
+        playground.getGameService().sendToSpecificPlayer(player, new InfoPlayDisplayMessage(playground.getID(), player.getTheUserInThePlayer(), availableAction, availableBuy, additionalMoney, moneyOnHand, playground.getActualPhase()));
+
+    }
 
 
     /**
@@ -48,10 +79,6 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
     public int executeBuyPhase(Player player, short cardId) {
         CardPack cardsPackField = playground.getCardsPackField();
         Card currentCard = getCardFromId(cardsPackField.getCards(), cardId);
-
-        if (player.getAvailableBuys() == 0) {
-            playground.nextPhase();
-        }
 
         // Karten und deren Anzahl werden aus dem Spielfeld geladen.
         int count = playground.getCardField().get(cardId);
@@ -124,38 +151,6 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
             playground.newTurn();
         }
     }
-
-    @Override
-    public void executeActionPhase(Player player, short cardId) {
-        CardPack cardsPackField = playground.getCardsPackField();
-        Card currentCard = getCardFromId(cardsPackField.getCards(), cardId);
-        player.getPlayerDeck().getHand().add(currentCard);
-        // 1. Verifiziere, dass Karte existiert
-
-        if (currentCard == null) {
-            throw new IllegalArgumentException("CardID wurde nicht gefunden");
-        }
-        // 2. Überprüfe, ob Spieler diese Karte in der Hand hat
-        if (!player.getPlayerDeck().getHand().contains(currentCard)) {
-            throw new IllegalArgumentException("Die Hand enthält die gesuchte Karte nicht");
-        }
-        /*
-        3. Führe die auf der Karte befindlichen Aktionen aus
-        3.1 Die Karte wird auf den ActionPile gelegt und aus der Hand entfernt.
-         */
-        player.getPlayerDeck().getActionPile().add(currentCard);
-        player.getPlayerDeck().getHand().remove(currentCard);
-            // TODO: Die Aktion der Karte muss noch ausgeführt werden
-
-        playground.sendCardsDeckSize();
-        int availableAction = player.getAvailableActions();
-        int availableBuy = player.getAvailableBuys();
-        int additionalMoney = player.getAdditionalMoney();
-        int moneyOnHand = player.getPlayerDeck().actualMoneyFromPlayer();
-        playground.getGameService().sendToSpecificPlayer(player, new InfoPlayDisplayMessage(playground.getID(), player.getTheUserInThePlayer(), availableAction, availableBuy, additionalMoney, moneyOnHand, playground.getActualPhase()));
-
-    }
-
 
     /**
      * Hilfsmethode um an die Daten über die ID zu kommen

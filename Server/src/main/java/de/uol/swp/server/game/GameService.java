@@ -212,17 +212,16 @@ public class GameService extends AbstractService {
         Optional<Game> game = gameManagement.getGame(request.getLobbyID());
         if (game.isPresent()) {
             Playground playground = game.get().getPlayground();
-            if (request.getCurrentUser().equals(playground.getActualPlayer().getTheUserInThePlayer())) {
+            if (request.getCurrentUser().equals(playground.getActualPlayer().getTheUserInThePlayer()) && playground.getActualPlayer().getAvailableBuys() > 0) {
                 try {
                     int count = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), request.getCardID());
                     Short costCard = playground.getCompositePhase().getCardFromId(playground.getCardsPackField().getCards(), request.getCardID()).getCosts();
                     BuyCardMessage buyCard = new BuyCardMessage(request.getLobbyID(), request.getCurrentUser(), request.getCardID(), count, costCard);
                     sendToAllPlayers(request.getLobbyID(), buyCard);
-                    } catch (NotEnoughMoneyException notEnoughMoney) {
+                } catch (NotEnoughMoneyException notEnoughMoney) {
                     sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(request.getLobbyID(), notEnoughMoney.getMessage()));
                 }
-            }
-            else {
+            } else {
                 LOG.error("Du bist nicht dran. " + playground.getActualPlayer().getPlayerName() + "ist an der Reihe.");
             }
         } else {
@@ -245,7 +244,7 @@ public class GameService extends AbstractService {
         Short cardID = rqs.getHandCardID();
         if (game.isPresent()) {
             Playground playground = game.get().getPlayground();
-            if (playground.getActualPlayer().getTheUserInThePlayer().getUsername().equals(player.getUsername())) {
+            if (playground.getActualPlayer().getTheUserInThePlayer().getUsername().equals(player.getUsername()) && playground.getActualPlayer().getAvailableActions() > 0) {
                 try {
                     playground.endTimer();
                     // Karte wird an die ActionPhase zum Handling übergeben.
