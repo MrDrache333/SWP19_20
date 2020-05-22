@@ -212,6 +212,7 @@ public class GameManagement {
     public void showGameView() {
         initGameView();
         showView(gamePane, lobbyName);
+        gameViewPresenter.getInGameUserList(this.id);
     }
 
     /**
@@ -390,4 +391,7 @@ public class GameManagement {
         return lobbyName;
     }
 
+    public User getLoggedInUser() {
+        return loggedInUser;
+    }
 }

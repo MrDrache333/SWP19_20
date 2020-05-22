@@ -1,12 +1,11 @@
 package de.uol.swp.common.game.card.parser.components;
 
 import com.google.gson.annotations.SerializedName;
-import de.uol.swp.common.game.card.ActionCard;
-import de.uol.swp.common.game.card.CurseCard;
-import de.uol.swp.common.game.card.MoneyCard;
-import de.uol.swp.common.game.card.ValueCard;
+import de.uol.swp.common.game.card.*;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Der Cardstack representiert eine Sammlung der verschiedenen Kartentypen.
@@ -48,6 +47,33 @@ public class CardStack {
         }
 
         return string.toString();
+    }
+
+    /**
+     * Gibt alle Karten zurück
+     *
+     * @return cards alle Karten
+     * @author Timo, Fenja, Keno O.
+     */
+    public ArrayList<Card> getAllCards() {
+        ArrayList<Card> cards = new ArrayList<>();
+        cards.addAll(moneyCards);
+        cards.addAll(valueCards);
+        cards.addAll(actionCards);
+        cards.addAll(curseCards);
+        return cards;
+    }
+
+    /**
+     * Gibt die Karte mit der entsprechenden ID zurück
+     *
+     * @return cards die eine Karte
+     * @author Timo, Fenja, Keno O.
+     */
+    public Card getCardById(short id) {
+        List<Card> cards = getAllCards().stream().filter(c -> c.getId() == id).collect(Collectors.toList());
+        if (cards.size() > 0) return cards.get(0);
+        return null;
     }
 
     /**

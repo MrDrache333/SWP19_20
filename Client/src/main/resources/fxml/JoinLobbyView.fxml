@@ -12,7 +12,7 @@
     <children>
         <ImageView fitHeight="255.0" fitWidth="475.0" opacity="0.9" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <image>
-                <Image url="@../images/settings_background.png" />
+                <Image url="@../images/createlobby_background.png" />
             </image>
         </ImageView>
         <PasswordField fx:id="passwordField" layoutX="21.0" layoutY="101.0" prefHeight="39.0" prefWidth="301.0" promptText="Passwort" />

@@ -282,7 +282,7 @@ public class PrimaryPresenter extends AbstractPresenter {
      */
     @Subscribe
     private void userLoggedOut(UserLoggedOutMessage msg) {
-        if (msg.getUsername().equals(loggedInUser.getUsername())) {
+        if (loggedInUser != null && msg.getUsername().equals(loggedInUser.getUsername())) {
             closeAllTabs();
         }
     }
@@ -307,6 +307,10 @@ public class PrimaryPresenter extends AbstractPresenter {
             } catch (ConcurrentModificationException ignored) {
             }
         }));
+    }
+
+    public User getUser() {
+        return loggedInUser;
     }
 
 }

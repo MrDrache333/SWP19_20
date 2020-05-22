@@ -9,6 +9,7 @@ public class DrawHandMessage extends AbstractServerMessage {
     private ArrayList<Short> cardsOnHand;
     private UUID theLobbyID;
     private Short numberOfPlayers;
+    private boolean initialHand;
 
     /**
      * Konstruktor, welcher die ArrayList mit den IDs der Hand übergeben bekommt. Entweder die Standart-Hand mit Größe 5 oder wenn er Karten
@@ -19,10 +20,11 @@ public class DrawHandMessage extends AbstractServerMessage {
      * @version 1.0
      * @since Sprint5
      */
-    public DrawHandMessage(ArrayList<Short> theIDsFromTheCards, UUID specificLobbyID, Short numberOfPlayers) {
+    public DrawHandMessage(ArrayList<Short> theIDsFromTheCards, UUID specificLobbyID, Short numberOfPlayers, boolean initialHand) {
         this.cardsOnHand = theIDsFromTheCards;
         this.theLobbyID = specificLobbyID;
         this.numberOfPlayers = numberOfPlayers;
+        this.initialHand = initialHand;
     }
 
     // Getter
@@ -35,4 +37,8 @@ public class DrawHandMessage extends AbstractServerMessage {
     }
 
     public Short getNumberOfPlayers() {return numberOfPlayers;}
+
+    public boolean isInitialHand() {
+        return initialHand;
+    }
 }
