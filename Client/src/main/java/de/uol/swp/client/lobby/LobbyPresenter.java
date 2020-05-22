@@ -54,8 +54,6 @@ public class LobbyPresenter extends AbstractPresenter {
 
     public static final String fxml = "/fxml/LobbyViewWIP.fxml";
     private static final Logger LOG = LogManager.getLogger(ChatViewPresenter.class);
-    @FXML
-    ChoiceBox<Integer> chooseMaxPlayer;
     private ChatViewPresenter chatViewPresenter;
     private Map<String, HBox> readyUserList = new TreeMap<>();
     private UUID lobbyID;
@@ -68,6 +66,8 @@ public class LobbyPresenter extends AbstractPresenter {
     private boolean ownReadyStatus = false;
 
     @FXML
+    private ChoiceBox<Integer> chooseMaxPlayer;
+    @FXML
     private Pane lobbyViewWIP;
     @FXML
     private ListView<HBox> usersView;
@@ -79,6 +79,10 @@ public class LobbyPresenter extends AbstractPresenter {
     private Button gamesettingsButton;
     @FXML
     private HBox lobbyHBox;
+    @FXML
+    private Label settingOwner;
+    @FXML
+    private Label maxSettingOwner;
 
     private ImageView bigCard;
 
@@ -142,10 +146,9 @@ public class LobbyPresenter extends AbstractPresenter {
      * Initialisieren des Chats - FXML laden, Controller setzen (muss immer eine eigene Instanz sein)
      * und chatView ind die chatView-Pane dieses Controllers laden.
      * Der eingeloggte User wird zur Userliste hinzugefügt und diese wird aktualisiert.
-     * chooserMaxPlayer wird auf den Default Wert (4) gesetzt.
      *
      * @throws IOException die IO-Exception
-     * @author Ferit, Keno O, Darian, Timo
+     * @author Keno O, Darian, Timo, Ferit
      * @since Sprint2
      */
     @FXML
@@ -162,13 +165,18 @@ public class LobbyPresenter extends AbstractPresenter {
         readyUserList.put(loggedInUser.getUsername(), getHboxFromReadyUser(loggedInUser, false));
         updateUsersList();
 
-        chooseMaxPlayer.setValue(4);
-
-        if (gameOwner.getUsername().equals(loggedInUser.getUsername())) {
+        if (gameOwner.equals(loggedInUser)) {
             gamesettingsButton.setVisible(true);
+            chooseMaxPlayer.setDisable(false);
+            chooseMaxPlayer.setValue(4);
         } else {
             gamesettingsButton.setVisible(false);
+            chooseMaxPlayer.setDisable(true);
+            chooseMaxPlayer.setVisible(false);
+            settingOwner.setVisible(false);
+            maxSettingOwner.setVisible(false);
         }
+
     }
 /*
     /**
@@ -214,7 +222,9 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     @FXML
     public void onMaxPlayerSelected(ActionEvent actionEvent) {
-        lobbyService.setMaxPlayer(this.getLobbyID(), this.loggedInUser, chooseMaxPlayer.getValue());
+        if (gameOwner.equals(loggedInUser)) {
+            lobbyService.setMaxPlayer(this.getLobbyID(), this.loggedInUser, chooseMaxPlayer.getValue());
+        }
     }
 
     /**
@@ -468,16 +478,10 @@ public class LobbyPresenter extends AbstractPresenter {
     @Subscribe
     public void onSetMaxPlayerMessage(SetMaxPlayerMessage msg) {
         Platform.runLater(() -> {
-            if (!chooseMaxPlayer.getValue().equals(msg.getMaxPlayer())) {
-                chooseMaxPlayer.setValue(msg.getMaxPlayer());
-            }
-            if (!msg.getOwner().equals(loggedInUser) && lobbyID == msg.getLobbyID()) {
-                chooseMaxPlayer.setDisable(true);
-            } else if (msg.getOwner().equals(loggedInUser)) {
+            if (msg.getOwner().equals(loggedInUser) && lobbyID == msg.getLobbyID()) {
                 chooseMaxPlayer.setDisable(false);
-            }
-            else {
-                chooseMaxPlayer.setDisable(true);
+            } else {
+                // TODO: Später implementieren, ob sich Owner geändert hat und anzeigen lassen.
             }
         });
     }
