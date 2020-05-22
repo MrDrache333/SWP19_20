@@ -821,41 +821,35 @@ public class GameViewPresenter extends AbstractPresenter {
                 if (numberOfPlayersInGame == 1){
                     return;
                 }
-                String pfad = "cards/images/card_back.png";
-                Image picture = new Image(pfad);
-                for(int i=0; i<5; i++) {
-                    ImageView card = new ImageView(picture);
-                    ImageView card2 = new ImageView(picture);
-                    ImageView card3 = new ImageView(picture);
-                    card.setFitHeight(80);
-                    card.setPreserveRatio(true);
-                    card.setId("back");
-                    card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
-                    card2.setFitHeight(card.getFitWidth());
-                    card2.setPreserveRatio(true);
-                    card2.setId("back");
-                    card2.setFitWidth(card.getFitHeight());
-                    card3.setFitHeight(card.getFitWidth());
-                    card3.setPreserveRatio(true);
-                    card3.setId("back");
-                    card3.setFitWidth(card.getFitHeight());
-                    firstEnemyDLC.getChildren().add(card);
-                    // AnimationManagement.addToHand(card, firstEnemyHand.getChildren().size());
-                    firstEnemyDLC.getChildren().remove(card);
-                    firstEnemyHand.getChildren().add(card);
-                    if(numberOfPlayersInGame >= 3) {
-                        secondEnemyDLC.getChildren().add(card2);
-                        // AnimationManagement.addToHand(card2, secondEnemyHand.getChildren().size());
-                        secondEnemyDLC.getChildren().remove(card2);
-                        secondEnemyHand.getChildren().add(card2);
-                        if (numberOfPlayersInGame == 4){
-                            thirdEnemyDLC.getChildren().add(card3);
-                            // AnimationManagement.addToHand(card3, thirdEnemyHand.getChildren().size());
-                            thirdEnemyDLC.getChildren().remove(card3);
-                            thirdEnemyHand.getChildren().add(card3);
+                if (message.isInitialHand()){
+                    String pfad = "cards/images/card_back.png";
+                    Image picture = new Image(pfad);
+                    for(int i=0; i<5; i++) {
+                        ImageView card = new ImageView(picture);
+                        ImageView card2 = new ImageView(picture);
+                        ImageView card3 = new ImageView(picture);
+                        card.setFitHeight(80);
+                        card.setPreserveRatio(true);
+                        card.setId("back");
+                        card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
+                        card2.setFitHeight(card.getFitWidth());
+                        card2.setPreserveRatio(true);
+                        card2.setId("back");
+                        card2.setFitWidth(card.getFitHeight());
+                        card3.setFitHeight(card.getFitWidth());
+                        card3.setPreserveRatio(true);
+                        card3.setId("back");
+                        card3.setFitWidth(card.getFitHeight());
+                        firstEnemyHand.getChildren().add(card);
+                        if(numberOfPlayersInGame >= 3) {
+                            secondEnemyHand.getChildren().add(card2);
+                            if (numberOfPlayersInGame == 4){
+                                thirdEnemyHand.getChildren().add(card3);
+                            }
                         }
                     }
                 }
+
             }
         });
     }
