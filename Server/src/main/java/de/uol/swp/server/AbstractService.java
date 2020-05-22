@@ -17,4 +17,8 @@ public class AbstractService {
         bus.post(message);
     }
 
+    public EventBus getBus() {
+        return bus;
+    }
+
 }

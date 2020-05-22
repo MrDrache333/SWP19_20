@@ -1,6 +1,8 @@
 package de.uol.swp.server.game;
 
 import com.google.inject.Inject;
+import de.uol.swp.common.chat.ChatMessage;
+import de.uol.swp.common.chat.request.NewChatMessageRequest;
 import de.uol.swp.common.game.AbstractPlayground;
 import de.uol.swp.common.game.card.ActionCard;
 import de.uol.swp.common.game.card.Card;
@@ -47,6 +49,7 @@ public class Playground extends AbstractPlayground {
     private short lobbySizeOnStart;
     private CardPack cardsPackField;
     private ArrayList<Short> chosenCards;
+    private final UserDTO infoUser = new UserDTO("infoUser", "", "");
 
     /**
      * Erstellt ein neues Spielfeld und übergibt die Spieler. Die Reihenfolge der Spieler wird zufällig zusammengestellt.
@@ -185,6 +188,10 @@ public class Playground extends AbstractPlayground {
         if (actualPhase == Phase.Type.ActionPhase) {
             actualPhase = Phase.Type.Buyphase;
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartBuyPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
+
+            ChatMessage infoMessage = new ChatMessage(infoUser, getActualPlayer().getTheUserInThePlayer().getUsername() + " ist am Zug!");
+            gameService.getBus().post(new NewChatMessageRequest(theSpecificLobbyID.toString(), infoMessage));
+
             endTimer();
         } else {
             actualPhase = Phase.Type.Clearphase;

@@ -137,7 +137,7 @@ public class AuthenticationService extends AbstractService {
                 // Could be already logged out
                 if (userToLogOut != null) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Logging out user " + userToLogOut.getUsername());
+                        LOG.debug("Logge User " + userToLogOut.getUsername() + " aus");
                     }
                     userManagement.logout(userToLogOut);
                     userSessions.remove(session);
