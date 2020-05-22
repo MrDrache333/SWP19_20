@@ -64,6 +64,10 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         int moneyOnHand = player.getPlayerDeck().actualMoneyFromPlayer();
         playground.getGameService().sendToSpecificPlayer(player, new InfoPlayDisplayMessage(playground.getID(), player.getTheUserInThePlayer(), availableAction, availableBuy, additionalMoney, moneyOnHand, playground.getActualPhase()));
 
+        if (player.getAvailableActions() == 0) {
+            playground.nextPhase();
+        }
+
     }
 
 
