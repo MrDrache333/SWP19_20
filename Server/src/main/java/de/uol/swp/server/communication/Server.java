@@ -201,7 +201,6 @@ public class Server implements ServerHandlerDelegate {
     private void onServerMessage(ServerMessage msg) {
         msg.setSession(null);
         msg.setMessageContext(null);
-        msg.setReceiver(new ArrayList<>(activeSessions.values()));
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Sende " + msg + " zu " + (msg.getReceiver().isEmpty() ? "allen" : msg.getReceiver()));
