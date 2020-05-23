@@ -12,7 +12,9 @@ import de.uol.swp.common.game.card.parser.components.CardAction.response.Optiona
 import de.uol.swp.common.game.card.parser.components.CardAction.types.*;
 import de.uol.swp.common.game.messages.CardMovedMessage;
 import de.uol.swp.common.game.messages.ChooseNextActionMessage;
+import de.uol.swp.common.game.messages.InfoPlayDisplayMessage;
 import de.uol.swp.common.game.messages.ShowCardMessage;
+import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.user.User;
 import de.uol.swp.server.game.Playground;
 import de.uol.swp.server.game.player.Player;
@@ -130,7 +132,17 @@ public class ActionCardExecution {
             executeOptionalAction = false;
         }
 
-        checkIfComplete();
+        if (checkIfComplete()) {
+            //Sende alle neuen Informationen bezüglich seiner möglichen Aktioen des Spielers an den Spieler zurück
+            playground.getGameService().sendToSpecificPlayer(player,
+                    new InfoPlayDisplayMessage(
+                            gameID, player.getTheUserInThePlayer(),
+                            player.getAvailableActions(),
+                            player.getAvailableBuys(),
+                            player.getAdditionalMoney(),
+                            player.getPlayerDeck().actualMoneyFromPlayer(),
+                            Phase.Type.ActionPhase));
+        }
         return true;
     }
 
