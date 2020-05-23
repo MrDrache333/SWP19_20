@@ -129,6 +129,11 @@ public class ActionCardExecution {
                     if (!executeNextActions(playerList)) return false;
                 }
             }
+            //Entsorge ggf. die gespielte Karte
+            if (action instanceof ComplexCardAction && ((ComplexCardAction) action).isRemoveCardAfter()) {
+                player.getPlayerDeck().getActionPile().remove(theCard);
+                playground.getTrash().add(theCard);
+            }
             executeOptionalAction = false;
         }
 
