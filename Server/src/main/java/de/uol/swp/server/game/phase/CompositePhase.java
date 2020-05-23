@@ -7,7 +7,6 @@ import de.uol.swp.common.game.exception.NotEnoughMoneyException;
 import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.game.messages.GameOverMessage;
 import de.uol.swp.common.game.messages.InfoPlayDisplayMessage;
-import de.uol.swp.server.game.GameService;
 import de.uol.swp.server.game.Playground;
 import de.uol.swp.server.game.player.Deck;
 import de.uol.swp.server.game.player.Player;
@@ -23,7 +22,7 @@ import java.util.List;
 public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
 
     private final Playground playground;
-    private static final Logger LOG = LogManager.getLogger(GameService.class);
+    private static final Logger LOG = LogManager.getLogger(CompositePhase.class);
 
     /**
      * Der Konstruktor

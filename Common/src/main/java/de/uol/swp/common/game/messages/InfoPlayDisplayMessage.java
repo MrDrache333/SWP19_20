@@ -31,10 +31,6 @@ public class InfoPlayDisplayMessage extends AbstractServerMessage {
     private int moneyOnHand;
     private Phase.Type sourceMessage;
 
-    public InfoPlayDisplayMessage() {
-
-    }
-
     public InfoPlayDisplayMessage(UUID lobbyID, User currentUser, int availableAction, int availableBuy, int additionalMoney, int moneyOnHand, Phase.Type sourceMessage) {
         this.lobbyID = lobbyID;
         this.currentUser = currentUser;
