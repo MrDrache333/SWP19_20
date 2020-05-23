@@ -489,7 +489,7 @@ public class MainMenuPresenter extends AbstractPresenter {
                                 SceneManager.showAlert(Alert.AlertType.WARNING, "Du kannst einer Lobby nicht beitreten,\nwenn in ihr ein Spiel läuft!", "Fehler");
                             } else {
                                 if (lobby.getLobbyPassword().isEmpty()) {
-                                    lobbyService.joinLobby(lobby.getLobbyID(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
+                                    lobbyService.joinLobby(lobby.getLobbyID(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), false);
                                 } else if (!lobby.getLobbyPassword().isEmpty()) {
                                     OpenJoinLobbyRequest request = new OpenJoinLobbyRequest(loggedInUser, lobby);
                                     eventBus.post(request);

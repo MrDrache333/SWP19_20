@@ -13,6 +13,7 @@ public class Player {
     private int availableActions;
     private int availableBuys;
     private int additionalMoney;
+    private boolean isBot = false;
 
     /**
      * Erstellt einen neuen Spieler

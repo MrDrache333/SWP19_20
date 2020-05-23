@@ -10,6 +10,7 @@ import de.uol.swp.common.chat.ChatService;
 import de.uol.swp.common.game.card.parser.JsonCardParser;
 import de.uol.swp.common.game.card.parser.components.CardPack;
 import de.uol.swp.common.lobby.message.*;
+import de.uol.swp.common.lobby.request.AddBotRequest;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.lobby.response.SetChosenCardsResponse;
 import de.uol.swp.common.user.User;
@@ -77,6 +78,8 @@ public class LobbyPresenter extends AbstractPresenter {
     private Button readyButton;
     @FXML
     private Button gamesettingsButton;
+    @FXML
+    private Button createBotButton;
     @FXML
     private HBox lobbyHBox;
 
@@ -166,8 +169,11 @@ public class LobbyPresenter extends AbstractPresenter {
 
         if (gameOwner.getUsername().equals(loggedInUser.getUsername())) {
             gamesettingsButton.setVisible(true);
+            createBotButton.setVisible(true);
+
         } else {
             gamesettingsButton.setVisible(false);
+            createBotButton.setVisible(false);
         }
     }
 /*
@@ -215,6 +221,17 @@ public class LobbyPresenter extends AbstractPresenter {
     @FXML
     public void onMaxPlayerSelected(ActionEvent actionEvent) {
         lobbyService.setMaxPlayer(this.getLobbyID(), this.loggedInUser, chooseMaxPlayer.getValue());
+    }
+
+    /**
+     * Wenn der BotButton gepresst wird.
+     *
+     * @param actionEvent
+     */
+    @FXML
+    public void onCreateBotButtonPressed(ActionEvent actionEvent) {
+        AddBotRequest request = new AddBotRequest(lobbyID);
+        eventBus.post(request);
     }
 
     /**

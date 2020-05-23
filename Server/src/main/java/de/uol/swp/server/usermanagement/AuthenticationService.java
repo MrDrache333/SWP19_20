@@ -17,6 +17,8 @@ import de.uol.swp.common.user.request.*;
 import de.uol.swp.common.user.response.AllOnlineUsersResponse;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.communication.UUIDSession;
+import de.uol.swp.server.game.player.bot.BotPlayer;
+import de.uol.swp.server.game.player.bot.internal.messages.AuthBotInternalRequest;
 import de.uol.swp.server.lobby.LobbyManagement;
 import de.uol.swp.server.message.ClientAuthorizedMessage;
 import de.uol.swp.server.message.ServerExceptionMessage;
@@ -43,6 +45,7 @@ public class AuthenticationService extends AbstractService {
      * @since Start
      */
     final private Map<Session, User> userSessions = new HashMap<>();
+    final private Map<Session, BotPlayer> botSessions = new HashMap<>();
 
     private final UserManagement userManagement;
     private final LobbyManagement lobbyManagement;
@@ -121,6 +124,21 @@ public class AuthenticationService extends AbstractService {
         post(returnMessage);
     }
 
+    @Subscribe
+    public void onBotCreatedRequest(AuthBotInternalRequest req) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Bot Request kommt im Auth Service an");
+        }
+        try {
+            BotPlayer theBot = req.getBotPlayer();
+            Session newSession = UUIDSession.create(theBot);
+            botSessions.put(newSession, theBot);
+        } catch (Exception e) {
+            LOG.error(e);
+        }
+    }
+
+
     /**
      * Serverlogikg vom LogoutRequest
      *
@@ -146,8 +164,7 @@ public class AuthenticationService extends AbstractService {
                     ServerMessage returnMessage = new UserLoggedOutMessage(userToLogOut.getUsername());
                     post(returnMessage);
                 }
-            }
-            else{
+            } else {
                 UpdateUserFailedMessage returnMessage = new UpdateUserFailedMessage(session.getUser(), "Der Account befindet sich in einem laufenden Spiel. Du kannst dich nicht ausloggen!");
                 sendToLoggedInPlayers(returnMessage);
             }
@@ -206,7 +223,7 @@ public class AuthenticationService extends AbstractService {
         User userToDrop = msg.getUser();
 
         // Could be already logged out/removed or he is in a game
-        if (userToDrop != null ) {
+        if (userToDrop != null) {
             if (!lobbyManagement.isUserIngame(userToDrop)) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Lösche User " + userToDrop.getUsername());
@@ -216,9 +233,8 @@ public class AuthenticationService extends AbstractService {
 
                 ServerMessage returnMessage = new UserDroppedMessage(userToDrop);
                 sendToLoggedInPlayers(returnMessage);
-            }
-            else{
-                UpdateUserFailedMessage returnMessage = new UpdateUserFailedMessage(userToDrop,"Der Account befindet sich in einem laufenden Spiel. Du kannst deinen Account nicht löschen!");
+            } else {
+                UpdateUserFailedMessage returnMessage = new UpdateUserFailedMessage(userToDrop, "Der Account befindet sich in einem laufenden Spiel. Du kannst deinen Account nicht löschen!");
                 sendToLoggedInPlayers(returnMessage);
             }
         }

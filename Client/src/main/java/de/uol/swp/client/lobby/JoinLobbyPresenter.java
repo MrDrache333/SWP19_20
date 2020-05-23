@@ -53,6 +53,7 @@ public class JoinLobbyPresenter {
      * Nach Eingabe des Passworts der Lobby wird hier das Passwort überprüft, ist es
      * gleich, wird die lobbyJoinUserRequest verschickt.
      * Ist es falsch, wird man zur erneuten Eingabe aufgefordert.
+     *
      * @param actionEvent
      * @author Paula
      * @since Sprint7
@@ -60,9 +61,9 @@ public class JoinLobbyPresenter {
     @FXML
     public void onJoinButtonPressed(javafx.event.ActionEvent actionEvent) {
         // Passwörter stimmen überein
-        if (lobby.getLobbyPassword().equals(String.valueOf(passwordField.getText())) || lobby.getLobbyPassword()== null && passwordField.getText().equals(null)) {
-            lobbyService.joinLobby(lobby.getLobbyID(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
-            LobbyJoinUserRequest msg = new LobbyJoinUserRequest(lobby.getLobbyID(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
+        if (lobby.getLobbyPassword().equals(String.valueOf(passwordField.getText())) || lobby.getLobbyPassword() == null && passwordField.getText().equals(null)) {
+            lobbyService.joinLobby(lobby.getLobbyID(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), false);
+            LobbyJoinUserRequest msg = new LobbyJoinUserRequest(lobby.getLobbyID(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), false);
             eventBus.post(msg);
             LOG.info("LobbyJoinUserRequest wurde gesendet.");
 
@@ -81,17 +82,18 @@ public class JoinLobbyPresenter {
      * Beim Drücken auf den Abbrechen Button schließt sich das Fenster.
      *
      * @param actionEvent
-     * @since Sprint7
      * @author Paula
+     * @since Sprint7
      */
     @FXML
     public void onCancelButtonPressed(javafx.event.ActionEvent actionEvent) {
         eventBus.post(new CloseJoinLobbyEvent());
         passwordField.clear();
     }
+
     @Subscribe
     public void updatedUser(UpdatedUserMessage message) {
-        if(loggedInUser != null && loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
+        if (loggedInUser != null && loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
             loggedInUser = message.getUser();
         }
     }

@@ -54,8 +54,8 @@ public class LobbyService {
      * @since Sprint3
      */
 
-    public void joinLobby(UUID lobbyID, UserDTO user) {
-        LobbyJoinUserRequest request = new LobbyJoinUserRequest(lobbyID, user);
+    public void joinLobby(UUID lobbyID, UserDTO user, Boolean isBot) {
+        LobbyJoinUserRequest request = new LobbyJoinUserRequest(lobbyID, user, isBot);
         bus.post(request);
     }
 

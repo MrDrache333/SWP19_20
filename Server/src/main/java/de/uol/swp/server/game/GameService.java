@@ -21,6 +21,7 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.game.player.Player;
+import de.uol.swp.server.game.player.bot.BotService;
 import de.uol.swp.server.message.StartGameInternalMessage;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import org.apache.logging.log4j.LogManager;
@@ -39,6 +40,7 @@ public class GameService extends AbstractService {
     private final GameManagement gameManagement;
     private final AuthenticationService authenticationService;
     private final UserDTO infoUser = new UserDTO("infoUser", "", "");
+    private Optional<BotService> botService;
 
     /**
      * Erstellt einen neuen GameService
@@ -70,11 +72,14 @@ public class GameService extends AbstractService {
      * @author Ferit
      * @since Sprint 5
      */
-    // TODO: Wenn PlaygroundService implementiert ist, dann verschieben der Methode dorthin.
     public void sendToSpecificPlayer(Player thePlayer, ServerMessage message) {
         Set<User> playerToUserSet = new HashSet<User>(1);
         playerToUserSet.add(thePlayer.getTheUserInThePlayer());
+
         message.setReceiver(authenticationService.getSessions(playerToUserSet));
+
+        // TODO: BotSession holen und message.SetReciever setzen.
+
         post(message);
     }
 
@@ -271,5 +276,6 @@ public class GameService extends AbstractService {
             LOG.error("Irgendwas ist bei der onSelectCardRequest im GameService falsch gelaufen. Folgende ID: " + gameID);
         }
     }
+
 
 }

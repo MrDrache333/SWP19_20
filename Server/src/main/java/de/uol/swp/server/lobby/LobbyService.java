@@ -19,6 +19,9 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.chat.ChatManagement;
+import de.uol.swp.server.game.player.bot.BotPlayer;
+import de.uol.swp.server.game.player.bot.BotService;
+import de.uol.swp.server.game.player.bot.internal.messages.AuthBotInternalRequest;
 import de.uol.swp.server.message.StartGameInternalMessage;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import org.apache.logging.log4j.LogManager;
@@ -41,6 +44,7 @@ public class LobbyService extends AbstractService {
     private final LobbyManagement lobbyManagement;
     private final ChatManagement chatManagement;
     private final AuthenticationService authenticationService;
+    private final EventBus eventBus;
 
     /**
      * Instanziiert einen neuen Lobby Service
@@ -55,6 +59,7 @@ public class LobbyService extends AbstractService {
     @Inject
     public LobbyService(LobbyManagement lobbyManagement, AuthenticationService authenticationService, ChatManagement chatManagement, EventBus eventBus) {
         super(eventBus);
+        this.eventBus = eventBus;
         this.lobbyManagement = lobbyManagement;
         this.authenticationService = authenticationService;
         this.chatManagement = chatManagement;
@@ -109,6 +114,13 @@ public class LobbyService extends AbstractService {
             lobby.get().joinUser(new LobbyUser(msg.getUser()));
             ServerMessage returnMessage = new UserJoinedLobbyMessage(msg.getLobbyID(), msg.getUser(), (UserDTO) lobby.get().getOwner(), (LobbyDTO) lobby.get());
             authenticationService.sendToLoggedInPlayers(returnMessage);
+            if (msg.getBot() == true && lobby.isPresent()) {
+                lobby.get().setReadyStatus(msg.getUser(), true);
+                ServerMessage msg2 = new UpdatedLobbyReadyStatusMessage(lobby.get().getLobbyID(), msg.getUser(), lobby.get().getReadyStatus(msg.getUser()));
+                authenticationService.sendToLoggedInPlayers(msg2);
+                LOG.debug("Sending Updated Status of Bot: " + msg.getUser().getUsername() + " to true in Lobby: " + lobby.get().getLobbyID());
+                allPlayersReady(lobby.get());
+            }
         } else {
             LOG.error("Beitreten der Lobby mit der ID " + msg.getLobbyID() + " fehlgeschlagen");
         }
@@ -368,5 +380,21 @@ public class LobbyService extends AbstractService {
             }
         }
         return false;
+    }
+
+    @Subscribe
+    public void createBotRequest(AddBotRequest request) {
+        Lobby thisLobby = lobbyManagement.getLobby(request.getLobbyID()).get();
+        String[] collectionBotName = {"King Arthur", "Merlin", "Die Queen", "Prinzessin Diana"};
+        BotService botService = null;
+        if (thisLobby.getUsers().size() < thisLobby.getMaxPlayer()) {
+            String theRandomBotName = collectionBotName[(int) (Math.random() * 3)];
+            BotPlayer createdBot = new BotPlayer(theRandomBotName, Optional.ofNullable(botService), request.getLobbyID());
+            UserDTO userDT = new UserDTO(createdBot.getTheUserInThePlayer().getUsername(), createdBot.getTheUserInThePlayer().getPassword(), createdBot.getTheUserInThePlayer().getEMail());
+            AuthBotInternalRequest createReq = new AuthBotInternalRequest(createdBot);
+            LobbyJoinUserRequest req = new LobbyJoinUserRequest(thisLobby.getLobbyID(), userDT, true);
+            eventBus.post(createReq);
+            eventBus.post(req);
+        }
     }
 }

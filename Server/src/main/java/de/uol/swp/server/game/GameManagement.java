@@ -27,6 +27,7 @@ public class GameManagement {
     private final ChatManagement chatManagement;
     private GameService gameService;
 
+
     /**
      * Erstellt ein neues gameManagement
      *

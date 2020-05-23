@@ -14,7 +14,22 @@ public class LobbyJoinUserRequest extends AbstractLobbyRequest {
 
     private static final long serialVersionUID = 5835542658263297422L;
     String lobbyPassword;
-  
+
+    Boolean isBot;
+
+    /**
+     * Instanziiert ein LobbyJoinUserRequest
+     *
+     * @param lobbyID die ID der Lobby
+     * @param user    der User, der der Lobby beitreten will
+     * @author Julia, Paula, Marvin
+     * @since Sprint3
+     */
+    public LobbyJoinUserRequest(UUID lobbyID, UserDTO user, Boolean isBot) {
+        super(lobbyID, user);
+        this.isBot = isBot;
+    }
+
     /**
      * Konstruktor für die Serialisierung
      *
@@ -26,18 +41,9 @@ public class LobbyJoinUserRequest extends AbstractLobbyRequest {
     public LobbyJoinUserRequest() {
     }
 
-    /**
-     * Instanziiert ein LobbyJoinUserRequest
-     *
-     * @param lobbyID die ID der Lobby
-     * @param user    der User, der der Lobby beitreten will
-     * @author Julia, Paula, Marvin
-     * @since Sprint3
-     */
-    public LobbyJoinUserRequest(UUID lobbyID, UserDTO user) {
-        super(lobbyID, user);
+    public Boolean getBot() {
+        return isBot;
     }
-
 
 
     /**
