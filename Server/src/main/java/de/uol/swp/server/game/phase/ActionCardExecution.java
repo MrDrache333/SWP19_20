@@ -10,10 +10,7 @@ import de.uol.swp.common.game.card.parser.components.CardAction.request.Optional
 import de.uol.swp.common.game.card.parser.components.CardAction.response.ChooseCardResponse;
 import de.uol.swp.common.game.card.parser.components.CardAction.response.OptionalActionResponse;
 import de.uol.swp.common.game.card.parser.components.CardAction.types.*;
-import de.uol.swp.common.game.messages.CardMovedMessage;
-import de.uol.swp.common.game.messages.ChooseNextActionMessage;
-import de.uol.swp.common.game.messages.InfoPlayDisplayMessage;
-import de.uol.swp.common.game.messages.ShowCardMessage;
+import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.user.User;
 import de.uol.swp.server.game.Playground;
@@ -133,6 +130,7 @@ public class ActionCardExecution {
             if (action instanceof ComplexCardAction && ((ComplexCardAction) action).isRemoveCardAfter()) {
                 player.getPlayerDeck().getActionPile().remove(theCard);
                 playground.getTrash().add(theCard);
+                playground.getGameService().sendToSpecificPlayer(player, new RemoveActionCardMessage(theCard.getId(), gameID, player.getTheUserInThePlayer()));
             }
             executeOptionalAction = false;
         }
