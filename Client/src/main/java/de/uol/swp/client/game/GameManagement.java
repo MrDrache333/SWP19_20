@@ -103,7 +103,6 @@ public class GameManagement {
 
         eventBus.register(chatViewPresenter);
         eventBus.register(lobbyPresenter);
-        eventBus.register(gameViewPresenter);
     }
 
     /**
@@ -211,6 +210,7 @@ public class GameManagement {
      */
     public void showGameView() {
         initGameView();
+        eventBus.register(gameViewPresenter);
         showView(gamePane, lobbyName);
         gameViewPresenter.getInGameUserList(this.id);
     }
@@ -340,7 +340,7 @@ public class GameManagement {
      */
     private void showView(final Pane pane, final String title) {
         Platform.runLater(() -> {
-            primaryTab.setText(title);
+            primaryTab.setText(title + "-Lobby");
             primaryTab.setContent(pane);
             new SoundMediaPlayer(SoundMediaPlayer.Sound.Window_Opened, SoundMediaPlayer.Type.Sound).play();
         });
