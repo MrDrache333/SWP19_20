@@ -220,7 +220,10 @@ public class ChatViewPresenter extends AbstractPresenter {
 
         //Erstellt eine neue Chat-Historie und übergibt die Liste an die ListView
         updateChatMessages(new ArrayList<>());
-        messageView.setItems(chatMessages);
+        try {
+            messageView.setItems(chatMessages);
+        } catch (Exception ignored) {
+        }
 
         //Berechnet die maximale Nachrichtenbreite
         maxChatMessageWidth = (int) chatViewAnchorPane.getPrefWidth() - 70;
@@ -233,6 +236,9 @@ public class ChatViewPresenter extends AbstractPresenter {
 
         //Verwende den richtigen Namen im Label
         titleLabel.setText(chatTitle.toUpperCase() + " CHAT");
+        if (!chatId.equals("global")) {
+            titleLabel.setStyle("-fx-text-fill: white;");
+        }
 
         //Nötige Styles laden und übernehmen
         chatViewAnchorPane.getStylesheets().add(styleSheet);

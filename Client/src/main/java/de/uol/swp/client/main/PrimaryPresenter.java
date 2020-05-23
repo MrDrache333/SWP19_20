@@ -214,6 +214,7 @@ public class PrimaryPresenter extends AbstractPresenter {
                 lobbyService.retrieveAllLobbies();
             });
             TabView.getTabs().add(gameManagement.getPrimaryTab());
+            TabView.getSelectionModel().select(gameManagement.getPrimaryTab());
         });
 
     }

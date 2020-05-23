@@ -991,8 +991,7 @@ public class GameViewPresenter extends AbstractPresenter {
         // Attention: This must be done on the FX Thread!
         Platform.runLater(() -> {
             int enemyCounter = 0;
-            for( User u : usersList)
-            {
+            for (User u : usersList) {
                 if (loggedInUser != null && u.getUsername().equals(loggedInUser.getUsername())) {
                     //skip self
                 } else {
