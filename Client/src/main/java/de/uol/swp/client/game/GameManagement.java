@@ -340,7 +340,7 @@ public class GameManagement {
      */
     private void showView(final Pane pane, final String title) {
         Platform.runLater(() -> {
-            primaryTab.setText(title + "-Lobby");
+            primaryTab.setText(title + (pane == gamePane ? "-Spiel" : "-Lobby"));
             primaryTab.setContent(pane);
             new SoundMediaPlayer(SoundMediaPlayer.Sound.Window_Opened, SoundMediaPlayer.Type.Sound).play();
         });
