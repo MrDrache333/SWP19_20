@@ -145,6 +145,8 @@ public class GameViewPresenter extends AbstractPresenter {
     private Label infoActualPhase;
     @FXML
     private Button playAllMoneyCardsButton;
+    @FXML
+    private Button skipPhaseButton;
 
     private final HandcardsLayoutContainer handcards;
     private final HandcardsLayoutContainer firstEnemyHand;
@@ -654,6 +656,8 @@ public class GameViewPresenter extends AbstractPresenter {
     public void onChooseCardRequest (ChooseCardRequest req) {
         if (req.getGameID().equals(lobbyID) && req.getSourcePlayer().equals(loggedInUser)) {
             numberOfCardsToChoose = req.getCount();
+            showAlert(Alert.AlertType.INFORMATION, "Du darfst bis zu " + numberOfCardsToChoose + " Karten von deiner Hand auf den Ablagestapel legen, ", "Aktionsinformation");
+            skipPhaseButton.setDisable(true);
             if (req.getSource()== AbstractPlayground.ZoneType.HAND) {
                 handcards.getChildren().forEach((n) -> {
                     n.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
@@ -1077,6 +1081,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 n.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
             });
             gameService.chooseCard(loggedInUser, gameID, choosenCardsId);
+            skipPhaseButton.setDisable(false);
             choosenCardsId.clear();
         }
     }
