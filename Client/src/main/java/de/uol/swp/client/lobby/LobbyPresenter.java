@@ -82,6 +82,8 @@ public class LobbyPresenter extends AbstractPresenter {
 
     private ImageView bigCard;
 
+    private ImageView crownView = new ImageView("images/crown.png");
+
     private ObservableList<HBox> userHBoxes;
 
     private GameManagement gameManagement;
@@ -668,9 +670,7 @@ public class LobbyPresenter extends AbstractPresenter {
      */
 
     private HBox crownCheck(HBox box, User user) {
-        if (user.getUsername().equals(gameOwner.getUsername())) {
-            Image crown = new Image("images/crown.png");
-            ImageView crownView = new ImageView(crown);
+        if (!box.getChildren().contains(crownView) && user.getUsername().equals(gameOwner.getUsername())) {
             crownView.setFitHeight(15);
             crownView.setFitWidth(15);
             box.getChildren().add(crownView);
