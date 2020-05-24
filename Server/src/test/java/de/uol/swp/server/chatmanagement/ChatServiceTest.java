@@ -7,6 +7,12 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.chat.ChatManagement;
 import de.uol.swp.server.chat.ChatService;
+import de.uol.swp.server.lobby.LobbyManagement;
+import de.uol.swp.server.usermanagement.AuthenticationService;
+import de.uol.swp.server.usermanagement.UserManagement;
+import de.uol.swp.server.usermanagement.store.MainMemoryBasedUserStore;
+import de.uol.swp.server.usermanagement.store.UserStore;
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,7 +24,11 @@ class ChatServiceTest {
 
     final EventBus bus = new EventBus();
     final ChatManagement chatManagement = new ChatManagement();
-    final ChatService userService = new ChatService(bus, chatManagement);
+    final UserManagement userManagement = new UserManagement(new MainMemoryBasedUserStore());
+    final LobbyManagement lobbyManagement = new LobbyManagement();
+
+    final AuthenticationService authenticationService = new AuthenticationService(bus, userManagement, lobbyManagement);
+    final ChatService userService = new ChatService(bus, chatManagement, authenticationService);
 
 
     /**

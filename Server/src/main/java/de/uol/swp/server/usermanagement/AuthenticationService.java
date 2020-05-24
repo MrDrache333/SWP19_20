@@ -137,7 +137,7 @@ public class AuthenticationService extends AbstractService {
                 // Could be already logged out
                 if (userToLogOut != null) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Logging out user " + userToLogOut.getUsername());
+                        LOG.debug("Logge User " + userToLogOut.getUsername() + " aus");
                     }
                     userManagement.logout(userToLogOut);
                     userSessions.remove(session);
@@ -149,7 +149,7 @@ public class AuthenticationService extends AbstractService {
             }
             else{
                 UpdateUserFailedMessage returnMessage = new UpdateUserFailedMessage(session.getUser(), "Der Account befindet sich in einem laufenden Spiel. Du kannst dich nicht ausloggen!");
-                post(returnMessage);
+                sendToLoggedInPlayers(returnMessage);
             }
         }
     }
@@ -192,7 +192,7 @@ public class AuthenticationService extends AbstractService {
             returnMessage = new UpdateUserFailedMessage(msg.getOldUser(), e.getMessage());
             LOG.info("Aktualisierung des Users " + msg.getOldUser().getUsername() + " fehlgeschlagen");
         }
-        post(returnMessage);
+        sendToLoggedInPlayers(returnMessage);
     }
 
     /**
@@ -215,12 +215,28 @@ public class AuthenticationService extends AbstractService {
                 userManagement.dropUser(userToDrop);
 
                 ServerMessage returnMessage = new UserDroppedMessage(userToDrop);
-                post(returnMessage);
+                sendToLoggedInPlayers(returnMessage);
             }
             else{
                 UpdateUserFailedMessage returnMessage = new UpdateUserFailedMessage(userToDrop,"Der Account befindet sich in einem laufenden Spiel. Du kannst deinen Account nicht löschen!");
-                post(returnMessage);
+                sendToLoggedInPlayers(returnMessage);
             }
         }
+    }
+
+    /**
+     * Die Funktion sendet eine Nachricht an alle angemeldeten User.
+     *
+     * @param message Die zu übertragende Nachricht
+     * @author Keno S.
+     * @since Sprint7
+     */
+
+    public void sendToLoggedInPlayers(ServerMessage message) {
+
+        Set<User> loggedInUsers = new TreeSet<>(userSessions.values());
+
+        message.setReceiver(getSessions(loggedInUsers));
+        post(message);
     }
 }

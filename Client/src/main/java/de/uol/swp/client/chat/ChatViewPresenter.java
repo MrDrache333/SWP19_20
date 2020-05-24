@@ -67,8 +67,8 @@ public class ChatViewPresenter extends AbstractPresenter {
     private final int MAXCHATMESSAGEHISTORY = 100;
 
     //Farbe der Nachrichten Label (eigene Nachrichten) (Hintergrund und Text) bei beiden Themen
-    private final String ChatMessageBubbleBackgroundColor_Me_LIGHT = "#1C6FEE";
-    private final String ChatMessageBubbleBackgroundColor_Me_DARK = "#1C6FEE";
+    private final String ChatMessageBubbleBackgroundColor_Me_LIGHT = "#3D3D3D";
+    private final String ChatMessageBubbleBackgroundColor_Me_DARK = "#3D3D3D";
     private final String ChatMessageBubbleTextColor_Me_LIGHT = "white";
     private final String ChatMessageBubbleTextColor_Me_DARK = "white";
 
@@ -101,6 +101,13 @@ public class ChatViewPresenter extends AbstractPresenter {
     private ChatMessage lastMessage;
 
     private Injector injector;
+
+    // infoUser für Chatinformationen
+    private final UserDTO infoUser = new UserDTO("infoUser", "", "");
+
+    // serverUser für Chatnachrichten
+    private final UserDTO serverUser = new UserDTO("server", "", "");
+
 
     //Farben des aktuellen Chats
     private String ChatMessageBubbleBackgroundColor_Me;
@@ -213,7 +220,10 @@ public class ChatViewPresenter extends AbstractPresenter {
 
         //Erstellt eine neue Chat-Historie und übergibt die Liste an die ListView
         updateChatMessages(new ArrayList<>());
-        messageView.setItems(chatMessages);
+        try {
+            messageView.setItems(chatMessages);
+        } catch (Exception ignored) {
+        }
 
         //Berechnet die maximale Nachrichtenbreite
         maxChatMessageWidth = (int) chatViewAnchorPane.getPrefWidth() - 70;
@@ -226,6 +236,9 @@ public class ChatViewPresenter extends AbstractPresenter {
 
         //Verwende den richtigen Namen im Label
         titleLabel.setText(chatTitle.toUpperCase() + " CHAT");
+        if (!chatId.equals("global")) {
+            titleLabel.setStyle("-fx-text-fill: white;");
+        }
 
         //Nötige Styles laden und übernehmen
         chatViewAnchorPane.getStylesheets().add(styleSheet);
@@ -315,13 +328,13 @@ public class ChatViewPresenter extends AbstractPresenter {
      * Die Methode userJoined gibt eine Nachricht, wenn ein User dem Chat beitritt.
      *
      * @param username the username
-     * @author KenoO
+     * @author KenoO, Fenja, Timo
      * @since Sprint 2
      */
 
     public void userJoined(String username) {
         if (!chatId.equals(""))
-            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(new UserDTO("server", "", ""), username + " ist " + (chatId.equals("global") ? "dem Chat" : "der Lobby") + " beigereten")));
+            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(chatId.equals("global") ? serverUser : infoUser, username + " ist " + (chatId.equals("global") ? "dem Chat" : "der Lobby") + " beigereten")));
     }
 
     /**
@@ -329,25 +342,25 @@ public class ChatViewPresenter extends AbstractPresenter {
      * Ausgabe einer Nachricht, wenn ein User einen Chat verlassen hat.
      *
      * @param username the username
-     * @author KenoO
+     * @author KenoO, Fenja, Timo
      * @since Sprint 2
      */
 
     public void userLeft(String username) {
         if (!chatId.equals(""))
-            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(new UserDTO("server", "", ""), username + " hat " + (chatId.equals("global") ? "den Chat" : "die Lobby") + " verlassen")));
+            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(chatId.equals("global") ? serverUser : infoUser, username + " hat " + (chatId.equals("global") ? "den Chat" : "die Lobby") + " verlassen!")));
     }
 
     /**
      * Nachricht, dass der Spieler gekickt wurde, wird im Chat angezeigt.
      *
      * @param username Benutzername des gekickten Spielers
-     * @author Darian
+     * @author Darian, Fenja, Timo
      * @since sprint4
      */
     public void userKicked(String username) {
         if (!chatId.equals(""))
-            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(new UserDTO("server", "", ""), username + " wurde aus der Lobby entfernt")));
+            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(chatId.equals("global") ? serverUser : infoUser, username + " wurde aus der Lobby entfernt!")));
     }
 
     /**
@@ -401,10 +414,10 @@ public class ChatViewPresenter extends AbstractPresenter {
         pb.setImage(new Image("/images/pb_template.png"));
         pb.setFitHeight(25);
         pb.setFitWidth(25);
-        if (!msg.getSender().getUsername().equals("server")) {
+        if (!msg.getSender().getUsername().equals("server") && !msg.getSender().getUsername().equals("infoUser")) {
             if (msg.getSender().getUsername().equals(loggedInUser.getUsername())) {
                 //Wenn die Nachricht mehrere Zeilen umfasst, dann aendere den Radius der Ecken
-                message.setStyle("-fx-background-radius: " + (plainMessage.length() > message.getMaxWidth() / 10 ? "15" : "90") + ";-fx-background-color: " + ChatMessageBubbleBackgroundColor_Me + ";-fx-text-fill: " + ChatMessageBubbleTextColor_Me + "; -fx-font-size: 16");
+                message.setStyle("-fx-background-radius: " + (plainMessage.length() > message.getMaxWidth() / 10 ? "15" : "90") + ";-fx-background-color: " + ChatMessageBubbleBackgroundColor_Me + ";-fx-text-fill: " + ChatMessageBubbleTextColor_Me + "; -fx-font-size: 16" + ";-fx-opacity: 0.73");
                 sender.setText("Du");
                 sender.setAlignment(Pos.BOTTOM_RIGHT);
                 message.setAlignment(Pos.BOTTOM_RIGHT);
@@ -457,6 +470,11 @@ public class ChatViewPresenter extends AbstractPresenter {
                 box.alignmentProperty().setValue(Pos.BOTTOM_LEFT);
                 hbox.alignmentProperty().setValue(Pos.BOTTOM_LEFT);
             }
+        } else if (msg.getSender().getUsername().equals("infoUser")) {
+            // Wenn die empfangene Nachricht eine Info-Nachricht ist
+            message.setStyle("-fx-text-fill: blue; -fx-background-color: transparent; -fx-font-size: 16");
+            hbox.setAlignment(Pos.CENTER);
+            hbox.getChildren().add(message);
         } else {
             //Wenn die empfangene Nachricht eine ServerMessage ist
             message.setStyle("-fx-text-fill: black; -fx-background-color: transparent; -fx-font-size: 14");
@@ -491,7 +509,7 @@ public class ChatViewPresenter extends AbstractPresenter {
 
     //Aktualisiert die ListView indem alle übergebenen Nachrichten dieser hinzugefügt werden
     private void updateChatMessages(List<ChatMessage> chatMessageList) {
-        // Warung: Das muss auf dem FX Thread passieren!
+        // Warnung: Das muss auf dem FX Thread passieren!
         Platform.runLater(() -> {
             if (chatMessages == null) {
                 chatMessages = FXCollections.observableArrayList();

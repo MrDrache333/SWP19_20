@@ -1,6 +1,8 @@
 package de.uol.swp.server.game;
 
 import com.google.inject.Inject;
+import de.uol.swp.common.chat.ChatMessage;
+import de.uol.swp.common.chat.request.NewChatMessageRequest;
 import de.uol.swp.common.game.AbstractPlayground;
 import de.uol.swp.common.game.card.ActionCard;
 import de.uol.swp.common.game.card.Card;
@@ -47,6 +49,7 @@ public class Playground extends AbstractPlayground {
     private short lobbySizeOnStart;
     private CardPack cardsPackField;
     private ArrayList<Short> chosenCards;
+    private final UserDTO infoUser = new UserDTO("infoUser", "", "");
     private ArrayList<Card> trash;
 
     /**
@@ -105,7 +108,6 @@ public class Playground extends AbstractPlayground {
             else if (i == 2) cardField.put(card.getId(), 30);
             else LOG.debug("Komisch: @ initializeCardField- Else Methode in 104 ausgeschlagen.");
         }
-        gameService.sendCardField(theSpecificLobbyID, cardField);
     }
 
     /**
@@ -119,6 +121,7 @@ public class Playground extends AbstractPlayground {
      */
     public void newTurn() {
         if (actualPlayer == null && nextPlayer == null) {
+            gameService.sendCardField(theSpecificLobbyID, cardField);
             actualPlayer = players.get(0);
             nextPlayer = players.get(1);
             sendInitialCardsDeckSize();
@@ -141,7 +144,7 @@ public class Playground extends AbstractPlayground {
         if (checkForActionCard()) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartActionPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID, timestamp));
-            phaseTimer();
+            //phaseTimer();
         } else {
             nextPhase();
         }
@@ -186,6 +189,10 @@ public class Playground extends AbstractPlayground {
         if (actualPhase == Phase.Type.ActionPhase) {
             actualPhase = Phase.Type.Buyphase;
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartBuyPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
+
+            ChatMessage infoMessage = new ChatMessage(infoUser, getActualPlayer().getTheUserInThePlayer().getUsername() + " ist am Zug!");
+            gameService.getBus().post(new NewChatMessageRequest(theSpecificLobbyID.toString(), infoMessage));
+
             endTimer();
         } else {
             actualPhase = Phase.Type.Clearphase;
@@ -211,7 +218,7 @@ public class Playground extends AbstractPlayground {
         for (Card card : actualPlayer.getPlayerDeck().getHand()) {
             theIdsFromTheHand.add(card.getId());
         }
-        DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID, (short) getPlayers().size());
+        DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID, (short) getPlayers().size(), false);
         gameService.sendToSpecificPlayer(actualPlayer, theHandMessage);
     }
 
@@ -313,7 +320,7 @@ public class Playground extends AbstractPlayground {
             for (Card card : playerhand.getPlayerDeck().getHand()) {
                 theIdsFromInitalPlayerDeck.add(card.getId());
             }
-            DrawHandMessage initialHandFromPlayer = new DrawHandMessage(theIdsFromInitalPlayerDeck, theSpecificLobbyID, (short) getPlayers().size());
+            DrawHandMessage initialHandFromPlayer = new DrawHandMessage(theIdsFromInitalPlayerDeck, theSpecificLobbyID, (short) getPlayers().size(), true);
             gameService.sendToSpecificPlayer(playerhand, initialHandFromPlayer);
             int availableAction = playerhand.getAvailableActions();
             int availableBuy = playerhand.getAvailableBuys();

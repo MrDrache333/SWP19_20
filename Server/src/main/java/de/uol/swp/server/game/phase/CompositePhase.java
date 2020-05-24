@@ -7,6 +7,7 @@ import de.uol.swp.common.game.exception.NotEnoughMoneyException;
 import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.game.messages.GameOverMessage;
 import de.uol.swp.common.game.messages.InfoPlayDisplayMessage;
+import de.uol.swp.server.game.GameService;
 import de.uol.swp.server.game.Playground;
 import de.uol.swp.server.game.player.Deck;
 import de.uol.swp.server.game.player.Player;
@@ -89,10 +90,6 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
     public int executeBuyPhase(Player player, short cardId) {
         CardPack cardsPackField = playground.getCardsPackField();
         Card currentCard = getCardFromId(cardsPackField.getCards(), cardId);
-
-        if (player.getAvailableBuys() == 0) {
-            playground.nextPhase();
-        }
 
         // Karten und deren Anzahl werden aus dem Spielfeld geladen.
         int count = playground.getCardField().get(cardId);
