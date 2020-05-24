@@ -3,6 +3,7 @@ package de.uol.swp.server.usermanagement;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import de.uol.swp.common.game.request.GameGiveUpRequest;
 import de.uol.swp.common.lobby.request.LeaveAllLobbiesOnLogoutRequest;
 import de.uol.swp.common.lobby.request.UpdateLobbiesRequest;
 import de.uol.swp.common.message.ServerMessage;
@@ -125,7 +126,7 @@ public class AuthenticationService extends AbstractService {
      * Serverlogik vom LogoutRequest
      *
      * @param msg LogoutRequest
-     * @author Marco, Darian
+     * @author Marco, Darian, Marvin
      * @since Start
      */
     @Subscribe
@@ -133,6 +134,10 @@ public class AuthenticationService extends AbstractService {
         if (msg.getSession().isPresent()) {
             Session session = msg.getSession().get();
             User userToLogOut = session.getUser();
+            if (msg.isHardLogout()) {
+                lobbyManagement.activeGamesOfUser(userToLogOut)
+                        .forEach(game -> post(new GameGiveUpRequest((UserDTO) userToLogOut, game)));
+            }
             if (!lobbyManagement.isUserIngame(userToLogOut) || msg.isHardLogout()) {
                 // Could be already logged out
                 if (userToLogOut != null) {
@@ -146,8 +151,7 @@ public class AuthenticationService extends AbstractService {
                     ServerMessage returnMessage = new UserLoggedOutMessage(userToLogOut.getUsername());
                     post(returnMessage);
                 }
-            }
-            else{
+            } else {
                 UpdateUserFailedMessage returnMessage = new UpdateUserFailedMessage(session.getUser(), "Der Account befindet sich in einem laufenden Spiel. Du kannst dich nicht ausloggen!");
                 sendToLoggedInPlayers(returnMessage);
             }
@@ -206,7 +210,7 @@ public class AuthenticationService extends AbstractService {
         User userToDrop = msg.getUser();
 
         // Could be already logged out/removed or he is in a game
-        if (userToDrop != null ) {
+        if (userToDrop != null) {
             if (!lobbyManagement.isUserIngame(userToDrop)) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Lösche User " + userToDrop.getUsername());
@@ -216,9 +220,8 @@ public class AuthenticationService extends AbstractService {
 
                 ServerMessage returnMessage = new UserDroppedMessage(userToDrop);
                 sendToLoggedInPlayers(returnMessage);
-            }
-            else{
-                UpdateUserFailedMessage returnMessage = new UpdateUserFailedMessage(userToDrop,"Der Account befindet sich in einem laufenden Spiel. Du kannst deinen Account nicht löschen!");
+            } else {
+                UpdateUserFailedMessage returnMessage = new UpdateUserFailedMessage(userToDrop, "Der Account befindet sich in einem laufenden Spiel. Du kannst deinen Account nicht löschen!");
                 sendToLoggedInPlayers(returnMessage);
             }
         }
