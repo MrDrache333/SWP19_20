@@ -593,7 +593,6 @@ public class LobbyPresenter extends AbstractPresenter {
         if (readyUserList.get(username) != null) {
             Platform.runLater(() -> {
                 readyUserList.remove(username);
-                readyUserList.replace(gameOwner.getUsername(), getHboxFromReadyUser(gameOwner, false));
                 updateUsersList();
                 //Je nachdem ob der Benutzer gekickt wurde oder freiwillig aus der Lobby gegangen ist wird es auch so angezeigt
                 if (kicked) {
