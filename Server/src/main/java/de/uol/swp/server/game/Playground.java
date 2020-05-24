@@ -347,6 +347,15 @@ public class Playground extends AbstractPlayground {
         return false;
     }
 
+    public void actualPoint() {
+
+        // ActualePhase auf ActionPhase Testweise gesetzt.
+        actualPhase = Phase.Type.ActionPhase;
+        actualPlayer.getPlayerDeck().countSiegpunkte();
+        ActualPointMessage actualPointMessage = new ActualPointMessage(theSpecificLobbyID, (UserDTO) actualPlayer.getTheUserInThePlayer(), actualPhase.toString(), actualPlayer.getPlayerDeck().getSiegpunkte());
+        gameService.sendToSpecificPlayer(actualPlayer, actualPointMessage);
+    }
+
     /**
      * Ermittelt den/die Gewinner des Spiels. Bei Gleichstand gewinnen der/die mit den wenigsten Zügen.
      *

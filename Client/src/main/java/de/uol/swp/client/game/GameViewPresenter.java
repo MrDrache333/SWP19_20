@@ -1226,4 +1226,17 @@ public class GameViewPresenter extends AbstractPresenter {
             });
         }
     }
+
+    @FXML
+    Label onActualPhase;
+    @FXML
+    Label actualPoints;
+
+    @Subscribe
+    public void actualPointMassage(ActualPointMessage msg) {
+        Platform.runLater(() -> {
+            onActualPhase.setText(msg.getActualPhase());
+            actualPoints.setText(msg.getPoints().toString());
+        });
+    }
 }
