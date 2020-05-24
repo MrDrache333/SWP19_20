@@ -2,6 +2,7 @@ package de.uol.swp.client.game;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
+import de.uol.swp.common.game.card.parser.components.CardAction.response.ChooseCardResponse;
 import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.game.request.GameGiveUpRequest;
 import de.uol.swp.common.game.request.PlayCardRequest;
@@ -11,6 +12,7 @@ import de.uol.swp.common.user.UserDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class GameService {
@@ -56,6 +58,18 @@ public class GameService {
         bus.post(req);
     }
 
+    /**
+     * Erstellt ChooseCardResponse
+     *
+     * @param gameID die LobbyID zum Lobbynamen
+     * @param user   der User der seine Phase skippen möchte
+     * @author Devin
+     * @since Sprint5
+     */
+    public void chooseCard(User user, UUID gameID, ArrayList<Short> cardIDs) {
+        ChooseCardResponse resp = new ChooseCardResponse(gameID, user, cardIDs);
+        bus.post(resp);
+    }
 
     public void playCard(UUID gameID, User loggedInUser, Short id) {
         PlayCardRequest req = new PlayCardRequest(gameID, loggedInUser, id);

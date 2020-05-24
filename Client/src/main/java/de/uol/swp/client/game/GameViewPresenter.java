@@ -11,6 +11,8 @@ import de.uol.swp.client.game.container.HandcardsLayoutContainer;
 import de.uol.swp.client.game.container.PlayedCardLayoutContainer;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
+import de.uol.swp.common.game.AbstractPlayground;
+import de.uol.swp.common.game.card.parser.components.CardAction.request.ChooseCardRequest;
 import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.game.request.BuyCardRequest;
@@ -171,12 +173,23 @@ public class GameViewPresenter extends AbstractPresenter {
     private PathTransition pathTransition;
     private ArrayList<Short> handCardIDs;
     private Map<Short, Label> valuecardLabels = new HashMap<>();
+    private ArrayList<Short> choosenCardsId = new ArrayList<>();
+    private int numberOfCardsToChoose;
 
     private final EventHandler<MouseEvent> handCardEventHandler = new EventHandler() {
         @Override
         public void handle(Event event) {
             ImageView card = (ImageView) event.getSource();
             playChoosenCard(lobbyID, loggedInUser, card.getImage().getUrl(), Short.valueOf(card.getId()), card, (MouseEvent) event);
+        }
+    };
+
+    private final EventHandler<MouseEvent> discardCardEventHandler = new EventHandler() {
+        @Override
+        public void handle(Event event) {
+            ImageView card = (ImageView) event.getSource();
+            choosenCardsId.add(Short.parseShort(card.getId()));
+            discardChoosenCard(lobbyID, loggedInUser, card.getImage().getUrl(), Short.valueOf(card.getId()), card, (MouseEvent) event);
         }
     };
 
@@ -632,68 +645,23 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Wenn ein anderer Spieler eine Karte von der Hand entsorgt, wird dies den anderen Spielern angezeigt.
      *
-     * @param msg       Die Message die vom server gesendet wird, wenn ein anderer Spieler eine Karte entsorgt.
+     * @param req       Die Message die vom server gesendet wird, wenn ein anderer Spieler eine Karte entsorgt.
      * @author Devin
      * @since Sprint 7
      */
     @FXML
     @Subscribe
-    public void onDiscardCardMessage (DiscardCardMessage msg) {
-        if (msg.getGameID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
-            //TODO: Aussuchverfahren zum abwerfen von Karten implementieren
-        }
-        List<Short> playerIndexNumbers = new ArrayList<>(); playerIndexNumbers.add((short) 0); playerIndexNumbers.add((short) 1); playerIndexNumbers.add((short) 2); playerIndexNumbers.add((short) 3);
-        if (msg.getGameID().equals(lobbyID) && !msg.getCurrentUser().equals(loggedInUser)) {
-            playerIndexNumbers.remove(msg.getUserPlaceNumber());
-            if (playerIndexNumbers.get(0).equals(msg.getEnemyPlaceNumber())) {
-                int numberOfCardsInHand = firstEnemyHand.getChildren().size();
-                for (Short id: msg.getCardID()) {
-                    Card card = new Card (id.toString(),328,447,104);
-                    if(numberOfCardsInHand==0) {
-                        LOG.debug("Die Hand hat keine Karten mehr zum entsorgen");
-                        return;
-                    }
-                    Platform.runLater(() -> {
-                    firstEnemyHand.getChildren().remove(0);
-                    // TODO: Animation Management zum entsorgen einer Karte
-                    firstEnemyDPLC.getChildren().add(card);
-                    });
-                }
-                return;
-            }
-            if (playerIndexNumbers.get(1).equals(msg.getEnemyPlaceNumber())) {
-                int numberOfCardsInHand = secondEnemyHand.getChildren().size();
-                for (Short id: msg.getCardID()) {
-                    Card card = new Card (id.toString(),0,0,104);
-                    if(numberOfCardsInHand==0) {
-                        LOG.debug("Die Hand hat keine Karten mehr zum entsorgen");
-                        return;
-                    }
-                    Platform.runLater(() -> {
-                        secondEnemyHand.getChildren().remove(0);
-                        // TODO: Animation Management zum entsorgen einer Karte
-                        secondEnemyDPLC.getChildren().add(card);
-                    });
-                }
-                return;
-            }
-            if (playerIndexNumbers.get(2).equals(msg.getEnemyPlaceNumber())) {
-                int numberOfCardsInHand = thirdEnemyHand.getChildren().size();
-                for (Short id: msg.getCardID()) {
-                    Card card = new Card (id.toString(),328,447,104);
-                    if(numberOfCardsInHand==0) {
-                        LOG.debug("Die Hand hat keine Karten mehr zum entsorgen");
-                        return;
-                    }
-                    Platform.runLater(() -> {
-                        thirdEnemyHand.getChildren().remove(0);
-                        // TODO: Animation Management zum entsorgen einer Karte
-                        thirdEnemyDPLC.getChildren().add(card);
-                    });
-                }
-                return;
+    public void onChooseCardRequest (ChooseCardRequest req) {
+        if (req.getGameID().equals(lobbyID) && req.getSourcePlayer().equals(loggedInUser)) {
+            numberOfCardsToChoose = req.getCount();
+            if (req.getSource()== AbstractPlayground.ZoneType.HAND) {
+                handcards.getChildren().forEach((n) -> {
+                    n.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+                    n.addEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
+                });
             }
         }
+
     }
 
     /**
@@ -1074,6 +1042,42 @@ public class GameViewPresenter extends AbstractPresenter {
                     gameManagement.getGameService().playCard(gameID, loggedInUser, id);
                 }
             }
+        }
+    }
+
+    /**
+     * Methode, die beim Anklicken einer Handkarte ausgeführt wird.
+     * Rechtsklick -> großes Bild
+     * Linksklick -> Karte auf den Ablagestapel legen wird gestellt
+     *
+     * @param gameID       Die ID des Spiels
+     * @param loggedInUser der User der gerade eingelogt im Spiel ist und die Karte ausgewählt hat.
+     * @param pfad         Der Pfad zum entsprechendem Vollbild
+     * @param id           Die ID der Karte
+     * @param card         Die ImageView der ausgewählten Karte
+     * @param e            Das MouseEvent, das zum anlicken der Karte zuständig ist.
+     * @author Devin
+     * @since Sprint 7
+     */
+    private void discardChoosenCard(UUID gameID, User loggedInUser, String pfad, Short id, ImageView card, MouseEvent e) {
+        if (e.getButton() != MouseButton.PRIMARY) {
+            bigCardImage.setImage(new Image(pfad));
+            buyCardButton.setVisible(false);
+            bigCardImageBox.setVisible(true);
+        } else {
+            numberOfCardsToChoose = numberOfCardsToChoose-1;
+            bigCardImageBox.setVisible(false);
+            ArrayList<Node> a = new ArrayList<>();
+            a.add(card);
+            moveCardsToDiscardPile((ObservableList<Node>) a, true);
+        }
+        if(numberOfCardsToChoose == 0) {
+            handcards.getChildren().forEach((n) -> {
+                n.removeEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
+                n.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+            });
+            gameService.chooseCard(loggedInUser, gameID, choosenCardsId);
+            choosenCardsId.clear();
         }
     }
 
