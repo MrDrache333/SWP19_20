@@ -36,7 +36,7 @@ public class ActionCardExecution {
     private ActionCard theCard;
     private UUID gameID;
     private List<Player> players;
-    private List<User> chooseCardPlayers;
+    private List<User> chooseCardPlayers = new ArrayList<>();
     private ArrayList<Short> newHandCards = new ArrayList<>();
     //Liste aller Unteraktionen einer Aktion
     private List<CardAction> nextActions = new ArrayList<>();
@@ -489,7 +489,9 @@ public class ActionCardExecution {
             } else if (action.getCardSource() == AbstractPlayground.ZoneType.BUY) {
                 List<Short> l = new ArrayList<>(playground.getCardField().keySet());
                 for (Short card : l) {
+                    //if (card < 25) {
                     theSelectableCards.add(card.shortValue());
+                    //}
                 }
             }
             ChooseCardRequest request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount(), playerChooseCard.getTheUserInThePlayer(), action.getCardSource(), "Bitte die Anzahl der Karten auswählen von dem Bereich der dir angezeigt wird!");

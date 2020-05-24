@@ -2,6 +2,7 @@ package de.uol.swp.client.game;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
+import de.uol.swp.common.game.card.parser.components.CardAction.response.ChooseCardResponse;
 import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.game.request.GameGiveUpRequest;
 import de.uol.swp.common.game.request.PlayCardRequest;
@@ -11,6 +12,7 @@ import de.uol.swp.common.user.UserDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class GameService {
@@ -66,4 +68,8 @@ public class GameService {
         bus.post(req);
     }
 
+    public void chooseCardResponse(UUID gameID, User loggedInUser, ArrayList<Short> chosenCards) {
+        ChooseCardResponse response = new ChooseCardResponse(gameID, loggedInUser, chosenCards);
+        bus.post(response);
+    }
 }

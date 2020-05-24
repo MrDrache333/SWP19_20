@@ -7,7 +7,6 @@ import de.uol.swp.common.game.exception.NotEnoughMoneyException;
 import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.game.messages.GameOverMessage;
 import de.uol.swp.common.game.messages.InfoPlayDisplayMessage;
-import de.uol.swp.server.game.GameService;
 import de.uol.swp.server.game.Playground;
 import de.uol.swp.server.game.player.Deck;
 import de.uol.swp.server.game.player.Player;
@@ -62,7 +61,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
 
     public void finishedActionCardExecution(Player player, ArrayList<Short> newHandCards) {
         if (!newHandCards.isEmpty()) {
-            playground.getGameService().sendToSpecificPlayer(player, new DrawHandMessage(newHandCards, playground.getID(), (short) playground.getPlayers().size()));
+            playground.getGameService().sendToSpecificPlayer(player, new DrawHandMessage(newHandCards, playground.getID(), (short) playground.getPlayers().size(), false));
         }
         playground.sendCardsDeckSize();
         player.setAvailableActions(player.getAvailableActions() - 1);

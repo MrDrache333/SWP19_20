@@ -50,21 +50,6 @@ public class CardStack {
     }
 
     /**
-     * Gibt alle Karten zurück
-     *
-     * @return cards alle Karten
-     * @author Timo, Fenja, Keno O.
-     */
-    public ArrayList<Card> getAllCards() {
-        ArrayList<Card> cards = new ArrayList<>();
-        cards.addAll(moneyCards);
-        cards.addAll(valueCards);
-        cards.addAll(actionCards);
-        cards.addAll(curseCards);
-        return cards;
-    }
-
-    /**
      * Gibt die Karte mit der entsprechenden ID zurück
      *
      * @return cards die eine Karte
