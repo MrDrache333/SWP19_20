@@ -604,7 +604,7 @@ public class ActionCardExecution {
             for (int i = 0; i < theIds.size(); i++) {
                 int count = playground.getCardField().get(theIds.get(i));
                 newCount.put(theIds.get(i), count);
-                ReduceCardCounterMessage message = new ReduceCardCounterMessage(gameID, player.getTheUserInThePlayer(), newCount);
+                UpdateCardCounterMessage message = new UpdateCardCounterMessage(gameID, player.getTheUserInThePlayer(), newCount);
                 playground.getGameService().sendToAllPlayers(gameID, message);
             }
         }
