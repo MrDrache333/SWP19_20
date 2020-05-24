@@ -40,6 +40,7 @@ public class ActionCardExecution {
     private ArrayList<Short> newHandCards = new ArrayList<>();
     //Liste aller Unteraktionen einer Aktion
     private List<CardAction> nextActions = new ArrayList<>();
+    private Card inputCard;
 
     //Ob auf eine Auswahl oder Reaktion des Spielers gewartet werden muss
     private boolean waitedForPlayerInput;
@@ -481,16 +482,29 @@ public class ActionCardExecution {
 
         for (Player playerChooseCard : thePlayers) {
             this.chooseCardPlayers.add(playerChooseCard.getTheUserInThePlayer());
+            ArrayList<Card> tmp = new ArrayList<>();
             ArrayList<Short> theSelectableCards = new ArrayList<>();
             if (action.getCardSource() == AbstractPlayground.ZoneType.HAND) {
-                for (Card card : playerChooseCard.getPlayerDeck().getHand()) {
-                    theSelectableCards.add(card.getId());
-                }
+                tmp.addAll(playerChooseCard.getPlayerDeck().getHand());
             } else if (action.getCardSource() == AbstractPlayground.ZoneType.BUY) {
                 List<Short> l = new ArrayList<>(playground.getCardField().keySet());
                 for (Short card : l) {
-                    theSelectableCards.add(card.shortValue());
+                    Card c = playground.getCompositePhase().getCardFromId(playground.getCardsPackField().getCards(), card);
+                    if (playground.getCardField().get(card) > 0) {
+                        tmp.add(c);
+                    }
                 }
+            }
+            tmp = filterCards(action, tmp);
+            if (action.getHasMoreCostThanInput() != null) {
+                if (inputCard == null) return false;
+                tmp.forEach(card -> {
+                    if (card.getCosts() - inputCard.getCosts() <= action.getHasMoreCostThanInput().getMax()) {
+                        theSelectableCards.add(card.getId());
+                    }
+                });
+            } else {
+                tmp.forEach(card -> theSelectableCards.add(card.getId()));
             }
             ChooseCardRequest request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount(), playerChooseCard.getTheUserInThePlayer(), action.getCardSource(), "Bitte die Anzahl der Karten auswählen von dem Bereich der dir angezeigt wird!");
             playground.getGameService().sendToSpecificPlayer(player, request);
