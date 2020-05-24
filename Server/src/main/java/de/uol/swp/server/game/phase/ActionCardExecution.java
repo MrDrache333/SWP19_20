@@ -27,9 +27,6 @@ public class ActionCardExecution {
 
     private static final Logger LOG = LogManager.getLogger(ActionCardExecution.class);
 
-    //TODO: Subscribe Methode -> waitedForPlayerInput prüfen -> auf false setzen -> benötigen Antwort vom Client
-    // -> ChooseCard (IDs der gewählten Karten) und ChooseNextAction (gewählte Aktion)
-
     private short cardID;
     private Playground playground;
     private Player player;
@@ -89,6 +86,34 @@ public class ActionCardExecution {
         }
     }
 
+    @Subscribe
+    public void onChooseCardResponse(ChooseCardResponse response) {
+        List<Player> p = new ArrayList<>();
+        Player helpPlayer = players.get(helpMethodToGetThePlayerFromUser(response.getPlayer()));
+        p.add(helpPlayer);
+        if (response.getGameID().equals(gameID) && waitedForPlayerInput && chooseCardPlayers.contains(response.getPlayer())) {
+            waitedForPlayerInput = false;
+            actualStateIndex++;
+            if (response.getCards().size() == 1) {
+                inputCard = helpMethod2GetTheCard(response.getCards().get(0));
+            }
+
+            ArrayList<Card> cards = new ArrayList<>();
+            response.getCards().forEach(c -> cards.add(helpMethod2GetTheCard(c)));
+
+            if (response.getDirectHand()) {
+                helpPlayer.getPlayerDeck().getHand().addAll(cards);
+                newHandCards.addAll(response.getCards());
+            } else if (nextActions.get(nextActionIndex) instanceof Move) {
+                ((Move) nextActions.get(nextActionIndex)).setCardsToMove(cards);
+            } else if (nextActions.get(nextActionIndex) instanceof ForEach) {
+                ((ForEach) nextActions.get(nextActionIndex)).setCards(cards);
+            }
+
+            executeNextActions(p);
+        }
+    }
+
     /**
      * Führt beim Aufruf alle enthaltenen Aktionen der Aktionskarte aus
      *
@@ -96,7 +121,6 @@ public class ActionCardExecution {
      * @author KenoO, Julia
      */
     public boolean execute() {
-        //TODO Some pretty nice and clean Code to Execute the Shit out of that Card
         while (actualStateIndex < theCard.getActions().size() && !waitedForPlayerInput && finishedNextActions) {
             startedNextActions = false;
             CardAction action = theCard.getActions().get(actualStateIndex);
@@ -121,8 +145,6 @@ public class ActionCardExecution {
                     finishedNextActions = false;
                 }
 
-                //TODO: ggf. gegebene nextActions müssen wenn Spielerantwort da ist, ausgeführt werden
-                // -> über finishedNextActions kann dies geprüft werden
                 if (!nextActions.isEmpty() && !waitedForPlayerInput) {
                     if (!executeNextActions(playerList)) return false;
                 }
@@ -476,7 +498,6 @@ public class ActionCardExecution {
      * @return
      */
 
-    //TODO: Überprüfen, ob die Logik stimmt.
     private boolean executeChooseCard(ChooseCard action, List<Player> thePlayers) {
         waitedForPlayerInput = true;
 
@@ -506,7 +527,7 @@ public class ActionCardExecution {
             } else {
                 tmp.forEach(card -> theSelectableCards.add(card.getId()));
             }
-            ChooseCardRequest request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount(), playerChooseCard.getTheUserInThePlayer(), action.getCardSource(), "Bitte die Anzahl der Karten auswählen von dem Bereich der dir angezeigt wird!");
+            ChooseCardRequest request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount(), playerChooseCard.getTheUserInThePlayer(), action.getCardSource(), "Bitte die Anzahl der Karten auswählen von dem Bereich der dir angezeigt wird!", action.isDirectHand());
             playground.getGameService().sendToSpecificPlayer(player, request);
         }
         return true;
@@ -534,63 +555,51 @@ public class ActionCardExecution {
      */
     private boolean executeMoveAction(Move action, Player player) {
         ArrayList<Short> theIds = new ArrayList<>();
-        ArrayList<Card> cardsToRemoveHand = new ArrayList<>();
+        action.getCardsToMove().forEach(c -> theIds.add(c.getId()));
         if (action.getCardSource().equals(AbstractPlayground.ZoneType.HAND) && action.getCardDestination().equals(AbstractPlayground.ZoneType.DISCARD)) {
-            for (Card card : action.getCardsToMove()) {
-                if (player.getPlayerDeck().getHand().contains(card)) {
-                    cardsToRemoveHand.add(card);
-                    // ConcurrentCardModificatioNException Fix, muss getestet werden. @Julia
-                    // player.getPlayerDeck().getHand().remove(card);
-                    player.getPlayerDeck().getDiscardPile().add(card);
-                    theIds.add(card.getId());
-                }
+            player.getPlayerDeck().getDiscardPile().addAll(action.getCardsToMove());
+            while (!action.getCardsToMove().isEmpty()) {
+                player.getPlayerDeck().getHand().remove(action.getCardsToMove().get(0));
             }
-            player.getPlayerDeck().getHand().removeAll(cardsToRemoveHand);
         } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.HAND) && action.getCardDestination().equals(AbstractPlayground.ZoneType.TRASH)) {
-            for (Card card : action.getCardsToMove()) {
-                if (player.getPlayerDeck().getHand().contains(card)) {
-                    player.getPlayerDeck().getHand().remove(card);
-                    playground.getTrash().add(card);
-                    theIds.add(card.getId());
-                }
+            playground.getTrash().addAll(action.getCardsToMove());
+            while (!action.getCardsToMove().isEmpty()) {
+                player.getPlayerDeck().getHand().remove(action.getCardsToMove().get(0));
             }
         } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.BUY) && action.getCardDestination().equals(AbstractPlayground.ZoneType.DISCARD)) {
-            for (Card card : action.getCardsToMove()) {
-                // TODO: BuyCard Implementierung von Paula hier einfügen.
-                player.getPlayerDeck().getDiscardPile().add(card);
-                theIds.add(card.getId());
+            player.getPlayerDeck().getDiscardPile().addAll(action.getCardsToMove());
+            while (!action.getCardsToMove().isEmpty()) {
+                short id = action.getCardsToMove().get(0).getId();
+                int count = playground.getCardField().get(id);
+                if (count > 0) {
+                    playground.getCardField().replace(id, --count);
+                }
             }
         } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.DRAW) && action.getCardDestination().equals(AbstractPlayground.ZoneType.TEMP)) {
-            // TODO: Implementierung im Playerdeck, dass der Spieler eine bestimmte Anzahl an Karten nachziehen kann.
-            for (Card card : action.getCardsToMove()) {
-                player.getPlayerDeck().getCardsDeck().remove(card);
-                player.getPlayerDeck().getTemp().add(card);
+            player.getPlayerDeck().getTemp().addAll(action.getCardsToMove());
+            while (!action.getCardsToMove().isEmpty()) {
+                player.getPlayerDeck().getCardsDeck().remove(action.getCardsToMove().get(0));
             }
         } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.DRAW) && action.getCardDestination().equals(AbstractPlayground.ZoneType.DISCARD)) {
-            for (Card card : action.getCardsToMove()) {
-                player.getPlayerDeck().getCardsDeck().remove(card);
-                player.getPlayerDeck().getDiscardPile().add(card);
+            player.getPlayerDeck().getDiscardPile().addAll(action.getCardsToMove());
+            while (!action.getCardsToMove().isEmpty()) {
+                player.getPlayerDeck().getCardsDeck().remove(action.getCardsToMove().get(0));
             }
         } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.DISCARD) && action.getCardDestination().equals(AbstractPlayground.ZoneType.DRAW)) {
-            for (Card card : action.getCardsToMove()) {
-                player.getPlayerDeck().getDiscardPile().remove(card);
-                player.getPlayerDeck().getCardsDeck().add(card);
-                Collections.shuffle(player.getPlayerDeck().getCardsDeck());
+            player.getPlayerDeck().getCardsDeck().addAll(action.getCardsToMove());
+            while (!action.getCardsToMove().isEmpty()) {
+                player.getPlayerDeck().getDiscardPile().remove(action.getCardsToMove().get(0));
             }
         } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.TEMP) && action.getCardDestination().equals(AbstractPlayground.ZoneType.HAND)) {
-            for (Card card : action.getCardsToMove()) {
-                player.getPlayerDeck().getTemp().remove(card);
-                player.getPlayerDeck().getHand().add(card);
-                theIds.add(card.getId());
-            }
-            if (true) {
-                // TODO: Checken, ob nextAction gegeben und dann von Hand auf Discard.
+            player.getPlayerDeck().getHand().addAll(action.getCardsToMove());
+            action.getCardsToMove().forEach(c -> newHandCards.add(c.getId()));
+            while (!action.getCardsToMove().isEmpty()) {
+                player.getPlayerDeck().getTemp().remove(action.getCardsToMove().get(0));
             }
         } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.TEMP) && action.getCardDestination().equals(AbstractPlayground.ZoneType.DISCARD)) {
-            for (Card card : action.getCardsToMove()) {
-                player.getPlayerDeck().getTemp().remove(card);
-                player.getPlayerDeck().getDiscardPile().add(card);
-                theIds.add(card.getId());
+            player.getPlayerDeck().getDiscardPile().addAll(action.getCardsToMove());
+            while (!action.getCardsToMove().isEmpty()) {
+                player.getPlayerDeck().getTemp().remove(action.getCardsToMove().get(0));
             }
         }
         if (!theIds.isEmpty()) {
@@ -694,29 +703,6 @@ public class ActionCardExecution {
             return true;
         }
         return false;
-    }
-
-    @Subscribe
-    public void chooseCardResponseHandling(ChooseCardResponse response) {
-        Player helpPlayer = players.get(helpMethodToGetThePlayerFromUser(response.getPlayer()));
-        if (response.getGameID().equals(gameID) && waitedForPlayerInput == true && chooseCardPlayers.contains(response.getPlayer())) {
-            if (response.getFrom() == AbstractPlayground.ZoneType.HAND) {
-                for (Short short2 : response.getCards()) {
-                    Card theWantedCard = helpMethod2GetTheCard(short2);
-                    if (helpPlayer.getPlayerDeck().getHand().contains(theWantedCard)) {
-                        helpPlayer.getPlayerDeck().getHand().remove(theWantedCard);
-                        helpPlayer.getPlayerDeck().getDiscardPile().add(theWantedCard);
-                    }
-                }
-            }
-            if (response.getFrom() == AbstractPlayground.ZoneType.BUY) {
-                for (Short short2 : response.getCards()) {
-                    Card theWantedCard = helpMethod2GetTheCard(short2);
-                    // TODO: Überprüfung, ob der Spieler auch eine Karte gekauft hat die in dem Wertebereich sich befindet.
-                    player.getPlayerDeck().getDiscardPile().add(theWantedCard);
-                }
-            }
-        }
     }
 
     // vorläufige Hilfsmethode //
