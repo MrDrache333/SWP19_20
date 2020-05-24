@@ -93,7 +93,7 @@ public class ActionCardExecution {
         p.add(helpPlayer);
         if (response.getGameID().equals(gameID) && waitedForPlayerInput && chooseCardPlayers.contains(response.getPlayer())) {
             waitedForPlayerInput = false;
-            actualStateIndex++;
+            if (!startedNextActions) actualStateIndex++;
             if (response.getCards().size() == 1) {
                 inputCard = helpMethod2GetTheCard(response.getCards().get(0));
             }
