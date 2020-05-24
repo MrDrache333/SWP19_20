@@ -4,6 +4,7 @@ import de.uol.swp.common.game.card.Card;
 import de.uol.swp.common.game.card.MoneyCard;
 import de.uol.swp.common.game.card.parser.JsonCardParser;
 import de.uol.swp.common.game.card.parser.components.CardPack;
+import de.uol.swp.common.game.card.ValueCard;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,6 +24,7 @@ public class Deck {
     private final ArrayList<Card> discardPile = new ArrayList<>();
     private final ArrayList<Card> hand = new ArrayList<>();
     private final ArrayList<Card> actionPile = new ArrayList<>();
+    private int siegpunkte;
 
     /**
      * Konstruktor
@@ -34,6 +36,25 @@ public class Deck {
         initialiseStartDeck();
         initialiseHand();
     }
+
+    /**
+     * Zählt die Siegpunkte und fügt sie dem Attribut hinzu.
+     */
+    public void countSiegpunkte() {
+        if (siegpunkte != 0) {
+            siegpunkte = 0;
+            for (Card card : cardsDeck) {
+                if (card.getCardType().equals(Card.Type.ValueCard)) {
+                    ValueCard theValueCard = (ValueCard) card;
+                    siegpunkte += (int) theValueCard.getValue();
+                }
+            }
+        } else {
+            // TODO: Code Refactoring durchführen...
+            siegpunkte = 0;
+        }
+    }
+
 
     /**
      * Zieht eine neue Hand. Sind auf dem Nachziehstapel nicht mehr genügend Karten vorhanden,
@@ -182,5 +203,8 @@ public class Deck {
 
     public ArrayList<Card> getActionPile() {
         return actionPile;
+    }
+    public int getSiegpunkte() {
+        return siegpunkte;
     }
 }
