@@ -18,10 +18,7 @@ import de.uol.swp.server.game.player.Player;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class ActionCardExecution {
 
@@ -602,9 +599,14 @@ public class ActionCardExecution {
                 player.getPlayerDeck().getTemp().remove(action.getCardsToMove().get(0));
             }
         }
-        if (!theIds.isEmpty()) {
-            CardMovedMessage cardMovedMessage = new CardMovedMessage(theIds, action.getCardSource(), action.getCardDestination(), gameID);
-            playground.getGameService().sendToSpecificPlayer(player, cardMovedMessage);
+        if (!theIds.isEmpty() && action.getCardSource() == AbstractPlayground.ZoneType.BUY) {
+            Map<Short, Integer> newCount = new HashMap<>();
+            for (int i = 0; i < theIds.size(); i++) {
+                int count = playground.getCardField().get(theIds.get(i));
+                newCount.put(theIds.get(i), count);
+                ReduceCardCounterMessage message = new ReduceCardCounterMessage(gameID, player.getTheUserInThePlayer(), newCount);
+                playground.getGameService().sendToAllPlayers(gameID, message);
+            }
         }
         return true;
     }
