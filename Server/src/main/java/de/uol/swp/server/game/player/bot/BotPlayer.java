@@ -1,6 +1,15 @@
 package de.uol.swp.server.game.player.bot;
 
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import de.uol.swp.common.chat.ChatService;
+import de.uol.swp.common.game.messages.StartActionPhaseMessage;
+import de.uol.swp.common.game.messages.StartBuyPhaseMessage;
+import de.uol.swp.common.game.request.SkipPhaseRequest;
 import de.uol.swp.common.user.User;
+import de.uol.swp.server.game.GameService;
 import de.uol.swp.server.game.player.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -8,7 +17,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class BotPlayer extends Player {
-    private Optional<BotService> botService;
+    protected EventBus eventBus;
+
     private UUID gameId;
     private boolean isBot = true;
 
@@ -17,9 +27,11 @@ public class BotPlayer extends Player {
      *
      * @param playerName Der Spielername
      */
-    public BotPlayer(String playerName, Optional<BotService> botService, UUID gameID) {
+
+    public BotPlayer(String playerName, EventBus bus, UUID gameID) {
         super(playerName);
-        this.botService = botService;
+        this.eventBus = bus;
+        eventBus.register(this);
         this.gameId = gameID;
         User botFakeUser = new User() {
             @Override
@@ -29,7 +41,7 @@ public class BotPlayer extends Player {
 
             @Override
             public String getPassword() {
-                return "";
+                return gameID.toString();
             }
 
             @Override
@@ -54,7 +66,30 @@ public class BotPlayer extends Player {
         return isBot;
     }
 
-    // TODO: Subscribe Methode auf die Phasen und dann direkt eine SkipPhaseRequest senden.
-    // TODO: Benötigt wird der BotService für den Bot
+    @Subscribe
+    public void onStartBuyPhaseMessage(StartBuyPhaseMessage msg) {
+        if (msg.getUser().getUsername().equals(getTheUserInThePlayer().getUsername())) {
+            SkipPhaseRequest req = new SkipPhaseRequest(this.getTheUserInThePlayer(), gameId);
+            eventBus.post(req);
+        }
+    }
 
+    @Subscribe
+    public void onStartActionPhaseMessage(StartActionPhaseMessage msg) {
+        if (msg.getUser().getUsername().equals(getTheUserInThePlayer().getUsername())) {
+            SkipPhaseRequest req = new SkipPhaseRequest(this.getTheUserInThePlayer(), gameId);
+            eventBus.post(req);
+        }
+    }
+
+    /**
+     * Es wird der gesetzte Eventbus gelöscht
+     *
+     * @author Marco
+     * @since Start
+     */
+    public void clearEventBus() {
+        this.eventBus.unregister(this);
+        this.eventBus = null;
+    }
 }

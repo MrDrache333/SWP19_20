@@ -20,7 +20,6 @@ import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.chat.ChatManagement;
 import de.uol.swp.server.game.player.bot.BotPlayer;
-import de.uol.swp.server.game.player.bot.BotService;
 import de.uol.swp.server.game.player.bot.internal.messages.AuthBotInternalRequest;
 import de.uol.swp.server.message.StartGameInternalMessage;
 import de.uol.swp.server.usermanagement.AuthenticationService;
@@ -386,10 +385,10 @@ public class LobbyService extends AbstractService {
     public void createBotRequest(AddBotRequest request) {
         Lobby thisLobby = lobbyManagement.getLobby(request.getLobbyID()).get();
         String[] collectionBotName = {"King Arthur", "Merlin", "Die Queen", "Prinzessin Diana"};
-        BotService botService = null;
         if (thisLobby.getUsers().size() < thisLobby.getMaxPlayer()) {
-            String theRandomBotName = collectionBotName[(int) (Math.random() * 3)];
-            BotPlayer createdBot = new BotPlayer(theRandomBotName, Optional.ofNullable(botService), request.getLobbyID());
+            String theRandomBotName = collectionBotName[(int) (Math.random() * 4)];
+            theRandomBotName = theRandomBotName + String.valueOf(((int) (Math.random() * 999)));
+            BotPlayer createdBot = new BotPlayer(theRandomBotName, eventBus, request.getLobbyID());
             UserDTO userDT = new UserDTO(createdBot.getTheUserInThePlayer().getUsername(), createdBot.getTheUserInThePlayer().getPassword(), createdBot.getTheUserInThePlayer().getEMail());
             AuthBotInternalRequest createReq = new AuthBotInternalRequest(createdBot);
             LobbyJoinUserRequest req = new LobbyJoinUserRequest(thisLobby.getLobbyID(), userDT, true);

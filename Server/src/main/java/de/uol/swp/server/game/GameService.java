@@ -21,7 +21,6 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.game.player.Player;
-import de.uol.swp.server.game.player.bot.BotService;
 import de.uol.swp.server.message.StartGameInternalMessage;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import org.apache.logging.log4j.LogManager;
@@ -40,7 +39,6 @@ public class GameService extends AbstractService {
     private final GameManagement gameManagement;
     private final AuthenticationService authenticationService;
     private final UserDTO infoUser = new UserDTO("infoUser", "", "");
-    private Optional<BotService> botService;
 
     /**
      * Erstellt einen neuen GameService
@@ -169,7 +167,7 @@ public class GameService extends AbstractService {
         Optional<Game> game = gameManagement.getGame(msg.getGameID());
         if (game.isPresent()) {
             Playground playground = game.get().getPlayground();
-            if (playground.getActualPlayer().getTheUserInThePlayer().equals(msg.getUser())) {
+            if (playground.getActualPlayer().getTheUserInThePlayer().getUsername().equals(msg.getUser().getUsername())) {
                 try {
                     playground.nextPhase();
                 } catch (GamePhaseException e) {

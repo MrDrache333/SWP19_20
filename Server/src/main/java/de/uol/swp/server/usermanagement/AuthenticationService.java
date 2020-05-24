@@ -45,7 +45,7 @@ public class AuthenticationService extends AbstractService {
      * @since Start
      */
     final private Map<Session, User> userSessions = new HashMap<>();
-    final private Map<Session, BotPlayer> botSessions = new HashMap<>();
+    final private Map<Session, User> botSessions = new HashMap<>();
 
     private final UserManagement userManagement;
     private final LobbyManagement lobbyManagement;
@@ -75,6 +75,10 @@ public class AuthenticationService extends AbstractService {
      */
     public Optional<Session> getSession(User user) {
         Optional<Map.Entry<Session, User>> entry = userSessions.entrySet().stream().filter(e -> e.getValue().equals(user)).findFirst();
+        if (entry.isEmpty()) {
+            entry = botSessions.entrySet().stream().filter(e -> e.getValue().getUsername().equals(user.getUsername())).findFirst();
+            return entry.map(Map.Entry::getKey);
+        }
         return entry.map(Map.Entry::getKey);
     }
 
@@ -130,9 +134,8 @@ public class AuthenticationService extends AbstractService {
             LOG.debug("Bot Request kommt im Auth Service an");
         }
         try {
-            BotPlayer theBot = req.getBotPlayer();
-            Session newSession = UUIDSession.create(theBot);
-            botSessions.put(newSession, theBot);
+            Session newSession = UUIDSession.create(req.getBotPlayer().getTheUserInThePlayer());
+            botSessions.put(newSession, req.getBotPlayer().getTheUserInThePlayer());
         } catch (Exception e) {
             LOG.error(e);
         }
