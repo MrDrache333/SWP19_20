@@ -176,6 +176,7 @@ public class GameViewPresenter extends AbstractPresenter {
     private ArrayList<Short> handCardIDs;
     private Map<Short, Label> valuecardLabels = new HashMap<>();
     private ArrayList<Short> choosenCardsId = new ArrayList<>();
+    private ArrayList<ImageView> choosenCards = new ArrayList<>();
     private int numberOfCardsToChoose;
 
     private final EventHandler<MouseEvent> handCardEventHandler = new EventHandler() {
@@ -1069,11 +1070,13 @@ public class GameViewPresenter extends AbstractPresenter {
             buyCardButton.setVisible(false);
             bigCardImageBox.setVisible(true);
         } else {
-            numberOfCardsToChoose = numberOfCardsToChoose-1;
-            bigCardImageBox.setVisible(false);
-            ArrayList<Node> a = new ArrayList<>();
-            a.add(card);
-            moveCardsToDiscardPile((ObservableList<Node>) a, true);
+            if (!choosenCards.contains(card)) {
+                numberOfCardsToChoose = numberOfCardsToChoose - 1;
+                choosenCards.add(card);
+                bigCardImageBox.setVisible(false);
+            } else {
+                showAlert(Alert.AlertType.INFORMATION, "Du hast die Karte bereits ausgewählt", "Auswählproblem");
+            }
         }
         if(numberOfCardsToChoose == 0) {
             handcards.getChildren().forEach((n) -> {
