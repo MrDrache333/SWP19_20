@@ -244,8 +244,7 @@ public class ClientApp extends Application implements ConnectionListener {
                 sceneManager.closeJoinLobby();
             }
             LOG.info("User " + message.getUser().getUsername() + " joined lobby successfully");
-        }
-       else if (message.getLobby().getLobbyPassword() == null) {
+        } else if (message.getLobby().getLobbyPassword() == null) {
             SceneManager.showAlert(Alert.AlertType.WARNING, "Das Passwort ist falsch!", "Fehler");
         }
     }
@@ -388,10 +387,13 @@ public class ClientApp extends Application implements ConnectionListener {
      */
     @Subscribe
     public void onSetMaxPlayerMessage(SetMaxPlayerMessage msg) {
+
         if (msg.isSetMaxPlayerSet()) {
             LOG.info("Max. Spieler der Lobby: " + msg.getLobbyID() + " erfolgreich auf " + msg.getMaxPlayer() + " gesetzt.");
         } else {
             LOG.info("Max. Spieler der Lobby: " + msg.getLobbyID() + " nicht gesetzt. User ist nicht der Lobbyowner!");
+
+            sceneManager.showAlert(Alert.AlertType.INFORMATION, "Max. Spieler nicht geändert :(\nBitte einen User vorher Kicken,\nda mehr Spieler in der Lobby sind\nals der Wert den du ausgewählt hast.", "Fehler 404 - Marco nicht gefunden.");
         }
     }
 

@@ -4,12 +4,15 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.ClientApp;
+import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.common.chat.ChatService;
 import de.uol.swp.common.game.card.parser.JsonCardParser;
 import de.uol.swp.common.game.card.parser.components.CardPack;
 import de.uol.swp.common.lobby.message.*;
+import de.uol.swp.common.lobby.request.SetMaxPlayerRequest;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.lobby.response.SetChosenCardsResponse;
 import de.uol.swp.common.user.User;
@@ -212,6 +215,7 @@ public class LobbyPresenter extends AbstractPresenter {
         LOG.debug("Setze eigenen Bereitstatus in der Lobby " + lobbyID + " zu " + (ownReadyStatus ? "Bereit" : "Nicht bereit"));
         lobbyService.setLobbyUserStatus(lobbyID, loggedInUserDTO, ownReadyStatus);
     }
+
 
     /**
      * Wird aufgerufen wenn der Wert in der max. Spieler-Box geändert wird.
@@ -478,10 +482,11 @@ public class LobbyPresenter extends AbstractPresenter {
     @Subscribe
     public void onSetMaxPlayerMessage(SetMaxPlayerMessage msg) {
         Platform.runLater(() -> {
-            if (msg.getOwner().equals(loggedInUser) && lobbyID == msg.getLobbyID()) {
+            if (msg.getOwner().equals(loggedInUser) && lobbyID == msg.getLobbyID() && msg.isSetMaxPlayerSet()) {
                 chooseMaxPlayer.setDisable(false);
+                chooseMaxPlayer.setValue(msg.getMaxPlayer());
+                LOG.info("Max. Spieler der Lobby: " + msg.getLobbyID() + " erfolgreich auf " + msg.getMaxPlayer() + " gesetzt.");
             } else {
-                // TODO: Später implementieren, ob sich Owner geändert hat und anzeigen lassen.
             }
         });
     }
