@@ -62,7 +62,7 @@ public class GameService {
      * Erstellt ChooseCardResponse
      *
      * @param gameID die LobbyID zum Lobbynamen
-     * @param user   der User der seine Phase skippen möchte
+     * @param user   der User der Karten ausgewählt hat
      * @author Devin
      * @since Sprint5
      */

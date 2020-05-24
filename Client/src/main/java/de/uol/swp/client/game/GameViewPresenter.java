@@ -178,6 +178,7 @@ public class GameViewPresenter extends AbstractPresenter {
     private ArrayList<Short> choosenCardsId = new ArrayList<>();
     private ArrayList<ImageView> choosenCards = new ArrayList<>();
     private int numberOfCardsToChoose;
+    private String currentInfoText;
 
     private final EventHandler<MouseEvent> handCardEventHandler = new EventHandler() {
         @Override
@@ -193,6 +194,21 @@ public class GameViewPresenter extends AbstractPresenter {
             ImageView card = (ImageView) event.getSource();
             choosenCardsId.add(Short.parseShort(card.getId()));
             discardChoosenCard(lobbyID, loggedInUser, card.getImage().getUrl(), Short.valueOf(card.getId()), card, (MouseEvent) event);
+        }
+    };
+
+    private final EventHandler<ActionEvent> sendChoosenCardResponse = new EventHandler() {
+        @Override
+        public void handle(Event event) {
+            gameService.chooseCard(loggedInUser, lobbyID, choosenCardsId);
+            handcards.getChildren().forEach((n) -> {
+                n.removeEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
+                n.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+            });
+            gameViewWIP.getChildren().remove(gameViewWIP.getChildren().size());
+            skipPhaseButton.setDisable(false);
+            choosenCardsId.clear();
+            infoActualPhase.setText(currentInfoText);
         }
     };
 
@@ -648,7 +664,7 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Wenn ein anderer Spieler eine Karte von der Hand entsorgt, wird dies den anderen Spielern angezeigt.
      *
-     * @param req       Die Message die vom server gesendet wird, wenn ein anderer Spieler eine Karte entsorgt.
+     * @param req       Die Request, die vom server gesendet wird, wenn der jeweilige Spieler eine Karte entsorgt.
      * @author Devin
      * @since Sprint 7
      */
@@ -657,9 +673,14 @@ public class GameViewPresenter extends AbstractPresenter {
     public void onChooseCardRequest (ChooseCardRequest req) {
         if (req.getGameID().equals(lobbyID) && req.getSourcePlayer().equals(loggedInUser)) {
             numberOfCardsToChoose = req.getCount();
-            showAlert(Alert.AlertType.INFORMATION, "Du darfst bis zu " + numberOfCardsToChoose + " Karten von deiner Hand auf den Ablagestapel legen, ", "Aktionsinformation");
+            currentInfoText = infoActualPhase.getText();
+            Button button = new Button("Auswahl beenden");
             skipPhaseButton.setDisable(true);
+            button.setLayoutX(skipPhaseButton.getLayoutX()); button.setLayoutY(skipPhaseButton.getLayoutY());
+            button.setOnAction(sendChoosenCardResponse);
+            gameViewWIP.getChildren().add(button);
             if (req.getSource()== AbstractPlayground.ZoneType.HAND) {
+                infoActualPhase.setText(numberOfCardsToChoose + " Karten entsorgen");
                 handcards.getChildren().forEach((n) -> {
                     n.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                     n.addEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
@@ -1072,10 +1093,14 @@ public class GameViewPresenter extends AbstractPresenter {
         } else {
             if (!choosenCards.contains(card)) {
                 numberOfCardsToChoose = numberOfCardsToChoose - 1;
+                infoActualPhase.setText(numberOfCardsToChoose + " Karten entsorgen");
+                card.setStyle("-fx-border-width: 1");
+                card.setStyle("-fx-border-color: lightskyblue");
                 choosenCards.add(card);
                 bigCardImageBox.setVisible(false);
             } else {
-                showAlert(Alert.AlertType.INFORMATION, "Du hast die Karte bereits ausgewählt", "Auswählproblem");
+                choosenCards.remove(card);
+                card.setStyle("-fx-border-width: 0");
             }
         }
         if(numberOfCardsToChoose == 0) {
@@ -1086,6 +1111,7 @@ public class GameViewPresenter extends AbstractPresenter {
             gameService.chooseCard(loggedInUser, gameID, choosenCardsId);
             skipPhaseButton.setDisable(false);
             choosenCardsId.clear();
+            infoActualPhase.setText(currentInfoText);
         }
     }
 
