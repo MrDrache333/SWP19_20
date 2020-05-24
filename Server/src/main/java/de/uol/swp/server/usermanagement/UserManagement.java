@@ -5,7 +5,10 @@ import com.google.inject.Inject;
 import de.uol.swp.common.user.User;
 import de.uol.swp.server.usermanagement.store.UserStore;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 /**
@@ -135,6 +138,11 @@ public class UserManagement extends AbstractUserManagement {
      */
     @Override
     public void logout(User user) {
+        loggedInUsers.remove(user.getUsername());
+    }
+
+    @Override
+    public void hardLogout(User user) {
         loggedInUsers.remove(user.getUsername());
     }
 

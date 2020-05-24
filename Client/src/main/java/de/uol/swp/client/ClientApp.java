@@ -149,7 +149,7 @@ public class ClientApp extends Application implements ConnectionListener {
     @Override
     public void stop() {
         if (userService != null && user != null) {
-            userService.logout(user);
+            userService.hardLogout(user);
             user = null;
         }
         eventBus.unregister(this);

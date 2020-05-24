@@ -122,7 +122,7 @@ public class AuthenticationService extends AbstractService {
     }
 
     /**
-     * Serverlogikg vom LogoutRequest
+     * Serverlogik vom LogoutRequest
      *
      * @param msg LogoutRequest
      * @author Marco, Darian
@@ -133,7 +133,7 @@ public class AuthenticationService extends AbstractService {
         if (msg.getSession().isPresent()) {
             Session session = msg.getSession().get();
             User userToLogOut = session.getUser();
-            if (!lobbyManagement.isUserIngame(userToLogOut)) {
+            if (!lobbyManagement.isUserIngame(userToLogOut) || msg.isHardLogout()) {
                 // Could be already logged out
                 if (userToLogOut != null) {
                     if (LOG.isDebugEnabled()) {
