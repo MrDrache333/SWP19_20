@@ -26,7 +26,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * testet paar Aktionskarten...
+ * Testet Aktionskarten, die keine Spielerantwort benötigen
+ *
+ * @author Julia
+ * @since Sprint8
  */
 public class ActionCardTest {
 
