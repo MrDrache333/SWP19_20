@@ -7,6 +7,7 @@ import de.uol.swp.common.game.exception.NotEnoughMoneyException;
 import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.game.messages.GameOverMessage;
 import de.uol.swp.common.game.messages.InfoPlayDisplayMessage;
+import de.uol.swp.common.game.messages.RemoveActionCardMessage;
 import de.uol.swp.server.game.Playground;
 import de.uol.swp.server.game.player.Deck;
 import de.uol.swp.server.game.player.Player;
@@ -62,14 +63,19 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
          */
         ActionCardExecution executeAction = new ActionCardExecution(cardId, playground);
         executeAction.execute();
-        player.getPlayerDeck().getActionPile().add(currentCard);
         player.getPlayerDeck().getHand().remove(currentCard);
         // TODO: Die Aktion der Karte muss noch ausgeführt werden
 
         playground.sendCardsDeckSize();
     }
 
-    public void finishedActionCardExecution(Player player, ArrayList<Short> newHandCards) {
+    public void finishedActionCardExecution(Player player, ArrayList<Short> newHandCards, Card card, boolean removeCardAfter) {
+        if (!removeCardAfter) {
+            player.getPlayerDeck().getActionPile().add(card);
+        } else {
+            playground.getTrash().add(card);
+            playground.getGameService().sendToSpecificPlayer(player, new RemoveActionCardMessage(card.getId(), playground.getID(), player.getTheUserInThePlayer()));
+        }
         if (!newHandCards.isEmpty()) {
             playground.getGameService().sendToSpecificPlayer(player, new DrawHandMessage(newHandCards, playground.getID()));
         }
