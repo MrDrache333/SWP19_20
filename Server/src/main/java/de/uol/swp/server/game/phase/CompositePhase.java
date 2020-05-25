@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -23,6 +24,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
 
     private final Playground playground;
     private static final Logger LOG = LogManager.getLogger(CompositePhase.class);
+    private List<Short> implementedActionCards;
 
     /**
      * Der Konstruktor
@@ -33,6 +35,8 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      */
     public CompositePhase(Playground playground) {
         this.playground = playground;
+        Short[] actioncards = {(short) 22, (short) 8, (short) 9, (short) 21, (short) 14, (short) 23, (short) 11, (short) 27, (short) 10, (short) 16, (short) 19, (short) 15, (short) 13};
+        implementedActionCards = Arrays.asList(actioncards);
     }
 
 
@@ -48,6 +52,9 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         // 2. Überprüfe, ob Spieler diese Karte in der Hand hat
         if (!player.getPlayerDeck().getHand().contains(currentCard)) {
             throw new IllegalArgumentException("Die Hand enthält die gesuchte Karte nicht");
+        }
+        if (!implementedActionCards.contains(currentCard.getId())) {
+            throw new IllegalArgumentException("Diese Aktionskarte ist leider noch nicht implementiert.");
         }
         /*
         3. Führe die auf der Karte befindlichen Aktionen aus
