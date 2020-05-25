@@ -47,7 +47,7 @@ public class Playground extends AbstractPlayground {
     private short lobbySizeOnStart;
     private CardPack cardsPackField;
     private ArrayList<Short> chosenCards;
-    private ArrayList<Card> trash;
+    private ArrayList<Card> trash = new ArrayList<>();
 
     /**
      * Erstellt ein neues Spielfeld und übergibt die Spieler. Die Reihenfolge der Spieler wird zufällig zusammengestellt.

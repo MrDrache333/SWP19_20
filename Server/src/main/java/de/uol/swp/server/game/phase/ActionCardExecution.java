@@ -33,7 +33,7 @@ public class ActionCardExecution {
     private ActionCard theCard;
     private UUID gameID;
     private List<Player> players;
-    private List<User> chooseCardPlayers;
+    private List<User> chooseCardPlayers = new ArrayList<>();
     private ArrayList<Short> newHandCards = new ArrayList<>();
     //Liste aller Unteraktionen einer Aktion
     private List<CardAction> nextActions = new ArrayList<>();
