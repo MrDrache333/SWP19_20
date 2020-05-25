@@ -593,19 +593,17 @@ public class ActionCardExecution {
                 }
                 break;
             case BUY:
+                Map<Short, Integer> newCount = new HashMap<>();
                 while (!action.getCardsToMove().isEmpty()) {
                     short id = action.getCardsToMove().get(0).getId();
                     int count = playground.getCardField().get(id);
                     if (count > 0) {
                         playground.getCardField().replace(id, --count);
-                        Map<Short, Integer> newCount = new HashMap<>();
-                        for (Short theId : theIds) {
-                            newCount.put(theId, count);
-                            UpdateCardCounterMessage message = new UpdateCardCounterMessage(gameID, player.getTheUserInThePlayer(), newCount);
-                            playground.getGameService().sendToAllPlayers(gameID, message);
-                        }
+                        newCount.put(id, count);
                     }
                 }
+                UpdateCardCounterMessage message = new UpdateCardCounterMessage(gameID, player.getTheUserInThePlayer(), newCount);
+                playground.getGameService().sendToAllPlayers(gameID, message);
                 break;
         }
 
