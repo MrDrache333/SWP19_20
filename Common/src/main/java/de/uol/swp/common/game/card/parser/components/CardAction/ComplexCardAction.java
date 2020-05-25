@@ -55,6 +55,7 @@ public abstract class ComplexCardAction extends CardAction {
      * Rückgabewert bei execute())
      */
     private boolean executionOptional = false;
+    private String executionOptionalMessage;
     /**
      * Gibt an, ob die Karte, nachdem sie gespielt wurde, Entsorgt wird.
      */
@@ -384,6 +385,14 @@ public abstract class ComplexCardAction extends CardAction {
      */
     public void setHideCardDuringAction(boolean hideCardDuringAction) {
         this.hideCardDuringAction = hideCardDuringAction;
+    }
+
+    public String getExecutionOptionalMessage() {
+        return executionOptionalMessage;
+    }
+
+    public void setExecutionOptionalMessage(String message) {
+        this.executionOptionalMessage = message;
     }
 }
 

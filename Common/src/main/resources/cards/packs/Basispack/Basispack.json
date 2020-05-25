@@ -538,6 +538,7 @@
             "GetCard": {
               "count": 254,
               "executionOptional": true,
+              "executionOptionalMessage": "Willst du deinen kompletten Nachziehstapel ablegen?",
               "cardSource": "DRAW",
               "nextAction": {
                 "Move": {

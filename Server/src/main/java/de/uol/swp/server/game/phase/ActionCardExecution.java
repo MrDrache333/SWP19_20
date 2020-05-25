@@ -129,7 +129,7 @@ public class ActionCardExecution {
             CardAction action = theCard.getActions().get(actualStateIndex);
             getNextActions(action);
             if (action instanceof ComplexCardAction && ((ComplexCardAction) action).isExecutionOptional() && !executeOptionalAction) {
-                playground.getGameService().sendToSpecificPlayer(player, new OptionalActionRequest(gameID, player.getTheUserInThePlayer(), action));
+                playground.getGameService().sendToSpecificPlayer(player, new OptionalActionRequest(gameID, player.getTheUserInThePlayer(), ((ComplexCardAction) action).getExecutionOptionalMessage()));
                 waitedForPlayerInput = true;
             } else {
                 if (!(action instanceof ChooseNextAction) && !(action instanceof ChooseCard)) {
