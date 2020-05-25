@@ -5,7 +5,6 @@ import de.uol.swp.common.message.Message;
 
 public class AbstractService {
 
-
     private final EventBus bus;
 
     public AbstractService(EventBus bus) {
@@ -15,6 +14,10 @@ public class AbstractService {
 
     protected void post(Message message) {
         bus.post(message);
+    }
+
+    public EventBus getBus() {
+        return bus;
     }
 
 }
