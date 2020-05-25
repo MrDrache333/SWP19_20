@@ -1,7 +1,6 @@
 package de.uol.swp.common.game.card.parser.components.CardAction.request;
 
 import de.uol.swp.common.game.AbstractGameMessage;
-import de.uol.swp.common.game.card.parser.components.CardAction.CardAction;
 import de.uol.swp.common.user.User;
 
 import java.util.UUID;
@@ -15,14 +14,14 @@ import java.util.UUID;
 public class OptionalActionRequest extends AbstractGameMessage {
 
     private static final long serialVersionUID = -2721566171106710582L;
-    private CardAction action;
+    private String message;
 
-    public OptionalActionRequest(UUID gameID, User player, CardAction action) {
+    public OptionalActionRequest(UUID gameID, User player, String message) {
         super(gameID, player);
-        this.action = action;
+        this.message = message;
     }
 
-    public CardAction getAction() {
-        return action;
+    public String getMessage() {
+        return message;
     }
 }
