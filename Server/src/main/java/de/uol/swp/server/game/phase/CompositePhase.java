@@ -62,6 +62,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         3.1 Die Karte wird auf den ActionPile gelegt und aus der Hand entfernt.
          */
         ActionCardExecution executeAction = new ActionCardExecution(cardId, playground);
+        playground.getGameService().getBus().register(executeAction);
         executeAction.execute();
         player.getPlayerDeck().getHand().remove(currentCard);
         // TODO: Die Aktion der Karte muss noch ausgeführt werden
