@@ -10,7 +10,10 @@ import de.uol.swp.common.game.card.parser.components.CardAction.request.Optional
 import de.uol.swp.common.game.card.parser.components.CardAction.response.ChooseCardResponse;
 import de.uol.swp.common.game.card.parser.components.CardAction.response.OptionalActionResponse;
 import de.uol.swp.common.game.card.parser.components.CardAction.types.*;
-import de.uol.swp.common.game.messages.*;
+import de.uol.swp.common.game.messages.ChooseNextActionMessage;
+import de.uol.swp.common.game.messages.InfoPlayDisplayMessage;
+import de.uol.swp.common.game.messages.ShowCardMessage;
+import de.uol.swp.common.game.messages.UpdateCardCounterMessage;
 import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.user.User;
 import de.uol.swp.server.game.Playground;
@@ -35,6 +38,8 @@ public class ActionCardExecution {
     //Liste aller Unteraktionen einer Aktion
     private List<CardAction> nextActions = new ArrayList<>();
     private Card inputCard;
+    //Ob die Aktionskarte anschließend entsorgt werden soll
+    private boolean removeCardAfter;
 
     //Ob auf eine Auswahl oder Reaktion des Spielers gewartet werden muss
     private boolean waitedForPlayerInput;
@@ -64,6 +69,7 @@ public class ActionCardExecution {
         this.finishedNextActions = true;
         this.executeOptionalAction = false;
         this.startedNextActions = false;
+        this.removeCardAfter = false;
     }
 
     /**
@@ -148,9 +154,7 @@ public class ActionCardExecution {
             }
             //Entsorge ggf. die gespielte Karte
             if (action instanceof ComplexCardAction && ((ComplexCardAction) action).isRemoveCardAfter()) {
-                player.getPlayerDeck().getActionPile().remove(theCard);
-                playground.getTrash().add(theCard);
-                playground.getGameService().sendToSpecificPlayer(player, new RemoveActionCardMessage(theCard.getId(), gameID, player.getTheUserInThePlayer()));
+                removeCardAfter = true;
             }
             executeOptionalAction = false;
         }
@@ -700,7 +704,7 @@ public class ActionCardExecution {
      */
     private boolean checkIfComplete() {
         if (actualStateIndex == theCard.getActions().size() && !waitedForPlayerInput && finishedNextActions) {
-            playground.getCompositePhase().finishedActionCardExecution(player, newHandCards);
+            playground.getCompositePhase().finishedActionCardExecution(player, newHandCards, theCard, removeCardAfter);
             return true;
         }
         return false;
