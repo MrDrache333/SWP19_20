@@ -526,7 +526,14 @@ public class ActionCardExecution {
             } else {
                 tmp.forEach(card -> theSelectableCards.add(card.getId()));
             }
-            ChooseCardRequest request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount(), playerChooseCard.getTheUserInThePlayer(), action.getCardSource(), "Bitte die Anzahl der Karten auswählen von dem Bereich der dir angezeigt wird!", action.isDirectHand());
+            ChooseCardRequest request;
+            if (action.getCount().getMin() == action.getCount().getMax()) {
+                request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount().getMin(), playerChooseCard.getTheUserInThePlayer(), action.getCardSource(), "Bitte die Anzahl der Karten auswählen von dem Bereich der dir angezeigt wird!", action.isDirectHand());
+            } else if (action.getCount().getMin() == 0) {
+                request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount().getMax(), playerChooseCard.getTheUserInThePlayer(), action.getCardSource(), "Bitte die Anzahl der Karten auswählen von dem Bereich der dir angezeigt wird!", action.isDirectHand());
+            } else {
+                request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount(), playerChooseCard.getTheUserInThePlayer(), action.getCardSource(), "Bitte die Anzahl der Karten auswählen von dem Bereich der dir angezeigt wird!", action.isDirectHand());
+            }
             playground.getGameService().sendToSpecificPlayer(player, request);
         }
         return true;
