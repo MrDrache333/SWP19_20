@@ -112,7 +112,6 @@
                 "max": 255
               },
               "cardSource": "HAND",
-              "executionOptional": true,
               "nextAction": {
                 "ForEach": {
                   "actions": [
