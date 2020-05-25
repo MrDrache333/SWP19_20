@@ -4,12 +4,15 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.ClientApp;
+import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.common.chat.ChatService;
 import de.uol.swp.common.game.card.parser.JsonCardParser;
 import de.uol.swp.common.game.card.parser.components.CardPack;
 import de.uol.swp.common.lobby.message.*;
+import de.uol.swp.common.lobby.request.SetMaxPlayerRequest;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.lobby.response.SetChosenCardsResponse;
 import de.uol.swp.common.user.User;
@@ -54,8 +57,6 @@ public class LobbyPresenter extends AbstractPresenter {
 
     public static final String fxml = "/fxml/LobbyViewWIP.fxml";
     private static final Logger LOG = LogManager.getLogger(ChatViewPresenter.class);
-    @FXML
-    ChoiceBox<Integer> chooseMaxPlayer;
     private ChatViewPresenter chatViewPresenter;
     private Map<String, HBox> readyUserList = new TreeMap<>();
     private UUID lobbyID;
@@ -68,6 +69,8 @@ public class LobbyPresenter extends AbstractPresenter {
     private boolean ownReadyStatus = false;
 
     @FXML
+    private ChoiceBox<Integer> chooseMaxPlayer;
+    @FXML
     private Pane lobbyViewWIP;
     @FXML
     private ListView<HBox> usersView;
@@ -79,6 +82,10 @@ public class LobbyPresenter extends AbstractPresenter {
     private Button gamesettingsButton;
     @FXML
     private HBox lobbyHBox;
+    @FXML
+    private Label settingOwner;
+    @FXML
+    private Label maxSettingOwner;
 
     private ImageView bigCard;
 
@@ -142,10 +149,9 @@ public class LobbyPresenter extends AbstractPresenter {
      * Initialisieren des Chats - FXML laden, Controller setzen (muss immer eine eigene Instanz sein)
      * und chatView ind die chatView-Pane dieses Controllers laden.
      * Der eingeloggte User wird zur Userliste hinzugefügt und diese wird aktualisiert.
-     * chooserMaxPlayer wird auf den Default Wert (4) gesetzt.
      *
      * @throws IOException die IO-Exception
-     * @author Ferit, Keno O, Darian, Timo
+     * @author Keno O, Darian, Timo, Ferit
      * @since Sprint2
      */
     @FXML
@@ -162,13 +168,18 @@ public class LobbyPresenter extends AbstractPresenter {
         readyUserList.put(loggedInUser.getUsername(), getHboxFromReadyUser(loggedInUser, false));
         updateUsersList();
 
-        chooseMaxPlayer.setValue(4);
-
-        if (gameOwner.getUsername().equals(loggedInUser.getUsername())) {
+        if (gameOwner.equals(loggedInUser)) {
             gamesettingsButton.setVisible(true);
+            chooseMaxPlayer.setDisable(false);
+            chooseMaxPlayer.setValue(4);
         } else {
             gamesettingsButton.setVisible(false);
+            chooseMaxPlayer.setDisable(true);
+            chooseMaxPlayer.setVisible(false);
+            settingOwner.setVisible(false);
+            maxSettingOwner.setVisible(false);
         }
+
     }
 /*
     /**
@@ -205,6 +216,7 @@ public class LobbyPresenter extends AbstractPresenter {
         lobbyService.setLobbyUserStatus(lobbyID, loggedInUserDTO, ownReadyStatus);
     }
 
+
     /**
      * Wird aufgerufen wenn der Wert in der max. Spieler-Box geändert wird.
      *
@@ -214,7 +226,9 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     @FXML
     public void onMaxPlayerSelected(ActionEvent actionEvent) {
-        lobbyService.setMaxPlayer(this.getLobbyID(), this.loggedInUser, chooseMaxPlayer.getValue());
+        if (gameOwner.equals(loggedInUser)) {
+            lobbyService.setMaxPlayer(this.getLobbyID(), this.loggedInUser, chooseMaxPlayer.getValue());
+        }
     }
 
     /**
@@ -468,13 +482,11 @@ public class LobbyPresenter extends AbstractPresenter {
     @Subscribe
     public void onSetMaxPlayerMessage(SetMaxPlayerMessage msg) {
         Platform.runLater(() -> {
-            if (!chooseMaxPlayer.getValue().equals(msg.getMaxPlayer())) {
-                chooseMaxPlayer.setValue(msg.getMaxPlayer());
-            }
-            if (!msg.getOwner().equals(loggedInUser)) {
-                chooseMaxPlayer.setDisable(true);
-            } else {
+            if (msg.getOwner().equals(loggedInUser) && lobbyID == msg.getLobbyID() && msg.isSetMaxPlayerSet()) {
                 chooseMaxPlayer.setDisable(false);
+                chooseMaxPlayer.setValue(msg.getMaxPlayer());
+                LOG.info("Max. Spieler der Lobby: " + msg.getLobbyID() + " erfolgreich auf " + msg.getMaxPlayer() + " gesetzt.");
+            } else {
             }
         });
     }
