@@ -26,11 +26,14 @@ import io.netty.channel.Channel;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ClientApp extends Application implements ConnectionListener {
 
@@ -115,7 +118,19 @@ public class ClientApp extends Application implements ConnectionListener {
         new SoundMediaPlayer(SoundMediaPlayer.Sound.Intro, SoundMediaPlayer.Type.Music).play();
 
         //  close request calls method to close all windows
-        primaryStage.setOnCloseRequest(event -> closeAllWindows());
+        primaryStage.setOnCloseRequest(event -> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setResizable(false);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.getDialogPane().setHeaderText("Möchtest du das Spiel wirklich beenden?");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                userService.hardLogout(user);
+                closeAllWindows();
+            } else {
+                event.consume();
+            }
+        });
 
         ClientConnectionFactory connectionFactory = injector.getInstance(ClientConnectionFactory.class);
         clientConnection = connectionFactory.create(host, port);
