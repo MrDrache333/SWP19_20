@@ -43,6 +43,16 @@ public class CreateLobbyPresenter extends AbstractPresenter {
     @FXML
     private PasswordField passwordField;
 
+    /**
+     * Erstellt einen Lobby Presenter
+     *
+     * @param loggedInUser der eingeloggte User
+     * @param lobbyService der LobbyService
+     * @param userService  der UserService
+     * @param eventBus     der Eventbus
+     * @author Paula
+     * @since Sprint 7
+     */
     public CreateLobbyPresenter(User loggedInUser, LobbyService lobbyService, UserService userService, EventBus eventBus) {
         this.loggedInUser = loggedInUser;
         this.lobbyService = lobbyService;
@@ -58,7 +68,6 @@ public class CreateLobbyPresenter extends AbstractPresenter {
      * @author Paula
      * @since Sprint7
      */
-
     @FXML
     public void onCreateLobbyButtonPressed(ActionEvent actionEvent) {
         String lobbyName = lobbynameField.getText();

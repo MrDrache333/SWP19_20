@@ -59,7 +59,7 @@ public class RegistrationPresenter extends AbstractPresenter {
     }
 
     /**
-     * initialisieren der Buttonsounds.
+     * Initialisieren der Buttonsounds.
      *
      * @author Keno O
      */

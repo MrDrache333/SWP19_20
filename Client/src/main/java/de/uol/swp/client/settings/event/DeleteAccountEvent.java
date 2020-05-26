@@ -6,10 +6,24 @@ public class DeleteAccountEvent {
 
     private User user;
 
+    /**
+     * Konstruktor des DeleteAccountEvent
+     *
+     * @param user
+     * @author Anna
+     * @since Sprint 4
+     */
     public DeleteAccountEvent(User user) {
         this.user = user;
     }
 
+    /**
+     * Gibt den User zurück
+     *
+     * @return user der User
+     * @author Anna
+     * @since Sprint 4
+     */
     public User getUser() {
         return user;
     }
