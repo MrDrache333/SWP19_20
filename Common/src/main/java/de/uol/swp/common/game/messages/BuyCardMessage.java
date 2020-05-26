@@ -7,19 +7,6 @@ import java.util.UUID;
 
 public class BuyCardMessage extends AbstractServerMessage {
 
-    /**
-     * Die Antwort auf die BuyCardRequest
-     *
-     * @param lobbyID       die LobbyID
-     * @param currentUser   der User der die Request gestellt hat
-     * @param cardID        die ID der Karte (String)
-     * @param cardImage     die ImageView der Karte
-     * @param counterCard   Anzahl der Karten (die die selbe ID haben) die man noch kaufen kann
-     * @param costCard      die Kosten der zu kaufenden Karte
-     * @author Rike
-     * @since Sprint 5
-     */
-
     private UUID lobbyID;
     private User currentUser;
     private Short cardID;
@@ -29,6 +16,17 @@ public class BuyCardMessage extends AbstractServerMessage {
     public BuyCardMessage() {
     }
 
+    /**
+     * Die Antwort auf die BuyCardRequest
+     *
+     * @param lobbyID     die LobbyID
+     * @param currentUser der User der die Request gestellt hat
+     * @param cardID      die ID der Karte (String)
+     * @param counterCard Anzahl der Karten (die die selbe ID haben) die man noch kaufen kann
+     * @param costCard    die Kosten der zu kaufenden Karte
+     * @author Rike
+     * @since Sprint 5
+     */
     public BuyCardMessage(UUID lobbyID, User currentUser, Short cardID, int counterCard, Short costCard) {
         this.lobbyID = lobbyID;
         this.currentUser = currentUser;
