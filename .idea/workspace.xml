@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2c71850d-4657-4628-a2f1-2a8b023b6343" name="Default Changelist" comment="CHANGED:&#10;* Hatte einen Fehler im CompositePhase behoben, der zum Fehlschlag des playCardTestes geführt hat.&#10;* In der execute Action Phase sollte die ausgespielte Karte von der Hand entfernt werden, ich hatte aber die Karte statdessen wieder vom ActionPile entfernt.">
-      <change beforePath="$PROJECT_DIR$/common.uml" beforeDir="false" afterPath="$PROJECT_DIR$/common.uml" afterDir="false" />
+    <list default="true" id="ec5a1b8b-bacc-45c9-966c-69b0ed7a1dff" name="Default Changelist" comment="CHANGED:&#10;* Wenn beliebig viele Karten ausgewählt werden dürfen, dann erkennt man das daran, dass numberOdCardsToChoose auf 255 gesetzt wird. Der Nutzer kann dann so viele Karten auswählen bis er den Auswahl beenden Button drückt.&#10;*Platform.Blöcke um die infoActualPhase.setText Stellen gesetzt.&#10;*Die ausgewählten Karten werden entfernt, nachdem man mit dem Auswählen fertig ist.&#10;*Kleine Code Nachbesserungen">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,26 +15,17 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Interface" />
-        <option value="JUnit5 Test Class" />
         <option value="Class" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="PREVIOUS_COMMIT_AUTHORS">
-      <list>
-        <option value="Devin Schlüter" />
-      </list>
-    </option>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="feature/SWP2019B-251-als-nutzer-mochte-ich-meine-karte-ausspielen-konnen-damit-sie-ihre-aktion" />
+        <entry key="$PROJECT_DIR$" value="bugfix/SWP2019B-338-im-compositephase-werden-die-karten-auf-der-hand-mit-contains-uberpruft-was-zu" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="ROOT_SYNC" value="DONT_SYNC" />
-    <option name="SIGN_OFF_COMMIT" value="true" />
   </component>
   <component name="JsFlowSettings">
     <service-enabled>true</service-enabled>
@@ -45,7 +36,7 @@
   <component name="ProjectCodeStyleSettingsMigration">
     <option name="version" value="1" />
   </component>
-  <component name="ProjectId" id="1ShMjzqHgrCCBaTm4Go0Xrpcghn" />
+  <component name="ProjectId" id="1bJ49TpbNSTrsC7SoSFsT9kbyqT" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="1" id="Add" />
   </component>
@@ -58,41 +49,37 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary" value="JUnit5" />
-    <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5" value="" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/Common/src/main/java/de/uol/swp/common/game" />
-    <property name="nodejs_package_manager_path" value="npm" />
-    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/Client/src/main/resources/cards/images" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="project.structure.last.edited" value="Global Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.18850575" />
-    <property name="settings.editor.selected.configurable" value="Errors" />
+    <property name="settings.editor.selected.configurable" value="Settings.JavaScript" />
   </component>
   <component name="RecentsManager">
-    <key name="CreateTestDialog.RecentsKey">
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="de.uol.swp.client.game" />
     </key>
-    <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="de.uol.swp.common.game.phase" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\ryuta\IdeaProjects\swp19b\Common\src\main\java\de\uol\swp\common\game" />
-      <recent name="C:\Users\ryuta\IdeaProjects\swp19b\Common\src\main\java\de\uol\swp\common\json" />
-    </key>
-    <key name="CreateTestDialog.Recents.Supers">
-      <recent name="" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\ryuta\IdeaProjects\swp19b\resources" />
-      <recent name="C:\Users\ryuta\IdeaProjects\swp19b\Server\src\main\java\de\uol\swp\server" />
-      <recent name="C:\Users\ryuta\IdeaProjects\swp19b\Server\src" />
+      <recent name="C:\Users\ryuta\IdeaProjects\swp19b\Client\src\main\resources\cards\images" />
     </key>
   </component>
   <component name="RunManager" selected="Application.ClientApp">
     <configuration name="ClientApp" type="Application" factoryName="Application" singleton="false" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="de.uol.swp.client.ClientApp" />
       <module name="client" />
-      <option name="PROGRAM_PARAMETERS" value="1 " />
-      <option name="VM_PARAMETERS" value="--module-path C:\Users\ryuta\Downloads\javafx-sdk-11.0.2\lib --add-modules=javafx.controls,javafx.fxml,javafx.web" />
+      <option name="VM_PARAMETERS" value="--module-path C:\bin\javafx-sdk-11.0.2/lib --add-modules=javafx.controls,javafx.fxml" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="de.uol.swp.client.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -130,7 +117,7 @@
       <module name="client" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="de.uol.swp.client.game.*" />
+          <option name="PATTERN" value="de.uol.swp.client.game.container.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -170,15 +157,15 @@
       <item itemvalue="Application.ClientApp" />
       <item itemvalue="Application.ServerApp" />
       <item itemvalue="JUnit.PlaygroundTest.testNewTurn" />
-      <item itemvalue="JUnit.GameViewPresenterTest" />
       <item itemvalue="JUnit.GameViewPresenterTest.PlayCardTest" />
+      <item itemvalue="JUnit.GameViewPresenterTest" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.GameViewPresenterTest" />
-        <item itemvalue="JUnit.GameViewPresenterTest.PlayCardTest" />
         <item itemvalue="Application.ClientApp" />
         <item itemvalue="Application.ServerApp" />
+        <item itemvalue="JUnit.GameViewPresenterTest" />
+        <item itemvalue="JUnit.GameViewPresenterTest.PlayCardTest" />
         <item itemvalue="JUnit.PlaygroundTest.testNewTurn" />
       </list>
     </recent_temporary>
@@ -188,751 +175,481 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="2c71850d-4657-4628-a2f1-2a8b023b6343" name="Default Changelist" comment="" />
-      <created>1572011513439</created>
+      <changelist id="ec5a1b8b-bacc-45c9-966c-69b0ed7a1dff" name="Default Changelist" comment="" />
+      <created>1588336718779</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1572011513439</updated>
-      <workItem from="1572011519558" duration="1387000" />
-      <workItem from="1572016287261" duration="1629000" />
-      <workItem from="1572190515203" duration="3281000" />
-      <workItem from="1572362719741" duration="4606000" />
-      <workItem from="1572369141477" duration="595000" />
-      <workItem from="1572435984712" duration="1126000" />
-      <workItem from="1572437196951" duration="560000" />
-      <workItem from="1572437810638" duration="2271000" />
-      <workItem from="1572528838870" duration="1306000" />
-      <workItem from="1572862415297" duration="2135000" />
-      <workItem from="1572886938077" duration="2637000" />
-      <workItem from="1573030610438" duration="51000" />
-      <workItem from="1573044713835" duration="7059000" />
-      <workItem from="1573118382528" duration="8861000" />
-      <workItem from="1573218796131" duration="2649000" />
-      <workItem from="1573225830685" duration="963000" />
-      <workItem from="1573306792425" duration="2326000" />
-      <workItem from="1573549973996" duration="105000" />
-      <workItem from="1573550253380" duration="663000" />
-      <workItem from="1573554558260" duration="724000" />
-      <workItem from="1573558936553" duration="428000" />
-      <workItem from="1573916222093" duration="1773000" />
-      <workItem from="1573920041155" duration="5765000" />
-      <workItem from="1573986267041" duration="8655000" />
-      <workItem from="1575968162649" duration="678000" />
-      <workItem from="1575976626051" duration="3899000" />
-      <workItem from="1576150845171" duration="4665000" />
-      <workItem from="1576243012645" duration="6048000" />
-      <workItem from="1576500456548" duration="4847000" />
-      <workItem from="1576514103442" duration="4306000" />
-      <workItem from="1576589306282" duration="773000" />
-      <workItem from="1576591441617" duration="526000" />
-      <workItem from="1576673801810" duration="2498000" />
-      <workItem from="1576832982236" duration="4298000" />
-      <workItem from="1576925558359" duration="4086000" />
-      <workItem from="1576941892889" duration="3154000" />
-      <workItem from="1577472747717" duration="1603000" />
-      <workItem from="1577480157438" duration="1737000" />
-      <workItem from="1577653149745" duration="1665000" />
-      <workItem from="1578314813829" duration="929000" />
-      <workItem from="1578315771431" duration="47000" />
-      <workItem from="1578510932913" duration="1549000" />
-      <workItem from="1578561762231" duration="4170000" />
-      <workItem from="1578568308051" duration="2957000" />
-      <workItem from="1578657259154" duration="1595000" />
-      <workItem from="1578659149697" duration="1111000" />
-      <workItem from="1578669632624" duration="627000" />
-      <workItem from="1578900001904" duration="734000" />
-      <workItem from="1578951541537" duration="633000" />
-      <workItem from="1578994838178" duration="2104000" />
-      <workItem from="1579092150955" duration="6572000" />
-      <workItem from="1579857654729" duration="1438000" />
-      <workItem from="1580306069975" duration="1300000" />
-      <workItem from="1580396361693" duration="1679000" />
-      <workItem from="1580410692485" duration="532000" />
-      <workItem from="1581961686077" duration="1572000" />
-      <workItem from="1581963401507" duration="1018000" />
-      <workItem from="1582113389549" duration="4752000" />
-      <workItem from="1582134764654" duration="1019000" />
-      <workItem from="1582193223513" duration="901000" />
-      <workItem from="1582200079171" duration="146000" />
-      <workItem from="1582715802609" duration="7754000" />
-      <workItem from="1582738906142" duration="914000" />
-      <workItem from="1582811903961" duration="63000" />
-      <workItem from="1582812352564" duration="1258000" />
-      <workItem from="1582815094334" duration="7294000" />
-      <workItem from="1582830133545" duration="345000" />
-      <workItem from="1583064869602" duration="294000" />
-      <workItem from="1583088092451" duration="2013000" />
-      <workItem from="1583091187339" duration="598000" />
-      <workItem from="1583092375727" duration="175000" />
-      <workItem from="1583092788941" duration="678000" />
-      <workItem from="1583230976357" duration="18430000" />
-      <workItem from="1583326819136" duration="5360000" />
-      <workItem from="1583499411998" duration="13272000" />
-      <workItem from="1583518252696" duration="1673000" />
-      <workItem from="1583523607118" duration="5328000" />
-      <workItem from="1583529616990" duration="1689000" />
-      <workItem from="1583664631887" duration="174000" />
-      <workItem from="1583666273111" duration="355000" />
-      <workItem from="1583866270884" duration="1224000" />
-      <workItem from="1583940909157" duration="1657000" />
-      <workItem from="1583942604027" duration="9157000" />
-      <workItem from="1584103423114" duration="1489000" />
-      <workItem from="1584117488243" duration="1488000" />
-      <workItem from="1584352207544" duration="852000" />
-      <workItem from="1584358825513" duration="1818000" />
-      <workItem from="1584360693861" duration="428000" />
-      <workItem from="1584364833082" duration="6907000" />
-      <workItem from="1584390858508" duration="4128000" />
-      <workItem from="1584457391968" duration="429000" />
-      <workItem from="1584457894987" duration="2307000" />
-      <workItem from="1584461142926" duration="4362000" />
-      <workItem from="1584466426452" duration="599000" />
-      <workItem from="1584467254877" duration="2537000" />
-      <workItem from="1584470630571" duration="934000" />
-      <workItem from="1584471639784" duration="1357000" />
-      <workItem from="1584473643482" duration="1718000" />
-      <workItem from="1584475430823" duration="336000" />
-      <workItem from="1584550256517" duration="634000" />
-      <workItem from="1584627364929" duration="2523000" />
-      <workItem from="1584630053684" duration="8099000" />
-      <workItem from="1584643152733" duration="1854000" />
-      <workItem from="1584649287383" duration="10270000" />
-      <workItem from="1584704960591" duration="3127000" />
-      <workItem from="1584791605802" duration="7836000" />
-      <workItem from="1584814908928" duration="3453000" />
-      <workItem from="1584883727393" duration="2554000" />
-      <workItem from="1585051341763" duration="1155000" />
-      <workItem from="1585052862948" duration="5486000" />
-      <workItem from="1585082241123" duration="70000" />
-      <workItem from="1585082649639" duration="503000" />
-      <workItem from="1585232305110" duration="19963000" />
-      <workItem from="1585260084612" duration="252000" />
-      <workItem from="1585260365305" duration="841000" />
-      <workItem from="1585298758065" duration="12550000" />
-      <workItem from="1585323342088" duration="185000" />
-      <workItem from="1585323672743" duration="380000" />
-      <workItem from="1585392560324" duration="3504000" />
-      <workItem from="1585404071889" duration="3997000" />
-      <workItem from="1585410583724" duration="3250000" />
-      <workItem from="1585415682522" duration="7082000" />
-      <workItem from="1585476678586" duration="2782000" />
-      <workItem from="1585753326470" duration="24376000" />
-      <workItem from="1586200775309" duration="8601000" />
-      <workItem from="1586336271966" duration="620000" />
-      <workItem from="1586355112178" duration="1211000" />
-      <workItem from="1586356363090" duration="5894000" />
-      <workItem from="1586436329872" duration="507000" />
-      <workItem from="1586436925724" duration="1123000" />
-      <workItem from="1586438111693" duration="935000" />
-      <workItem from="1586441135683" duration="483000" />
-      <workItem from="1586442070651" duration="378000" />
-      <workItem from="1586443201835" duration="265000" />
-      <workItem from="1586443513436" duration="250000" />
-      <workItem from="1586443809058" duration="3107000" />
-      <workItem from="1586446975269" duration="565000" />
-      <workItem from="1586447594390" duration="315000" />
-      <workItem from="1586447952288" duration="151000" />
-      <workItem from="1586448152953" duration="103000" />
-      <workItem from="1586448298321" duration="142000" />
-      <workItem from="1586454801759" duration="3738000" />
-      <workItem from="1586513924588" duration="5269000" />
-      <workItem from="1586598832622" duration="2896000" />
-      <workItem from="1586625354349" duration="2646000" />
-      <workItem from="1586633632101" duration="3911000" />
-      <workItem from="1586966591403" duration="3352000" />
-      <workItem from="1586973661211" duration="142000" />
-      <workItem from="1587215664817" duration="2687000" />
-      <workItem from="1587285725280" duration="8709000" />
-      <workItem from="1587301612240" duration="1097000" />
-      <workItem from="1587305252597" duration="1033000" />
-      <workItem from="1587316812971" duration="1025000" />
-      <workItem from="1587380030677" duration="3476000" />
-      <workItem from="1587387980805" duration="3245000" />
-      <workItem from="1587392968936" duration="5041000" />
-      <workItem from="1587480258095" duration="11089000" />
-      <workItem from="1587546478405" duration="7134000" />
-      <workItem from="1587557186458" duration="180000" />
-      <workItem from="1587638388415" duration="2221000" />
-      <workItem from="1587659832471" duration="4481000" />
-      <workItem from="1587669650061" duration="8356000" />
-      <workItem from="1587679426174" duration="3047000" />
-      <workItem from="1587735364654" duration="2292000" />
-      <workItem from="1587911171248" duration="358000" />
-      <workItem from="1587973966934" duration="1798000" />
-      <workItem from="1588064574647" duration="6245000" />
-      <workItem from="1588071795564" duration="663000" />
-      <workItem from="1588085074071" duration="11953000" />
-      <workItem from="1588154827740" duration="979000" />
-      <workItem from="1588155889700" duration="694000" />
-      <workItem from="1588173827530" duration="4370000" />
-      <workItem from="1588179531922" duration="1163000" />
-      <workItem from="1588181260426" duration="430000" />
+      <updated>1588336718779</updated>
+      <workItem from="1588336767645" duration="256000" />
+      <workItem from="1588337273838" duration="2496000" />
+      <workItem from="1588339796395" duration="366000" />
+      <workItem from="1588340199513" duration="334000" />
+      <workItem from="1588340558261" duration="256000" />
+      <workItem from="1588340843474" duration="1255000" />
+      <workItem from="1588342545086" duration="212000" />
+      <workItem from="1588342897899" duration="425000" />
+      <workItem from="1588343353671" duration="1215000" />
+      <workItem from="1588344821576" duration="93000" />
+      <workItem from="1588344942203" duration="6490000" />
+      <workItem from="1588357108782" duration="1697000" />
+      <workItem from="1588359728031" duration="395000" />
+      <workItem from="1588360149090" duration="175000" />
+      <workItem from="1588360349594" duration="3484000" />
+      <workItem from="1588420166091" duration="2549000" />
+      <workItem from="1588743645563" duration="13491000" />
+      <workItem from="1588774837077" duration="961000" />
+      <workItem from="1588857952202" duration="1424000" />
+      <workItem from="1588859443779" duration="95000" />
+      <workItem from="1588859570830" duration="2561000" />
+      <workItem from="1588862185598" duration="7946000" />
+      <workItem from="1588870296656" duration="26000" />
+      <workItem from="1588891851155" duration="2991000" />
+      <workItem from="1588961474766" duration="12172000" />
+      <workItem from="1589141640870" duration="1438000" />
+      <workItem from="1589144884458" duration="1088000" />
+      <workItem from="1589190496690" duration="2614000" />
+      <workItem from="1589276869333" duration="11938000" />
+      <workItem from="1589293788681" duration="10148000" />
+      <workItem from="1589308175319" duration="6867000" />
+      <workItem from="1589373713986" duration="15124000" />
+      <workItem from="1589399981209" duration="2400000" />
+      <workItem from="1589403088142" duration="467000" />
+      <workItem from="1589403935970" duration="692000" />
+      <workItem from="1589405774614" duration="540000" />
+      <workItem from="1589446885510" duration="26088000" />
+      <workItem from="1589524392383" duration="21725000" />
+      <workItem from="1589559840844" duration="16220000" />
+      <workItem from="1589628816119" duration="355000" />
+      <workItem from="1589629203408" duration="13074000" />
+      <workItem from="1589736602439" duration="4026000" />
+      <workItem from="1589755010148" duration="4179000" />
+      <workItem from="1589785779693" duration="18576000" />
+      <workItem from="1589822026423" duration="4090000" />
+      <workItem from="1589827286617" duration="657000" />
+      <workItem from="1589877847080" duration="5584000" />
+      <workItem from="1589895081703" duration="99000" />
+      <workItem from="1589895644583" duration="1863000" />
+      <workItem from="1589914959427" duration="3826000" />
+      <workItem from="1589918870374" duration="2122000" />
+      <workItem from="1589921997761" duration="167000" />
+      <workItem from="1589979827332" duration="9016000" />
+      <workItem from="1590245747118" duration="15989000" />
+      <workItem from="1590308938479" duration="13885000" />
+      <workItem from="1590331053605" duration="579000" />
+      <workItem from="1590345982518" duration="6588000" />
+      <workItem from="1590510979327" duration="2352000" />
+      <workItem from="1590517870138" duration="4446000" />
+      <workItem from="1590525485463" duration="451000" />
+      <workItem from="1590525968215" duration="66000" />
     </task>
-    <task id="LOCAL-00044" summary="DELETE:&#10;*Jason Dateien in Client Ressources gelöscht Jason Visuals and Jason Cards.">
-      <created>1584360041980</created>
-      <option name="number" value="00044" />
-      <option name="presentableId" value="LOCAL-00044" />
+    <task id="LOCAL-00001" summary="CHANGED&#10;* Bin auf Vorschläge von Gruppenmitglieder angegangen. In PlayCardMessage/Request muss das Attribut count nicht mehr mitgenommen werden.&#10;* Der Idea Ordner musste gelöscht werden.&#10;* Eine unnötige Zeile im GameView musste entfernt werden.&#10;* SelectCardRequest wurde gelöscht, weil sie keinen Nutzen mehr hat.">
+      <created>1588358479236</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
       <option name="project" value="LOCAL" />
-      <updated>1584360041980</updated>
+      <updated>1588358479236</updated>
     </task>
-    <task id="LOCAL-00045" summary="ADDED:&#10;*Überprüfung nach der LobbyID und die Methode in Platform.RunLater umschlossen (Vorschlag von Julia).">
-      <created>1584397138350</created>
-      <option name="number" value="00045" />
-      <option name="presentableId" value="LOCAL-00045" />
+    <task id="LOCAL-00002" summary="CHANGED&#10;* JavaDoc hinzugefügt und das ausspielen der Handkarten nur für Actionskarten möglich gemacht.">
+      <created>1588361561002</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
       <option name="project" value="LOCAL" />
-      <updated>1584397138351</updated>
+      <updated>1588361561002</updated>
     </task>
-    <task id="LOCAL-00046" summary="RENAMED:&#10;*Die Karte 11.png wurde zu 4.png unbenannt, weil sie vorher falsch benannt wurde.&#10;FIXED:&#10;*Die if Bedingung der showNewHand Methode wurde verbessert. Statt == wird .equals benutst.&#10;CHANGED:&#10;*Layout X und Y Werte der Karten und eine Variable für das hinzufügen zum Animation Management.">
-      <created>1584471911633</created>
-      <option name="number" value="00046" />
-      <option name="presentableId" value="LOCAL-00046" />
+    <task id="LOCAL-00003" summary="CHANGED&#10;* JavaDoc geändert.">
+      <created>1588362353085</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
       <option name="project" value="LOCAL" />
-      <updated>1584471911633</updated>
+      <updated>1588362353085</updated>
     </task>
-    <task id="LOCAL-00047" summary="CHANGED:&#10;*Wert der Hand_XY Attribute im Game Management. Die Karten werden jetzt ornungsgemäß angezeigt. Ein Spieler bekommt die DrawHandMessage doppelt.">
-      <created>1584474423513</created>
-      <option name="number" value="00047" />
-      <option name="presentableId" value="LOCAL-00047" />
+    <task id="LOCAL-00004" summary="CHANGED&#10;* JavaDoc geändert.">
+      <created>1588363241620</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
       <option name="project" value="LOCAL" />
-      <updated>1584474423513</updated>
+      <updated>1588363241620</updated>
     </task>
-    <task id="LOCAL-00048" summary="CHANGED:&#10;*Zeile 102 im GameService als Kommentar markiert, weil sie dafür sorgte, dass jeder Spieler seien hand zweimal bekommt.">
-      <created>1584475369166</created>
-      <option name="number" value="00048" />
-      <option name="presentableId" value="LOCAL-00048" />
+    <task id="LOCAL-00005" summary="CHANGED&#10;* Exception, die in GameService playCard gefangen werden soll.&#10;* In executeClearPhase wird nun auch der ActionPile übergeben.">
+      <created>1588420791548</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
       <option name="project" value="LOCAL" />
-      <updated>1584475369166</updated>
+      <updated>1588420791548</updated>
     </task>
-    <task id="LOCAL-00049" summary="CHANGED:&#10;*Statt cardPane werden die Karten in gameView hinzugefügt.">
-      <created>1584636082944</created>
-      <option name="number" value="00049" />
-      <option name="presentableId" value="LOCAL-00049" />
+    <task id="LOCAL-00006" summary="CHANGED&#10;* Test Feheler behoben">
+      <created>1588422364879</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
       <option name="project" value="LOCAL" />
-      <updated>1584636082944</updated>
+      <updated>1588422364879</updated>
     </task>
-    <task id="LOCAL-00050" summary="CHANGED:&#10;*Hand_X und Hand_Y angepasst, damit sie auch in den Handkartenbereich sind.">
-      <created>1584638422196</created>
-      <option name="number" value="00050" />
-      <option name="presentableId" value="LOCAL-00050" />
+    <task id="LOCAL-00007" summary="ADDED:&#10;* TODO in GameService. Gener müssen über die Aktion des Spielers informiert werden und die GameView muss darauf reagieren können.">
+      <created>1588426669653</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
       <option name="project" value="LOCAL" />
-      <updated>1584638422197</updated>
+      <updated>1588426669653</updated>
     </task>
-    <task id="LOCAL-00051" summary="CHANGED:&#10;*Den Counter Parameter für die addToHand Methode des AnimationManagements.">
-      <created>1584643690050</created>
-      <option name="number" value="00051" />
-      <option name="presentableId" value="LOCAL-00051" />
+    <task id="LOCAL-00008" summary="ADDED:&#10;* Hände und Deck für weitere Spieler. (Problem beim richtigen anzeigen der Karten)&#10;* Rückseite der Karte">
+      <created>1588767329387</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
       <option name="project" value="LOCAL" />
-      <updated>1584643690050</updated>
+      <updated>1588767329387</updated>
     </task>
-    <task id="LOCAL-00052" summary="CHANGED:&#10;*Variablen in AnimationManagement und gamePresenter.&#10;*Den Sound im RegistrationPresenter auf false gesetzt.">
-      <created>1584659515737</created>
-      <option name="number" value="00052" />
-      <option name="presentableId" value="LOCAL-00052" />
+    <task id="LOCAL-00009" summary="CHANGED&#10;* String Pfad für den Kartenrücken">
+      <created>1588862433148</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
       <option name="project" value="LOCAL" />
-      <updated>1584659515738</updated>
+      <updated>1588862433148</updated>
     </task>
-    <task id="LOCAL-00053" summary="CHANGED:&#10;*Den Vorschlag von Julia bezüglich einer Zeile der Playground Klasse übernommen.">
-      <created>1584705994579</created>
-      <option name="number" value="00053" />
-      <option name="presentableId" value="LOCAL-00053" />
+    <task id="LOCAL-00010" summary="CHANGED&#10;* Die Layout Position X und Y für bigCardImage geändert.">
+      <created>1588870169619</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
       <option name="project" value="LOCAL" />
-      <updated>1584705994579</updated>
+      <updated>1588870169619</updated>
     </task>
-    <task id="LOCAL-00054" summary="ADDED:&#10;*Phases und phase Parameter, die die möglichen Phasen darstellen&#10;*skipPhase Methode erstellt, sie erstellt eine SkipPhaseRequest und postet sie auf dem EventBus&#10;*currentPhase Methoden, die auf die verschiedenen Phasen Messages reagiert und die Phase wechselt.&#10;*Skip Phase Button, der die skipPhase Methode aufruft.">
-      <created>1584799629595</created>
-      <option name="number" value="00054" />
-      <option name="presentableId" value="LOCAL-00054" />
+    <task id="LOCAL-00011" summary="CHANGED&#10;* Die Art und Weise wie die Handkarten für den Gegner hinzugefügt werden.">
+      <created>1589123375640</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
       <option name="project" value="LOCAL" />
-      <updated>1584799629596</updated>
+      <updated>1589123375640</updated>
     </task>
-    <task id="LOCAL-00055" summary="CHANGED:&#10;* SkipPhaseRequest braucht nun keine String Nachricht über die aktuelle Phase.&#10;* Es wird bei der skipPhase Methode eine Fehlermeldung bei falscher Benutzung gesendet.">
-      <created>1584826331686</created>
-      <option name="number" value="00055" />
-      <option name="presentableId" value="LOCAL-00055" />
+    <task id="LOCAL-00012" summary="ADDED&#10;* Die Gegner haben nun auch einen Ablagestapel und eine Ausspielfläche, die Variablen dazu sind in GameViewPresenter.&#10;* Eine Methode die auf die OtherPlayerDiscardMessage reagiert und eine Karte den Ablagestapel hinzufügt.&#10;* OtherPlayerDiscardMessage erstellt, die dazu dienen soll einem Spieler mitzuteilen welche Karten sein Gegner auf den Ablagestapel tut.">
+      <created>1589292166054</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
       <option name="project" value="LOCAL" />
-      <updated>1584826331686</updated>
+      <updated>1589292166054</updated>
     </task>
-    <task id="LOCAL-00056" summary="CHANGED:&#10;* Phase in Common verschoben und Veränderungen angepasst.">
-      <created>1584888362654</created>
-      <option name="number" value="00056" />
-      <option name="presentableId" value="LOCAL-00056" />
+    <task id="LOCAL-00013" summary="ADDED&#10;* onClearPhaseMessage-Methode in GameViewPresenter und die dazugehörige ClearPhaseMessage wurden erstellt. OnClearPhaseMessage sorgt für das Aufräumen des Spielfeldes und das erneute ziehen einer Hand. Dieser Vorgang wird für alle Spieler deutlich gemacht.&#10;&#10;CHANGED&#10;* OtherPlayerDiscardMessage wurde zu DiscardCardMessage geändert, entsprechende Subscribe Methode wurde entsprechend unbenannt und reagiert für jeden Spieler&#10;* onPlayCardMessage reagiert nun auch, wenn sie an andere Spieler gesendet wird und zeigt die entsprechende Aktion für die Gegner an.&#10;&#10;TODO&#10;* Animations für das Aufräumen und abwerfen fehlen und müssen anwendbar sein für die gegnerischen Karten sein.">
+      <created>1589380594140</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
       <option name="project" value="LOCAL" />
-      <updated>1584888362654</updated>
+      <updated>1589380594140</updated>
     </task>
-    <task id="LOCAL-00057" summary="CHANGED:&#10;* Phase in Common verschoben und Veränderungen angepasst.">
-      <created>1584888697543</created>
-      <option name="number" value="00057" />
-      <option name="presentableId" value="LOCAL-00057" />
+    <task id="LOCAL-00014" summary="CHANGED&#10;* Das senden der PlayCardRequest wurde angepasst.">
+      <created>1589402364700</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
       <option name="project" value="LOCAL" />
-      <updated>1584888697543</updated>
+      <updated>1589402364700</updated>
     </task>
-    <task id="LOCAL-00058" summary="CHANGED:&#10;* PlaygroundTest musste Phase neu importieren.">
-      <created>1585052487786</created>
-      <option name="number" value="00058" />
-      <option name="presentableId" value="LOCAL-00058" />
+    <task id="LOCAL-00015" summary="CHANGED&#10;* Fehler im GameService beim erstellen der PlayCardRequests behoben.&#10;* Anzeigen der gespielten gegnerischen Karten&#10;* Alle DiscardPiles, Hände und Aktionsfelder passend angeordnet.">
+      <created>1589496640884</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
       <option name="project" value="LOCAL" />
-      <updated>1585052487802</updated>
+      <updated>1589496640884</updated>
     </task>
-    <task id="LOCAL-00059" summary="CHANGED:&#10;* Versuch Merge-Konflikt zu lösen im GameView.fxml.">
-      <created>1585054547040</created>
-      <option name="number" value="00059" />
-      <option name="presentableId" value="LOCAL-00059" />
+    <task id="LOCAL-00016" summary="ADDED:&#10;* HandcardsLayoutContainer und PlayedCardLayoutContainer erstellt&#10;* Fehler behoben&#10;* Eine Klasse Card erstellt, die eine ImageView mit der Karte darstellt.">
+      <created>1589552298122</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
       <option name="project" value="LOCAL" />
-      <updated>1585054547042</updated>
+      <updated>1589552298122</updated>
     </task>
-    <task id="LOCAL-00060" summary="CHANGED:&#10;* Versuch Merge-Konflikt zu lösen im GameView.fxml.&#10;* GameViewPresenter zeigt einen Alert bei einer GameException an.">
-      <created>1585081994874</created>
-      <option name="number" value="00060" />
-      <option name="presentableId" value="LOCAL-00060" />
+    <task id="LOCAL-00017" summary="CHANGED:&#10;* Layout und Größe der Elemente der GameViewWIP um für mehr Platz zu sorgen&#10;* Das Bild für die DeckLayoutContainer fürs erste rausgenommen.">
+      <created>1589582774333</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
       <option name="project" value="LOCAL" />
-      <updated>1585081994875</updated>
+      <updated>1589582774333</updated>
     </task>
-    <task id="LOCAL-00061" summary="CHANGED:&#10;* Versuch Merge-Konflikt zu lösen im GameView.fxml.">
-      <created>1585244012186</created>
-      <option name="number" value="00061" />
-      <option name="presentableId" value="LOCAL-00061" />
+    <task id="LOCAL-00018" summary="CHANGED:&#10;* Layout und Größe der Elemente der GameViewWIP geändert, um für mehr Platz zu sorgen">
+      <created>1589629618908</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
       <option name="project" value="LOCAL" />
-      <updated>1585244012186</updated>
+      <updated>1589629618908</updated>
     </task>
-    <task id="LOCAL-00062" summary="ADDED:&#10;* Verloren gegangener Code wieder hinzugefügt.">
-      <created>1585246529152</created>
-      <option name="number" value="00062" />
-      <option name="presentableId" value="LOCAL-00062" />
+    <task id="LOCAL-00019" summary="CHANGED:&#10;* Kleine Fehler behoben.">
+      <created>1589656571444</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
       <option name="project" value="LOCAL" />
-      <updated>1585246529152</updated>
+      <updated>1589656571444</updated>
     </task>
-    <task id="LOCAL-00063" summary="DELETED:&#10;* Unnötigen alten Code.">
-      <created>1585247203834</created>
-      <option name="number" value="00063" />
-      <option name="presentableId" value="LOCAL-00063" />
+    <task id="LOCAL-00020" summary="CHANGED:&#10;* Die LayoutContainer gehen nun in die richtige Richtung.&#10;* Die ClearPhaseMessage wurde gelöscht, weil es schon eine StarClearPhaseMessage gibt, diese wurde ergänzt.&#10;*Fehler mit dem discardPile behoben.">
+      <created>1589743215950</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
       <option name="project" value="LOCAL" />
-      <updated>1585247203835</updated>
+      <updated>1589743215951</updated>
     </task>
-    <task id="LOCAL-00064" summary="ADDED:&#10;* playerGaveUp Methode, die in einem Test drin war, aber noch nicht existierte..">
-      <created>1585248284783</created>
-      <option name="number" value="00064" />
-      <option name="presentableId" value="LOCAL-00064" />
+    <task id="LOCAL-00021" summary="CHANGED:&#10;* Fehler beim Skipphase Button behoben.">
+      <created>1589787727658</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
       <option name="project" value="LOCAL" />
-      <updated>1585248284783</updated>
+      <updated>1589787727658</updated>
     </task>
-    <task id="LOCAL-00065" summary="ADDED:&#10;* SkipPhaseMessageTest hinzugefügt und getCompositePhase und endTime Methode in Playground erstellt.">
-      <created>1585256883845</created>
-      <option name="number" value="00065" />
-      <option name="presentableId" value="LOCAL-00065" />
+    <task id="LOCAL-00022" summary="CHANGED:&#10;* Darians Version der ClearPhase mit meiner Version verbunden..">
+      <created>1589792755018</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
       <option name="project" value="LOCAL" />
-      <updated>1585256883845</updated>
+      <updated>1589792755019</updated>
     </task>
-    <task id="LOCAL-00066" summary="DELETED:&#10;* SkipPhaseMessageTest wird nicht benötigt, weil es bereits einen Test dafür in PlaygroundTest gibt.">
-      <created>1585260282667</created>
-      <option name="number" value="00066" />
-      <option name="presentableId" value="LOCAL-00066" />
+    <task id="LOCAL-00023" summary="CHANGED:&#10;* Merge Konflikt gelöst.">
+      <created>1589794504902</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
       <option name="project" value="LOCAL" />
-      <updated>1585260282668</updated>
+      <updated>1589794504902</updated>
     </task>
-    <task id="LOCAL-00067" summary="ADDED:&#10;* Code, der beim mergen des Develop into current verloren geganen ist, wurde wieder hinzugefügt.">
-      <created>1585312646734</created>
-      <option name="number" value="00067" />
-      <option name="presentableId" value="LOCAL-00067" />
+    <task id="LOCAL-00024" summary="CHANGED:&#10;* Problem mit anzeigen der ClearPhase teils behoben.">
+      <created>1589811052432</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
       <option name="project" value="LOCAL" />
-      <updated>1585312646734</updated>
+      <updated>1589811052432</updated>
     </task>
-    <task id="LOCAL-00068" summary="ADDED:&#10;* Code, der beim mergen des Develop into current verloren geganen ist, wurde wieder hinzugefügt.">
-      <created>1585322972797</created>
-      <option name="number" value="00068" />
-      <option name="presentableId" value="LOCAL-00068" />
+    <task id="LOCAL-00025" summary="CHANGED:&#10;* Die Farben wieder abgeschaltet.">
+      <created>1589826048689</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
       <option name="project" value="LOCAL" />
-      <updated>1585322972797</updated>
+      <updated>1589826048689</updated>
     </task>
-    <task id="LOCAL-00069" summary="ADDED:&#10;* Code, der beim mergen des Develop into current verloren geganen ist, wurde wieder hinzugefügt.">
-      <created>1585399760135</created>
-      <option name="number" value="00069" />
-      <option name="presentableId" value="LOCAL-00069" />
+    <task id="LOCAL-00026" summary="CHANGED:&#10;* Animation in der BuyCardMessage angepasst.">
+      <created>1589878221145</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
       <option name="project" value="LOCAL" />
-      <updated>1585399760136</updated>
+      <updated>1589878221145</updated>
     </task>
-    <task id="LOCAL-00070" summary="CHANGED:&#10;* Kleine Änderungen bei Inputwerten verändert.">
-      <created>1585406332710</created>
-      <option name="number" value="00070" />
-      <option name="presentableId" value="LOCAL-00070" />
+    <task id="LOCAL-00027" summary="DELETED:&#10;* Unnötige Ausgabe, die zur Überprüfung genutzt wurde.">
+      <created>1589891171018</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
       <option name="project" value="LOCAL" />
-      <updated>1585406332710</updated>
+      <updated>1589891171018</updated>
     </task>
-    <task id="LOCAL-00071" summary="CHANGED:&#10;* Kleine Änderungen entfernt.">
-      <created>1585407915782</created>
-      <option name="number" value="00071" />
-      <option name="presentableId" value="LOCAL-00071" />
+    <task id="LOCAL-00028" summary="DELETED:&#10;* Unnötige Ausgabe, die zur Überprüfung genutzt wurde.">
+      <created>1589893185309</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
       <option name="project" value="LOCAL" />
-      <updated>1585407915782</updated>
+      <updated>1589893185309</updated>
     </task>
-    <task id="LOCAL-00072" summary="CHANGED:&#10;* Request werden nun vom GameService geschickt.">
-      <created>1585413966086</created>
-      <option name="number" value="00072" />
-      <option name="presentableId" value="LOCAL-00072" />
+    <task id="LOCAL-00029" summary="CHANGED:&#10;* Probiert einen GameViewPresenterTest zu schreiben.">
+      <created>1590001203944</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
       <option name="project" value="LOCAL" />
-      <updated>1585413966086</updated>
+      <updated>1590001203944</updated>
     </task>
-    <task id="LOCAL-00073" summary="ADDED:&#10;* Bei der onBuyCardMessage die ImageView der Karte erstellt, die bewegt werden soll.">
-      <created>1585422943585</created>
-      <option name="number" value="00073" />
-      <option name="presentableId" value="LOCAL-00073" />
+    <task id="LOCAL-00030" summary="CHANGED:&#10;* Habe die Abfrage nach der Karte in der Hand für die execute ActionPhase umgeändert.">
+      <created>1590267550682</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
       <option name="project" value="LOCAL" />
-      <updated>1585422943585</updated>
+      <updated>1590267550682</updated>
     </task>
-    <task id="LOCAL-00074" summary="CHANGED:&#10;* ÄÄnderungen vom letzten Commit teils rückgängig gemacht, weil ein anderer Branch dies schon gemacht hat.">
-      <created>1585426312302</created>
-      <option name="number" value="00074" />
-      <option name="presentableId" value="LOCAL-00074" />
+    <task id="LOCAL-00031" summary="ADDED:&#10;* AbstractGameMessage und ChooseCardRequest/Response. Diese Klassen stammten aus dem Branch Serverseitige Kartenimplementierung und wurden gebraucht, damit der Client auf ihren Nutzen reagieren kann.&#10;CHANGED:&#10;* Die onDiscardMessage Methode wurde zu onChooseCardRequest geändert. Von der Logik her sollte der Spieler nun in der Lage sein, wenn die Request kommt, Karten auszuwählen und sie abzulegen.">
+      <created>1590320341893</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
       <option name="project" value="LOCAL" />
-      <updated>1585426312302</updated>
+      <updated>1590320341893</updated>
     </task>
-    <task id="LOCAL-00075" summary="CHANGED:&#10;* Den Bildpfad der chosenBuyable Card im GameViewPresenter verändert, sodass keine Exception mehr ausgelöst werden.">
-      <created>1585758484649</created>
-      <option name="number" value="00075" />
-      <option name="presentableId" value="LOCAL-00075" />
+    <task id="LOCAL-00032" summary="CHANGED:&#10;* Ein Alert wird nun dem Spieler angezeigt, der in darauf informiert, wie viele Karten er ablegen kann.">
+      <created>1590322747809</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
       <option name="project" value="LOCAL" />
-      <updated>1585758484650</updated>
+      <updated>1590322747809</updated>
     </task>
-    <task id="LOCAL-00076" summary="ADDED:&#10;* Im GameViewPresenter eine MouseEventVariable hinzugefügt, womit eine ImageView erstellt wird, die auf die entsprechende Karte zeigt.&#10;CHANGED:&#10;*Eine Zeile im AnimationManagement gelöscht, die zu einer NullPointerException geführt hat.">
-      <created>1585846539590</created>
-      <option name="number" value="00076" />
-      <option name="presentableId" value="LOCAL-00076" />
+    <task id="LOCAL-00033" summary="CHANGED:&#10;* Eine Karte kann nun nicht zweimal ausgewählt werden.">
+      <created>1590328300862</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
       <option name="project" value="LOCAL" />
-      <updated>1585846539590</updated>
+      <updated>1590328300862</updated>
     </task>
-    <task id="LOCAL-00077" summary="CHANGED:&#10;*Versuch Merge-Konflikt zu lösen.">
-      <created>1586204815538</created>
-      <option name="number" value="00077" />
-      <option name="presentableId" value="LOCAL-00077" />
+    <task id="LOCAL-00034" summary="CHANGED:&#10;* Die Überprüfung der Karten läuft nun über einen Stream.">
+      <created>1590329377491</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
       <option name="project" value="LOCAL" />
-      <updated>1586204815540</updated>
+      <updated>1590329377492</updated>
     </task>
-    <task id="LOCAL-00078" summary="CHANGED:&#10;*Versuch Merge-Konflikt zu lösen.">
-      <created>1586206592501</created>
-      <option name="number" value="00078" />
-      <option name="presentableId" value="LOCAL-00078" />
+    <task id="LOCAL-00035" summary="CHANGED:&#10;* Überflüssige Variable gelöscht.">
+      <created>1590331172210</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
       <option name="project" value="LOCAL" />
-      <updated>1586206592501</updated>
+      <updated>1590331172210</updated>
     </task>
-    <task id="LOCAL-00079" summary="CHANGED:&#10;*Versuch Merge-Konflikt zu lösen.">
-      <created>1586356167096</created>
-      <option name="number" value="00079" />
-      <option name="presentableId" value="LOCAL-00079" />
+    <task id="LOCAL-00036" summary="CHANGED:&#10;* Rechtschreibfehler in den Kommentaren korrigiert.&#10;* Alerts weggelassen und statdessen über die Infoanzeige die Informationen weitergeleitet.&#10;* Ausgewählte Karten bekommen nun einen blauen Rand.">
+      <created>1590362272370</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
       <option name="project" value="LOCAL" />
-      <updated>1586356167096</updated>
+      <updated>1590362272370</updated>
     </task>
-    <task id="LOCAL-00080" summary="ADDED:&#10;* Beim Anklicken der Handkarten wird die Karte nochmal als ein Großes Bild angezeigt&#10;* Spieler hat die Option die Karte auszuspielen oder wieder zurück zu gehen. &#10;* Die playChoosenCard Methode im GameViewPresenter regelt diesen Vorgang.&#10;* Das ausspielen der Karte ist graphisch noch nicht umgesetzt.">
-      <created>1586458570206</created>
-      <option name="number" value="00080" />
-      <option name="presentableId" value="LOCAL-00080" />
+    <task id="LOCAL-00037" summary="CHANGED:&#10;* Wenn beliebig viele Karten ausgewählt werden dürfen, dann erkennt man das daran, dass numberOdCardsToChoose auf 255 gesetzt wird. Der Nutzer kann dann so viele Karten auswählen bis er den Auswahl beenden Button drückt.&#10;*Platform.Blöcke um die infoActualPhase.setText Stellen gesetzt.&#10;*Die ausgewählten Karten werden entfernt, nachdem man mit dem Auswählen fertig ist.&#10;*Kleine Code Nachbesserungen">
+      <created>1590525234528</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
       <option name="project" value="LOCAL" />
-      <updated>1586458570207</updated>
+      <updated>1590525234528</updated>
     </task>
-    <task id="LOCAL-00081" summary="ADDED:&#10;* Versucht die PlayCardRequest zum Server zu schicken.">
-      <created>1586523991514</created>
-      <option name="number" value="00081" />
-      <option name="presentableId" value="LOCAL-00081" />
-      <option name="project" value="LOCAL" />
-      <updated>1586523991514</updated>
-    </task>
-    <task id="LOCAL-00082" summary="CHANGED:&#10;* Versucht die PlayCardRequest zum Server zu schicken.">
-      <created>1586637536387</created>
-      <option name="number" value="00082" />
-      <option name="presentableId" value="LOCAL-00082" />
-      <option name="project" value="LOCAL" />
-      <updated>1586637536388</updated>
-    </task>
-    <task id="LOCAL-00083" summary="CHANGED:&#10;* Statt der PlayCardRequest wird nun mit der SelectCardRequest gearbeitet.">
-      <created>1587303370525</created>
-      <option name="number" value="00083" />
-      <option name="presentableId" value="LOCAL-00083" />
-      <option name="project" value="LOCAL" />
-      <updated>1587303370527</updated>
-    </task>
-    <task id="LOCAL-00084" summary="CHANGED:&#10;* Kleinen Variablefehler im GameViewPresenter behoben.">
-      <created>1587305585468</created>
-      <option name="number" value="00084" />
-      <option name="presentableId" value="LOCAL-00084" />
-      <option name="project" value="LOCAL" />
-      <updated>1587305585468</updated>
-    </task>
-    <task id="LOCAL-00085" summary="CHANGED:&#10;* PlayCard Message und Request nachgebessert, damit sie auch vom Server Client angenommen werden.&#10;* GameViewPresenter die Erreichbarkeit der Handkarten durch ein Mouse Event nachgebessert.">
-      <created>1587557061666</created>
-      <option name="number" value="00085" />
-      <option name="presentableId" value="LOCAL-00085" />
-      <option name="project" value="LOCAL" />
-      <updated>1587557061667</updated>
-    </task>
-    <task id="LOCAL-00086" summary="CHANGED:&#10;* Unnötigen Code, der zum Prüfen benutzt wurde, wurde entfernt.">
-      <created>1587557297749</created>
-      <option name="number" value="00086" />
-      <option name="presentableId" value="LOCAL-00086" />
-      <option name="project" value="LOCAL" />
-      <updated>1587557297751</updated>
-    </task>
-    <task id="LOCAL-00087" summary="CHANGED:&#10;* Die Handkarte bewegt sich nun zum richtigen Feld.">
-      <created>1587663805961</created>
-      <option name="number" value="00087" />
-      <option name="presentableId" value="LOCAL-00087" />
-      <option name="project" value="LOCAL" />
-      <updated>1587663805962</updated>
-    </task>
-    <task id="LOCAL-00088" summary="CHANGED:&#10;* Die ausgespielten Karten können nun nicht nochmal ausgespielt werden.">
-      <created>1587740318168</created>
-      <option name="number" value="00088" />
-      <option name="presentableId" value="LOCAL-00088" />
-      <option name="project" value="LOCAL" />
-      <updated>1587740318168</updated>
-    </task>
-    <task id="LOCAL-00089" summary="CHANGED:&#10;* Habe develope in den current Branch gemerged und eine SerialVersionUID in PlayCardMessage und PlayCardRequest gestellt.">
-      <created>1588072328611</created>
-      <option name="number" value="00089" />
-      <option name="presentableId" value="LOCAL-00089" />
-      <option name="project" value="LOCAL" />
-      <updated>1588072328612</updated>
-    </task>
-    <task id="LOCAL-00090" summary="CHANGED:&#10;* Test zum ausspielen einer Karte geschrieben. Die Klasse heißt GameViewPresenterTest und enthält den PlayCardTest.">
-      <created>1588156540219</created>
-      <option name="number" value="00090" />
-      <option name="presentableId" value="LOCAL-00090" />
-      <option name="project" value="LOCAL" />
-      <updated>1588156540223</updated>
-    </task>
-    <task id="LOCAL-00091" summary="ADDED:&#10;* Hatte vergessen die unversioned Files auch zu anzukreuzen.">
-      <created>1588176528388</created>
-      <option name="number" value="00091" />
-      <option name="presentableId" value="LOCAL-00091" />
-      <option name="project" value="LOCAL" />
-      <updated>1588176528388</updated>
-    </task>
-    <task id="LOCAL-00092" summary="CHANGED:&#10;* Hatte einen Fehler im CompositePhase behoben, der zum Fehlschlag des playCardTestes geführt hat.&#10;* In der execute Action Phase sollte die ausgespielte Karte von der Hand entfernt werden, ich hatte aber die Karte statdessen wieder vom ActionPile entfernt.">
-      <created>1588178052357</created>
-      <option name="number" value="00092" />
-      <option name="presentableId" value="LOCAL-00092" />
-      <option name="project" value="LOCAL" />
-      <updated>1588178052361</updated>
-    </task>
-    <option name="localTasksCounter" value="93" />
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="2" />
   </component>
-  <component name="Vcs.Log.History.Properties">
-    <option name="COLUMN_ORDER">
-      <list>
-        <option value="0" />
-        <option value="2" />
-        <option value="3" />
-        <option value="1" />
-      </list>
-    </option>
-  </component>
   <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
-    <MESSAGE value="ADDED:&#10;* playerGaveUp Methode, die in einem Test drin war, aber noch nicht existierte.." />
-    <MESSAGE value="ADDED:&#10;* SkipPhaseMessageTest hinzugefügt und getCompositePhase und endTime Methode in Playground erstellt." />
-    <MESSAGE value="DELETED:&#10;* SkipPhaseMessageTest wird nicht benötigt, weil es bereits einen Test dafür in PlaygroundTest gibt." />
-    <MESSAGE value="ADDED:&#10;* Code, der beim mergen des Develop into current verloren geganen ist, wurde wieder hinzugefügt." />
-    <MESSAGE value="CHANGED:&#10;* Kleine Änderungen bei Inputwerten verändert." />
-    <MESSAGE value="CHANGED:&#10;* Kleine Änderungen entfernt." />
-    <MESSAGE value="CHANGED:&#10;* Request werden nun vom GameService geschickt." />
-    <MESSAGE value="ADDED:&#10;* Bei der onBuyCardMessage die ImageView der Karte erstellt, die bewegt werden soll." />
-    <MESSAGE value="CHANGED:&#10;* ÄÄnderungen vom letzten Commit teils rückgängig gemacht, weil ein anderer Branch dies schon gemacht hat." />
-    <MESSAGE value="CHANGED:&#10;* Den Bildpfad der chosenBuyable Card im GameViewPresenter verändert, sodass keine Exception mehr ausgelöst werden." />
-    <MESSAGE value="ADDED:&#10;* Im GameViewPresenter eine MouseEventVariable hinzugefügt, womit eine ImageView erstellt wird, die auf die entsprechende Karte zeigt.&#10;CHANGED:&#10;*Eine Zeile im AnimationManagement gelöscht, die zu einer NullPointerException geführt hat." />
-    <MESSAGE value="CHANGED:&#10;*Versuch Merge-Konflikt zu lösen." />
-    <MESSAGE value="ADDED:&#10;* Beim Anklicken der Handkarten wird die Karte nochmal als ein Großes Bild angezeigt&#10;* Spieler hat die Option die Karte auszuspielen oder wieder zurück zu gehen. &#10;* Die playChoosenCard Methode im GameViewPresenter regelt diesen Vorgang.&#10;* Das ausspielen der Karte ist graphisch noch nicht umgesetzt." />
-    <MESSAGE value="ADDED:&#10;* Versucht die PlayCardRequest zum Server zu schicken." />
-    <MESSAGE value="CHANGED:&#10;* Versucht die PlayCardRequest zum Server zu schicken." />
-    <MESSAGE value="CHANGED:&#10;* Statt der PlayCardRequest wird nun mit der SelectCardRequest gearbeitet." />
-    <MESSAGE value="CHANGED:&#10;* Kleinen Variablefehler im GameViewPresenter behoben." />
-    <MESSAGE value="CHANGED:&#10;* PlayCard Message und Request nachgebessert, damit sie auch vom Server Client angenommen werden.&#10;* GameViewPresenter die Erreichbarkeit der Handkarten durch ein Mouse Event nachgebessert." />
-    <MESSAGE value="CHANGED:&#10;* Unnötigen Code, der zum Prüfen benutzt wurde, wurde entfernt." />
-    <MESSAGE value="CHANGED:&#10;* Die Handkarte bewegt sich nun zum richtigen Feld." />
-    <MESSAGE value="CHANGED:&#10;* Die ausgespielten Karten können nun nicht nochmal ausgespielt werden." />
-    <MESSAGE value="CHANGED:&#10;* Habe develope in den current Branch gemerged und eine SerialVersionUID in PlayCardMessage und PlayCardRequest gestellt." />
-    <MESSAGE value="CHANGED:&#10;* Test zum ausspielen einer Karte geschrieben. Die Klasse heißt GameViewPresenterTest und enthält den PlayCardTest." />
-    <MESSAGE value="ADDED:&#10;* Hatte vergessen die unversioned Files auch zu anzukreuzen." />
-    <MESSAGE value="CHANGED:&#10;* Hatte einen Fehler im CompositePhase behoben, der zum Fehlschlag des playCardTestes geführt hat.&#10;* In der execute Action Phase sollte die ausgespielte Karte von der Hand entfernt werden, ich hatte aber die Karte statdessen wieder vom ActionPile entfernt." />
-    <option name="LAST_COMMIT_MESSAGE" value="CHANGED:&#10;* Hatte einen Fehler im CompositePhase behoben, der zum Fehlschlag des playCardTestes geführt hat.&#10;* In der execute Action Phase sollte die ausgespielte Karte von der Hand entfernt werden, ich hatte aber die Karte statdessen wieder vom ActionPile entfernt." />
-    <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
-    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
-    <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
+    <MESSAGE value="ADDED&#10;* Die Gegner haben nun auch einen Ablagestapel und eine Ausspielfläche, die Variablen dazu sind in GameViewPresenter.&#10;* Eine Methode die auf die OtherPlayerDiscardMessage reagiert und eine Karte den Ablagestapel hinzufügt.&#10;* OtherPlayerDiscardMessage erstellt, die dazu dienen soll einem Spieler mitzuteilen welche Karten sein Gegner auf den Ablagestapel tut." />
+    <MESSAGE value="ADDED&#10;* onClearPhaseMessage-Methode in GameViewPresenter und die dazugehörige ClearPhaseMessage wurden erstellt. OnClearPhaseMessage sorgt für das Aufräumen des Spielfeldes und das erneute ziehen einer Hand. Dieser Vorgang wird für alle Spieler deutlich gemacht.&#10;&#10;CHANGED&#10;* OtherPlayerDiscardMessage wurde zu DiscardCardMessage geändert, entsprechende Subscribe Methode wurde entsprechend unbenannt und reagiert für jeden Spieler&#10;* onPlayCardMessage reagiert nun auch, wenn sie an andere Spieler gesendet wird und zeigt die entsprechende Aktion für die Gegner an.&#10;&#10;TODO&#10;* Animations für das Aufräumen und abwerfen fehlen und müssen anwendbar sein für die gegnerischen Karten sein." />
+    <MESSAGE value="CHANGED&#10;* Das senden der PlayCardRequest wurde angepasst." />
+    <MESSAGE value="CHANGED&#10;* Fehler im GameService beim erstellen der PlayCardRequests behoben.&#10;* Anzeigen der gespielten gegnerischen Karten&#10;* Alle DiscardPiles, Hände und Aktionsfelder passend angeordnet." />
+    <MESSAGE value="ADDED:&#10;* HandcardsLayoutContainer und PlayedCardLayoutContainer erstellt&#10;* Fehler behoben&#10;* Eine Klasse Card erstellt, die eine ImageView mit der Karte darstellt." />
+    <MESSAGE value="CHANGED:&#10;* Layout und Größe der Elemente der GameViewWIP um für mehr Platz zu sorgen&#10;* Das Bild für die DeckLayoutContainer fürs erste rausgenommen." />
+    <MESSAGE value="CHANGED:&#10;* Layout und Größe der Elemente der GameViewWIP geändert, um für mehr Platz zu sorgen" />
+    <MESSAGE value="CHANGED:&#10;* Kleine Fehler behoben." />
+    <MESSAGE value="CHANGED:&#10;* Die LayoutContainer gehen nun in die richtige Richtung.&#10;* Die ClearPhaseMessage wurde gelöscht, weil es schon eine StarClearPhaseMessage gibt, diese wurde ergänzt.&#10;*Fehler mit dem discardPile behoben." />
+    <MESSAGE value="CHANGED:&#10;* Fehler beim Skipphase Button behoben." />
+    <MESSAGE value="CHANGED:&#10;* Darians Version der ClearPhase mit meiner Version verbunden.." />
+    <MESSAGE value="CHANGED:&#10;* Merge Konflikt gelöst." />
+    <MESSAGE value="CHANGED:&#10;* Problem mit anzeigen der ClearPhase teils behoben." />
+    <MESSAGE value="CHANGED:&#10;* Die Farben wieder abgeschaltet." />
+    <MESSAGE value="CHANGED:&#10;* Animation in der BuyCardMessage angepasst." />
+    <MESSAGE value="DELETED:&#10;* Unnötige Ausgabe, die zur Überprüfung genutzt wurde." />
+    <MESSAGE value="CHANGED:&#10;* Probiert einen GameViewPresenterTest zu schreiben." />
+    <MESSAGE value="CHANGED:&#10;* Habe die Abfrage nach der Karte in der Hand für die execute ActionPhase umgeändert." />
+    <MESSAGE value="ADDED:&#10;* AbstractGameMessage und ChooseCardRequest/Response. Diese Klassen stammten aus dem Branch Serverseitige Kartenimplementierung und wurden gebraucht, damit der Client auf ihren Nutzen reagieren kann.&#10;CHANGED:&#10;* Die onDiscardMessage Methode wurde zu onChooseCardRequest geändert. Von der Logik her sollte der Spieler nun in der Lage sein, wenn die Request kommt, Karten auszuwählen und sie abzulegen." />
+    <MESSAGE value="CHANGED:&#10;* Ein Alert wird nun dem Spieler angezeigt, der in darauf informiert, wie viele Karten er ablegen kann." />
+    <MESSAGE value="CHANGED:&#10;* Eine Karte kann nun nicht zweimal ausgewählt werden." />
+    <MESSAGE value="CHANGED:&#10;* Die Überprüfung der Karten läuft nun über einen Stream." />
+    <MESSAGE value="CHANGED:&#10;* Überflüssige Variable gelöscht." />
+    <MESSAGE value="CHANGED:&#10;* Rechtschreibfehler in den Kommentaren korrigiert.&#10;* Alerts weggelassen und statdessen über die Infoanzeige die Informationen weitergeleitet.&#10;* Ausgewählte Karten bekommen nun einen blauen Rand." />
+    <MESSAGE value="CHANGED:&#10;* Wenn beliebig viele Karten ausgewählt werden dürfen, dann erkennt man das daran, dass numberOdCardsToChoose auf 255 gesetzt wird. Der Nutzer kann dann so viele Karten auswählen bis er den Auswahl beenden Button drückt.&#10;*Platform.Blöcke um die infoActualPhase.setText Stellen gesetzt.&#10;*Die ausgewählten Karten werden entfernt, nachdem man mit dem Auswählen fertig ist.&#10;*Kleine Code Nachbesserungen" />
+    <option name="LAST_COMMIT_MESSAGE" value="CHANGED:&#10;* Wenn beliebig viele Karten ausgewählt werden dürfen, dann erkennt man das daran, dass numberOdCardsToChoose auf 255 gesetzt wird. Der Nutzer kann dann so viele Karten auswählen bis er den Auswahl beenden Button drückt.&#10;*Platform.Blöcke um die infoActualPhase.setText Stellen gesetzt.&#10;*Die ausgewählten Karten werden entfernt, nachdem man mit dem Auswählen fertig ist.&#10;*Kleine Code Nachbesserungen" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="643" y="76" key="#Plugins" timestamp="1586443462653">
+    <state x="414" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1588358118036">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="643" y="76" key="#Plugins/0.0.1920.1040@0.0.1920.1040" timestamp="1586443462653" />
-    <state x="552" y="182" key="#Project_Structure" timestamp="1580306257414">
+    <state x="414" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1588358118036" />
+    <state x="765" y="220" key="#com.intellij.ide.util.MemberChooser" timestamp="1589316220685">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="182" key="#Project_Structure/0.0.1920.1040@0.0.1920.1040" timestamp="1580306257414" />
-    <state x="828" y="356" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1584464521600">
+    <state x="765" y="220" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1589316220685" />
+    <state x="640" y="255" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1588336941152">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="828" y="356" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1584464521600" />
-    <state x="92" y="92" width="1736" height="856" key="#com.intellij.execution.junit2.states.ComparisonFailureState$DiffDialog" timestamp="1588177218261">
+    <state x="640" y="255" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1588336941152" />
+    <state x="553" y="444" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog" timestamp="1590311054368">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="92" y="92" width="1736" height="856" key="#com.intellij.execution.junit2.states.ComparisonFailureState$DiffDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1588177218261" />
-    <state x="765" y="226" key="#com.intellij.ide.util.MemberChooser" timestamp="1588105257350">
+    <state x="553" y="444" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1590311054368" />
+    <state x="743" y="389" width="433" height="269" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes" timestamp="1589535879041">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="765" y="226" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1588105257350" />
-    <state x="482" y="121" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1586441500801">
+    <state x="743" y="389" width="433" height="269" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes/0.0.1920.1040@0.0.1920.1040" timestamp="1589535879041" />
+    <state x="690" y="267" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1589740420125">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="482" y="121" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1586441500801" />
-    <state x="416" y="413" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog" timestamp="1585051541749">
+    <state x="690" y="267" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1589740420125" />
+    <state x="717" y="254" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1588362884627">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="416" y="413" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1585051541749" />
-    <state x="665" y="320" width="448" height="269" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes" timestamp="1588071114241">
+    <state x="717" y="254" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.1920.1040@0.0.1920.1040" timestamp="1588362884627" />
+    <state x="-118" y="28" key="CommitChangelistDialog2" timestamp="1590525652477">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="665" y="320" width="448" height="269" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes/0.0.1920.1040@0.0.1920.1040" timestamp="1588071114241" />
-    <state x="794" y="400" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.packages" timestamp="1583952608338">
+    <state x="-118" y="28" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1590525652477" />
+    <state x="97" y="65" key="DiffContextDialog" timestamp="1589826012339">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="794" y="400" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.packages/0.0.1920.1040@0.0.1920.1040" timestamp="1583952608338" />
-    <state x="557" y="138" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1586209188913">
+    <state x="97" y="65" key="DiffContextDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1589826012339" />
+    <state x="740" y="274" key="FileChooserDialogImpl" timestamp="1588362872843">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="557" y="138" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1586209188913" />
-    <state x="520" y="91" width="889" height="817" key="CommitChangelistDialog2" timestamp="1588181583983">
+    <state x="740" y="274" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1588362872843" />
+    <state width="1877" height="133" key="GridCell.Tab.0.bottom" timestamp="1590362627603">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="520" y="91" width="889" height="817" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1588181583983" />
-    <state x="157" y="22" key="DiffContextDialog" timestamp="1587678347722">
+    <state width="1877" height="133" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1590362627603" />
+    <state width="1877" height="133" key="GridCell.Tab.0.center" timestamp="1590362627603">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="157" y="22" key="DiffContextDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1587678347722" />
-    <state width="1877" height="197" key="GridCell.Tab.0.bottom" timestamp="1588178510197">
+    <state width="1877" height="133" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1590362627603" />
+    <state width="1877" height="133" key="GridCell.Tab.0.left" timestamp="1590362627603">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="197" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1588178510197" />
-    <state width="1877" height="197" key="GridCell.Tab.0.center" timestamp="1588178510197">
+    <state width="1877" height="133" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1590362627603" />
+    <state width="1877" height="133" key="GridCell.Tab.0.right" timestamp="1590362627603">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="197" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1588178510197" />
-    <state width="1877" height="197" key="GridCell.Tab.0.left" timestamp="1588178510197">
+    <state width="1877" height="133" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1590362627603" />
+    <state width="1877" height="347" key="GridCell.Tab.1.bottom" timestamp="1590267281640">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="197" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1588178510197" />
-    <state width="1877" height="197" key="GridCell.Tab.0.right" timestamp="1588178510197">
+    <state width="1877" height="347" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1590267281640" />
+    <state width="1877" height="347" key="GridCell.Tab.1.center" timestamp="1590267281639">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="197" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1588178510197" />
-    <state width="1877" height="336" key="GridCell.Tab.1.bottom" timestamp="1588177752440">
+    <state width="1877" height="347" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1590267281639" />
+    <state width="1877" height="347" key="GridCell.Tab.1.left" timestamp="1590267281639">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="336" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1588177752440" />
-    <state width="1877" height="336" key="GridCell.Tab.1.center" timestamp="1588177752440">
+    <state width="1877" height="347" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1590267281639" />
+    <state width="1877" height="347" key="GridCell.Tab.1.right" timestamp="1590267281640">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="336" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1588177752440" />
-    <state width="1877" height="336" key="GridCell.Tab.1.left" timestamp="1588177752440">
+    <state width="1877" height="347" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1590267281640" />
+    <state x="217" y="77" key="MergeDialog" timestamp="1589919772731">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="336" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1588177752440" />
-    <state width="1877" height="336" key="GridCell.Tab.1.right" timestamp="1588177752440">
+    <state x="217" y="77" key="MergeDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1589919772731" />
+    <state x="645" y="408" width="842" height="265" key="MultipleFileMergeDialog" timestamp="1589919772746">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="336" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1588177752440" />
-    <state x="49" y="95" key="Maven.ArtifactSearchDialog" timestamp="1586437754562">
+    <state x="645" y="408" width="842" height="265" key="MultipleFileMergeDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1589919772746" />
+    <state x="832" y="264" key="RollbackChangesDialog" timestamp="1588357040760">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="49" y="95" key="Maven.ArtifactSearchDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1586437754562" />
-    <state x="279" y="92" key="MergeDialog" timestamp="1588069183133">
+    <state x="832" y="264" key="RollbackChangesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1588357040760" />
+    <state x="461" y="164" key="SettingsEditor" timestamp="1588360321227">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="279" y="92" key="MergeDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1588069183133" />
-    <state x="672" y="238" width="835" height="563" key="MultipleFileMergeDialog" timestamp="1588069183143">
+    <state x="461" y="164" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1588360321227" />
+    <state x="552" y="252" key="Vcs.Push.Dialog.v2" timestamp="1590525398811">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="672" y="238" width="835" height="563" key="MultipleFileMergeDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1588069183143" />
-    <state x="182" y="0" width="1122" height="843" key="SettingsEditor" timestamp="1588175927370">
+    <state x="552" y="252" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1590525398811" />
+    <state x="769" y="433" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1590525412277">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="182" y="0" width="1122" height="843" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1588175927370" />
-    <state x="700" y="284" key="Vcs.Multiple.Commit.Info.Dialog.Key" timestamp="1588066754602">
+    <state x="769" y="433" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1040@0.0.1920.1040" timestamp="1590525412277" />
+    <state x="690" y="277" key="extract.method.dialog" timestamp="1589296324965">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="700" y="284" key="Vcs.Multiple.Commit.Info.Dialog.Key/0.0.1920.1040@0.0.1920.1040" timestamp="1588066754602" />
-    <state x="350" y="116" key="Vcs.Push.Dialog.v2" timestamp="1588178058671">
+    <state x="690" y="277" key="extract.method.dialog/0.0.1920.1040@0.0.1920.1040" timestamp="1589296324965" />
+    <state x="748" y="232" key="git4idea.branch.GitSmartOperationDialog" timestamp="1590259971854">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="350" y="116" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1588178058671" />
-    <state x="522" y="255" width="583" height="342" key="com.intellij.ide.util.TipDialog" timestamp="1586441404061">
+    <state x="748" y="232" key="git4idea.branch.GitSmartOperationDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1590259971854" />
+    <state x="616" y="242" key="run.anything.popup" timestamp="1589534168394">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="522" y="255" width="583" height="342" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1586441404061" />
-    <state x="627" y="202" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1585311592520">
+    <state x="616" y="242" key="run.anything.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1589534168394" />
+    <state x="616" y="177" width="672" height="676" key="search.everywhere.popup" timestamp="1589740569455">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="627" y="202" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1585311592520" />
-    <state x="678" y="396" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1588175475391">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="678" y="396" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1040@0.0.1920.1040" timestamp="1588175475391" />
-    <state x="716" y="293" key="com.intellij.testIntegration.createTest.CreateTestDialog" timestamp="1588085333106">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="716" y="293" key="com.intellij.testIntegration.createTest.CreateTestDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1588085333106" />
-    <state x="524" y="259" width="872" height="554" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1584465574066">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="524" y="259" width="872" height="554" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1920.1040@0.0.1920.1040" timestamp="1584465574066" />
-    <state x="667" y="154" width="586" height="732" key="find.popup" timestamp="1585260667263">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="667" y="154" width="586" height="732" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1585260667263" />
-    <state x="1390" y="171" key="git4idea.branch.GitSmartOperationDialog" timestamp="1586447220156">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="1390" y="171" key="git4idea.branch.GitSmartOperationDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1586447220156" />
-    <state x="624" y="323" key="git4idea.merge.GitPullDialog" timestamp="1584360728012">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="624" y="323" key="git4idea.merge.GitPullDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1584360728012" />
-    <state x="668" y="154" key="refactoring.ChangeSignatureDialog" timestamp="1585761277011">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="668" y="154" key="refactoring.ChangeSignatureDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1585761277011" />
-    <state x="446" y="231" key="run.anything.popup" timestamp="1588104911031">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="446" y="231" key="run.anything.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1588104911031" />
-    <state x="455" y="2" width="1008" height="1037" key="search.everywhere.popup" timestamp="1587682140963">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="455" y="2" width="1008" height="1037" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1587682140963" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-method">
-          <url>file://$PROJECT_DIR$/Server/src/main/java/de/uol/swp/server/game/phase/CompositePhase.java</url>
-          <line>100</line>
-          <properties class="de.uol.swp.server.game.phase.CompositePhase" method="executeActionPhase">
-            <option name="EMULATED" value="true" />
-          </properties>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <state x="616" y="177" width="672" height="676" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1589740569455" />
   </component>
 </project>
