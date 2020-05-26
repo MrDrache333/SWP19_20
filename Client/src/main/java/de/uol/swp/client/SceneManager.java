@@ -37,9 +37,9 @@ import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.text.Text;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -404,9 +404,6 @@ public class SceneManager {
             primaryScene = new Scene(rootPane, 1400, 790);
             primaryScene.getStylesheets().add(styleSheet);
             primaryScene.getStylesheets().add(PrimaryPresenter.css);
-            primaryStage.setOnCloseRequest(event -> {
-                userService.logout(currentUser);
-            });
             eventBus.register(primaryPresenter);
             primaryScene.setOnKeyPressed(hotkeyEventHandler);
         }
