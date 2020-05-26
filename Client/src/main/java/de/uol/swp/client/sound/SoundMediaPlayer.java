@@ -70,7 +70,6 @@ public class SoundMediaPlayer implements MediaPlayer {
      * @author Keno Oelrichs Garcia
      * @since Sprint3
      */
-
     @Override
     public void play() {
         if (soundEnabled)
@@ -96,8 +95,7 @@ public class SoundMediaPlayer implements MediaPlayer {
                             started = true;
                         }
                     });
-
-                    //Sounddatei abspielen
+                    // Sounddatei abspielen
                     if (type.equals(Type.Music)) clip.loop(-1);    //Wenn Hintergrundmusic -> Unendlich Loopen
                     clip.start();
                 } catch (Exception e) {
@@ -113,7 +111,6 @@ public class SoundMediaPlayer implements MediaPlayer {
      * @author Keno Oelrichs Garcia
      * @since Sprint3
      */
-
     @Override
     public void mute() {
         setMuted(true);
@@ -124,7 +121,6 @@ public class SoundMediaPlayer implements MediaPlayer {
      *
      * @param muted Der Status, ob der Track stumm sein soll oder nicht.
      */
-
     private void setMuted(boolean muted) {
         BooleanControl muteControl = (BooleanControl) clip
                 .getControl(BooleanControl.Type.MUTE);
@@ -137,7 +133,6 @@ public class SoundMediaPlayer implements MediaPlayer {
      * @author Keno Oelrichs Garcia
      * @since Sprint3
      */
-
     @Override
     public void unMute() {
         setMuted(false);
@@ -150,7 +145,6 @@ public class SoundMediaPlayer implements MediaPlayer {
      * @author Keno Oelrichs Garcia
      * @since Sprint3
      */
-
     @Override
     public void setVolume(double Volume) {
         if (Volume < 0 || Volume > 1) return;
@@ -166,7 +160,6 @@ public class SoundMediaPlayer implements MediaPlayer {
      * @author Keno Oelrichs Garcia
      * @since Sprint3
      */
-
     @Override
     public boolean isStarted() {
         return started;
@@ -178,7 +171,6 @@ public class SoundMediaPlayer implements MediaPlayer {
      * @author Keno Oelrichs Garcia
      * @since Sprint3
      */
-
     @Override
     public void stop() {
         if (clip != null) clip.stop();
@@ -251,7 +243,6 @@ public class SoundMediaPlayer implements MediaPlayer {
          * @author Keno Oelrichs Garcia
          * @since Sprint3
          */
-
         Sound(String path) {
             this.path = path;
         }

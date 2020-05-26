@@ -913,19 +913,26 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Impelemntiert das Verhalten bei Erhalten einer StartActionPhaseMessage und StartBuyPhaseMessage
+     * Impelementiert das Verhalten bei Erhalten einer StartActionPhaseMessage
      * die onStartPhase Methode wird aufgerufen
      *
-     * @param msg
+     * @param msg die Nachricht
      * @author Rike
      * @since Sprint 7
      */
-
     @Subscribe
     public void onStartActionPhaseMessage(StartActionPhaseMessage msg) {
         onStartPhase(msg.getGameID(), msg.getUser(), msg);
     }
 
+    /**
+     * Impelementiert das Verhalten bei Erhalten einer StartBuyPhaseMessage
+     * die onStartPhase Methode wird aufgerufen
+     *
+     * @param msg die Nachricht
+     * @author Rike
+     * @since Sprint 7
+     */
     @Subscribe
     public void onStartBuyPhaseMessage(StartBuyPhaseMessage msg) {
         onStartPhase(msg.getGameID(), msg.getUser(), msg);
@@ -1185,8 +1192,8 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Hier werden alle Geldkarten, die sich auf der Hand befinden, ausgespielt
-     * der playAllMoneyCardsButton wird anschließend auf nicht anklickbar gesetzt
+     * Hier werden alle Geldkarten, die sich auf der Hand befinden, ausgespielt.
+     * Der playAllMoneyCardsButton wird anschließend auf nicht anklickbar gesetzt
      *
      * @author Anna, Rike
      * @since Sprint 7
