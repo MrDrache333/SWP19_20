@@ -1224,12 +1224,15 @@ public class GameViewPresenter extends AbstractPresenter {
                 if (user.equals(loggedInUser)) {
                     playAllMoneyCardsButton.setVisible(true);
                     if (msg instanceof StartActionPhaseMessage) {
+                        playAllMoneyCardsButton.setDisable(true);
                         infoActualPhase.setText("Du darfst Aktionen spielen.");
                     }
                     if (msg instanceof StartBuyPhaseMessage) {
+                        playAllMoneyCardsButton.setDisable(false);
                         infoActualPhase.setText("Du darfst Karten kaufen.");
                     }
                     if (msg instanceof StartClearPhaseMessage) {
+                        playAllMoneyCardsButton.setDisable(true);
                         infoActualPhase.setText("Clearphase");
                     }
                 } else {
