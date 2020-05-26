@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ec5a1b8b-bacc-45c9-966c-69b0ed7a1dff" name="Default Changelist" comment="CHANGED:&#10;* Wenn beliebig viele Karten ausgewählt werden dürfen, dann erkennt man das daran, dass numberOdCardsToChoose auf 255 gesetzt wird. Der Nutzer kann dann so viele Karten auswählen bis er den Auswahl beenden Button drückt.&#10;*Platform.Blöcke um die infoActualPhase.setText Stellen gesetzt.&#10;*Die ausgewählten Karten werden entfernt, nachdem man mit dem Auswählen fertig ist.&#10;*Kleine Code Nachbesserungen">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="ec5a1b8b-bacc-45c9-966c-69b0ed7a1dff" name="Default Changelist" comment="ADDED&#10;*Änderungen aus dem Develope" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -611,14 +609,14 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1877" height="347" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1590267281640" />
-    <state x="217" y="77" key="MergeDialog" timestamp="1589919772731">
+    <state x="217" y="77" width="1647" height="869" key="MergeDialog" timestamp="1590527408479">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="217" y="77" key="MergeDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1589919772731" />
-    <state x="645" y="408" width="842" height="265" key="MultipleFileMergeDialog" timestamp="1589919772746">
+    <state x="217" y="77" width="1647" height="869" key="MergeDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1590527408479" />
+    <state x="645" y="408" width="842" height="265" key="MultipleFileMergeDialog" timestamp="1590527408495">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="645" y="408" width="842" height="265" key="MultipleFileMergeDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1589919772746" />
+    <state x="645" y="408" width="842" height="265" key="MultipleFileMergeDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1590527408495" />
     <state x="832" y="264" key="RollbackChangesDialog" timestamp="1588357040760">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
