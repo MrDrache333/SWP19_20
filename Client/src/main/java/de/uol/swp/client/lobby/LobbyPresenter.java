@@ -673,7 +673,12 @@ public class LobbyPresenter extends AbstractPresenter {
         if (!box.getChildren().contains(crownView) && user.getUsername().equals(gameOwner.getUsername())) {
             crownView.setFitHeight(15);
             crownView.setFitWidth(15);
-            box.getChildren().add(crownView);
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    box.getChildren().add(crownView);
+                }
+            });
         }
         return box;
     }
