@@ -172,6 +172,9 @@ public class GameViewPresenter extends AbstractPresenter {
     private ArrayList<Short> handCardIDs;
     private Map<Short, Label> valuecardLabels = new HashMap<>();
 
+    private ColorAdjust makeImageDarker = new ColorAdjust();
+
+
     private final EventHandler<MouseEvent> handCardEventHandler = new EventHandler() {
         @Override
         public void handle(Event event) {
@@ -224,6 +227,8 @@ public class GameViewPresenter extends AbstractPresenter {
         thirdEnemyDLC = new DeckLayoutContainer(1198, 446, 106, 60, "3.DLC");
 
         this.gameService = gameService;
+
+        makeImageDarker.setBrightness(-0.7);
     }
 
     /**
@@ -514,8 +519,6 @@ public class GameViewPresenter extends AbstractPresenter {
                     myDPLC.getChildren().add(newCardImage);
                 });
                 if (msg.getCounterCard() < 1) {
-                    ColorAdjust makeImageDarker = new ColorAdjust();
-                    makeImageDarker.setBrightness(-0.7);
                     selectedCard.setEffect(makeImageDarker);
                 }
                 // entfernt die genutzen Geldkarten aus der Aktionszone (wichtig, wenn der User mehr als 1 Kauf hat)
@@ -1225,12 +1228,30 @@ public class GameViewPresenter extends AbstractPresenter {
                     playAllMoneyCardsButton.setVisible(true);
                     if (msg instanceof StartActionPhaseMessage) {
                         infoActualPhase.setText("Du darfst Aktionen spielen.");
+                        for (Node n : handcards.getChildren()) {
+                            if (Integer.parseInt(n.getId()) < 4) {
+                                n.setEffect(makeImageDarker);
+                            }
+                        }
                     }
                     if (msg instanceof StartBuyPhaseMessage) {
                         infoActualPhase.setText("Du darfst Karten kaufen.");
+                        for (Node n : handcards.getChildren()) {
+                            if (Integer.parseInt(n.getId()) > 6) {
+                                n.setEffect(makeImageDarker);
+                            }
+                            if (Integer.parseInt(n.getId()) < 4) {
+                                n.setEffect(null);
+                            }
+                        }
                     }
                     if (msg instanceof StartClearPhaseMessage) {
                         infoActualPhase.setText("Clearphase");
+                        for (Node n : handcards.getChildren()) {
+                            if (Integer.parseInt(n.getId()) > 6) {
+                                n.setEffect(null);
+                            }
+                        }
                     }
                 } else {
                     playAllMoneyCardsButton.setVisible(false);
