@@ -167,13 +167,10 @@ public class GameViewPresenter extends AbstractPresenter {
     private final ChatViewPresenter chatViewPresenter;
     private final Injector injector;
     private final GameManagement gameManagement;
-
     private PathTransition pathTransition;
     private ArrayList<Short> handCardIDs;
     private Map<Short, Label> valuecardLabels = new HashMap<>();
-
     private ColorAdjust makeImageDarker = new ColorAdjust();
-
 
     private final EventHandler<MouseEvent> handCardEventHandler = new EventHandler() {
         @Override
@@ -204,6 +201,8 @@ public class GameViewPresenter extends AbstractPresenter {
         this.chatViewPresenter = chatViewPresenter;
         this.injector = injector;
         this.gameManagement = gameManagement;
+        this.gameService = gameService;
+        makeImageDarker.setBrightness(-0.7);
         // Die Hände für jeden Spieler
         handcards = new HandcardsLayoutContainer(575, 630, 110, 420, "My.HCLC");
         firstEnemyHand = new HandcardsLayoutContainer(700, 110, 110, 215, "1.HCLC");
@@ -225,10 +224,6 @@ public class GameViewPresenter extends AbstractPresenter {
         firstEnemyDLC = new DeckLayoutContainer(915, 0, 110, 60, "1.DLC");
         secondEnemyDLC = new DeckLayoutContainer(328, 169, 104, 60, "2.DLC");
         thirdEnemyDLC = new DeckLayoutContainer(1198, 446, 106, 60, "3.DLC");
-
-        this.gameService = gameService;
-
-        makeImageDarker.setBrightness(-0.7);
     }
 
     /**
@@ -499,8 +494,11 @@ public class GameViewPresenter extends AbstractPresenter {
                     valuecardLabels.get(msg.getCardID()).setText(String.valueOf(msg.getCounterCard()));
                 });
             }
+            ImageView selectedCard = (ImageView) mouseEvent.getSource();
+            if (msg.getCounterCard() < 1) {
+                selectedCard.setEffect(makeImageDarker);
+            }
             if (msg.getCurrentUser().equals(loggedInUser)) {
-                ImageView selectedCard = (ImageView) mouseEvent.getSource();
                 String pfad = "cards/images/" + msg.getCardID().toString() + ".png";
                 Image picture = new Image(pfad);
                 ImageView newCardImage = new ImageView(picture);
@@ -518,9 +516,6 @@ public class GameViewPresenter extends AbstractPresenter {
                     gameViewWIP.getChildren().remove(newCardImage);
                     myDPLC.getChildren().add(newCardImage);
                 });
-                if (msg.getCounterCard() < 1) {
-                    selectedCard.setEffect(makeImageDarker);
-                }
                 // entfernt die genutzen Geldkarten aus der Aktionszone (wichtig, wenn der User mehr als 1 Kauf hat)
                 Platform.runLater(() -> {
                     int money = 0;
@@ -1084,12 +1079,14 @@ public class GameViewPresenter extends AbstractPresenter {
             buyCardButton.setVisible(false);
             bigCardImageBox.setVisible(true);
         } else {
-            bigCardImageBox.setVisible(false);
-            for (Node a : handcards.getChildren()) {
-                ImageView b = (ImageView) a;
-                if (b.equals(card)) {
-                    mouseEvent = e;
-                    gameManagement.getGameService().playCard(gameID, loggedInUser, id);
+            if (id > 6) {
+                bigCardImageBox.setVisible(false);
+                for (Node a : handcards.getChildren()) {
+                    ImageView b = (ImageView) a;
+                    if (b.equals(card)) {
+                        mouseEvent = e;
+                        gameManagement.getGameService().playCard(gameID, loggedInUser, id);
+                    }
                 }
             }
         }
@@ -1228,6 +1225,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     playAllMoneyCardsButton.setVisible(true);
                     if (msg instanceof StartActionPhaseMessage) {
                         infoActualPhase.setText("Du darfst Aktionen spielen.");
+                        playAllMoneyCardsButton.setDisable(true);
                         for (Node n : handcards.getChildren()) {
                             if (Integer.parseInt(n.getId()) < 4) {
                                 n.setEffect(makeImageDarker);
@@ -1236,6 +1234,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     }
                     if (msg instanceof StartBuyPhaseMessage) {
                         infoActualPhase.setText("Du darfst Karten kaufen.");
+                        playAllMoneyCardsButton.setDisable(false);
                         for (Node n : handcards.getChildren()) {
                             if (Integer.parseInt(n.getId()) > 6) {
                                 n.setEffect(makeImageDarker);
