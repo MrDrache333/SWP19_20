@@ -42,7 +42,7 @@ public class JoinLobbyPresenter {
     private PasswordField passwordField;
 
     /**
-     * Konstrutor des JoinLobbyPresenters
+     * Konstruktor des JoinLobbyPresenters
      *
      * @param loggedInUser
      * @param lobbyService
