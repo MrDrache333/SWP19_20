@@ -66,8 +66,8 @@ public class GameService {
      * @author Devin
      * @since Sprint5
      */
-    public void chooseCard(User user, UUID gameID, ArrayList<Short> cardIDs) {
-        ChooseCardResponse resp = new ChooseCardResponse(gameID, user, cardIDs);
+    public void chooseCard(User user, UUID gameID, ArrayList<Short> cardIDs, boolean directHand) {
+        ChooseCardResponse resp = new ChooseCardResponse(gameID, user, cardIDs, directHand);
         bus.post(resp);
     }
 

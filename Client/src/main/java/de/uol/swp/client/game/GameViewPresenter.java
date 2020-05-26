@@ -179,6 +179,7 @@ public class GameViewPresenter extends AbstractPresenter {
     private ArrayList<ImageView> choosenCards = new ArrayList<>();
     private int numberOfCardsToChoose;
     private String currentInfoText;
+    private boolean directHand;
 
     private final EventHandler<MouseEvent> handCardEventHandler = new EventHandler() {
         @Override
@@ -192,7 +193,6 @@ public class GameViewPresenter extends AbstractPresenter {
         @Override
         public void handle(Event event) {
             ImageView card = (ImageView) event.getSource();
-            choosenCardsId.add(Short.parseShort(card.getId()));
             discardChoosenCard(lobbyID, loggedInUser, card.getImage().getUrl(), Short.valueOf(card.getId()), card, (MouseEvent) event);
         }
     };
@@ -200,15 +200,26 @@ public class GameViewPresenter extends AbstractPresenter {
     private final EventHandler<ActionEvent> sendChoosenCardResponse = new EventHandler() {
         @Override
         public void handle(Event event) {
-            gameService.chooseCard(loggedInUser, lobbyID, choosenCardsId);
+            gameService.chooseCard(loggedInUser, lobbyID, choosenCardsId, directHand);
             handcards.getChildren().forEach((n) -> {
-                n.removeEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
-                n.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+                if (choosenCards.stream().anyMatch(c -> c == n)) {
+                    Platform.runLater(() -> {
+                        handcards.getChildren().remove(n);
+                    });
+                } else {
+                    n.removeEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
+                    n.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+                }
             });
-            gameViewWIP.getChildren().remove(gameViewWIP.getChildren().size());
-            skipPhaseButton.setDisable(false);
-            choosenCardsId.clear();
-            infoActualPhase.setText(currentInfoText);
+            Platform.runLater(() -> {
+                gameViewWIP.getChildren().remove(gameViewWIP.getChildren().size() - 1);
+                skipPhaseButton.setDisable(false);
+                choosenCardsId.clear();
+                choosenCards.clear();
+                Platform.runLater(() -> {
+                    infoActualPhase.setText(currentInfoText);
+                });
+            });
         }
     };
 
@@ -673,18 +684,35 @@ public class GameViewPresenter extends AbstractPresenter {
     public void onChooseCardRequest (ChooseCardRequest req) {
         if (req.getGameID().equals(lobbyID) && req.getSourcePlayer().equals(loggedInUser)) {
             numberOfCardsToChoose = req.getCount();
+            directHand = req.getDirectHand();
             currentInfoText = infoActualPhase.getText();
             Button button = new Button("Auswahl beenden");
             skipPhaseButton.setDisable(true);
-            button.setLayoutX(skipPhaseButton.getLayoutX()); button.setLayoutY(skipPhaseButton.getLayoutY());
-            button.setOnAction(sendChoosenCardResponse);
-            gameViewWIP.getChildren().add(button);
+            Platform.runLater(() -> {
+                button.setLayoutX(skipPhaseButton.getLayoutX());
+                button.setLayoutY(skipPhaseButton.getLayoutY());
+                button.setOnAction(sendChoosenCardResponse);
+                gameViewWIP.getChildren().add(button);
+            });
             if (req.getSource()== AbstractPlayground.ZoneType.HAND) {
-                infoActualPhase.setText(numberOfCardsToChoose + " Karten entsorgen");
-                handcards.getChildren().forEach((n) -> {
-                    n.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
-                    n.addEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
-                });
+                if (numberOfCardsToChoose != 255) {
+                    Platform.runLater(() -> {
+                        infoActualPhase.setText(numberOfCardsToChoose + " Karten entsorgen");
+                        handcards.getChildren().forEach((n) -> {
+                            n.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+                            n.addEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
+                        });
+                    });
+                } else {
+                    if (numberOfCardsToChoose != 255) {
+                        Platform.runLater(() -> {
+                            infoActualPhase.setText("Beliebig viele Karten entsorgen");
+                            handcards.getChildren().forEach((n) -> {
+                                n.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+                                n.addEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
+                            });
+                        });
+                }}
             }
         }
 
@@ -1091,27 +1119,55 @@ public class GameViewPresenter extends AbstractPresenter {
             buyCardButton.setVisible(false);
             bigCardImageBox.setVisible(true);
         } else {
-            if (!choosenCards.contains(card)) {
-                numberOfCardsToChoose = numberOfCardsToChoose - 1;
-                infoActualPhase.setText(numberOfCardsToChoose + " Karten entsorgen");
-                card.setStyle("-fx-border-width: 1");
-                card.setStyle("-fx-border-color: lightskyblue");
-                choosenCards.add(card);
-                bigCardImageBox.setVisible(false);
+            if(numberOfCardsToChoose != 255) {
+                if (!choosenCards.contains(card)) {
+                    choosenCardsId.add(Short.parseShort(card.getId()));
+                    numberOfCardsToChoose = numberOfCardsToChoose - 1;
+                    Platform.runLater(() -> {
+                        infoActualPhase.setText(numberOfCardsToChoose + " Karten entsorgen");
+                    });
+                    card.setStyle("-fx-border-width: 1");
+                    card.setStyle("-fx-border-color: lightskyblue");
+                    choosenCards.add(card);
+                    bigCardImageBox.setVisible(false);
+                } else {
+                    choosenCards.remove(card);
+                    numberOfCardsToChoose += 1;
+                    card.setStyle("-fx-border-width: 0");
+                }
             } else {
-                choosenCards.remove(card);
-                card.setStyle("-fx-border-width: 0");
+                if (!choosenCards.contains(card)) {
+                    choosenCardsId.add(Short.parseShort(card.getId()));
+                    numberOfCardsToChoose = numberOfCardsToChoose - 1;
+                    card.setStyle("-fx-border-width: 1");
+                    card.setStyle("-fx-border-color: lightskyblue");
+                    choosenCards.add(card);
+                    bigCardImageBox.setVisible(false);
+                } else {
+                    choosenCards.remove(card);
+                    numberOfCardsToChoose += 1;
+                    card.setStyle("-fx-border-width: 0");
+                }
             }
         }
         if(numberOfCardsToChoose == 0) {
+            handcards.getChildren().removeIf(c -> choosenCards.contains(c));
             handcards.getChildren().forEach((n) -> {
-                n.removeEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
-                n.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+                if (choosenCards.stream().anyMatch(c -> c == n)) {
+                    Platform.runLater(() -> {
+                        handcards.getChildren().remove(n);
+                    });
+                } else {
+                    n.removeEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
+                    n.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+                }
             });
-            gameService.chooseCard(loggedInUser, gameID, choosenCardsId);
+            gameService.chooseCard(loggedInUser, gameID, choosenCardsId, directHand);
             skipPhaseButton.setDisable(false);
             choosenCardsId.clear();
-            infoActualPhase.setText(currentInfoText);
+            Platform.runLater(() -> {
+                infoActualPhase.setText(currentInfoText);
+            });
         }
     }
 
