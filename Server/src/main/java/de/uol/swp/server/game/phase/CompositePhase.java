@@ -45,7 +45,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
             throw new IllegalArgumentException("CardID wurde nicht gefunden");
         }
         // 2. Überprüfe, ob Spieler diese Karte in der Hand hat
-        if (player.getPlayerDeck().getHand().stream().noneMatch(c->c.getId() == currentCard.getId())) {
+        if(player.getPlayerDeck().getHand().stream().noneMatch(c -> c.getId() == currentCard.getId())){
             throw new IllegalArgumentException("Die Hand enthält die gesuchte Karte nicht");
         }
         /*

@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
  * Presenter für das Account löschen Fenster
  *
  * @author Anna
- * @since Sprint4
+ * @since Sprint 4
  */
 @SuppressWarnings("UnstableApiUsage")
 public class DeleteAccountPresenter {
@@ -33,7 +33,6 @@ public class DeleteAccountPresenter {
     private LobbyService lobbyService;
     private UserService userService;
     private EventBus eventBus;
-
 
     /**
      * Instanziert ein neuen DeleteAccountPresenter.

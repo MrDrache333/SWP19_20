@@ -122,10 +122,7 @@ public class MainMenuPresenter extends AbstractPresenter {
         players.setPrefWidth(66);
         inGame.setPrefWidth(60);
         joinLobby.setPrefWidth(85);
-
-
     }
-
 
     /**
      * Request für Lobby erstellen Fenster
@@ -141,7 +138,6 @@ public class MainMenuPresenter extends AbstractPresenter {
     //--------------------------------------
     // EVENTBUS
     //--------------------------------------
-
 
     /**
      * Login war erfolgreich. Der User tritt dem globalen Chat bei. Lobbys werden aktualisiert
@@ -220,7 +216,6 @@ public class MainMenuPresenter extends AbstractPresenter {
             Platform.runLater(() -> {
                 lobbies.add(0, message.getLobby());
             });
-
         }
     }
 
@@ -399,7 +394,6 @@ public class MainMenuPresenter extends AbstractPresenter {
                         toAdd.add(lobbyToUpdate);
                     }
                 }
-
                 //Lobbytabelle aktualisieren
                 lobbies.removeAll(toRemove);
                 lobbies.addAll(toAdd);
@@ -441,7 +435,7 @@ public class MainMenuPresenter extends AbstractPresenter {
 
 
     //-----------------
-    // PRIVATE METHODS
+    // PRIVATE METHODEN
     //-----------------
 
     /**
@@ -469,15 +463,12 @@ public class MainMenuPresenter extends AbstractPresenter {
      * @author Rike, Julia, Paula, Marvin
      * @since Sprint3
      */
-
     private void addJoinLobbyButton() {
         Callback<TableColumn<Lobby, Void>, TableCell<Lobby, Void>> cellFactory = new Callback<>() {
             @Override
             public TableCell<Lobby, Void> call(final TableColumn<Lobby, Void> param) {
                 return new TableCell<>() {
-
                     final Button joinLobbyButton = new Button("Beitreten");
-
                     {
                         joinLobbyButton.setOnAction((ActionEvent event) -> {
                             Lobby lobby = getTableView().getItems().get(getIndex());
@@ -493,8 +484,6 @@ public class MainMenuPresenter extends AbstractPresenter {
                                 } else if (!lobby.getLobbyPassword().isEmpty()) {
                                     OpenJoinLobbyRequest request = new OpenJoinLobbyRequest(loggedInUser, lobby);
                                     eventBus.post(request);
-
-
                                 }
                             }
                         });

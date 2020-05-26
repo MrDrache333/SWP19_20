@@ -497,13 +497,12 @@ public class GameViewPresenter extends AbstractPresenter {
 
 
     /**
-    *
-    * Wird aufgerufen, wenn eine AllOnlineUsersInLobbyResponse empfangen wird. Prüft auch, ob aktuell das GameView angezeigt wird.
-    *
-    * @param response die Antwort aller Lobby-Benutzer
-    * @author Marvin, Alex
-    * @since Sprint3
-    */
+     * Wird aufgerufen, wenn eine AllOnlineUsersInLobbyResponse empfangen wird. Prüft auch, ob aktuell das GameView angezeigt wird.
+     *
+     * @param response die Antwort aller Lobby-Benutzer
+     * @author Marvin, Alex
+     * @since Sprint3
+     */
     @Subscribe
     private void onReceiveAllUsersInLobby(AllOnlineUsersInLobbyResponse response) {
         if (response.getLobbyID().equals(this.lobbyID)) {
@@ -532,13 +531,13 @@ public class GameViewPresenter extends AbstractPresenter {
     // TODO: Karte wenn sie gekauft wird, von der richtigen Postition einfliegen lassen. ( Weiter nach rechts)
     @Subscribe
     public void onBuyCardMessage(BuyCardMessage msg) {
-        if (msg.getLobbyID().equals(lobbyID)){
+        if (msg.getLobbyID().equals(lobbyID)) {
             if (valuecardLabels.containsKey(msg.getCardID())) {
                 Platform.runLater(() -> {
                     valuecardLabels.get(msg.getCardID()).setText(String.valueOf(msg.getCounterCard()));
                 });
             }
-            if(msg.getCurrentUser().equals(loggedInUser)) {
+            if (msg.getCurrentUser().equals(loggedInUser)) {
                 ImageView selectedCard = (ImageView) mouseEvent.getSource();
                 String pfad = "cards/images/" + msg.getCardID().toString() + ".png";
                 Image picture = new Image(pfad);
@@ -616,8 +615,7 @@ public class GameViewPresenter extends AbstractPresenter {
                         if (cardToBeChecked.getId().equals("1") || cardToBeChecked.getId().equals("2") || cardToBeChecked.getId().equals("3")) {
                             playAllMoneyCardsButton.setDisable(false);
                             break;
-                        }
-                        else {
+                        } else {
                             playAllMoneyCardsButton.setDisable(true);
                         }
                     }
@@ -640,7 +638,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     Card card = new Card(msg.getHandCardID(), firstEnemyPCLC.getLayoutX(), firstEnemyPCLC.getLayoutY(), firstEnemyPCLC.getHeight());
                     if (playerIndexNumbers.get(0).equals(msg.getEnemyPlaceNumber())) {
                         Platform.runLater(() -> {
-                            AnimationManagement.playCard((ImageView)firstEnemyHand.getChildren().get(0),  firstEnemyPCLC.getChildren().size(), firstEnemyPCLC);
+                            AnimationManagement.playCard((ImageView) firstEnemyHand.getChildren().get(0), firstEnemyPCLC.getChildren().size(), firstEnemyPCLC);
                             firstEnemyHand.getChildren().remove(0);
                             firstEnemyPCLC.getChildren().add(card);
                             return;
@@ -649,7 +647,7 @@ public class GameViewPresenter extends AbstractPresenter {
 
                     if (playerIndexNumbers.get(1).equals(msg.getEnemyPlaceNumber())) {
                         Platform.runLater(() -> {
-                            AnimationManagement.playCard((ImageView)secondEnemyHand.getChildren().get(0),  secondEnemyPCLC.getChildren().size(), secondEnemyPCLC);
+                            AnimationManagement.playCard((ImageView) secondEnemyHand.getChildren().get(0), secondEnemyPCLC.getChildren().size(), secondEnemyPCLC);
                             secondEnemyHand.getChildren().remove(0);
                             secondEnemyPCLC.getChildren().add(card);
                             return;
@@ -657,7 +655,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     }
                     if (playerIndexNumbers.get(2).equals(msg.getEnemyPlaceNumber())) {
                         Platform.runLater(() -> {
-                            AnimationManagement.playCard((ImageView)thirdEnemyHand.getChildren().get(0),  thirdEnemyPCLC.getChildren().size(), thirdEnemyPCLC);
+                            AnimationManagement.playCard((ImageView) thirdEnemyHand.getChildren().get(0), thirdEnemyPCLC.getChildren().size(), thirdEnemyPCLC);
                             thirdEnemyHand.getChildren().remove(0);
                             thirdEnemyPCLC.getChildren().add(card);
                             return;
@@ -715,19 +713,18 @@ public class GameViewPresenter extends AbstractPresenter {
                 }}
             }
         }
-
     }
 
     /**
      * Wenn ein anderer Spieler sich in der ClearPhase befindet, wird das Entsorgen dessen Handkarten und ausgespielten Karten den anderen Spielern angezeigt
      *
-     * @param msg       Die Message die vom server gesendet wird, wenn ein anderer Spieler eine Karte sich in der ClearPhase befindet.
+     * @param msg Die Message die vom server gesendet wird, wenn ein anderer Spieler eine Karte sich in der ClearPhase befindet.
      * @author Devin
      * @since Sprint 7
      */
     @FXML
     @Subscribe
-    public void onStartClearPhaseMessage (StartClearPhaseMessage msg) {
+    public void onStartClearPhaseMessage(StartClearPhaseMessage msg) {
         // Wenn die ClearMessage an den currentPlayer geht werden, seine Handkarten und
         // ausgespielten Karten auf den Ablagestapel getan und fünf neue Karten gezogen.
         onStartPhase(msg.getGameID(), msg.getCurrentUser(), msg);
@@ -740,14 +737,18 @@ public class GameViewPresenter extends AbstractPresenter {
         // Wenn ein anderer Spieler eine ClearPhaseMessage erhählt wird dies den anderen Spielern
         // angezeigt, indem deren Repräsentation des Spieler seine Handkarten und ausgespielten Karten auf den Ablagestapel legt.
         if (msg.getGameID().equals(lobbyID) && !msg.getCurrentUser().equals(loggedInUser)) {
-            List<Short> playerIndexNumbers = new ArrayList<>(); playerIndexNumbers.add((short) 0); playerIndexNumbers.add((short) 1); playerIndexNumbers.add((short) 2); playerIndexNumbers.add((short) 3);
+            List<Short> playerIndexNumbers = new ArrayList<>();
+            playerIndexNumbers.add((short) 0);
+            playerIndexNumbers.add((short) 1);
+            playerIndexNumbers.add((short) 2);
+            playerIndexNumbers.add((short) 3);
             playerIndexNumbers.remove(msg.getUserPlaceNumber());
             if (playerIndexNumbers.get(0).equals(msg.getEnemyPlaceNumber())) {
                 Platform.runLater(() -> {
                     firstEnemyHand.getChildren().clear();
                     firstEnemyPCLC.getChildren().clear();
                 });
-                for(int i=0; i<5; i++) {
+                for (int i = 0; i < 5; i++) {
                     Card card = new Card("card_back", firstEnemyHand.getLayoutX(), firstEnemyHand.getLayoutY(), 80);
                     Platform.runLater(() -> {
                         firstEnemyHand.getChildren().add(card);
@@ -760,7 +761,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     secondEnemyHand.getChildren().clear();
                     secondEnemyPCLC.getChildren().clear();
                 });
-                for(int i=0; i<5; i++) {
+                for (int i = 0; i < 5; i++) {
                     Platform.runLater(() -> {
                         Card card = new Card("card_back", secondEnemyHand.getLayoutX(), secondEnemyHand.getLayoutY(), 80);
                         secondEnemyHand.getChildren().add(card);
@@ -773,7 +774,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     thirdEnemyHand.getChildren().clear();
                     thirdEnemyPCLC.getChildren().clear();
                 });
-                for(int i=0; i<5; i++) {
+                for (int i = 0; i < 5; i++) {
                     Platform.runLater(() -> {
                         Card card = new Card("card_back", thirdEnemyHand.getLayoutX(), thirdEnemyHand.getLayoutY(), 80);
                         thirdEnemyHand.getChildren().add(card);
@@ -840,13 +841,13 @@ public class GameViewPresenter extends AbstractPresenter {
                         playAllMoneyCardsButton.setDisable(false);
                     }
                 });
-                if (numberOfPlayersInGame == 1){
+                if (numberOfPlayersInGame == 1) {
                     return;
                 }
-                if (message.isInitialHand()){
+                if (message.isInitialHand()) {
                     String pfad = "cards/images/card_back.png";
                     Image picture = new Image(pfad);
-                    for(int i=0; i<5; i++) {
+                    for (int i = 0; i < 5; i++) {
                         ImageView card = new ImageView(picture);
                         ImageView card2 = new ImageView(picture);
                         ImageView card3 = new ImageView(picture);
@@ -863,9 +864,9 @@ public class GameViewPresenter extends AbstractPresenter {
                         card3.setId("back");
                         card3.setFitWidth(card.getFitHeight());
                         firstEnemyHand.getChildren().add(card);
-                        if(numberOfPlayersInGame >= 3) {
+                        if (numberOfPlayersInGame >= 3) {
                             secondEnemyHand.getChildren().add(card2);
-                            if (numberOfPlayersInGame == 4){
+                            if (numberOfPlayersInGame == 4) {
                                 thirdEnemyHand.getChildren().add(card3);
                             }
                         }
@@ -929,19 +930,26 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Impelemntiert das Verhalten bei Erhalten einer StartActionPhaseMessage und StartBuyPhaseMessage
+     * Implementiert das Verhalten bei Erhalten einer StartActionPhaseMessage
      * die onStartPhase Methode wird aufgerufen
      *
-     * @param msg
+     * @param msg die Nachricht
      * @author Rike
      * @since Sprint 7
      */
-
     @Subscribe
     public void onStartActionPhaseMessage(StartActionPhaseMessage msg) {
         onStartPhase(msg.getGameID(), msg.getUser(), msg);
     }
 
+    /**
+     * Impelementiert das Verhalten bei Erhalten einer StartBuyPhaseMessage
+     * die onStartPhase Methode wird aufgerufen
+     *
+     * @param msg die Nachricht
+     * @author Rike
+     * @since Sprint 7
+     */
     @Subscribe
     public void onStartBuyPhaseMessage(StartBuyPhaseMessage msg) {
         onStartPhase(msg.getGameID(), msg.getUser(), msg);
@@ -958,10 +966,18 @@ public class GameViewPresenter extends AbstractPresenter {
     public void onInfoPlayDisplayMessage(InfoPlayDisplayMessage msg) {
         if (msg.getLobbyID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
             Platform.runLater(() -> {
-                if (msg.getAvailableBuy() == 1){ numberOfBuy.setText(msg.getAvailableBuy() + " Kauf"); }
-                if (msg.getAvailableBuy() != 1) { numberOfBuy.setText(msg.getAvailableBuy() + " Käufe"); }
-                if (msg.getAvailableAction() == 1){ numberOfAction.setText(msg.getAvailableAction() + " Aktion"); }
-                if (msg.getAvailableAction() != 1){ numberOfAction.setText(msg.getAvailableAction() + " Aktionen"); }
+                if (msg.getAvailableBuy() == 1) {
+                    numberOfBuy.setText(msg.getAvailableBuy() + " Kauf");
+                }
+                if (msg.getAvailableBuy() != 1) {
+                    numberOfBuy.setText(msg.getAvailableBuy() + " Käufe");
+                }
+                if (msg.getAvailableAction() == 1) {
+                    numberOfAction.setText(msg.getAvailableAction() + " Aktion");
+                }
+                if (msg.getAvailableAction() != 1) {
+                    numberOfAction.setText(msg.getAvailableAction() + " Aktionen");
+                }
                 if (msg.getSourceMessage() == Phase.Type.ActionPhase || msg.getSourceMessage() == Phase.Type.Clearphase) {
                     usableMoney = msg.getAdditionalMoney();
                 }
@@ -1048,13 +1064,14 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Fasst Funktionen zusammen, welche die Spielerlisten/Spielernamen aktualisieren.
      *
-     * @since Sprint7
-     * @author Alex
      * @param usersList Die User Liste als Set
+     * @author Alex
+     * @since Sprint7
      */
     private void updateUsersInGame(Set<User> usersList) {
-        updateEnemiesOnBoard(usersList);
-        updateUsersList(usersList);
+        // TODO: Deaktiviert, da NullPointer. NullPointer muss behoben werden.
+        // updateEnemiesOnBoard(usersList);
+        // updateUsersList(usersList);
     }
 
     /**
@@ -1174,21 +1191,21 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Die Karten werden zum Ablagestapel bewegt
      *
-     * @param children Das children von dem Karten Stapel
+     * @param children    Das children von dem Karten Stapel
      * @param actionCards true wenn die Karten in der Aktionszone liegen
      * @author Darian
      * @since Sprint7
      */
-    private void moveCardsToDiscardPile(ObservableList<Node> children, boolean actionCards){
+    private void moveCardsToDiscardPile(ObservableList<Node> children, boolean actionCards) {
         for (Node c : children) {
             Platform.runLater(() -> {
                 ImageView card = (ImageView) c;
                 String pfad = "cards/images/" + card.getId() + ".png";
-                if(actionCards) {
-                    card.setLayoutX(c.getLayoutX()-400);
+                if (actionCards) {
+                    card.setLayoutX(c.getLayoutX() - 400);
                     card.setLayoutY(0);//433);
                 } else {
-                    card.setLayoutX(c.getLayoutX()-845);
+                    card.setLayoutX(c.getLayoutX() - 845);
                     card.setLayoutY(145);
                 }
                 card.setId(String.valueOf(c));
@@ -1230,12 +1247,11 @@ public class GameViewPresenter extends AbstractPresenter {
             buyCardButton.setVisible(true);
             buyCardButton.setOnAction(event -> {
                 bigCardImageBox.setVisible(false);
-                if (playAllMoneyCardsButton.isDisable() && playAllMoneyCardsButton.isVisible()){
+                if (playAllMoneyCardsButton.isDisable() && playAllMoneyCardsButton.isVisible()) {
                     BuyCardRequest req = new BuyCardRequest(lobbyID, loggedInUser, Short.valueOf(cardID));
                     gameService.buyCard(req);
                     this.mouseEvent = mouseEvent;
-                }
-                else {
+                } else {
                     if (!playAllMoneyCardsButton.isVisible()) {
                         showAlert(Alert.AlertType.INFORMATION, "Du bist nicht dran!", "Fehler");
                     } else {
@@ -1249,12 +1265,11 @@ public class GameViewPresenter extends AbstractPresenter {
         } else {
             String cardID = cardImage.getId();
             bigCardImageBox.setVisible(false);
-            if (playAllMoneyCardsButton.isDisable() && playAllMoneyCardsButton.isVisible()){
+            if (playAllMoneyCardsButton.isDisable() && playAllMoneyCardsButton.isVisible()) {
                 BuyCardRequest req = new BuyCardRequest(lobbyID, loggedInUser, Short.valueOf(cardID));
                 gameService.buyCard(req);
                 this.mouseEvent = mouseEvent;
-            }
-            else {
+            } else {
                 if (!playAllMoneyCardsButton.isVisible()) {
                     showAlert(Alert.AlertType.INFORMATION, "Du bist nicht dran!", "Fehler");
                 } else {
@@ -1266,8 +1281,8 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Hier werden alle Geldkarten, die sich auf der Hand befinden, ausgespielt
-     * der playAllMoneyCardsButton wird anschließend auf nicht anklickbar gesetzt
+     * Hier werden alle Geldkarten, die sich auf der Hand befinden, ausgespielt.
+     * Der playAllMoneyCardsButton wird anschließend auf nicht anklickbar gesetzt
      *
      * @author Anna, Rike
      * @since Sprint 7

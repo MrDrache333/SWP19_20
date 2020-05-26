@@ -146,8 +146,7 @@ public class AuthenticationService extends AbstractService {
                     ServerMessage returnMessage = new UserLoggedOutMessage(userToLogOut.getUsername());
                     post(returnMessage);
                 }
-            }
-            else{
+            } else {
                 UpdateUserFailedMessage returnMessage = new UpdateUserFailedMessage(session.getUser(), "Der Account befindet sich in einem laufenden Spiel. Du kannst dich nicht ausloggen!");
                 sendToLoggedInPlayers(returnMessage);
             }
@@ -206,7 +205,7 @@ public class AuthenticationService extends AbstractService {
         User userToDrop = msg.getUser();
 
         // Could be already logged out/removed or he is in a game
-        if (userToDrop != null ) {
+        if (userToDrop != null) {
             if (!lobbyManagement.isUserIngame(userToDrop)) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Lösche User " + userToDrop.getUsername());
@@ -216,9 +215,8 @@ public class AuthenticationService extends AbstractService {
 
                 ServerMessage returnMessage = new UserDroppedMessage(userToDrop);
                 sendToLoggedInPlayers(returnMessage);
-            }
-            else{
-                UpdateUserFailedMessage returnMessage = new UpdateUserFailedMessage(userToDrop,"Der Account befindet sich in einem laufenden Spiel. Du kannst deinen Account nicht löschen!");
+            } else {
+                UpdateUserFailedMessage returnMessage = new UpdateUserFailedMessage(userToDrop, "Der Account befindet sich in einem laufenden Spiel. Du kannst deinen Account nicht löschen!");
                 sendToLoggedInPlayers(returnMessage);
             }
         }
@@ -237,6 +235,15 @@ public class AuthenticationService extends AbstractService {
         Set<User> loggedInUsers = new TreeSet<>(userSessions.values());
 
         message.setReceiver(getSessions(loggedInUsers));
+        post(message);
+    }
+
+    public void sendToLobbyOwner(ServerMessage message, User owner) {
+
+        Set<User> owner2 = new HashSet<>(1);
+        owner2.add(owner);
+
+        message.setReceiver(getSessions(owner2));
         post(message);
     }
 }
