@@ -35,22 +35,57 @@ public class BuyCardMessage extends AbstractServerMessage {
         this.costCard = costCard;
     }
 
+    /**
+     * Gibt die LobbyID zurück
+     *
+     * @return lobbyID die LobbyID
+     * @author Rike
+     * @since Sprint 3
+     */
     public UUID getLobbyID() {
         return lobbyID;
     }
 
+    /**
+     * Gibt den derzeitigen User zurück
+     *
+     * @return currentUser der aktuelle User
+     * @author Rike
+     * @since Sprint 3
+     */
     public User getCurrentUser() {
         return currentUser;
     }
 
+    /**
+     * Gibt die Karten-ID zurück
+     *
+     * @return cardID die Karten-ID
+     * @author Rike
+     * @since Sprint 3
+     */
     public Short getCardID() {
         return cardID;
     }
 
+    /**
+     * Gibt die Anzahl der verfügbaren Kartenkäufe zurück
+     *
+     * @return counterCard die Anzahl der verfügbaren Kartenkäufe
+     * @author Rike
+     * @since Sprint 3
+     */
     public int getCounterCard() {
         return counterCard;
     }
 
+    /**
+     * Gibt den Kartenpreis zurück
+     *
+     * @return costCard der Kartenpreis
+     * @author Rike
+     * @since Sprint 3
+     */
     public Short getCostCard() {
         return costCard;
     }

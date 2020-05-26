@@ -8,18 +8,6 @@ import java.util.UUID;
 
 public class DiscardCardMessage extends AbstractServerMessage {
 
-    /**
-     * Die Message die anderen Spielern gesendet wird, wenn ein Spieler eine Karte entsorgt.
-     *
-     * @param gameID                Die ID des aktuellen Spiels
-     * @param currentUser           Der Spieler der gerade am Zug ist
-     * @param cardID                Die ID der entsorgten Karte
-     * @param UserPlaceNumber       Der Index des Users in der Players Liste
-     * @param enemyPlaceNumber      Der Index des Gegners in der Player Liste
-     * @author Devin
-     * @since Sprint 7
-     */
-
     private final UUID gameID;
     private final User currentUser;
     private final List<Short> cardID;
@@ -27,7 +15,18 @@ public class DiscardCardMessage extends AbstractServerMessage {
     private final Short enemyPlaceNumber;
     private final Short numberOfCardsToDiscard;
 
-    public DiscardCardMessage (UUID gameID, User currentUser, List<Short> cardID, Short userPlaceNumber, Short enemyPlaceNumber, Short numberOfCardsToDiscard) {
+    /**
+     * Die Message die anderen Spielern gesendet wird, wenn ein Spieler eine Karte entsorgt.
+     *
+     * @param gameID           Die ID des aktuellen Spiels
+     * @param currentUser      Der Spieler der gerade am Zug ist
+     * @param cardID           Die ID der entsorgten Karte
+     * @param userPlaceNumber  Der Index des Users in der Players Liste
+     * @param enemyPlaceNumber Der Index des Gegners in der Player Liste
+     * @author Devin
+     * @since Sprint 7
+     */
+    public DiscardCardMessage(UUID gameID, User currentUser, List<Short> cardID, Short userPlaceNumber, Short enemyPlaceNumber, Short numberOfCardsToDiscard) {
         this.gameID = gameID;
         this.currentUser = currentUser;
         this.cardID = cardID;
@@ -37,22 +36,57 @@ public class DiscardCardMessage extends AbstractServerMessage {
 
     }
 
+    /**
+     * Gibt die Game-ID zurück
+     *
+     * @return gameID die ID
+     * @author Devin
+     * @since Sprint 7
+     */
     public UUID getGameID() {
         return gameID;
     }
 
+    /**
+     * Gibt die Game-ID zurück
+     *
+     * @return currentUser der aktuelle User
+     * @author Devin
+     * @since Sprint 7
+     */
     public User getCurrentUser() {
         return currentUser;
     }
 
+    /**
+     * Gibt die Karten-ID zurück
+     *
+     * @return cardID die Karten-ID
+     * @author Devin
+     * @since Sprint 7
+     */
     public List<Short> getCardID() {
         return cardID;
     }
 
+    /**
+     * Gibt die gegnerische Platznummer zurück
+     *
+     * @return enemyPlaceNumber die gegnerische Platznummer
+     * @author Devin
+     * @since Sprint 7
+     */
     public Short getEnemyPlaceNumber() {
         return enemyPlaceNumber;
     }
 
+    /**
+     * Gibt die Nummer des eigenen Userplatzes zurück
+     *
+     * @return userPlaceNumber die Nummer des eingenen Userplatzes
+     * @author Devin
+     * @since Sprint 7
+     */
     public Short getUserPlaceNumber() {
         return userPlaceNumber;
     }
