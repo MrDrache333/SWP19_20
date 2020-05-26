@@ -70,9 +70,9 @@ public class DiscardCardMessage extends AbstractServerMessage {
     }
 
     /**
-     * Gibt die gegnerische Platznummer zurück
+     * Gibt den Index des Gegners in der Players Liste zurück
      *
-     * @return enemyPlaceNumber die gegnerische Platznummer
+     * @return enemyPlaceNumber der Index des Gegners in der Players Liste
      * @author Devin
      * @since Sprint 7
      */
@@ -81,9 +81,9 @@ public class DiscardCardMessage extends AbstractServerMessage {
     }
 
     /**
-     * Gibt die Nummer des eigenen Userplatzes zurück
+     * Gibt den Index des Users in der Players Liste zurück
      *
-     * @return userPlaceNumber die Nummer des eingenen Userplatzes
+     * @return userPlaceNumber der Index des Users in der Players Liste
      * @author Devin
      * @since Sprint 7
      */

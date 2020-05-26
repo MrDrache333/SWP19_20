@@ -38,10 +38,12 @@ public class PlayCardMessage extends AbstractServerMessage {
      * Überladener Konstruktor
      * Die Message die gesendet wird, wenn eine Handkarte angeklickt wurde
      *
-     * @param gameID      Die ID des aktuellen Spiels
-     * @param currentUser Der Spieler der die Request stellt
-     * @param handCardID  Die ID der angeklickten Karte
-     * @param isPlayed    Sagt aus, ob die Karte ausgespielt werden darf
+     * @param gameID           Die ID des aktuellen Spiels
+     * @param currentUser      Der Spieler der die Request stellt
+     * @param handCardID       Die ID der angeklickten Karte
+     * @param isPlayed         Sagt aus, ob die Karte ausgespielt werden darf
+     * @param enemyPlaceNumber Die Platznummer des Gegners
+     * @param userPlaceNumber  Die Platznummer des Users
      * @author Rike, Devin
      * @since Sprint 5
      */
