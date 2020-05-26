@@ -582,35 +582,56 @@ public class ActionCardExecution {
                 break;
         }
 
+        int size = action.getCardsToMove().size();
         switch (action.getCardSource()) {
             case HAND:
-                while (!action.getCardsToMove().isEmpty()) {
-                    player.getPlayerDeck().getHand().remove(action.getCardsToMove().get(0));
+                for (int i = 0; i < size; i++) {
+                    Card card = action.getCardsToMove().get(i);
+                    player.getPlayerDeck().getHand().remove(card);
+                    if (action.getCardsToMove().size() != size) {
+                        action.getCardsToMove().add(i, card);
+                    }
                 }
                 break;
             case TEMP:
-                while (!action.getCardsToMove().isEmpty()) {
-                    player.getPlayerDeck().getTemp().remove(action.getCardsToMove().get(0));
+                for (int i = 0; i < size; i++) {
+                    Card card = action.getCardsToMove().get(i);
+                    player.getPlayerDeck().getTemp().remove(card);
+                    if (action.getCardsToMove().size() != size) {
+                        action.getCardsToMove().add(i, card);
+                    }
                 }
                 break;
             case DISCARD:
-                while (!action.getCardsToMove().isEmpty()) {
-                    player.getPlayerDeck().getDiscardPile().remove(action.getCardsToMove().get(0));
+                for (int i = 0; i < size; i++) {
+                    Card card = action.getCardsToMove().get(i);
+                    player.getPlayerDeck().getDiscardPile().remove(card);
+                    if (action.getCardsToMove().size() != size) {
+                        action.getCardsToMove().add(i, card);
+                    }
                 }
                 break;
             case DRAW:
-                while (!action.getCardsToMove().isEmpty()) {
-                    player.getPlayerDeck().getCardsDeck().remove(action.getCardsToMove().get(0));
+                for (int i = 0; i < size; i++) {
+                    Card card = action.getCardsToMove().get(i);
+                    player.getPlayerDeck().getCardsDeck().remove(card);
+                    if (action.getCardsToMove().size() != size) {
+                        action.getCardsToMove().add(i, card);
+                    }
                 }
                 break;
             case BUY:
                 Map<Short, Integer> newCount = new HashMap<>();
-                while (!action.getCardsToMove().isEmpty()) {
-                    short id = action.getCardsToMove().get(0).getId();
+                for (int i = 0; i < size; i++) {
+                    Card card = action.getCardsToMove().get(i);
+                    short id = card.getId();
                     int count = playground.getCardField().get(id);
                     if (count > 0) {
                         playground.getCardField().replace(id, --count);
                         newCount.put(id, count);
+                    }
+                    if (action.getCardsToMove().size() != size) {
+                        action.getCardsToMove().add(i, card);
                     }
                 }
                 UpdateCardCounterMessage message = new UpdateCardCounterMessage(gameID, player.getTheUserInThePlayer(), newCount);
