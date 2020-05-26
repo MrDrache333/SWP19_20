@@ -102,7 +102,7 @@ public class PlayCardMessage extends AbstractServerMessage {
     }
 
     /**
-     * Gibt Gibt die gegnerische Platznummer zurück
+     *Gibt die gegnerische Platznummer zurück
      *
      * @return enemyPlaceNumber die gegnerische Platznummer
      * @author Devin
