@@ -33,10 +33,6 @@ public class ChooseCardRequest extends AbstractGameMessage {
      */
     private String message;
     /**
-     * Spieler, auf den die Quellen-Zone bezogen ist
-     */
-    private User sourcePlayer;
-    /**
      * Die Anzahl an wählbaren Karten
      */
     private Value countV;
@@ -124,17 +120,6 @@ public class ChooseCardRequest extends AbstractGameMessage {
      */
     public String getMessage() {
         return message;
-    }
-
-    /**
-     * Gets source player.
-     *
-     * @return the source player
-     * @author KenoO
-     * @since Sprint 7
-     */
-    public User getSourcePlayer() {
-        return sourcePlayer;
     }
 
     /**

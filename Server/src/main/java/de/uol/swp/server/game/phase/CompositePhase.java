@@ -63,8 +63,8 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
          */
         ActionCardExecution executeAction = new ActionCardExecution(cardId, playground);
         playground.getGameService().getBus().register(executeAction);
-        executeAction.execute();
         player.getPlayerDeck().getHand().remove(currentCard);
+        executeAction.execute();
     }
 
     public void finishedActionCardExecution(Player player, ArrayList<Short> newHandCards, Card card, boolean removeCardAfter) {
