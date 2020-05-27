@@ -33,10 +33,6 @@ public class ChooseCardRequest extends AbstractGameMessage {
      */
     private String message;
     /**
-     * Spieler, auf den die Quellen-Zone bezogen ist
-     */
-    private User sourcePlayer;
-    /**
      * Die Anzahl an wählbaren Karten
      */
     private Value countV;
@@ -51,13 +47,12 @@ public class ChooseCardRequest extends AbstractGameMessage {
      * @param player       Der Spieler, der die Auswahl treffen soll
      * @param cards        Die Karten, die zur Auswahl stehen
      * @param countV       Die Anzahl an wählbaren Karten
-     * @param sourcePlayer Der Spieler, von dem die Karten ausgewählt werden
      * @param source       Die Zone, von welcher die Karten stammen
      * @param message      Die Nachricht, die dem Spieler gezeigt werden soll
      * @author KenoO
      * @since Sprint 7
      */
-    public ChooseCardRequest(UUID id, User player, ArrayList<Short> cards, Value countV, User sourcePlayer, AbstractPlayground.ZoneType source, String message, boolean directHand) {
+    public ChooseCardRequest(UUID id, User player, ArrayList<Short> cards, Value countV, AbstractPlayground.ZoneType source, String message, boolean directHand) {
         super(id, player);
         this.cards = cards;
         this.countV = countV;
@@ -124,17 +119,6 @@ public class ChooseCardRequest extends AbstractGameMessage {
      */
     public String getMessage() {
         return message;
-    }
-
-    /**
-     * Gets source player.
-     *
-     * @return the source player
-     * @author KenoO
-     * @since Sprint 7
-     */
-    public User getSourcePlayer() {
-        return sourcePlayer;
     }
 
     /**

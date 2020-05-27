@@ -201,6 +201,7 @@ public class GameViewPresenter extends AbstractPresenter {
         @Override
         public void handle(Event event) {
             gameService.chooseCard(loggedInUser, lobbyID, choosenCardsId, directHand);
+            playAllMoneyCardsButton.setDisable(false);
             handcards.getChildren().forEach((n) -> {
                 if (choosenCards.stream().anyMatch(c -> c == n)) {
                     Platform.runLater(() -> {
@@ -335,7 +336,6 @@ public class GameViewPresenter extends AbstractPresenter {
         gameViewWIP.getChildren().add(firstEnemyDLC);
         gameViewWIP.getChildren().add(secondEnemyDLC);
         gameViewWIP.getChildren().add(thirdEnemyDLC);
-
         gameViewWIP.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
                 bigCardImageBox.setVisible(false);
@@ -680,15 +680,16 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     @Subscribe
     public void onChooseCardRequest (ChooseCardRequest req) {
-        if (req.getGameID().equals(lobbyID) && req.getSourcePlayer().equals(loggedInUser)) {
+        if (req.getGameID().equals(lobbyID) && req.getPlayer().equals(loggedInUser)) {
             numberOfCardsToChoose = req.getCount();
             directHand = req.getDirectHand();
             currentInfoText = infoActualPhase.getText();
             Button button = new Button("Auswahl beenden");
             skipPhaseButton.setDisable(true);
+            playAllMoneyCardsButton.setDisable(true);
             Platform.runLater(() -> {
-                button.setLayoutX(skipPhaseButton.getLayoutX());
-                button.setLayoutY(skipPhaseButton.getLayoutY());
+                button.setLayoutX(750);
+                button.setLayoutY(585);
                 button.setOnAction(sendChoosenCardResponse);
                 gameViewWIP.getChildren().add(button);
             });
@@ -702,15 +703,14 @@ public class GameViewPresenter extends AbstractPresenter {
                         });
                     });
                 } else {
-                    if (numberOfCardsToChoose != 255) {
-                        Platform.runLater(() -> {
-                            infoActualPhase.setText("Beliebig viele Karten entsorgen");
-                            handcards.getChildren().forEach((n) -> {
-                                n.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
-                                n.addEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
-                            });
+                    Platform.runLater(() -> {
+                        infoActualPhase.setText("Beliebig viele Karten entsorgen");
+                        handcards.getChildren().forEach((n) -> {
+                            n.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+                            n.addEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
                         });
-                }}
+                    });
+                }
             }
         }
     }
@@ -1143,7 +1143,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     Platform.runLater(() -> {
                         infoActualPhase.setText(numberOfCardsToChoose + " Karten entsorgen");
                     });
-                    card.setStyle("-fx-border-width: 1");
+                    card.setStyle("-fx-border-width: 5");
                     card.setStyle("-fx-border-color: lightskyblue");
                     choosenCards.add(card);
                     bigCardImageBox.setVisible(false);
@@ -1169,6 +1169,7 @@ public class GameViewPresenter extends AbstractPresenter {
         }
         if(numberOfCardsToChoose == 0) {
             handcards.getChildren().removeIf(c -> choosenCards.contains(c));
+            playAllMoneyCardsButton.setDisable(false);
             handcards.getChildren().forEach((n) -> {
                 if (choosenCards.stream().anyMatch(c -> c == n)) {
                     Platform.runLater(() -> {

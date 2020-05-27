@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ec5a1b8b-bacc-45c9-966c-69b0ed7a1dff" name="Default Changelist" comment="ADDED&#10;*Änderungen aus dem Develope" />
+    <list default="true" id="ec5a1b8b-bacc-45c9-966c-69b0ed7a1dff" name="Default Changelist" comment="CHANGED&#10;*Änderungen aus dem Develope">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Client/src/main/java/de/uol/swp/client/game/GameViewPresenter.java" beforeDir="false" afterPath="$PROJECT_DIR$/Client/src/main/java/de/uol/swp/client/game/GameViewPresenter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Common/src/main/java/de/uol/swp/common/game/card/parser/components/CardAction/request/ChooseCardRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/Common/src/main/java/de/uol/swp/common/game/card/parser/components/CardAction/request/ChooseCardRequest.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -239,6 +243,8 @@
       <workItem from="1590517870138" duration="4446000" />
       <workItem from="1590525485463" duration="451000" />
       <workItem from="1590525968215" duration="66000" />
+      <workItem from="1590585356444" duration="106000" />
+      <workItem from="1590585496016" duration="5336000" />
     </task>
     <task id="LOCAL-00001" summary="CHANGED&#10;* Bin auf Vorschläge von Gruppenmitglieder angegangen. In PlayCardMessage/Request muss das Attribut count nicht mehr mitgenommen werden.&#10;* Der Idea Ordner musste gelöscht werden.&#10;* Eine unnötige Zeile im GameView musste entfernt werden.&#10;* SelectCardRequest wurde gelöscht, weil sie keinen Nutzen mehr hat.">
       <created>1588358479236</created>
@@ -499,7 +505,14 @@
       <option name="project" value="LOCAL" />
       <updated>1590525234528</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="ADDED&#10;*Änderungen aus dem Develope">
+      <created>1590527430226</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1590527430226</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -509,7 +522,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="ADDED&#10;* Die Gegner haben nun auch einen Ablagestapel und eine Ausspielfläche, die Variablen dazu sind in GameViewPresenter.&#10;* Eine Methode die auf die OtherPlayerDiscardMessage reagiert und eine Karte den Ablagestapel hinzufügt.&#10;* OtherPlayerDiscardMessage erstellt, die dazu dienen soll einem Spieler mitzuteilen welche Karten sein Gegner auf den Ablagestapel tut." />
     <MESSAGE value="ADDED&#10;* onClearPhaseMessage-Methode in GameViewPresenter und die dazugehörige ClearPhaseMessage wurden erstellt. OnClearPhaseMessage sorgt für das Aufräumen des Spielfeldes und das erneute ziehen einer Hand. Dieser Vorgang wird für alle Spieler deutlich gemacht.&#10;&#10;CHANGED&#10;* OtherPlayerDiscardMessage wurde zu DiscardCardMessage geändert, entsprechende Subscribe Methode wurde entsprechend unbenannt und reagiert für jeden Spieler&#10;* onPlayCardMessage reagiert nun auch, wenn sie an andere Spieler gesendet wird und zeigt die entsprechende Aktion für die Gegner an.&#10;&#10;TODO&#10;* Animations für das Aufräumen und abwerfen fehlen und müssen anwendbar sein für die gegnerischen Karten sein." />
     <MESSAGE value="CHANGED&#10;* Das senden der PlayCardRequest wurde angepasst." />
     <MESSAGE value="CHANGED&#10;* Fehler im GameService beim erstellen der PlayCardRequests behoben.&#10;* Anzeigen der gespielten gegnerischen Karten&#10;* Alle DiscardPiles, Hände und Aktionsfelder passend angeordnet." />
@@ -534,7 +546,8 @@
     <MESSAGE value="CHANGED:&#10;* Überflüssige Variable gelöscht." />
     <MESSAGE value="CHANGED:&#10;* Rechtschreibfehler in den Kommentaren korrigiert.&#10;* Alerts weggelassen und statdessen über die Infoanzeige die Informationen weitergeleitet.&#10;* Ausgewählte Karten bekommen nun einen blauen Rand." />
     <MESSAGE value="CHANGED:&#10;* Wenn beliebig viele Karten ausgewählt werden dürfen, dann erkennt man das daran, dass numberOdCardsToChoose auf 255 gesetzt wird. Der Nutzer kann dann so viele Karten auswählen bis er den Auswahl beenden Button drückt.&#10;*Platform.Blöcke um die infoActualPhase.setText Stellen gesetzt.&#10;*Die ausgewählten Karten werden entfernt, nachdem man mit dem Auswählen fertig ist.&#10;*Kleine Code Nachbesserungen" />
-    <option name="LAST_COMMIT_MESSAGE" value="CHANGED:&#10;* Wenn beliebig viele Karten ausgewählt werden dürfen, dann erkennt man das daran, dass numberOdCardsToChoose auf 255 gesetzt wird. Der Nutzer kann dann so viele Karten auswählen bis er den Auswahl beenden Button drückt.&#10;*Platform.Blöcke um die infoActualPhase.setText Stellen gesetzt.&#10;*Die ausgewählten Karten werden entfernt, nachdem man mit dem Auswählen fertig ist.&#10;*Kleine Code Nachbesserungen" />
+    <MESSAGE value="ADDED&#10;*Änderungen aus dem Develope" />
+    <option name="LAST_COMMIT_MESSAGE" value="ADDED&#10;*Änderungen aus dem Develope" />
   </component>
   <component name="WindowStateProjectService">
     <state x="414" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1588358118036">
@@ -565,10 +578,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="717" y="254" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.1920.1040@0.0.1920.1040" timestamp="1588362884627" />
-    <state x="-118" y="28" key="CommitChangelistDialog2" timestamp="1590525652477">
+    <state x="460" y="77" key="CommitChangelistDialog2" timestamp="1590591067428">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="-118" y="28" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1590525652477" />
+    <state x="460" y="77" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1590591067428" />
     <state x="97" y="65" key="DiffContextDialog" timestamp="1589826012339">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -577,22 +590,22 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="274" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1588362872843" />
-    <state width="1877" height="133" key="GridCell.Tab.0.bottom" timestamp="1590362627603">
+    <state width="1877" height="133" key="GridCell.Tab.0.bottom" timestamp="1590590199436">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="133" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1590362627603" />
-    <state width="1877" height="133" key="GridCell.Tab.0.center" timestamp="1590362627603">
+    <state width="1877" height="133" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1590590199436" />
+    <state width="1877" height="133" key="GridCell.Tab.0.center" timestamp="1590590199435">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="133" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1590362627603" />
-    <state width="1877" height="133" key="GridCell.Tab.0.left" timestamp="1590362627603">
+    <state width="1877" height="133" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1590590199435" />
+    <state width="1877" height="133" key="GridCell.Tab.0.left" timestamp="1590590199434">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="133" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1590362627603" />
-    <state width="1877" height="133" key="GridCell.Tab.0.right" timestamp="1590362627603">
+    <state width="1877" height="133" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1590590199434" />
+    <state width="1877" height="133" key="GridCell.Tab.0.right" timestamp="1590590199436">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="133" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1590362627603" />
+    <state width="1877" height="133" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1590590199436" />
     <state width="1877" height="347" key="GridCell.Tab.1.bottom" timestamp="1590267281640">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -625,10 +638,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="461" y="164" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1588360321227" />
-    <state x="552" y="252" key="Vcs.Push.Dialog.v2" timestamp="1590525398811">
+    <state x="552" y="252" key="Vcs.Push.Dialog.v2" timestamp="1590527435551">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="252" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1590525398811" />
+    <state x="552" y="252" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1590527435551" />
     <state x="769" y="433" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1590525412277">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -645,9 +658,9 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="616" y="242" key="run.anything.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1589534168394" />
-    <state x="616" y="177" width="672" height="676" key="search.everywhere.popup" timestamp="1589740569455">
+    <state x="616" y="177" width="672" height="676" key="search.everywhere.popup" timestamp="1590586309836">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="616" y="177" width="672" height="676" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1589740569455" />
+    <state x="616" y="177" width="672" height="676" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1590586309836" />
   </component>
 </project>
