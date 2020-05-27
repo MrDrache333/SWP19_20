@@ -326,19 +326,19 @@ public class ActionCardExecution {
     private ArrayList<Card> filterCards(ComplexCardAction action, ArrayList<Card> cards) {
         Card.Type allowedType = action.getAllowedCardType();
         if (allowedType == Card.Type.ActionCard) {
-            cards.removeIf(c -> c.getCardType() != Card.Type.ActionCard);
+            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.ActionCard);
         } else if (allowedType == Card.Type.ReactionCard) {
-            cards.removeIf(c -> c.getCardType() != Card.Type.ReactionCard);
+            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.ReactionCard);
         } else if (allowedType == Card.Type.MoneyCard) {
-            cards.removeIf(c -> c.getCardType() != Card.Type.MoneyCard);
+            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.MoneyCard);
         } else if (allowedType == Card.Type.ValueCard) {
-            cards.removeIf(c -> c.getCardType() != Card.Type.ValueCard);
+            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.ValueCard);
         } else if (allowedType == Card.Type.Cursecard) {
-            cards.removeIf(c -> c.getCardType() != Card.Type.Cursecard);
+            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.Cursecard);
         }
 
         if (action.getHasCost() != null) {
-            cards.removeIf(c -> c.getCosts() < action.getHasCost().getMin() || c.getCosts() > action.getHasCost().getMax());
+            cards.removeIf(c -> c == null || c.getCosts() < action.getHasCost().getMin() || c.getCosts() > action.getHasCost().getMax());
         }
 
         if (action.getHasWorth() != null) {
