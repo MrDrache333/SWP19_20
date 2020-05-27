@@ -21,7 +21,6 @@ import de.uol.swp.common.user.response.LoginSuccessfulResponse;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import org.apache.logging.log4j.LogManager;
@@ -36,17 +35,16 @@ import java.util.UUID;
 public class PrimaryPresenter extends AbstractPresenter {
 
     /**
-     * The constant fxml.
+     * Die Konstante fxml.
      */
     public static final String fxml = "/fxml/PrimaryView.fxml";
     /**
-     * The constant css.
+     * Die Konstante css.
      */
     public static final String css = "css/PrimaryPresenter.css";
 
     private final Logger LOG = LogManager.getLogger(PrimaryPresenter.class);
-    private Scene mainScene;
-    private Map<UUID, GameManagement> games = new HashMap<>();
+    private final Map<UUID, GameManagement> games = new HashMap<>();
     private Injector injector = null;
     private ChatService chatService;
     private LobbyService lobbyService;
@@ -58,15 +56,15 @@ public class PrimaryPresenter extends AbstractPresenter {
     /**
      * Initialisierung des Injektors
      *
-     * @param eventBus     the event bus
-     * @param loggedInUser the logged in user
-     * @param chatService  the chat service
-     * @param lobbyService the lobby service
-     * @param userService  the user service
-     * @param injector     the injector
+     * @param eventBus     Der Eventbus
+     * @param loggedInUser Der eingeloggte Nutzer
+     * @param chatService  Der Chatservice
+     * @param lobbyService Der Lobbyservice
+     * @param userService  Der Userservice
+     * @param injector     Der Injector
      * @author Fenja Oelrichs Garcia
-     * @Version 1.0
-     * @since Sprint 4
+     * @version 1.0
+     * @since Sprint4
      */
     public void initialise(EventBus eventBus, User loggedInUser, ChatService chatService, LobbyService lobbyService, UserService userService, Injector injector, GameService gameService) {
         this.loggedInUser = loggedInUser;
@@ -81,7 +79,7 @@ public class PrimaryPresenter extends AbstractPresenter {
     /**
      * Login war erfolgreich. Der User tritt dem globalen Chat bei. Lobbys werden aktualisiert
      *
-     * @param message Die Nachricht
+     * @param message Die LoginSuccessfulResponse
      * @author Marco
      * @since Start
      */
@@ -93,12 +91,12 @@ public class PrimaryPresenter extends AbstractPresenter {
     /**
      * Schließt alle Tabs, wenn der eingeloggte User der übergebene User ist
      *
-     * @param msg die UserDroppedMessage
+     * @param msg Die UserDroppedMessage
      * @author Fenja, Keno O.
-     * @since 7
+     * @since Sprint7
      */
     private void userDroppedAccount(UserDroppedMessage msg) {
-        if (loggedInUser.equals(msg.getUser().getUsername())) {
+        if (loggedInUser.getUsername().equals(msg.getUser().getUsername())) {
             closeAllTabs();
         }
     }
@@ -106,9 +104,9 @@ public class PrimaryPresenter extends AbstractPresenter {
     /**
      * Fügt eine Tab, der Tabview hinzu
      *
-     * @param tab der Tab
+     * @param tab Der zu hinzufügende Tab
      * @author Fenja, Keno O.
-     * @since Sprint 7
+     * @since Sprint7
      */
     public void addTab(Tab tab) {
         TabView.getTabs().add(tab);
@@ -117,9 +115,9 @@ public class PrimaryPresenter extends AbstractPresenter {
     /**
      * Zeigt einen Tab an
      *
-     * @param id die ID
+     * @param id die ID des Tabs
      * @author Fenja, Keno O.
-     * @since Sprint 7
+     * @since Sprint7
      */
     public void showTab(UUID id) {
         TabView.getTabs().forEach(t -> {
@@ -132,9 +130,9 @@ public class PrimaryPresenter extends AbstractPresenter {
     /**
      * Methode fängt Button-Klick ab, User verlässt alle Lobbies, in denen er angemeldet ist und wird ausgeloggt
      *
-     * @param actionEvent the action event
+     * @param actionEvent Das Actionevent
      * @author Julia, Paula
-     * @Version 1.0
+     * @version 1.0
      * @since Sprint3
      */
     @FXML
@@ -145,9 +143,9 @@ public class PrimaryPresenter extends AbstractPresenter {
     /**
      * Gibt den fokussierten Tab als ID zurück
      *
-     * @return ID die ID
+     * @return Die ID des Tabs
      * @author Fenja, Keno O.
-     * @since Sprint 7
+     * @since Sprint7
      */
     public String getFocusedTab() {
         return TabView.getSelectionModel().getSelectedItem().getId();
@@ -156,9 +154,9 @@ public class PrimaryPresenter extends AbstractPresenter {
     /**
      * Entfernt den Tab aus der TabView
      *
-     * @param id
+     * @param id Die Tab UUID
      * @author Fenja, Keno O.
-     * @since Sprint 7
+     * @since Sprint7
      */
     private void removeTab(UUID id) {
         TabView.getTabs().forEach(t -> {
@@ -171,10 +169,10 @@ public class PrimaryPresenter extends AbstractPresenter {
     /**
      * Beim Drücken des instructions Button
      *
-     * @param actionEvent das action event
+     * @param actionEvent das Actionevent
      * @author Keno Oelrichs Garcia
-     * @Version 1.0
-     * @since
+     * @version 1.0
+     * @since Sprint3
      */
     @FXML
     public void onInstructionsButtonPressed(ActionEvent actionEvent) {
@@ -188,7 +186,7 @@ public class PrimaryPresenter extends AbstractPresenter {
     /**
      * Schließt das Fenster, wenn der aktuelle Benutzer diese Lobby verlassen hat
      *
-     * @param msg die UserLeftLobbyMessage
+     * @param msg Die UserLeftLobbyMessage
      * @author Keno O.
      * @since Sprint3
      */
@@ -202,7 +200,7 @@ public class PrimaryPresenter extends AbstractPresenter {
     /**
      * Die Methode postet ein Request auf den Bus, wenn der Einstellungen-Button gedrückt wird
      *
-     * @param actionEvent das ActionEvent
+     * @param actionEvent Das ActionEvent
      * @author Anna
      * @since Sprint4
      */
@@ -215,12 +213,11 @@ public class PrimaryPresenter extends AbstractPresenter {
     /**
      * Es wird eine neue Stage mit der lobbyScene angezeigt und mit dem Attribut geöffnet.
      *
-     * @param currentUser the current user
-     * @param title       der Übergebene Titel aus dem MainMenuPresenter
-     * @param lobbyID     die übergebene LobbyID aus der empfangenen Message in der ClientApp
+     * @param currentUser Der aktuelle Nutzer
+     * @param title       Der Übergebene Titel aus dem MainMenuPresenter
+     * @param lobbyID     Die übergebene LobbyID aus der empfangenen Message in der ClientApp
      * @author Paula, Haschem, Ferit, Anna
-     * @Version 1.0
-     * @version 0.2
+     * @version 1.0
      * @since Sprint3
      */
     public void createLobby(User currentUser, String title, UUID lobbyID, UserDTO gameOwner) {
@@ -238,7 +235,7 @@ public class PrimaryPresenter extends AbstractPresenter {
 
             //Auf Schließung des Tabs reagieren
             gameManagement.getPrimaryTab().setOnCloseRequest(event -> {
-                games.remove(gameManagement);
+                games.remove(gameManagement.getID());
                 lobbyService.leaveLobby(gameManagement.getID(), (UserDTO) loggedInUser);
                 TabView.getTabs().remove(gameManagement.getPrimaryTab());
                 lobbyService.retrieveAllLobbies();
@@ -252,9 +249,9 @@ public class PrimaryPresenter extends AbstractPresenter {
     /**
      * Bei Erhalt einer UserLeftLobbyMessage wird der Tab geschlossen und eine Log Info ausgegeben.
      *
-     * @param msg
+     * @param msg Die UserLeftLobbyMessage
      * @author Fenja, Keno O., Timo
-     * @since Sprint
+     * @since Sprint8
      */
     @Subscribe
     private void onUserLeftLobby(UserLeftLobbyMessage msg) {
@@ -282,7 +279,7 @@ public class PrimaryPresenter extends AbstractPresenter {
     /**
      * Gibt das zur übergebenen lobbyID gehörige GameManagement zurück
      *
-     * @param lobbyID the lobby id
+     * @param lobbyID Die LobbyID
      * @return GameManagement game management
      * @author Julia, Paula
      * @since Sprint3
@@ -314,7 +311,7 @@ public class PrimaryPresenter extends AbstractPresenter {
     /**
      * Schließt das Fenster, wenn sich der aktuelle Benutzer ausgeloggt hat
      *
-     * @param msg die UserLoggedOutMessage
+     * @param msg Die UserLoggedOutMessage
      * @author Keno O.
      * @since Sprint3
      */
@@ -328,9 +325,9 @@ public class PrimaryPresenter extends AbstractPresenter {
     /**
      * Aktualisiert den eingeloggten User
      *
-     * @param message die Nachricht
-     * @auhtor Keno O., Paula
-     * @since Sprint 3
+     * @param message Die UpdatedUserMessage
+     * @author Keno O., Paula
+     * @since Sprint3
      */
     @Subscribe
     public void updatedUser(UpdatedUserMessage message) {
@@ -343,7 +340,7 @@ public class PrimaryPresenter extends AbstractPresenter {
      * Schließt alle GameManagement Stages
      *
      * @author Julia, Paula
-     * @Version 1.0
+     * @version 1.0
      * @since Sprint3
      */
     public void closeAllTabs() {
@@ -358,9 +355,9 @@ public class PrimaryPresenter extends AbstractPresenter {
     /**
      * Gibt den eingeloggten User zurück
      *
-     * @return
+     * @return Gibt den eingeloggten User zurück
      * @author Marvin
-     * @since Sprint 8
+     * @since Sprint8
      */
     public User getUser() {
         return loggedInUser;

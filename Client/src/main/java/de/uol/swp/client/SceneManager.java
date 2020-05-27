@@ -38,6 +38,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
@@ -301,7 +302,6 @@ public class SceneManager {
      * @author Paula
      * @since Sprint7
      */
-
     public void showCreateLobbyScreen(User loggedInUser) {
         Platform.runLater(() -> {
             createLobbyPresenter = new CreateLobbyPresenter(loggedInUser, lobbyService, userService, eventBus);
@@ -319,11 +319,10 @@ public class SceneManager {
     /**
      * Öffnet das Lobby beitreten Fenster,falls man aufgefordert wird sein Passwort anzugeben
      *
-     * @param loggedInUser
+     * @param loggedInUser Der angemeldete Nutzer
      * @author Paula
      * @since Sprint7
      */
-
     public void showJoinLobbyScreen(User loggedInUser, Lobby lobby) {
         Platform.runLater(() -> {
             joinLobbyPresenter = new JoinLobbyPresenter(loggedInUser, lobbyService, userService, eventBus, lobby);
@@ -367,7 +366,6 @@ public class SceneManager {
         if (joinLobbyStage != null)
         Platform.runLater(() -> joinLobbyStage.close());
     }
-
 
     //-----------------
     // PRIVATE METHODS
@@ -416,9 +414,7 @@ public class SceneManager {
             primaryScene = new Scene(rootPane, 1400, 790);
             primaryScene.getStylesheets().add(styleSheet);
             primaryScene.getStylesheets().add(PrimaryPresenter.css);
-            primaryStage.setOnCloseRequest(event -> {
-                userService.logout(currentUser);
-            });
+            primaryStage.setOnCloseRequest(event -> userService.logout(currentUser));
             eventBus.register(primaryPresenter);
             primaryScene.setOnKeyPressed(hotkeyEventHandler);
         }
@@ -521,7 +517,7 @@ public class SceneManager {
     private void initCreateLobbyView(CreateLobbyPresenter createLobbyPresenter) {
         if (createLobbyScene == null) {
             Parent rootPane = initCreateLobbyPresenter(createLobbyPresenter);
-            createLobbyScene = new Scene(rootPane, 400, 255);
+            createLobbyScene = new Scene(rootPane, 350, 250);
             createLobbyScene.getStylesheets().add(CreateLobbyPresenter.css);
         }
     }
@@ -547,7 +543,7 @@ public class SceneManager {
      * @since Sprint7
      */
 
-    private EventHandler<KeyEvent> hotkeyEventHandler = new EventHandler<>() {
+    private final EventHandler<KeyEvent> hotkeyEventHandler = new EventHandler<>() {
         @Override
         public void handle(KeyEvent event) {
             if (event.isControlDown()) {
@@ -575,11 +571,9 @@ public class SceneManager {
                     }
                     event.consume();
                 } else if (focusedTab.equals("Menu")) {
-                    switch (event.getCode()) {
-                        case L:
-                            LOG.debug("Create Lobby Hotkey pressed");
-                            showCreateLobbyScreen(primaryPresenter.getUser());
-                            break;
+                    if (event.getCode() == KeyCode.L) {
+                        LOG.debug("Create Lobby Hotkey pressed");
+                        showCreateLobbyScreen(primaryPresenter.getUser());
                     }
                     event.consume();
                 }

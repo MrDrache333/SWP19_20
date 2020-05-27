@@ -231,11 +231,10 @@ public class AuthenticationService extends AbstractService {
      */
 
     public void sendToLoggedInPlayers(ServerMessage message) {
-
-        Set<User> loggedInUsers = new TreeSet<>(userSessions.values());
-
-        message.setReceiver(getSessions(loggedInUsers));
-        post(message);
+        if(!userSessions.isEmpty()) {
+            message.setReceiver(getSessions(new TreeSet<>(userSessions.values())));
+            post(message);
+        }
     }
 
     public void sendToLobbyOwner(ServerMessage message, User owner) {

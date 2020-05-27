@@ -1,29 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-
-<AnchorPane prefHeight="255.0" prefWidth="400.0" stylesheets="@../css/CreateLobbyView.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
-    <children>
-        <ImageView fitHeight="255.0" fitWidth="475.0" opacity="0.9" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-            <image>
-                <Image url="@../images/createlobby_background.png" />
-            </image>
-        </ImageView>
-        <TextField fx:id="lobbynameField" layoutX="23.0" layoutY="80.0" prefHeight="29.0" prefWidth="272.0" promptText="Lobbyname" />
-        <PasswordField fx:id="passwordField" layoutX="23.0" layoutY="128.0" prefHeight="29.0" prefWidth="272.0" promptText="Passwort (optional)" />
-        <Button fx:id="cancelButton" layoutX="166.0" layoutY="187.0" mnemonicParsing="false" onAction="#onCancelButtonPressed" prefHeight="27.0" prefWidth="85.0" text="Abbrechen" />
-        <Button fx:id="createButton" defaultButton="true" layoutX="268.0" layoutY="187.0" mnemonicParsing="false" onAction="#onCreateLobbyButtonPressed" text="Lobby erstellen" />
-        <Label layoutX="33.0" layoutY="10.0" prefHeight="46.0" prefWidth="183.0" text="Lobby erstellen">
-            <font>
-                <Font size="30.0" />
-            </font>
-        </Label>
-    </children>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0"
+            prefWidth="350.0" stylesheets="@../css/CreateLobbyView.css" xmlns="http://javafx.com/javafx/10.0.2-internal"
+            xmlns:fx="http://javafx.com/fxml/1">
+    <ImageView fitHeight="250.0" fitWidth="475.0" opacity="0.9" pickOnBounds="true" preserveRatio="true"
+               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-0.058013916015625"
+               AnchorPane.topAnchor="0.0">
+        <Image url="@../images/createlobby_background.png"/>
+    </ImageView>
+    <TextField fx:id="lobbynameField" layoutX="23.0" layoutY="80.0" maxHeight="-Infinity" maxWidth="-Infinity"
+               minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="200.0" promptText="Lobbyname"
+               AnchorPane.leftAnchor="20.0"/>
+    <PasswordField fx:id="passwordField" layoutX="23.0" layoutY="128.0" maxHeight="-Infinity" maxWidth="-Infinity"
+                   minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="200.0"
+                   promptText="Passwort (optional)" AnchorPane.leftAnchor="20.0"/>
+    <Button fx:id="cancelButton" layoutX="133.0" layoutY="200.0" maxHeight="-Infinity" maxWidth="-Infinity"
+            minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onCancelButtonPressed"
+            prefHeight="25.0" prefWidth="80.0" text="Abbrechen" AnchorPane.bottomAnchor="20.0"
+            AnchorPane.rightAnchor="140.0"/>
+    <Button fx:id="createButton" defaultButton="true" layoutX="239.0" layoutY="201.0" maxHeight="-Infinity"
+            maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
+            onAction="#onCreateLobbyButtonPressed" prefHeight="25.0" prefWidth="100.0" text="Lobby erstellen"
+            AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="20.0"/>
+    <Label layoutX="73.0" layoutY="14.0" prefHeight="46.0" prefWidth="204.0" text="Lobby erstellen">
+        <font>
+            <Font size="30.0"/>
+        </font>
+    </Label>
 </AnchorPane>

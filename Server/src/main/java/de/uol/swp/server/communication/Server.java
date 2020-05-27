@@ -61,7 +61,7 @@ public class Server implements ServerHandlerDelegate {
     /**
      * Starten einen neuen Server an einem gegebenen Port
      *
-     * @throws Exception
+     * @throws Exception Exception
      */
     public void start(int port) throws Exception {
         final ServerHandler serverHandler = new ServerHandler(this);
@@ -82,7 +82,6 @@ public class Server implements ServerHandlerDelegate {
                     // get encoded/decoded objects but ByteBuf
                     ch.pipeline().addLast(serverHandler);
                 }
-
             });
             // Just wait for server shutdown
             ChannelFuture f = b.bind().sync();
@@ -128,10 +127,10 @@ public class Server implements ServerHandlerDelegate {
         LOG.error("DeadEvent detected " + deadEvent);
     }
 
-
     // -------------------------------------------------------------------------------
     // Behandlung der verbundenen clients (von netty)
     // -------------------------------------------------------------------------------
+
     @Override
     public void newClientConnected(ChannelHandlerContext ctx) {
         LOG.debug("Neuer Client " + ctx + " verbunden");
@@ -208,7 +207,6 @@ public class Server implements ServerHandlerDelegate {
         sendMessage(msg);
     }
 
-
     // -------------------------------------------------------------------------------
     // Session Management (helper methods)
     // -------------------------------------------------------------------------------
@@ -256,7 +254,6 @@ public class Server implements ServerHandlerDelegate {
         return ctxs;
     }
 
-
     // -------------------------------------------------------------------------------
     // Hilfsmethoden: Senden nur Objekte des Types Message
     // -------------------------------------------------------------------------------
@@ -284,6 +281,4 @@ public class Server implements ServerHandlerDelegate {
             }
         }
     }
-
-
 }
