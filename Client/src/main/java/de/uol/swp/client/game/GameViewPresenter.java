@@ -556,6 +556,7 @@ public class GameViewPresenter extends AbstractPresenter {
             if (msg.getIsPlayed()) {
                 Platform.runLater(() -> {
                     if (handcards.getChildren().contains(card)) {
+                        card.setEffect(null);
                         AnimationManagement.playCard(card, myPCLC.getChildren().size(), myPCLC);
                         handcards.getChildren().remove(card);
                         myPCLC.getChildren().add(card);
@@ -1215,7 +1216,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * @param gameID die ID des Spieles
      * @param user   der User
      * @param msg    die Message
-     * @author Rike
+     * @author Rike, Anna, Paula
      * @since Sprint 7
      */
     private void onStartPhase(UUID gameID, User user, AbstractServerMessage msg) {
@@ -1225,7 +1226,6 @@ public class GameViewPresenter extends AbstractPresenter {
                     playAllMoneyCardsButton.setVisible(true);
                     if (msg instanceof StartActionPhaseMessage) {
                         infoActualPhase.setText("Du darfst Aktionen spielen.");
-                        playAllMoneyCardsButton.setDisable(true);
                         for (Node n : handcards.getChildren()) {
                             if (Integer.parseInt(n.getId()) < 4) {
                                 n.setEffect(makeImageDarker);
@@ -1234,7 +1234,6 @@ public class GameViewPresenter extends AbstractPresenter {
                     }
                     if (msg instanceof StartBuyPhaseMessage) {
                         infoActualPhase.setText("Du darfst Karten kaufen.");
-                        playAllMoneyCardsButton.setDisable(false);
                         for (Node n : handcards.getChildren()) {
                             if (Integer.parseInt(n.getId()) > 6) {
                                 n.setEffect(makeImageDarker);
