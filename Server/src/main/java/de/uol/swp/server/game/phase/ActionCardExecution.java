@@ -40,6 +40,7 @@ public class ActionCardExecution {
     private Card inputCard;
     //Ob die Aktionskarte anschließend entsorgt werden soll
     private boolean removeCardAfter;
+    private AbstractPlayground.ZoneType chooseCardSource;
 
     //Ob auf eine Auswahl oder Reaktion des Spielers gewartet werden muss
     private boolean waitedForPlayerInput;
@@ -107,6 +108,19 @@ public class ActionCardExecution {
             if (response.getDirectHand()) {
                 helpPlayer.getPlayerDeck().getHand().addAll(cards);
                 newHandCards.addAll(response.getCards());
+                if (chooseCardSource == AbstractPlayground.ZoneType.BUY) {
+                    Map<Short, Integer> newCount = new HashMap<>();
+                    for (Card card : cards) {
+                        short id = card.getId();
+                        int count = playground.getCardField().get(id);
+                        if (count > 0) {
+                            playground.getCardField().replace(id, --count);
+                            newCount.put(id, count);
+                        }
+                    }
+                    UpdateCardCounterMessage message = new UpdateCardCounterMessage(gameID, player.getTheUserInThePlayer(), newCount);
+                    playground.getGameService().sendToAllPlayers(gameID, message);
+                }
             } else if (nextActions.get(nextActionIndex) instanceof Move) {
                 ((Move) nextActions.get(nextActionIndex)).setCardsToMove(cards);
             } else if (nextActions.get(nextActionIndex) instanceof ForEach) {
@@ -152,7 +166,6 @@ public class ActionCardExecution {
                     if (!executeNextActions(playerList)) return false;
                 }
             }
-            //Entsorge ggf. die gespielte Karte
             if (action instanceof ComplexCardAction && ((ComplexCardAction) action).isRemoveCardAfter()) {
                 removeCardAfter = true;
             }
@@ -499,7 +512,7 @@ public class ActionCardExecution {
 
     private boolean executeChooseCard(ChooseCard action, List<Player> thePlayers) {
         waitedForPlayerInput = true;
-
+        chooseCardSource = action.getCardSource();
         for (Player playerChooseCard : thePlayers) {
             this.chooseCardPlayers.add(playerChooseCard.getTheUserInThePlayer());
             ArrayList<Card> tmp = new ArrayList<>();
