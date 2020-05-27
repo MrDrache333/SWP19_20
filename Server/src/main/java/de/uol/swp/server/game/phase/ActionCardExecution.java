@@ -36,8 +36,6 @@ public class ActionCardExecution {
     //Liste aller Unteraktionen einer Aktion
     private List<CardAction> nextActions = new ArrayList<>();
     private Card inputCard;
-    //Ob die Aktionskarte anschließend entsorgt werden soll
-    private boolean removeCardAfter;
     private AbstractPlayground.ZoneType chooseCardSource;
 
     //Ob auf eine Auswahl oder Reaktion des Spielers gewartet werden muss
@@ -68,7 +66,6 @@ public class ActionCardExecution {
         this.finishedNextActions = true;
         this.executeOptionalAction = false;
         this.startedNextActions = false;
-        this.removeCardAfter = false;
     }
 
     /**
@@ -170,7 +167,7 @@ public class ActionCardExecution {
                 }
             }
             if (action instanceof ComplexCardAction && ((ComplexCardAction) action).isRemoveCardAfter()) {
-                removeCardAfter = true;
+                playground.getCompositePhase().setRemoveCardAfter(true);
             }
             executeOptionalAction = false;
         }
@@ -763,7 +760,7 @@ public class ActionCardExecution {
      */
     private boolean checkIfComplete() {
         if (actualStateIndex == theCard.getActions().size() && !waitedForPlayerInput && finishedNextActions) {
-            playground.getCompositePhase().finishedActionCardExecution(player, newHandCards, theCard, removeCardAfter);
+            playground.getCompositePhase().finishedActionCardExecution(player, newHandCards, theCard);
             return true;
         }
         return false;
