@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ec5a1b8b-bacc-45c9-966c-69b0ed7a1dff" name="Default Changelist" comment="CHANGED&#10;*Änderungen aus dem Develope">
+    <list default="true" id="ec5a1b8b-bacc-45c9-966c-69b0ed7a1dff" name="Default Changelist" comment="CHANGED&#10;*ChoosenCardRequest, nicht gebrauchtest Attribut entfernt.&#10;*GameViewPresenter, den Button an der richtigen Stelle gesetzt&#10;*Unbenötigte if-Abfrage entfernt.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Client/src/main/java/de/uol/swp/client/game/GameViewPresenter.java" beforeDir="false" afterPath="$PROJECT_DIR$/Client/src/main/java/de/uol/swp/client/game/GameViewPresenter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Common/src/main/java/de/uol/swp/common/game/card/parser/components/CardAction/request/ChooseCardRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/Common/src/main/java/de/uol/swp/common/game/card/parser/components/CardAction/request/ChooseCardRequest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -245,6 +244,7 @@
       <workItem from="1590525968215" duration="66000" />
       <workItem from="1590585356444" duration="106000" />
       <workItem from="1590585496016" duration="5336000" />
+      <workItem from="1590595622599" duration="349000" />
     </task>
     <task id="LOCAL-00001" summary="CHANGED&#10;* Bin auf Vorschläge von Gruppenmitglieder angegangen. In PlayCardMessage/Request muss das Attribut count nicht mehr mitgenommen werden.&#10;* Der Idea Ordner musste gelöscht werden.&#10;* Eine unnötige Zeile im GameView musste entfernt werden.&#10;* SelectCardRequest wurde gelöscht, weil sie keinen Nutzen mehr hat.">
       <created>1588358479236</created>
@@ -642,10 +642,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="552" y="252" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1590527435551" />
-    <state x="769" y="433" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1590525412277">
+    <state x="769" y="433" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1590595324733">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="769" y="433" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1040@0.0.1920.1040" timestamp="1590525412277" />
+    <state x="769" y="433" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1040@0.0.1920.1040" timestamp="1590595324733" />
     <state x="690" y="277" key="extract.method.dialog" timestamp="1589296324965">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

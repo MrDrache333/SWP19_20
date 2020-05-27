@@ -1143,27 +1143,25 @@ public class GameViewPresenter extends AbstractPresenter {
                     Platform.runLater(() -> {
                         infoActualPhase.setText(numberOfCardsToChoose + " Karten entsorgen");
                     });
-                    card.setStyle("-fx-border-width: 5");
-                    card.setStyle("-fx-border-color: lightskyblue");
                     choosenCards.add(card);
                     bigCardImageBox.setVisible(false);
+                    card.setDisable(true);
                 } else {
                     choosenCards.remove(card);
                     numberOfCardsToChoose += 1;
-                    card.setStyle("-fx-border-width: 0");
+                    card.setDisable(false);
                 }
             } else {
                 if (!choosenCards.contains(card)) {
                     choosenCardsId.add(Short.parseShort(card.getId()));
                     numberOfCardsToChoose = numberOfCardsToChoose - 1;
-                    card.setStyle("-fx-border-width: 1");
-                    card.setStyle("-fx-border-color: lightskyblue");
                     choosenCards.add(card);
                     bigCardImageBox.setVisible(false);
+                    card.setDisable(true);
                 } else {
                     choosenCards.remove(card);
                     numberOfCardsToChoose += 1;
-                    card.setStyle("-fx-border-width: 0");
+                    card.setDisable(false);
                 }
             }
         }
