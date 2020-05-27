@@ -8,6 +8,7 @@ import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.game.messages.GameOverMessage;
 import de.uol.swp.common.game.messages.InfoPlayDisplayMessage;
 import de.uol.swp.common.game.messages.RemoveActionCardMessage;
+import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.server.game.Playground;
 import de.uol.swp.server.game.player.Deck;
 import de.uol.swp.server.game.player.Player;
@@ -81,13 +82,16 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
             playground.getGameService().sendToSpecificPlayer(player, new DrawHandMessage(newHandCards, playground.getID()));
         }
         player.setAvailableActions(player.getAvailableActions() - 1);
-        int availableAction = player.getAvailableActions();
-        int availableBuy = player.getAvailableBuys();
-        int additionalMoney = player.getAdditionalMoney();
-        int moneyOnHand = player.getPlayerDeck().actualMoneyFromPlayer();
-        playground.getGameService().sendToSpecificPlayer(player, new InfoPlayDisplayMessage(playground.getID(), player.getTheUserInThePlayer(), availableAction, availableBuy, additionalMoney, moneyOnHand, playground.getActualPhase()));
-
-        if (player.getAvailableActions() == 0) {
+        //Sende alle neuen Informationen bezüglich seiner möglichen Aktioen des Spielers an den Spieler zurück
+        playground.getGameService().sendToSpecificPlayer(player,
+                new InfoPlayDisplayMessage(
+                        playground.getID(), player.getTheUserInThePlayer(),
+                        player.getAvailableActions(),
+                        player.getAvailableBuys(),
+                        player.getAdditionalMoney(),
+                        player.getPlayerDeck().actualMoneyFromPlayer(),
+                        Phase.Type.ActionPhase));
+        if (player.getAvailableActions() == 0 || !playground.checkForActionCard()) {
             playground.nextPhase();
         }
     }
