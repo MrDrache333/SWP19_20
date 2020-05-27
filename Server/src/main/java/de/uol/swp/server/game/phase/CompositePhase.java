@@ -89,7 +89,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
                         player.getAdditionalMoney(),
                         player.getPlayerDeck().actualMoneyFromPlayer(),
                         Phase.Type.ActionPhase));
-        if (player.getAvailableActions() == 0 || !playground.checkForActionCard()) {
+        if (player.getAvailableActions() == 0) {
             playground.nextPhase();
         }
     }
