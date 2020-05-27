@@ -13,6 +13,7 @@ import javafx.scene.image.ImageView;
 public class Card extends ImageView {
 
     /**
+     * Basiskonstruktor
      * Instanziiert eine ImageView einer Karte.
      *
      * @author Devin
@@ -31,6 +32,17 @@ public class Card extends ImageView {
         this.setImage(new Image("file:Client/src/main/resources/cards/images/" + id + ".png"));
     }
 
+    /**
+     * Überladener Konstruktor
+     * Instanziiert eine ImageView einer Karte.
+     *
+     * @param height   die Höhe
+     * @param id       die Karten-ID
+     * @param layout_x der x-Wert
+     * @param layout_y der y-Wert
+     * @author Devin
+     * @since Sprint7
+     */
     public Card(String id, double layout_x, double layout_y, double height) {
         this.setImage(new Image("file:Client/src/main/resources/cards/images/" + id + ".png"));
         this.setPreserveRatio(true);
