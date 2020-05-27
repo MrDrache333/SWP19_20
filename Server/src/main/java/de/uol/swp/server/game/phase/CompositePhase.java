@@ -7,7 +7,6 @@ import de.uol.swp.common.game.exception.NotEnoughMoneyException;
 import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.game.messages.GameOverMessage;
 import de.uol.swp.common.game.messages.InfoPlayDisplayMessage;
-import de.uol.swp.common.game.messages.RemoveActionCardMessage;
 import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.server.game.Playground;
 import de.uol.swp.server.game.player.Deck;
@@ -27,6 +26,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
     private final Playground playground;
     private static final Logger LOG = LogManager.getLogger(CompositePhase.class);
     private List<Short> implementedActionCards;
+    private boolean removeCardAfter;
 
     /**
      * Der Konstruktor
@@ -43,6 +43,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
 
     @Override
     public void executeActionPhase(Player player, short cardId) {
+        removeCardAfter = false;
         CardPack cardsPackField = playground.getCardsPackField();
         Card currentCard = getCardFromId(cardsPackField.getCards(), cardId);
 
@@ -71,12 +72,11 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         playground.sendCardsDeckSize();
     }
 
-    public void finishedActionCardExecution(Player player, ArrayList<Short> newHandCards, Card card, boolean removeCardAfter) {
+    public void finishedActionCardExecution(Player player, ArrayList<Short> newHandCards, Card card) {
         if (!removeCardAfter) {
             player.getPlayerDeck().getActionPile().add(card);
         } else {
             playground.getTrash().add(card);
-            playground.getGameService().sendToSpecificPlayer(player, new RemoveActionCardMessage(card.getId(), playground.getID(), player.getTheUserInThePlayer()));
         }
         if (!newHandCards.isEmpty()) {
             playground.getGameService().sendToSpecificPlayer(player, new DrawHandMessage(newHandCards, playground.getID()));
@@ -158,6 +158,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      */
     @Override
     public void executeClearPhase(Player player) {
+        removeCardAfter = false;
         Deck deck = player.getPlayerDeck();
         deck.getDiscardPile().addAll(deck.getHand());
         deck.getDiscardPile().addAll(deck.getActionPile());
@@ -233,6 +234,14 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
             }
         }
         return false;
+    }
+
+    public boolean isRemoveCardAfter() {
+        return removeCardAfter;
+    }
+
+    public void setRemoveCardAfter(boolean removeCardAfter) {
+        this.removeCardAfter = removeCardAfter;
     }
 }
 
