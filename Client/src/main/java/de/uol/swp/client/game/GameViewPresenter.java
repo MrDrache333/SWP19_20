@@ -1080,7 +1080,7 @@ public class GameViewPresenter extends AbstractPresenter {
             buyCardButton.setVisible(false);
             bigCardImageBox.setVisible(true);
         } else {
-            if (id > 6) {
+            if (id > 6 && id != 38) { //nur Aktionskarten, ohne Fluchkarte
                 bigCardImageBox.setVisible(false);
                 for (Node a : handcards.getChildren()) {
                     ImageView b = (ImageView) a;
