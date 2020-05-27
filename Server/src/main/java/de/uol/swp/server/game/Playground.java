@@ -29,7 +29,7 @@ import java.util.*;
 public class Playground extends AbstractPlayground {
 
     private static final Logger LOG = LogManager.getLogger(Playground.class);
-    private static Map<Short, Integer> cardField = new TreeMap<>();
+    private Map<Short, Integer> cardField = new TreeMap<>();
     /**
      * Die Spieler
      */
