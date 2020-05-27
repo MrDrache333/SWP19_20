@@ -253,7 +253,7 @@ public class GameService extends AbstractService {
                     //sendToSpecificPlayer(playground.getActualPlayer(), new PlayCardMessage(gameID, player, cardID, true));
                     playground.getPlayers().forEach(n -> {
                         PlayCardMessage msg = new PlayCardMessage(gameID, playground.getActualPlayer().getTheUserInThePlayer(), cardID, true,
-                                playground.getIndexOfPlayer(n), playground.getIndexOfPlayer(playground.getActualPlayer()), playground.getCompositePhase().isRemoveCardAfter());
+                                playground.getIndexOfPlayer(n), playground.getIndexOfPlayer(playground.getActualPlayer()), playground.getCompositePhase().getExecuteAction().isRemoveCardAfter());
                         sendToSpecificPlayer(n, msg);
                     });/*
                      TODO: Nachdem das gegnerische Feld und ein Text-Feld für den generellem Spiel ablauf hinzugefügt wurde, muss allen Gegnern das ausspielen der Karte mitgeteilt werden.

@@ -37,6 +37,7 @@ public class ActionCardExecution {
     private List<CardAction> nextActions = new ArrayList<>();
     private Card inputCard;
     private AbstractPlayground.ZoneType chooseCardSource;
+    private boolean removeCardAfter;
 
     //Ob auf eine Auswahl oder Reaktion des Spielers gewartet werden muss
     private boolean waitedForPlayerInput;
@@ -167,7 +168,7 @@ public class ActionCardExecution {
                 }
             }
             if (action instanceof ComplexCardAction && ((ComplexCardAction) action).isRemoveCardAfter()) {
-                playground.getCompositePhase().setRemoveCardAfter(true);
+                removeCardAfter = true;
             }
             executeOptionalAction = false;
         }
@@ -808,5 +809,9 @@ public class ActionCardExecution {
         }
 
         return theCard;
+    }
+
+    public boolean isRemoveCardAfter() {
+        return removeCardAfter;
     }
 }

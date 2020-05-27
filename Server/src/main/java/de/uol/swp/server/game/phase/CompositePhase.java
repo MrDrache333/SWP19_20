@@ -26,7 +26,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
     private final Playground playground;
     private static final Logger LOG = LogManager.getLogger(CompositePhase.class);
     private List<Short> implementedActionCards;
-    private boolean removeCardAfter;
+    private ActionCardExecution executeAction;
 
     /**
      * Der Konstruktor
@@ -44,7 +44,6 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
 
     @Override
     public void executeActionPhase(Player player, short cardId) {
-        removeCardAfter = false;
         CardPack cardsPackField = playground.getCardsPackField();
         Card currentCard = getCardFromId(cardsPackField.getCards(), cardId);
         // 1. Verifiziere, dass Karte existiert
@@ -63,14 +62,14 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         3. Führe die auf der Karte befindlichen Aktionen aus
         3.1 Die Karte wird auf den ActionPile gelegt und aus der Hand entfernt.
          */
-        ActionCardExecution executeAction = new ActionCardExecution(cardId, playground);
+        executeAction = new ActionCardExecution(cardId, playground);
         playground.getGameService().getBus().register(executeAction);
         player.getPlayerDeck().getHand().remove(currentCard);
         executeAction.execute();
     }
 
     public void finishedActionCardExecution(Player player, ArrayList<Short> newHandCards, Card card) {
-        if (!removeCardAfter) {
+        if (!executeAction.isRemoveCardAfter()) {
             player.getPlayerDeck().getActionPile().add(card);
         } else {
             playground.getTrash().add(card);
@@ -160,7 +159,6 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      */
     @Override
     public void executeClearPhase(Player player) {
-        removeCardAfter = false;
         Deck deck = player.getPlayerDeck();
         deck.getDiscardPile().addAll(deck.getHand());
         deck.getDiscardPile().addAll(deck.getActionPile());
@@ -238,11 +236,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         return false;
     }
 
-    public boolean isRemoveCardAfter() {
-        return removeCardAfter;
-    }
-
-    public void setRemoveCardAfter(boolean removeCardAfter) {
-        this.removeCardAfter = removeCardAfter;
+    public ActionCardExecution getExecuteAction() {
+        return executeAction;
     }
 }
