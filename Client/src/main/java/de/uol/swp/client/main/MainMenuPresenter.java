@@ -151,7 +151,6 @@ public class MainMenuPresenter extends AbstractPresenter {
         loggedInUser = message.getUser();
         chatViewPresenter.setloggedInUser(loggedInUser);
         chatViewPresenter.userJoined(loggedInUser.getUsername());
-        LOG.debug("Angemeldeter User: " + loggedInUser.getUsername());
         userService.retrieveAllUsers();
         lobbyService.retrieveAllLobbies();
     }
