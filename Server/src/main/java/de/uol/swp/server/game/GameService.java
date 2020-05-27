@@ -86,7 +86,7 @@ public class GameService extends AbstractService {
      * @param cardID die Karten-ID
      * @param user   der User
      * @author Fenja
-     * @since Sprint6
+     * @since Sprint 6
      */
     public void sendLastCardOfDiscardPile(UUID gameID, short cardID, User user) {
         DiscardPileLastCardMessage message = new DiscardPileLastCardMessage(gameID, cardID, user);
@@ -99,7 +99,7 @@ public class GameService extends AbstractService {
      * @param gameID  die ID des Games
      * @param message die Nachricht
      * @author Julia
-     * @since Sprint5
+     * @since Sprint 5
      */
     public void sendToAllPlayers(UUID gameID, ServerMessage message) {
         Optional<Game> game = gameManagement.getGame(gameID);
@@ -138,7 +138,7 @@ public class GameService extends AbstractService {
      *
      * @param msg Interne Message mit der LobbyId um das Game zu starten.
      * @author Ferit, Julia, Marvin
-     * @since Sprint5
+     * @since Sprint 5
      */
     @Subscribe
     void startGame(StartGameInternalMessage msg) {
@@ -158,7 +158,7 @@ public class GameService extends AbstractService {
      *
      * @param msg SkipPhaseRequest
      * @author Julia
-     * @since Sprint5
+     * @since Sprint 5
      */
     @Subscribe
     public void onSkipPhaseRequest(SkipPhaseRequest msg) {
@@ -182,7 +182,7 @@ public class GameService extends AbstractService {
      *
      * @param msg Request zum Aufgeben
      * @author Haschem, Ferit
-     * @since Sprint5
+     * @since Sprint 5
      */
     @Subscribe
     void userGivesUp(GameGiveUpRequest msg) {
@@ -208,7 +208,7 @@ public class GameService extends AbstractService {
      *
      * @param request BuyCardRequest wird hier vom Client empfangen
      * @author Paula, Rike
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Subscribe
     public void onBuyCardRequest(BuyCardRequest request) {
@@ -240,7 +240,7 @@ public class GameService extends AbstractService {
      *
      * @param rqs PlayCardRequest wird hier vom Client empfangen
      * @author Devin, Rike
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Subscribe
     public void onPlayCardRequest(PlayCardRequest rqs) {

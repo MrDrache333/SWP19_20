@@ -9,7 +9,7 @@ import javafx.scene.layout.Region;
  * Layoutcontainer für die Karten auf der Hand.
  *
  * @author Anna
- * @since Sprint6
+ * @since Sprint 6
  */
 public class HandcardsLayoutContainer extends Region {
 
@@ -17,7 +17,7 @@ public class HandcardsLayoutContainer extends Region {
      * Instantiiert einen neuen HandcardsLayoutContainer.
      *
      * @author Anna
-     * @since Sprint6
+     * @since Sprint 6
      */
     public HandcardsLayoutContainer() {
     }
@@ -30,7 +30,7 @@ public class HandcardsLayoutContainer extends Region {
      * @param height  Höhe
      * @param width   Breite
      * @author Anna
-     * @since Sprint6
+     * @since Sprint 6
      */
     public HandcardsLayoutContainer(double layoutX, double layoutY, double height, double width, String id) {
         this.setLayoutX(layoutX);
@@ -55,7 +55,7 @@ public class HandcardsLayoutContainer extends Region {
      * Ansonsten überlappen sie sich, aber immer nur so viel wie nötig.
      *
      * @author Anna
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Override
     protected void layoutChildren() {
@@ -88,7 +88,7 @@ public class HandcardsLayoutContainer extends Region {
      *
      * @return Kinder
      * @author Anna
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Override
     public ObservableList<Node> getChildren() {

@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  * Der Settings Presenter für den Typ.
  *
  * @author Anna
- * @since Sprint4
+ * @since Sprint 4
  */
 public class SettingsPresenter extends AbstractPresenter {
 
@@ -37,7 +37,7 @@ public class SettingsPresenter extends AbstractPresenter {
      * Die FXML Konstante.
      *
      * @author Anna
-     * @since Sprint4
+     * @since Sprint 4
      */
     public static final String fxml = "/fxml/SettingsView.fxml";
     public static final String css = "css/SettingsPresenter.css";
@@ -91,7 +91,7 @@ public class SettingsPresenter extends AbstractPresenter {
      *
      * @param event
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     @FXML
     public void onSaveButtonPressed(ActionEvent event) {
@@ -145,7 +145,7 @@ public class SettingsPresenter extends AbstractPresenter {
      *
      * @param actionEvent
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     @FXML
     public void onDeleteAccountButtonPressed(ActionEvent actionEvent) {
@@ -157,7 +157,7 @@ public class SettingsPresenter extends AbstractPresenter {
      *
      * @param actionEvent
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     @FXML
     public void onCancelButtonPressed(ActionEvent actionEvent) {
@@ -170,7 +170,7 @@ public class SettingsPresenter extends AbstractPresenter {
      *
      * @param actionEvent
      * @author Keno S.
-     * @since Sprint7
+     * @since Sprint 7
      */
     @FXML
     public void onChatMuteToggleButtonPressed(ActionEvent actionEvent) {
@@ -186,7 +186,7 @@ public class SettingsPresenter extends AbstractPresenter {
      *
      * @param message
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void updatedUser(UpdatedUserMessage message) {
@@ -199,7 +199,7 @@ public class SettingsPresenter extends AbstractPresenter {
      * Leert alle Felder (Benutzername, E-Mail und alle Passwortfelder)
      *
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     private void clearAll() {
         usernameField.clear();

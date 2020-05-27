@@ -66,7 +66,7 @@ public class CreateLobbyPresenter extends AbstractPresenter {
      *
      * @param actionEvent
      * @author Paula
-     * @since Sprint7
+     * @since Sprint 7
      */
     @FXML
     public void onCreateLobbyButtonPressed(ActionEvent actionEvent) {
@@ -93,7 +93,7 @@ public class CreateLobbyPresenter extends AbstractPresenter {
      *
      * @param actionEvent
      * @author Paula
-     * @since Sprint7
+     * @since Sprint 7
      */
     @FXML
     public void onCancelButtonPressed(ActionEvent actionEvent) {
@@ -107,7 +107,7 @@ public class CreateLobbyPresenter extends AbstractPresenter {
      *
      * @param message
      * @author Paula
-     * @since Sprint7
+     * @since Sprint 7
      */
     @Subscribe
     public void updatedUser(UpdatedUserMessage message) {

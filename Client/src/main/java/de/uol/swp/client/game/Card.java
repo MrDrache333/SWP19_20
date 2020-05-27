@@ -7,7 +7,7 @@ import javafx.scene.image.ImageView;
  * Die ImageView einer Karte.
  *
  * @author Devin
- * @since Sprint7
+ * @since Sprint 7
  */
 
 public class Card extends ImageView {
@@ -17,7 +17,7 @@ public class Card extends ImageView {
      * Instanziiert eine ImageView einer Karte.
      *
      * @author Devin
-     * @since Sprint7
+     * @since Sprint 7
      */
     public Card() {
     }
@@ -26,7 +26,7 @@ public class Card extends ImageView {
      * Instanziiert eine ImageView einer Karte.
      *
      * @author Devin
-     * @since Sprint7
+     * @since Sprint 7
      */
     public Card(String id) {
         this.setImage(new Image("file:Client/src/main/resources/cards/images/" + id + ".png"));
@@ -41,7 +41,7 @@ public class Card extends ImageView {
      * @param layout_x der x-Wert
      * @param layout_y der y-Wert
      * @author Devin
-     * @since Sprint7
+     * @since Sprint 7
      */
     public Card(String id, double layout_x, double layout_y, double height) {
         this.setImage(new Image("file:Client/src/main/resources/cards/images/" + id + ".png"));

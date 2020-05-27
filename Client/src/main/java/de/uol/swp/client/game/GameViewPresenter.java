@@ -400,7 +400,7 @@ public class GameViewPresenter extends AbstractPresenter {
      *
      * @param userJoinedLobbyMessage Die Nachricht wenn ein User die Lobby beitritt
      * @author Marvin
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void newUser(UserJoinedLobbyMessage userJoinedLobbyMessage) {
@@ -415,7 +415,7 @@ public class GameViewPresenter extends AbstractPresenter {
      *
      * @param message die Nachricht
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void updatedUser(UpdatedUserMessage message) {
@@ -434,7 +434,7 @@ public class GameViewPresenter extends AbstractPresenter {
      *
      * @param message die Nachricht
      * @author Alex
-     * @since Sprint7
+     * @since Sprint 7
      */
     @Subscribe
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
@@ -448,7 +448,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * Wird bei Erstellung in GameManagement aufgerufen und startet eine Abfrage an den Server für alle User in der Lobby.
      *
      * @author Marvin, Alex
-     * @since Sprint3
+     * @since Sprint 3
      */
     public void getInGameUserList(UUID id) {
         lobbyService.retrieveAllUsersInLobby(id);
@@ -460,7 +460,7 @@ public class GameViewPresenter extends AbstractPresenter {
      *
      * @param response die Antwort aller Lobby-Benutzer
      * @author Marvin, Alex
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     private void onReceiveAllUsersInLobby(AllOnlineUsersInLobbyResponse response) {
@@ -787,7 +787,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * setzt den Zustand des "Alle Geldkarten spielen" auf anklickbar, wenn der User Geldkarten auf die Hand bekommt
      *
      * @author Devin S., Anna, Rike
-     * @since Sprint5
+     * @since Sprint 5
      */
     @FXML
     @Subscribe
@@ -971,7 +971,7 @@ public class GameViewPresenter extends AbstractPresenter {
      *
      * @param userList die neue Userliste
      * @author Marvin
-     * @since Sprint3
+     * @since Sprint 3
      */
     private void updateUsersList(Set<User> userList) {
         // Attention: This must be done on the FX Thread!
@@ -997,7 +997,7 @@ public class GameViewPresenter extends AbstractPresenter {
      *
      * @param usersList Die Liste der Spieler im Spiel bzw. in der Lobby.
      * @author Alex
-     * @since Sprint7
+     * @since Sprint 7
      */
     private void updateEnemiesOnBoard(Set<User> usersList) {
         // Attention: This must be done on the FX Thread!
@@ -1040,7 +1040,7 @@ public class GameViewPresenter extends AbstractPresenter {
      *
      * @param usersList Die User Liste als Set
      * @author Alex
-     * @since Sprint7
+     * @since Sprint 7
      */
     private void updateUsersInGame(Set<User> usersList) {
         // TODO: Deaktiviert, da NullPointer. NullPointer muss behoben werden.
@@ -1052,7 +1052,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * Skipt die aktuelle Phase des Spielers zur nächsten.
      *
      * @author Devin S.
-     * @since Sprint6
+     * @since Sprint 6
      */
     @FXML
     public void onSkipPhaseButtonPressed(ActionEvent actionEvent) {
@@ -1096,7 +1096,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * @param children    Das children von dem Karten Stapel
      * @param actionCards true wenn die Karten in der Aktionszone liegen
      * @author Darian
-     * @since Sprint7
+     * @since Sprint 7
      */
     private void moveCardsToDiscardPile(ObservableList<Node> children, boolean actionCards) {
         for (Node c : children) {

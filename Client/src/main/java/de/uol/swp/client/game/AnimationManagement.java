@@ -142,7 +142,7 @@ public class AnimationManagement {
      * @param count gibt an, die wievielte Karte gerade gespielt wird
      * @return boolean ob die Bewegung durchgeführt wurde
      * @author Anna
-     * @since Sprint5
+     * @since Sprint 5
      */
     public static Boolean opponentPlaysCard(ImageView card, int count) {
         return createArcToPath(card, new MoveTo(500 - card.getLayoutX(), -70 - card.getLayoutY()), ACTION_ZONE_OPPONENT_X, ACTION_ZONE_OPPONENT_Y, count, false);

@@ -112,7 +112,7 @@ public class LobbyPresenter extends AbstractPresenter {
      * @param injector          der Injector
      * @param gameManagement    das GameManagement
      * @author Julia, Keno O, Anna, Darian, Keno S.
-     * @since Sprint2
+     * @since Sprint 2
      */
     public LobbyPresenter(User loggedInUser, String name, UUID lobbyID, ChatService chatService, ChatViewPresenter chatViewPresenter, LobbyService lobbyService, UserService userService, Injector injector, UserDTO gameOwner, GameManagement gameManagement, EventBus eventBus) {
         this.loggedInUser = loggedInUser;
@@ -140,7 +140,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param event
      * @author Julia, Keno S., Marvin
-     * @since Sprint3
+     * @since Sprint 3
      */
     @FXML
     public void onLeaveLobbyButtonPressed(ActionEvent event) {
@@ -154,7 +154,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @throws IOException die IO-Exception
      * @author Keno O, Darian, Timo, Ferit
-     * @since Sprint2
+     * @since Sprint 2
      */
     @FXML
     public void initialize() throws IOException {
@@ -189,7 +189,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param actionEvent
      * @author Keno S, Keno O.
-     * @since Sprint3
+     * @since Sprint 3
 
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
@@ -203,7 +203,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param actionEvent
      * @author Darian, Keno S, Keno O.
-     * @since Sprint3
+     * @since Sprint 3
      */
     @FXML
     public void onReadyButtonPressed(ActionEvent actionEvent) {
@@ -420,7 +420,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param message die UpdatedLobbyReadyStatusMessage
      * @author Darian, Keno O.
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onUpdatedLobbyReadyStatusMessage(UpdatedLobbyReadyStatusMessage message) {
@@ -437,7 +437,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param response die AllOnlineUsersInLobbyResponse
      * @author Keno O.
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     private void onReceiveAllUsersInLobby(AllOnlineUsersInLobbyResponse response) {
@@ -455,7 +455,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param message die UpdatedUserMessage
      * @author Julia, Anna
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void updatedUser(UpdatedUserMessage message) {
@@ -498,7 +498,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param message die StartGameMessage
      * @author Darian, Keno O.
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onGameStartMessage(StartGameMessage message) {
@@ -512,7 +512,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param message die UserLoggedOutMessage
      * @author Darian
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onUserLoggedOutMessage(UserLoggedOutMessage message) {
@@ -524,7 +524,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param message die UserDroppedMessage
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void onUserDroppedMessage(UserDroppedMessage message) {
@@ -536,7 +536,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param message die UserJoinedLobbyMessage
      * @author Darian, Keno O., Marvin
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onUserJoinedLobbyMessage(UserJoinedLobbyMessage message) {
@@ -557,7 +557,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param message die UserLeftLobbyMessage
      * @author Darian, Keno O, Julia
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
@@ -578,7 +578,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param message die eingehende Nachricht vom Server
      * @author Darian, Marvin
-     * @since sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void onKickUserMessage(KickUserMessage message) {
@@ -598,7 +598,7 @@ public class LobbyPresenter extends AbstractPresenter {
      * @param username Benutzername des Benutzers der gegangen ist
      * @param kicked   True wenn der Benutzer aus der Lobby gekickt wurde
      * @author Darian
-     * @since sprint4
+     * @since Sprint 4
      */
     private void userLeftLobby(String username, boolean kicked) {
         if (readyUserList.get(username) != null) {
@@ -624,7 +624,7 @@ public class LobbyPresenter extends AbstractPresenter {
      * Geänderte Userliste wird angezeigt.
      *
      * @author Darian, Keno O.
-     * @since Sprint3
+     * @since Sprint 3
      */
     private void updateUsersList() {
         Platform.runLater(() -> {
@@ -701,7 +701,7 @@ public class LobbyPresenter extends AbstractPresenter {
      * @param user   der User
      * @param status der aktuelle Bereit-Status
      * @author Darian
-     * @since Sprint3
+     * @since Sprint 3
      */
     private void updateReadyUser(User user, boolean status) {
         if (readyUserList.containsKey(user.getUsername())) {
@@ -716,7 +716,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @return alle HBoxes als ArrayList
      * @author Darian, Keno S.
-     * @since Sprint3
+     * @since Sprint 3
      */
     private ArrayList<HBox> getAllHBoxes() {
         return new ArrayList<>(readyUserList.values());
@@ -731,7 +731,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @return die LobbyID
      * @author Darian
-     * @since Sprint3
+     * @since Sprint 3
      */
     public UUID getLobbyID() {
         return lobbyID;
@@ -742,7 +742,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @return den Lobbynamen
      * @author Darian
-     * @since Sprint3
+     * @since Sprint 3
      */
     public String getLobbyName() {
         return lobbyName;
@@ -753,7 +753,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @return den LobbyService
      * @author Ferit
-     * @since Sprint3
+     * @since Sprint 3
      */
     public LobbyService getLobbyService() {
         return lobbyService;
@@ -764,7 +764,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param loggedInUser der aktuelle User
      * @author Anna
-     * @since Sprint6
+     * @since Sprint 6
      */
     public void setButtonReady(UserDTO loggedInUser) {
         if (loggedInUser.equals(this.loggedInUserDTO)) {

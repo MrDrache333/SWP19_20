@@ -22,7 +22,7 @@ public class GameService {
      *
      * @param bus der Bus
      * @author Haschem, Ferit
-     * @since Sprint5
+     * @since Sprint 5
      */
     @Inject
     public GameService(EventBus bus) {
@@ -36,7 +36,7 @@ public class GameService {
      * @param lobbyID           die LobbyID zum Lobbynamen
      * @param theUserWhoGivedUp der User der aufgeben will.
      * @author Haschem, Ferit
-     * @since Sprint5
+     * @since Sprint 5
      */
     public void giveUp(UUID lobbyID, UserDTO theUserWhoGivedUp) {
         GameGiveUpRequest request = new GameGiveUpRequest(theUserWhoGivedUp, lobbyID);

@@ -116,7 +116,7 @@ public class Playground extends AbstractPlayground {
      * Es wird zusätzlich der Timestamp (vom Server) mitgeschickt
      *
      * @author Julia, Ferit
-     * @since Sprint5
+     * @since Sprint 5
      */
     public void newTurn() {
         if (actualPlayer == null && nextPlayer == null) {
@@ -335,7 +335,7 @@ public class Playground extends AbstractPlayground {
      *
      * @return true, wenn er eine Aktionskarte auf der Hand hat, sonst false
      * @author Julia
-     * @since Sprint5
+     * @since Sprint 5
      */
     public boolean checkForActionCard() {
         for (Card card : actualPlayer.getPlayerDeck().getHand()) {
@@ -351,7 +351,7 @@ public class Playground extends AbstractPlayground {
      *
      * @return Liste mit allen Gewinnern
      * @author Julia
-     * @since Sprint6
+     * @since Sprint 6
      */
     public List<String> calculateWinners() {
         List<String> winners = new ArrayList<>();
@@ -419,7 +419,7 @@ public class Playground extends AbstractPlayground {
      *
      * @return aktuelle Phase
      * @author Paula
-     * @since Sprint5
+     * @since Sprint 5
      */
     public Phase.Type getActualPhase() {
         return actualPhase;
@@ -434,7 +434,7 @@ public class Playground extends AbstractPlayground {
      *
      * @return s.o
      * @author Haschem, Ferit
-     * @since Sprint5
+     * @since Sprint 5
      */
     public Player getLatestGavedUpPlayer() {
         return latestGavedUpPlayer;

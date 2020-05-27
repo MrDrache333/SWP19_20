@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * Die Klasse SoundMediaPlayer.
  *
  * @author Keno Oelrichs Garcia
- * @since Sprint3
+ * @since Sprint 3
  */
 public class SoundMediaPlayer implements MediaPlayer {
 
@@ -31,7 +31,7 @@ public class SoundMediaPlayer implements MediaPlayer {
      * @param sound Die Sound Art, die festgelegt werden soll.
      * @param type  Der Typ (entweder Sound oder Music).
      * @author Keno Oelrichs Garcia
-     * @since Sprint3
+     * @since Sprint 3
      */
     public SoundMediaPlayer(Sound sound, Type type) {
         this.sound = sound;
@@ -68,7 +68,7 @@ public class SoundMediaPlayer implements MediaPlayer {
      * Spielt den aktuellen Track ab.
      *
      * @author Keno Oelrichs Garcia
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Override
     public void play() {
@@ -109,7 +109,7 @@ public class SoundMediaPlayer implements MediaPlayer {
      * Ruft eine Funktion auf, um den Ton für den Player auszuschalten.
      *
      * @author Keno Oelrichs Garcia
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Override
     public void mute() {
@@ -131,7 +131,7 @@ public class SoundMediaPlayer implements MediaPlayer {
      * Stellt den Ton für den Nutzer ein.
      *
      * @author Keno Oelrichs Garcia
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Override
     public void unMute() {
@@ -143,7 +143,7 @@ public class SoundMediaPlayer implements MediaPlayer {
      *
      * @param Volume Die finale Lautstärke.
      * @author Keno Oelrichs Garcia
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Override
     public void setVolume(double Volume) {
@@ -158,7 +158,7 @@ public class SoundMediaPlayer implements MediaPlayer {
      *
      * @return Den Wert von started.
      * @author Keno Oelrichs Garcia
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Override
     public boolean isStarted() {
@@ -169,7 +169,7 @@ public class SoundMediaPlayer implements MediaPlayer {
      * Stoppt den aktuellen Player
      *
      * @author Keno Oelrichs Garcia
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Override
     public void stop() {
@@ -181,7 +181,7 @@ public class SoundMediaPlayer implements MediaPlayer {
      * Die Enumeration Type.
      *
      * @author Keno Oelrichs Garcia
-     * @since Sprint3
+     * @since Sprint 3
      */
     public enum Type {
 
@@ -200,7 +200,7 @@ public class SoundMediaPlayer implements MediaPlayer {
      * Die Enumeration Sound.
      *
      * @author Keno Oelrichs Garcia
-     * @since Sprint3
+     * @since Sprint 3
      */
     public enum Sound {
 
@@ -241,7 +241,7 @@ public class SoundMediaPlayer implements MediaPlayer {
          *
          * @param path Der Pfad
          * @author Keno Oelrichs Garcia
-         * @since Sprint3
+         * @since Sprint 3
          */
         Sound(String path) {
             this.path = path;
@@ -252,7 +252,7 @@ public class SoundMediaPlayer implements MediaPlayer {
          *
          * @return the Path
          * @author Keno Oelrichs Garcia
-         * @since Sprint3
+         * @since Sprint 3
          */
         public String getPath() {
             return this.path;
