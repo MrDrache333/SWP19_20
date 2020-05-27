@@ -565,9 +565,11 @@ public class GameViewPresenter extends AbstractPresenter {
             if (msg.getIsPlayed()) {
                 Platform.runLater(() -> {
                     if (handcards.getChildren().contains(card)) {
-                        AnimationManagement.playCard(card, myPCLC.getChildren().size(), myPCLC);
+                        if (!msg.isRemoveCardAfter()) {
+                            AnimationManagement.playCard(card, myPCLC.getChildren().size(), myPCLC);
+                            myPCLC.getChildren().add(card);
+                        }
                         handcards.getChildren().remove(card);
-                        myPCLC.getChildren().add(card);
                         card.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                     }
                     if (msg.getHandCardID().equals("1") || msg.getHandCardID().equals("2") || msg.getHandCardID().equals("3")) {

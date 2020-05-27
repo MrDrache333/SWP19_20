@@ -112,7 +112,6 @@
                 "max": 255
               },
               "cardSource": "HAND",
-              "executionOptional": true,
               "nextAction": {
                 "ForEach": {
                   "actions": [
@@ -280,34 +279,34 @@
               },
               "cardSource": "HAND",
               "nextAction": {
-                "ForEach": {
-                  "actions": [
-                    {
-                      "Move": {
-                        "cardSource": "HAND",
-                        "cardDestination": "TRASH"
-                      }
-                    },
-                    {
-                      "ChooseCard": {
-                        "count": {
-                          "min": 1
-                        },
-                        "cardSource": "BUY",
-                        "hasMoreCostThanInput": {
-                          "min": 0,
-                          "max": 2
-                        },
-                        "directHand": true
-                      }
-                    }
-                  ]
+                "Move": {
+                  "cardSource": "HAND",
+                  "cardDestination": "TRASH"
+                }
+              }
+            }
+          },
+          {
+            "ChooseCard": {
+              "count": {
+                "min": 1
+              },
+              "cardSource": "BUY",
+              "hasMoreCostThanInput": {
+                "min": 0,
+                "max": 2
+              },
+              "nextAction": {
+                "Move": {
+                  "cardSource": "BUY",
+                  "cardDestination": "DISCARD"
                 }
               }
             }
           }
         ]
       },
+
       {
         "id": 16,
         "name": "Werkstatt",
@@ -315,6 +314,9 @@
         "actions": [
           {
             "ChooseCard": {
+              "count": {
+                "min": 1
+              },
               "hasCost": {
                 "min": 0,
                 "max": 4
@@ -536,6 +538,7 @@
             "GetCard": {
               "count": 254,
               "executionOptional": true,
+              "executionOptionalMessage": "Willst du deinen kompletten Nachziehstapel ablegen?",
               "cardSource": "DRAW",
               "nextAction": {
                 "Move": {

@@ -26,7 +26,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * testet paar Aktionskarten...
+ * Testet Aktionskarten, die keine Spielerantwort benötigen
+ *
+ * @author Julia
+ * @since Sprint8
  */
 public class ActionCardTest {
 
@@ -113,7 +116,11 @@ public class ActionCardTest {
         assertEquals(2, playground.getActualPlayer().getAvailableBuys());
         assertEquals(2, playground.getActualPlayer().getAvailableActions());
         assertEquals(2, playground.getActualPlayer().getAdditionalMoney());
-        assertEquals(Phase.Type.ActionPhase, playground.getActualPhase());
+        if (playground.checkForActionCard()) {
+            assertEquals(Phase.Type.ActionPhase, playground.getActualPhase());
+        } else {
+            assertEquals(Phase.Type.Buyphase, playground.getActualPhase());
+        }
     }
 
     @Test
@@ -127,7 +134,11 @@ public class ActionCardTest {
         assertEquals(2, playground.getActualPlayer().getAvailableActions());
         assertEquals(handSize, playground.getActualPlayer().getPlayerDeck().getHand().size());
         assertTrue(playground.getActualPlayer().getPlayerDeck().getHand().contains(card));
-        assertEquals(Phase.Type.ActionPhase, playground.getActualPhase());
+        if (playground.checkForActionCard()) {
+            assertEquals(Phase.Type.ActionPhase, playground.getActualPhase());
+        } else {
+            assertEquals(Phase.Type.Buyphase, playground.getActualPhase());
+        }
     }
 
     @Test
@@ -160,7 +171,11 @@ public class ActionCardTest {
         assertEquals(1, playground.getActualPlayer().getAvailableActions());
         assertTrue(playground.getActualPlayer().getPlayerDeck().getHand().contains(card1));
         assertTrue(playground.getActualPlayer().getPlayerDeck().getHand().contains(card2));
-        assertEquals(Phase.Type.ActionPhase, playground.getActualPhase());
+        if (playground.checkForActionCard()) {
+            assertEquals(Phase.Type.ActionPhase, playground.getActualPhase());
+        } else {
+            assertEquals(Phase.Type.Buyphase, playground.getActualPhase());
+        }
     }
 
     @Test
@@ -176,7 +191,11 @@ public class ActionCardTest {
         assertEquals(2, playground.getActualPlayer().getAvailableBuys());
         assertEquals(1, playground.getActualPlayer().getAdditionalMoney());
         assertTrue(playground.getActualPlayer().getPlayerDeck().getHand().contains(card1));
-        assertEquals(Phase.Type.ActionPhase, playground.getActualPhase());
+        if (playground.checkForActionCard()) {
+            assertEquals(Phase.Type.ActionPhase, playground.getActualPhase());
+        } else {
+            assertEquals(Phase.Type.Buyphase, playground.getActualPhase());
+        }
     }
 
 

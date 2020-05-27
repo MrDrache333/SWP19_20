@@ -33,15 +33,12 @@ public class ChooseCardRequest extends AbstractGameMessage {
      */
     private String message;
     /**
-     * Spieler, auf den die Quellen-Zone bezogen ist
-     */
-    private User sourcePlayer;
-    /**
      * Die Anzahl an wählbaren Karten
      */
     private Value countV;
 
     private int count;
+    private boolean directHand;
 
     /**
      * Erstellt einen neuen Request
@@ -56,13 +53,14 @@ public class ChooseCardRequest extends AbstractGameMessage {
      * @author KenoO
      * @since Sprint 7
      */
-    public ChooseCardRequest(UUID id, User player, ArrayList<Short> cards, Value countV, User sourcePlayer, AbstractPlayground.ZoneType source, String message) {
+    public ChooseCardRequest(UUID id, User player, ArrayList<Short> cards, Value countV, User sourcePlayer, AbstractPlayground.ZoneType source, String message, boolean directHand) {
         super(id, player);
         this.cards = cards;
         this.countV = countV;
         this.source = source;
         if (message.equals("")) message = DEFAULT_MESSAGE;
         this.message = message;
+        this.directHand = directHand;
     }
 
     /**
@@ -77,13 +75,14 @@ public class ChooseCardRequest extends AbstractGameMessage {
      * @author KenoO
      * @since Sprint 7
      */
-    public ChooseCardRequest(UUID id, User player, ArrayList<Short> cards, User sourcePlayer, AbstractPlayground.ZoneType source, String message) {
+    public ChooseCardRequest(UUID id, User player, ArrayList<Short> cards, int count, User sourcePlayer, AbstractPlayground.ZoneType source, String message, boolean directHand) {
         super(id, player);
         this.cards = cards;
-        this.count = 1;
+        this.count = count;
         this.source = source;
         if (message.equals("")) message = DEFAULT_MESSAGE;
         this.message = message;
+        this.directHand = directHand;
     }
 
     //***********************
@@ -124,17 +123,6 @@ public class ChooseCardRequest extends AbstractGameMessage {
     }
 
     /**
-     * Gets source player.
-     *
-     * @return the source player
-     * @author KenoO
-     * @since Sprint 7
-     */
-    public User getSourcePlayer() {
-        return sourcePlayer;
-    }
-
-    /**
      * Gets count.
      *
      * @return the count
@@ -143,5 +131,13 @@ public class ChooseCardRequest extends AbstractGameMessage {
      */
     public int getCount() {
         return count;
+    }
+
+    public boolean getDirectHand() {
+        return directHand;
+    }
+
+    public Value getCountV() {
+        return countV;
     }
 }
