@@ -149,15 +149,14 @@ public class GameManagement {
             primaryPresenter.showTab(msg.getChatID());
         }
     }
-
- */
+*/
 
     /**
      * Aktualisiert den loggedInUser, wenn dieser seine Daten geändert hat
      *
      * @param message die UpdatedUserMessage
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void updatedUser(UpdatedUserMessage message) {
@@ -171,7 +170,7 @@ public class GameManagement {
      *
      * @param message die GameOverMessage
      * @author Anna
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Subscribe
     public void onGameOverMessage(GameOverMessage message) {
@@ -195,7 +194,7 @@ public class GameManagement {
      * Methode zum Anzeigen der LobbyView
      *
      * @author Keno O.
-     * @since Sprint3
+     * @since Sprint 3
      */
     public void showLobbyView() {
         initLobbyView();
@@ -355,7 +354,7 @@ public class GameManagement {
      *
      * @return die ID
      * @author Anna
-     * @aince Sprint6
+     * @since Sprint 6
      */
     public UUID getID() {
         return this.id;
@@ -366,7 +365,7 @@ public class GameManagement {
      *
      * @return der LobbyService
      * @author Anna
-     * @Since Sprint6
+     * @since Sprint 6
      */
     public LobbyService getLobbyService() {
         return this.lobbyPresenter.getLobbyService();
@@ -381,7 +380,6 @@ public class GameManagement {
      *
      * @return lobbyName der Lobbyname
      * @author Keno Oelrichs Garcia
-     * @Version 1.0
      * @since Sprint 4
      */
     public String getLobbyName() {
@@ -393,7 +391,6 @@ public class GameManagement {
      *
      * @return loggedInUser der eingloggte User
      * @author Marvin, Timo
-     * @Version 1.0
      * @since Sprint 7
      */
     public User getLoggedInUser() {

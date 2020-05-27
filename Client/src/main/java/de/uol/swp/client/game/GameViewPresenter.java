@@ -143,6 +143,8 @@ public class GameViewPresenter extends AbstractPresenter {
     private Label infoActualPhase;
     @FXML
     private Button playAllMoneyCardsButton;
+    @FXML
+    private Button skipPhaseButton;
 
     private final HandcardsLayoutContainer handcards;
     private final HandcardsLayoutContainer firstEnemyHand;
@@ -349,7 +351,7 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Ereignis das ausgeführt wird, wenn der User den Button "Alle Geldkarten spielen" drückt
      *
-     * @param actionEvent
+     * @param actionEvent das Action-Event
      * @author Rike
      * @since Sprint 7
      */
@@ -362,7 +364,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * Ereignis das ausgeführt wird, wenn eine Karte im Shop angeklickt wird.
      * ruft die chosenBuyableCard()-Methode auf
      *
-     * @param mouseEvent
+     * @param mouseEvent das Maus-Event
      * @author Rike
      * @since Sprint 5
      */
@@ -411,7 +413,7 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Aktualisiert den loggedInUser sowie die Liste, falls sich der Username geändert hat
      *
-     * @param message
+     * @param message die Nachricht
      * @author Julia
      * @since Sprint4
      */
@@ -430,7 +432,7 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Aktualisiert den loggedInUser sowie die Liste, wenn ein Spieler die Lobby (also das Spiel) verlässt.
      *
-     * @param message
+     * @param message die Nachricht
      * @author Alex
      * @since Sprint7
      */
@@ -598,7 +600,6 @@ public class GameViewPresenter extends AbstractPresenter {
                             AnimationManagement.playCard((ImageView) firstEnemyHand.getChildren().get(0), firstEnemyPCLC.getChildren().size(), firstEnemyPCLC);
                             firstEnemyHand.getChildren().remove(0);
                             firstEnemyPCLC.getChildren().add(card);
-                            return;
                         });
                     }
 
@@ -607,7 +608,6 @@ public class GameViewPresenter extends AbstractPresenter {
                             AnimationManagement.playCard((ImageView) secondEnemyHand.getChildren().get(0), secondEnemyPCLC.getChildren().size(), secondEnemyPCLC);
                             secondEnemyHand.getChildren().remove(0);
                             secondEnemyPCLC.getChildren().add(card);
-                            return;
                         });
                     }
                     if (playerIndexNumbers.get(2).equals(msg.getEnemyPlaceNumber())) {
@@ -615,7 +615,6 @@ public class GameViewPresenter extends AbstractPresenter {
                             AnimationManagement.playCard((ImageView) thirdEnemyHand.getChildren().get(0), thirdEnemyPCLC.getChildren().size(), thirdEnemyPCLC);
                             thirdEnemyHand.getChildren().remove(0);
                             thirdEnemyPCLC.getChildren().add(card);
-                            return;
                         });
                     }
                 }
@@ -653,7 +652,6 @@ public class GameViewPresenter extends AbstractPresenter {
                     Card card = new Card(id.toString(), 328, 447, 104);
                     if (numberOfCardsInHand == 0) {
                         LOG.debug("Die Hand hat keine Karten mehr zum entsorgen");
-                        return;
                     }
                     Platform.runLater(() -> {
                         firstEnemyHand.getChildren().remove(0);
@@ -661,7 +659,6 @@ public class GameViewPresenter extends AbstractPresenter {
                         firstEnemyDPLC.getChildren().add(card);
                     });
                 }
-                return;
             }
             if (playerIndexNumbers.get(1).equals(msg.getEnemyPlaceNumber())) {
                 int numberOfCardsInHand = secondEnemyHand.getChildren().size();
@@ -677,7 +674,6 @@ public class GameViewPresenter extends AbstractPresenter {
                         secondEnemyDPLC.getChildren().add(card);
                     });
                 }
-                return;
             }
             if (playerIndexNumbers.get(2).equals(msg.getEnemyPlaceNumber())) {
                 int numberOfCardsInHand = thirdEnemyHand.getChildren().size();
@@ -693,7 +689,6 @@ public class GameViewPresenter extends AbstractPresenter {
                         thirdEnemyDPLC.getChildren().add(card);
                     });
                 }
-                return;
             }
         }
     }
@@ -737,7 +732,6 @@ public class GameViewPresenter extends AbstractPresenter {
                         firstEnemyHand.getChildren().add(card);
                     });
                 }
-                return;
             }
             if (playerIndexNumbers.get(1).equals(msg.getEnemyPlaceNumber())) {
                 Platform.runLater(() -> {
@@ -750,7 +744,6 @@ public class GameViewPresenter extends AbstractPresenter {
                         secondEnemyHand.getChildren().add(card);
                     });
                 }
-                return;
             }
             if (playerIndexNumbers.get(2).equals(msg.getEnemyPlaceNumber())) {
                 Platform.runLater(() -> {
@@ -763,18 +756,16 @@ public class GameViewPresenter extends AbstractPresenter {
                         thirdEnemyHand.getChildren().add(card);
                     });
                 }
-                return;
             }
         }
     }
-
 
     /**
      * Fügt die Karte aus der DiscardPileLastCardMessage dem Ablagestapel hinzu.
      *
      * @param msg Die Nachricht
      * @author Timo
-     * @Sprint 6
+     * @since Sprint 6
      */
     @Subscribe
     public void onDiscardPileLastCardMessage(DiscardPileLastCardMessage msg) {
@@ -941,7 +932,7 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Aktualisiert die Anzeige für Aktion, Kauf und Geld
      *
-     * @param msg
+     * @param msg die Nachricht
      * @author Rike
      * @since Sprint 7
      */
@@ -1232,18 +1223,22 @@ public class GameViewPresenter extends AbstractPresenter {
                     playAllMoneyCardsButton.setVisible(true);
                     if (msg instanceof StartActionPhaseMessage) {
                         playAllMoneyCardsButton.setDisable(true);
+                        skipPhaseButton.setDisable(false);
                         infoActualPhase.setText("Du darfst Aktionen spielen.");
                     }
                     if (msg instanceof StartBuyPhaseMessage) {
                         playAllMoneyCardsButton.setDisable(false);
+                        skipPhaseButton.setDisable(false);
                         infoActualPhase.setText("Du darfst Karten kaufen.");
                     }
                     if (msg instanceof StartClearPhaseMessage) {
                         playAllMoneyCardsButton.setDisable(true);
+                        skipPhaseButton.setDisable(false);
                         infoActualPhase.setText("Clearphase");
                     }
                 } else {
                     playAllMoneyCardsButton.setVisible(false);
+                    skipPhaseButton.setDisable(true);
                     infoActualPhase.setText("Du bist nicht dran.");
                 }
             });

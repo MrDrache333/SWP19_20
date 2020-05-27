@@ -49,7 +49,7 @@ public class GameService {
      * @param gameID die LobbyID zum Lobbynamen
      * @param user   der User der seine Phase skippen möchte
      * @author Devin
-     * @since Sprint5
+     * @since Sprint 5
      */
     public void skipPhase(User user, UUID gameID) {
         SkipPhaseRequest req = new SkipPhaseRequest(user, gameID);
@@ -62,6 +62,13 @@ public class GameService {
         bus.post(req);
     }
 
+    /**
+     * Sendet einen BuyCardRequest
+     *
+     * @param req der Request
+     * @author Devin
+     * @since Sprint 5
+     */
     public void buyCard(BuyCardRequest req) {
         bus.post(req);
     }
