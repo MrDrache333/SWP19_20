@@ -278,7 +278,7 @@ public class Playground extends AbstractPlayground {
             } else if (nextPlayer.equals(latestGavedUpPlayer)) {
                 if (thePositionInList < this.players.size() - 1) {
                     nextPlayer = this.players.get(++thePositionInList);
-                    this.players.remove(thePositionInList);
+                    this.players.remove(--thePositionInList);
                 } else {
                     this.players.remove(thePositionInList);
                     nextPlayer = this.players.get(0);

@@ -110,7 +110,6 @@ public class ChatViewPresenter extends AbstractPresenter {
     // serverUser für Chatnachrichten
     private final UserDTO serverUser = new UserDTO("server", "", "");
 
-
     //Farben des aktuellen Chats
     private String ChatMessageBubbleBackgroundColor_Me;
     private String ChatMessageBubbleTextColor_Me;
@@ -146,7 +145,7 @@ public class ChatViewPresenter extends AbstractPresenter {
     };
 
     /**
-     * Instatiziiere einen neuen ChatViewPresenter im Spiel.
+     * Instanziiere einen neuen ChatViewPresenter im Spiel.
      *
      * @param chatTitle   Name des Chats
      * @param theme       THEMA des Chats
@@ -162,12 +161,11 @@ public class ChatViewPresenter extends AbstractPresenter {
         this.loggedInUser = currentUser;
         this.injector = injector;
         this.gameManagement = gameManagement;
-
         setTheme(CHATTHEME);
     }
 
     /**
-     * Instaziiere einen neuen ChatViewPresenter in der lobby.
+     * Instanziiere einen neuen ChatViewPresenter in der lobby.
      *
      * @param chatTitle   Name des Chats
      * @param theme       Thema des Chats
@@ -181,7 +179,6 @@ public class ChatViewPresenter extends AbstractPresenter {
         this.chatService = chatService;
         this.chatId = chatId;
         this.loggedInUser = currentUser;
-
         setTheme(CHATTHEME);
     }
 
@@ -253,7 +250,6 @@ public class ChatViewPresenter extends AbstractPresenter {
             LOG.debug("Lade Dark Theme");
             chatViewAnchorPane.getStylesheets().add(styleSheet_dark);
         }
-
         sendButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
     }
 
@@ -281,7 +277,7 @@ public class ChatViewPresenter extends AbstractPresenter {
             if (!loggedInUser.getUsername().equals(msg.getMessage().getSender().getUsername()) && msg.getMessage().getSender().equals("server"))
                 new SoundMediaPlayer(SoundMediaPlayer.Sound.Message_Receive, SoundMediaPlayer.Type.Sound).play();
             Platform.runLater(() -> {
-                //Loesche alte Nachrichten bei bedarf
+                //Loesche alte Nachrichten bei Bedarf
                 if (chatMessages.size() > MAXCHATMESSAGEHISTORY) {
                     chatMessages.remove(0);
                     chatMessageHistory.remove(0);
@@ -289,7 +285,6 @@ public class ChatViewPresenter extends AbstractPresenter {
                 //Fuege neue ChatNachricht hinzu
                 chatMessages.add(chatMessagetoBox(msg.getMessage()));
                 chatMessageHistory.add(msg.getMessage());
-
             });
             lastMessage = msg.getMessage();
         }
@@ -324,9 +319,8 @@ public class ChatViewPresenter extends AbstractPresenter {
     }
 
     //--------------------------------------
-    // METHODE
+    // METHODEN
     //--------------------------------------
-
 
     /**
      * Die Methode userJoined gibt eine Nachricht, wenn ein User dem Chat beitritt.
@@ -360,7 +354,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      *
      * @param username Benutzername des gekickten Spielers
      * @author Darian, Fenja, Timo
-     * @since sprint4
+     * @since Sprint4
      */
     public void userKicked(String username) {
         if (!chatId.equals(""))
@@ -378,22 +372,19 @@ public class ChatViewPresenter extends AbstractPresenter {
         new SoundMediaPlayer(SoundMediaPlayer.Sound.Message_Send, SoundMediaPlayer.Type.Sound).play();
         if (chatId.equals("")) return;
         String message;
-
         message = chatTextField.getText();
         //Prüfe auf leere Nachricht
         if (!message.equals("")) {
             LOG.debug("Sende neue Chatnachricht: User= " + loggedInUser.getUsername() + " Msg= " + message + " ChatID= " + chatId);
             ChatMessage newChatMessage = new ChatMessage(loggedInUser, message);
-
             LOG.debug("Neue Nachricht zum Senden: " + message);
-
             chatTextField.clear();
             this.chatService.sendMessage(chatId, newChatMessage);
         }
     }
 
     /**
-     * Kreiert eine HBox mit dem Label einer gegeben ChatMessage
+     * Kreiert eine HBox mit dem Label einer gegebenen ChatMessage
      *
      * @param msg die Chatnachricht
      * @return eine HBox mit Labels
@@ -410,7 +401,6 @@ public class ChatViewPresenter extends AbstractPresenter {
         //Als Tooltip der Nachricht die Eingangs-Zeit anzeigen
         message.setTooltip(new Tooltip(new SimpleDateFormat("HH:mm:ss").format(msg.getTimeStamp())));
         sender.setStyle("-fx-text-fill: black; -fx-font-size: 12");
-
         //Je nachdem wer die Nachriht gesendet hat, diese auf der richtigen Seite darstellen
         VBox box = new VBox();
         HBox hbox = new HBox();
@@ -426,13 +416,9 @@ public class ChatViewPresenter extends AbstractPresenter {
                 sender.setAlignment(Pos.BOTTOM_RIGHT);
                 message.setAlignment(Pos.BOTTOM_RIGHT);
                 message.setPadding(new Insets(5, 5, 5, 5));
-
-
                 hbox.getChildren().add(message);
                 box.alignmentProperty().setValue(Pos.BOTTOM_RIGHT);
                 hbox.alignmentProperty().setValue(Pos.BOTTOM_RIGHT);
-
-
             } else {
                 //Wenn die Nachricht mehrere Zeilen umfasst, dann ändere den Radius der Ecken
                 message.setStyle("-fx-background-radius: " + (plainMessage.length() > message.getMaxWidth() / 10 ? "15" : "90") + ";-fx-background-color: " + ChatMessageBubbleBackgroundColor_Other + ";-fx-text-fill: " + ChatMessageBubbleTextColor_Other + "; -fx-font-size: 16");
@@ -440,9 +426,7 @@ public class ChatViewPresenter extends AbstractPresenter {
                 sender.setPadding(new Insets(0, 0, 0, 40));
                 message.setAlignment(Pos.BOTTOM_LEFT);
                 message.setPadding(new Insets(8, 8, 8, 8));
-
                 hbox.setSpacing(5);
-
                 //Vorrangegangene Einträge ggf. bearbeiten
                 if (chatMessageHistory.size() > 1) {
                     String lastsender = chatMessageHistory.get(chatMessageHistory.size() - 1).getSender().getUsername();

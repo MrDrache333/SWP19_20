@@ -28,7 +28,6 @@ public class AnimationManagement {
     private static final double TRASH_X = 150;
     private static final double TRASH_Y = 455;
 
-
     /**
      * Erstellt ein neues MoveTo Objekt für den Pfad, wobei die aktuellen Koordinaten der Karte übernommen werden.
      *

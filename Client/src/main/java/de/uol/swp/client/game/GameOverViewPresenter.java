@@ -70,7 +70,7 @@ public class GameOverViewPresenter extends AbstractPresenter {
     /**
      * Initilaisieren.
      * Die Spieler und ihre Punkte werden angezeigt.
-     * Je nachdem ob gewonnen oder verliren wurde, werden verschiedene Elemente zur GameOverView hinzugefügt.
+     * Je nachdem ob gewonnen oder verloren wurde, werden verschiedene Elemente zur GameOverView hinzugefügt.
      *
      * @author Anna
      * @since Sprint6

@@ -277,7 +277,7 @@ public class GameManagement {
     }
 
     /**
-     * LobbyView wird initalisiert und deklariert.
+     * LobbyView wird initialisiert und deklariert.
      * Neue Szene für die neue Lobby wird erstellt und gespeichert
      *
      * @author Keno O., Fenja
@@ -291,7 +291,7 @@ public class GameManagement {
     }
 
     /**
-     * GameOverView wird initalisiert und deklariert.
+     * GameOverView wird initialisiert und deklariert.
      * Neue Szene für das Fenster mit dem Spielergebnis wird erstellt und gespeichert
      *
      * @param user    der User, dem das Fenster angezeigt wird
@@ -350,7 +350,6 @@ public class GameManagement {
         return gameService;
     }
 
-
     /**
      * Getter für die ID des Spiels bzw. der Lobby.
      *
@@ -373,7 +372,6 @@ public class GameManagement {
         return this.lobbyPresenter.getLobbyService();
     }
 
-
     public Tab getPrimaryTab() {
         return primaryTab;
     }
@@ -381,16 +379,23 @@ public class GameManagement {
     /**
      * Gets the Lobby Name.
      *
-     * @return the Name
+     * @return lobbyName der Lobbyname
      * @author Keno Oelrichs Garcia
      * @Version 1.0
      * @since Sprint 4
      */
-
     public String getLobbyName() {
         return lobbyName;
     }
 
+    /**
+     * Gibt den eingeloggten User zurück
+     *
+     * @return loggedInUser der eingloggte User
+     * @author Marvin, Timo
+     * @Version 1.0
+     * @since Sprint 7
+     */
     public User getLoggedInUser() {
         return loggedInUser;
     }
