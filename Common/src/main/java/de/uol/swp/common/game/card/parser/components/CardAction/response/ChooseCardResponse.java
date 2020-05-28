@@ -20,6 +20,7 @@ public class ChooseCardResponse extends AbstractGameMessage {
     private ArrayList<Short> cards;
 
     private AbstractPlayground.ZoneType from;
+    private boolean directHand;
 
     /**
      * Erstellt eine neue Antwortnachricht
@@ -30,10 +31,11 @@ public class ChooseCardResponse extends AbstractGameMessage {
      * @author KenoO
      * @since Sprint7
      */
-    public ChooseCardResponse(UUID gameID, User player, short choosenCard) {
+    public ChooseCardResponse(UUID gameID, User player, short choosenCard, boolean directHand) {
         super(gameID, player);
         cards = new ArrayList<>();
         cards.add(choosenCard);
+        this.directHand = directHand;
     }
 
     /**
@@ -45,9 +47,10 @@ public class ChooseCardResponse extends AbstractGameMessage {
      * @author KenoO
      * @since Sprint7
      */
-    public ChooseCardResponse(UUID gameID, User player, ArrayList<Short> choosenCards) {
+    public ChooseCardResponse(UUID gameID, User player, ArrayList<Short> choosenCards, boolean directHand) {
         super(gameID, player);
         cards = choosenCards;
+        this.directHand = directHand;
     }
 
     /**
@@ -63,5 +66,9 @@ public class ChooseCardResponse extends AbstractGameMessage {
 
     public AbstractPlayground.ZoneType getFrom() {
         return from;
+    }
+
+    public boolean getDirectHand() {
+        return directHand;
     }
 }

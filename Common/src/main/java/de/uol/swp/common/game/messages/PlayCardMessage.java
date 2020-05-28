@@ -25,27 +25,17 @@ public class PlayCardMessage extends AbstractServerMessage {
     private final Short handCardID;
     private final Boolean isPlayed;
     private Short userPlaceNumber = null;
-
-
-
     private Short enemyPlaceNumber = null;
+    private boolean removeCardAfter;
 
-
-    public PlayCardMessage(UUID gameID, User currentUser, Short handCardID, Boolean isPlayed) {
-        this.gameID = gameID;
-        this.currentUser = currentUser;
-        this.handCardID = handCardID;
-        this.isPlayed = isPlayed;
-    }
-
-    public PlayCardMessage (UUID gameID, User currentUser, Short handCardID, Boolean isPlayed, Short userPlaceNumber, Short enemyPlaceNumber) {
+    public PlayCardMessage(UUID gameID, User currentUser, Short handCardID, Boolean isPlayed, Short userPlaceNumber, Short enemyPlaceNumber, boolean removeCardAfter) {
         this.gameID = gameID;
         this.currentUser = currentUser;
         this.handCardID = handCardID;
         this.isPlayed = isPlayed;
         this.userPlaceNumber = userPlaceNumber;
         this.enemyPlaceNumber = enemyPlaceNumber;
-
+        this.removeCardAfter = removeCardAfter;
     }
 
     public UUID getGameID() {
@@ -60,7 +50,9 @@ public class PlayCardMessage extends AbstractServerMessage {
         return handCardID.toString();
     }
 
-    public Boolean getIsPlayed() {return isPlayed;}
+    public Boolean getIsPlayed() {
+        return isPlayed;
+    }
 
     public Short getEnemyPlaceNumber() {
         return enemyPlaceNumber;
@@ -68,5 +60,9 @@ public class PlayCardMessage extends AbstractServerMessage {
 
     public Short getUserPlaceNumber() {
         return userPlaceNumber;
+    }
+
+    public boolean isRemoveCardAfter() {
+        return removeCardAfter;
     }
 }

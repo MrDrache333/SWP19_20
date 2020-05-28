@@ -7,6 +7,7 @@ import de.uol.swp.common.game.exception.NotEnoughMoneyException;
 import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.game.messages.GameOverMessage;
 import de.uol.swp.common.game.messages.InfoPlayDisplayMessage;
+import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.server.game.Playground;
 import de.uol.swp.server.game.player.Deck;
 import de.uol.swp.server.game.player.Player;
@@ -14,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -23,6 +25,8 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
 
     private final Playground playground;
     private static final Logger LOG = LogManager.getLogger(CompositePhase.class);
+    private List<Short> implementedActionCards;
+    private ActionCardExecution executeAction;
 
     /**
      * Der Konstruktor
@@ -33,6 +37,8 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      */
     public CompositePhase(Playground playground) {
         this.playground = playground;
+        Short[] actioncards = {(short) 22, (short) 8, (short) 9, (short) 21, (short) 14, (short) 23, (short) 11, (short) 27, (short) 10, (short) 16, (short) 19, (short) 15, (short) 13};
+        implementedActionCards = Arrays.asList(actioncards);
     }
 
 
@@ -46,32 +52,43 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
             throw new IllegalArgumentException("CardID wurde nicht gefunden");
         }
         // 2. Überprüfe, ob Spieler diese Karte in der Hand hat
-        if (!player.getPlayerDeck().getHand().contains(currentCard)) {
+        if (player.getPlayerDeck().getHand().stream().noneMatch(c -> c.getId() == currentCard.getId())) {
             throw new IllegalArgumentException("Die Hand enthält die gesuchte Karte nicht");
+        }
+        if (!implementedActionCards.contains(currentCard.getId())) {
+            throw new IllegalArgumentException("Diese Aktionskarte ist leider noch nicht implementiert.");
         }
         /*
         3. Führe die auf der Karte befindlichen Aktionen aus
         3.1 Die Karte wird auf den ActionPile gelegt und aus der Hand entfernt.
          */
-        ActionCardExecution executeAction = new ActionCardExecution(cardId, playground);
-        executeAction.execute();
-        player.getPlayerDeck().getActionPile().add(currentCard);
+        executeAction = new ActionCardExecution(cardId, playground);
+        playground.getGameService().getBus().register(executeAction);
         player.getPlayerDeck().getHand().remove(currentCard);
+        executeAction.execute();
     }
 
-    public void finishedActionCardExecution(Player player, ArrayList<Short> newHandCards) {
+    public void finishedActionCardExecution(Player player, ArrayList<Short> newHandCards, Card card) {
+        if (!executeAction.isRemoveCardAfter()) {
+            player.getPlayerDeck().getActionPile().add(card);
+        } else {
+            playground.getTrash().add(card);
+        }
         if (!newHandCards.isEmpty()) {
             playground.getGameService().sendToSpecificPlayer(player, new DrawHandMessage(newHandCards, playground.getID(), (short) playground.getPlayers().size(), false));
         }
         playground.sendCardsDeckSize();
         player.setAvailableActions(player.getAvailableActions() - 1);
-        int availableAction = player.getAvailableActions();
-        int availableBuy = player.getAvailableBuys();
-        int additionalMoney = player.getAdditionalMoney();
-        int moneyOnHand = player.getPlayerDeck().actualMoneyFromPlayer();
-        playground.getGameService().sendToSpecificPlayer(player, new InfoPlayDisplayMessage(playground.getID(), player.getTheUserInThePlayer(), availableAction, availableBuy, additionalMoney, moneyOnHand, playground.getActualPhase()));
-
-        if (player.getAvailableActions() == 0) {
+        //Sende alle neuen Informationen bezüglich seiner möglichen Aktioen des Spielers an den Spieler zurück
+        playground.getGameService().sendToSpecificPlayer(player,
+                new InfoPlayDisplayMessage(
+                        playground.getID(), player.getTheUserInThePlayer(),
+                        player.getAvailableActions(),
+                        player.getAvailableBuys(),
+                        player.getAdditionalMoney(),
+                        player.getPlayerDeck().actualMoneyFromPlayer(),
+                        Phase.Type.ActionPhase));
+        if ((player.getAvailableActions() == 0 || !playground.checkForActionCard()) && playground.getActualPhase() == Type.ActionPhase) {
             playground.nextPhase();
         }
     }
@@ -213,5 +230,9 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
             }
         }
         return false;
+    }
+
+    public ActionCardExecution getExecuteAction() {
+        return executeAction;
     }
 }

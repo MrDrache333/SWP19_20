@@ -10,18 +10,16 @@ import de.uol.swp.common.game.card.parser.components.CardAction.request.Optional
 import de.uol.swp.common.game.card.parser.components.CardAction.response.ChooseCardResponse;
 import de.uol.swp.common.game.card.parser.components.CardAction.response.OptionalActionResponse;
 import de.uol.swp.common.game.card.parser.components.CardAction.types.*;
-import de.uol.swp.common.game.messages.*;
-import de.uol.swp.common.game.phase.Phase;
+import de.uol.swp.common.game.messages.ChooseNextActionMessage;
+import de.uol.swp.common.game.messages.ShowCardMessage;
+import de.uol.swp.common.game.messages.UpdateCardCounterMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.server.game.Playground;
 import de.uol.swp.server.game.player.Player;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class ActionCardExecution {
 
@@ -40,6 +38,9 @@ public class ActionCardExecution {
     private ArrayList<Short> newHandCards = new ArrayList<>();
     //Liste aller Unteraktionen einer Aktion
     private List<CardAction> nextActions = new ArrayList<>();
+    private Card inputCard;
+    private AbstractPlayground.ZoneType chooseCardSource;
+    private boolean removeCardAfter;
 
     //Ob auf eine Auswahl oder Reaktion des Spielers gewartet werden muss
     private boolean waitedForPlayerInput;
@@ -88,6 +89,52 @@ public class ActionCardExecution {
         }
     }
 
+    @Subscribe
+    public void onChooseCardResponse(ChooseCardResponse response) {
+        List<Player> p = new ArrayList<>();
+        Player helpPlayer = players.get(helpMethodToGetThePlayerFromUser(response.getPlayer()));
+        p.add(helpPlayer);
+        if (response.getGameID().equals(gameID) && waitedForPlayerInput && chooseCardPlayers.contains(response.getPlayer())) {
+            waitedForPlayerInput = false;
+            if (!startedNextActions) actualStateIndex++;
+            if (response.getCards().size() == 1) {
+                inputCard = helpMethod2GetTheCard(response.getCards().get(0));
+            }
+
+            ArrayList<Card> cards = new ArrayList<>();
+            response.getCards().forEach(c -> cards.add(helpMethod2GetTheCard(c)));
+
+            if (response.getDirectHand()) {
+                helpPlayer.getPlayerDeck().getHand().addAll(cards);
+                newHandCards.addAll(response.getCards());
+                if (chooseCardSource == AbstractPlayground.ZoneType.BUY) {
+                    Map<Short, Integer> newCount = new HashMap<>();
+                    int size = cards.size();
+                    for (int i = 0; i < size; i++) {
+                        Card card = cards.get(i);
+                        short id = cards.get(i).getId();
+                        int count = playground.getCardField().get(id);
+                        if (count > 0) {
+                            playground.getCardField().replace(id, --count);
+                            newCount.put(id, count);
+                        }
+                        if (cards.size() != size) {
+                            cards.add(i, card);
+                        }
+                    }
+                    UpdateCardCounterMessage message = new UpdateCardCounterMessage(gameID, player.getTheUserInThePlayer(), newCount);
+                    playground.getGameService().sendToAllPlayers(gameID, message);
+                }
+            } else if (nextActions.get(nextActionIndex) instanceof Move) {
+                ((Move) nextActions.get(nextActionIndex)).setCardsToMove(cards);
+            } else if (nextActions.get(nextActionIndex) instanceof ForEach) {
+                ((ForEach) nextActions.get(nextActionIndex)).setCards(cards);
+            }
+
+            executeNextActions(p);
+        }
+    }
+
     /**
      * Führt beim Aufruf alle enthaltenen Aktionen der Aktionskarte aus
      *
@@ -101,7 +148,7 @@ public class ActionCardExecution {
             CardAction action = theCard.getActions().get(actualStateIndex);
             nextActions = getNextActions(action);
             if (action instanceof ComplexCardAction && ((ComplexCardAction) action).isExecutionOptional() && !executeOptionalAction) {
-                playground.getGameService().sendToSpecificPlayer(player, new OptionalActionRequest(gameID, player.getTheUserInThePlayer(), action));
+                playground.getGameService().sendToSpecificPlayer(player, new OptionalActionRequest(gameID, player.getTheUserInThePlayer(), ((ComplexCardAction) action).getExecutionOptionalMessage()));
                 waitedForPlayerInput = true;
             } else {
                 if (!(action instanceof ChooseNextAction) && !(action instanceof ChooseCard)) {
@@ -128,24 +175,12 @@ public class ActionCardExecution {
             }
             //Entsorge ggf. die gespielte Karte
             if (action instanceof ComplexCardAction && ((ComplexCardAction) action).isRemoveCardAfter()) {
-                player.getPlayerDeck().getActionPile().remove(theCard);
-                playground.getTrash().add(theCard);
-                playground.getGameService().sendToSpecificPlayer(player, new RemoveActionCardMessage(theCard.getId(), gameID, player.getTheUserInThePlayer()));
+                removeCardAfter = true;
             }
             executeOptionalAction = false;
         }
 
-        if (checkIfComplete()) {
-            //Sende alle neuen Informationen bezüglich seiner möglichen Aktioen des Spielers an den Spieler zurück
-            playground.getGameService().sendToSpecificPlayer(player,
-                    new InfoPlayDisplayMessage(
-                            gameID, player.getTheUserInThePlayer(),
-                            player.getAvailableActions(),
-                            player.getAvailableBuys(),
-                            player.getAdditionalMoney(),
-                            player.getPlayerDeck().actualMoneyFromPlayer(),
-                            Phase.Type.ActionPhase));
-        }
+        checkIfComplete();
         return true;
     }
 
@@ -234,16 +269,48 @@ public class ActionCardExecution {
                 GetCard getAction = (GetCard) action;
                 ArrayList<Card> c = executeGetCard(getAction, player);
                 if (getAction.isDirectHand()) {
-                    player.getPlayerDeck().getHand().addAll(c);
-                    c.forEach(card -> newHandCards.add(card.getId()));
+                    int size = c.size();
+                    c.forEach(card -> {
+                        player.getPlayerDeck().getHand().add(card);
+                        newHandCards.add(card.getId());
+                    });
+                    List<Card> remove = new ArrayList<>();
                     if (getAction.getCardSource() == AbstractPlayground.ZoneType.DRAW) {
-                        c.forEach(card -> player.getPlayerDeck().getCardsDeck().remove(card));
+                        for (int i = 0; i < size; i++) {
+                            Card card = c.get(i);
+                            player.getPlayerDeck().getCardsDeck().stream().filter(a -> a.getId() == card.getId()).findFirst().ifPresent(remove::add);
+                            if (c.size() != size) {
+                                c.add(i, card);
+                            }
+                        }
+                        remove.forEach(t -> player.getPlayerDeck().getCardsDeck().remove(t));
                     } else if (getAction.getCardSource() == AbstractPlayground.ZoneType.DISCARD) {
-                        c.forEach(card -> player.getPlayerDeck().getDiscardPile().remove(card));
+                        for (int i = 0; i < size; i++) {
+                            Card card = c.get(i);
+                            player.getPlayerDeck().getDiscardPile().stream().filter(a -> a.getId() == card.getId()).findFirst().ifPresent(remove::add);
+                            if (c.size() != size) {
+                                c.add(i, card);
+                            }
+                        }
+                        remove.forEach(t -> player.getPlayerDeck().getDiscardPile().remove(t));
                     } else if (getAction.getCardSource() == AbstractPlayground.ZoneType.TEMP) {
-                        c.forEach(card -> player.getPlayerDeck().getTemp().remove(card));
+                        for (int i = 0; i < size; i++) {
+                            Card card = c.get(i);
+                            player.getPlayerDeck().getTemp().stream().filter(a -> a.getId() == card.getId()).findFirst().ifPresent(remove::add);
+                            if (c.size() != size) {
+                                c.add(i, card);
+                            }
+                        }
+                        remove.forEach(t -> player.getPlayerDeck().getTemp().remove(t));
                     } else if (getAction.getCardSource() == AbstractPlayground.ZoneType.TRASH) {
-                        c.forEach(card -> playground.getTrash().remove(card));
+                        for (int i = 0; i < size; i++) {
+                            Card card = c.get(i);
+                            playground.getTrash().stream().filter(a -> a.getId() == card.getId()).findFirst().ifPresent(remove::add);
+                            if (c.size() != size) {
+                                c.add(i, card);
+                            }
+                        }
+                        remove.forEach(t -> playground.getTrash().remove(t));
                     }
 
                 } else if (!foreach) {
@@ -275,21 +342,20 @@ public class ActionCardExecution {
     private ArrayList<Card> filterCards(ComplexCardAction action, ArrayList<Card> cards) {
         Card.Type allowedType = action.getAllowedCardType();
         if (allowedType == Card.Type.ActionCard) {
-            cards.removeIf(c -> c.getCardType() != Card.Type.ActionCard);
+            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.ActionCard);
         } else if (allowedType == Card.Type.ReactionCard) {
-            cards.removeIf(c -> c.getCardType() != Card.Type.ReactionCard);
+            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.ReactionCard);
         } else if (allowedType == Card.Type.MoneyCard) {
-            cards.removeIf(c -> c.getCardType() != Card.Type.MoneyCard);
+            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.MoneyCard);
         } else if (allowedType == Card.Type.ValueCard) {
-            cards.removeIf(c -> c.getCardType() != Card.Type.ValueCard);
+            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.ValueCard);
         } else if (allowedType == Card.Type.Cursecard) {
-            cards.removeIf(c -> c.getCardType() != Card.Type.Cursecard);
+            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.Cursecard);
         }
 
         if (action.getHasCost() != null) {
-            cards.removeIf(c -> c.getCosts() < action.getHasCost().getMin() || c.getCosts() > action.getHasCost().getMax());
+            cards.removeIf(c -> c == null || c.getCosts() < action.getHasCost().getMin() || c.getCosts() > action.getHasCost().getMax());
         }
-
         if (action.getHasWorth() != null) {
             cards.removeIf(c -> c.getCardType() == Card.Type.ActionCard || c.getCardType() == Card.Type.ReactionCard);
             List<Card> tmp = new ArrayList<>();
@@ -478,23 +544,41 @@ public class ActionCardExecution {
     //TODO: Überprüfen, ob die Logik stimmt.
     private boolean executeChooseCard(ChooseCard action, List<Player> thePlayers) {
         waitedForPlayerInput = true;
-
+        chooseCardSource = action.getCardSource();
         for (Player playerChooseCard : thePlayers) {
             this.chooseCardPlayers.add(playerChooseCard.getTheUserInThePlayer());
+            ArrayList<Card> tmp = new ArrayList<>();
             ArrayList<Short> theSelectableCards = new ArrayList<>();
             if (action.getCardSource() == AbstractPlayground.ZoneType.HAND) {
-                for (Card card : playerChooseCard.getPlayerDeck().getHand()) {
-                    theSelectableCards.add(card.getId());
-                }
+                tmp.addAll(playerChooseCard.getPlayerDeck().getHand());
             } else if (action.getCardSource() == AbstractPlayground.ZoneType.BUY) {
                 List<Short> l = new ArrayList<>(playground.getCardField().keySet());
                 for (Short card : l) {
-                    //if (card < 25) {
-                    theSelectableCards.add(card.shortValue());
-                    //}
+                    Card c = playground.getCompositePhase().getCardFromId(playground.getCardsPackField().getCards(), card);
+                    if (playground.getCardField().get(card) > 0) {
+                        tmp.add(c);
+                    }
                 }
             }
-            ChooseCardRequest request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount(), playerChooseCard.getTheUserInThePlayer(), action.getCardSource(), "Bitte die Anzahl der Karten auswählen von dem Bereich der dir angezeigt wird!");
+            tmp = filterCards(action, tmp);
+            if (action.getHasMoreCostThanInput() != null) {
+                if (inputCard == null) return false;
+                tmp.forEach(card -> {
+                    if (card.getCosts() - inputCard.getCosts() <= action.getHasMoreCostThanInput().getMax()) {
+                        theSelectableCards.add(card.getId());
+                    }
+                });
+            } else {
+                tmp.forEach(card -> theSelectableCards.add(card.getId()));
+            }
+            ChooseCardRequest request;
+            if (action.getCount().getMin() == action.getCount().getMax()) {
+                request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount().getMin(), playerChooseCard.getTheUserInThePlayer(), action.getCardSource(), "Bitte die Anzahl der Karten auswählen von dem Bereich der dir angezeigt wird!", action.isDirectHand());
+            } else if (action.getCount().getMin() == 0) {
+                request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount().getMax(), playerChooseCard.getTheUserInThePlayer(), action.getCardSource(), "Bitte die Anzahl der Karten auswählen von dem Bereich der dir angezeigt wird!", action.isDirectHand());
+            } else {
+                request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount(), playerChooseCard.getTheUserInThePlayer(), action.getCardSource(), "Bitte die Anzahl der Karten auswählen von dem Bereich der dir angezeigt wird!", action.isDirectHand());
+            }
             playground.getGameService().sendToSpecificPlayer(player, request);
         }
         return true;
@@ -516,74 +600,93 @@ public class ActionCardExecution {
     }
 
     /**
-     * Bewegt Karten von einem Ort zum anderen. ----------WIP----------
+     * Bewegt Karten von einem Ort zum anderen
      *
-     * @return true(? ? ?)
+     * @return true
+     * @author Julia
+     * @since Sprint8
      */
     private boolean executeMoveAction(Move action, Player player) {
         ArrayList<Short> theIds = new ArrayList<>();
-        ArrayList<Card> cardsToRemoveHand = new ArrayList<>();
-        if (action.getCardSource().equals(AbstractPlayground.ZoneType.HAND) && action.getCardDestination().equals(AbstractPlayground.ZoneType.DISCARD)) {
-            for (Card card : action.getCardsToMove()) {
-                if (player.getPlayerDeck().getHand().contains(card)) {
-                    cardsToRemoveHand.add(card);
-                    // ConcurrentCardModificatioNException Fix, muss getestet werden. @Julia
-                    // player.getPlayerDeck().getHand().remove(card);
-                    player.getPlayerDeck().getDiscardPile().add(card);
-                    theIds.add(card.getId());
-                }
-            }
-            player.getPlayerDeck().getHand().removeAll(cardsToRemoveHand);
-        } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.HAND) && action.getCardDestination().equals(AbstractPlayground.ZoneType.TRASH)) {
-            for (Card card : action.getCardsToMove()) {
-                if (player.getPlayerDeck().getHand().contains(card)) {
-                    player.getPlayerDeck().getHand().remove(card);
-                    playground.getTrash().add(card);
-                    theIds.add(card.getId());
-                }
-            }
-        } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.BUY) && action.getCardDestination().equals(AbstractPlayground.ZoneType.DISCARD)) {
-            for (Card card : action.getCardsToMove()) {
-                // TODO: BuyCard Implementierung von Paula hier einfügen.
-                player.getPlayerDeck().getDiscardPile().add(card);
-                theIds.add(card.getId());
-            }
-        } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.DRAW) && action.getCardDestination().equals(AbstractPlayground.ZoneType.TEMP)) {
-            // TODO: Implementierung im Playerdeck, dass der Spieler eine bestimmte Anzahl an Karten nachziehen kann.
-            for (Card card : action.getCardsToMove()) {
-                player.getPlayerDeck().getCardsDeck().remove(card);
-                player.getPlayerDeck().getTemp().add(card);
-            }
-        } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.DRAW) && action.getCardDestination().equals(AbstractPlayground.ZoneType.DISCARD)) {
-            for (Card card : action.getCardsToMove()) {
-                player.getPlayerDeck().getCardsDeck().remove(card);
-                player.getPlayerDeck().getDiscardPile().add(card);
-            }
-        } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.DISCARD) && action.getCardDestination().equals(AbstractPlayground.ZoneType.DRAW)) {
-            for (Card card : action.getCardsToMove()) {
-                player.getPlayerDeck().getDiscardPile().remove(card);
-                player.getPlayerDeck().getCardsDeck().add(card);
-                Collections.shuffle(player.getPlayerDeck().getCardsDeck());
-            }
-        } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.TEMP) && action.getCardDestination().equals(AbstractPlayground.ZoneType.HAND)) {
-            for (Card card : action.getCardsToMove()) {
-                player.getPlayerDeck().getTemp().remove(card);
-                player.getPlayerDeck().getHand().add(card);
-                theIds.add(card.getId());
-            }
-            if (true) {
-                // TODO: Checken, ob nextAction gegeben und dann von Hand auf Discard.
-            }
-        } else if (action.getCardSource().equals(AbstractPlayground.ZoneType.TEMP) && action.getCardDestination().equals(AbstractPlayground.ZoneType.DISCARD)) {
-            for (Card card : action.getCardsToMove()) {
-                player.getPlayerDeck().getTemp().remove(card);
-                player.getPlayerDeck().getDiscardPile().add(card);
-                theIds.add(card.getId());
-            }
+        action.getCardsToMove().forEach(c -> theIds.add(c.getId()));
+        switch (action.getCardDestination()) {
+            case DISCARD:
+                player.getPlayerDeck().getDiscardPile().addAll(action.getCardsToMove());
+                break;
+            case TRASH:
+                playground.getTrash().addAll(action.getCardsToMove());
+                break;
+            case DRAW:
+                player.getPlayerDeck().getCardsDeck().addAll(action.getCardsToMove());
+                break;
+            case TEMP:
+                player.getPlayerDeck().getTemp().addAll(action.getCardsToMove());
+                break;
+            case HAND:
+                player.getPlayerDeck().getHand().addAll(action.getCardsToMove());
+                break;
         }
-        if (!theIds.isEmpty()) {
-            CardMovedMessage cardMovedMessage = new CardMovedMessage(theIds, action.getCardSource(), action.getCardDestination(), gameID);
-            playground.getGameService().sendToSpecificPlayer(player, cardMovedMessage);
+
+        int size = action.getCardsToMove().size();
+        List<Card> toRemove = new ArrayList<>();
+        switch (action.getCardSource()) {
+            case HAND:
+                for (int i = 0; i < size; i++) {
+                    Card card = action.getCardsToMove().get(i);
+                    player.getPlayerDeck().getHand().stream().filter(c -> c.getId() == card.getId()).findFirst().ifPresent(toRemove::add);
+                    if (action.getCardsToMove().size() != size) {
+                        action.getCardsToMove().add(i, card);
+                    }
+                }
+                toRemove.forEach(c -> player.getPlayerDeck().getHand().remove(c));
+                break;
+            case TEMP:
+                for (int i = 0; i < size; i++) {
+                    Card card = action.getCardsToMove().get(i);
+                    player.getPlayerDeck().getTemp().stream().filter(c -> c.getId() == card.getId()).findFirst().ifPresent(toRemove::add);
+                    if (action.getCardsToMove().size() != size) {
+                        action.getCardsToMove().add(i, card);
+                    }
+                }
+                toRemove.forEach(c -> player.getPlayerDeck().getTemp().remove(c));
+                break;
+            case DISCARD:
+                for (int i = 0; i < size; i++) {
+                    Card card = action.getCardsToMove().get(i);
+                    player.getPlayerDeck().getDiscardPile().stream().filter(c -> c.getId() == card.getId()).findFirst().ifPresent(toRemove::add);
+                    if (action.getCardsToMove().size() != size) {
+                        action.getCardsToMove().add(i, card);
+                    }
+                }
+                toRemove.forEach(c -> player.getPlayerDeck().getDiscardPile().remove(c));
+                break;
+            case DRAW:
+                for (int i = 0; i < size; i++) {
+                    Card card = action.getCardsToMove().get(i);
+                    player.getPlayerDeck().getCardsDeck().stream().filter(c -> c.getId() == card.getId()).findFirst().ifPresent(toRemove::add);
+                    if (action.getCardsToMove().size() != size) {
+                        action.getCardsToMove().add(i, card);
+                    }
+                }
+                toRemove.forEach(c -> player.getPlayerDeck().getCardsDeck().remove(c));
+                break;
+            case BUY:
+                Map<Short, Integer> newCount = new HashMap<>();
+                for (int i = 0; i < size; i++) {
+                    Card card = action.getCardsToMove().get(i);
+                    short id = card.getId();
+                    int count = playground.getCardField().get(id);
+                    if (count > 0) {
+                        playground.getCardField().replace(id, --count);
+                        newCount.put(id, count);
+                    }
+                    if (action.getCardsToMove().size() != size) {
+                        action.getCardsToMove().add(i, card);
+                    }
+                }
+                UpdateCardCounterMessage message = new UpdateCardCounterMessage(gameID, player.getTheUserInThePlayer(), newCount);
+                playground.getGameService().sendToAllPlayers(gameID, message);
+                break;
         }
         return true;
     }
@@ -662,7 +765,7 @@ public class ActionCardExecution {
         for (Card card : player.getPlayerDeck().getHand()) {
             if (card instanceof ActionCard && ((ActionCard) card).getType() == ActionCard.ActionType.Reaction) {
                 player.getPlayerDeck().getHand().remove(card);
-                player.getPlayerDeck().getActionPile().add(card); //?
+                player.getPlayerDeck().getActionPile().add(card);
                 //TODO: Message an Client
                 return true;
             }
@@ -678,33 +781,10 @@ public class ActionCardExecution {
      */
     private boolean checkIfComplete() {
         if (actualStateIndex == theCard.getActions().size() && !waitedForPlayerInput && finishedNextActions) {
-            playground.getCompositePhase().finishedActionCardExecution(player, newHandCards);
+            playground.getCompositePhase().finishedActionCardExecution(player, newHandCards, theCard);
             return true;
         }
         return false;
-    }
-
-    @Subscribe
-    public void chooseCardResponseHandling(ChooseCardResponse response) {
-        Player helpPlayer = players.get(helpMethodToGetThePlayerFromUser(response.getPlayer()));
-        if (response.getGameID().equals(gameID) && waitedForPlayerInput == true && chooseCardPlayers.contains(response.getPlayer())) {
-            if (response.getFrom() == AbstractPlayground.ZoneType.HAND) {
-                for (Short short2 : response.getCards()) {
-                    Card theWantedCard = helpMethod2GetTheCard(short2);
-                    if (helpPlayer.getPlayerDeck().getHand().contains(theWantedCard)) {
-                        helpPlayer.getPlayerDeck().getHand().remove(theWantedCard);
-                        helpPlayer.getPlayerDeck().getDiscardPile().add(theWantedCard);
-                    }
-                }
-            }
-            if (response.getFrom() == AbstractPlayground.ZoneType.BUY) {
-                for (Short short2 : response.getCards()) {
-                    Card theWantedCard = helpMethod2GetTheCard(short2);
-                    // TODO: Überprüfung, ob der Spieler auch eine Karte gekauft hat die in dem Wertebereich sich befindet.
-                    player.getPlayerDeck().getDiscardPile().add(theWantedCard);
-                }
-            }
-        }
     }
 
     // vorläufige Hilfsmethode //
@@ -749,5 +829,9 @@ public class ActionCardExecution {
         }
 
         return theCard;
+    }
+
+    public boolean isRemoveCardAfter() {
+        return removeCardAfter;
     }
 }
