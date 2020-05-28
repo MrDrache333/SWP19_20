@@ -801,7 +801,7 @@ public class ActionCardExecution {
 
     private int helpMethodToGetThePlayerFromUser(User user) {
         int thePlayer = -1;
-        for (int i = 0; i < players.size() - 1; i++) {
+        for (int i = 0; i < players.size(); i++) {
             if (user.equals(player.getTheUserInThePlayer())) {
                 thePlayer = i;
                 break;

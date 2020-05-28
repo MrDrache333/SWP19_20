@@ -108,6 +108,8 @@ public class Playground extends AbstractPlayground {
             else if (i == 2) cardField.put(card.getId(), 30);
             else LOG.debug("Komisch: @ initializeCardField- Else Methode in 104 ausgeschlagen.");
         }
+        System.out.println("petwesd");
+        System.out.println(theSpecificLobbyID + "###" + cardField);
     }
 
     /**

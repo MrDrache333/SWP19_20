@@ -29,7 +29,7 @@ public class Player {
     /*
     Nachfolgende Methoden speichern den zugehörigen User zum Player im Player, da bei der Konvertierung User->Player ein Späterer vergleich
     bzgl. der SessionId verloren geht.
-    TODO: Nach der nächsten Absprache mit der Gruppe evtl. restrukturierung?
+    TODO: Nach der nächsten Absprache mit der Gruppe evtl. restrukturierung? JAAAA, am besten alles
      */
     public User getTheUserInThePlayer() {
         return theUserInThePlayer;
