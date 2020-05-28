@@ -507,18 +507,13 @@ public class MainMenuPresenter extends AbstractPresenter {
                             setGraphic(null);
                         } else {
                             setGraphic(joinLobbyButton);
+                            Lobby lobby = getTableView().getItems().get(getIndex());
                             Platform.runLater(() -> {
-                                for (Lobby lobby : lobbies){
-                                    //TODO:
-                                    // soll nur im Fenster der jeweilen loggedInUsers angezeigt werden
-                                    // Derzeit wird es nur bei einem User angezeigt
-                                    if (lobby.getUsers().contains(loggedInUser)){
-                                        joinLobbyButton.setDisable(true);
-                                    }
-                                    else{
-                                        joinLobbyButton.setDisable(false);
-                                    }
-
+                                if (lobby.getUsers().contains(loggedInUser)){
+                                    joinLobbyButton.setDisable(true);
+                                }
+                                else{
+                                    joinLobbyButton.setDisable(false);
                                 }
                             });
                         }
