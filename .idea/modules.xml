@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/Client/client.iml" filepath="$PROJECT_DIR$/Client/client.iml" />
       <module fileurl="file://$PROJECT_DIR$/Common/common.iml" filepath="$PROJECT_DIR$/Common/common.iml" />
       <module fileurl="file://$PROJECT_DIR$/Server/server.iml" filepath="$PROJECT_DIR$/Server/server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/swp19b.iml" filepath="$PROJECT_DIR$/.idea/swp19b.iml" />
     </modules>
   </component>
 </project>

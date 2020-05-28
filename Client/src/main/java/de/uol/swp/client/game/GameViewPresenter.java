@@ -201,6 +201,7 @@ public class GameViewPresenter extends AbstractPresenter {
         @Override
         public void handle(Event event) {
             gameService.chooseCard(loggedInUser, lobbyID, choosenCardsId, directHand);
+            playAllMoneyCardsButton.setVisible(true);
             playAllMoneyCardsButton.setDisable(false);
             handcards.getChildren().forEach((n) -> {
                 if (choosenCards.stream().anyMatch(c -> c == n)) {
@@ -686,6 +687,7 @@ public class GameViewPresenter extends AbstractPresenter {
             currentInfoText = infoActualPhase.getText();
             Button button = new Button("Auswahl beenden");
             skipPhaseButton.setDisable(true);
+            playAllMoneyCardsButton.setVisible(false);
             playAllMoneyCardsButton.setDisable(true);
             Platform.runLater(() -> {
                 button.setLayoutX(750);
@@ -1135,34 +1137,31 @@ public class GameViewPresenter extends AbstractPresenter {
             bigCardImage.setImage(new Image(pfad));
             buyCardButton.setVisible(false);
             bigCardImageBox.setVisible(true);
+
+
+
+
         } else {
-            if(numberOfCardsToChoose != 255) {
-                if (!choosenCards.contains(card)) {
-                    choosenCardsId.add(Short.parseShort(card.getId()));
-                    numberOfCardsToChoose = numberOfCardsToChoose - 1;
+            if (!choosenCards.contains(card)) {
+                choosenCardsId.add(Short.parseShort(card.getId()));
+                if(numberOfCardsToChoose != 255) {
+                    numberOfCardsToChoose -= 1;
                     Platform.runLater(() -> {
                         infoActualPhase.setText(numberOfCardsToChoose + " Karten entsorgen");
                     });
-                    choosenCards.add(card);
-                    bigCardImageBox.setVisible(false);
-                    card.setDisable(true);
-                } else {
-                    choosenCards.remove(card);
-                    numberOfCardsToChoose += 1;
-                    card.setDisable(false);
                 }
+                choosenCards.add(card);
+                bigCardImageBox.setVisible(false);
+                card.setDisable(true);
             } else {
-                if (!choosenCards.contains(card)) {
-                    choosenCardsId.add(Short.parseShort(card.getId()));
-                    numberOfCardsToChoose = numberOfCardsToChoose - 1;
-                    choosenCards.add(card);
-                    bigCardImageBox.setVisible(false);
-                    card.setDisable(true);
-                } else {
-                    choosenCards.remove(card);
+                choosenCards.remove(card);
+                if(numberOfCardsToChoose != 255) {
                     numberOfCardsToChoose += 1;
-                    card.setDisable(false);
+                    Platform.runLater(() -> {
+                        infoActualPhase.setText(numberOfCardsToChoose + " Karten entsorgen");
+                    });
                 }
+                card.setDisable(false);
             }
         }
         if(numberOfCardsToChoose == 0) {
