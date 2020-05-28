@@ -684,7 +684,7 @@ public class GameViewPresenter extends AbstractPresenter {
             numberOfCardsToChoose = req.getCount();
             directHand = req.getDirectHand();
             currentInfoText = infoActualPhase.getText();
-            Button button = new Button("Auswahl beenden");
+            Button button = new Button("Auswahl abschicken");
             skipPhaseButton.setDisable(true);
             playAllMoneyCardsButton.setVisible(false);
             playAllMoneyCardsButton.setDisable(true);
@@ -1138,10 +1138,6 @@ public class GameViewPresenter extends AbstractPresenter {
             bigCardImage.setImage(new Image(pfad));
             buyCardButton.setVisible(false);
             bigCardImageBox.setVisible(true);
-
-
-
-
         } else {
             if (!choosenCards.contains(card)) {
                 choosenCardsId.add(Short.parseShort(card.getId()));
@@ -1152,10 +1148,12 @@ public class GameViewPresenter extends AbstractPresenter {
                     });
                 }
                 choosenCards.add(card);
+                card.setEffect(makeImageDarker);
                 bigCardImageBox.setVisible(false);
                 card.setDisable(true);
             } else {
                 choosenCards.remove(card);
+                card.setEffect(null);
                 if(numberOfCardsToChoose != 255) {
                     numberOfCardsToChoose += 1;
                     Platform.runLater(() -> {
