@@ -275,7 +275,7 @@ public class ActionCardExecution {
                     int size = c.size();
                     player.getPlayerDeck().getHand().addAll(c);
                     c.forEach(card -> {
-                        player.getPlayerDeck().getHand().add(card);
+                        newHandCards.add(card.getId());
                     });
                     List<Card> remove = new ArrayList<>();
                     if (getAction.getCardSource() == AbstractPlayground.ZoneType.DRAW) {
