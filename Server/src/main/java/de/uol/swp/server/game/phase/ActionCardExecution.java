@@ -268,7 +268,7 @@ public class ActionCardExecution {
                     if (getAction.getCardSource() == AbstractPlayground.ZoneType.DRAW) {
                         for (int i = 0; i < size; i++) {
                             Card card = c.get(i);
-                            player.getPlayerDeck().getCardsDeck().stream().filter(a -> a.getId() == card.getId()).findFirst().ifPresent(a -> player.getPlayerDeck().getCardsDeck().remove(player.getPlayerDeck().getCardsDeck().indexOf(a)));
+                            player.getPlayerDeck().getCardsDeck().stream().filter(a -> a.getId() == card.getId()).findFirst().ifPresent(a -> player.getPlayerDeck().getCardsDeck().remove(a));
                             if (c.size() != size) {
                                 c.add(i, card);
                             }
@@ -276,7 +276,7 @@ public class ActionCardExecution {
                     } else if (getAction.getCardSource() == AbstractPlayground.ZoneType.DISCARD) {
                         for (int i = 0; i < size; i++) {
                             Card card = c.get(i);
-                            player.getPlayerDeck().getDiscardPile().stream().filter(a -> a.getId() == card.getId()).findFirst().ifPresent(a -> player.getPlayerDeck().getDiscardPile().remove(player.getPlayerDeck().getDiscardPile().indexOf(a)));
+                            player.getPlayerDeck().getDiscardPile().stream().filter(a -> a.getId() == card.getId()).findFirst().ifPresent(a -> player.getPlayerDeck().getDiscardPile().remove(a));
                             if (c.size() != size) {
                                 c.add(i, card);
                             }
@@ -284,7 +284,7 @@ public class ActionCardExecution {
                     } else if (getAction.getCardSource() == AbstractPlayground.ZoneType.TEMP) {
                         for (int i = 0; i < size; i++) {
                             Card card = c.get(i);
-                            player.getPlayerDeck().getTemp().stream().filter(a -> a.getId() == card.getId()).findFirst().ifPresent(a -> player.getPlayerDeck().getTemp().remove(player.getPlayerDeck().getTemp().indexOf(a)));
+                            player.getPlayerDeck().getTemp().stream().filter(a -> a.getId() == card.getId()).findFirst().ifPresent(a -> player.getPlayerDeck().getTemp().remove(a));
                             if (c.size() != size) {
                                 c.add(i, card);
                             }
@@ -292,7 +292,7 @@ public class ActionCardExecution {
                     } else if (getAction.getCardSource() == AbstractPlayground.ZoneType.TRASH) {
                         for (int i = 0; i < size; i++) {
                             Card card = c.get(i);
-                            playground.getTrash().stream().filter(a -> a.getId() == card.getId()).findFirst().ifPresent(a -> playground.getTrash().remove(playground.getTrash().indexOf(a)));
+                            playground.getTrash().stream().filter(a -> a.getId() == card.getId()).findFirst().ifPresent(a -> playground.getTrash().remove(a));
                             if (c.size() != size) {
                                 c.add(i, card);
                             }
@@ -617,7 +617,7 @@ public class ActionCardExecution {
             case HAND:
                 for (int i = 0; i < size; i++) {
                     Card card = action.getCardsToMove().get(i);
-                    player.getPlayerDeck().getHand().stream().filter(a -> a.getId() == card.getId()).findFirst().ifPresent(a -> player.getPlayerDeck().getHand().remove(player.getPlayerDeck().getHand().indexOf(a)));
+                    player.getPlayerDeck().getHand().stream().filter(a -> a.getId() == card.getId()).findFirst().ifPresent(a -> player.getPlayerDeck().getHand().remove(a));
                     if (action.getCardsToMove().size() != size) {
                         action.getCardsToMove().add(i, card);
                     }
@@ -626,7 +626,7 @@ public class ActionCardExecution {
             case TEMP:
                 for (int i = 0; i < size; i++) {
                     Card card = action.getCardsToMove().get(i);
-                    player.getPlayerDeck().getTemp().stream().filter(a -> a.getId() == card.getId()).findFirst().ifPresent(a -> player.getPlayerDeck().getTemp().remove(player.getPlayerDeck().getTemp().indexOf(a)));
+                    player.getPlayerDeck().getTemp().stream().filter(a -> a.getId() == card.getId()).findFirst().ifPresent(a -> player.getPlayerDeck().getTemp().remove(a));
                     if (action.getCardsToMove().size() != size) {
                         action.getCardsToMove().add(i, card);
                     }
@@ -635,7 +635,7 @@ public class ActionCardExecution {
             case DISCARD:
                 for (int i = 0; i < size; i++) {
                     Card card = action.getCardsToMove().get(i);
-                    player.getPlayerDeck().getDiscardPile().stream().filter(a -> a.getId() == card.getId()).findFirst().ifPresent(a -> player.getPlayerDeck().getDiscardPile().remove(player.getPlayerDeck().getDiscardPile().indexOf(a)));
+                    player.getPlayerDeck().getDiscardPile().stream().filter(a -> a.getId() == card.getId()).findFirst().ifPresent(a -> player.getPlayerDeck().getDiscardPile().remove(a));
                     if (action.getCardsToMove().size() != size) {
                         action.getCardsToMove().add(i, card);
                     }
@@ -644,7 +644,7 @@ public class ActionCardExecution {
             case DRAW:
                 for (int i = 0; i < size; i++) {
                     Card card = action.getCardsToMove().get(i);
-                    player.getPlayerDeck().getCardsDeck().stream().filter(a -> a.getId() == card.getId()).findFirst().ifPresent(a -> player.getPlayerDeck().getCardsDeck().remove(player.getPlayerDeck().getCardsDeck().indexOf(a)));
+                    player.getPlayerDeck().getCardsDeck().stream().filter(a -> a.getId() == card.getId()).findFirst().ifPresent(a -> player.getPlayerDeck().getCardsDeck().remove(a));
                     if (action.getCardsToMove().size() != size) {
                         action.getCardsToMove().add(i, card);
                     }
