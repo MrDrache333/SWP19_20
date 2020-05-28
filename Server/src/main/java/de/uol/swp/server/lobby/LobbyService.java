@@ -131,9 +131,6 @@ public class LobbyService extends AbstractService {
             LOG.info("User " + msg.getUser().getUsername() + " verlässt die Lobby " + msg.getLobbyID());
             ServerMessage returnMessage;
             if (lobby.isPresent()) {
-                if (!oldOwner.getUsername().equals(lobby.get().getOwner().getUsername())) {
-                    lobbyManagement.getLobby(msg.getLobbyID()).get().setReadyStatus(lobby.get().getOwner(), false);
-                }
                 returnMessage = new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), (UserDTO) lobby.get().getOwner(), (LobbyDTO) lobby.get());
             } else {
                 returnMessage = new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), null, null);
@@ -273,18 +270,22 @@ public class LobbyService extends AbstractService {
     }
 
     /**
-     * Definiert, was bei einem onSetMaxPlayerRequest passieren soll.
+     * Abarbeitung des Requests.
      *
-     * @author Timo, Rike, Marvin
+     * @author Timo, Rike, Marvin, Ferit
      * @since Sprint 3
      */
     @Subscribe
     public void onSetMaxPlayerRequest(SetMaxPlayerRequest msg) {
-        boolean setMaxPlayerSet = lobbyManagement.setMaxPlayer(msg.getLobbyID(), msg.getUser(), msg.getMaxPlayerValue());
         LobbyDTO lobby = (LobbyDTO) lobbyManagement.getLobby(msg.getLobbyID()).get();
-        ServerMessage returnMessage = new SetMaxPlayerMessage(msg.getMaxPlayerValue(), msg.getLobbyID(), setMaxPlayerSet, lobbyManagement.getLobbyOwner(msg.getLobbyID()), lobby);
-        authenticationService.sendToLoggedInPlayers(returnMessage);
-
+        if (msg.getMaxPlayerValue() >= lobbyManagement.getLobby(msg.getLobbyID()).get().getPlayers()) {
+            boolean setMaxPlayerSet = lobbyManagement.setMaxPlayer(msg.getLobbyID(), msg.getUser(), msg.getMaxPlayerValue());
+            ServerMessage returnMessage = new SetMaxPlayerMessage(msg.getMaxPlayerValue(), msg.getLobbyID(), setMaxPlayerSet, lobbyManagement.getLobbyOwner(msg.getLobbyID()), lobby);
+            authenticationService.sendToLobbyOwner(returnMessage, lobby.getOwner());
+        } else {
+            ServerMessage returnMessage2 = new SetMaxPlayerMessage(lobbyManagement.getLobby(msg.getLobbyID()).get().getMaxPlayer(), msg.getLobbyID(), false, lobbyManagement.getLobbyOwner(msg.getLobbyID()), lobby);
+            authenticationService.sendToLobbyOwner(returnMessage2, lobby.getOwner());
+        }
     }
 
     /**

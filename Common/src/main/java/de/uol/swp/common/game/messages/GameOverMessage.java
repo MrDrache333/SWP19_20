@@ -19,7 +19,7 @@ public class GameOverMessage extends AbstractServerMessage {
      * @param gameID  Die ID des Games
      * @param winners Der/die Gewinner
      * @author Anna
-     * @since Sprint6
+     * @since Sprint 6
      */
     public GameOverMessage(UUID gameID, List<String> winners, Map<String, Integer> results) {
         this.gameID = gameID;
@@ -32,7 +32,7 @@ public class GameOverMessage extends AbstractServerMessage {
      *
      * @return die ID
      * @author Anna
-     * @since Sprint6
+     * @since Sprint 6
      */
     public UUID getGameID() {
         return gameID;
@@ -43,7 +43,7 @@ public class GameOverMessage extends AbstractServerMessage {
      *
      * @return der Gewinner
      * @author Anna
-     * @since Sprint6
+     * @since Sprint 6
      */
     public List<String> getWinners() {
         return winners;
@@ -54,7 +54,7 @@ public class GameOverMessage extends AbstractServerMessage {
      *
      * @return die Map mit dem Namen des Spieler und seiner Punkte
      * @author Anna
-     * @since Sprint6
+     * @since Sprint 6
      */
     public Map<String, Integer> getResults() {
         return results;

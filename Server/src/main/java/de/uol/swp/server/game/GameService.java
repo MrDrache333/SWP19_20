@@ -10,6 +10,7 @@ import de.uol.swp.common.game.exception.GameManagementException;
 import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.exception.NotEnoughMoneyException;
 import de.uol.swp.common.game.messages.*;
+import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.game.request.GameGiveUpRequest;
 import de.uol.swp.common.game.request.PlayCardRequest;
@@ -45,7 +46,7 @@ public class GameService extends AbstractService {
      *
      * @param eventBus              Der zu nutzende EventBus
      * @param gameManagement        Das GameManagement
-     * @param authenticationService
+     * @param authenticationService der Authentication-Service
      * @author KenoO
      * @since Sprint 5
      */
@@ -81,9 +82,9 @@ public class GameService extends AbstractService {
     /**
      * Sendet die letzte Karte an den Game Service
      *
-     * @param gameID
-     * @param cardID
-     * @param user
+     * @param gameID die Game-ID
+     * @param cardID die Karten-ID
+     * @param user   der User
      * @author Fenja
      * @since Sprint6
      */
@@ -185,11 +186,11 @@ public class GameService extends AbstractService {
      */
     @Subscribe
     void userGivesUp(GameGiveUpRequest msg) {
-        Boolean userRemovedSuccesfully = gameManagement.getGame(msg.getTheSpecificLobbyID()).get().getPlayground().playerGaveUp(msg.getTheSpecificLobbyID(), msg.getGivingUpUSer(), msg.getWantsToGiveUP());
+        Boolean userRemovedSuccesfully = gameManagement.getGame(msg.getTheSpecificLobbyID()).get().getPlayground().playerGaveUp(msg.getTheSpecificLobbyID(), msg.getGivingUpUser(), msg.getWantsToGiveUP());
         if (userRemovedSuccesfully) {
-            UserGaveUpMessage gaveUp = new UserGaveUpMessage(msg.getTheSpecificLobbyID(), msg.getGivingUpUSer(), true);
+            UserGaveUpMessage gaveUp = new UserGaveUpMessage(msg.getTheSpecificLobbyID(), msg.getGivingUpUser(), true);
             sendToAllPlayers(msg.getTheSpecificLobbyID(), gaveUp);
-            ChatMessage infoMessage = new ChatMessage(infoUser, msg.getGivingUpUSer().getUsername() + " gab auf!");
+            ChatMessage infoMessage = new ChatMessage(infoUser, msg.getGivingUpUser().getUsername() + " gab auf!");
             post(new NewChatMessageRequest(msg.getTheSpecificLobbyID().toString(), infoMessage));
         } else {
             // TODO: Implementierung: Was passiert wenn der User nicht entfernt werden kann? Welche Fälle gibt es?
@@ -214,7 +215,7 @@ public class GameService extends AbstractService {
         Optional<Game> game = gameManagement.getGame(request.getLobbyID());
         if (game.isPresent()) {
             Playground playground = game.get().getPlayground();
-            if (request.getCurrentUser().equals(playground.getActualPlayer().getTheUserInThePlayer()) && playground.getActualPlayer().getAvailableBuys() > 0) {
+            if (request.getCurrentUser().equals(playground.getActualPlayer().getTheUserInThePlayer()) && playground.getActualPhase() == Phase.Type.Buyphase) {
                 try {
                     Card card = playground.getCardsPackField().getCards().getCardById(request.getCardID());
                     ChatMessage infoMessage = new ChatMessage(infoUser, request.getCurrentUser().getUsername() + " kauft Karte " + (card != null ? card.getName() : "Undefiniert") + "!");
@@ -249,7 +250,7 @@ public class GameService extends AbstractService {
         Short cardID = rqs.getHandCardID();
         if (game.isPresent()) {
             Playground playground = game.get().getPlayground();
-            if (playground.getActualPlayer().getTheUserInThePlayer().getUsername().equals(player.getUsername()) && playground.getActualPlayer().getAvailableActions() > 0) {
+            if (playground.getActualPlayer().getTheUserInThePlayer().getUsername().equals(player.getUsername()) && playground.getActualPhase() == Phase.Type.ActionPhase) {
                 try {
                     playground.endTimer();
                     // Karte wird an die ActionPhase zum Handling übergeben.

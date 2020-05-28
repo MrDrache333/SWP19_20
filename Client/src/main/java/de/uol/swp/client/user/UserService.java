@@ -51,6 +51,7 @@ public class UserService implements de.uol.swp.common.user.UserService {
         return null; // async call
     }
 
+    //TODO Implementieren oder löschen
     /**
      * Noch nicht implementiert, würde überprüfen ob der Nutzer angemeldet ist
      *

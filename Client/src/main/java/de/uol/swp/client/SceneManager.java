@@ -89,7 +89,19 @@ public class SceneManager {
     private PrimaryPresenter primaryPresenter;
     private Scene primaryScene;
 
-
+    /**
+     * Der Konstruktor des SceneManagers
+     *
+     * @param eventBus     der Eventbus
+     * @param userService  der UserService
+     * @param lobbyService der LobbyService
+     * @param injected     der Injektor
+     * @param primaryStage die PrimaryStage
+     * @param chatService  der Chatservice
+     * @param gameService  der Gameservice
+     * @author Marco, Anna, Haschem, Keno O.
+     * @since Sprint 1
+     */
     @Inject
     public SceneManager(EventBus eventBus, UserService userService, LobbyService lobbyService, Injector injected, @Assisted Stage primaryStage, ChatService chatService, GameService gameService) {
         this.eventBus = eventBus;
