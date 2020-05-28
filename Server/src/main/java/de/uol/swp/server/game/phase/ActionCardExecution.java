@@ -20,6 +20,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 public class ActionCardExecution {
 
@@ -86,6 +87,13 @@ public class ActionCardExecution {
         }
     }
 
+    /**
+     * Reaktion auf eine ChooseCardResponse
+     *
+     * @param response Die ChooseCardResponse
+     * @author Ferit, Julia
+     * @since Sprint7
+     */
     @Subscribe
     public void onChooseCardResponse(ChooseCardResponse response) {
         List<Player> p = new ArrayList<>();
@@ -137,6 +145,7 @@ public class ActionCardExecution {
      *
      * @return
      * @author KenoO, Julia
+     * @since Sprint6
      */
     public boolean execute() {
         while (actualStateIndex < theCard.getActions().size() && !waitedForPlayerInput && finishedNextActions) {
@@ -218,6 +227,7 @@ public class ActionCardExecution {
      * @param thePlayers Liste aller Player, auf die die Aktion ausgeführt werden soll
      * @return Ob die Ausführung erfolgreich war.
      * @author KenoO
+     * @since Sprint6
      */
     private boolean executeCardAction(CardAction action, List<Player> thePlayers) {
         if (action == null) throw new NullPointerException("Action can't be null");
@@ -247,6 +257,8 @@ public class ActionCardExecution {
      * @param action Auszuführende Aktion
      * @param input  Eingabe an Karten
      * @return Ergebnis
+     * @author KenoO, Julia
+     * @since Sprint6
      */
     private ArrayList<Card> executeCardAction(CardAction action, ArrayList<Card> input, List<Player> playerList, boolean foreach) throws NullPointerException {
         if (action == null) throw new NullPointerException("Action can't be null");
@@ -261,9 +273,9 @@ public class ActionCardExecution {
                 ArrayList<Card> c = executeGetCard(getAction, player);
                 if (getAction.isDirectHand()) {
                     int size = c.size();
+                    player.getPlayerDeck().getHand().addAll(c);
                     c.forEach(card -> {
                         player.getPlayerDeck().getHand().add(card);
-                        newHandCards.add(card.getId());
                     });
                     List<Card> remove = new ArrayList<>();
                     if (getAction.getCardSource() == AbstractPlayground.ZoneType.DRAW) {
@@ -395,6 +407,15 @@ public class ActionCardExecution {
         return false;
     }
 
+    /**
+     * Methode, um eine bestimmte Anzahl Karten aus einer Zone zu bekommen
+     *
+     * @param action
+     * @param player
+     * @return Liste der Karten
+     * @author KenoO, Julia
+     * @since Sprint6
+     */
     private ArrayList<Card> executeGetCard(GetCard action, Player player) {
         List<Card> result = new ArrayList<>();
         if (action.getCardSource() != AbstractPlayground.ZoneType.NONE) {
@@ -456,6 +477,8 @@ public class ActionCardExecution {
      *
      * @param action Die ForEach-Aktion
      * @return
+     * @author KenoO, Julia
+     * @since Sprint6
      */
     private boolean executeForEach(ForEach action, List<Player> playerList) {
         try {
@@ -537,6 +560,8 @@ public class ActionCardExecution {
      * @param action     Die Anzahl der Karten
      * @param thePlayers Die Player, die Karten auswählen dürfen.
      * @return
+     * @author Ferit, Julia
+     * @since Sprint7
      */
 
     private boolean executeChooseCard(ChooseCard action, List<Player> thePlayers) {
@@ -785,48 +810,40 @@ public class ActionCardExecution {
         return false;
     }
 
-    // vorläufige Hilfsmethode //
+
+    /**
+     * Hilfsmethode, um die gespielte Aktionskarte aus der Hand des Spielers zu erhalten
+     *
+     * @param cardID ID der Aktionskarte
+     * @author KenoO
+     * @since Sprint6
+     */
     private void getCardFromHand(short cardID) {
-
-        for (int i = 0; i < player.getPlayerDeck().getHand().size(); i++) {
-
-            if (player.getPlayerDeck().getHand().get(i).getId() == cardID) {
-                theCard = (ActionCard) player.getPlayerDeck().getHand().get(i);
-                break;
-            }
-        }
+        theCard = player.getPlayerDeck().getHand().stream().filter(card -> card.getId() == cardID).findFirst().map(card -> (ActionCard) card).orElse(theCard);
     }
 
+    /**
+     * Hilsmethode, um den zu einem User gehörigen Player zu bekommmen
+     *
+     * @param user Der User
+     * @return Index des Players in der Playerliste oder -1
+     * @author Ferit
+     * @since Sprint7
+     */
     private int helpMethodToGetThePlayerFromUser(User user) {
-        int thePlayer = -1;
-        for (int i = 0; i < players.size(); i++) {
-            if (user.equals(player.getTheUserInThePlayer())) {
-                thePlayer = i;
-                break;
-
-            }
-        }
-        return thePlayer;
+        return IntStream.range(0, players.size()).filter(i -> user.equals(player.getTheUserInThePlayer())).findFirst().orElse(-1);
     }
 
-    private Card helpMethod2GetTheCard(Short shor2) {
-        Card theCard = null;
-        boolean isfound = false;
-        for (Card card : playground.getCardsPackField().getCards().getAllCards()) {
-            for (int i = 0; i < playground.getCardsPackField().getCards().getAllCards().size() - 1; i++) {
-                if (card.getId() == shor2) {
-                    theCard = card;
-
-                    break;
-                }
-
-            }
-            if (isfound) {
-                break;
-            }
-        }
-
-        return theCard;
+    /**
+     * Hilfsmethode, um die zu einer ID gehörige Karte zu bekommen
+     *
+     * @param id ID der Karte
+     * @return die Karte, wenn sie gefunden wurde, sonst null
+     * @author Ferit
+     * @since Sprint7
+     */
+    private Card helpMethod2GetTheCard(Short id) {
+        return playground.getCardsPackField().getCards().getAllCards().stream().filter(c -> c.getId() == id).findFirst().orElse(null);
     }
 
     public boolean isRemoveCardAfter() {
