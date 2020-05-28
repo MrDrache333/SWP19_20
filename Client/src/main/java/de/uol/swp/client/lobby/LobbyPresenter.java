@@ -89,6 +89,8 @@ public class LobbyPresenter extends AbstractPresenter {
 
     private ImageView bigCard;
 
+    private ImageView crownView = new ImageView("images/crown.png");
+
     private ObservableList<HBox> userHBoxes;
 
     private GameManagement gameManagement;
@@ -541,10 +543,7 @@ public class LobbyPresenter extends AbstractPresenter {
         if (!message.getLobbyID().equals(lobbyID)) return;
         LOG.debug("Neuer User " + message.getUser() + " loggte sich ein");
         Platform.runLater(() -> {
-            if (readyUserList != null && loggedInUser != null && !loggedInUser.toString().equals(message.getLobby().getName())) {
-                // TODO: ??? Username wird mit Lobbynamen verglichen, vor Refactoring war es:
-                // !loggedInUser.toString().equals(message.getLobbyName()) jetzt also funktionsgleich, aber immer noch nicht sinnvoll
-                // ~ Marvin
+            if (readyUserList != null && loggedInUser != null) {
                 gameOwner = message.getGameOwner();
                 readyUserList.put(message.getUser().getUsername(), getHboxFromReadyUser(message.getUser(), false));
                 updateUsersList();
@@ -605,7 +604,7 @@ public class LobbyPresenter extends AbstractPresenter {
         if (readyUserList.get(username) != null) {
             Platform.runLater(() -> {
                 readyUserList.remove(username);
-                readyUserList.replace(gameOwner.getUsername(), getHboxFromReadyUser(gameOwner, false));
+                readyUserList.replace(gameOwner.getUsername(), crownCheck(readyUserList.get(gameOwner.getUsername()), gameOwner));
                 updateUsersList();
                 //Je nachdem ob der Benutzer gekickt wurde oder freiwillig aus der Lobby gegangen ist wird es auch so angezeigt
                 if (kicked) {
@@ -668,12 +667,30 @@ public class LobbyPresenter extends AbstractPresenter {
                 }
             });
         }
-        if (user.getUsername().equals(gameOwner.getUsername())) {
-            Image crown = new Image("images/crown.png");
-            ImageView crownView = new ImageView(crown);
+        crownCheck(box, user);
+        return box;
+    }
+
+    /**
+     * Ausgelagerte Methode aus getHboxFromReadyUser da es als Teilfunktion benötigt wird.
+     *
+     * @param box  Die HBox des Users
+     * @param user Der User
+     * @return Die HBox mit oder ohne Krone
+     * @author Marvin
+     * @since Sprint 8
+     */
+
+    private HBox crownCheck(HBox box, User user) {
+        if (!box.getChildren().contains(crownView) && user.getUsername().equals(gameOwner.getUsername())) {
             crownView.setFitHeight(15);
             crownView.setFitWidth(15);
-            box.getChildren().add(crownView);
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    box.getChildren().add(crownView);
+                }
+            });
         }
         return box;
     }
