@@ -108,7 +108,8 @@ public class Playground extends AbstractPlayground {
             else if (i == 2) cardField.put(card.getId(), 30);
             else LOG.debug("Komisch: @ initializeCardField- Else Methode in 104 ausgeschlagen.");
         }
-        gameService.sendCardField(theSpecificLobbyID, cardField);
+        System.out.println("petwesd");
+        System.out.println(theSpecificLobbyID + "###" + cardField);
     }
 
     /**
@@ -122,6 +123,7 @@ public class Playground extends AbstractPlayground {
      */
     public void newTurn() {
         if (actualPlayer == null && nextPlayer == null) {
+            gameService.sendCardField(theSpecificLobbyID, cardField);
             actualPlayer = players.get(0);
             nextPlayer = players.get(1);
             sendInitialCardsDeckSize();
