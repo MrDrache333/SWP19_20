@@ -396,6 +396,7 @@ public class ActionCardExecution {
     }
 
     private ArrayList<Card> executeGetCard(GetCard action, Player player) {
+        List<Card> result = new ArrayList<>();
         if (action.getCardSource() != AbstractPlayground.ZoneType.NONE) {
             switch (action.getCardSource()) {
 
@@ -420,13 +421,13 @@ public class ActionCardExecution {
                         int missingCards = action.getCount() - action.getCards().size();
                         List<Card> discard = player.getPlayerDeck().getDiscardPile();
                         Collections.shuffle(discard);
-                        player.getPlayerDeck().getDiscardPile().clear();
                         player.getPlayerDeck().getCardsDeck().addAll(0, discard);
                         int i = 0;
                         while(i < missingCards && i < discard.size()) {
-                            action.addCard(player.getPlayerDeck().getCardsDeck().get(i));
+                            result.add(player.getPlayerDeck().getCardsDeck().get(i));
                             i++;
                         }
+                        player.getPlayerDeck().getDiscardPile().clear();
                     }
                     break;
                 case DISCARD:
@@ -446,6 +447,7 @@ public class ActionCardExecution {
             } else action.setCards(cards);
 
         }
+        action.getCards().addAll(result);
         return action.getCards();
     }
 
@@ -457,7 +459,9 @@ public class ActionCardExecution {
      */
     private boolean executeForEach(ForEach action, List<Player> playerList) {
         try {
-            for (Card card : action.getCards()) {
+            int size = action.getCards().size();
+            for (int i = 0; i < size; i++) {
+                Card card = action.getCards().get(i);
                 ArrayList<Card> cards = new ArrayList<>();
                 cards.add(card);
                 for (CardAction cardAction : action.getActions()) {
@@ -467,6 +471,9 @@ public class ActionCardExecution {
                             cards = c;
                         }
                     } else executeCardAction(cardAction, playerList);
+                }
+                if (action.getCards().size() != size) {
+                    action.getCards().add(i, card);
                 }
             }
         } catch (NullPointerException e) {
