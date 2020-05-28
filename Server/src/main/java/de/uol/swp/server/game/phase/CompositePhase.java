@@ -71,6 +71,19 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         playground.sendCardsDeckSize();
     }
 
+    /**
+     * Wenn eine Aktionskarte vollständig ausgeführt wurde, wird sie in die Aktionszone des Spielers oder den Müll gelegt.
+     * Ggf. neue Handkarten, die letzte Karte auf dem Ablagestapel und Müll, Anzahl der Karten auf dem Nachziehstapel
+     * werden gesendet.
+     * Der Aktionencounter wird um 1 verringert, dem Spieler wird eine InfoPlayDisplayMessage gesendet und die Phase
+     * wird gewechselt, falls der Spieler keine Aktionen oder Aktionskarten mehr hat.
+     *
+     * @param player       Der Spieler
+     * @param newHandCards Liste neuer Handkarten
+     * @param card         Gespielte Karte
+     * @author Julia, KenoO
+     * @since Sprint7
+     */
     public void finishedActionCardExecution(Player player, ArrayList<Short> newHandCards, Card card) {
         if (!executeAction.isRemoveCardAfter()) {
             player.getPlayerDeck().getActionPile().add(card);
