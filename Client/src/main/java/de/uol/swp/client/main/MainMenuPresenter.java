@@ -459,7 +459,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     /**
      * Hilfsmethode zum Erstellen des Buttons zum Betreten einer Lobby
      * beim join wird ebenfalls überprüft ob die Lobby ein lobbyPassword besitzt und ggf. dieses abgefragt
-     * Der "lobby beitreten"-Button wird asgegraut, wenn der User schon in der Lobby ist,
+     * Der "lLbby beitreten"-Button wird ausgegraut, wenn der User schon in der Lobby ist,
      * die Lobby sich im Spiel befindet oder, wenn nicht mehr User in die Lobby können
      *
      * @author Julia, Paula, Marvin, Rike
