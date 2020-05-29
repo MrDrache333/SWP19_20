@@ -1171,7 +1171,9 @@ public class GameViewPresenter extends AbstractPresenter {
                 card.setDisable(true);
             } else {
                 choosenCards.remove(card);
-                card.setEffect(null);
+                ColorAdjust normal = new ColorAdjust();
+                normal.setBrightness(1);
+                card.setEffect(normal);
                 if(numberOfCardsToChoose != 255) {
                     numberOfCardsToChoose += 1;
                     Platform.runLater(() -> {
