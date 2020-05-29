@@ -21,7 +21,7 @@ public class SetMaxPlayerRequest extends AbstractLobbyRequest {
      * @param lobbyID        die LobbyID
      * @param user           Der Benutzer
      * @author Timo, Marvin
-     * @since Sprint3
+     * @since Sprint 3
      */
     public SetMaxPlayerRequest(UUID lobbyID, UserDTO user, Integer maxPlayerValue) {
         super(lobbyID, user);
@@ -33,7 +33,7 @@ public class SetMaxPlayerRequest extends AbstractLobbyRequest {
      *
      * @return maximale Spieleranzahl
      * @author Timo
-     * @since Sprint3
+     * @since Sprint 3
      */
     public Integer getMaxPlayerValue() {
         return maxPlayerValue;

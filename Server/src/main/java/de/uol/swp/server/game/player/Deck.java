@@ -17,7 +17,7 @@ public class Deck {
      * Listen für Hand, Deck, Ablagestapel
      *
      * @author Paula
-     * @since Sprint5
+     * @since Sprint 5
      */
     private ArrayList<Card> cardsDeck = new ArrayList<>();
     private ArrayList<Card> discardPile = new ArrayList<>();
@@ -29,7 +29,7 @@ public class Deck {
      * Konstruktor
      *
      * @author Paula
-     * @since Sprint5
+     * @since Sprint 5
      */
     public Deck() {
         initialiseStartDeck();
@@ -41,7 +41,7 @@ public class Deck {
      * wird der Ablagestapel zum neuen Nachziehstapel und die restlichen Karten werden gezogen.
      *
      * @author Julia
-     * @since Sprint6
+     * @since Sprint 6
      */
     public void drawHand() {
         if (cardsDeck.size() < 5) {
@@ -67,7 +67,7 @@ public class Deck {
      *
      * @return Kartendeck
      * @author Paula
-     * @since Sprint5
+     * @since Sprint 5
      */
     private ArrayList<Card> initialiseStartDeck() {
         CardPack cardsPack = new JsonCardParser().loadPack("Basispack");
@@ -87,7 +87,7 @@ public class Deck {
      *
      * @return Hand
      * @author Paula
-     * @since Sprint5
+     * @since Sprint 5
      */
     private ArrayList<Card> initialiseHand() {
         Collections.shuffle(cardsDeck);
@@ -104,7 +104,7 @@ public class Deck {
      * Karte wird aus Arrays gelöscht
      *
      * @author Pauia
-     * @since Sprint5
+     * @since Sprint 5
      */
     private void deleteCard(Card card) {
         cardsDeck.remove(card);
@@ -129,7 +129,7 @@ public class Deck {
      *
      * @return Geldwert der Karten eines Spielers
      * @author Paula
-     * @since Sprint6
+     * @since Sprint 6
      */
     public int actualMoneyFromPlayer() {
         int money = 0;
@@ -146,7 +146,7 @@ public class Deck {
      *
      * @param value Wert einer Geldkarte
      * @author Paula
-     * @since Sprint6
+     * @since Sprint 6
      */
 
     public void discardMoneyCardsForValue(int value) {

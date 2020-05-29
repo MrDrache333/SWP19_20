@@ -137,7 +137,7 @@ public class AuthenticationService extends AbstractService {
                 // Could be already logged out
                 if (userToLogOut != null) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Logging out user " + userToLogOut.getUsername());
+                        LOG.debug("Logge User " + userToLogOut.getUsername() + " aus");
                     }
                     userManagement.logout(userToLogOut);
                     userSessions.remove(session);
@@ -146,10 +146,9 @@ public class AuthenticationService extends AbstractService {
                     ServerMessage returnMessage = new UserLoggedOutMessage(userToLogOut.getUsername());
                     post(returnMessage);
                 }
-            }
-            else{
+            } else {
                 UpdateUserFailedMessage returnMessage = new UpdateUserFailedMessage(session.getUser(), "Der Account befindet sich in einem laufenden Spiel. Du kannst dich nicht ausloggen!");
-                post(returnMessage);
+                sendToLoggedInPlayers(returnMessage);
             }
         }
     }
@@ -174,7 +173,7 @@ public class AuthenticationService extends AbstractService {
      *
      * @param msg die UpdateUserRequest
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void onUpdateUserRequest(UpdateUserRequest msg) {
@@ -192,21 +191,21 @@ public class AuthenticationService extends AbstractService {
             returnMessage = new UpdateUserFailedMessage(msg.getOldUser(), e.getMessage());
             LOG.info("Aktualisierung des Users " + msg.getOldUser().getUsername() + " fehlgeschlagen");
         }
-        post(returnMessage);
+        sendToLoggedInPlayers(returnMessage);
     }
 
     /**
      * Der Nutzer wird gelöscht und eine entprechende Message zurückgesendet
      *
      * @author Anna, Julia, Darian
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void onDropUserRequest(DropUserRequest msg) {
         User userToDrop = msg.getUser();
 
         // Could be already logged out/removed or he is in a game
-        if (userToDrop != null ) {
+        if (userToDrop != null) {
             if (!lobbyManagement.isUserIngame(userToDrop)) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Lösche User " + userToDrop.getUsername());
@@ -215,12 +214,36 @@ public class AuthenticationService extends AbstractService {
                 userManagement.dropUser(userToDrop);
 
                 ServerMessage returnMessage = new UserDroppedMessage(userToDrop);
-                post(returnMessage);
-            }
-            else{
-                UpdateUserFailedMessage returnMessage = new UpdateUserFailedMessage(userToDrop,"Der Account befindet sich in einem laufenden Spiel. Du kannst deinen Account nicht löschen!");
-                post(returnMessage);
+                sendToLoggedInPlayers(returnMessage);
+            } else {
+                UpdateUserFailedMessage returnMessage = new UpdateUserFailedMessage(userToDrop, "Der Account befindet sich in einem laufenden Spiel. Du kannst deinen Account nicht löschen!");
+                sendToLoggedInPlayers(returnMessage);
             }
         }
+    }
+
+    /**
+     * Die Funktion sendet eine Nachricht an alle angemeldeten User.
+     *
+     * @param message Die zu übertragende Nachricht
+     * @author Keno S.
+     * @since Sprint 7
+     */
+
+    public void sendToLoggedInPlayers(ServerMessage message) {
+
+        Set<User> loggedInUsers = new TreeSet<>(userSessions.values());
+
+        message.setReceiver(getSessions(loggedInUsers));
+        post(message);
+    }
+
+    public void sendToLobbyOwner(ServerMessage message, User owner) {
+
+        Set<User> owner2 = new HashSet<>(1);
+        owner2.add(owner);
+
+        message.setReceiver(getSessions(owner2));
+        post(message);
     }
 }

@@ -33,7 +33,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      *
      * @param playground das Spielfeld
      * @author Fenja
-     * @since Sprint6
+     * @since Sprint 6
      */
     public CompositePhase(Playground playground) {
         this.playground = playground;
@@ -112,16 +112,12 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      * @param player Der Spieler
      * @param cardId Die Karten-ID
      * @author Paula
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Override
     public int executeBuyPhase(Player player, short cardId) {
         CardPack cardsPackField = playground.getCardsPackField();
         Card currentCard = getCardFromId(cardsPackField.getCards(), cardId);
-
-        if (player.getAvailableBuys() == 0) {
-            playground.nextPhase();
-        }
 
         // Karten und deren Anzahl werden aus dem Spielfeld geladen.
         int count = playground.getCardField().get(cardId);
@@ -167,7 +163,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      *
      * @param player Der aktuelle Spieler
      * @author Julia, Fenja
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Override
     public void executeClearPhase(Player player) {
@@ -202,7 +198,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      * @param cardId
      * @return card Karte, zu der die ID gehört
      * @author Paula
-     * @since Sprint6
+     * @since Sprint 6
      */
 
     public Card getCardFromId(CardStack cardStack, short cardId) {
@@ -230,7 +226,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      *
      * @return false, wenn das Spiel nicht vorbei ist
      * @author Fenja
-     * @since Sprint6
+     * @since Sprint 6
      */
     public boolean checkIfGameIsFinished() {
         if (playground.getCardField().get((short) 6) == 0) {

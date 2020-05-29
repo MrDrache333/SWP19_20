@@ -18,7 +18,7 @@ public class RetrieveAllOnlineUsersInLobbyRequest extends AbstractLobbyRequest {
      *
      * @param lobbyID die LobbyID
      * @author Marvin
-     * @since Sprint3
+     * @since Sprint 3
      */
     public RetrieveAllOnlineUsersInLobbyRequest(UUID lobbyID) {
         super(lobbyID, null);

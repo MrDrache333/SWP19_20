@@ -22,7 +22,7 @@ public class UserJoinedLobbyMessage extends AbstractLobbyMessage {
      * @param gameOwner Der Besitzer
      * @param lobby     Die Lobby
      * @author Julia Debkowski, Marvin
-     * @since Sprint1
+     * @since Sprint 1
      */
 
     public UserJoinedLobbyMessage(UUID lobbyID, UserDTO user, UserDTO gameOwner, LobbyDTO lobby) {

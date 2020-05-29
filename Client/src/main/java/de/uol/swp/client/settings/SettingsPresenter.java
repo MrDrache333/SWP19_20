@@ -22,7 +22,6 @@ import javafx.scene.image.ImageView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
 import java.util.regex.Pattern;
 
 
@@ -30,7 +29,7 @@ import java.util.regex.Pattern;
  * Der Settings Presenter für den Typ.
  *
  * @author Anna
- * @since Sprint4
+ * @since Sprint 4
  */
 public class SettingsPresenter extends AbstractPresenter {
 
@@ -38,7 +37,7 @@ public class SettingsPresenter extends AbstractPresenter {
      * Die FXML Konstante.
      *
      * @author Anna
-     * @since Sprint4
+     * @since Sprint 4
      */
     public static final String fxml = "/fxml/SettingsView.fxml";
     public static final String css = "css/SettingsPresenter.css";
@@ -67,6 +66,17 @@ public class SettingsPresenter extends AbstractPresenter {
     @FXML
     private ToggleButton chatMuteToggleButton;
 
+    /**
+     * Konstruktor des SettingPresenters
+     *
+     * @param loggedInUser
+     * @param lobbyService
+     * @param userService
+     * @param injector
+     * @param eventBus
+     * @author Julia, Keno S.
+     * @since Sprint 4
+     */
     public SettingsPresenter(User loggedInUser, LobbyService lobbyService, UserService userService, Injector injector, EventBus eventBus) {
         this.loggedInUser = loggedInUser;
         this.lobbyService = lobbyService;
@@ -74,13 +84,14 @@ public class SettingsPresenter extends AbstractPresenter {
         this.injector = injector;
         this.eventBus = eventBus;
     }
+
     /**
      * Überprüft die Benutzereingaben. Falls alle gültig sind, wird im UserService die Methode updateUser aufgerufen,
      * ansonsten wird eine entsprechende Fehlermeldung angezeigt
      *
      * @param event
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     @FXML
     public void onSaveButtonPressed(ActionEvent event) {
@@ -90,7 +101,7 @@ public class SettingsPresenter extends AbstractPresenter {
         String password2 = password2Field.getText();
         String currentPassword = currentPasswordField.getText();
 
-        //keine Eingaben vom User -> Fenster schließen
+        // Keine Eingaben vom User -> Fenster schließen
 
         if (Strings.isNullOrEmpty(username) && Strings.isNullOrEmpty(email) && Strings.isNullOrEmpty(password) && Strings.isNullOrEmpty(password2)) {
             eventBus.post(new CloseSettingsEvent());
@@ -134,7 +145,7 @@ public class SettingsPresenter extends AbstractPresenter {
      *
      * @param actionEvent
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     @FXML
     public void onDeleteAccountButtonPressed(ActionEvent actionEvent) {
@@ -146,7 +157,7 @@ public class SettingsPresenter extends AbstractPresenter {
      *
      * @param actionEvent
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     @FXML
     public void onCancelButtonPressed(ActionEvent actionEvent) {
@@ -159,7 +170,7 @@ public class SettingsPresenter extends AbstractPresenter {
      *
      * @param actionEvent
      * @author Keno S.
-     * @since Sprint7
+     * @since Sprint 7
      */
     @FXML
     public void onChatMuteToggleButtonPressed(ActionEvent actionEvent) {
@@ -175,7 +186,7 @@ public class SettingsPresenter extends AbstractPresenter {
      *
      * @param message
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void updatedUser(UpdatedUserMessage message) {
@@ -188,7 +199,7 @@ public class SettingsPresenter extends AbstractPresenter {
      * Leert alle Felder (Benutzername, E-Mail und alle Passwortfelder)
      *
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     private void clearAll() {
         usernameField.clear();

@@ -41,6 +41,17 @@ public class JoinLobbyPresenter {
     @FXML
     private PasswordField passwordField;
 
+    /**
+     * Konstruktor des JoinLobbyPresenters
+     *
+     * @param loggedInUser
+     * @param lobbyService
+     * @param userService
+     * @param eventBus
+     * @param lobby
+     * @author Paula
+     * @since Sprint 7
+     */
     public JoinLobbyPresenter(User loggedInUser, LobbyService lobbyService, UserService userService, EventBus eventBus, Lobby lobby) {
         this.loggedInUser = loggedInUser;
         this.lobbyService = lobbyService;
@@ -55,7 +66,7 @@ public class JoinLobbyPresenter {
      * Ist es falsch, wird man zur erneuten Eingabe aufgefordert.
      * @param actionEvent
      * @author Paula
-     * @since Sprint7
+     * @since Sprint 7
      */
     @FXML
     public void onJoinButtonPressed(javafx.event.ActionEvent actionEvent) {
@@ -81,7 +92,7 @@ public class JoinLobbyPresenter {
      * Beim Drücken auf den Abbrechen Button schließt sich das Fenster.
      *
      * @param actionEvent
-     * @since Sprint7
+     * @since Sprint 7
      * @author Paula
      */
     @FXML

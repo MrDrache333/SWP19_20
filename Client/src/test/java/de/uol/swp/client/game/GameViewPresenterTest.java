@@ -64,7 +64,7 @@ class GameViewPresenterTest {
      * Setzt vor jedem Test das aktuelle Event auf null und registriert diese Testklasse auf dem Eventbus
      *
      * @author Devin
-     * @since Sprint6
+     * @since Sprint 6
      */
     @BeforeEach
     void registerBus() {
@@ -78,7 +78,7 @@ class GameViewPresenterTest {
      *
      * @param e das DeadEvent
      * @author Paula
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Subscribe
     void handle(DeadEvent e) {

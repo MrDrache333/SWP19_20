@@ -12,6 +12,7 @@ import de.uol.swp.common.chat.response.ChatResponseMessage;
 import de.uol.swp.common.message.AbstractResponseMessage;
 import de.uol.swp.common.message.ResponseMessage;
 import de.uol.swp.server.AbstractService;
+import de.uol.swp.server.usermanagement.AuthenticationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,24 +29,26 @@ public class ChatService extends AbstractService {
     private static final Logger LOG = LogManager.getLogger(ChatService.class);
 
     private final ChatManagement chatManagement;
+    private final AuthenticationService authenticationService;
 
     /**
-     * Erstellt einen neuen Chat service.
+     * Erstellt einen neuen Chatservice.
      *
-     * @param eventBus       Der verwendete EventBus
-     * @param chatManagement Das verwendete ChatManagement
+     * @param eventBus                  Der verwendete EventBus.
+     * @param chatManagement            Das verwendete ChatManagement.
+     * @param authenticationService     Der verwendete AuthenticationService.
      */
     @Inject
-    public ChatService(EventBus eventBus, ChatManagement chatManagement) {
+    public ChatService(EventBus eventBus, ChatManagement chatManagement, AuthenticationService authenticationService) {
         super(eventBus);
         this.chatManagement = chatManagement;
+        this.authenticationService = authenticationService;
     }
-
 
     /**
      * Wenn eine neue ChatNachricht von einem CLient auf dem Bus gesendet wurde.
      *
-     * @param request Der Request, gesendet wurde
+     * @param request Der Request, gesendet wurde.
      */
     @Subscribe
     private void onNewChatMessageRequest(NewChatMessageRequest request) {
@@ -69,15 +72,15 @@ public class ChatService extends AbstractService {
             post(returnMessage);
             return;
         }
-        //Die neue Chatnachricht an alle Clients senden an alle Clients senden
+        //Die neue Chatnachricht an alle Clients senden
         NewChatMessage message = new NewChatMessage(request.getChatid(), request.getMessage());
-        post(message);
+        authenticationService.sendToLoggedInPlayers(message);
     }
 
     /**
      * Wenn eine Anfrage für die gesamte Historie eines Chats von einem Client an den Server gesendet wurde.
      *
-     * @param request Der Request, der gesendet wurde
+     * @param request Der Request, der gesendet wurde.
      */
     @Subscribe
     private void onChatHistoryRequest(ChatHistoryRequest request) {
