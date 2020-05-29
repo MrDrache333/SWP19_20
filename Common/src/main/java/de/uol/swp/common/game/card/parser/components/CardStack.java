@@ -112,12 +112,4 @@ public class CardStack {
         return curseCards;
     }
 
-    public ArrayList<Card> getAllCards() {
-        ArrayList<Card> cards = new ArrayList<>();
-        cards.addAll(moneyCards);
-        cards.addAll(valueCards);
-        cards.addAll(actionCards);
-        cards.addAll(curseCards);
-        return cards;
-    }
 }

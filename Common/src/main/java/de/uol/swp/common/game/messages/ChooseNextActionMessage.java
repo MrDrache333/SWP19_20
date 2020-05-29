@@ -10,7 +10,7 @@ import java.util.UUID;
  * Message, die gesendet wird, wenn sich der Spieler zwischen mehreren möglichen Aktionen entscheiden kann
  *
  * @author Julia
- * @since Sprint6
+ * @since Sprint 6
  */
 public class ChooseNextActionMessage extends AbstractServerMessage {
 

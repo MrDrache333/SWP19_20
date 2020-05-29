@@ -117,7 +117,7 @@ public class Deck {
      *
      * @param card
      * @author Paula
-     * @since Sprint6
+     * @since Sprint 6
      */
     public void addCardToDiscardPile(Card card) {
         discardPile.add(card);

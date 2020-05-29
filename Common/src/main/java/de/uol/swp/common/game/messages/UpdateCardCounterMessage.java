@@ -10,7 +10,7 @@ import java.util.UUID;
  * Message, die gesendet wird, wenn sich die Anzahl verfügbarer Karten durch Ausspielen einer Aktionskarte verändert hat
  *
  * @author Julia
- * @since Sprint8
+ * @since Sprint 8
  */
 public class UpdateCardCounterMessage extends AbstractGameMessage {
 

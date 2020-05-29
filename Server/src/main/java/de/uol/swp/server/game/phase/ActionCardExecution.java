@@ -77,7 +77,7 @@ public class ActionCardExecution {
      *
      * @param response Die OptionalActionResponse
      * @author Julia
-     * @since Sprint7
+     * @since Sprint 7
      */
     @Subscribe
     public void onOptionalActionResponse(OptionalActionResponse response) {
@@ -95,7 +95,7 @@ public class ActionCardExecution {
      *
      * @param response Die ChooseCardResponse
      * @author Ferit, Julia
-     * @since Sprint7
+     * @since Sprint 7
      */
     @Subscribe
     public void onChooseCardResponse(ChooseCardResponse response) {
@@ -149,7 +149,7 @@ public class ActionCardExecution {
      *
      * @return
      * @author KenoO, Julia
-     * @since Sprint6
+     * @since Sprint 6
      */
     public boolean execute() {
         while (actualStateIndex < theCard.getActions().size() && !waitedForPlayerInput && finishedNextActions) {
@@ -195,7 +195,7 @@ public class ActionCardExecution {
      *
      * @return false sobald eine Aktion nicht erfolgreich ausgeführt werden konnte
      * @author Julia
-     * @since Sprint7
+     * @since Sprint 7
      */
     private boolean executeNextActions(List<Player> playerList) {
         startedNextActions = true;
@@ -231,7 +231,7 @@ public class ActionCardExecution {
      * @param thePlayers Liste aller Player, auf die die Aktion ausgeführt werden soll
      * @return Ob die Ausführung erfolgreich war.
      * @author KenoO
-     * @since Sprint6
+     * @since Sprint 6
      */
     private boolean executeCardAction(CardAction action, List<Player> thePlayers) {
         if (action == null) throw new NullPointerException("Action can't be null");
@@ -262,7 +262,7 @@ public class ActionCardExecution {
      * @param input  Eingabe an Karten
      * @return Ergebnis
      * @author KenoO, Julia
-     * @since Sprint6
+     * @since Sprint 6
      */
     private ArrayList<Card> executeCardAction(CardAction action, ArrayList<Card> input, List<Player> playerList, boolean foreach) throws NullPointerException {
         if (action == null) throw new NullPointerException("Action can't be null");
@@ -345,7 +345,7 @@ public class ActionCardExecution {
      * @param cards  Die zu filternden Karten
      * @return Das gefilterte Kartenarray
      * @author Julia
-     * @since Sprint6
+     * @since Sprint 6
      */
     private ArrayList<Card> filterCards(ComplexCardAction action, ArrayList<Card> cards) {
         Card.Type allowedType = action.getAllowedCardType();
@@ -419,7 +419,7 @@ public class ActionCardExecution {
      * @param player
      * @return Liste der Karten
      * @author KenoO, Julia
-     * @since Sprint6
+     * @since Sprint 6
      */
     private ArrayList<Card> executeGetCard(GetCard action, Player player) {
         if (action.getCardSource() != AbstractPlayground.ZoneType.NONE) {
@@ -480,7 +480,7 @@ public class ActionCardExecution {
      * @param action Die ForEach-Aktion
      * @return
      * @author KenoO, Julia
-     * @since Sprint6
+     * @since Sprint 6
      */
     private boolean executeForEach(ForEach action, List<Player> playerList) {
         try {
@@ -514,7 +514,7 @@ public class ActionCardExecution {
      * @param activity Aktion
      * @return true
      * @author Julia
-     * @since Sprint6
+     * @since Sprint 6
      */
     private boolean executeAddCapablePlayerActivity(AddCapablePlayerActivity activity) {
         if (activity.getActivity() == AbstractPlayground.PlayerActivityValue.ACTION) {
@@ -534,7 +534,7 @@ public class ActionCardExecution {
      * @param showCard
      * @return true
      * @author Julia
-     * @since Sprint6
+     * @since Sprint 6
      */
     private boolean executeShowCard(ShowCard showCard, List<Player> thePlayers) {
         for (Player player : thePlayers) {
@@ -563,7 +563,7 @@ public class ActionCardExecution {
      * @param thePlayers Die Player, die Karten auswählen dürfen.
      * @return
      * @author Ferit, Julia
-     * @since Sprint7
+     * @since Sprint 7
      */
 
     private boolean executeChooseCard(ChooseCard action, List<Player> thePlayers) {
@@ -615,7 +615,7 @@ public class ActionCardExecution {
      * @param chooseNextAction
      * @return true
      * @author Julia
-     * @since Sprint6
+     * @since Sprint 6
      */
     private boolean executeChooseNextAction(ChooseNextAction chooseNextAction) {
         waitedForPlayerInput = true;
@@ -628,7 +628,7 @@ public class ActionCardExecution {
      *
      * @return true
      * @author Julia
-     * @since Sprint8
+     * @since Sprint 8
      */
     private boolean executeMoveAction(Move action, Player player) {
         ArrayList<Short> theIds = new ArrayList<>();
@@ -722,7 +722,7 @@ public class ActionCardExecution {
      * @param action die Kartenaktion, deren Unteraktionen herausgefiltert werden sollen
      * @return Liste mit allen Unteraktionen der Aktion
      * @author Julia
-     * @since Sprint7
+     * @since Sprint 7
      */
     private List<CardAction> getNextActions(CardAction action) {
         if (!(action instanceof ComplexCardAction)) return nextActions;
@@ -739,7 +739,7 @@ public class ActionCardExecution {
      * @param action Die CardAction
      * @return Spielerliste mit allen betroffenen Spielern
      * @author Julia
-     * @since Sprint7
+     * @since Sprint 7
      */
     private List<Player> getAffectedPlayers(CardAction action) {
         List<Player> affectedPlayers = new ArrayList<>();
@@ -784,7 +784,7 @@ public class ActionCardExecution {
      * @param player Der Spieler, dessen Hand überprüft werden soll
      * @return true, wenn er eine Reaktionskarte auf der Hand hat, sonst false
      * @author Julia
-     * @since Sprint7
+     * @since Sprint 7
      */
     private boolean checkForReactionCard(Player player) {
         for (Card card : player.getPlayerDeck().getHand()) {
@@ -802,7 +802,7 @@ public class ActionCardExecution {
      * Überprüft ob die Karte vollständig abgearbeitet ist
      *
      * @author Julia
-     * @since Sprint7
+     * @since Sprint 7
      */
     private boolean checkIfComplete() {
         if (actualStateIndex == theCard.getActions().size() && !waitedForPlayerInput && finishedNextActions) {
@@ -818,7 +818,7 @@ public class ActionCardExecution {
      *
      * @param cardID ID der Aktionskarte
      * @author KenoO
-     * @since Sprint6
+     * @since Sprint 6
      */
     private void getCardFromHand(short cardID) {
         theCard = player.getPlayerDeck().getHand().stream().filter(card -> card.getId() == cardID).findFirst().map(card -> (ActionCard) card).orElse(theCard);
@@ -830,7 +830,7 @@ public class ActionCardExecution {
      * @param user Der User
      * @return Player
      * @author Ferit
-     * @since Sprint7
+     * @since Sprint 7
      */
     private Player helpMethodToGetThePlayerFromUser(User user) {
         return players.stream().filter(p -> user.equals(p.getTheUserInThePlayer())).findFirst().orElse(null);
@@ -842,7 +842,7 @@ public class ActionCardExecution {
      * @param id ID der Karte
      * @return die Karte, wenn sie gefunden wurde, sonst null
      * @author Ferit
-     * @since Sprint7
+     * @since Sprint 7
      */
     private Card helpMethod2GetTheCard(Short id) {
         return playground.getCardsPackField().getCards().getAllCards().stream().filter(c -> c.getId() == id).findFirst().orElse(null);

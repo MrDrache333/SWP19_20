@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Testet Aktionskarten, die keine Spielerantwort benötigen
  *
  * @author Julia
- * @since Sprint8
+ * @since Sprint 8
  */
 public class ActionCardTest {
 
