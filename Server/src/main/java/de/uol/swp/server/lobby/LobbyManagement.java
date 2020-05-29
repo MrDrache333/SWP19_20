@@ -15,7 +15,7 @@ public class LobbyManagement {
      * Map von UUID zu Lobby
      *
      * @author Marvin
-     * @since Sprint5
+     * @since Sprint 5
      */
     private final Map<UUID, Lobby> lobbies = new HashMap<>();
 
@@ -44,7 +44,7 @@ public class LobbyManagement {
      * @param id die LobbyID.
      * @throws IllegalArgumentException wenn keine Lobby mit der ID gefunden werden konnte.
      * @author Marvin
-     * @since Sprint5
+     * @since Sprint 5
      */
     public void dropLobby(UUID id) {
         if (!lobbies.containsKey(id)) {
@@ -60,7 +60,7 @@ public class LobbyManagement {
      * @param id der Lobbyname
      * @return Optional mit Lobby wenn vorhanden, sonst leere Optional
      * @author Marvin
-     * @since Sprint5
+     * @since Sprint 5
      */
     public Optional<Lobby> getLobby(UUID id) {
         Lobby lobby = lobbies.get(id);
@@ -76,7 +76,7 @@ public class LobbyManagement {
      * @param user der User
      * @return Boolean ob der User ingame ist
      * @author Darian
-     * @since Sprint5
+     * @since Sprint 5
      */
     public boolean isUserIngame(User user) {
         for (Map.Entry<UUID, Lobby> lobby : lobbies.entrySet()){
@@ -118,7 +118,7 @@ public class LobbyManagement {
      * @param updatedUser der aktualisierte User
      * @param oldUser     der alte User
      * @author Julia, Marvin
-     * @since Sprint4
+     * @since Sprint 4
      */
     public void updateLobbies(UserDTO updatedUser, UserDTO oldUser) {
         Map<UUID, Lobby> updatedLobbies = new HashMap<>();
@@ -155,7 +155,7 @@ public class LobbyManagement {
      * @param owner      der Lobbybesitzer
      * @return Boolean ob der Kick gerechtfertigt ist
      * @author Darian, Marvin
-     * @since sprint4
+     * @since Sprint 4
      */
     public boolean kickUser(UUID id, User userToKick, User owner) {
         Optional<Lobby> lobby = this.getLobby(id);
@@ -187,7 +187,7 @@ public class LobbyManagement {
      *
      * @param lobbyID Die übergebene Lobby ID
      * @author Marvin
-     * @since Sprint3
+     * @since Sprint 3
      */
     public Optional<String> getName(UUID lobbyID) {
         return lobbies.get(lobbyID) != null ? Optional.of(lobbies.get(lobbyID).getName()) : Optional.empty();

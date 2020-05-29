@@ -11,7 +11,7 @@ import javafx.scene.layout.StackPane;
  * Layoutcontainer für das Deck.
  *
  * @author Devin
- * @since Sprint7
+ * @since Sprint 7
  */
 
 public class DeckLayoutContainer extends StackPane {
@@ -20,7 +20,7 @@ public class DeckLayoutContainer extends StackPane {
      * Instanziiert einen neuen DeckLayoutContainer.
      *
      * @author Devin
-     * @since Sprint7
+     * @since Sprint 7
      */
     public DeckLayoutContainer() {
     }
@@ -34,7 +34,7 @@ public class DeckLayoutContainer extends StackPane {
      * @param width   Breite des Containers
      * @param id   ID des Containers
      * @author Devin
-     * @since Sprint7
+     * @since Sprint 7
      */
     public DeckLayoutContainer(double layoutX, double layoutY, double height, double width, String id) {
         this.setLayoutX(layoutX);
@@ -61,7 +61,7 @@ public class DeckLayoutContainer extends StackPane {
      * Ansonsten überlappen sie sich, aber immer nur so viel wie nötig.
      *
      * @author Devin
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Override
     protected void layoutChildren() {
@@ -94,7 +94,7 @@ public class DeckLayoutContainer extends StackPane {
      *
      * @return Kinder
      * @author Devin
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Override
     public ObservableList<Node> getChildren() {

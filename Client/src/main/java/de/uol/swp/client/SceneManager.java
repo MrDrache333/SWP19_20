@@ -122,7 +122,7 @@ public class SceneManager {
      * @param message die Message
      * @param title   der Titel des Alerts
      * @author Paula, Haschem, Ferit
-     * @since Sprint1
+     * @since Sprint 1
      */
     public static void showAlert(Alert.AlertType type, String message, String title) {
         Platform.runLater(() -> {
@@ -185,7 +185,7 @@ public class SceneManager {
      *
      * @param event das Event
      * @author Anna
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void onDeleteAccountEvent(DeleteAccountEvent event) {
@@ -259,7 +259,7 @@ public class SceneManager {
      * @param lobbyID die übergebene LobbyID aus der empfangenen Message in der ClientApp
      * @author Paula, Haschem, Ferit, Anna, Darian
      * @version 0.2
-     * @since Sprint3
+     * @since Sprint 3
      */
     public void showLobbyScreen(User currentUser, String title, UUID lobbyID, UserDTO gameOwner) {
         Platform.runLater(() -> {
@@ -277,7 +277,7 @@ public class SceneManager {
      *
      * @param loggedInUser der eingeloggte User
      * @author Anna, Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     public void showSettingsScreen(User loggedInUser) {
         Platform.runLater(() -> {
@@ -299,7 +299,7 @@ public class SceneManager {
      *
      * @param loggedInUser der eingeloggte User
      * @author Paula
-     * @since Sprint7
+     * @since Sprint 7
      */
 
     public void showCreateLobbyScreen(User loggedInUser) {
@@ -321,7 +321,7 @@ public class SceneManager {
      *
      * @param loggedInUser
      * @author Paula
-     * @since Sprint7
+     * @since Sprint 7
      */
 
     public void showJoinLobbyScreen(User loggedInUser, Lobby lobby) {
@@ -342,7 +342,7 @@ public class SceneManager {
      * Schließt alle Stages
      *
      * @author Julia, Paula
-     * @since Sprint3
+     * @since Sprint 3
      */
     public void closeAllStages() {
         Platform.runLater(() -> {
@@ -544,7 +544,7 @@ public class SceneManager {
      * Strg + L: CreateLobby
      *
      * @author Marvin
-     * @since Sprint7
+     * @since Sprint 7
      */
 
     private EventHandler<KeyEvent> hotkeyEventHandler = new EventHandler<>() {

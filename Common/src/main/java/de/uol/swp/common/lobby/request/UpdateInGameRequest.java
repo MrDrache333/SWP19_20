@@ -6,7 +6,7 @@ import java.util.UUID;
  * Request um den inGame-Status der Lobby bei Spielende wieder auf false zu setzen
  *
  * @author Julia
- * @since Sprint6
+ * @since Sprint 6
  */
 public class UpdateInGameRequest extends AbstractLobbyRequest {
 

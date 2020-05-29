@@ -393,7 +393,7 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Ereignis das ausgeführt wird, wenn der User den Button "Alle Geldkarten spielen" drückt
      *
-     * @param actionEvent
+     * @param actionEvent das Action-Event
      * @author Rike
      * @since Sprint 7
      */
@@ -406,7 +406,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * Ereignis das ausgeführt wird, wenn eine Karte im Shop angeklickt wird.
      * ruft die chosenBuyableCard()-Methode auf
      *
-     * @param mouseEvent
+     * @param mouseEvent das Maus-Event
      * @author Rike
      * @since Sprint 5
      */
@@ -442,7 +442,7 @@ public class GameViewPresenter extends AbstractPresenter {
      *
      * @param userJoinedLobbyMessage Die Nachricht wenn ein User die Lobby beitritt
      * @author Marvin
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void newUser(UserJoinedLobbyMessage userJoinedLobbyMessage) {
@@ -455,9 +455,9 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Aktualisiert den loggedInUser sowie die Liste, falls sich der Username geändert hat
      *
-     * @param message
+     * @param message die Nachricht
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void updatedUser(UpdatedUserMessage message) {
@@ -474,9 +474,9 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Aktualisiert den loggedInUser sowie die Liste, wenn ein Spieler die Lobby (also das Spiel) verlässt.
      *
-     * @param message
+     * @param message die Nachricht
      * @author Alex
-     * @since Sprint7
+     * @since Sprint 7
      */
     @Subscribe
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
@@ -490,7 +490,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * Wird bei Erstellung in GameManagement aufgerufen und startet eine Abfrage an den Server für alle User in der Lobby.
      *
      * @author Marvin, Alex
-     * @since Sprint3
+     * @since Sprint 3
      */
     public void getInGameUserList(UUID id) {
         lobbyService.retrieveAllUsersInLobby(id);
@@ -502,7 +502,7 @@ public class GameViewPresenter extends AbstractPresenter {
      *
      * @param response die Antwort aller Lobby-Benutzer
      * @author Marvin, Alex
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     private void onReceiveAllUsersInLobby(AllOnlineUsersInLobbyResponse response) {
@@ -641,7 +641,6 @@ public class GameViewPresenter extends AbstractPresenter {
                             AnimationManagement.playCard((ImageView) firstEnemyHand.getChildren().get(0), firstEnemyPCLC.getChildren().size(), firstEnemyPCLC);
                             firstEnemyHand.getChildren().remove(0);
                             firstEnemyPCLC.getChildren().add(card);
-                            return;
                         });
                     }
 
@@ -650,7 +649,6 @@ public class GameViewPresenter extends AbstractPresenter {
                             AnimationManagement.playCard((ImageView) secondEnemyHand.getChildren().get(0), secondEnemyPCLC.getChildren().size(), secondEnemyPCLC);
                             secondEnemyHand.getChildren().remove(0);
                             secondEnemyPCLC.getChildren().add(card);
-                            return;
                         });
                     }
                     if (playerIndexNumbers.get(2).equals(msg.getEnemyPlaceNumber())) {
@@ -658,7 +656,6 @@ public class GameViewPresenter extends AbstractPresenter {
                             AnimationManagement.playCard((ImageView) thirdEnemyHand.getChildren().get(0), thirdEnemyPCLC.getChildren().size(), thirdEnemyPCLC);
                             thirdEnemyHand.getChildren().remove(0);
                             thirdEnemyPCLC.getChildren().add(card);
-                            return;
                         });
                     }
                 }
@@ -679,23 +676,24 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @FXML
     @Subscribe
-    public void onChooseCardRequest (ChooseCardRequest req) {
-        if (req.getGameID().equals(lobbyID) && req.getPlayer().equals(loggedInUser)) {
-            numberOfCardsToChoose = req.getCount();
-            directHand = req.getDirectHand();
-            currentInfoText = infoActualPhase.getText();
-            Button button = new Button("Auswahl abschicken");
-            skipPhaseButton.setDisable(true);
-            playAllMoneyCardsButton.setVisible(false);
-            playAllMoneyCardsButton.setDisable(true);
-            Platform.runLater(() -> {
-                button.setLayoutX(750);
-                button.setLayoutY(585);
-                button.setOnAction(sendChoosenCardResponse);
-                gameViewWIP.getChildren().add(button);
-            });
-            if (req.getSource()== AbstractPlayground.ZoneType.HAND) {
-                if (numberOfCardsToChoose != 255) {
+    public void onDiscardCardMessage(DiscardCardMessage msg) {
+        if (msg.getGameID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
+            //TODO: Aussuchverfahren zum abwerfen von Karten implementieren
+        }
+        List<Short> playerIndexNumbers = new ArrayList<>();
+        playerIndexNumbers.add((short) 0);
+        playerIndexNumbers.add((short) 1);
+        playerIndexNumbers.add((short) 2);
+        playerIndexNumbers.add((short) 3);
+        if (msg.getGameID().equals(lobbyID) && !msg.getCurrentUser().equals(loggedInUser)) {
+            playerIndexNumbers.remove(msg.getUserPlaceNumber());
+            if (playerIndexNumbers.get(0).equals(msg.getEnemyPlaceNumber())) {
+                int numberOfCardsInHand = firstEnemyHand.getChildren().size();
+                for (Short id : msg.getCardID()) {
+                    Card card = new Card(id.toString(), 328, 447, 104);
+                    if (numberOfCardsInHand == 0) {
+                        LOG.debug("Die Hand hat keine Karten mehr zum entsorgen");
+                    }
                     Platform.runLater(() -> {
                         infoActualPhase.setText(numberOfCardsToChoose + " Karten entsorgen");
                         handcards.getChildren().forEach((n) -> {
@@ -703,13 +701,37 @@ public class GameViewPresenter extends AbstractPresenter {
                             n.addEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
                         });
                     });
-                } else {
+                }
+            }
+            if (playerIndexNumbers.get(1).equals(msg.getEnemyPlaceNumber())) {
+                int numberOfCardsInHand = secondEnemyHand.getChildren().size();
+                for (Short id : msg.getCardID()) {
+                    Card card = new Card(id.toString(), 0, 0, 104);
+                    if (numberOfCardsInHand == 0) {
+                        LOG.debug("Die Hand hat keine Karten mehr zum entsorgen");
+                        return;
+                    }
                     Platform.runLater(() -> {
                         infoActualPhase.setText("Beliebig viele Karten entsorgen");
                         handcards.getChildren().forEach((n) -> {
                             n.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                             n.addEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
                         });
+                    });
+                }
+            }
+            if (playerIndexNumbers.get(2).equals(msg.getEnemyPlaceNumber())) {
+                int numberOfCardsInHand = thirdEnemyHand.getChildren().size();
+                for (Short id : msg.getCardID()) {
+                    Card card = new Card(id.toString(), 328, 447, 104);
+                    if (numberOfCardsInHand == 0) {
+                        LOG.debug("Die Hand hat keine Karten mehr zum entsorgen");
+                        return;
+                    }
+                    Platform.runLater(() -> {
+                        thirdEnemyHand.getChildren().remove(0);
+                        // TODO: Animation Management zum entsorgen einer Karte
+                        thirdEnemyDPLC.getChildren().add(card);
                     });
                 }
             }
@@ -755,7 +777,6 @@ public class GameViewPresenter extends AbstractPresenter {
                         firstEnemyHand.getChildren().add(card);
                     });
                 }
-                return;
             }
             if (playerIndexNumbers.get(1).equals(msg.getEnemyPlaceNumber())) {
                 Platform.runLater(() -> {
@@ -768,7 +789,6 @@ public class GameViewPresenter extends AbstractPresenter {
                         secondEnemyHand.getChildren().add(card);
                     });
                 }
-                return;
             }
             if (playerIndexNumbers.get(2).equals(msg.getEnemyPlaceNumber())) {
                 Platform.runLater(() -> {
@@ -781,18 +801,16 @@ public class GameViewPresenter extends AbstractPresenter {
                         thirdEnemyHand.getChildren().add(card);
                     });
                 }
-                return;
             }
         }
     }
-
 
     /**
      * Fügt die Karte aus der DiscardPileLastCardMessage dem Ablagestapel hinzu.
      *
      * @param msg Die Nachricht
      * @author Timo
-     * @Sprint 6
+     * @since Sprint 6
      */
     @Subscribe
     public void onDiscardPileLastCardMessage(DiscardPileLastCardMessage msg) {
@@ -814,7 +832,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * setzt den Zustand des "Alle Geldkarten spielen" auf anklickbar, wenn der User Geldkarten auf die Hand bekommt
      *
      * @author Devin S., Anna, Rike
-     * @since Sprint5
+     * @since Sprint 5
      */
     @FXML
     @Subscribe
@@ -959,7 +977,7 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Aktualisiert die Anzeige für Aktion, Kauf und Geld
      *
-     * @param msg
+     * @param msg die Nachricht
      * @author Rike
      * @since Sprint 7
      */
@@ -998,7 +1016,7 @@ public class GameViewPresenter extends AbstractPresenter {
      *
      * @param userList die neue Userliste
      * @author Marvin
-     * @since Sprint3
+     * @since Sprint 3
      */
     private void updateUsersList(Set<User> userList) {
         // Attention: This must be done on the FX Thread!
@@ -1024,7 +1042,7 @@ public class GameViewPresenter extends AbstractPresenter {
      *
      * @param usersList Die Liste der Spieler im Spiel bzw. in der Lobby.
      * @author Alex
-     * @since Sprint7
+     * @since Sprint 7
      */
     private void updateEnemiesOnBoard(Set<User> usersList) {
         // Attention: This must be done on the FX Thread!
@@ -1067,7 +1085,7 @@ public class GameViewPresenter extends AbstractPresenter {
      *
      * @param usersList Die User Liste als Set
      * @author Alex
-     * @since Sprint7
+     * @since Sprint 7
      */
     private void updateUsersInGame(Set<User> usersList) {
         // TODO: Deaktiviert, da NullPointer. NullPointer muss behoben werden.
@@ -1079,7 +1097,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * Skipt die aktuelle Phase des Spielers zur nächsten.
      *
      * @author Devin S.
-     * @since Sprint6
+     * @since Sprint 6
      */
     @FXML
     public void onSkipPhaseButtonPressed(ActionEvent actionEvent) {
@@ -1191,7 +1209,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * @param children    Das children von dem Karten Stapel
      * @param actionCards true wenn die Karten in der Aktionszone liegen
      * @author Darian
-     * @since Sprint7
+     * @since Sprint 7
      */
     private void moveCardsToDiscardPile(ObservableList<Node> children, boolean actionCards) {
         for (Node c : children) {
@@ -1318,6 +1336,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     playAllMoneyCardsButton.setVisible(true);
                     if (msg instanceof StartActionPhaseMessage) {
                         playAllMoneyCardsButton.setDisable(true);
+                        skipPhaseButton.setDisable(false);
                         infoActualPhase.setText("Du darfst Aktionen spielen.");
                         for (Node n : handcards.getChildren()) {
                             if (Integer.parseInt(n.getId()) < 4) {
@@ -1327,6 +1346,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     }
                     if (msg instanceof StartBuyPhaseMessage) {
                         playAllMoneyCardsButton.setDisable(false);
+                        skipPhaseButton.setDisable(false);
                         infoActualPhase.setText("Du darfst Karten kaufen.");
                         for (Node n : handcards.getChildren()) {
                             if (Integer.parseInt(n.getId()) > 6) {
@@ -1339,6 +1359,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     }
                     if (msg instanceof StartClearPhaseMessage) {
                         playAllMoneyCardsButton.setDisable(true);
+                        skipPhaseButton.setDisable(false);
                         infoActualPhase.setText("Clearphase");
                         for (Node n : handcards.getChildren()) {
                             if (Integer.parseInt(n.getId()) > 6) {
@@ -1348,6 +1369,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     }
                 } else {
                     playAllMoneyCardsButton.setVisible(false);
+                    skipPhaseButton.setDisable(true);
                     infoActualPhase.setText("Du bist nicht dran.");
                 }
             });

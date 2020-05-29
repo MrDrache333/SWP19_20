@@ -135,7 +135,7 @@ public class PrimaryPresenter extends AbstractPresenter {
      * @param actionEvent the action event
      * @author Julia, Paula
      * @Version 1.0
-     * @since Sprint3
+     * @since Sprint 3
      */
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
@@ -190,7 +190,7 @@ public class PrimaryPresenter extends AbstractPresenter {
      *
      * @param msg die UserLeftLobbyMessage
      * @author Keno O.
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     private void userLeft(UserLeftLobbyMessage msg) {
@@ -204,7 +204,7 @@ public class PrimaryPresenter extends AbstractPresenter {
      *
      * @param actionEvent das ActionEvent
      * @author Anna
-     * @since Sprint4
+     * @since Sprint 4
      */
     @FXML
     public void onSettingsButtonPressed(ActionEvent actionEvent) {
@@ -221,7 +221,7 @@ public class PrimaryPresenter extends AbstractPresenter {
      * @author Paula, Haschem, Ferit, Anna
      * @Version 1.0
      * @version 0.2
-     * @since Sprint3
+     * @since Sprint 3
      */
     public void createLobby(User currentUser, String title, UUID lobbyID, UserDTO gameOwner) {
         Platform.runLater(() -> {
@@ -285,7 +285,7 @@ public class PrimaryPresenter extends AbstractPresenter {
      * @param lobbyID the lobby id
      * @return GameManagement game management
      * @author Julia, Paula
-     * @since Sprint3
+     * @since Sprint 3
      */
     public GameManagement getGameManagement(UUID lobbyID) {
         GameManagement gameManagement;
@@ -302,7 +302,7 @@ public class PrimaryPresenter extends AbstractPresenter {
      * geschlossen
      *
      * @author Darian, Marvin
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     private void onKickUserMessage(KickUserMessage msg) {
@@ -316,7 +316,7 @@ public class PrimaryPresenter extends AbstractPresenter {
      *
      * @param msg die UserLoggedOutMessage
      * @author Keno O.
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     private void userLoggedOut(UserLoggedOutMessage msg) {
@@ -344,7 +344,7 @@ public class PrimaryPresenter extends AbstractPresenter {
      *
      * @author Julia, Paula
      * @Version 1.0
-     * @since Sprint3
+     * @since Sprint 3
      */
     public void closeAllTabs() {
         Platform.runLater(() -> games.values().forEach(e -> {

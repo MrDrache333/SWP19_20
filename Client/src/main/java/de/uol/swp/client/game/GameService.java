@@ -24,7 +24,7 @@ public class GameService {
      *
      * @param bus der Bus
      * @author Haschem, Ferit
-     * @since Sprint5
+     * @since Sprint 5
      */
     @Inject
     public GameService(EventBus bus) {
@@ -38,7 +38,7 @@ public class GameService {
      * @param lobbyID           die LobbyID zum Lobbynamen
      * @param theUserWhoGivedUp der User der aufgeben will.
      * @author Haschem, Ferit
-     * @since Sprint5
+     * @since Sprint 5
      */
     public void giveUp(UUID lobbyID, UserDTO theUserWhoGivedUp) {
         GameGiveUpRequest request = new GameGiveUpRequest(theUserWhoGivedUp, lobbyID);
@@ -51,7 +51,7 @@ public class GameService {
      * @param gameID die LobbyID zum Lobbynamen
      * @param user   der User der seine Phase skippen möchte
      * @author Devin
-     * @since Sprint5
+     * @since Sprint 5
      */
     public void skipPhase(User user, UUID gameID) {
         SkipPhaseRequest req = new SkipPhaseRequest(user, gameID);
@@ -76,6 +76,13 @@ public class GameService {
         bus.post(req);
     }
 
+    /**
+     * Sendet einen BuyCardRequest
+     *
+     * @param req der Request
+     * @author Devin
+     * @since Sprint 5
+     */
     public void buyCard(BuyCardRequest req) {
         bus.post(req);
     }

@@ -9,7 +9,7 @@ import java.util.UUID;
  * Message die signalisiert, dass der User mit der BuyPhase starten kann
  *
  * @author Julia
- * @since Sprint5
+ * @since Sprint 5
  */
 public class StartBuyPhaseMessage extends AbstractServerMessage {
 

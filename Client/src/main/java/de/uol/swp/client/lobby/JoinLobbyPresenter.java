@@ -66,7 +66,7 @@ public class JoinLobbyPresenter {
      * Ist es falsch, wird man zur erneuten Eingabe aufgefordert.
      * @param actionEvent
      * @author Paula
-     * @since Sprint7
+     * @since Sprint 7
      */
     @FXML
     public void onJoinButtonPressed(javafx.event.ActionEvent actionEvent) {
@@ -92,7 +92,7 @@ public class JoinLobbyPresenter {
      * Beim Drücken auf den Abbrechen Button schließt sich das Fenster.
      *
      * @param actionEvent
-     * @since Sprint7
+     * @since Sprint 7
      * @author Paula
      */
     @FXML

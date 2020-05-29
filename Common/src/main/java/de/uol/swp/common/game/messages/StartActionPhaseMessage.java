@@ -10,7 +10,7 @@ import java.util.UUID;
  * Message die signalisiert, dass der User mit der Aktionsphase starten kann
  *
  * @author Julia
- * @since Sprint5
+ * @since Sprint 5
  */
 public class StartActionPhaseMessage extends AbstractServerMessage {
 
