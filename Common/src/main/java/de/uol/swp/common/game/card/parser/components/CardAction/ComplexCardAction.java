@@ -15,7 +15,7 @@ public abstract class ComplexCardAction extends CardAction {
     /**
      * Gibt an, welcher Kartentyp bei der Aktion verwendet werden darf(z.B. beim Ablegen/ Ziehen einer Karte)
      */
-    private Card.Type allowedCardType = Card.Type.None;
+    private Card.Type allowedCardType = Card.Type.NONE;
     /**
      * Gibt an, wie hoch der Wert der durch die Aktion aufgenommene/ abgelegte Karte mindestens/ höchstens sein muss/darf
      */
