@@ -275,10 +275,11 @@ public class ActionCardExecution {
                 ArrayList<Card> c = executeGetCard(getAction, player);
                 if (getAction.isDirectHand()) {
                     int size = c.size();
-                    player.getPlayerDeck().getHand().addAll(c);
-                    c.forEach(card -> {
+                    for (int i = 0; i < size; i++) {
+                        Card card = c.get(i);
+                        player.getPlayerDeck().getHand().add(card);
                         newHandCards.add(card.getId());
-                    });
+                    }
                     List<Card> remove = new ArrayList<>();
                     if (getAction.getCardSource() == AbstractPlayground.ZoneType.DRAW) {
                         for (int i = 0; i < size; i++) {
@@ -444,13 +445,13 @@ public class ActionCardExecution {
                         int missingCards = action.getCount() - action.getCards().size();
                         List<Card> discard = player.getPlayerDeck().getDiscardPile();
                         Collections.shuffle(discard);
-                        player.getPlayerDeck().getCardsDeck().addAll(0, discard);
                         int i = 0;
                         while(i < missingCards && i < discard.size()) {
-                            result.add(player.getPlayerDeck().getCardsDeck().get(i));
+                            result.add(discard.get(i));
                             i++;
                         }
                         player.getPlayerDeck().getDiscardPile().clear();
+                        player.getPlayerDeck().getCardsDeck().addAll(0, discard);
                     }
                     break;
                 case DISCARD:
