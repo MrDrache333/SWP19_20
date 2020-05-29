@@ -79,6 +79,7 @@ public class ActionCardExecution {
      */
     @Subscribe
     public void onOptionalActionResponse(OptionalActionResponse response) {
+        LOG.debug("OptionalActionResponse von " + response.getPlayer().getUsername() + " erhalten");
         if (response.getGameID().equals(gameID)) {
             if (!response.isExecute()) actualStateIndex++;
             else executeOptionalAction = true;
@@ -96,6 +97,7 @@ public class ActionCardExecution {
      */
     @Subscribe
     public void onChooseCardResponse(ChooseCardResponse response) {
+        LOG.debug("ChooseCardResponse von " + response.getPlayer().getUsername() + " erhalten");
         List<Player> p = new ArrayList<>();
         Player helpPlayer = players.get(helpMethodToGetThePlayerFromUser(response.getPlayer()));
         p.add(helpPlayer);
@@ -586,7 +588,7 @@ public class ActionCardExecution {
             if (action.getHasMoreCostThanInput() != null) {
                 if (inputCard == null) return false;
                 tmp.forEach(card -> {
-                    if (card.getCosts() - inputCard.getCosts() <= action.getHasMoreCostThanInput().getMax()) {
+                    if (card != null && card.getCosts() - inputCard.getCosts() <= action.getHasMoreCostThanInput().getMax()) {
                         theSelectableCards.add(card.getId());
                     }
                 });

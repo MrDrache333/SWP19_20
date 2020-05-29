@@ -224,31 +224,25 @@
               "allowedCardType": "MONEYCARD",
               "cardSource": "HAND",
               "nextAction": {
-                "ForEach": {
-                  "actions": [
-                    {
-                      "Move": {
-                        "cardSource": "HAND",
-                        "cardDestination": "TRASH"
-                      }
-                    },
-                    {
-                      "ChooseCard": {
-                        "count": {
-                          "min": 1
-                        },
-                        "cardSource": "BUY",
-                        "allowedCardType": "MONEYCARD",
-                        "hasMoreCostThanInput": {
-                          "min": 0,
-                          "max": 3
-                        },
-                        "directHand": true
-                      }
-                    }
-                  ]
+                "Move": {
+                  "cardSource": "HAND",
+                  "cardDestination": "TRASH"
                 }
               }
+            }
+          },
+          {
+            "ChooseCard": {
+              "count": {
+                "min": 1
+              },
+              "allowedCardType": "MONEYCARD",
+              "cardSource": "BUY",
+              "hasMoreCostThanInput": {
+                "min": 0,
+                "max": 3
+              },
+              "directHand": true
             }
           }
         ]
