@@ -20,7 +20,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.*;
-import java.util.stream.IntStream;
 
 public class ActionCardExecution {
 
@@ -33,12 +32,12 @@ public class ActionCardExecution {
     private UUID gameID;
     private List<Player> players;
     private List<User> chooseCardPlayers = new ArrayList<>();
+    //Liste neuer Handkarten
     private ArrayList<Short> newHandCards = new ArrayList<>();
     //Liste aller Unteraktionen einer Aktion
     private List<CardAction> nextActions = new ArrayList<>();
     private Card inputCard;
     private AbstractPlayground.ZoneType chooseCardSource;
-    private boolean removeCardAfter;
 
     //Ob auf eine Auswahl oder Reaktion des Spielers gewartet werden muss
     private boolean waitedForPlayerInput;
@@ -46,6 +45,7 @@ public class ActionCardExecution {
     //Index der aktuell auszuführenden Aktion
     private int actualStateIndex;
 
+    private boolean startedNextActions;
     //Ob alle Unteraktionen einer Aktion ausgeführt wurden
     private boolean finishedNextActions;
 
@@ -53,7 +53,9 @@ public class ActionCardExecution {
     private int nextActionIndex;
     //Ob eine optionale Aktion ausgeführt werden soll
     private boolean executeOptionalAction;
-    private boolean startedNextActions;
+
+    //Ob die Aktionskarte entsorgt werden soll
+    private boolean removeCardAfter;
 
     public ActionCardExecution(short cardID, Playground playground) {
         this.waitedForPlayerInput = false;
@@ -99,7 +101,7 @@ public class ActionCardExecution {
     public void onChooseCardResponse(ChooseCardResponse response) {
         LOG.debug("ChooseCardResponse von " + response.getPlayer().getUsername() + " erhalten");
         List<Player> p = new ArrayList<>();
-        Player helpPlayer = players.get(helpMethodToGetThePlayerFromUser(response.getPlayer()));
+        Player helpPlayer = helpMethodToGetThePlayerFromUser(response.getPlayer());
         p.add(helpPlayer);
         if (response.getGameID().equals(gameID) && waitedForPlayerInput && chooseCardPlayers.contains(response.getPlayer())) {
             waitedForPlayerInput = false;
@@ -420,10 +422,8 @@ public class ActionCardExecution {
      * @since Sprint6
      */
     private ArrayList<Card> executeGetCard(GetCard action, Player player) {
-        List<Card> result = new ArrayList<>();
         if (action.getCardSource() != AbstractPlayground.ZoneType.NONE) {
             switch (action.getCardSource()) {
-
                 case TRASH:
                     action.setCards(playground.getTrash());
                     break;
@@ -447,7 +447,7 @@ public class ActionCardExecution {
                         Collections.shuffle(discard);
                         int i = 0;
                         while(i < missingCards && i < discard.size()) {
-                            result.add(discard.get(i));
+                            action.getCards().add(discard.get(i));
                             i++;
                         }
                         player.getPlayerDeck().getDiscardPile().clear();
@@ -471,7 +471,6 @@ public class ActionCardExecution {
             } else action.setCards(cards);
 
         }
-        action.getCards().addAll(result);
         return action.getCards();
     }
 
@@ -829,12 +828,12 @@ public class ActionCardExecution {
      * Hilsmethode, um den zu einem User gehörigen Player zu bekommmen
      *
      * @param user Der User
-     * @return Index des Players in der Playerliste oder -1
+     * @return Player
      * @author Ferit
      * @since Sprint7
      */
-    private int helpMethodToGetThePlayerFromUser(User user) {
-        return IntStream.range(0, players.size()).filter(i -> user.equals(player.getTheUserInThePlayer())).findFirst().orElse(-1);
+    private Player helpMethodToGetThePlayerFromUser(User user) {
+        return players.stream().filter(p -> user.equals(p.getTheUserInThePlayer())).findFirst().orElse(null);
     }
 
     /**
