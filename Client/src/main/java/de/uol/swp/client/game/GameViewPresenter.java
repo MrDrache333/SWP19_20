@@ -11,6 +11,7 @@ import de.uol.swp.client.game.container.HandcardsLayoutContainer;
 import de.uol.swp.client.game.container.PlayedCardLayoutContainer;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
+import de.uol.swp.common.game.card.parser.components.CardAction.request.OptionalActionRequest;
 import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.game.request.BuyCardRequest;
@@ -143,6 +144,10 @@ public class GameViewPresenter extends AbstractPresenter {
     private Label infoActualPhase;
     @FXML
     private Button playAllMoneyCardsButton;
+    @FXML
+    private Button yesButton;
+    @FXML
+    private Button noButton;
 
     private final HandcardsLayoutContainer handcards;
     private final HandcardsLayoutContainer firstEnemyHand;
@@ -235,7 +240,6 @@ public class GameViewPresenter extends AbstractPresenter {
      * @author M.Haschem
      * @since Sprint 3
      */
-
     public void showGiveUpAlert(Alert.AlertType type, String message, String title) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "");
         alert.setResizable(false);
@@ -316,7 +320,7 @@ public class GameViewPresenter extends AbstractPresenter {
         valuecardLabels.put((short) 5, countDuchiesCardLabel);
         valuecardLabels.put((short) 6, countProvinceCardLabel);
         valuecardLabels.put((short) 38, countCurseCardLabel);
-        //Initialisieren der AKtionskarten
+        //Initialisieren der Aktionskarten
         for (ImageView imageView : allImageViews) {
             String theIdInString = String.valueOf(theList.get(index));
             String imageUrl = "cards/images/" + theIdInString + "_sm.png";
@@ -356,6 +360,30 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     public void onPlayAllMoneyCardsButtonPressed(ActionEvent actionEvent) {
         playAllMoneyCardsOnHand();
+    }
+
+    /**
+     * Ereignis wenn der Spieler den "Nein"-Button drückt. Es wird true an den Server zurückgegeben
+     *
+     * @param actionEvent
+     * @author Darian
+     * @since Sprint 8
+     */
+    @FXML
+    public void onYesButtonPressed(ActionEvent actionEvent) {
+        optionalAction(true);
+    }
+
+    /**
+     * Ereignis wenn der Spieler den "Nein"-Button drückt. Es wird false an den Server zurückgegeben
+     *
+     * @param actionEvent
+     * @author Darian
+     * @since Sprint 8
+     */
+    @FXML
+    public void onNoButtonPressed(ActionEvent actionEvent) {
+        optionalAction(false);
     }
 
     /**
@@ -452,7 +480,6 @@ public class GameViewPresenter extends AbstractPresenter {
         lobbyService.retrieveAllUsersInLobby(id);
     }
 
-
     /**
     *
     * Wird aufgerufen, wenn eine AllOnlineUsersInLobbyResponse empfangen wird. Prüft auch, ob aktuell das GameView angezeigt wird.
@@ -538,6 +565,19 @@ public class GameViewPresenter extends AbstractPresenter {
                     moveCardsToDiscardPile(removeMoneyCardList, false);
                 });
             }
+        }
+    }
+
+    @Subscribe
+    public void onOptionalActionRequest(OptionalActionRequest msg){
+        if (msg.getGameID().equals(lobbyID) && msg.getPlayer().equals(loggedInUser)){
+            Platform.runLater(() -> {
+                yesButton.setVisible(true);
+                noButton.setVisible(true);
+                playAllMoneyCardsButton.setVisible(false);
+                infoActualPhase.setText(msg.getTextMessage());
+                infoActualPhase.setStyle("-fx-font-size: 12;");
+            });
         }
     }
 
@@ -1234,5 +1274,22 @@ public class GameViewPresenter extends AbstractPresenter {
                 }
             });
         }
+    }
+
+    /**
+     * Die Antwort auf die OptionalActionRequest wird zum Server gesendet und die Buttons verschwinden wieder.
+     *
+     * @param answer  Die Entscheidung des Spielers
+     * @author Darian
+     * @since Sprint 8
+     */
+    private void optionalAction(boolean answer){
+        gameManagement.getGameService().optionalAction(loggedInUser, lobbyID, answer);
+        Platform.runLater(() -> {
+            yesButton.setVisible(false);
+            noButton.setVisible(false);
+            playAllMoneyCardsButton.setVisible(true);
+            infoActualPhase.setStyle("-fx-font-size: 17; -fx-font-weight: bold;");
+        });
     }
 }
