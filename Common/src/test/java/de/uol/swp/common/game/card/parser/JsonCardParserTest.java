@@ -41,7 +41,7 @@ class JsonCardParserTest {
             assertNotNull(card);
             assertNotNull(card.getName());
 
-            if (card.getCardType().equals(Card.Type.ActionCard)) {
+            if (card.getCardType().equals(Card.Type.ACTIONCARD)) {
                 ActionCard actionCard = (ActionCard) card;
                 if (!actionCard.getType().equals(ActionCard.ActionType.Reaction)) {
                     assertNotNull(actionCard.getActions());

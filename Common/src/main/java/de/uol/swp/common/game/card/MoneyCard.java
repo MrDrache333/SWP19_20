@@ -16,7 +16,7 @@ public class MoneyCard extends Card {
      * @since Sprint 5
      */
     public MoneyCard(String name, short id, short costs, short value) {
-        super(Type.MoneyCard, name, id, costs);
+        super(Type.MONEYCARD, name, id, costs);
         this.value = value;
     }
 

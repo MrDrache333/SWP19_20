@@ -93,26 +93,26 @@ public abstract class Card {
         /**
          * Kein Festgelegter Kartentyp
          */
-        None,
+        NONE,
         /**
          * Der Typ Aktionskarte
          */
-        ActionCard,
+        ACTIONCARD,
         /**
          * Der Typ Reaktionskarte
          */
-        ReactionCard,
+        REACTIONCARD,
         /**
          * Der Typ Provinzkarte
          */
-        ValueCard,
+        VALUECARD,
         /**
          * Der Typ Geldkarte
          */
-        MoneyCard,
+        MONEYCARD,
         /**
          * Der Typ Fluchkarte.
          */
-        Cursecard
+        CURSECARD
     }
 }
