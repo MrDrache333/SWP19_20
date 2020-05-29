@@ -112,6 +112,18 @@ public class Deck {
     }
 
     /**
+     * Hilfsmethode um eine Karte zum Ablagestapel hinzuzufügen
+     *
+     * @param card
+     * @author Paula
+     * @since Sprint 6
+     */
+    public void addCardToDiscardPile(Card card) {
+        discardPile.add(card);
+
+    }
+
+    /**
      * Methode, die den Geldwert eines Spielers berechnet und zurückgibt
      *
      * @return Geldwert der Karten eines Spielers
@@ -167,18 +179,6 @@ public class Deck {
         return discardPile.size() == 0;
     }
 
-
-    /**
-     * Hilfsmethode um eine Karte zum Ablagestapel hinzuzufügen
-     *
-     * @param card
-     * @author Paula
-     * @since Sprint6
-     */
-    public void addCardToDiscardPile(Card card) {
-        discardPile.add(card);
-
-    }
 
     public ArrayList<Card> getHand() {
         return hand;

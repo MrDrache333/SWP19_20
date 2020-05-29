@@ -82,7 +82,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      * @param newHandCards Liste neuer Handkarten
      * @param card         Gespielte Karte
      * @author Julia, KenoO
-     * @since Sprint7
+     * @since Sprint 7
      */
     public void finishedActionCardExecution(Player player, ArrayList<Short> newHandCards, Card card) {
         if (!executeAction.isRemoveCardAfter()) {
@@ -91,7 +91,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
             playground.getTrash().add(card);
         }
         if (!newHandCards.isEmpty()) {
-            playground.getGameService().sendToSpecificPlayer(player, new DrawHandMessage(newHandCards, playground.getID()));
+            playground.getGameService().sendToSpecificPlayer(player, new DrawHandMessage(newHandCards, playground.getID(), (short) playground.getPlayers().size(), false));
         }
         player.setAvailableActions(player.getAvailableActions() - 1);
         //Sende alle neuen Informationen bezüglich seiner möglichen Aktioen des Spielers an den Spieler zurück

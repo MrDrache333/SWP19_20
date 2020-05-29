@@ -31,7 +31,7 @@ public class ChooseCardResponse extends AbstractRequestMessage {
      * @param player      Der Spieler
      * @param choosenCard Die ausgewählte Karte
      * @author KenoO
-     * @since Sprint7
+     * @since Sprint 7
      */
     public ChooseCardResponse(UUID gameID, User player, short choosenCard, boolean directHand) {
         this.gameID = gameID;
@@ -48,7 +48,7 @@ public class ChooseCardResponse extends AbstractRequestMessage {
      * @param player       Der Spieler
      * @param choosenCards Die ausgewählten Karten
      * @author KenoO
-     * @since Sprint7
+     * @since Sprint 7
      */
     public ChooseCardResponse(UUID gameID, User player, ArrayList<Short> choosenCards, boolean directHand) {
         this.gameID = gameID;

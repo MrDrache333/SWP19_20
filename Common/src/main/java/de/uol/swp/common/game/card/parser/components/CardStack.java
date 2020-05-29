@@ -111,4 +111,5 @@ public class CardStack {
     public ArrayList<CurseCard> getCurseCards() {
         return curseCards;
     }
+
 }

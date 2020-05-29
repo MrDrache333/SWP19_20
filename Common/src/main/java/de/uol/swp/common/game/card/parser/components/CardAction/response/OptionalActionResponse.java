@@ -9,7 +9,7 @@ import java.util.UUID;
  * Antwortnachricht auf ein OptionalActionRequest
  *
  * @author Julia
- * @since Sprint7
+ * @since Sprint 7
  */
 public class OptionalActionResponse extends AbstractRequestMessage {
 
