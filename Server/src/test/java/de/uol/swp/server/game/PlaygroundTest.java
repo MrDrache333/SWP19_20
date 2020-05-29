@@ -105,7 +105,7 @@ public class PlaygroundTest {
      * Testet ob actual- und nextPlayer korrekt aktualisiert werden
      *
      * @author Julia
-     * @since Sprint5
+     * @since Sprint 5
      */
     @Test
     void testNewTurn() {
@@ -142,7 +142,7 @@ public class PlaygroundTest {
      * Testet die checkForActionCard - Methode
      *
      * @author Julia
-     * @since Sprint5
+     * @since Sprint 5
      */
     @Test
     void testCheckForActionCard() {
@@ -156,7 +156,7 @@ public class PlaygroundTest {
      * Testet, ob korrekt zur nächsten Phase gewechselt wird
      *
      * @author Julia
-     * @since Sprint5
+     * @since Sprint 5
      */
     @Test
     void testNextPhase() {
@@ -181,7 +181,7 @@ public class PlaygroundTest {
      * Testet, ob Requests ankommen und alles richtig durchlaufen wird und ein Spieler entfernt worden ist.
      *
      * @author Ferit
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Test
     void playerGaveUpTest() {
@@ -195,7 +195,7 @@ public class PlaygroundTest {
      * Testet, ob der spezifizierte Spieler der Aufgeben will, nach Aufgabe noch im Game befindet.
      *
      * @author Ferit
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Test
     void specificPlayerGaveUpTest() {
@@ -208,7 +208,7 @@ public class PlaygroundTest {
      * Testet, ob der mit den meisten Punkten gewinnt
      *
      * @author Julia
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Test
     void calculateWinnerHighestScoreTest() {
@@ -225,7 +225,7 @@ public class PlaygroundTest {
      * Testet, ob bei Punktegleichstand der mit den wenigsten Zügen gewinnt
      *
      * @author Julia
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Test
     void calculateWinnerFewestTurnsTest() {
@@ -245,7 +245,7 @@ public class PlaygroundTest {
      * Testet ob die korrekte Anzahl an Karten auf dem Nachziehstapel gesendet wird
      *
      * @author Julia
-     * @since Sprint7
+     * @since Sprint 7
      */
     @Test
     void cardsDeckSizeTest() {

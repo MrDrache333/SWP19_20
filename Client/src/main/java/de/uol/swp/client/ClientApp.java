@@ -212,7 +212,7 @@ public class ClientApp extends Application implements ConnectionListener {
      * @param message CreateLobbyMessage vom Server, dass die Lobby erstellt worden ist.
      * @author Paula, Haschem, Ferit, Anna, Darian
      * @version 0.2
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onCreateLobbyMessage(CreateLobbyMessage message) {
@@ -233,7 +233,7 @@ public class ClientApp extends Application implements ConnectionListener {
      *
      * @param message UserJoinedLobbyMessage Das ein User der Lobby beigetreten ist.
      * @author Paula, Julia
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onUserJoinedLobbyMessage(UserJoinedLobbyMessage message) {
@@ -255,7 +255,7 @@ public class ClientApp extends Application implements ConnectionListener {
      *
      * @param message UserLeftLobbyMessage
      * @author Julia, Paula
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
@@ -271,7 +271,7 @@ public class ClientApp extends Application implements ConnectionListener {
      *
      * @param message Die Anfrage zum öffnen des Fensters
      * @author Anna
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void onOpenSettingsRequest(OpenSettingsRequest message) {
@@ -285,7 +285,7 @@ public class ClientApp extends Application implements ConnectionListener {
      *
      * @param message
      * @author Paula
-     * @since Sprint4
+     * @since Sprint 4
      */
 
     @Subscribe
@@ -311,7 +311,7 @@ public class ClientApp extends Application implements ConnectionListener {
      *
      * @param message Nachricht um die neuen Daten des Users anzuzeigen und zu setzen.
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void onUpdatedUserMessage(UpdatedUserMessage message) {
@@ -361,7 +361,7 @@ public class ClientApp extends Application implements ConnectionListener {
      *
      * @param message UserLoggedOutMessage
      * @author Paula, Julia
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onUserLoggedOutMessage(UserLoggedOutMessage message) {
@@ -399,7 +399,7 @@ public class ClientApp extends Application implements ConnectionListener {
      * Nachdem der Account gelöscht wurde, werden alle Fenster geschlossen und der Login-Screen angezeigt
      *
      * @author Anna
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void onUserDroppedMessage(UserDroppedMessage message) {
@@ -414,7 +414,7 @@ public class ClientApp extends Application implements ConnectionListener {
      * Schließen aller Fenster, wenn die Methode aufgerufen wird.
      *
      * @author Julia, Paula
-     * @since Sprint3
+     * @since Sprint 3
      */
     public void closeAllWindows() {
         SoundMediaPlayer.setSound(false);

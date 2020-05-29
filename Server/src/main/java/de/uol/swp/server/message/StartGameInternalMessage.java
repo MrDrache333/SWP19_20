@@ -6,7 +6,7 @@ import java.util.UUID;
  * Eine ServerinterneMessage die den benötigten Komponenenten mitteilt, dass ein Spiel gestartet worden ist.
  *
  * @author Ferit
- * @since Sprint5
+ * @since Sprint 5
  */
 public class StartGameInternalMessage extends AbstractServerInternalMessage {
 

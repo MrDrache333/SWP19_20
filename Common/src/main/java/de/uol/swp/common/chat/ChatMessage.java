@@ -9,7 +9,7 @@ import java.util.Date;
  * Die ChatMessage
  *
  * @author Keno O.
- * @since Sprint2
+ * @since Sprint 2
  */
 public class ChatMessage implements Serializable {
 

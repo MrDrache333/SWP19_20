@@ -44,7 +44,7 @@ public class GiveUpTest {
      * Testet ob ein Nutzer Aufgeben kann.
      *
      * @author Ferit
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Test
     void testGiveUp() {

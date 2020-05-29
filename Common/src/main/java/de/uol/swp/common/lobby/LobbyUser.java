@@ -8,7 +8,7 @@ import de.uol.swp.common.user.UserDTO;
  *
  * @author Keno Oelrichs Garcia
  * @Version 1.0
- * @since Sprint3
+ * @since Sprint 3
  */
 public class LobbyUser extends UserDTO {
 
@@ -20,7 +20,7 @@ public class LobbyUser extends UserDTO {
      *
      * @param user Der Benutzer der erweitert werden soll
      * @author Keno Oelrichs Garcia
-     * @since Sprint3
+     * @since Sprint 3
      */
     public LobbyUser(User user) {
         super(user.getUsername(), user.getPassword(), user.getEMail());
@@ -31,7 +31,7 @@ public class LobbyUser extends UserDTO {
      *
      * @return Bereit-Status des Spielers
      * @author Keno Oelrichs Garcia
-     * @since Sprint3
+     * @since Sprint 3
      */
     public boolean isReady() {
         return Ready;
@@ -42,7 +42,7 @@ public class LobbyUser extends UserDTO {
      *
      * @param ready der neue Bereit-Status
      * @author Keno Oelrichs Garcia
-     * @since Sprint3
+     * @since Sprint 3
      */
     public void setReady(boolean ready) {
         Ready = ready;

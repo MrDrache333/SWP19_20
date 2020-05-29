@@ -38,7 +38,7 @@ import java.util.UUID;
  * Das GameManagement
  *
  * @author Keno O.
- * @since Sprint3
+ * @since Sprint 3
  */
 @SuppressWarnings("UnstableApiUsage")
 public class GameManagement {
@@ -81,7 +81,7 @@ public class GameManagement {
      * @param userService  der UserService
      * @param injector     der Injector
      * @author Keno O., Darian
-     * @since Sprint3
+     * @since Sprint 3
      */
     public GameManagement(EventBus eventBus, UUID id, String lobbyName, User loggedInUser, ChatService chatService, LobbyService lobbyService, UserService userService, Injector injector, UserDTO gameOwner, GameService gameService, PrimaryPresenter primaryPresenter) {
         this.id = id;
@@ -110,7 +110,7 @@ public class GameManagement {
      *
      * @param msg enthält die Informationen die benötigt werden um das Gamefenster zu schließen.
      * @author Haschem, Ferit
-     * @since Sprint5
+     * @since Sprint 5
      */
     @Subscribe
     private void userGivedUp(UserGaveUpMessage msg) {
@@ -149,15 +149,14 @@ public class GameManagement {
             primaryPresenter.showTab(msg.getChatID());
         }
     }
-
- */
+*/
 
     /**
      * Aktualisiert den loggedInUser, wenn dieser seine Daten geändert hat
      *
      * @param message die UpdatedUserMessage
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void updatedUser(UpdatedUserMessage message) {
@@ -171,7 +170,7 @@ public class GameManagement {
      *
      * @param message die GameOverMessage
      * @author Anna
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Subscribe
     public void onGameOverMessage(GameOverMessage message) {
@@ -185,7 +184,7 @@ public class GameManagement {
      *
      * @return true wenn sie im Vordergrund ist, sonst false
      * @author Keno O.
-     * @since Sprint3
+     * @since Sprint 3
      */
     public boolean hasFocus() {
         return primaryPresenter.getFocusedTab().equals(id.toString());
@@ -195,7 +194,7 @@ public class GameManagement {
      * Methode zum Anzeigen der LobbyView
      *
      * @author Keno O.
-     * @since Sprint3
+     * @since Sprint 3
      */
     public void showLobbyView() {
         initLobbyView();
@@ -206,7 +205,7 @@ public class GameManagement {
      * Methode zum Anzeigen der GameView
      *
      * @author Keno O.
-     * @since Sprint3
+     * @since Sprint 3
      */
     public void showGameView() {
         initGameView();
@@ -222,7 +221,7 @@ public class GameManagement {
      * @param loggedInUser der aktuelle Nutzer
      * @param winners      der/die Gewinner des Spiels
      * @author Anna
-     * @since Sprint6
+     * @since Sprint 6
      */
     public void showGameOverView(User loggedInUser, List<String> winners, Map<String, Integer> res) {
         if (loggedInUser.getUsername().equals(this.loggedInUser.getUsername())) {
@@ -245,7 +244,7 @@ public class GameManagement {
      * Methode zum Schließen der GameOverStage.
      *
      * @author Anna
-     * @since Sprint6
+     * @since Sprint 6
      */
     public void closeGameOverView() {
         Platform.runLater(() -> gameOverStage.close());
@@ -255,7 +254,7 @@ public class GameManagement {
      * Methode zum Schließen der GameOverStage und verlassen der Lobby
      *
      * @author Anna
-     * @since Sprint6
+     * @since Sprint 6
      */
     public void closeGameOverViewAndLeaveLobby() {
         Platform.runLater(() -> gameOverStage.close());
@@ -267,7 +266,7 @@ public class GameManagement {
      * Initialisieren der GameView
      *
      * @author Keno O., Fenja
-     * @since Sprint7
+     * @since Sprint 7
      */
     private void initGameView() {
         if (gamePane == null) {
@@ -281,7 +280,7 @@ public class GameManagement {
      * Neue Szene für die neue Lobby wird erstellt und gespeichert
      *
      * @author Keno O., Fenja
-     * @since Sprint7
+     * @since Sprint 7
      */
     private void initLobbyView() {
         if (lobbyPane == null) {
@@ -297,7 +296,7 @@ public class GameManagement {
      * @param user    der User, dem das Fenster angezeigt wird
      * @param winners der/die Gewinner des Spiels
      * @author Anna
-     * @since Sprint6
+     * @since Sprint 6
      */
     private void initGameOverView(User user, List<String> winners, Map<String, Integer> res) {
         Parent rootPane = initPresenter(new GameOverViewPresenter(this, user, winners, res), GameOverViewPresenter.fxml);
@@ -312,7 +311,7 @@ public class GameManagement {
      * @param fxml      die zum Presenter gehörige fxml
      * @return die rootPane
      * @author Keno O., Fenja
-     * @since Sprint7
+     * @since Sprint 7
      */
     private Pane initPresenter(AbstractPresenter presenter, String fxml) {
         Pane rootPane;
@@ -336,7 +335,7 @@ public class GameManagement {
      * @param pane die Szene
      * @param title der Titel der Stage
      * @author Julia, Keno O., Marvin, Fenja
-     * @since Sprint7
+     * @since Sprint 7
      */
     private void showView(final Pane pane, final String title) {
         Platform.runLater(() -> {
@@ -355,7 +354,7 @@ public class GameManagement {
      *
      * @return die ID
      * @author Anna
-     * @aince Sprint6
+     * @since Sprint 6
      */
     public UUID getID() {
         return this.id;
@@ -366,7 +365,7 @@ public class GameManagement {
      *
      * @return der LobbyService
      * @author Anna
-     * @Since Sprint6
+     * @since Sprint 6
      */
     public LobbyService getLobbyService() {
         return this.lobbyPresenter.getLobbyService();
@@ -381,7 +380,6 @@ public class GameManagement {
      *
      * @return lobbyName der Lobbyname
      * @author Keno Oelrichs Garcia
-     * @Version 1.0
      * @since Sprint 4
      */
     public String getLobbyName() {
@@ -393,7 +391,6 @@ public class GameManagement {
      *
      * @return loggedInUser der eingloggte User
      * @author Marvin, Timo
-     * @Version 1.0
      * @since Sprint 7
      */
     public User getLoggedInUser() {
