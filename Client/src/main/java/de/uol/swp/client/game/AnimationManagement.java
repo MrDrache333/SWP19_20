@@ -28,14 +28,13 @@ public class AnimationManagement {
     private static final double TRASH_X = 150;
     private static final double TRASH_Y = 455;
 
-
     /**
      * Erstellt ein neues MoveTo Objekt für den Pfad, wobei die aktuellen Koordinaten der Karte übernommen werden.
      *
      * @param card die Kare
      * @return MoveTo
      * @author Anna
-     * @since Sprint5
+     * @since Sprint 5
      */
     public static MoveTo keepPosition(ImageView card) {
         double w = card.getFitWidth() / 2;
@@ -54,7 +53,7 @@ public class AnimationManagement {
      * @param EndPointY die Y-Koordinate des Endpunktes
      * @return boolean ob die Bewegung durchgeführt wurde
      * @author Anna
-     * @since Sprint5
+     * @since Sprint 5
      */
     public static PathTransition createLineToPath(ImageView card, MoveTo moveTo, double EndPointX, double EndPointY) {
         double x = card.getLayoutX();
@@ -94,7 +93,7 @@ public class AnimationManagement {
      * @param largeArc  gibt an, ob der große Bogen genommen werden soll
      * @return boolean ob die Bewegung durchgeführt wurde
      * @author Anna
-     * @since Sprint5
+     * @since Sprint 5
      */
     public static Boolean createArcToPath(ImageView card, MoveTo moveTo, double EndPointX, double EndPointY, int count, boolean largeArc) {
         double x = card.getBoundsInParent().getMinX();
@@ -124,12 +123,12 @@ public class AnimationManagement {
     /**
      * Wenn der Spieler eine Karte ausspielt, wird sie in seine Aktionszone bewegt.
      *
-     * @param card  die Karte
-     * @param count gibt an, die wievielte Karte eines Zuges gerade gespielt wird.
-     * @param action_zone  Die Zielzone wo die Karte sich hinbewegen soll
+     * @param card        die Karte
+     * @param count       gibt an, die wievielte Karte eines Zuges gerade gespielt wird.
+     * @param action_zone Die Zielzone wo die Karte sich hinbewegen soll
      * @return boolean ob die Bewegung durchgeführt wurde
      * @author Anna
-     * @since Sprint5
+     * @since Sprint 5
      */
 
     public static Boolean playCard(ImageView card, int count, PlayedCardLayoutContainer action_zone) {
@@ -143,7 +142,7 @@ public class AnimationManagement {
      * @param count gibt an, die wievielte Karte gerade gespielt wird
      * @return boolean ob die Bewegung durchgeführt wurde
      * @author Anna
-     * @since Sprint5
+     * @since Sprint 5
      */
     public static Boolean opponentPlaysCard(ImageView card, int count) {
         return createArcToPath(card, new MoveTo(500 - card.getLayoutX(), -70 - card.getLayoutY()), ACTION_ZONE_OPPONENT_X, ACTION_ZONE_OPPONENT_Y, count, false);
@@ -156,7 +155,7 @@ public class AnimationManagement {
      * @param card die Karte
      * @return boolean ob die Bewegung durchgeführt wurde
      * @author Anna
-     * @since Sprint5
+     * @since Sprint 5
      */
     public static PathTransition buyCard(ImageView card) {
         return createLineToPath(card, keepPosition(card), ABLAGE_X, ABLAGE_Y);
@@ -168,7 +167,7 @@ public class AnimationManagement {
      *
      * @param card die Karte
      * @author Darian
-     * @since Sprint7
+     * @since Sprint 7
      */
     public static PathTransition clearCards(ImageView card, DiscardPileLayoutContainer discardPile) {
         return createLineToPath(card, keepPosition(card), discardPile.getLayoutX(), discardPile.getLayoutY());
@@ -180,7 +179,7 @@ public class AnimationManagement {
      * @param card die Karte
      * @return boolean ob die Bewegung durchgeführt wurde
      * @author Anna
-     * @since Sprint5
+     * @since Sprint 5
      */
     public static PathTransition opponentBuysCard(ImageView card) {
         return createLineToPath(card, keepPosition(card), 334, -300);
@@ -192,7 +191,7 @@ public class AnimationManagement {
      * @param card die Karte
      * @return boolean ob die Bewegung durchgeführt wurde
      * @author Anna
-     * @since Sprint5
+     * @since Sprint 5
      */
     public static Boolean deleteCard(ImageView card) {
         return createArcToPath(card, keepPosition(card), TRASH_X, TRASH_Y, 0, true);
@@ -206,7 +205,7 @@ public class AnimationManagement {
      * @param card  die Karte
      * @param count gibt an, die wievielte Karte hinzugefügt wird
      * @author Anna
-     * @since Sprint5
+     * @since Sprint 5
      */
     public static Boolean addToHand(ImageView card, int count) {
         Parent parent = card.getParent();
@@ -238,7 +237,7 @@ public class AnimationManagement {
      * @param card           die Karte
      * @param pathTransition die PathTransition(Bewegung)
      * @author Anna
-     * @since Sprint5
+     * @since Sprint 5
      */
     public static void setNewCoordinates(ImageView card, PathTransition pathTransition) {
         pathTransition.setOnFinished(actionEvent -> {

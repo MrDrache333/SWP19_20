@@ -55,8 +55,22 @@ public class While extends ComplexCardAction {
         return actions;
     }
 
-    @Override
-    public boolean execute() {
-        return false;
+
+    /**
+     * Sets new Die auszuführenden Aktionen.
+     *
+     * @param actions New value of Die auszuführenden Aktionen.
+     */
+    public void setActions(ArrayList<CardAction> actions) {
+        this.actions = actions;
+    }
+
+    /**
+     * Sets new Die Bedingung.
+     *
+     * @param condition New value of Die Bedingung.
+     */
+    public void setCondition(Condition condition) {
+        this.condition = condition;
     }
 }

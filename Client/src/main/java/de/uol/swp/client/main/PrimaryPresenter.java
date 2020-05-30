@@ -45,8 +45,6 @@ public class PrimaryPresenter extends AbstractPresenter {
     public static final String css = "css/PrimaryPresenter.css";
 
     private final Logger LOG = LogManager.getLogger(PrimaryPresenter.class);
-
-
     private Scene mainScene;
     private Map<UUID, GameManagement> games = new HashMap<>();
     private Injector injector = null;
@@ -57,9 +55,8 @@ public class PrimaryPresenter extends AbstractPresenter {
     @FXML
     private TabPane TabView;
 
-
     /**
-     * Setting the Injector
+     * Initialisierung des Injektors
      *
      * @param eventBus     the event bus
      * @param loggedInUser the logged in user
@@ -79,7 +76,6 @@ public class PrimaryPresenter extends AbstractPresenter {
         this.lobbyService = lobbyService;
         this.userService = userService;
         this.gameService = gameService;
-
     }
 
     /**
@@ -94,16 +90,37 @@ public class PrimaryPresenter extends AbstractPresenter {
         loggedInUser = message.getUser();
     }
 
+    /**
+     * Schließt alle Tabs, wenn der eingeloggte User der übergebene User ist
+     *
+     * @param msg die UserDroppedMessage
+     * @author Fenja, Keno O.
+     * @since 7
+     */
     private void userDroppedAccount(UserDroppedMessage msg) {
         if (loggedInUser.equals(msg.getUser().getUsername())) {
             closeAllTabs();
         }
     }
 
+    /**
+     * Fügt eine Tab, der Tabview hinzu
+     *
+     * @param tab der Tab
+     * @author Fenja, Keno O.
+     * @since Sprint 7
+     */
     public void addTab(Tab tab) {
         TabView.getTabs().add(tab);
     }
 
+    /**
+     * Zeigt einen Tab an
+     *
+     * @param id die ID
+     * @author Fenja, Keno O.
+     * @since Sprint 7
+     */
     public void showTab(UUID id) {
         TabView.getTabs().forEach(t -> {
             if (t.getId().equals(id.toString())) {
@@ -118,30 +135,43 @@ public class PrimaryPresenter extends AbstractPresenter {
      * @param actionEvent the action event
      * @author Julia, Paula
      * @Version 1.0
-     * @since Sprint3
+     * @since Sprint 3
      */
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
         userService.logout(loggedInUser);
     }
 
+    /**
+     * Gibt den fokussierten Tab als ID zurück
+     *
+     * @return ID die ID
+     * @author Fenja, Keno O.
+     * @since Sprint 7
+     */
     public String getFocusedTab() {
         return TabView.getSelectionModel().getSelectedItem().getId();
     }
 
+    /**
+     * Entfernt den Tab aus der TabView
+     *
+     * @param id
+     * @author Fenja, Keno O.
+     * @since Sprint 7
+     */
     private void removeTab(UUID id) {
         TabView.getTabs().forEach(t -> {
             if (t.getId().equals(id.toString())) {
                 Platform.runLater(() -> TabView.getTabs().remove(t));
-
             }
         });
     }
 
     /**
-     * On instructions button pressed.
+     * Beim Drücken des instructions Button
      *
-     * @param actionEvent the action event
+     * @param actionEvent das action event
      * @author Keno Oelrichs Garcia
      * @Version 1.0
      * @since
@@ -160,7 +190,7 @@ public class PrimaryPresenter extends AbstractPresenter {
      *
      * @param msg die UserLeftLobbyMessage
      * @author Keno O.
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     private void userLeft(UserLeftLobbyMessage msg) {
@@ -174,7 +204,7 @@ public class PrimaryPresenter extends AbstractPresenter {
      *
      * @param actionEvent das ActionEvent
      * @author Anna
-     * @since Sprint4
+     * @since Sprint 4
      */
     @FXML
     public void onSettingsButtonPressed(ActionEvent actionEvent) {
@@ -191,7 +221,7 @@ public class PrimaryPresenter extends AbstractPresenter {
      * @author Paula, Haschem, Ferit, Anna
      * @Version 1.0
      * @version 0.2
-     * @since Sprint3
+     * @since Sprint 3
      */
     public void createLobby(User currentUser, String title, UUID lobbyID, UserDTO gameOwner) {
         Platform.runLater(() -> {
@@ -214,10 +244,18 @@ public class PrimaryPresenter extends AbstractPresenter {
                 lobbyService.retrieveAllLobbies();
             });
             TabView.getTabs().add(gameManagement.getPrimaryTab());
+            TabView.getSelectionModel().select(gameManagement.getPrimaryTab());
         });
 
     }
 
+    /**
+     * Bei Erhalt einer UserLeftLobbyMessage wird der Tab geschlossen und eine Log Info ausgegeben.
+     *
+     * @param msg
+     * @author Fenja, Keno O., Timo
+     * @since Sprint
+     */
     @Subscribe
     private void onUserLeftLobby(UserLeftLobbyMessage msg) {
         if (games.containsKey(msg.getLobbyID()) && loggedInUser.getUsername().equals(msg.getUser().getUsername())) {
@@ -247,7 +285,7 @@ public class PrimaryPresenter extends AbstractPresenter {
      * @param lobbyID the lobby id
      * @return GameManagement game management
      * @author Julia, Paula
-     * @since Sprint3
+     * @since Sprint 3
      */
     public GameManagement getGameManagement(UUID lobbyID) {
         GameManagement gameManagement;
@@ -264,7 +302,7 @@ public class PrimaryPresenter extends AbstractPresenter {
      * geschlossen
      *
      * @author Darian, Marvin
-     * @since sprint4
+     * @since Sprint 4
      */
     @Subscribe
     private void onKickUserMessage(KickUserMessage msg) {
@@ -278,7 +316,7 @@ public class PrimaryPresenter extends AbstractPresenter {
      *
      * @param msg die UserLoggedOutMessage
      * @author Keno O.
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     private void userLoggedOut(UserLoggedOutMessage msg) {
@@ -286,9 +324,17 @@ public class PrimaryPresenter extends AbstractPresenter {
             closeAllTabs();
         }
     }
+
+    /**
+     * Aktualisiert den eingeloggten User
+     *
+     * @param message die Nachricht
+     * @auhtor Keno O., Paula
+     * @since Sprint 3
+     */
     @Subscribe
     public void updatedUser(UpdatedUserMessage message) {
-        if(loggedInUser != null && loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
+        if (loggedInUser != null && loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
             loggedInUser = message.getUser();
         }
     }
@@ -298,7 +344,7 @@ public class PrimaryPresenter extends AbstractPresenter {
      *
      * @author Julia, Paula
      * @Version 1.0
-     * @since Sprint3
+     * @since Sprint 3
      */
     public void closeAllTabs() {
         Platform.runLater(() -> games.values().forEach(e -> {
@@ -309,6 +355,13 @@ public class PrimaryPresenter extends AbstractPresenter {
         }));
     }
 
+    /**
+     * Gibt den eingeloggten User zurück
+     *
+     * @return
+     * @author Marvin
+     * @since Sprint 8
+     */
     public User getUser() {
         return loggedInUser;
     }

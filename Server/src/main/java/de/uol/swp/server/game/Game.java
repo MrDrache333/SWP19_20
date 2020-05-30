@@ -39,6 +39,13 @@ public class Game {
         playground = new Playground(lobby, gameService);
     }
 
+    /**
+     * Gibt den Playground zurück
+     *
+     * @return playground der Playground
+     * @author Ferit
+     * @since Sprint 5
+     */
     public Playground getPlayground() {
         return playground;
     }

@@ -35,7 +35,7 @@ import java.util.UUID;
  * Die Klasse LobbyService, welche eine Lobby erstellt
  *
  * @author KenoO
- * @since Sprint2
+ * @since Sprint 2
  */
 public class LobbyService extends AbstractService {
     private static final Logger LOG = LogManager.getLogger(LobbyService.class);
@@ -76,7 +76,7 @@ public class LobbyService extends AbstractService {
      * @param msg enthält die Message vom Client mit den benötigten Daten, um die Lobby zu erstellen.
      * @author Haschem, Ferit, Rike, Marvin, Paula
      * @version 0.2
-     * @since Sprint2
+     * @since Sprint 2
      */
     @Subscribe
     public void onCreateLobbyRequest(CreateLobbyRequest msg) {
@@ -103,7 +103,7 @@ public class LobbyService extends AbstractService {
      *
      * @param msg the msg
      * @author Paula, Julia, Marvin
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onLobbyJoinUserRequest(LobbyJoinUserRequest msg) {
@@ -131,7 +131,7 @@ public class LobbyService extends AbstractService {
      *
      * @param msg the msg
      * @author Julia, Paula, Darian, Marvin
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onLobbyLeaveUserRequest(LobbyLeaveUserRequest msg) {
@@ -142,9 +142,6 @@ public class LobbyService extends AbstractService {
             LOG.info("User " + msg.getUser().getUsername() + " verlässt die Lobby " + msg.getLobbyID());
             ServerMessage returnMessage;
             if (lobby.isPresent()) {
-                if (!oldOwner.getUsername().equals(lobby.get().getOwner().getUsername())) {
-                    lobbyManagement.getLobby(msg.getLobbyID()).get().setReadyStatus(lobby.get().getOwner(), false);
-                }
                 returnMessage = new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), (UserDTO) lobby.get().getOwner(), (LobbyDTO) lobby.get());
             } else {
                 returnMessage = new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), null, null);
@@ -160,7 +157,7 @@ public class LobbyService extends AbstractService {
      *
      * @param msg the msg
      * @author Paula, Julia, Marvin, Darian
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onLeaveAllLobbiesOnLogoutRequest(LeaveAllLobbiesOnLogoutRequest msg) {
@@ -185,7 +182,7 @@ public class LobbyService extends AbstractService {
      *
      * @param request den geupdateteten Status des Users
      * @author Keno Oelrichs Garcia
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onUpdateLobbyReadyStatusRequest(UpdateLobbyReadyStatusRequest request) {
@@ -206,7 +203,7 @@ public class LobbyService extends AbstractService {
      *
      * @param request das UpdateInGameRequest
      * @author Julia
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Subscribe
     public void onGameEnd(UpdateInGameRequest request) {
@@ -225,7 +222,7 @@ public class LobbyService extends AbstractService {
      *
      * @param request die RetrieveAllOnlineUsersInLobbyRequest
      * @author Marvin
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onRetrieveAllOnlineUsersInLobbyRequest(RetrieveAllOnlineUsersInLobbyRequest request) {
@@ -244,7 +241,7 @@ public class LobbyService extends AbstractService {
      *
      * @param msg the msg
      * @author Julia
-     * @since Sprint2
+     * @since Sprint 2
      */
     @Subscribe
     public void onRetrieveAllOnlineLobbiesRequest(RetrieveAllOnlineLobbiesRequest msg) {
@@ -258,7 +255,7 @@ public class LobbyService extends AbstractService {
      *
      * @param msg
      * @author Julis
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void onUpdateLobbiesRequest(UpdateLobbiesRequest msg) {
@@ -284,18 +281,22 @@ public class LobbyService extends AbstractService {
     }
 
     /**
-     * Definiert, was bei einem onSetMaxPlayerRequest passieren soll.
+     * Abarbeitung des Requests.
      *
-     * @author Timo, Rike, Marvin
+     * @author Timo, Rike, Marvin, Ferit
      * @since Sprint 3
      */
     @Subscribe
     public void onSetMaxPlayerRequest(SetMaxPlayerRequest msg) {
-        boolean setMaxPlayerSet = lobbyManagement.setMaxPlayer(msg.getLobbyID(), msg.getUser(), msg.getMaxPlayerValue());
         LobbyDTO lobby = (LobbyDTO) lobbyManagement.getLobby(msg.getLobbyID()).get();
-        ServerMessage returnMessage = new SetMaxPlayerMessage(msg.getMaxPlayerValue(), msg.getLobbyID(), setMaxPlayerSet, lobbyManagement.getLobbyOwner(msg.getLobbyID()), lobby);
-        authenticationService.sendToLoggedInPlayers(returnMessage);
-
+        if (msg.getMaxPlayerValue() >= lobbyManagement.getLobby(msg.getLobbyID()).get().getPlayers()) {
+            boolean setMaxPlayerSet = lobbyManagement.setMaxPlayer(msg.getLobbyID(), msg.getUser(), msg.getMaxPlayerValue());
+            ServerMessage returnMessage = new SetMaxPlayerMessage(msg.getMaxPlayerValue(), msg.getLobbyID(), setMaxPlayerSet, lobbyManagement.getLobbyOwner(msg.getLobbyID()), lobby);
+            authenticationService.sendToLobbyOwner(returnMessage, lobby.getOwner());
+        } else {
+            ServerMessage returnMessage2 = new SetMaxPlayerMessage(lobbyManagement.getLobby(msg.getLobbyID()).get().getMaxPlayer(), msg.getLobbyID(), false, lobbyManagement.getLobbyOwner(msg.getLobbyID()), lobby);
+            authenticationService.sendToLobbyOwner(returnMessage2, lobby.getOwner());
+        }
     }
 
     /**

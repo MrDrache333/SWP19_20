@@ -15,12 +15,11 @@ public class DiscardPileLastCardMessage extends AbstractServerMessage {
     /**
      * Konstruktor, welcher die KartenID der letzten Karte vom Ablegestapel übergibt.
      *
-     * @param gameID
-     * @param cardID
-     * @param user
+     * @param gameID die Game-ID
+     * @param cardID die Karten-ID
+     * @param user   der User
      * @author Fenja
-     * @version 1.0
-     * @since Sprint6
+     * @since Sprint 6
      */
     public DiscardPileLastCardMessage(UUID gameID, short cardID, User user) {
         this.gameID = gameID;
@@ -28,15 +27,35 @@ public class DiscardPileLastCardMessage extends AbstractServerMessage {
         this.user = user;
     }
 
-    //getter
+    /**
+     * Gibt den User zurück
+     *
+     * @return user der User
+     * @author Fenja
+     * @since Sprint 6
+     */
     public User getUser() {
         return user;
     }
 
+    /**
+     * Gibt die Game-ID zurück
+     *
+     * @return gameID die Game-ID
+     * @author Fenja
+     * @since Sprint 6
+     */
     public UUID getGameID() {
         return gameID;
     }
 
+    /**
+     * Gibt die Karten-ID zurück
+     *
+     * @return cardID die Karten-ID
+     * @author Fenja
+     * @since Sprint 6
+     */
     public short getCardID() {
         return cardID;
     }

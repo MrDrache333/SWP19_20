@@ -31,7 +31,7 @@ public class ActionCard extends Card {
      * @since Sprint 5
      */
     public ActionCard(String name, short id, short costs, ArrayList<CardAction> actions, ActionType type) {
-        super(Type.ActionCard, name, id, costs);
+        super(Type.ACTIONCARD, name, id, costs);
         this.type = Objects.requireNonNullElse(type, ActionType.Action);
         this.actions = actions;
     }

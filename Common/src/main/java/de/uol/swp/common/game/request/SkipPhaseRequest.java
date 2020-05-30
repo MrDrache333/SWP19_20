@@ -9,7 +9,7 @@ import java.util.UUID;
  * Request um die aktuelle Phase zu überspringen
  *
  * @author Julia
- * @aince Sprint5
+ * @since Sprint 5
  */
 public class SkipPhaseRequest extends AbstractRequestMessage {
 
@@ -17,15 +17,37 @@ public class SkipPhaseRequest extends AbstractRequestMessage {
     private User user;
     private UUID gameID;
 
+    /**
+     * Konstruktor der SkipPhaseRequest
+     *
+     * @param user   der User
+     * @param gameID die Game-ID
+     * @author Julia
+     * @since Sprint 5
+     */
     public SkipPhaseRequest(User user, UUID gameID) {
         this.user = user;
         this.gameID = gameID;
     }
 
+    /**
+     * Gibt den User zurück
+     *
+     * @return user der User
+     * @author Julia
+     * @since Sprint 5
+     */
     public User getUser() {
         return user;
     }
 
+    /**
+     * Gibt die Game-ID zurück
+     *
+     * @return gameID die Game-ID
+     * @author Julia
+     * @since Sprint 5
+     */
     public UUID getGameID() {
         return gameID;
     }

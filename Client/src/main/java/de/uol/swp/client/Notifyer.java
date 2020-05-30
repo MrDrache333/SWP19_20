@@ -7,7 +7,7 @@ import java.awt.*;
  * Java Implementation
  *
  * @author Keno O.
- * @since Sprint3
+ * @since Sprint 3
  */
 public class Notifyer {
 

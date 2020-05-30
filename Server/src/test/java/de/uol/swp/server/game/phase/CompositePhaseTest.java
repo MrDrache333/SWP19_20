@@ -44,6 +44,8 @@ public class CompositePhaseTest {
         chosenCards.add((short) 7);
         chosenCards.add((short) 8);
         chosenCards.add((short) 9);
+        chosenCards.add((short) 10);
+        chosenCards.add((short) 11);
 
         lobbyManagement.getLobby(gameID).get().setChosenCards(chosenCards);
         bus.post(new StartGameInternalMessage(gameID));
@@ -58,8 +60,8 @@ public class CompositePhaseTest {
         assertTrue(playground.getCompositePhase().checkIfGameIsFinished());
         playground.getCardField().replace((short) 6, 10);
         assertFalse(playground.getCompositePhase().checkIfGameIsFinished());
-        for (int i = 0; i < 3; i++) {
-            playground.getCardField().replace(playground.getCardsPackField().getCards().getActionCards().get(i).getId(), 0);
+        for (int i = 8; i < 11; i++) {
+            playground.getCardField().replace((short) i, 0);
         }
         assertTrue(playground.getCompositePhase().checkIfGameIsFinished());
     }

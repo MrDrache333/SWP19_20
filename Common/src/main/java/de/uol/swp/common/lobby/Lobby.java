@@ -11,7 +11,7 @@ import java.util.UUID;
  * Das Interface Lobby.
  *
  * @author Marco Grawunder
- * @since Sprint0
+ * @since Sprint 0
  */
 public interface Lobby {
 

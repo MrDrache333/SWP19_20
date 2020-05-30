@@ -51,7 +51,7 @@ public class LobbyService {
      * @param lobbyID die LobbyID der Lobby der beigetreten werden soll
      * @param user    der User der der Lobby beitreten will
      * @author Julia, Paula, Marvin
-     * @since Sprint3
+     * @since Sprint 3
      */
 
     public void joinLobby(UUID lobbyID, UserDTO user, Boolean isBot) {
@@ -65,7 +65,7 @@ public class LobbyService {
      * @param lobbyID die LobbyID zum Lobbynamen
      * @param user    der User der die Lobby verlassen will
      * @author Julia, Paula
-     * @since Sprint3
+     * @since Sprint 3
      */
 
     public void leaveLobby(UUID lobbyID, UserDTO user) {
@@ -77,7 +77,7 @@ public class LobbyService {
      * Erstellt ein RetrieveAllOnlineLobbiesRequest und postet diese auf den Eventbus.
      *
      * @author Julia
-     * @since Sprint2
+     * @since Sprint 2
      */
 
     public List<Lobby> retrieveAllLobbies() {
@@ -91,7 +91,7 @@ public class LobbyService {
      *
      * @param lobbyID LobbyID über die die Request gestellt wird
      * @author Marvin
-     * @since Sprint3
+     * @since Sprint 3
      */
 
     public ArrayList<LobbyUser> retrieveAllUsersInLobby(UUID lobbyID) {
@@ -113,7 +113,7 @@ public class LobbyService {
      * @param gameOwner  Der Besitzer
      * @param userToKick Der zu entfernende Benutzer
      * @author Darian, Marvin
-     * @since sprint4
+     * @since Sprint 4
      */
     public void kickUser(UUID lobbyID, UserDTO gameOwner, UserDTO userToKick) {
         RequestMessage request = new KickUserRequest(lobbyID, gameOwner, userToKick);

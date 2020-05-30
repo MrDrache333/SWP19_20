@@ -4,6 +4,8 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.ClientApp;
+import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.common.chat.ChatService;
@@ -11,6 +13,7 @@ import de.uol.swp.common.game.card.parser.JsonCardParser;
 import de.uol.swp.common.game.card.parser.components.CardPack;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.request.AddBotRequest;
+import de.uol.swp.common.lobby.request.SetMaxPlayerRequest;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.lobby.response.SetChosenCardsResponse;
 import de.uol.swp.common.user.User;
@@ -55,8 +58,6 @@ public class LobbyPresenter extends AbstractPresenter {
 
     public static final String fxml = "/fxml/LobbyViewWIP.fxml";
     private static final Logger LOG = LogManager.getLogger(ChatViewPresenter.class);
-    @FXML
-    ChoiceBox<Integer> chooseMaxPlayer;
     private ChatViewPresenter chatViewPresenter;
     private Map<String, HBox> readyUserList = new TreeMap<>();
     private UUID lobbyID;
@@ -68,6 +69,8 @@ public class LobbyPresenter extends AbstractPresenter {
     private Injector injector;
     private boolean ownReadyStatus = false;
 
+    @FXML
+    private ChoiceBox<Integer> chooseMaxPlayer;
     @FXML
     private Pane lobbyViewWIP;
     @FXML
@@ -82,8 +85,14 @@ public class LobbyPresenter extends AbstractPresenter {
     private Button createBotButton;
     @FXML
     private HBox lobbyHBox;
+    @FXML
+    private Label settingOwner;
+    @FXML
+    private Label maxSettingOwner;
 
     private ImageView bigCard;
+
+    private ImageView crownView = new ImageView("images/crown.png");
 
     private ObservableList<HBox> userHBoxes;
 
@@ -106,7 +115,7 @@ public class LobbyPresenter extends AbstractPresenter {
      * @param injector          der Injector
      * @param gameManagement    das GameManagement
      * @author Julia, Keno O, Anna, Darian, Keno S.
-     * @since Sprint2
+     * @since Sprint 2
      */
     public LobbyPresenter(User loggedInUser, String name, UUID lobbyID, ChatService chatService, ChatViewPresenter chatViewPresenter, LobbyService lobbyService, UserService userService, Injector injector, UserDTO gameOwner, GameManagement gameManagement, EventBus eventBus) {
         this.loggedInUser = loggedInUser;
@@ -134,7 +143,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param event
      * @author Julia, Keno S., Marvin
-     * @since Sprint3
+     * @since Sprint 3
      */
     @FXML
     public void onLeaveLobbyButtonPressed(ActionEvent event) {
@@ -145,11 +154,10 @@ public class LobbyPresenter extends AbstractPresenter {
      * Initialisieren des Chats - FXML laden, Controller setzen (muss immer eine eigene Instanz sein)
      * und chatView ind die chatView-Pane dieses Controllers laden.
      * Der eingeloggte User wird zur Userliste hinzugefügt und diese wird aktualisiert.
-     * chooserMaxPlayer wird auf den Default Wert (4) gesetzt.
      *
      * @throws IOException die IO-Exception
-     * @author Ferit, Keno O, Darian, Timo
-     * @since Sprint2
+     * @author Keno O, Darian, Timo, Ferit
+     * @since Sprint 2
      */
     @FXML
     public void initialize() throws IOException {
@@ -165,16 +173,21 @@ public class LobbyPresenter extends AbstractPresenter {
         readyUserList.put(loggedInUser.getUsername(), getHboxFromReadyUser(loggedInUser, false));
         updateUsersList();
 
-        chooseMaxPlayer.setValue(4);
-
-        if (gameOwner.getUsername().equals(loggedInUser.getUsername())) {
+        if (gameOwner.equals(loggedInUser)) {
             gamesettingsButton.setVisible(true);
             createBotButton.setVisible(true);
 
+            chooseMaxPlayer.setDisable(false);
+            chooseMaxPlayer.setValue(4);
         } else {
             gamesettingsButton.setVisible(false);
             createBotButton.setVisible(false);
+            chooseMaxPlayer.setDisable(true);
+            chooseMaxPlayer.setVisible(false);
+            settingOwner.setVisible(false);
+            maxSettingOwner.setVisible(false);
         }
+
     }
 /*
     /**
@@ -182,7 +195,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param actionEvent
      * @author Keno S, Keno O.
-     * @since Sprint3
+     * @since Sprint 3
 
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
@@ -196,7 +209,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param actionEvent
      * @author Darian, Keno S, Keno O.
-     * @since Sprint3
+     * @since Sprint 3
      */
     @FXML
     public void onReadyButtonPressed(ActionEvent actionEvent) {
@@ -211,6 +224,7 @@ public class LobbyPresenter extends AbstractPresenter {
         lobbyService.setLobbyUserStatus(lobbyID, loggedInUserDTO, ownReadyStatus);
     }
 
+
     /**
      * Wird aufgerufen wenn der Wert in der max. Spieler-Box geändert wird.
      *
@@ -220,7 +234,9 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     @FXML
     public void onMaxPlayerSelected(ActionEvent actionEvent) {
-        lobbyService.setMaxPlayer(this.getLobbyID(), this.loggedInUser, chooseMaxPlayer.getValue());
+        if (gameOwner.equals(loggedInUser)) {
+            lobbyService.setMaxPlayer(this.getLobbyID(), this.loggedInUser, chooseMaxPlayer.getValue());
+        }
     }
 
     /**
@@ -421,7 +437,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param message die UpdatedLobbyReadyStatusMessage
      * @author Darian, Keno O.
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onUpdatedLobbyReadyStatusMessage(UpdatedLobbyReadyStatusMessage message) {
@@ -438,7 +454,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param response die AllOnlineUsersInLobbyResponse
      * @author Keno O.
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     private void onReceiveAllUsersInLobby(AllOnlineUsersInLobbyResponse response) {
@@ -456,7 +472,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param message die UpdatedUserMessage
      * @author Julia, Anna
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void updatedUser(UpdatedUserMessage message) {
@@ -485,13 +501,11 @@ public class LobbyPresenter extends AbstractPresenter {
     @Subscribe
     public void onSetMaxPlayerMessage(SetMaxPlayerMessage msg) {
         Platform.runLater(() -> {
-            if (!chooseMaxPlayer.getValue().equals(msg.getMaxPlayer())) {
-                chooseMaxPlayer.setValue(msg.getMaxPlayer());
-            }
-            if (!msg.getOwner().equals(loggedInUser)) {
-                chooseMaxPlayer.setDisable(true);
-            } else {
+            if (msg.getOwner().equals(loggedInUser) && lobbyID == msg.getLobbyID() && msg.isSetMaxPlayerSet()) {
                 chooseMaxPlayer.setDisable(false);
+                chooseMaxPlayer.setValue(msg.getMaxPlayer());
+                LOG.info("Max. Spieler der Lobby: " + msg.getLobbyID() + " erfolgreich auf " + msg.getMaxPlayer() + " gesetzt.");
+            } else {
             }
         });
     }
@@ -501,7 +515,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param message die StartGameMessage
      * @author Darian, Keno O.
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onGameStartMessage(StartGameMessage message) {
@@ -515,7 +529,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param message die UserLoggedOutMessage
      * @author Darian
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onUserLoggedOutMessage(UserLoggedOutMessage message) {
@@ -527,7 +541,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param message die UserDroppedMessage
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void onUserDroppedMessage(UserDroppedMessage message) {
@@ -539,17 +553,14 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param message die UserJoinedLobbyMessage
      * @author Darian, Keno O., Marvin
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onUserJoinedLobbyMessage(UserJoinedLobbyMessage message) {
         if (!message.getLobbyID().equals(lobbyID)) return;
         LOG.debug("Neuer User " + message.getUser() + " loggte sich ein");
         Platform.runLater(() -> {
-            if (readyUserList != null && loggedInUser != null && !loggedInUser.toString().equals(message.getLobby().getName())) {
-                // TODO: ??? Username wird mit Lobbynamen verglichen, vor Refactoring war es:
-                // !loggedInUser.toString().equals(message.getLobbyName()) jetzt also funktionsgleich, aber immer noch nicht sinnvoll
-                // ~ Marvin
+            if (readyUserList != null && loggedInUser != null) {
                 gameOwner = message.getGameOwner();
                 readyUserList.put(message.getUser().getUsername(), getHboxFromReadyUser(message.getUser(), false));
                 updateUsersList();
@@ -563,7 +574,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param message die UserLeftLobbyMessage
      * @author Darian, Keno O, Julia
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
@@ -584,7 +595,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param message die eingehende Nachricht vom Server
      * @author Darian, Marvin
-     * @since sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void onKickUserMessage(KickUserMessage message) {
@@ -604,13 +615,13 @@ public class LobbyPresenter extends AbstractPresenter {
      * @param username Benutzername des Benutzers der gegangen ist
      * @param kicked   True wenn der Benutzer aus der Lobby gekickt wurde
      * @author Darian
-     * @since sprint4
+     * @since Sprint 4
      */
     private void userLeftLobby(String username, boolean kicked) {
         if (readyUserList.get(username) != null) {
             Platform.runLater(() -> {
                 readyUserList.remove(username);
-                readyUserList.replace(gameOwner.getUsername(), getHboxFromReadyUser(gameOwner, false));
+                readyUserList.replace(gameOwner.getUsername(), crownCheck(readyUserList.get(gameOwner.getUsername()), gameOwner));
                 updateUsersList();
                 //Je nachdem ob der Benutzer gekickt wurde oder freiwillig aus der Lobby gegangen ist wird es auch so angezeigt
                 if (kicked) {
@@ -630,7 +641,7 @@ public class LobbyPresenter extends AbstractPresenter {
      * Geänderte Userliste wird angezeigt.
      *
      * @author Darian, Keno O.
-     * @since Sprint3
+     * @since Sprint 3
      */
     private void updateUsersList() {
         Platform.runLater(() -> {
@@ -673,12 +684,30 @@ public class LobbyPresenter extends AbstractPresenter {
                 }
             });
         }
-        if (user.getUsername().equals(gameOwner.getUsername())) {
-            Image crown = new Image("images/crown.png");
-            ImageView crownView = new ImageView(crown);
+        crownCheck(box, user);
+        return box;
+    }
+
+    /**
+     * Ausgelagerte Methode aus getHboxFromReadyUser da es als Teilfunktion benötigt wird.
+     *
+     * @param box  Die HBox des Users
+     * @param user Der User
+     * @return Die HBox mit oder ohne Krone
+     * @author Marvin
+     * @since Sprint 8
+     */
+
+    private HBox crownCheck(HBox box, User user) {
+        if (!box.getChildren().contains(crownView) && user.getUsername().equals(gameOwner.getUsername())) {
             crownView.setFitHeight(15);
             crownView.setFitWidth(15);
-            box.getChildren().add(crownView);
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    box.getChildren().add(crownView);
+                }
+            });
         }
         return box;
     }
@@ -689,7 +718,7 @@ public class LobbyPresenter extends AbstractPresenter {
      * @param user   der User
      * @param status der aktuelle Bereit-Status
      * @author Darian
-     * @since Sprint3
+     * @since Sprint 3
      */
     private void updateReadyUser(User user, boolean status) {
         if (readyUserList.containsKey(user.getUsername())) {
@@ -704,7 +733,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @return alle HBoxes als ArrayList
      * @author Darian, Keno S.
-     * @since Sprint3
+     * @since Sprint 3
      */
     private ArrayList<HBox> getAllHBoxes() {
         return new ArrayList<>(readyUserList.values());
@@ -719,7 +748,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @return die LobbyID
      * @author Darian
-     * @since Sprint3
+     * @since Sprint 3
      */
     public UUID getLobbyID() {
         return lobbyID;
@@ -730,7 +759,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @return den Lobbynamen
      * @author Darian
-     * @since Sprint3
+     * @since Sprint 3
      */
     public String getLobbyName() {
         return lobbyName;
@@ -741,7 +770,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @return den LobbyService
      * @author Ferit
-     * @since Sprint3
+     * @since Sprint 3
      */
     public LobbyService getLobbyService() {
         return lobbyService;
@@ -752,7 +781,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param loggedInUser der aktuelle User
      * @author Anna
-     * @since Sprint6
+     * @since Sprint 6
      */
     public void setButtonReady(UserDTO loggedInUser) {
         if (loggedInUser.equals(this.loggedInUserDTO)) {
