@@ -275,6 +275,4 @@ public class GameService extends AbstractService {
             LOG.error("Irgendwas ist bei der onSelectCardRequest im GameService falsch gelaufen. Folgende ID: " + gameID);
         }
     }
-
-
 }

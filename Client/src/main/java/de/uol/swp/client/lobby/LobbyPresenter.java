@@ -21,7 +21,6 @@ import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
 import de.uol.swp.common.user.message.UserDroppedMessage;
-import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -531,10 +530,12 @@ public class LobbyPresenter extends AbstractPresenter {
      * @author Darian
      * @since Sprint 3
      */
-    @Subscribe
-    public void onUserLoggedOutMessage(UserLoggedOutMessage message) {
-        userLeftLobby(message.getUsername(), false);
-    }
+//    @Subscribe
+//    public void onUserLoggedOutMessage(UserLoggedOutMessage message) {
+//        userLeftLobby(message.getUsername(), false);
+//    }
+//
+//    Überflüssig, da man beim ausloggen inzwischen schon jede Lobby verlässt. (Siehe LeaveAllLobbiesOnLogoutRequest)
 
     /**
      * User wird aus der Liste entfernt, wenn er seinen Account gelöscht hat

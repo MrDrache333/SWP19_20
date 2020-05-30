@@ -416,9 +416,6 @@ public class SceneManager {
             primaryScene = new Scene(rootPane, 1400, 790);
             primaryScene.getStylesheets().add(styleSheet);
             primaryScene.getStylesheets().add(PrimaryPresenter.css);
-            primaryStage.setOnCloseRequest(event -> {
-                userService.logout(currentUser);
-            });
             eventBus.register(primaryPresenter);
             primaryScene.setOnKeyPressed(hotkeyEventHandler);
         }

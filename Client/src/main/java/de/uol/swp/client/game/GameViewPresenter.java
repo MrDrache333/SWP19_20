@@ -522,9 +522,9 @@ public class GameViewPresenter extends AbstractPresenter {
                 // entfernt die genutzen Geldkarten aus der Aktionszone (wichtig, wenn der User mehr als 1 Kauf hat)
                 Platform.runLater(() -> {
                     int money = 0;
-                    int playedCardLayoutContainerSize = myPCLC.getChildren().size();
+                    int playedCardLayoutContainerSize = myPCLC.getChildren().size() - 1;
                     ObservableList<Node> removeMoneyCardList = FXCollections.observableArrayList();
-                    for (int i = 0; i < playedCardLayoutContainerSize; i++) {
+                    for (int i = playedCardLayoutContainerSize; i >= 0; i--) {
                         Node removeCards = myPCLC.getChildren().get(i);
                         if (removeCards.getId().equals("1") || removeCards.getId().equals("2") || removeCards.getId().equals("3")) {
                             money += Integer.parseInt(removeCards.getId());
