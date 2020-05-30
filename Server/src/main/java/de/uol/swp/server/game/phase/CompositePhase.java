@@ -228,23 +228,15 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      * Überprüft, ob das Spiel in der Clearphase beendet ist
      *
      * @return false, wenn das Spiel nicht vorbei ist
-     * @author Fenja
-     * @since Sprint 6
+     * @author Fenja, Keno0
+     * @since Sprint 7
      */
     public boolean checkIfGameIsFinished() {
         if (playground.getCardField().get((short) 6) == 0) {
             return true;
         }
-        int counter = 0;
-        for (Card card : playground.getCardsPackField().getCards().getActionCards()) {
-            if (playground.getCardField().containsKey(card.getId()) && playground.getCardField().get(card.getId()) == 0) {
-                counter++;
-                if (counter >= 3) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        //Prüfen ob min. 3 Aktionskartenstapel leer sind
+        return playground.getCardsPackField().getCards().getActionCards().stream().filter(c -> playground.getCardField().containsKey(c.getId()) && playground.getCardField().get(c.getId()) == 0).count() >= 3;
     }
 
     public ActionCardExecution getExecuteAction() {
