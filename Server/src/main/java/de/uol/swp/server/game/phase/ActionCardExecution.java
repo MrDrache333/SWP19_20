@@ -351,30 +351,30 @@ public class ActionCardExecution {
      */
     private ArrayList<Card> filterCards(ComplexCardAction action, ArrayList<Card> cards) {
         Card.Type allowedType = action.getAllowedCardType();
-        if (allowedType == Card.Type.ActionCard) {
-            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.ActionCard);
-        } else if (allowedType == Card.Type.ReactionCard) {
-            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.ReactionCard);
-        } else if (allowedType == Card.Type.MoneyCard) {
-            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.MoneyCard);
-        } else if (allowedType == Card.Type.ValueCard) {
-            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.ValueCard);
-        } else if (allowedType == Card.Type.Cursecard) {
-            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.Cursecard);
+        if (allowedType == Card.Type.ACTIONCARD) {
+            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.ACTIONCARD);
+        } else if (allowedType == Card.Type.REACTIONCARD) {
+            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.REACTIONCARD);
+        } else if (allowedType == Card.Type.MONEYCARD) {
+            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.MONEYCARD);
+        } else if (allowedType == Card.Type.VALUECARD) {
+            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.VALUECARD);
+        } else if (allowedType == Card.Type.CURSECARD) {
+            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.CURSECARD);
         }
 
         if (action.getHasCost() != null) {
             cards.removeIf(c -> c == null || c.getCosts() < action.getHasCost().getMin() || c.getCosts() > action.getHasCost().getMax());
         }
         if (action.getHasWorth() != null) {
-            cards.removeIf(c -> c.getCardType() == Card.Type.ActionCard || c.getCardType() == Card.Type.ReactionCard);
+            cards.removeIf(c -> c.getCardType() == Card.Type.ACTIONCARD || c.getCardType() == Card.Type.REACTIONCARD);
             List<Card> tmp = new ArrayList<>();
             cards.forEach(card -> {
-                if (card.getCardType() == Card.Type.ValueCard) {
+                if (card.getCardType() == Card.Type.VALUECARD) {
                     if (((ValueCard) card).getValue() < action.getHasWorth().getMin() || ((ValueCard) card).getValue() > action.getHasWorth().getMax()) {
                         tmp.add(card);
                     }
-                } else if (card.getCardType() == Card.Type.MoneyCard) {
+                } else if (card.getCardType() == Card.Type.MONEYCARD) {
                     if (((MoneyCard) card).getValue() < action.getHasWorth().getMin() || ((MoneyCard) card).getValue() > action.getHasWorth().getMax()) {
                         tmp.add(card);
                     }
