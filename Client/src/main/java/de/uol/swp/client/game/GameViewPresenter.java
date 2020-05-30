@@ -1121,7 +1121,7 @@ public class GameViewPresenter extends AbstractPresenter {
             buyCardButton.setVisible(false);
             bigCardImageBox.setVisible(true);
         } else {
-            if (choosenCards.stream().noneMatch(n -> (n == card))) {
+            if (!choosenCards.contains(card)) {
                 choosenCards.add(card);
                 card.setEffect(makeImageDarker);
                 bigCardImageBox.setVisible(false);
