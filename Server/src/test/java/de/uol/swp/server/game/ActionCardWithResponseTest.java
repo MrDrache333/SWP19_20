@@ -3,9 +3,7 @@ package de.uol.swp.server.game;
 import com.google.common.eventbus.DeadEvent;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import de.uol.swp.common.game.card.Card;
 import de.uol.swp.common.game.card.MoneyCard;
-import de.uol.swp.common.game.card.parser.components.CardAction.request.ChooseCardRequest;
 import de.uol.swp.common.game.card.parser.components.CardAction.response.ChooseCardResponse;
 import de.uol.swp.common.game.card.parser.components.CardAction.response.OptionalActionResponse;
 import de.uol.swp.common.game.phase.Phase;
@@ -18,9 +16,7 @@ import de.uol.swp.server.usermanagement.AuthenticationService;
 import de.uol.swp.server.usermanagement.UserManagement;
 import de.uol.swp.server.usermanagement.store.MainMemoryBasedUserStore;
 import de.uol.swp.server.usermanagement.store.UserStore;
-import org.jetbrains.annotations.Async;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -179,7 +175,7 @@ public class ActionCardWithResponseTest {
         playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 16);
         ChooseCardResponse theResponse = new ChooseCardResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), (short) 15, false);
         bus.post(theResponse);
-        assertTrue(playground.getActualPlayer().getPlayerDeck().getDiscardPile().get(0).equals(playground.getCardsPackField().getCards().getCardById((short) 15)));
+        assertTrue(playground.getActualPlayer().getPlayerDeck().getDiscardPile().get(0).equals(playground.getCardsPackField().getCards().getCardForId((short) 15)));
     }
 
     // Ebenfalls hin und wieder Nullpointer
@@ -192,7 +188,7 @@ public class ActionCardWithResponseTest {
         playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 19);
         ChooseCardResponse theResponse = new ChooseCardResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), (short) 15, false);
         bus.post(theResponse);
-        assertTrue(playground.getActualPlayer().getPlayerDeck().getDiscardPile().contains(playground.getCardsPackField().getCards().getCardById((short) 15)));
+        assertTrue(playground.getActualPlayer().getPlayerDeck().getDiscardPile().contains(playground.getCardsPackField().getCards().getCardForId((short) 15)));
 
     }
 
