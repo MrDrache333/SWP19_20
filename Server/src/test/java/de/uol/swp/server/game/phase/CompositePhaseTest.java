@@ -44,6 +44,8 @@ public class CompositePhaseTest {
         chosenCards.add((short) 7);
         chosenCards.add((short) 8);
         chosenCards.add((short) 9);
+        chosenCards.add((short) 10);
+        chosenCards.add((short) 11);
 
         lobbyManagement.getLobby(gameID).get().setChosenCards(chosenCards);
         bus.post(new StartGameInternalMessage(gameID));
