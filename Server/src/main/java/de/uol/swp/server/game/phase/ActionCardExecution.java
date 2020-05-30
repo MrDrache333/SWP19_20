@@ -59,8 +59,6 @@ public class ActionCardExecution {
     //Ob die Aktionskarte entsorgt werden soll
     private boolean removeCardAfter;
 
-    //Wieviele Karten wurden
-
     public ActionCardExecution(short cardID, Playground playground) {
         this.waitedForPlayerInput = false;
         this.actualStateIndex = 0;
@@ -445,7 +443,7 @@ public class ActionCardExecution {
                     break;
                 case DRAW:
                     action.setCards(player.getPlayerDeck().getCardsDeck());
-                    if(action.getCards().size() < action.getCount() && action.getCount() < 254) {
+                    if (action.getCards().size() < action.getCount() && action.getCount() < 254) {
                         int missingCards = action.getCount() - action.getCards().size();
                         List<Card> discard = player.getPlayerDeck().getDiscardPile();
                         Collections.shuffle(discard);
