@@ -41,6 +41,16 @@ public interface UserService {
     void logout(User user);
 
     /**
+     * Loggt den User aus ohne mögliche Fehlermeldungen (insbesondere "Du bist gerade noch in einem Spiel",
+     * da diese, nach Schließen des Fensters, sowieso nicht mehr angezeigt werden können.)
+     *
+     * @param user Userobjekt
+     * @author Marvin
+     * @since Sprint 8
+     */
+    void hardLogout(User user);
+
+    /**
      * Legt einen neuen User an.
      *
      * @param user User, welcher angelegt werden soll
@@ -79,5 +89,4 @@ public interface UserService {
      * @since Sprint 0
      */
     List<User> retrieveAllUsers();
-
 }
