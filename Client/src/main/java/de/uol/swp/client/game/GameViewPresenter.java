@@ -676,24 +676,23 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @FXML
     @Subscribe
-    public void onDiscardCardMessage(DiscardCardMessage msg) {
-        if (msg.getGameID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
-            //TODO: Aussuchverfahren zum abwerfen von Karten implementieren
-        }
-        List<Short> playerIndexNumbers = new ArrayList<>();
-        playerIndexNumbers.add((short) 0);
-        playerIndexNumbers.add((short) 1);
-        playerIndexNumbers.add((short) 2);
-        playerIndexNumbers.add((short) 3);
-        if (msg.getGameID().equals(lobbyID) && !msg.getCurrentUser().equals(loggedInUser)) {
-            playerIndexNumbers.remove(msg.getUserPlaceNumber());
-            if (playerIndexNumbers.get(0).equals(msg.getEnemyPlaceNumber())) {
-                int numberOfCardsInHand = firstEnemyHand.getChildren().size();
-                for (Short id : msg.getCardID()) {
-                    Card card = new Card(id.toString(), 328, 447, 104);
-                    if (numberOfCardsInHand == 0) {
-                        LOG.debug("Die Hand hat keine Karten mehr zum entsorgen");
-                    }
+    public void onChooseCardRequest (ChooseCardRequest req) {
+        if (req.getGameID().equals(lobbyID) && req.getPlayer().equals(loggedInUser)) {
+            numberOfCardsToChoose = req.getCount();
+            directHand = req.getDirectHand();
+            currentInfoText = infoActualPhase.getText();
+            Button button = new Button("Auswahl abschicken");
+            skipPhaseButton.setDisable(true);
+            playAllMoneyCardsButton.setVisible(false);
+            playAllMoneyCardsButton.setDisable(true);
+            Platform.runLater(() -> {
+                button.setLayoutX(750);
+                button.setLayoutY(585);
+                button.setOnAction(sendChoosenCardResponse);
+                gameViewWIP.getChildren().add(button);
+            });
+            if (req.getSource() == AbstractPlayground.ZoneType.HAND) {
+                if (numberOfCardsToChoose != 255) {
                     Platform.runLater(() -> {
                         infoActualPhase.setText(numberOfCardsToChoose + " Karten entsorgen");
                         handcards.getChildren().forEach((n) -> {
@@ -703,41 +702,8 @@ public class GameViewPresenter extends AbstractPresenter {
                     });
                 }
             }
-            if (playerIndexNumbers.get(1).equals(msg.getEnemyPlaceNumber())) {
-                int numberOfCardsInHand = secondEnemyHand.getChildren().size();
-                for (Short id : msg.getCardID()) {
-                    Card card = new Card(id.toString(), 0, 0, 104);
-                    if (numberOfCardsInHand == 0) {
-                        LOG.debug("Die Hand hat keine Karten mehr zum entsorgen");
-                        return;
-                    }
-                    Platform.runLater(() -> {
-                        infoActualPhase.setText("Beliebig viele Karten entsorgen");
-                        handcards.getChildren().forEach((n) -> {
-                            n.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
-                            n.addEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
-                        });
-                    });
-                }
-            }
-            if (playerIndexNumbers.get(2).equals(msg.getEnemyPlaceNumber())) {
-                int numberOfCardsInHand = thirdEnemyHand.getChildren().size();
-                for (Short id : msg.getCardID()) {
-                    Card card = new Card(id.toString(), 328, 447, 104);
-                    if (numberOfCardsInHand == 0) {
-                        LOG.debug("Die Hand hat keine Karten mehr zum entsorgen");
-                        return;
-                    }
-                    Platform.runLater(() -> {
-                        thirdEnemyHand.getChildren().remove(0);
-                        // TODO: Animation Management zum entsorgen einer Karte
-                        thirdEnemyDPLC.getChildren().add(card);
-                    });
-                }
-            }
         }
     }
-
     /**
      * Wenn ein anderer Spieler sich in der ClearPhase befindet, wird das Entsorgen dessen Handkarten und ausgespielten Karten den anderen Spielern angezeigt
      *
@@ -1157,7 +1123,7 @@ public class GameViewPresenter extends AbstractPresenter {
             buyCardButton.setVisible(false);
             bigCardImageBox.setVisible(true);
         } else {
-            if (!choosenCards.contains(card)) {
+            if (choosenCards.stream().noneMatch(n -> (n == card))) {
                 choosenCardsId.add(Short.parseShort(card.getId()));
                 if(numberOfCardsToChoose != 255) {
                     numberOfCardsToChoose -= 1;
@@ -1171,9 +1137,8 @@ public class GameViewPresenter extends AbstractPresenter {
                 card.setDisable(true);
             } else {
                 choosenCards.remove(card);
-                ColorAdjust normal = new ColorAdjust();
-                normal.setBrightness(1);
-                card.setEffect(normal);
+                choosenCardsId.remove(Short.parseShort(card.getId()));
+                card.setEffect(null);
                 if(numberOfCardsToChoose != 255) {
                     numberOfCardsToChoose += 1;
                     Platform.runLater(() -> {
