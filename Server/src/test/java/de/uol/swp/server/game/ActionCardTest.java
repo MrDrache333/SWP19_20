@@ -100,7 +100,7 @@ public class ActionCardTest {
     void testHolzfäller() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(2));
+        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 9));
         playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 9);
         assertEquals(2, playground.getActualPlayer().getAvailableBuys());
         assertEquals(2, playground.getActualPlayer().getAdditionalMoney());
@@ -111,7 +111,7 @@ public class ActionCardTest {
     void testJahrmarkt() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(20));
+        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 27));
         playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 27);
         assertEquals(2, playground.getActualPlayer().getAvailableBuys());
         assertEquals(2, playground.getActualPlayer().getAvailableActions());
@@ -127,7 +127,7 @@ public class ActionCardTest {
     void testDorf() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(1));
+        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 8));
         int handSize = playground.getActualPlayer().getPlayerDeck().getHand().size();
         Card card = playground.getActualPlayer().getPlayerDeck().getCardsDeck().get(0);
         playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 8);
@@ -145,7 +145,7 @@ public class ActionCardTest {
     void testSchmiede() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(7));
+        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 14));
         int handSize = playground.getActualPlayer().getPlayerDeck().getHand().size();
         Card card1 = playground.getActualPlayer().getPlayerDeck().getCardsDeck().get(0);
         Card card2 = playground.getActualPlayer().getPlayerDeck().getCardsDeck().get(1);
@@ -162,7 +162,7 @@ public class ActionCardTest {
     void testLaboratorium() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(16));
+        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 23));
         int handSize = playground.getActualPlayer().getPlayerDeck().getHand().size();
         Card card1 = playground.getActualPlayer().getPlayerDeck().getCardsDeck().get(0);
         Card card2 = playground.getActualPlayer().getPlayerDeck().getCardsDeck().get(1);
@@ -182,7 +182,7 @@ public class ActionCardTest {
     void testMarkt() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(4));
+        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 11));
         int handSize = playground.getActualPlayer().getPlayerDeck().getHand().size();
         Card card1 = playground.getActualPlayer().getPlayerDeck().getCardsDeck().get(0);
         playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 11);

@@ -217,7 +217,7 @@ public class GameService extends AbstractService {
             Playground playground = game.get().getPlayground();
             if (request.getCurrentUser().equals(playground.getActualPlayer().getTheUserInThePlayer()) && playground.getActualPhase() == Phase.Type.Buyphase) {
                 try {
-                    Card card = playground.getCardsPackField().getCards().getCardById(request.getCardID());
+                    Card card = playground.getCardsPackField().getCards().getCardForId(request.getCardID());
                     ChatMessage infoMessage = new ChatMessage(infoUser, request.getCurrentUser().getUsername() + " kauft Karte " + (card != null ? card.getName() : "Undefiniert") + "!");
                     post(new NewChatMessageRequest(request.getLobbyID().toString(), infoMessage));
                     int count = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), request.getCardID());
@@ -261,7 +261,7 @@ public class GameService extends AbstractService {
                                 playground.getIndexOfPlayer(n), playground.getIndexOfPlayer(playground.getActualPlayer()), playground.getCompositePhase().getExecuteAction().isRemoveCardAfter());
                         sendToSpecificPlayer(n, msg);
                     });
-                    Card card = playground.getCardsPackField().getCards().getCardById(cardID);
+                    Card card = playground.getCardsPackField().getCards().getCardForId(cardID);
                     ChatMessage infoMessage = new ChatMessage(infoUser, playground.getActualPlayer().getTheUserInThePlayer().getUsername() + " spielt Karte " + (card != null ? card.getName() : "Undefiniert") + "!");
                     post(new NewChatMessageRequest(gameID.toString(), infoMessage));
                 } catch (IllegalArgumentException e) {
