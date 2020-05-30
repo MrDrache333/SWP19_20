@@ -309,7 +309,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      *
      * @param message
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void updatedUser(UpdatedUserMessage message) {
@@ -354,7 +354,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      *
      * @param username Benutzername des gekickten Spielers
      * @author Darian, Fenja, Timo
-     * @since Sprint4
+     * @since Sprint 4
      */
     public void userKicked(String username) {
         if (!chatId.equals(""))
@@ -389,7 +389,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      * @param msg die Chatnachricht
      * @return eine HBox mit Labels
      * @author KenoO
-     * @since Sprint2
+     * @since Sprint 2
      */
     private VBox chatMessagetoBox(ChatMessage msg) {
         String plainMessage = msg.getMessage();
@@ -486,7 +486,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      *
      * @param chatMessageList die Chatnachricht
      * @author KenoO
-     * @since Sprint2
+     * @since Sprint 2
      */
     private void updateChat(List<ChatMessage> chatMessageList) {
         Platform.runLater(() -> {
@@ -515,7 +515,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      *
      * @param user den User
      * @author KenoO
-     * @since Sprint2
+     * @since Sprint 2
      */
     public void setloggedInUser(User user) {
         loggedInUser = user;
@@ -530,7 +530,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      *
      * @param chatId die chat id
      * @author KenoO
-     * @since Sprint2
+     * @since Sprint 2
      */
     public void setChatId(String chatId) {
         this.chatId = chatId;

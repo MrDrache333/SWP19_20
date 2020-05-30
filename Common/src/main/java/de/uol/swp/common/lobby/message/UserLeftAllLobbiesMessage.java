@@ -16,7 +16,7 @@ public class UserLeftAllLobbiesMessage extends AbstractLobbyMessage {
      * @param user    Der User, der alle Lobbies verlassen hat
      * @param lobbies Liste aller Lobbies
      * @author Julia, Marvin
-     * @since Sprint4
+     * @since Sprint 4
      */
     public UserLeftAllLobbiesMessage(UserDTO user, List<LobbyDTO> lobbies) {
         super(null, user);
@@ -29,7 +29,7 @@ public class UserLeftAllLobbiesMessage extends AbstractLobbyMessage {
      *
      * @return Liste aller Lobbies
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     public List<LobbyDTO> getLobbies() {
         return lobbies;

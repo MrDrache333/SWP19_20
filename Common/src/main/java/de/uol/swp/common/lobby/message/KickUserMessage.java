@@ -16,7 +16,7 @@ public class KickUserMessage extends AbstractLobbyMessage {
      * @param userToKick Der User, der aus der Lobby entfernt wurde
      * @param lobby      Die Lobby
      * @author Darian, Julia, Marvin
-     * @since Sprint4
+     * @since Sprint 4
      */
     public KickUserMessage(UUID lobbyID, UserDTO userToKick, LobbyDTO lobby) {
         super(lobbyID, userToKick);
@@ -28,7 +28,7 @@ public class KickUserMessage extends AbstractLobbyMessage {
      *
      * @return Die Lobby
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     public LobbyDTO getLobby() {
         return lobby;

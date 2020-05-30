@@ -23,7 +23,7 @@ import java.util.Map;
  * Der Presenter für die Ansicht des Spielergebnisses.
  *
  * @author Anna
- * @since Sprint6
+ * @since Sprint 6
  */
 public class GameOverViewPresenter extends AbstractPresenter {
 
@@ -73,7 +73,7 @@ public class GameOverViewPresenter extends AbstractPresenter {
      * Je nachdem ob gewonnen oder verloren wurde, werden verschiedene Elemente zur GameOverView hinzugefügt.
      *
      * @author Anna
-     * @since Sprint6
+     * @since Sprint 6
      */
     @FXML
     public void initialize() {
@@ -160,7 +160,7 @@ public class GameOverViewPresenter extends AbstractPresenter {
      *
      * @param actionEvent das Ereignis der Aktion
      * @author Anna
-     * @since Sprint6
+     * @since Sprint 6
      */
     @FXML
     public void onAgainButtonPressed(ActionEvent actionEvent) {
@@ -175,7 +175,7 @@ public class GameOverViewPresenter extends AbstractPresenter {
      *
      * @param actionEvent das Ereignis der Aktion
      * @author Anna
-     * @since Sprint6
+     * @since Sprint 6
      */
     @FXML
     public void onReturnButtonPressed(ActionEvent actionEvent) {

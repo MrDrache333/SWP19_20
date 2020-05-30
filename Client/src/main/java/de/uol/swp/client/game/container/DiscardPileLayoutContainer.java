@@ -8,7 +8,7 @@ import javafx.scene.layout.StackPane;
  * Layoutcontainer für die Karten, die verworfen wurden.
  *
  * @author Devin
- * @since Sprint7
+ * @since Sprint 7
  */
 
 public class DiscardPileLayoutContainer extends StackPane {
@@ -17,7 +17,7 @@ public class DiscardPileLayoutContainer extends StackPane {
      * Instanziiert einen neuen PlayedCardLayoutContainer.
      *
      * @author Devin
-     * @since Sprint7
+     * @since Sprint 7
      */
     public DiscardPileLayoutContainer() {
     }
@@ -32,7 +32,7 @@ public class DiscardPileLayoutContainer extends StackPane {
      * @param width   Breite des Containers
      * @param id   ID des Containers
      * @author Devin
-     * @since Sprint7
+     * @since Sprint 7
      */
     public DiscardPileLayoutContainer(double layoutX, double layoutY, double height, double width, String id) {
         this.setLayoutX(layoutX);
@@ -57,7 +57,7 @@ public class DiscardPileLayoutContainer extends StackPane {
      * Ansonsten überlappen sie sich, aber immer nur so viel wie nötig.
      *
      * @author Devin
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Override
     protected void layoutChildren() {
@@ -90,7 +90,7 @@ public class DiscardPileLayoutContainer extends StackPane {
      *
      * @return Kinder
      * @author Devin
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Override
     public ObservableList<Node> getChildren() {

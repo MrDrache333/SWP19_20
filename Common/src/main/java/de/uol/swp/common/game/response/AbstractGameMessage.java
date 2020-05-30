@@ -26,7 +26,7 @@ abstract public class AbstractGameMessage extends AbstractServerMessage {
      * @param gameID Die ID des Games
      * @param player Der Spieler
      * @author Paula
-     * @since Sprint5
+     * @since Sprint 5
      */
     public AbstractGameMessage(UUID gameID, User player) {
         this.gameID = gameID;
@@ -41,7 +41,7 @@ abstract public class AbstractGameMessage extends AbstractServerMessage {
      * @param gameID Die ID des Games
      * @param player Der Spieler
      * @author Paula
-     * @since Sprint5
+     * @since Sprint 5
      */
     public AbstractGameMessage(UUID gameID, User player, short cardID) {
         this.gameID = gameID;
@@ -54,7 +54,7 @@ abstract public class AbstractGameMessage extends AbstractServerMessage {
      *
      * @return GameID
      * @author Paula
-     * @since Sprint5
+     * @since Sprint 5
      */
     public UUID getGameID() {
         return gameID;
@@ -65,7 +65,7 @@ abstract public class AbstractGameMessage extends AbstractServerMessage {
      *
      * @return CardID der ausgewählten Karte
      * @author Paula
-     * @since Sprint5
+     * @since Sprint 5
      */
     public short getCardID() {
         return cardID;
@@ -76,7 +76,7 @@ abstract public class AbstractGameMessage extends AbstractServerMessage {
      *
      * @return Spieler, der die Karte ausgewählt hat
      * @author Paula
-     * @since Sprint5
+     * @since Sprint 5
      */
     public User getPlayer() {
         return player;

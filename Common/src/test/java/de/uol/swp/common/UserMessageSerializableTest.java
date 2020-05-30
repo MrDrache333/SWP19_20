@@ -17,7 +17,7 @@ class UserMessageSerializableTest {
      *Zehn Nutzer werden der Liste hinzugefügt.
      *
      * @author Keno S.
-     * @since Sprint3
+     * @since Sprint 3
      */
     static {
         for (int i = 0; i < SIZE; i++) {
@@ -29,7 +29,7 @@ class UserMessageSerializableTest {
      * Test, ob die UserMessages Serializable sind.
      *
      * @author Keno S.
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Test
     void testUserMessagesSerializable() {
