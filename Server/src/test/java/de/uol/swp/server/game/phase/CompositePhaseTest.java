@@ -59,7 +59,7 @@ public class CompositePhaseTest {
         playground.getCardField().replace((short) 6, 10);
         assertFalse(playground.getCompositePhase().checkIfGameIsFinished());
         for (int i = 8; i < 11; i++) {
-            playground.getCardField().replace(playground.getCardsPackField().getCards().getCardForId((short) i).getId(), 0);
+            playground.getCardField().replace((short) i, 0);
         }
         assertTrue(playground.getCompositePhase().checkIfGameIsFinished());
     }
