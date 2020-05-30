@@ -450,12 +450,17 @@ public class ActionCardExecution {
                         List<Card> discard = player.getPlayerDeck().getDiscardPile();
                         Collections.shuffle(discard);
                         int i = 0;
-                        while(i < missingCards && i < discard.size()) {
-                            action.getCards().add(discard.get(i));
+                        int size = discard.size();
+                        while (i < missingCards && i < size) {
+                            Card card = discard.get(i);
+                            action.getCards().add(card);
+                            if (discard.size() != size) {
+                                discard.add(i, card);
+                            }
                             i++;
                         }
+                        player.getPlayerDeck().getCardsDeck().addAll(discard);
                         player.getPlayerDeck().getDiscardPile().clear();
-                        player.getPlayerDeck().getCardsDeck().addAll(0, discard);
                     }
                     break;
                 case DISCARD:
