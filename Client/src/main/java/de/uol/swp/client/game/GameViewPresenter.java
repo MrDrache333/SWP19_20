@@ -1134,7 +1134,6 @@ public class GameViewPresenter extends AbstractPresenter {
                 choosenCards.add(card);
                 card.setEffect(makeImageDarker);
                 bigCardImageBox.setVisible(false);
-                card.setDisable(true);
             } else {
                 choosenCards.remove(card);
                 choosenCardsId.remove(Short.parseShort(card.getId()));
@@ -1145,7 +1144,6 @@ public class GameViewPresenter extends AbstractPresenter {
                         infoActualPhase.setText(numberOfCardsToChoose + " Karten entsorgen");
                     });
                 }
-                card.setDisable(false);
             }
         }
         if(numberOfCardsToChoose == 0) {
