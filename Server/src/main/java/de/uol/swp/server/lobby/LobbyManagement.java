@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class LobbyManagement {
     static final Logger LOG = LogManager.getLogger(LobbyManagement.class);
@@ -87,6 +88,24 @@ public class LobbyManagement {
             }
         }
         return false;
+    }
+
+    /**
+     * Gibt alle aktiven Spiele eines Spielers als UUID Liste zurück
+     *
+     * @param user Der Benutzer
+     * @return Liste aller aktive Spiele des Benutzers
+     * @author Marvin
+     * @since Sprint8
+     */
+
+    public List<UUID> activeGamesOfUser(User user) {
+        List<UUID> activeGames = lobbies.entrySet().stream()
+                .filter(e -> e.getValue().getInGame())
+                .filter(e -> e.getValue().getUsers().contains(user))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+        return activeGames;
     }
 
     /**

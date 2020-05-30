@@ -79,6 +79,11 @@ public class UserService implements de.uol.swp.common.user.UserService {
         bus.post(msg);
     }
 
+    public void hardLogout(User username) {
+        LogoutRequest msg = new LogoutRequest(true);
+        bus.post(msg);
+    }
+
     /**
      * Postet RegisterUserRequest auf den Bus
      *
