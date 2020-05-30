@@ -11,6 +11,7 @@ import de.uol.swp.common.game.card.parser.components.CardAction.response.ChooseC
 import de.uol.swp.common.game.card.parser.components.CardAction.response.OptionalActionResponse;
 import de.uol.swp.common.game.card.parser.components.CardAction.types.*;
 import de.uol.swp.common.game.messages.ChooseNextActionMessage;
+import de.uol.swp.common.game.messages.MoveCardMessage;
 import de.uol.swp.common.game.messages.ShowCardMessage;
 import de.uol.swp.common.game.messages.UpdateCardCounterMessage;
 import de.uol.swp.common.user.User;
@@ -38,6 +39,7 @@ public class ActionCardExecution {
     private List<CardAction> nextActions = new ArrayList<>();
     private Card inputCard;
     private AbstractPlayground.ZoneType chooseCardSource;
+    //
 
     //Ob auf eine Auswahl oder Reaktion des Spielers gewartet werden muss
     private boolean waitedForPlayerInput;
@@ -56,6 +58,8 @@ public class ActionCardExecution {
 
     //Ob die Aktionskarte entsorgt werden soll
     private boolean removeCardAfter;
+
+    //Wieviele Karten wurden
 
     public ActionCardExecution(short cardID, Playground playground) {
         this.waitedForPlayerInput = false;
@@ -712,6 +716,9 @@ public class ActionCardExecution {
                 playground.getGameService().sendToAllPlayers(gameID, message);
                 break;
         }
+        MoveCardMessage msg = new MoveCardMessage(gameID, player.getTheUserInThePlayer(), action);
+        //TODO Evtl. Daten, die andere Spieler nicht erhalten dürfen irgendwie unkenntlich machen? (Karten anderer Spieler)
+        playground.getGameService().sendToAllPlayers(gameID, msg);
 
         return true;
     }
