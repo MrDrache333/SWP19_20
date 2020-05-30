@@ -111,14 +111,13 @@ public class ActionCardWithResponseTest {
         ArrayList<Short> kartenAbwurf = new ArrayList<>();
         int handSize = playground.getActualPlayer().getPlayerDeck().getHand().size();
         playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 10);
-
         assertEquals(2, playground.getActualPlayer().getAvailableActions());
         for (int i = 0; i < cardsToSelect; i++) {
             kartenAbwurf.add(playground.getActualPlayer().getPlayerDeck().getHand().get(i).getId());
         }
         ChooseCardResponse theResponse = new ChooseCardResponse(playground.getID(), playground.getActualPlayer().getTheUserInThePlayer(), kartenAbwurf, false);
         bus.post(theResponse);
-        assertEquals(handSize, playground.getActualPlayer().getPlayerDeck().getHand().size());
+        assertEquals(5, playground.getActualPlayer().getPlayerDeck().getHand().size());
     }
 
     /**
