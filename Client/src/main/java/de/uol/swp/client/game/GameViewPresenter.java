@@ -687,6 +687,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 button.setLayoutX(750);
                 button.setLayoutY(585);
                 button.setOnAction(sendChoosenCardResponse);
+                button.setStyle("-fx-alignment: center");
                 gameViewWIP.getChildren().add(button);
             });
             if (req.getSource() == AbstractPlayground.ZoneType.HAND) {
