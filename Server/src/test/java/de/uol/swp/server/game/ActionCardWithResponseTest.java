@@ -20,6 +20,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
@@ -50,6 +51,16 @@ public class ActionCardWithResponseTest {
         chatManagement.createChat(gameID.toString());
         lobbyManagement.getLobby(gameID).get().joinUser(secondPlayer);
         lobbyManagement.getLobby(gameID).get().joinUser(thirdPlayer);
+        ArrayList<Short> theChoosenCards = new ArrayList<>();
+        theChoosenCards.add((short) 10);
+        theChoosenCards.add((short) 11);
+        theChoosenCards.add((short) 13);
+        theChoosenCards.add((short) 15);
+        theChoosenCards.add((short) 16);
+        theChoosenCards.add((short) 19);
+        theChoosenCards.add((short) 21);
+        theChoosenCards.add((short) 22);
+        lobbyManagement.getLobby(gameID).get().setChosenCards(theChoosenCards);
         bus.post(new StartGameInternalMessage(gameID));
     }
 
@@ -105,8 +116,8 @@ public class ActionCardWithResponseTest {
         playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(2));
         int cardsToSelect = (int) (Math.random() * 4);
         ArrayList<Short> kartenAbwurf = new ArrayList<>();
-        int handSize = playground.getActualPlayer().getPlayerDeck().getHand().size();
         playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 10);
+        int handSize = playground.getActualPlayer().getPlayerDeck().getHand().size();
         assertEquals(2, playground.getActualPlayer().getAvailableActions());
         for (int i = 0; i < cardsToSelect; i++) {
             kartenAbwurf.add(playground.getActualPlayer().getPlayerDeck().getHand().get(i).getId());
@@ -126,8 +137,8 @@ public class ActionCardWithResponseTest {
         playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(4));
         int selectedCardvalue = -1;
         ArrayList<Short> kartenAbwurf = new ArrayList<>();
-        int handSize = playground.getActualPlayer().getPlayerDeck().getHand().size();
         playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 13);
+        int handSize = playground.getActualPlayer().getPlayerDeck().getHand().size();
         for (int i = 0; i < handSize; i++) {
             if (playground.getActualPlayer().getPlayerDeck().getHand().get(i) instanceof MoneyCard) {
                 kartenAbwurf.add(((MoneyCard) playground.getActualPlayer().getPlayerDeck().getHand().get(i)).getValue());
@@ -154,8 +165,6 @@ public class ActionCardWithResponseTest {
         playground.setActualPhase(Phase.Type.ActionPhase);
         playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(6));
         int cardsToSelect = (int) (Math.random() * 4);
-        ArrayList<Short> kartenAbwurf = new ArrayList<>();
-        int costs = playground.getActualPlayer().getPlayerDeck().getHand().get(cardsToSelect).getCosts();
         playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 15);
         ChooseCardResponse theResponse = new ChooseCardResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), playground.getActualPlayer().getPlayerDeck().getHand().get(cardsToSelect).getId(), false);
         bus.post(theResponse);
@@ -170,8 +179,6 @@ public class ActionCardWithResponseTest {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         playground.setActualPhase(Phase.Type.ActionPhase);
         playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(7));
-        ArrayList<Short> kartenAbwurf = new ArrayList<>();
-        int handSize = playground.getActualPlayer().getPlayerDeck().getHand().size();
         playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 16);
         ChooseCardResponse theResponse = new ChooseCardResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), (short) 15, false);
         bus.post(theResponse);
@@ -184,7 +191,6 @@ public class ActionCardWithResponseTest {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         playground.setActualPhase(Phase.Type.ActionPhase);
         playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(8));
-        ArrayList<Short> kartenAbwurf = new ArrayList<>();
         playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 19);
         ChooseCardResponse theResponse = new ChooseCardResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), (short) 15, false);
         bus.post(theResponse);
@@ -200,8 +206,6 @@ public class ActionCardWithResponseTest {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         playground.setActualPhase(Phase.Type.ActionPhase);
         playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(9));
-        int cardsToSelect = (int) (Math.random() * 4);
-        ArrayList<Short> kartenAbwurf = new ArrayList<>();
         playground.getActualPlayer().getPlayerDeck().getDiscardPile().add(playground.getCardsPackField().getCards().getActionCards().get(2));
         playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 21);
         OptionalActionResponse theResponse = new OptionalActionResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), true);
