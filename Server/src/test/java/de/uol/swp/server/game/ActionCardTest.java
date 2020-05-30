@@ -197,6 +197,4 @@ public class ActionCardTest {
             assertEquals(Phase.Type.Buyphase, playground.getActualPhase());
         }
     }
-
-
 }
