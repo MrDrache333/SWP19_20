@@ -19,6 +19,7 @@ class JsonCardParserTest {
 
         JsonCardParser parser = new JsonCardParser();
         CardPack pack = parser.loadPack("Basispack");
+        //Wenn folgendes nicht null ist, stimmt die Syntax und alle Angaben verwenden die richtigen Namen und Datentypen
         assertNotNull(pack);
 
         //Pack
@@ -33,11 +34,7 @@ class JsonCardParserTest {
         assertEquals(1, pack.getCards().getCurseCards().size());
 
         //Karten sammeln
-        ArrayList<Card> cards = new ArrayList<>();
-        cards.addAll(pack.getCards().getActionCards());
-        cards.addAll(pack.getCards().getMoneyCards());
-        cards.addAll(pack.getCards().getValueCards());
-        cards.addAll(pack.getCards().getCurseCards());
+        ArrayList<Card> cards = new ArrayList<>(pack.getCards().getAllCards());
 
         //All Cards
         for (Card card : cards) {
