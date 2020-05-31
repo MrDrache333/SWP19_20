@@ -683,6 +683,10 @@ public class GameViewPresenter extends AbstractPresenter {
     @Subscribe
     public void onChooseCardRequest (ChooseCardRequest req) {
         if (req.getGameID().equals(lobbyID) && req.getPlayer().equals(loggedInUser)) {
+            ImageView card = (ImageView) mouseEvent.getTarget();
+            if (handcards.getChildren().contains(card)) {
+                handcards.getChildren().remove(card);
+            }
             for ( Node n : handcards.getChildren()) {
                 n.setEffect(null); }
             numberOfCardsToChoose = req.getCount();
