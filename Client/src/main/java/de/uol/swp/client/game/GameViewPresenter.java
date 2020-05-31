@@ -205,7 +205,6 @@ public class GameViewPresenter extends AbstractPresenter {
             selectButton.setVisible(false);
             selectButton.setDisable(true);
             playAllMoneyCardsButton.setVisible(true);
-            playAllMoneyCardsButton.setDisable(false);
             for (ImageView card : choosenCards) {
                 choosenCardsId.add(Short.parseShort(card.getId())); }
             handcards.getChildren().forEach((n) -> {
@@ -691,13 +690,20 @@ public class GameViewPresenter extends AbstractPresenter {
             currentInfoText = infoActualPhase.getText();
             skipPhaseButton.setDisable(true);
             playAllMoneyCardsButton.setVisible(false);
-            playAllMoneyCardsButton.setDisable(true);
             selectButton.setVisible(true);
             selectButton.setDisable(false);
             if (req.getSource() == AbstractPlayground.ZoneType.HAND) {
                 if (numberOfCardsToChoose != 255) {
                     Platform.runLater(() -> {
                         infoActualPhase.setText(numberOfCardsToChoose + " Karten entsorgen");
+                        handcards.getChildren().forEach((n) -> {
+                            n.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+                            n.addEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
+                        });
+                    });
+                } else {
+                    Platform.runLater(() -> {
+                        infoActualPhase.setText("Du kannst beliebig viele Karten entsorgen");
                         handcards.getChildren().forEach((n) -> {
                             n.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                             n.addEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
@@ -1159,7 +1165,6 @@ public class GameViewPresenter extends AbstractPresenter {
             selectButton.setVisible(false);
             selectButton.setDisable(true);
             playAllMoneyCardsButton.setVisible(true);
-            playAllMoneyCardsButton.setDisable(false);
             skipPhaseButton.setDisable(false);
             choosenCardsId.clear();
             choosenCards.clear();
