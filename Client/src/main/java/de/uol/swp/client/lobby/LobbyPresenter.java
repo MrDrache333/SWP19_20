@@ -4,15 +4,12 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
-import de.uol.swp.client.ClientApp;
-import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.common.chat.ChatService;
 import de.uol.swp.common.game.card.parser.JsonCardParser;
 import de.uol.swp.common.game.card.parser.components.CardPack;
 import de.uol.swp.common.lobby.message.*;
-import de.uol.swp.common.lobby.request.SetMaxPlayerRequest;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.lobby.response.SetChosenCardsResponse;
 import de.uol.swp.common.user.User;
@@ -25,7 +22,6 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.NodeOrientation;
@@ -57,15 +53,21 @@ public class LobbyPresenter extends AbstractPresenter {
 
     public static final String fxml = "/fxml/LobbyViewWIP.fxml";
     private static final Logger LOG = LogManager.getLogger(ChatViewPresenter.class);
-    private ChatViewPresenter chatViewPresenter;
+
+    private final ChatViewPresenter chatViewPresenter;
+    private final GameManagement gameManagement;
+    private final UUID lobbyID;
+    private final String lobbyName;
+    private final CardPack cardpack;
+    private final EventBus eventBus;
+    private final Injector injector;
+
     private Map<String, HBox> readyUserList = new TreeMap<>();
-    private UUID lobbyID;
-    private String lobbyName;
+    private ObservableList<HBox> userHBoxes;
     private User loggedInUser;
     private UserDTO loggedInUserDTO;
     private UserDTO gameOwner;
-    private EventBus eventBus;
-    private Injector injector;
+    private boolean gameSettingsOpen;
     private boolean ownReadyStatus = false;
 
     @FXML
@@ -86,18 +88,10 @@ public class LobbyPresenter extends AbstractPresenter {
     private Label settingOwner;
     @FXML
     private Label maxSettingOwner;
-
+    @FXML
     private ImageView bigCard;
-
-    private ImageView crownView = new ImageView("images/crown.png");
-
-    private ObservableList<HBox> userHBoxes;
-
-    private GameManagement gameManagement;
-
-    private CardPack cardpack;
-
-    private boolean gameSettingsOpen;
+    @FXML
+    private final ImageView crownView = new ImageView("images/crown.png");
 
     /**
      * Instanziiert einen neuen LobbyPresenter.
@@ -138,12 +132,12 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Wird aufgerufen wenn der Lobby verlassen Button gedrückt wird.
      *
-     * @param event
+     * @param actionEvent Das ActionEvent
      * @author Julia, Keno S., Marvin
      * @since Sprint3
      */
     @FXML
-    public void onLeaveLobbyButtonPressed(ActionEvent event) {
+    public void onLeaveLobbyButtonPressed(ActionEvent actionEvent) {
         lobbyService.leaveLobby(lobbyID, loggedInUserDTO);
     }
 
@@ -152,7 +146,7 @@ public class LobbyPresenter extends AbstractPresenter {
      * und chatView ind die chatView-Pane dieses Controllers laden.
      * Der eingeloggte User wird zur Userliste hinzugefügt und diese wird aktualisiert.
      *
-     * @throws IOException die IO-Exception
+     * @throws IOException Die IO-Exception
      * @author Keno O, Darian, Timo, Ferit
      * @since Sprint2
      */
@@ -201,7 +195,7 @@ public class LobbyPresenter extends AbstractPresenter {
      * Wird aufgerufen wenn der Bereit-Button gedrückt wird.
      * Der Text auf dem Button und der ownReadyStatus werden dabei jeweils geändert.
      *
-     * @param actionEvent
+     * @param actionEvent Das ActionEvent
      * @author Darian, Keno S, Keno O.
      * @since Sprint3
      */
@@ -222,7 +216,7 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Wird aufgerufen wenn der Wert in der max. Spieler-Box geändert wird.
      *
-     * @param actionEvent
+     * @param actionEvent Das ActionEvent
      * @author Timo, Rike
      * @since Sprint 3
      */
@@ -236,7 +230,7 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Wird aufgerufen, wenn der Button für die Spieleinstellungen betätigt wird.
      *
-     * @param actionEvent
+     * @param actionEvent Das ActionEvent
      * @author Fenja, Anna
      * @since Sprint 7
      */
@@ -286,16 +280,13 @@ public class LobbyPresenter extends AbstractPresenter {
                 sendCards.setText("Auswahl abschicken");
                 sendCards.setPrefSize(450, 31);
                 sendCards.setVisible(false);
-                sendCards.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent e) {
-                        if (chosenCards.getChildren().size() > 0) {
-                            ArrayList<Short> chosenCardIDs = new ArrayList<>();
-                            for (Node n : chosenCards.getChildren()) {
-                                chosenCardIDs.add(Short.valueOf(n.getId()));
-                            }
-                            lobbyService.sendChosenCards(lobbyID, chosenCardIDs);
+                sendCards.setOnAction(e -> {
+                    if (chosenCards.getChildren().size() > 0) {
+                        ArrayList<Short> chosenCardIDs = new ArrayList<>();
+                        for (Node n : chosenCards.getChildren()) {
+                            chosenCardIDs.add(Short.valueOf(n.getId()));
                         }
+                        lobbyService.sendChosenCards(lobbyID, chosenCardIDs);
                     }
                 });
 
@@ -310,42 +301,40 @@ public class LobbyPresenter extends AbstractPresenter {
                 for (int i = 0; i < cardpack.getCards().getActionCards().size(); i++) {
                     short cardID = cardpack.getCards().getActionCards().get(i).getId();
                     String pfad = "file:Client/src/main/resources/cards/images/" + cardID + "_sm.png";
-                    if (pfad != null) {
-                        Image picture = new Image(pfad);
-                        ImageView card = new ImageView(picture);
-                        card.setPreserveRatio(true);
-                        card.setFitWidth(100);
-                        tilePane.getChildren().add(card);
-                        card.setOnMouseClicked(event ->
-                        {
-                            if (event.getButton() == MouseButton.PRIMARY) {
-                                if (chosenCards.getChildren().size() < 10) {
-                                    chosenCards.getChildren().remove(textFlow);
-                                    tilePane.getChildren().remove(card);
-                                    ImageView chosenCard = new ImageView(picture);
-                                    chosenCard.setPreserveRatio(true);
-                                    chosenCard.setFitWidth(80);
-                                    chosenCard.setId(String.valueOf(cardID));
-                                    chosenCards.getChildren().add(chosenCard);
-                                    sendCards.setVisible(true);
-                                    chosenCard.setOnMouseClicked(event2 -> {
-                                        if (event2.getButton() == MouseButton.PRIMARY) {
-                                            chosenCards.getChildren().remove(chosenCard);
-                                            tilePane.getChildren().add(0, card);
-                                            if (chosenCards.getChildren().size() == 0) {
-                                                chosenCards.getChildren().add(textFlow);
-                                                sendCards.setVisible(false);
-                                            }
-                                        } else {
-                                            showBigCardImage(cardID);
+                    Image picture = new Image(pfad);
+                    ImageView card = new ImageView(picture);
+                    card.setPreserveRatio(true);
+                    card.setFitWidth(100);
+                    tilePane.getChildren().add(card);
+                    card.setOnMouseClicked(event ->
+                    {
+                        if (event.getButton() == MouseButton.PRIMARY) {
+                            if (chosenCards.getChildren().size() < 10) {
+                                chosenCards.getChildren().remove(textFlow);
+                                tilePane.getChildren().remove(card);
+                                ImageView chosenCard = new ImageView(picture);
+                                chosenCard.setPreserveRatio(true);
+                                chosenCard.setFitWidth(80);
+                                chosenCard.setId(String.valueOf(cardID));
+                                chosenCards.getChildren().add(chosenCard);
+                                sendCards.setVisible(true);
+                                chosenCard.setOnMouseClicked(event2 -> {
+                                    if (event2.getButton() == MouseButton.PRIMARY) {
+                                        chosenCards.getChildren().remove(chosenCard);
+                                        tilePane.getChildren().add(0, card);
+                                        if (chosenCards.getChildren().size() == 0) {
+                                            chosenCards.getChildren().add(textFlow);
+                                            sendCards.setVisible(false);
                                         }
-                                    });
-                                }
-                            } else {
-                                showBigCardImage(cardID);
+                                    } else {
+                                        showBigCardImage(cardID);
+                                    }
+                                });
                             }
-                        });
-                    }
+                        } else {
+                            showBigCardImage(cardID);
+                        }
+                    });
                 }
 
                 ScrollPane scrollPane = new ScrollPane(tilePane);
@@ -375,7 +364,7 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Hilfsmethode, um die Karte groß anzuzeigen
      *
-     * @param cardID
+     * @param cardID Die CardID
      * @author Fenja, Anna
      * @since Sprint 7
      */
@@ -395,7 +384,7 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Ruft Methode auf, die die ausgewählten Karten sendet.
      *
-     * @param message
+     * @param message Die SetChosenCardsResponse
      * @author Fenja, Anna
      * @since Sprint 7
      */
@@ -407,9 +396,7 @@ public class LobbyPresenter extends AbstractPresenter {
                 if (t.getId().equals("gameSettingsVBox")) {
                     Platform.runLater(() -> lobbyHBox.getChildren().remove(t));
                     gameSettingsOpen = false;
-                    Platform.runLater(() -> {
-                        gamesettingsButton.setText("Spieleinstellungen");
-                    });
+                    Platform.runLater(() -> gamesettingsButton.setText("Spieleinstellungen"));
                 }
             });
         }
@@ -418,7 +405,7 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Ruft Methode auf, die den Status des Nutzers ändert, nachdem der Bereit-Status des Nutzers serverseitig geändert wurde.
      *
-     * @param message die UpdatedLobbyReadyStatusMessage
+     * @param message Die UpdatedLobbyReadyStatusMessage
      * @author Darian, Keno O.
      * @since Sprint3
      */
@@ -426,7 +413,7 @@ public class LobbyPresenter extends AbstractPresenter {
     public void onUpdatedLobbyReadyStatusMessage(UpdatedLobbyReadyStatusMessage message) {
         if (!message.getLobbyID().equals(lobbyID)) return;
         if (readyUserList.containsKey(message.getUser().getUsername())) {
-            LOG.debug("User " + message.getUser().getUsername() + " änderte seinen Status zu " + (message.isReady() ? "Bereit" : "Nicht bereit") + " in Lobby " + lobbyID);
+            LOG.debug("User " + message.getUser().getUsername() + " änderte seinen Status zu " + (message.isReady() ? "Bereit" : "Nicht bereit") + " in Lobby " + getLobbyName());
             updateReadyUser(message.getUser(), message.isReady());
         }
     }
@@ -435,7 +422,7 @@ public class LobbyPresenter extends AbstractPresenter {
      * Reaktion auf die AllOnlineUsersInLobbyResponse vom Server.
      * Die Userliste wird aktualisiert.
      *
-     * @param response die AllOnlineUsersInLobbyResponse
+     * @param response Die AllOnlineUsersInLobbyResponse
      * @author Keno O.
      * @since Sprint3
      */
@@ -443,9 +430,7 @@ public class LobbyPresenter extends AbstractPresenter {
     private void onReceiveAllUsersInLobby(AllOnlineUsersInLobbyResponse response) {
         if (response.getLobbyID().equals(lobbyID)) {
             readyUserList = new TreeMap<>();
-            response.getUsers().forEach(user -> {
-                readyUserList.put(user.getUsername(), getHboxFromReadyUser(user, response.getStatus(user)));
-            });
+            response.getUsers().forEach(user -> readyUserList.put(user.getUsername(), getHboxFromReadyUser(user, response.getStatus(user))));
             updateUsersList();
         }
     }
@@ -453,7 +438,7 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Aktualisiert den loggedInUser sowie die Userliste.
      *
-     * @param message die UpdatedUserMessage
+     * @param message Die UpdatedUserMessage
      * @author Julia, Anna
      * @since Sprint4
      */
@@ -477,7 +462,7 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Deaktivieren der Max. Spieler ChoiceBox, sofern der eingeloggte Nutzer nicht der Lobbyowner ist.
      *
-     * @param msg die SetMaxPlayerMessage
+     * @param msg Die SetMaxPlayerMessage
      * @author Timo, Rike
      * @since Sprint 3
      */
@@ -487,8 +472,9 @@ public class LobbyPresenter extends AbstractPresenter {
             if (msg.getOwner().equals(loggedInUser) && lobbyID == msg.getLobbyID() && msg.isSetMaxPlayerSet()) {
                 chooseMaxPlayer.setDisable(false);
                 chooseMaxPlayer.setValue(msg.getMaxPlayer());
-                LOG.info("Max. Spieler der Lobby: " + msg.getLobbyID() + " erfolgreich auf " + msg.getMaxPlayer() + " gesetzt.");
-            } else {
+                LOG.info("Max. Spieler der Lobby: " + msg.getLobby().getName() + " erfolgreich auf " + msg.getMaxPlayer() + " gesetzt.");
+            } else if (msg.getOwner().equals(loggedInUser) && lobbyID.equals(msg.getLobbyID()) && !msg.isSetMaxPlayerSet()){
+                LOG.error("Max. Spieler der Lobby: " + msg.getLobby().getName() + " wurde nicht auf " + msg.getMaxPlayer() + " gesetzt.");
             }
         });
     }
@@ -496,7 +482,7 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * GameView wird aufgerufen.
      *
-     * @param message die StartGameMessage
+     * @param message Die StartGameMessage
      * @author Darian, Keno O.
      * @since Sprint3
      */
@@ -510,7 +496,7 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Nachdem der Nutzer sich ausgeloggt hat, wird er auch aus der Lobbyliste gelöscht.
      *
-     * @param message die UserLoggedOutMessage
+     * @param message Die UserLoggedOutMessage
      * @author Darian
      * @since Sprint3
      */
@@ -522,7 +508,7 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * User wird aus der Liste entfernt, wenn er seinen Account gelöscht hat
      *
-     * @param message die UserDroppedMessage
+     * @param message Die UserDroppedMessage
      * @author Julia
      * @since Sprint4
      */
@@ -534,14 +520,13 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Ein neuer Nutzer tritt der Lobby bei, die Userliste der Lobby wird aktualisiert und eine Nachricht im Chat angezeigt.
      *
-     * @param message die UserJoinedLobbyMessage
+     * @param message Die UserJoinedLobbyMessage
      * @author Darian, Keno O., Marvin
      * @since Sprint3
      */
     @Subscribe
     public void onUserJoinedLobbyMessage(UserJoinedLobbyMessage message) {
         if (!message.getLobbyID().equals(lobbyID)) return;
-        LOG.debug("Neuer User " + message.getUser() + " loggte sich ein");
         Platform.runLater(() -> {
             if (readyUserList != null && loggedInUser != null) {
                 gameOwner = message.getGameOwner();
@@ -555,7 +540,7 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Ein Nutzer verlässt die Lobby, die Userliste wird aktualisiert.
      *
-     * @param message die UserLeftLobbyMessage
+     * @param message Die UserLeftLobbyMessage
      * @author Darian, Keno O, Julia
      * @since Sprint3
      */
@@ -576,7 +561,7 @@ public class LobbyPresenter extends AbstractPresenter {
      * Wenn die Nachrticht eingeht dass ein Spieler gekickt wird, wird dieser aus der UserListe enntfernt. Dies wird
      * Ebenfalls im Chat angezeigt.
      *
-     * @param message die eingehende Nachricht vom Server
+     * @param message Die eingehende Nachricht vom Server
      * @author Darian, Marvin
      * @since sprint4
      */
@@ -596,7 +581,7 @@ public class LobbyPresenter extends AbstractPresenter {
      * entfernt.
      *
      * @param username Benutzername des Benutzers der gegangen ist
-     * @param kicked   True wenn der Benutzer aus der Lobby gekickt wurde
+     * @param kicked   True, wenn der Benutzer aus der Lobby gekickt wurde
      * @author Darian
      * @since sprint4
      */
@@ -641,8 +626,8 @@ public class LobbyPresenter extends AbstractPresenter {
      * Es wird eine HBox erstellt in der man den Benutzernamen sieht und den Bereit-Status. Wenn man der Besitzer der
      * Lobby ist kann man mit einem Button daneben die Spieler aus der Lobby entfernen
      *
-     * @param user   The User
-     * @param status The actual Status
+     * @param user   Der User
+     * @param status Der aktualisierte Status
      * @return The generated HBox
      * @author Darian
      * @since Sprint 3
@@ -660,12 +645,7 @@ public class LobbyPresenter extends AbstractPresenter {
             Button button = new Button("Spieler entfernen");
             box.getChildren().add(button);
             //Wenn der Button gedrückt wird der Spieler entfernt.
-            button.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent e) {
-                    lobbyService.kickUser(lobbyID, (UserDTO) loggedInUser, (UserDTO) user);
-                }
-            });
+            button.setOnAction(e -> lobbyService.kickUser(lobbyID, (UserDTO) loggedInUser, (UserDTO) user));
         }
         crownCheck(box, user);
         return box;
@@ -685,12 +665,7 @@ public class LobbyPresenter extends AbstractPresenter {
         if (!box.getChildren().contains(crownView) && user.getUsername().equals(gameOwner.getUsername())) {
             crownView.setFitHeight(15);
             crownView.setFitWidth(15);
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    box.getChildren().add(crownView);
-                }
-            });
+            Platform.runLater(() -> box.getChildren().add(crownView));
         }
         return box;
     }
@@ -698,8 +673,8 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Nutzer wird erst aus der Userliste gelöscht und dann mit seinem neuen Status wieder hinzugefügt.
      *
-     * @param user   der User
-     * @param status der aktuelle Bereit-Status
+     * @param user   Der User
+     * @param status Der aktuelle Bereit-Status
      * @author Darian
      * @since Sprint3
      */
@@ -714,7 +689,7 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Konvertiert die HBox Map in eine ArrayList.
      *
-     * @return alle HBoxes als ArrayList
+     * @return Alle HBoxes als ArrayList
      * @author Darian, Keno S.
      * @since Sprint3
      */
@@ -729,7 +704,7 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Gibt die LobbyID zurück.
      *
-     * @return die LobbyID
+     * @return Die LobbyID
      * @author Darian
      * @since Sprint3
      */
@@ -740,7 +715,7 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Gibt den Lobbynamen zurück.
      *
-     * @return den Lobbynamen
+     * @return Den Lobbynamen
      * @author Darian
      * @since Sprint3
      */
@@ -751,7 +726,7 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Gibt den LobbyService zurück.
      *
-     * @return den LobbyService
+     * @return Den LobbyService
      * @author Ferit
      * @since Sprint3
      */
@@ -762,7 +737,7 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Ändert den Text des Buttons auf Bereit und den Status auf false.
      *
-     * @param loggedInUser der aktuelle User
+     * @param loggedInUser Der aktuelle User
      * @author Anna
      * @since Sprint6
      */

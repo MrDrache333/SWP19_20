@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import de.uol.swp.common.chat.ChatMessage;
+import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.chat.request.NewChatMessageRequest;
 import de.uol.swp.common.game.card.Card;
 import de.uol.swp.common.game.exception.GameManagementException;
@@ -73,7 +74,7 @@ public class GameService extends AbstractService {
      */
     // TODO: Wenn PlaygroundService implementiert ist, dann verschieben der Methode dorthin.
     public void sendToSpecificPlayer(Player thePlayer, ServerMessage message) {
-        Set<User> playerToUserSet = new HashSet<User>(1);
+        Set<User> playerToUserSet = new HashSet<>(1);
         playerToUserSet.add(thePlayer.getTheUserInThePlayer());
         message.setReceiver(authenticationService.getSessions(playerToUserSet));
         post(message);
@@ -156,43 +157,43 @@ public class GameService extends AbstractService {
      * Versucht die aktuelle Phase zu überspringen; falls dies fehlschlägt, wird eine Nachricht
      * mit entsprechender Fehlermeldung gesendet
      *
-     * @param msg SkipPhaseRequest
+     * @param req SkipPhaseRequest
      * @author Julia
      * @since Sprint5
      */
     @Subscribe
-    public void onSkipPhaseRequest(SkipPhaseRequest msg) {
-        Optional<Game> game = gameManagement.getGame(msg.getGameID());
+    public void onSkipPhaseRequest(SkipPhaseRequest req) {
+        Optional<Game> game = gameManagement.getGame(req.getGameID());
         if (game.isPresent()) {
             Playground playground = game.get().getPlayground();
-            if (playground.getActualPlayer().getTheUserInThePlayer().equals(msg.getUser())) {
+            if (playground.getActualPlayer().getTheUserInThePlayer().equals(req.getUser())) {
                 try {
                     playground.nextPhase();
                 } catch (GamePhaseException e) {
-                    sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(msg.getGameID(), e.getMessage()));
+                    sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(req.getGameID(), e.getMessage()));
                 }
             }
         } else {
-            LOG.error("Es existiert kein Spiel mit der ID " + msg.getGameID());
+            LOG.error("Es existiert kein Spiel mit der ID " + req.getGameID());
         }
     }
 
     /**
      * Handling, dass der User aufgegeben hat und aus dem Playground entfernt wird. Ggf später auf null gesetzt wird o.ä.
      *
-     * @param msg Request zum Aufgeben
+     * @param req Request zum Aufgeben
      * @author Haschem, Ferit
      * @since Sprint5
      */
     @Subscribe
-    void userGivesUp(GameGiveUpRequest msg) {
-        Boolean userRemovedSuccesfully = gameManagement.getGame(msg.getTheSpecificLobbyID()).get().getPlayground().playerGaveUp(msg.getTheSpecificLobbyID(), msg.getGivingUpUser(), msg.getWantsToGiveUP());
-        if (userRemovedSuccesfully) {
-            UserGaveUpMessage gaveUp = new UserGaveUpMessage(msg.getTheSpecificLobbyID(), msg.getGivingUpUser(), true);
-            sendToAllPlayers(msg.getTheSpecificLobbyID(), gaveUp);
-            ChatMessage infoMessage = new ChatMessage(infoUser, msg.getGivingUpUser().getUsername() + " gab auf!");
-            post(new NewChatMessageRequest(msg.getTheSpecificLobbyID().toString(), infoMessage));
+    void userGivesUp(GameGiveUpRequest req) {
+        Boolean userRemovedSuccessfully = gameManagement.getGame(req.getLobbyID()).get().getPlayground().playerGaveUp(req.getLobbyID(), req.getGivingUpUser(), req.getGivingUp());
+        if (userRemovedSuccessfully) {
+            UserGaveUpMessage gaveUpMsg = new UserGaveUpMessage(req.getLobbyID(), req.getGivingUpUser(), true);
+            sendToAllPlayers(req.getLobbyID(), gaveUpMsg);
+            sendToAllPlayers(req.getLobbyID(), new NewChatMessage(req.getLobbyID().toString(), new ChatMessage(infoUser, req.getGivingUpUser().getUsername() + " gab auf!")));
         } else {
+            LOG.error("User " + req.getGivingUpUser().getUsername() + "konnte nicht aufgeben");
             // TODO: Implementierung: Was passiert wenn der User nicht entfernt werden kann? Welche Fälle gibt es?
         }
     }
@@ -206,48 +207,48 @@ public class GameService extends AbstractService {
     /**
      * Versuch eine Karte zu kaufen
      *
-     * @param request BuyCardRequest wird hier vom Client empfangen
+     * @param req BuyCardRequest wird hier vom Client empfangen
      * @author Paula, Rike
      * @since Sprint6
      */
     @Subscribe
-    public void onBuyCardRequest(BuyCardRequest request) {
-        Optional<Game> game = gameManagement.getGame(request.getLobbyID());
+    public void onBuyCardRequest(BuyCardRequest req) {
+        Optional<Game> game = gameManagement.getGame(req.getLobbyID());
         if (game.isPresent()) {
             Playground playground = game.get().getPlayground();
-            if (request.getCurrentUser().equals(playground.getActualPlayer().getTheUserInThePlayer()) && playground.getActualPhase() == Phase.Type.Buyphase) {
+            if (req.getCurrentUser().equals(playground.getActualPlayer().getTheUserInThePlayer()) && playground.getActualPhase() == Phase.Type.Buyphase) {
                 try {
-                    Card card = playground.getCardsPackField().getCards().getCardById(request.getCardID());
-                    ChatMessage infoMessage = new ChatMessage(infoUser, request.getCurrentUser().getUsername() + " kauft Karte " + (card != null ? card.getName() : "Undefiniert") + "!");
-                    post(new NewChatMessageRequest(request.getLobbyID().toString(), infoMessage));
-                    int count = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), request.getCardID());
-                    Short costCard = playground.getCompositePhase().getCardFromId(playground.getCardsPackField().getCards(), request.getCardID()).getCosts();
-                    BuyCardMessage buyCard = new BuyCardMessage(request.getLobbyID(), request.getCurrentUser(), request.getCardID(), count, costCard);
-                    sendToAllPlayers(request.getLobbyID(), buyCard);
+                    Card card = playground.getCardsPackField().getCards().getCardById(req.getCardID());
+                    ChatMessage infoMessage = new ChatMessage(infoUser, req.getCurrentUser().getUsername() + " kauft Karte " + (card != null ? card.getName() : "Undefiniert") + "!");
+                    post(new NewChatMessageRequest(req.getLobbyID().toString(), infoMessage));
+                    int count = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), req.getCardID());
+                    Short costCard = playground.getCompositePhase().getCardFromId(playground.getCardsPackField().getCards(), req.getCardID()).getCosts();
+                    BuyCardMessage buyCard = new BuyCardMessage(req.getLobbyID(), req.getCurrentUser(), req.getCardID(), count, costCard);
+                    sendToAllPlayers(req.getLobbyID(), buyCard);
                 } catch (NotEnoughMoneyException notEnoughMoney) {
-                    sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(request.getLobbyID(), notEnoughMoney.getMessage()));
+                    sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(req.getLobbyID(), notEnoughMoney.getMessage()));
                 }
             } else {
                 LOG.error("Du bist nicht dran. " + playground.getActualPlayer().getPlayerName() + "ist an der Reihe.");
             }
         } else {
-            LOG.error("Es existiert kein Spiel mit der ID " + request.getCardID());
+            LOG.error("Es existiert kein Spiel mit der ID " + req.getCardID());
         }
     }
 
     /**
      * Versuch eine Karte zu spielen
      *
-     * @param rqs PlayCardRequest wird hier vom Client empfangen
+     * @param req PlayCardRequest wird hier vom Client empfangen
      * @author Devin, Rike
      * @since Sprint6
      */
     @Subscribe
-    public void onPlayCardRequest(PlayCardRequest rqs) {
-        Optional<Game> game = gameManagement.getGame(rqs.getGameID());
-        UUID gameID = rqs.getGameID();
-        User player = rqs.getCurrentUser();
-        Short cardID = rqs.getHandCardID();
+    public void onPlayCardRequest(PlayCardRequest req) {
+        Optional<Game> game = gameManagement.getGame(req.getGameID());
+        UUID gameID = req.getGameID();
+        User player = req.getCurrentUser();
+        Short cardID = req.getHandCardID();
         if (game.isPresent()) {
             Playground playground = game.get().getPlayground();
             if (playground.getActualPlayer().getTheUserInThePlayer().getUsername().equals(player.getUsername()) && playground.getActualPhase() == Phase.Type.ActionPhase) {

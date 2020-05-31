@@ -57,15 +57,15 @@ public class MainMenuPresenter extends AbstractPresenter {
     @FXML
     private TableView<Lobby> lobbiesView;
     @FXML
-    private TableColumn<Lobby, String> name = new TableColumn<>("Name");
+    private final TableColumn<Lobby, String> name = new TableColumn<>("Name");
     @FXML
-    private TableColumn<Lobby, String> host = new TableColumn<>("Host");
+    private final TableColumn<Lobby, String> host = new TableColumn<>("Host");
     @FXML
-    private TableColumn<Lobby, String> players = new TableColumn<>("Spieler");
+    private final TableColumn<Lobby, String> players = new TableColumn<>("Spieler");
     @FXML
-    private TableColumn<Lobby, Circle> inGame = new TableColumn<>("im Spiel");
+    private final TableColumn<Lobby, Circle> inGame = new TableColumn<>("im Spiel");
     @FXML
-    private TableColumn<Lobby, Void> joinLobby = new TableColumn<>();
+    private final TableColumn<Lobby, Void> joinLobby = new TableColumn<>();
     @FXML
     private Pane chatView;
     @FXML
@@ -127,7 +127,9 @@ public class MainMenuPresenter extends AbstractPresenter {
     /**
      * Request für Lobby erstellen Fenster
      *
-     * @param actionEvent
+     * @param actionEvent Das ActionEvent
+     * @author Julia
+     * @since ?
      */
     @FXML
     public void onOpenCreateLobbyView(ActionEvent actionEvent) {
@@ -212,9 +214,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     public void newLobbyCreated(CreateLobbyMessage message) {
         LOG.debug("Neue Lobby " + message.getLobbyName() + " erstellt");
         if (message.getLobbyName() != null && lobbies != null) {
-            Platform.runLater(() -> {
-                lobbies.add(0, message.getLobby());
-            });
+            Platform.runLater(() -> lobbies.add(0, message.getLobby()));
         }
     }
 
@@ -246,7 +246,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     public void userLeftLobby(UserLeftLobbyMessage message) {
         if (lobbies != null) {
             if (message.getLobby() != null) {
-                LOG.debug("User " + message.getUser().getUsername() + " verließ Lobby  " + message.getLobby().getName());
+                LOG.debug("User " + message.getUser().getUsername() + " verließ Lobby " + message.getLobby().getName());
                 Platform.runLater(() -> {
                     lobbies.removeIf(lobby -> lobby.getLobbyID().equals(message.getLobbyID()));
                     lobbies.add(0, message.getLobby());
@@ -353,8 +353,10 @@ public class MainMenuPresenter extends AbstractPresenter {
                     }
                 }
                 lobbies.remove(updatedLobby);
-                updatedLobby.setInGame(false);
-                lobbies.add(0, updatedLobby);
+                if (updatedLobby != null) {
+                    updatedLobby.setInGame(false);
+                    lobbies.add(0, updatedLobby);
+                }
                 lobbiesView.refresh();
             });
     }
