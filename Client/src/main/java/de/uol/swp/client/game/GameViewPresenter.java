@@ -164,6 +164,7 @@ public class GameViewPresenter extends AbstractPresenter {
     private final DeckLayoutContainer firstEnemyDLC;
     private final DeckLayoutContainer secondEnemyDLC;
     private final DeckLayoutContainer thirdEnemyDLC;
+    private final Button selectButton;
 
     private ObservableList<String> users;
     private final GameService gameService;
@@ -201,6 +202,8 @@ public class GameViewPresenter extends AbstractPresenter {
         @Override
         public void handle(Event event) {
             gameService.chooseCard(loggedInUser, lobbyID, choosenCardsId, directHand);
+            selectButton.setVisible(false);
+            selectButton.setDisable(true);
             playAllMoneyCardsButton.setVisible(true);
             playAllMoneyCardsButton.setDisable(false);
             for (ImageView card : choosenCards) {
@@ -210,7 +213,6 @@ public class GameViewPresenter extends AbstractPresenter {
                     n.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
             });
             Platform.runLater(() -> {
-                gameViewWIP.getChildren().remove(gameViewWIP.getChildren().size() - 1);
                 skipPhaseButton.setDisable(false);
                 choosenCardsId.clear();
                 choosenCards.clear();
@@ -265,6 +267,13 @@ public class GameViewPresenter extends AbstractPresenter {
         firstEnemyDLC = new DeckLayoutContainer(915, 0, 110, 60, "1.DLC");
         secondEnemyDLC = new DeckLayoutContainer(328, 169, 104, 60, "2.DLC");
         thirdEnemyDLC = new DeckLayoutContainer(1198, 446, 106, 60, "3.DLC");
+        selectButton = new Button("Auswahl abschicken");
+        selectButton.setLayoutX(732);
+        selectButton.setLayoutY(585);
+        selectButton.setOnAction(sendChoosenCardResponse);
+        selectButton.setStyle("-fx-alignment: center");
+        selectButton.setVisible(false);
+        selectButton.setDisable(true);
     }
 
     /**
@@ -333,6 +342,7 @@ public class GameViewPresenter extends AbstractPresenter {
         gameViewWIP.getChildren().add(firstEnemyDLC);
         gameViewWIP.getChildren().add(secondEnemyDLC);
         gameViewWIP.getChildren().add(thirdEnemyDLC);
+        gameViewWIP.getChildren().add(selectButton);
         gameViewWIP.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
                 bigCardImageBox.setVisible(false);
@@ -679,17 +689,11 @@ public class GameViewPresenter extends AbstractPresenter {
             numberOfCardsToChoose = req.getCount();
             directHand = req.getDirectHand();
             currentInfoText = infoActualPhase.getText();
-            Button button = new Button("Auswahl abschicken");
             skipPhaseButton.setDisable(true);
             playAllMoneyCardsButton.setVisible(false);
             playAllMoneyCardsButton.setDisable(true);
-            Platform.runLater(() -> {
-                button.setLayoutX(750);
-                button.setLayoutY(585);
-                button.setOnAction(sendChoosenCardResponse);
-                button.setStyle("-fx-alignment: center");
-                gameViewWIP.getChildren().add(button);
-            });
+            selectButton.setVisible(true);
+            selectButton.setDisable(false);
             if (req.getSource() == AbstractPlayground.ZoneType.HAND) {
                 if (numberOfCardsToChoose != 255) {
                     Platform.runLater(() -> {
@@ -1144,7 +1148,7 @@ public class GameViewPresenter extends AbstractPresenter {
             }
         }
         if(numberOfCardsToChoose == 0) {
-            playAllMoneyCardsButton.setDisable(false);
+
             for (ImageView card2 : choosenCards) {
                 choosenCardsId.add(Short.parseShort(card2.getId())); }
             handcards.getChildren().forEach((n) -> {
@@ -1152,6 +1156,10 @@ public class GameViewPresenter extends AbstractPresenter {
                     n.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
             });
             gameService.chooseCard(loggedInUser, gameID, choosenCardsId, directHand);
+            selectButton.setVisible(false);
+            selectButton.setDisable(true);
+            playAllMoneyCardsButton.setVisible(true);
+            playAllMoneyCardsButton.setDisable(false);
             skipPhaseButton.setDisable(false);
             choosenCardsId.clear();
             choosenCards.clear();
