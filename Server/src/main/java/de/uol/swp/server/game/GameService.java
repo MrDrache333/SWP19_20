@@ -217,13 +217,19 @@ public class GameService extends AbstractService {
             Playground playground = game.get().getPlayground();
             if (request.getCurrentUser().equals(playground.getActualPlayer().getTheUserInThePlayer()) && playground.getActualPhase() == Phase.Type.Buyphase) {
                 try {
-                    Card card = playground.getCardsPackField().getCards().getCardForId(request.getCardID());
-                    ChatMessage infoMessage = new ChatMessage(infoUser, request.getCurrentUser().getUsername() + " kauft Karte " + (card != null ? card.getName() : "Undefiniert") + "!");
-                    post(new NewChatMessageRequest(request.getLobbyID().toString(), infoMessage));
-                    int count = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), request.getCardID());
-                    Short costCard = playground.getCompositePhase().getCardFromId(playground.getCardsPackField().getCards(), request.getCardID()).getCosts();
-                    BuyCardMessage buyCard = new BuyCardMessage(request.getLobbyID(), request.getCurrentUser(), request.getCardID(), count, costCard);
-                    sendToAllPlayers(request.getLobbyID(), buyCard);
+                    Card card = playground.getCardsPackField().getCards().getCardById(request.getCardID());
+                    int moneyValuePlayer = playground.getActualPlayer().getPlayerDeck().actualMoneyFromPlayer();
+                    int additionalMoney = playground.getActualPlayer().getAdditionalMoney();
+                    if (card.getCosts()  <= moneyValuePlayer + additionalMoney) {
+                        ChatMessage infoMessage = new ChatMessage(infoUser, request.getCurrentUser().getUsername() + " kauft Karte " + (card != null ? card.getName() : "Undefiniert") + "!");
+                        post(new NewChatMessageRequest(request.getLobbyID().toString(), infoMessage));
+                        int count = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), request.getCardID());
+                        Short costCard = playground.getCompositePhase().getCardFromId(playground.getCardsPackField().getCards(), request.getCardID()).getCosts();
+                        BuyCardMessage buyCard = new BuyCardMessage(request.getLobbyID(), request.getCurrentUser(), request.getCardID(), count, costCard);
+                        sendToAllPlayers(request.getLobbyID(), buyCard);
+                    } else {
+                        sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(request.getLobbyID(), "Dafür hast du nicht genug Geld!"));
+                    }
                 } catch (NotEnoughMoneyException notEnoughMoney) {
                     sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(request.getLobbyID(), notEnoughMoney.getMessage()));
                 }
