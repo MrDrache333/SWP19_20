@@ -40,12 +40,6 @@
         "name": "Provinz",
         "value": 6,
         "cost": 8
-      },
-      {
-        "id": 30,
-        "name": "Gärten",
-        "value": 6,
-        "cost": 8
       }
     ],
     "ActionCards": [
