@@ -221,7 +221,7 @@ public class GameService extends AbstractService {
                     int moneyValuePlayer = playground.getActualPlayer().getPlayerDeck().actualMoneyFromPlayer();
                     int additionalMoney = playground.getActualPlayer().getAdditionalMoney();
                     if (card.getCosts()  <= moneyValuePlayer + additionalMoney) {
-                        ChatMessage infoMessage = new ChatMessage(infoUser, request.getCurrentUser().getUsername() + " kauft Karte " + (card != null ? card.getName() : "Undefiniert") + "!");
+                        ChatMessage infoMessage = new ChatMessage(infoUser, request.getCurrentUser().getUsername() + " kauft Karte " + card.getName() + "!");
                         post(new NewChatMessageRequest(request.getLobbyID().toString(), infoMessage));
                         int count = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), request.getCardID());
                         Short costCard = playground.getCompositePhase().getCardFromId(playground.getCardsPackField().getCards(), request.getCardID()).getCosts();
