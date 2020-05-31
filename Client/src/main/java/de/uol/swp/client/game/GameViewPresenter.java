@@ -684,9 +684,6 @@ public class GameViewPresenter extends AbstractPresenter {
     public void onChooseCardRequest (ChooseCardRequest req) {
         if (req.getGameID().equals(lobbyID) && req.getPlayer().equals(loggedInUser)) {
             ImageView card = (ImageView) mouseEvent.getTarget();
-            if (handcards.getChildren().contains(card)) {
-                handcards.getChildren().remove(card);
-            }
             for ( Node n : handcards.getChildren()) {
                 n.setEffect(null); }
             numberOfCardsToChoose = req.getCount();
@@ -709,8 +706,10 @@ public class GameViewPresenter extends AbstractPresenter {
                     Platform.runLater(() -> {
                         infoActualPhase.setText("Du kannst beliebig viele Karten entsorgen");
                         handcards.getChildren().forEach((n) -> {
-                            n.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
-                            n.addEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
+                            if (card.getId() != n.getId()) {
+                                n.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+                                n.addEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
+                            }
                         });
                     });
                 }
