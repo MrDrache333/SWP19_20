@@ -29,7 +29,7 @@ class JsonCardParserTest {
 
         //Stack
         assertEquals(3, pack.getCards().getMoneyCards().size());
-        assertEquals(4, pack.getCards().getValueCards().size());
+        assertEquals(3, pack.getCards().getValueCards().size());
         assertEquals(13, pack.getCards().getActionCards().size());
         assertEquals(1, pack.getCards().getCurseCards().size());
 
