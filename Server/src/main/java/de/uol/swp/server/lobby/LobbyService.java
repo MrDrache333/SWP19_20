@@ -139,7 +139,7 @@ public class LobbyService extends AbstractService {
     public void onLobbyLeaveUserRequest(LobbyLeaveUserRequest msg) {
         Optional<User> oldOwner = lobbyManagement.getLobbyOwner(msg.getLobbyID());
         //Falls der Besitzer der Lobby aus der Lobby geht wird dieser aktualisiert
-        if (lobbyManagement.leaveLobby(msg.getLobbyID(), msg.getUser()) && !(lobbyManagement.getLobby(msg.getLobbyID()).get().onlyBotsLeft(msg.getLobbyID()))) {
+        if (!(lobbyManagement.getLobby(msg.getLobbyID()).get().onlyBotsLeft(msg.getLobbyID())) && lobbyManagement.leaveLobby(msg.getLobbyID(), msg.getUser())) {
             Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getLobbyID());
             LOG.info("User " + msg.getUser().getUsername() + " verlässt die Lobby " + msg.getLobbyID());
             ServerMessage returnMessage;
@@ -291,7 +291,7 @@ public class LobbyService extends AbstractService {
     @Subscribe
     public void onKickUserRequest(KickUserRequest msg) {
         if (lobbyManagement.kickUser(msg.getLobbyID(), msg.getUserToKick(), msg.getUser())) {
-            LOG.info("User " + msg.getUser().getUsername() + " wurde von der Lobby mit folgender ID " + msg.getLobbyID() + " gekickt!");
+            LOG.info("User " + msg.getUserToKick().getUsername() + " wurde von der Lobby mit folgender ID " + msg.getLobbyID() + " gekickt!");
             ServerMessage returnMessage = new KickUserMessage(msg.getLobbyID(), msg.getUserToKick(), (LobbyDTO) lobbyManagement.getLobby(msg.getLobbyID()).get());
             authenticationService.sendToLoggedInPlayers(returnMessage);
         } else {

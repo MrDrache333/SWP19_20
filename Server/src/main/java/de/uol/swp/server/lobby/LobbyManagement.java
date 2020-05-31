@@ -180,7 +180,7 @@ public class LobbyManagement {
         Optional<Lobby> lobby = this.getLobby(id);
         if (lobby.isPresent() && lobby.get().getOwner().getUsername().equals(owner.getUsername())) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("User " + userToKick.getUsername() + " ist von der Lobby gekickt worden " + getLobby(id));
+                LOG.debug("User " + userToKick.getUsername() + " ist von der Lobby gekickt worden " + getLobby(id).get());
             }
             lobby.get().leaveUser(userToKick);
             if (lobby.get().getPlayers() == 0) {
