@@ -228,7 +228,7 @@ public class GameService extends AbstractService {
                         BuyCardMessage buyCard = new BuyCardMessage(request.getLobbyID(), request.getCurrentUser(), request.getCardID(), count, costCard);
                         sendToAllPlayers(request.getLobbyID(), buyCard);
                     } else {
-                        sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(request.getLobbyID(), "Dafür hast du nicht genug Geld!"));
+                        throw  new NotEnoughMoneyException("Dafür hast du nicht genug Geld! ");
                     }
                 } catch (NotEnoughMoneyException notEnoughMoney) {
                     sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(request.getLobbyID(), notEnoughMoney.getMessage()));
