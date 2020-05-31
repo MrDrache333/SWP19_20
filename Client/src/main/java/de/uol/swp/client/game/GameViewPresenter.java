@@ -201,12 +201,12 @@ public class GameViewPresenter extends AbstractPresenter {
     private final EventHandler<ActionEvent> sendChoosenCardResponse = new EventHandler() {
         @Override
         public void handle(Event event) {
-            gameService.chooseCard(loggedInUser, lobbyID, choosenCardsId, directHand);
             selectButton.setVisible(false);
             selectButton.setDisable(true);
             playAllMoneyCardsButton.setVisible(true);
             for (ImageView card : choosenCards) {
                 choosenCardsId.add(Short.parseShort(card.getId())); }
+            gameService.chooseCard(loggedInUser, lobbyID, choosenCardsId, directHand);
             handcards.getChildren().forEach((n) -> {
                     n.removeEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
                     n.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
