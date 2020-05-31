@@ -99,10 +99,7 @@ public class GameManagement {
         this.gameService = gameService;
     }
 
-    public void deleteLobbyWithOnlyBots(UUID lobbyID) {
-        lobbyManagement.dropLobby(lobbyID);
-    }
-
+    //Hilfsmethode zum Überprüfen
     public boolean lobbyIsNotPresent(UUID lobbyID) {
         if (lobbyManagement.getLobby(lobbyID).isPresent()) {
             return false;

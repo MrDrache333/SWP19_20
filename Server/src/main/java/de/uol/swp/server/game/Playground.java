@@ -186,7 +186,7 @@ public class Playground extends AbstractPlayground {
 
     public void endGame(UUID lobbyID) {
         gameService.dropFinishedGame(lobbyID);
-       // gameService.getGameManagement().deleteLobbyWithOnlyBots(lobbyID);
+        // gameService.getGameManagement().deleteLobbyWithOnlyBots(lobbyID);
     }
 
     /**
@@ -327,6 +327,7 @@ public class Playground extends AbstractPlayground {
         }
     }
 
+    //Hilfsmethode zum Überprüfen
     public Boolean onlyBotsLeft() {
         for (Player player : players) {
             if (player.isBot() == true) {

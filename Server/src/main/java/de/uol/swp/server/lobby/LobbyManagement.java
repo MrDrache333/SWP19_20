@@ -216,13 +216,13 @@ public class LobbyManagement {
      * Getter für den Lobby Besitzer.
      *
      * @param lobbyID Die ID der Lobby, von der der Besitzer zurückgegeben werden soll.
-     * @author Timo, Rike, Marvin
+     * @author Timo, Rike, Marvin, Ferit, Fenja
      * @since Sprint 3
      */
     public Optional<User> getLobbyOwner(UUID lobbyID) {
         if (lobbies.containsKey(lobbyID)) {
-            Optional<User> abc = Optional.ofNullable(lobbies.get(lobbyID).getOwner());
-            return abc;
+            Optional<User> optionalLobby = Optional.ofNullable(lobbies.get(lobbyID).getOwner());
+            return optionalLobby;
         }
         return null;
     }

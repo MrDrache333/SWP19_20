@@ -112,9 +112,6 @@ public class LobbyService extends AbstractService {
         if (lobby.isPresent() && !lobby.get().getUsers().contains(msg.getUser()) && lobby.get().getPlayers() < lobby.get().getMaxPlayer() && !lobby.get().getInGame()) {
             LOG.info("User " + msg.getUser().getUsername() + " is joining lobby " + lobby.get().getName());
             LobbyUser theLobbyUser = new LobbyUser(msg.getUser());
-            /*if (msg.getBot().equals(true)) {
-                theLobbyUser.setBot(true);
-            } */
             lobby.get().joinUser(theLobbyUser);
             ServerMessage returnMessage = new UserJoinedLobbyMessage(msg.getLobbyID(), msg.getUser(), (UserDTO) lobby.get().getOwner(), (LobbyDTO) lobby.get());
             authenticationService.sendToLoggedInPlayers(returnMessage);
@@ -229,6 +226,7 @@ public class LobbyService extends AbstractService {
             LOG.debug("Lobby nicht gefunden! ID: " + request.getLobbyID());
     }
 
+    //Hilfsmethode zum Überprüfen
     public Boolean onlyBotsLeft(UUID lobbyID) {
         for (User user : lobbyManagement.getLobby(lobbyID).get().getUsers()) {
             if (user.getIsBot() == false) {

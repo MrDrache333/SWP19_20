@@ -43,6 +43,12 @@ public interface Lobby {
      */
     void joinUser(User user);
 
+    /**
+     * Prüft ob nur noch Bots in der Lobby sind
+     *
+     * @param lobbyID die Lobby ID
+     * @return s.o
+     */
     boolean onlyBotsLeft(UUID lobbyID);
 
     /**
