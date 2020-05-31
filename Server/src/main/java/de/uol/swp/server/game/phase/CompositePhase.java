@@ -239,4 +239,8 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
     public ActionCardExecution getExecuteAction() {
         return executeAction;
     }
+
+    public List<Short> getImplementedActionCards() {
+        return implementedActionCards;
+    }
 }

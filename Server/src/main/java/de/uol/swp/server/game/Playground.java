@@ -113,7 +113,7 @@ public class Playground extends AbstractPlayground {
         }
         while (chosenCards.size() < 10) {
             short random = (short) (Math.random() * 31);
-            if (!chosenCards.contains(random) && random > 6) {
+            if (!chosenCards.contains(random) && compositePhase.getImplementedActionCards().contains(random)) {
                 chosenCards.add(random);
             }
         }

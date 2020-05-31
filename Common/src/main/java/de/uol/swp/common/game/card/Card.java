@@ -2,11 +2,15 @@ package de.uol.swp.common.game.card;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
  * Die Spielkarte
  */
-public abstract class Card {
+public abstract class Card implements Serializable {
 
+
+    private static final long serialVersionUID = 2834856315139042613L;
     /**
      * The Name.
      */
