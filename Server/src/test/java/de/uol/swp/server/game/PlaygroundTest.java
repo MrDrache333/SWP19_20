@@ -34,8 +34,6 @@ public class PlaygroundTest {
     static final User defaultOwner = new UserDTO("test1", "test1", "test1@test.de");
     static final User secondPlayer = new UserDTO("test2", "test2", "test2@test2.de");
     static final User thirdPlayer = new UserDTO("test3", "test3", "test3@test3.de");
-    static final String lobbyName = "DrawHandMessageLobyTest";
-    static final String lobbyPassword = "";
     static final ChatManagement chatManagement = new ChatManagement();
     static final LobbyManagement lobbyManagement = new LobbyManagement();
     static final GameManagement gameManagement = new GameManagement(chatManagement, lobbyManagement);

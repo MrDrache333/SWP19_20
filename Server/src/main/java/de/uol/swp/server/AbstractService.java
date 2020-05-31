@@ -5,7 +5,6 @@ import de.uol.swp.common.message.Message;
 
 public class AbstractService {
 
-
     private final EventBus bus;
 
     public AbstractService(EventBus bus) {

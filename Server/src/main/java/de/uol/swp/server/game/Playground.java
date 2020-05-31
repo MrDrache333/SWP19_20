@@ -31,7 +31,7 @@ import java.util.*;
 public class Playground extends AbstractPlayground {
 
     private static final Logger LOG = LogManager.getLogger(Playground.class);
-    private static Map<Short, Integer> cardField = new TreeMap<>();
+    private Map<Short, Integer> cardField = new TreeMap<>();
     /**
      * Die Spieler
      */
@@ -49,6 +49,7 @@ public class Playground extends AbstractPlayground {
     private short lobbySizeOnStart;
     private CardPack cardsPackField;
     private ArrayList<Short> chosenCards;
+    private ArrayList<Card> trash = new ArrayList<>();
     private final UserDTO infoUser = new UserDTO("infoUser", "", "");
 
     /**
@@ -87,9 +88,22 @@ public class Playground extends AbstractPlayground {
                 cardField.put(card.getId(), 8);
             } else cardField.put(card.getId(), 12);
         }
-        while (chosenCards.size() <= 10) {
+        // ChosenCard BasicCards
+        if (chosenCards.isEmpty()) {
+            chosenCards.add((short) 8);
+            chosenCards.add((short) 9);
+            chosenCards.add((short) 10);
+            chosenCards.add((short) 11);
+            chosenCards.add((short) 13);
+            chosenCards.add((short) 14);
+            chosenCards.add((short) 15);
+            chosenCards.add((short) 16);
+            chosenCards.add((short) 19);
+            chosenCards.add((short) 21);
+        }
+        while (chosenCards.size() < 10) {
             short random = (short) (Math.random() * 31);
-            if (!chosenCards.contains(random) && random > 6) {
+            if (!chosenCards.contains(random) && compositePhase.getImplementedActionCards().contains(random)) {
                 chosenCards.add(random);
             }
         }
@@ -297,7 +311,7 @@ public class Playground extends AbstractPlayground {
      *
      * @param gameID die Game-ID
      * @param cardID die Karten-ID
-     * @param user der User
+     * @param user   der User
      * @author Fenja
      * @since Sprint 6
      */
@@ -478,5 +492,9 @@ public class Playground extends AbstractPlayground {
 
     public GameService getGameService() {
         return gameService;
+    }
+
+    public ArrayList<Card> getTrash() {
+        return trash;
     }
 }

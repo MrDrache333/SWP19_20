@@ -16,6 +16,7 @@ public class PlayCardMessage extends AbstractServerMessage {
     private final Boolean isPlayed;
     private Short userPlaceNumber = null;
     private Short enemyPlaceNumber = null;
+    private boolean removeCardAfter;
 
     /**
      * Die Message die gesendet wird, wenn eine Handkarte angeklickt wurde
@@ -47,14 +48,14 @@ public class PlayCardMessage extends AbstractServerMessage {
      * @author Rike, Devin
      * @since Sprint 5
      */
-    public PlayCardMessage(UUID gameID, User currentUser, Short handCardID, Boolean isPlayed, Short userPlaceNumber, Short enemyPlaceNumber) {
+    public PlayCardMessage(UUID gameID, User currentUser, Short handCardID, Boolean isPlayed, Short userPlaceNumber, Short enemyPlaceNumber, boolean removeCardAfter) {
         this.gameID = gameID;
         this.currentUser = currentUser;
         this.handCardID = handCardID;
         this.isPlayed = isPlayed;
         this.userPlaceNumber = userPlaceNumber;
         this.enemyPlaceNumber = enemyPlaceNumber;
-
+        this.removeCardAfter = removeCardAfter;
     }
 
     /**
@@ -121,5 +122,9 @@ public class PlayCardMessage extends AbstractServerMessage {
      */
     public Short getUserPlaceNumber() {
         return userPlaceNumber;
+    }
+
+    public boolean isRemoveCardAfter() {
+        return removeCardAfter;
     }
 }

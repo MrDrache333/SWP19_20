@@ -38,7 +38,7 @@ public class PlayedCardLayoutContainer extends Region {
         this.setPrefHeight(height);
         this.setPrefWidth(width);
         this.setId(id);
-        if (this.getId().equals("1.PCLC")) {
+        /* if (this.getId().equals("1.PCLC")) {
             this.setRotate(180);
         } else {
             if (this.getId().equals("2.PCLC")) {
@@ -46,7 +46,7 @@ public class PlayedCardLayoutContainer extends Region {
             } else if (this.getId().equals("3.PCLC")) {
                 this.setRotate(270);
             }
-        }
+    }*/
     }
 
     /**

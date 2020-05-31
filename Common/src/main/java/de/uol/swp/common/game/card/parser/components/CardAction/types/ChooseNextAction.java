@@ -30,12 +30,6 @@ public class ChooseNextAction extends SimpleCardAction {
         this.nextActions = nextActions;
     }
 
-    @Override
-    public boolean execute() {
-        //TODO
-        return false;
-    }
-
     /**
      * Gibt die ausgwwählte Aktion zurück
      *
@@ -45,5 +39,28 @@ public class ChooseNextAction extends SimpleCardAction {
      */
     public CardAction getChoosenAction() {
         return choosenAction;
+    }
+
+    public ArrayList<CardAction> getNextActions() {
+        return nextActions;
+    }
+
+
+    /**
+     * Sets new Die ausgewählte Aktion.
+     *
+     * @param choosenAction New value of Die ausgewählte Aktion.
+     */
+    public void setChoosenAction(CardAction choosenAction) {
+        this.choosenAction = choosenAction;
+    }
+
+    /**
+     * Sets new Die auswählbaren Aktionen.
+     *
+     * @param nextActions New value of Die auswählbaren Aktionen.
+     */
+    public void setNextActions(ArrayList<CardAction> nextActions) {
+        this.nextActions = nextActions;
     }
 }

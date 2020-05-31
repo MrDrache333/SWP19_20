@@ -19,9 +19,10 @@ public class Deck {
      * @author Paula
      * @since Sprint 5
      */
-    private final ArrayList<Card> cardsDeck = new ArrayList<>();
-    private final ArrayList<Card> discardPile = new ArrayList<>();
-    private final ArrayList<Card> hand = new ArrayList<>();
+    private ArrayList<Card> cardsDeck = new ArrayList<>();
+    private ArrayList<Card> discardPile = new ArrayList<>();
+    private ArrayList<Card> hand = new ArrayList<>();
+    private ArrayList<Card> temp = new ArrayList<>();
     private final ArrayList<Card> actionPile = new ArrayList<>();
 
     /**
@@ -112,6 +113,18 @@ public class Deck {
     }
 
     /**
+     * Hilfsmethode um eine Karte zum Ablagestapel hinzuzufügen
+     *
+     * @param card
+     * @author Paula
+     * @since Sprint 6
+     */
+    public void addCardToDiscardPile(Card card) {
+        discardPile.add(card);
+
+    }
+
+    /**
      * Methode, die den Geldwert eines Spielers berechnet und zurückgibt
      *
      * @return Geldwert der Karten eines Spielers
@@ -178,6 +191,10 @@ public class Deck {
 
     public ArrayList<Card> getCardsDeck() {
         return cardsDeck;
+    }
+
+    public ArrayList<Card> getTemp() {
+        return temp;
     }
 
     public ArrayList<Card> getActionPile() {

@@ -217,10 +217,10 @@ public class GameService extends AbstractService {
             Playground playground = game.get().getPlayground();
             if (request.getCurrentUser().equals(playground.getActualPlayer().getTheUserInThePlayer()) && playground.getActualPhase() == Phase.Type.Buyphase) {
                 try {
-                    Card card = playground.getCardsPackField().getCards().getCardById(request.getCardID());
+                    Card card = playground.getCardsPackField().getCards().getCardForId(request.getCardID());
                     int moneyValuePlayer = playground.getActualPlayer().getPlayerDeck().actualMoneyFromPlayer();
                     int additionalMoney = playground.getActualPlayer().getAdditionalMoney();
-                    if (card.getCosts()  <= moneyValuePlayer + additionalMoney) {
+                    if (card.getCosts() <= moneyValuePlayer + additionalMoney) {
                         ChatMessage infoMessage = new ChatMessage(infoUser, request.getCurrentUser().getUsername() + " kauft Karte " + card.getName() + "!");
                         post(new NewChatMessageRequest(request.getLobbyID().toString(), infoMessage));
                         int count = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), request.getCardID());
@@ -228,7 +228,7 @@ public class GameService extends AbstractService {
                         BuyCardMessage buyCard = new BuyCardMessage(request.getLobbyID(), request.getCurrentUser(), request.getCardID(), count, costCard);
                         sendToAllPlayers(request.getLobbyID(), buyCard);
                     } else {
-                        throw  new NotEnoughMoneyException("Dafür hast du nicht genug Geld! ");
+                        throw new NotEnoughMoneyException("Dafür hast du nicht genug Geld! ");
                     }
                 } catch (NotEnoughMoneyException notEnoughMoney) {
                     sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(request.getLobbyID(), notEnoughMoney.getMessage()));
@@ -264,10 +264,10 @@ public class GameService extends AbstractService {
                     //sendToSpecificPlayer(playground.getActualPlayer(), new PlayCardMessage(gameID, player, cardID, true));
                     playground.getPlayers().forEach(n -> {
                         PlayCardMessage msg = new PlayCardMessage(gameID, playground.getActualPlayer().getTheUserInThePlayer(), cardID, true,
-                                playground.getIndexOfPlayer(n), playground.getIndexOfPlayer(playground.getActualPlayer()));
+                                playground.getIndexOfPlayer(n), playground.getIndexOfPlayer(playground.getActualPlayer()), playground.getCompositePhase().getExecuteAction().isRemoveCardAfter());
                         sendToSpecificPlayer(n, msg);
                     });
-                    Card card = playground.getCardsPackField().getCards().getCardById(cardID);
+                    Card card = playground.getCardsPackField().getCards().getCardForId(cardID);
                     ChatMessage infoMessage = new ChatMessage(infoUser, playground.getActualPlayer().getTheUserInThePlayer().getUsername() + " spielt Karte " + (card != null ? card.getName() : "Undefiniert") + "!");
                     post(new NewChatMessageRequest(gameID.toString(), infoMessage));
                 } catch (IllegalArgumentException e) {

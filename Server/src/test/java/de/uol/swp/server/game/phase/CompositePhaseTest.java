@@ -21,19 +21,21 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CompositePhaseTest {
-    static final User defaultOwner = new UserDTO("test1", "test1", "test1@test.de");
-    static final User secondPlayer = new UserDTO("test2", "test2", "test2@test2.de");
-    static final User thirdPlayer = new UserDTO("test3", "test3", "test3@test3.de");
-    static final EventBus bus = new EventBus();
-    static final ChatManagement chatManagement = new ChatManagement();
-    static final LobbyManagement lobbyManagement = new LobbyManagement();
-    static final GameManagement gameManagement = new GameManagement(chatManagement, lobbyManagement);
-    static final AuthenticationService authenticationService = new AuthenticationService(bus, new UserManagement(new MainMemoryBasedUserStore()), lobbyManagement);
-    static final GameService gameService = new GameService(bus, gameManagement, authenticationService);
-    private static ArrayList<Short> chosenCards = new ArrayList<Short>();
+@SuppressWarnings({"OptionalGetWithoutIsPresent", "UnstableApiUsage"})
+class CompositePhaseTest {
+    private static final User defaultOwner = new UserDTO("test1", "test1", "test1@test.de");
+    private static final User secondPlayer = new UserDTO("test2", "test2", "test2@test2.de");
+    private static final User thirdPlayer = new UserDTO("test3", "test3", "test3@test3.de");
+    private static final EventBus bus = new EventBus();
+    private static final ChatManagement chatManagement = new ChatManagement();
+    private static final LobbyManagement lobbyManagement = new LobbyManagement();
+    private static final GameManagement gameManagement = new GameManagement(chatManagement, lobbyManagement);
+    private static final AuthenticationService authenticationService = new AuthenticationService(bus, new UserManagement(new MainMemoryBasedUserStore()), lobbyManagement);
+    @SuppressWarnings("unused")
+    private static final GameService gameService = new GameService(bus, gameManagement, authenticationService);
+    private static ArrayList<Short> chosenCards = new ArrayList<>();
 
-    static UUID gameID;
+    private static UUID gameID;
 
     @BeforeAll
     static void init() {
@@ -44,6 +46,8 @@ public class CompositePhaseTest {
         chosenCards.add((short) 7);
         chosenCards.add((short) 8);
         chosenCards.add((short) 9);
+        chosenCards.add((short) 10);
+        chosenCards.add((short) 11);
 
         lobbyManagement.getLobby(gameID).get().setChosenCards(chosenCards);
         bus.post(new StartGameInternalMessage(gameID));
@@ -58,8 +62,8 @@ public class CompositePhaseTest {
         assertTrue(playground.getCompositePhase().checkIfGameIsFinished());
         playground.getCardField().replace((short) 6, 10);
         assertFalse(playground.getCompositePhase().checkIfGameIsFinished());
-        for (int i = 0; i < 3; i++) {
-            playground.getCardField().replace(playground.getCardsPackField().getCards().getActionCards().get(i).getId(), 0);
+        for (int i = 8; i < 11; i++) {
+            playground.getCardField().replace((short) i, 0);
         }
         assertTrue(playground.getCompositePhase().checkIfGameIsFinished());
     }
