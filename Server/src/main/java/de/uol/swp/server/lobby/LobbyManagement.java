@@ -120,7 +120,7 @@ public class LobbyManagement {
         Optional<Lobby> lobby = this.getLobby(id);
         if (lobby.isPresent()) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("User " + user.getUsername() + " verlässt die Lobby " + getLobby(id));
+                LOG.debug("User " + user.getUsername() + " verlässt die Lobby " + getLobby(id).get());
             }
             lobby.get().leaveUser(user);
             if (lobby.get().getPlayers() == 0) {
@@ -219,8 +219,12 @@ public class LobbyManagement {
      * @author Timo, Rike, Marvin
      * @since Sprint 3
      */
-    public User getLobbyOwner(UUID lobbyID) {
-        return lobbies.get(lobbyID).getOwner();
+    public Optional<User> getLobbyOwner(UUID lobbyID) {
+        if (lobbies.containsKey(lobbyID)) {
+            Optional<User> abc = Optional.ofNullable(lobbies.get(lobbyID).getOwner());
+            return abc;
+        }
+        return null;
     }
 
     /**

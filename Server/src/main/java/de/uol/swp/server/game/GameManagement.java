@@ -9,10 +9,7 @@ import de.uol.swp.server.lobby.LobbyManagement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Das Gamemanagement verwaltet die laufenden Spiele
@@ -100,5 +97,21 @@ public class GameManagement {
 
     public void setGameService(GameService gameService) {
         this.gameService = gameService;
+    }
+
+    public void deleteLobbyWithOnlyBots(UUID lobbyID) {
+        lobbyManagement.dropLobby(lobbyID);
+    }
+
+    public boolean lobbyIsNotPresent(UUID lobbyID) {
+        if (lobbyManagement.getLobby(lobbyID).isPresent()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public Collection<Lobby> getAllLobies() {
+        return lobbyManagement.getLobbies();
     }
 }

@@ -43,6 +43,8 @@ public interface Lobby {
      */
     void joinUser(User user);
 
+    boolean onlyBotsLeft(UUID lobbyID);
+
     /**
      * Entfernt einen Nutzer aus der Lobby.
      *

@@ -703,17 +703,6 @@ public class GameViewPresenter extends AbstractPresenter {
      * @since Sprint 7
      */
 
-    @Subscribe
-    public void onStartClearPhaseMessage2(StartClearPhaseMessage msg) {
-        onStartPhase(msg.getGameID(), msg.getCurrentUser(), msg);
-        if (msg.getGameID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
-            Platform.runLater(() -> {
-                moveCardsToDiscardPile(handcards.getChildren(), false);
-                moveCardsToDiscardPile(myPCLC.getChildren(), true);
-            });
-        }
-    }
-
     @FXML
     @Subscribe
     public void onStartClearPhaseMessage(StartClearPhaseMessage msg) {
@@ -775,6 +764,22 @@ public class GameViewPresenter extends AbstractPresenter {
         th.setDaemon(true);
         th.start();
 
+    }
+
+    /**
+     * Kümmert sich nur um die eigene Animation (von der Hand zum Discard Pile)
+     *
+     * @param msg
+     */
+    @Subscribe
+    public void onStartClearPhaseMessageOwnHand(StartClearPhaseMessage msg) {
+        onStartPhase(msg.getGameID(), msg.getCurrentUser(), msg);
+        if (msg.getGameID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
+            Platform.runLater(() -> {
+                moveCardsToDiscardPile(handcards.getChildren(), false);
+                moveCardsToDiscardPile(myPCLC.getChildren(), true);
+            });
+        }
     }
 
     /**

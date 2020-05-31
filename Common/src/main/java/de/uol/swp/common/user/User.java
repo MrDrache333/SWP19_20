@@ -33,4 +33,6 @@ public interface User extends Serializable, Comparable<User> {
      * @return Der Benutzer ohne sein Passwort
      */
     User getWithoutPassword();
+
+    boolean getIsBot();
 }

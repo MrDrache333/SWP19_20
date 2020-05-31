@@ -6,6 +6,7 @@ import de.uol.swp.common.game.messages.StartActionPhaseMessage;
 import de.uol.swp.common.game.messages.StartBuyPhaseMessage;
 import de.uol.swp.common.game.request.SkipPhaseRequest;
 import de.uol.swp.common.user.User;
+import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.game.player.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,34 +29,8 @@ public class BotPlayer extends Player {
         this.eventBus = bus;
         eventBus.register(this);
         this.gameId = gameID;
-        User botFakeUser = new User() {
-            @Override
-            public String getUsername() {
-                return playerName;
-            }
-
-            @Override
-            public String getPassword() {
-                return gameID.toString();
-            }
-
-            @Override
-            public String getEMail() {
-                return "";
-            }
-
-            @Override
-            public User getWithoutPassword() {
-                return null;
-            }
-
-            @Override
-            public int compareTo(@NotNull User o) {
-                return 0;
-            }
-        };
+        User botFakeUser = new UserDTO(playerName, gameID.toString(), "", true);
         this.setTheUserInThePlayer(botFakeUser);
-
     }
 
     public boolean isBot() {
