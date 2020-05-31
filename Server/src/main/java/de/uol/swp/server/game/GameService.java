@@ -36,7 +36,6 @@ import java.util.*;
 public class GameService extends AbstractService {
 
     private static final Logger LOG = LogManager.getLogger(GameService.class);
-
     private final GameManagement gameManagement;
     private final AuthenticationService authenticationService;
     private final UserDTO infoUser = new UserDTO("infoUser", "", "");
@@ -281,4 +280,5 @@ public class GameService extends AbstractService {
             LOG.error("Irgendwas ist bei der onSelectCardRequest im GameService falsch gelaufen. Folgende ID: " + gameID);
         }
     }
+
 }

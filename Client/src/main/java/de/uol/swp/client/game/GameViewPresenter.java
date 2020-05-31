@@ -702,21 +702,24 @@ public class GameViewPresenter extends AbstractPresenter {
      * @author Devin
      * @since Sprint 7
      */
+
+    @Subscribe
+    public void onStartClearPhaseMessage2(StartClearPhaseMessage msg) {
+        onStartPhase(msg.getGameID(), msg.getCurrentUser(), msg);
+        if (msg.getGameID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
+            Platform.runLater(() -> {
+                moveCardsToDiscardPile(handcards.getChildren(), false);
+                moveCardsToDiscardPile(myPCLC.getChildren(), true);
+            });
+        }
+    }
+
     @FXML
     @Subscribe
     public void onStartClearPhaseMessage(StartClearPhaseMessage msg) {
         Task<Void> task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                // Wenn die ClearMessage an den currentPlayer geht werden, seine Handkarten und
-                // ausgespielten Karten auf den Ablagestapel getan und fünf neue Karten gezogen.
-                onStartPhase(msg.getGameID(), msg.getCurrentUser(), msg);
-                if (msg.getGameID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
-                    Platform.runLater(() -> {
-                        moveCardsToDiscardPile(handcards.getChildren(), false);
-                        moveCardsToDiscardPile(myPCLC.getChildren(), true);
-                    });
-                }
                 // Wenn ein anderer Spieler eine ClearPhaseMessage erhählt wird dies den anderen Spielern
                 // angezeigt, indem deren Repräsentation des Spieler seine Handkarten und ausgespielten Karten auf den Ablagestapel legt.
                 if (msg.getGameID().equals(lobbyID) && !msg.getCurrentUser().equals(loggedInUser)) {
@@ -763,6 +766,7 @@ public class GameViewPresenter extends AbstractPresenter {
                         }
                     }
                 }
+
                 return null;
             }
         };
@@ -770,6 +774,7 @@ public class GameViewPresenter extends AbstractPresenter {
         Thread th = new Thread(task);
         th.setDaemon(true);
         th.start();
+
     }
 
     /**

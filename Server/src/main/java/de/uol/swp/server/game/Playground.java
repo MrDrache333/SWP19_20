@@ -66,6 +66,9 @@ public class Playground extends AbstractPlayground {
             Player player = new Player(user.getUsername());
             player.setTheUserInThePlayer(user);
             players.add(player);
+            if (!(player.getPlayerName().contains("Merlin") || player.getPlayerName().contains("Diana") || player.getPlayerName().contains("Queen") || player.getPlayerName().contains("Arthur"))) {
+                player.setBot(true);
+            }
             playerTurns.put(player, 0);
         }
         Collections.shuffle(players);
@@ -258,7 +261,7 @@ public class Playground extends AbstractPlayground {
             gameService.sendToSpecificPlayer(player, new CardsDeckSizeMessage(theSpecificLobbyID, player.getTheUserInThePlayer(), size));
         }
     }
-
+    
     /**
      * Die Methode kümmert sich um das Aufgeben des Spielers in dem spezifizierten Game/Playground.
      *
@@ -279,6 +282,7 @@ public class Playground extends AbstractPlayground {
         if (this.players.get(thePositionInList).getPlayerName().equals(theGivingUpUser.getUsername()) && wantsToGiveUp && lobbyID.equals(this.theSpecificLobbyID)) {
             latestGavedUpPlayer = this.players.get(thePositionInList);
             gameService.userGavesUpLeavesLobby(lobbyID, theGivingUpUser);
+
             if (this.players.size() == 2) {
                 this.players.remove(thePositionInList);
                 List<String> winners = calculateWinners();
@@ -299,6 +303,7 @@ public class Playground extends AbstractPlayground {
             } else {
                 this.players.remove(thePositionInList);
             }
+
             return true;
         } // TODO: Wenn Spielelogik weiter implementiert wird und ein Spieler aufgibt, Handling implementieren wie mit aufgegeben Spielern weiter umgegangen wird.
         else {

@@ -81,4 +81,12 @@ public class Player {
     public void setAdditionalMoney(int additionalMoney) {
         this.additionalMoney = additionalMoney;
     }
+
+    public boolean isBot() {
+        return isBot;
+    }
+
+    public void setBot(boolean bot) {
+        isBot = bot;
+    }
 }

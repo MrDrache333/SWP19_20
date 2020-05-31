@@ -80,8 +80,8 @@ public class LobbyManagement {
      * @since Sprint 5
      */
     public boolean isUserIngame(User user) {
-        for (Map.Entry<UUID, Lobby> lobby : lobbies.entrySet()){
-            if (lobby.getValue().getUsers().contains(user) ){
+        for (Map.Entry<UUID, Lobby> lobby : lobbies.entrySet()) {
+            if (lobby.getValue().getUsers().contains(user)) {
                 if (lobby.getValue().getInGame()) {
                     return true;
                 }
@@ -220,7 +220,6 @@ public class LobbyManagement {
      * @since Sprint 3
      */
     public User getLobbyOwner(UUID lobbyID) {
-
         return lobbies.get(lobbyID).getOwner();
     }
 
