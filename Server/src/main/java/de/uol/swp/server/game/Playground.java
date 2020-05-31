@@ -100,8 +100,6 @@ public class Playground extends AbstractPlayground {
             chosenCards.add((short) 16);
             chosenCards.add((short) 19);
             chosenCards.add((short) 21);
-
-
         }
         while (chosenCards.size() < 10) {
             short random = (short) (Math.random() * 31);

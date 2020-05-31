@@ -252,9 +252,9 @@ public class GameViewPresenter extends AbstractPresenter {
         thirdEnemyHand = new HandcardsLayoutContainer(1070, 308, 105, 215, "3.HCLC");
         // Die Aktion-Zonen für jeden Spieler
         myPCLC = new PlayedCardLayoutContainer(960, 480, 100, 200, "My.PCLC");
-        firstEnemyPCLC = new PlayedCardLayoutContainer(700, 150, 100, 200, "1.PCLC");
-        secondEnemyPCLC = new PlayedCardLayoutContainer(360, 308, 107, 215, "2.PCLC");
-        thirdEnemyPCLC = new PlayedCardLayoutContainer(1012, 308, 105, 215, "3.PCLC");
+        firstEnemyPCLC = new PlayedCardLayoutContainer(700, 150, 120, 240, "1.PCLC");
+        secondEnemyPCLC = new PlayedCardLayoutContainer(360, 308, 120, 240, "2.PCLC");
+        thirdEnemyPCLC = new PlayedCardLayoutContainer(1012, 308, 120, 240, "3.PCLC");
         // Die Abwerf-Zonen für jeden Spieler
         myDPLC = new DiscardPileLayoutContainer(1050, 630, 110, 60, "My.DPLC");
         firstEnemyDPLC = new DiscardPileLayoutContainer(640, 0, 110, 60, "1.DPLC");
