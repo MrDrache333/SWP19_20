@@ -999,9 +999,11 @@ public class GameViewPresenter extends AbstractPresenter {
                     iv.setEffect(notChosenCard);
                 }
             }
+            skipPhaseButton.setDisable(true);
             Platform.runLater(() -> {
                 infoText = infoActualPhase.getText();
-                infoActualPhase.setText("Bitte wähle eine Karte vom Spielfeld aus.");
+                infoActualPhase.setText("Du darfst dir eine Karte vom Spielfeld nehmen.");
+                infoActualPhase.setStyle("-fx-font-size: 15");
             });
             chooseCardBecauseOfActionCard = true;
         }
@@ -1233,8 +1235,10 @@ public class GameViewPresenter extends AbstractPresenter {
                             }
                         }
                         chooseCardBecauseOfActionCard = false;
+                        skipPhaseButton.setDisable(false);
                         Platform.runLater(() -> {
                             infoActualPhase.setText(infoText);
+                            infoActualPhase.setStyle("-fx-font-size: 18");
                         });
                     } else {
                         showAlert(Alert.AlertType.INFORMATION, "Du musst erst deine Geldkarten ausspielen!", "Fehler");
