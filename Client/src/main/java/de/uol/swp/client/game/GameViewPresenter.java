@@ -1002,7 +1002,7 @@ public class GameViewPresenter extends AbstractPresenter {
             skipPhaseButton.setDisable(true);
             Platform.runLater(() -> {
                 infoText = infoActualPhase.getText();
-                infoActualPhase.setText("Du darfst dir eine Karte vom Spielfeld nehmen.");
+                infoActualPhase.setText("Nimm dir eine Karte vom Spielfeld.");
                 infoActualPhase.setStyle("-fx-font-size: 15");
             });
             chooseCardBecauseOfActionCard = true;
