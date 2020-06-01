@@ -4,15 +4,18 @@ import de.uol.swp.common.game.card.Card;
 import de.uol.swp.common.game.card.parser.components.CardPack;
 import de.uol.swp.common.game.card.parser.components.CardStack;
 import de.uol.swp.common.game.exception.NotEnoughMoneyException;
+import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.game.messages.GameOverMessage;
 import de.uol.swp.common.game.messages.InfoPlayDisplayMessage;
-import de.uol.swp.server.game.GameService;
+import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.server.game.Playground;
 import de.uol.swp.server.game.player.Deck;
 import de.uol.swp.server.game.player.Player;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -21,53 +24,85 @@ import java.util.List;
 public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
 
     private final Playground playground;
-    private static final Logger LOG = LogManager.getLogger(GameService.class);
+    private static final Logger LOG = LogManager.getLogger(CompositePhase.class);
+    private List<Short> implementedActionCards;
+    private ActionCardExecution executeAction;
 
     /**
      * Der Konstruktor
      *
      * @param playground das Spielfeld
      * @author Fenja
-     * @since Sprint6
+     * @since Sprint 6
      */
     public CompositePhase(Playground playground) {
         this.playground = playground;
+        Short[] actioncards = {(short) 22, (short) 8, (short) 9, (short) 21, (short) 14, (short) 23, (short) 11, (short) 27, (short) 10, (short) 16, (short) 19, (short) 15, (short) 13};
+        implementedActionCards = Arrays.asList(actioncards);
     }
 
     @Override
     public void executeActionPhase(Player player, short cardId) {
         CardPack cardsPackField = playground.getCardsPackField();
         Card currentCard = getCardFromId(cardsPackField.getCards(), cardId);
-
         // 1. Verifiziere, dass Karte existiert
 
         if (currentCard == null) {
             throw new IllegalArgumentException("CardID wurde nicht gefunden");
         }
         // 2. Überprüfe, ob Spieler diese Karte in der Hand hat
-        if(player.getPlayerDeck().getHand().stream().noneMatch(c -> c.getId() == currentCard.getId())){
+        if (player.getPlayerDeck().getHand().stream().noneMatch(c -> c.getId() == currentCard.getId())) {
             throw new IllegalArgumentException("Die Hand enthält die gesuchte Karte nicht");
+        }
+        if (!implementedActionCards.contains(currentCard.getId())) {
+            throw new IllegalArgumentException("Diese Aktionskarte ist leider noch nicht implementiert.");
         }
         /*
         3. Führe die auf der Karte befindlichen Aktionen aus
         3.1 Die Karte wird auf den ActionPile gelegt und aus der Hand entfernt.
          */
-        player.getPlayerDeck().getActionPile().add(currentCard);
+        executeAction = new ActionCardExecution(cardId, playground);
+        playground.getGameService().getBus().register(executeAction);
         player.getPlayerDeck().getHand().remove(currentCard);
-        // TODO: Die Aktion der Karte muss noch ausgeführt werden
+        executeAction.execute();
+    }
 
+    /**
+     * Wenn eine Aktionskarte vollständig ausgeführt wurde, wird sie in die Aktionszone des Spielers oder den Müll gelegt.
+     * Ggf. neue Handkarten, die letzte Karte auf dem Ablagestapel und Müll, Anzahl der Karten auf dem Nachziehstapel
+     * werden gesendet.
+     * Der Aktionencounter wird um 1 verringert, dem Spieler wird eine InfoPlayDisplayMessage gesendet und die Phase
+     * wird gewechselt, falls der Spieler keine Aktionen oder Aktionskarten mehr hat.
+     *
+     * @param player       Der Spieler
+     * @param newHandCards Liste neuer Handkarten
+     * @param card         Gespielte Karte
+     * @author Julia, KenoO
+     * @since Sprint 7
+     */
+    public void finishedActionCardExecution(Player player, ArrayList<Short> newHandCards, Card card) {
+        if (!executeAction.isRemoveCardAfter()) {
+            player.getPlayerDeck().getActionPile().add(card);
+        } else {
+            playground.getTrash().add(card);
+        }
+        if (!newHandCards.isEmpty()) {
+            playground.getGameService().sendToSpecificPlayer(player, new DrawHandMessage(newHandCards, playground.getID(), (short) playground.getPlayers().size(), false));
+        }
         playground.sendCardsDeckSize();
         player.setAvailableActions(player.getAvailableActions() - 1);
-        int availableAction = player.getAvailableActions();
-        int availableBuy = player.getAvailableBuys();
-        int additionalMoney = player.getAdditionalMoney();
-        int moneyOnHand = player.getPlayerDeck().actualMoneyFromPlayer();
-        playground.getGameService().sendToSpecificPlayer(player, new InfoPlayDisplayMessage(playground.getID(), player.getTheUserInThePlayer(), availableAction, availableBuy, additionalMoney, moneyOnHand, playground.getActualPhase()));
-
-        if (player.getAvailableActions() == 0) {
+        //Sende alle neuen Informationen bezüglich seiner möglichen Aktioen des Spielers an den Spieler zurück
+        playground.getGameService().sendToSpecificPlayer(player,
+                new InfoPlayDisplayMessage(
+                        playground.getID(), player.getTheUserInThePlayer(),
+                        player.getAvailableActions(),
+                        player.getAvailableBuys(),
+                        player.getAdditionalMoney(),
+                        player.getPlayerDeck().actualMoneyFromPlayer(),
+                        Phase.Type.ActionPhase));
+        if ((player.getAvailableActions() == 0 || !playground.checkForActionCard()) && playground.getActualPhase() == Type.ActionPhase) {
             playground.nextPhase();
         }
-
     }
 
 
@@ -77,7 +112,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      * @param player Der Spieler
      * @param cardId Die Karten-ID
      * @author Paula
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Override
     public int executeBuyPhase(Player player, short cardId) {
@@ -128,7 +163,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      *
      * @param player Der aktuelle Spieler
      * @author Julia, Fenja
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Override
     public void executeClearPhase(Player player) {
@@ -163,7 +198,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      * @param cardId
      * @return card Karte, zu der die ID gehört
      * @author Paula
-     * @since Sprint6
+     * @since Sprint 6
      */
 
     public Card getCardFromId(CardStack cardStack, short cardId) {
@@ -190,23 +225,22 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      * Überprüft, ob das Spiel in der Clearphase beendet ist
      *
      * @return false, wenn das Spiel nicht vorbei ist
-     * @author Fenja
-     * @since Sprint6
+     * @author Fenja, Keno0
+     * @since Sprint 7
      */
     public boolean checkIfGameIsFinished() {
         if (playground.getCardField().get((short) 6) == 0) {
             return true;
         }
-        int counter = 0;
-        for (Card card : playground.getCardsPackField().getCards().getActionCards()) {
-            if (playground.getCardField().containsKey(card.getId()) && playground.getCardField().get(card.getId()) == 0) {
-                counter++;
-                if (counter >= 3) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        //Prüfen ob min. 3 Aktionskartenstapel leer sind
+        return playground.getCardsPackField().getCards().getActionCards().stream().filter(c -> playground.getCardField().containsKey(c.getId()) && playground.getCardField().get(c.getId()) == 0).count() >= 3;
+    }
+
+    public ActionCardExecution getExecuteAction() {
+        return executeAction;
+    }
+
+    public List<Short> getImplementedActionCards() {
+        return implementedActionCards;
     }
 }
-

@@ -33,8 +33,30 @@ public class ForEach extends SimpleCardAction {
         this.actions = actions;
     }
 
-    @Override
-    public boolean execute() {
-        return false;
+    public ArrayList<Card> getCards() {
+        return cards;
+    }
+
+    public ArrayList<CardAction> getActions() {
+        return actions;
+    }
+
+
+    /**
+     * Sets new Die Karten, auf die die Aktionen angewendet werden sollen.
+     *
+     * @param cards New value of Die Karten, auf die die Aktionen angewendet werden sollen.
+     */
+    public void setCards(ArrayList<Card> cards) {
+        this.cards = cards;
+    }
+
+    /**
+     * Sets new Die Aktionen, welche auf die Karten angewendet werden sollen.
+     *
+     * @param actions New value of Die Aktionen, welche auf die Karten angewendet werden sollen.
+     */
+    public void setActions(ArrayList<CardAction> actions) {
+        this.actions = actions;
     }
 }

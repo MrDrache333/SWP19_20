@@ -16,7 +16,7 @@ public class CurseCard extends Card {
      * @since Sprint 6
      */
     public CurseCard(String name, short id, short value) {
-        super(Type.Cursecard, name, id, (short) 0);
+        super(Type.CURSECARD, name, id, (short) 0);
         this.value = value;
     }
 

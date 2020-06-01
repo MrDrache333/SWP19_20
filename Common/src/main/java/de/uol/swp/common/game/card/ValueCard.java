@@ -16,7 +16,7 @@ public class ValueCard extends Card {
      * @since Sprint 5
      */
     public ValueCard(String name, short id, short costs, short value) {
-        super(Type.ValueCard, name, id, costs);
+        super(Type.VALUECARD, name, id, costs);
         this.value = value;
     }
 

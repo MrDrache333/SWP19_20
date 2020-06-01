@@ -524,7 +524,7 @@ public class SceneManager {
 
     private void initJoinLobbyView(JoinLobbyPresenter joinLobbyPresenter) {
         Parent rootPane = initJoinLobbyPresenter(joinLobbyPresenter);
-        joinLobbyScene = new Scene(rootPane, 400, 255);
+        joinLobbyScene = new Scene(rootPane, 350, 250);
         joinLobbyScene.getStylesheets().add(JoinLobbyPresenter.css);
 
     }
@@ -543,7 +543,7 @@ public class SceneManager {
      * @since Sprint7
      */
 
-    private final EventHandler<KeyEvent> hotkeyEventHandler = new EventHandler<>() {
+    private EventHandler<KeyEvent> hotkeyEventHandler = new EventHandler<>() {
         @Override
         public void handle(KeyEvent event) {
             if (event.isControlDown()) {

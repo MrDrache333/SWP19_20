@@ -33,7 +33,7 @@ import java.util.UUID;
  * Die Klasse LobbyService, welche eine Lobby erstellt
  *
  * @author KenoO
- * @since Sprint2
+ * @since Sprint 2
  */
 public class LobbyService extends AbstractService {
     private static final Logger LOG = LogManager.getLogger(LobbyService.class);
@@ -72,7 +72,7 @@ public class LobbyService extends AbstractService {
      * @param req Enthält den Request vom Client mit den benötigten Daten, um die Lobby zu erstellen.
      * @author Haschem, Ferit, Rike, Marvin, Paula
      * @version 0.2
-     * @since Sprint2
+     * @since Sprint 2
      */
     @Subscribe
     public void onCreateLobbyRequest(CreateLobbyRequest req) {
@@ -99,7 +99,7 @@ public class LobbyService extends AbstractService {
      *
      * @param req Der LobbyJoinUserRequest
      * @author Paula, Julia, Marvin
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onLobbyJoinUserRequest(LobbyJoinUserRequest req) {
@@ -120,7 +120,7 @@ public class LobbyService extends AbstractService {
      *
      * @param req Der LobbyLeaveUserRequest
      * @author Julia, Paula, Darian, Marvin
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onLobbyLeaveUserRequest(LobbyLeaveUserRequest req) {
@@ -146,7 +146,7 @@ public class LobbyService extends AbstractService {
      *
      * @param req Der LeaveAllLobbiesOnLogoutRequest
      * @author Paula, Julia, Marvin, Darian
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onLeaveAllLobbiesOnLogoutRequest(LeaveAllLobbiesOnLogoutRequest req) {
@@ -171,7 +171,7 @@ public class LobbyService extends AbstractService {
      *
      * @param req Der geupdatetete Status des Users
      * @author Keno Oelrichs Garcia
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onUpdateLobbyReadyStatusRequest(UpdateLobbyReadyStatusRequest req) {
@@ -192,7 +192,7 @@ public class LobbyService extends AbstractService {
      *
      * @param req Der UpdateInGameRequest
      * @author Julia
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Subscribe
     public void onGameEnd(UpdateInGameRequest req) {
@@ -211,7 +211,7 @@ public class LobbyService extends AbstractService {
      *
      * @param req die RetrieveAllOnlineUsersInLobbyRequest
      * @author Marvin
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onRetrieveAllOnlineUsersInLobbyRequest(RetrieveAllOnlineUsersInLobbyRequest req) {
@@ -230,7 +230,7 @@ public class LobbyService extends AbstractService {
      *
      * @param req Der RetrieveAllOnlineLobbiesRequest
      * @author Julia
-     * @since Sprint2
+     * @since Sprint 2
      */
     @Subscribe
     public void onRetrieveAllOnlineLobbiesRequest(RetrieveAllOnlineLobbiesRequest req) {
@@ -244,7 +244,7 @@ public class LobbyService extends AbstractService {
      *
      * @param req Der UpdateLobbiesRequest
      * @author Julis
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void onUpdateLobbiesRequest(UpdateLobbiesRequest req) {

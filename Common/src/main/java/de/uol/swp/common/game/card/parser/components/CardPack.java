@@ -7,11 +7,15 @@ import com.google.gson.annotations.SerializedName;
  */
 public class CardPack {
 
+    @SuppressWarnings("unused")
     @SerializedName("packname")
     private String name;
+
+    @SuppressWarnings("unused")
     @SerializedName("_description")
     private String description;
 
+    @SuppressWarnings("unused")
     @SerializedName("cards")
     private CardStack cards;
 

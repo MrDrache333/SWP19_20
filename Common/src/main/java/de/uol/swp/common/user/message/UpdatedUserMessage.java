@@ -18,7 +18,7 @@ public class UpdatedUserMessage extends AbstractServerMessage {
      * @param user    der User
      * @param oldUser der User mit den alten Einstellungen
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
 
     public UpdatedUserMessage(User user, User oldUser) {
@@ -31,7 +31,7 @@ public class UpdatedUserMessage extends AbstractServerMessage {
      *
      * @return den User mit neuen Einstellungen
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     public User getUser() {
         return user;
@@ -42,7 +42,7 @@ public class UpdatedUserMessage extends AbstractServerMessage {
      *
      * @return den User mit seinen alten Einstellungen
      * @author Timo
-     * @since Sprint3
+     * @since Sprint 3
      */
     public User getOldUser() {
         return oldUser;

@@ -1,13 +1,13 @@
 package de.uol.swp.common.game.card.parser.components.CardAction.types;
 
 import de.uol.swp.common.game.card.parser.components.CardAction.CardAction;
-import de.uol.swp.common.game.card.parser.components.CardAction.SimpleCardAction;
+import de.uol.swp.common.game.card.parser.components.CardAction.ComplexCardAction;
 import de.uol.swp.common.game.card.parser.components.CardAction.types.subtypes.Condition;
 
 /**
  * Die IF-Aktion (Bedingte ausführung einer weiteren Aktion).
  */
-public class If extends SimpleCardAction {
+public class If extends ComplexCardAction {
 
     /**
      * Die Aktion, deren ergebnis ausgewertet wird
@@ -37,9 +37,43 @@ public class If extends SimpleCardAction {
         this.conditionedAction = conditionedAction;
     }
 
-    @Override
-    public boolean execute() {
-        //TODO
-        return false;
+    public Condition getCondition() {
+        return condition;
+    }
+
+    public boolean isExpectedResult() {
+        return expectedResult;
+    }
+
+    public CardAction getConditionedAction() {
+        return conditionedAction;
+    }
+
+
+    /**
+     * Sets new Die Aktion, deren ergebnis ausgewertet wird.
+     *
+     * @param condition New value of Die Aktion, deren ergebnis ausgewertet wird.
+     */
+    public void setCondition(Condition condition) {
+        this.condition = condition;
+    }
+
+    /**
+     * Sets new Die Aktion, deren Ausführung von dem Ergebnis der vorhergegangen Aktion abhängt.
+     *
+     * @param conditionedAction New value of Die Aktion, deren Ausführung von dem Ergebnis der vorhergegangen Aktion abhängt.
+     */
+    public void setConditionedAction(CardAction conditionedAction) {
+        this.conditionedAction = conditionedAction;
+    }
+
+    /**
+     * Sets new Gewünschtes Ergebnis der vorherigen Aktion.
+     *
+     * @param expectedResult New value of Gewünschtes Ergebnis der vorherigen Aktion.
+     */
+    public void setExpectedResult(boolean expectedResult) {
+        this.expectedResult = expectedResult;
     }
 }

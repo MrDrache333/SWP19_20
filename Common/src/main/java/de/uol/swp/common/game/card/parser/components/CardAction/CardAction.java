@@ -1,9 +1,14 @@
 package de.uol.swp.common.game.card.parser.components.CardAction;
 
+import java.io.Serializable;
+
 /**
  * Abstrakte Kartenaktion.
  */
-public abstract class CardAction implements Action {
+public abstract class CardAction implements Serializable {
+
+
+    private static final long serialVersionUID = 6240390855827452788L;
 
     public CardAction() {
 

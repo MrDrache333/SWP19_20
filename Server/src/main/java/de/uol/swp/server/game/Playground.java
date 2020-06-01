@@ -31,7 +31,7 @@ import java.util.*;
 public class Playground extends AbstractPlayground {
 
     private static final Logger LOG = LogManager.getLogger(Playground.class);
-    private static Map<Short, Integer> cardField = new TreeMap<>();
+    private Map<Short, Integer> cardField = new TreeMap<>();
     /**
      * Die Spieler
      */
@@ -49,6 +49,7 @@ public class Playground extends AbstractPlayground {
     private short lobbySizeOnStart;
     private CardPack cardsPackField;
     private ArrayList<Short> chosenCards;
+    private ArrayList<Card> trash = new ArrayList<>();
     private final UserDTO infoUser = new UserDTO("infoUser", "", "");
 
     /**
@@ -87,9 +88,22 @@ public class Playground extends AbstractPlayground {
                 cardField.put(card.getId(), 8);
             } else cardField.put(card.getId(), 12);
         }
-        while (chosenCards.size() <= 10) {
+        // ChosenCard BasicCards
+        if (chosenCards.isEmpty()) {
+            chosenCards.add((short) 8);
+            chosenCards.add((short) 9);
+            chosenCards.add((short) 10);
+            chosenCards.add((short) 11);
+            chosenCards.add((short) 13);
+            chosenCards.add((short) 14);
+            chosenCards.add((short) 15);
+            chosenCards.add((short) 16);
+            chosenCards.add((short) 19);
+            chosenCards.add((short) 21);
+        }
+        while (chosenCards.size() < 10) {
             short random = (short) (Math.random() * 31);
-            if (!chosenCards.contains(random) && random > 6) {
+            if (!chosenCards.contains(random) && compositePhase.getImplementedActionCards().contains(random)) {
                 chosenCards.add(random);
             }
         }
@@ -116,7 +130,7 @@ public class Playground extends AbstractPlayground {
      * Es wird zusätzlich der Timestamp (vom Server) mitgeschickt
      *
      * @author Julia, Ferit
-     * @since Sprint5
+     * @since Sprint 5
      */
     public void newTurn() {
         if (actualPlayer == null && nextPlayer == null) {
@@ -178,7 +192,7 @@ public class Playground extends AbstractPlayground {
      * Befindet sich der Spieler in der Clearphase, wird eine GamePhaseException geworfen.
      *
      * @author Julia
-     * @since Sprint5
+     * @since Sprint 5
      */
     public void nextPhase() {
         ArrayList<Short> theIdsFromTheHand = new ArrayList<>(5);
@@ -209,8 +223,7 @@ public class Playground extends AbstractPlayground {
      * sendet eine InfoPlayDisplayMessage zum aktualisieren der Anzeige von Aktion/Kauf/Geld
      *
      * @author Ferit, Rike
-     * @version 1
-     * @since Sprint5
+     * @since Sprint 5
      */
     public void sendPlayersHand() {
         ArrayList<Short> theIdsFromTheHand = new ArrayList<>(5);
@@ -225,7 +238,7 @@ public class Playground extends AbstractPlayground {
      * Sendet dem aktuellen Spieler die Anzahl seiner Karten auf dem Nachziehstapel
      *
      * @author Julia
-     * @since Sprint7
+     * @since Sprint 7
      */
     public int sendCardsDeckSize() {
         int size = actualPlayer.getPlayerDeck().getCardsDeck().size();
@@ -237,7 +250,7 @@ public class Playground extends AbstractPlayground {
      * Sendet zu Spielbeginn jedem Spieler die Anzahl seiner Karten auf dem Nachziehstapel
      *
      * @author Julia
-     * @since Sprint7
+     * @since Sprint 7
      */
     public void sendInitialCardsDeckSize() {
         for (Player player : players) {
@@ -249,9 +262,9 @@ public class Playground extends AbstractPlayground {
     /**
      * Die Methode kümmert sich um das Aufgeben des Spielers in dem spezifizierten Game/Playground.
      *
-     * @param lobbyID
-     * @param theGivingUpUser
-     * @param wantsToGiveUp
+     * @param lobbyID         die Lobby-ID
+     * @param theGivingUpUser der aufgebene User
+     * @param wantsToGiveUp   ob der User aufgibt (Boolean)
      * @return Ob der Spieler erfolgreich entfernt worden ist oder nicht.
      * @author Haschem, Ferit
      */
@@ -296,11 +309,11 @@ public class Playground extends AbstractPlayground {
     /**
      * Sendet die letzte Karte vom Ablagestapel an den GameService
      *
-     * @param gameID
-     * @param cardID
-     * @param user
+     * @param gameID die Game-ID
+     * @param cardID die Karten-ID
+     * @param user   der User
      * @author Fenja
-     * @since Sprint6
+     * @since Sprint 6
      */
     public void sendLastCardOfDiscardPile(UUID gameID, short cardID, User user) {
         gameService.sendLastCardOfDiscardPile(gameID, cardID, user);
@@ -311,7 +324,7 @@ public class Playground extends AbstractPlayground {
      * sendet eine InfoPlayDisplayMessage zum aktualisieren der Anzeige von Aktion/Kauf/Geld
      *
      * @author Ferit, Rike
-     * @since Sprint6
+     * @since Sprint 6
      */
     public void sendInitialHands() {
         for (Player playerhand : players) {
@@ -336,7 +349,7 @@ public class Playground extends AbstractPlayground {
      *
      * @return true, wenn er eine Aktionskarte auf der Hand hat, sonst false
      * @author Julia
-     * @since Sprint5
+     * @since Sprint 5
      */
     public boolean checkForActionCard() {
         for (Card card : actualPlayer.getPlayerDeck().getHand()) {
@@ -352,7 +365,7 @@ public class Playground extends AbstractPlayground {
      *
      * @return Liste mit allen Gewinnern
      * @author Julia
-     * @since Sprint6
+     * @since Sprint 6
      */
     public List<String> calculateWinners() {
         List<String> winners = new ArrayList<>();
@@ -399,7 +412,6 @@ public class Playground extends AbstractPlayground {
         return winners;
     }
 
-
     public List<Player> getPlayers() {
         return players;
     }
@@ -421,8 +433,7 @@ public class Playground extends AbstractPlayground {
      *
      * @return aktuelle Phase
      * @author Paula
-     * @version 1
-     * @since Sprint5
+     * @since Sprint 5
      */
     public Phase.Type getActualPhase() {
         return actualPhase;
@@ -437,7 +448,7 @@ public class Playground extends AbstractPlayground {
      *
      * @return s.o
      * @author Haschem, Ferit
-     * @since Sprint5
+     * @since Sprint 5
      */
     public Player getLatestGavedUpPlayer() {
         return latestGavedUpPlayer;
@@ -481,5 +492,9 @@ public class Playground extends AbstractPlayground {
 
     public GameService getGameService() {
         return gameService;
+    }
+
+    public ArrayList<Card> getTrash() {
+        return trash;
     }
 }

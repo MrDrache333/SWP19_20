@@ -11,14 +11,18 @@ import de.uol.swp.common.game.card.parser.components.deserializer.ActionCardDeSe
 import de.uol.swp.common.game.card.parser.components.deserializer.CurseCardDeSerializer;
 import de.uol.swp.common.game.card.parser.components.deserializer.MoneyCardDeSerializer;
 import de.uol.swp.common.game.card.parser.components.deserializer.ValueCardDeSerializer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 
 /**
  * JSonCardParser representiert eine Möglichkeit, Karten aus einer JSon-Datei zu laden und als Objekt zurück zu geben.
  */
 public class JsonCardParser {
+
+    private static final Logger LOG = LogManager.getLogger(JsonCardParser.class);
 
     /**
      * Methode, die versucht ein angegebenes Kartenpaket zu laden.
@@ -36,11 +40,18 @@ public class JsonCardParser {
                 registerTypeAdapter(CurseCard.class, new CurseCardDeSerializer());
 
         Gson gsonRealObj = gsonobj.create();
-        CardPack pack;
+        CardPack pack = null;
+        FileReader fr;
         try {
-            pack = gsonRealObj.fromJson(new FileReader(this.getClass().getResource("/cards/packs/" + packname + "/" + packname + ".json").toExternalForm().replace("file:", "")), CardPack.class);
-        } catch (FileNotFoundException e) {
-            pack = null;
+            fr = new FileReader(this.getClass().getResource("/cards/packs/" + packname + "/" + packname + ".json").toExternalForm().replace("file:", ""));
+
+            try {
+                pack = gsonRealObj.fromJson(fr, CardPack.class);
+            } finally {
+                fr.close();
+            }
+        } catch (IOException e) {
+            LOG.debug("Fehler beim Laden des Kartenpaketes!");
         }
         return pack;
     }

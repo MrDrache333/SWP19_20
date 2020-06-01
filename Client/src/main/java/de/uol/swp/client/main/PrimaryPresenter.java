@@ -28,8 +28,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("UnstableApiUsage")
 public class PrimaryPresenter extends AbstractPresenter {
@@ -337,19 +339,22 @@ public class PrimaryPresenter extends AbstractPresenter {
     }
 
     /**
-     * Schließt alle GameManagement Stages
+     * Schließt alle GameManagement Stages. Update Sprint 8: Auf Streams umgeschrieben, IDs werden jetzt erst gesammelt
+     * und dann die Tabs geschlossen, da man sonst, während man über die Spiele iteriert, Spiele beendet.
      *
-     * @author Julia, Paula
-     * @version 1.0
+     * @author Julia, Paula, Marvin
+     * @Version 1.0
      * @since Sprint3
      */
     public void closeAllTabs() {
-        Platform.runLater(() -> games.values().forEach(e -> {
-            try {
-                closeTab(e.getID(), true);
-            } catch (ConcurrentModificationException ignored) {
-            }
-        }));
+        Platform.runLater(() -> {
+            List<UUID> gameIDs = games.values()
+                    .stream()
+                    .map(g -> g.getID())
+                    .collect(Collectors.toList());
+            gameIDs.stream()
+                    .forEach(g -> closeTab(g, true));
+        });
     }
 
     /**

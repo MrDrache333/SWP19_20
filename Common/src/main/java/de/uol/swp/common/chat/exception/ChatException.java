@@ -9,7 +9,7 @@ public class ChatException extends RuntimeException {
      *
      * @param message
      * @author Keno O.
-     * @since Sprint2
+     * @since Sprint 2
      */
     public ChatException(String message) {
         super(message);

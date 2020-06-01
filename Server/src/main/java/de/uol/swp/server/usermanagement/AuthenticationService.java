@@ -3,6 +3,7 @@ package de.uol.swp.server.usermanagement;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import de.uol.swp.common.game.request.GameGiveUpRequest;
 import de.uol.swp.common.lobby.request.LeaveAllLobbiesOnLogoutRequest;
 import de.uol.swp.common.lobby.request.UpdateLobbiesRequest;
 import de.uol.swp.common.message.ServerMessage;
@@ -122,10 +123,10 @@ public class AuthenticationService extends AbstractService {
     }
 
     /**
-     * Serverlogikg vom LogoutRequest
+     * Serverlogik vom LogoutRequest
      *
      * @param msg LogoutRequest
-     * @author Marco, Darian
+     * @author Marco, Darian, Marvin
      * @since Start
      */
     @Subscribe
@@ -133,7 +134,11 @@ public class AuthenticationService extends AbstractService {
         if (msg.getSession().isPresent()) {
             Session session = msg.getSession().get();
             User userToLogOut = session.getUser();
-            if (!lobbyManagement.isUserIngame(userToLogOut)) {
+            if (msg.isHardLogout()) {
+                lobbyManagement.activeGamesOfUser(userToLogOut)
+                        .forEach(game -> post(new GameGiveUpRequest((UserDTO) userToLogOut, game)));
+            }
+            if (!lobbyManagement.isUserIngame(userToLogOut) || msg.isHardLogout()) {
                 // Could be already logged out
                 if (userToLogOut != null) {
                     if (LOG.isDebugEnabled()) {
@@ -173,7 +178,7 @@ public class AuthenticationService extends AbstractService {
      *
      * @param msg die UpdateUserRequest
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void onUpdateUserRequest(UpdateUserRequest msg) {
@@ -198,7 +203,7 @@ public class AuthenticationService extends AbstractService {
      * Der Nutzer wird gelöscht und eine entprechende Message zurückgesendet
      *
      * @author Anna, Julia, Darian
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void onDropUserRequest(DropUserRequest msg) {
@@ -227,7 +232,7 @@ public class AuthenticationService extends AbstractService {
      *
      * @param message Die zu übertragende Nachricht
      * @author Keno S.
-     * @since Sprint7
+     * @since Sprint 7
      */
 
     public void sendToLoggedInPlayers(ServerMessage message) {

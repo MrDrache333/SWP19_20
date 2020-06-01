@@ -64,7 +64,7 @@ class GameViewPresenterTest {
      * Setzt vor jedem Test das aktuelle Event auf null und registriert diese Testklasse auf dem Eventbus
      *
      * @author Devin
-     * @since Sprint6
+     * @since Sprint 6
      */
     @BeforeEach
     void registerBus() {
@@ -78,7 +78,7 @@ class GameViewPresenterTest {
      *
      * @param e das DeadEvent
      * @author Paula
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Subscribe
     void handle(DeadEvent e) {
@@ -92,9 +92,9 @@ class GameViewPresenterTest {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         playground.getActualPlayer().setAvailableActions(2);
         int CardsOnActionPile = playground.getActualPlayer().getPlayerDeck().getActionPile().size();
-        Card card = playground.getCardsPackField().getCards().getActionCards().get(3);
+        Card card = playground.getCardsPackField().getCards().getCardForId((short) 9);
         playground.getActualPlayer().getPlayerDeck().getHand().add(card);
-        playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 10);
+        playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 9);
         assertEquals(1, playground.getActualPlayer().getPlayerDeck().getActionPile().size());
     }
 }

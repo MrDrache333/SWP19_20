@@ -22,7 +22,7 @@ public class NewChatMessage extends AbstractServerMessage {
      * @param chatId  die Chat ID des aktuellen Chats.
      * @param message Die aktuelle Nachricht.
      * @author Keno Oelrichs Garcia, Darian Alves
-     * @since Sprint1
+     * @since Sprint 1
      */
     public NewChatMessage(String chatId, ChatMessage message) {
         this.message = message;
@@ -34,7 +34,7 @@ public class NewChatMessage extends AbstractServerMessage {
      *
      * @return Die Chat ID.
      * @author Keno Oelrichs Garcia, Darian Alves
-     * @since Sprint3
+     * @since Sprint 3
      */
     public String getChatId() {
         return chatId;
@@ -45,7 +45,7 @@ public class NewChatMessage extends AbstractServerMessage {
      *
      * @return Die Message.
      * @author Keno Oelrichs Garcia, Darian Alves
-     * @since Sprint3
+     * @since Sprint 3
      */
     public ChatMessage getMessage() {
         return message;

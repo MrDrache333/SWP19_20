@@ -17,7 +17,6 @@ import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
 import de.uol.swp.common.user.message.UserDroppedMessage;
-import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -106,7 +105,7 @@ public class LobbyPresenter extends AbstractPresenter {
      * @param injector          der Injector
      * @param gameManagement    das GameManagement
      * @author Julia, Keno O, Anna, Darian, Keno S.
-     * @since Sprint2
+     * @since Sprint 2
      */
     public LobbyPresenter(User loggedInUser, String name, UUID lobbyID, ChatService chatService, ChatViewPresenter chatViewPresenter, LobbyService lobbyService, UserService userService, Injector injector, UserDTO gameOwner, GameManagement gameManagement, EventBus eventBus) {
         this.loggedInUser = loggedInUser;
@@ -134,7 +133,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param actionEvent Das ActionEvent
      * @author Julia, Keno S., Marvin
-     * @since Sprint3
+     * @since Sprint 3
      */
     @FXML
     public void onLeaveLobbyButtonPressed(ActionEvent actionEvent) {
@@ -148,7 +147,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @throws IOException Die IO-Exception
      * @author Keno O, Darian, Timo, Ferit
-     * @since Sprint2
+     * @since Sprint 2
      */
     @FXML
     public void initialize() throws IOException {
@@ -183,7 +182,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param actionEvent
      * @author Keno S, Keno O.
-     * @since Sprint3
+     * @since Sprint 3
 
     @FXML
     public void onLogoutButtonPressed(ActionEvent actionEvent) {
@@ -197,7 +196,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param actionEvent Das ActionEvent
      * @author Darian, Keno S, Keno O.
-     * @since Sprint3
+     * @since Sprint 3
      */
     @FXML
     public void onReadyButtonPressed(ActionEvent actionEvent) {
@@ -407,7 +406,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param message Die UpdatedLobbyReadyStatusMessage
      * @author Darian, Keno O.
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onUpdatedLobbyReadyStatusMessage(UpdatedLobbyReadyStatusMessage message) {
@@ -424,7 +423,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param response Die AllOnlineUsersInLobbyResponse
      * @author Keno O.
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     private void onReceiveAllUsersInLobby(AllOnlineUsersInLobbyResponse response) {
@@ -440,7 +439,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param message Die UpdatedUserMessage
      * @author Julia, Anna
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void updatedUser(UpdatedUserMessage message) {
@@ -484,7 +483,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param message Die StartGameMessage
      * @author Darian, Keno O.
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onGameStartMessage(StartGameMessage message) {
@@ -498,19 +497,21 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param message Die UserLoggedOutMessage
      * @author Darian
-     * @since Sprint3
+     * @since Sprint 3
      */
-    @Subscribe
-    public void onUserLoggedOutMessage(UserLoggedOutMessage message) {
-        userLeftLobby(message.getUsername(), false);
-    }
+//    @Subscribe
+//    public void onUserLoggedOutMessage(UserLoggedOutMessage message) {
+//        userLeftLobby(message.getUsername(), false);
+//    }
+//
+//    Überflüssig, da man beim ausloggen inzwischen schon jede Lobby verlässt. (Siehe LeaveAllLobbiesOnLogoutRequest)
 
     /**
      * User wird aus der Liste entfernt, wenn er seinen Account gelöscht hat
      *
      * @param message Die UserDroppedMessage
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void onUserDroppedMessage(UserDroppedMessage message) {
@@ -522,7 +523,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param message Die UserJoinedLobbyMessage
      * @author Darian, Keno O., Marvin
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onUserJoinedLobbyMessage(UserJoinedLobbyMessage message) {
@@ -542,7 +543,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param message Die UserLeftLobbyMessage
      * @author Darian, Keno O, Julia
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
@@ -563,7 +564,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param message Die eingehende Nachricht vom Server
      * @author Darian, Marvin
-     * @since sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void onKickUserMessage(KickUserMessage message) {
@@ -583,7 +584,7 @@ public class LobbyPresenter extends AbstractPresenter {
      * @param username Benutzername des Benutzers der gegangen ist
      * @param kicked   True, wenn der Benutzer aus der Lobby gekickt wurde
      * @author Darian
-     * @since sprint4
+     * @since Sprint 4
      */
     private void userLeftLobby(String username, boolean kicked) {
         if (readyUserList.get(username) != null) {
@@ -609,7 +610,7 @@ public class LobbyPresenter extends AbstractPresenter {
      * Geänderte Userliste wird angezeigt.
      *
      * @author Darian, Keno O.
-     * @since Sprint3
+     * @since Sprint 3
      */
     private void updateUsersList() {
         Platform.runLater(() -> {
@@ -676,7 +677,7 @@ public class LobbyPresenter extends AbstractPresenter {
      * @param user   Der User
      * @param status Der aktuelle Bereit-Status
      * @author Darian
-     * @since Sprint3
+     * @since Sprint 3
      */
     private void updateReadyUser(User user, boolean status) {
         if (readyUserList.containsKey(user.getUsername())) {
@@ -691,7 +692,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @return Alle HBoxes als ArrayList
      * @author Darian, Keno S.
-     * @since Sprint3
+     * @since Sprint 3
      */
     private ArrayList<HBox> getAllHBoxes() {
         return new ArrayList<>(readyUserList.values());
@@ -706,7 +707,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @return Die LobbyID
      * @author Darian
-     * @since Sprint3
+     * @since Sprint 3
      */
     public UUID getLobbyID() {
         return lobbyID;
@@ -717,7 +718,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @return Den Lobbynamen
      * @author Darian
-     * @since Sprint3
+     * @since Sprint 3
      */
     public String getLobbyName() {
         return lobbyName;
@@ -728,7 +729,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @return Den LobbyService
      * @author Ferit
-     * @since Sprint3
+     * @since Sprint 3
      */
     public LobbyService getLobbyService() {
         return lobbyService;
@@ -739,7 +740,7 @@ public class LobbyPresenter extends AbstractPresenter {
      *
      * @param loggedInUser Der aktuelle User
      * @author Anna
-     * @since Sprint6
+     * @since Sprint 6
      */
     public void setButtonReady(UserDTO loggedInUser) {
         if (loggedInUser.equals(this.loggedInUserDTO)) {

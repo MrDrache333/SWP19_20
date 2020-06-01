@@ -17,18 +17,19 @@ public class Deck {
      * Listen für Hand, Deck, Ablagestapel
      *
      * @author Paula
-     * @since Sprint5
+     * @since Sprint 5
      */
-    private final ArrayList<Card> cardsDeck = new ArrayList<>();
-    private final ArrayList<Card> discardPile = new ArrayList<>();
-    private final ArrayList<Card> hand = new ArrayList<>();
+    private ArrayList<Card> cardsDeck = new ArrayList<>();
+    private ArrayList<Card> discardPile = new ArrayList<>();
+    private ArrayList<Card> hand = new ArrayList<>();
+    private ArrayList<Card> temp = new ArrayList<>();
     private final ArrayList<Card> actionPile = new ArrayList<>();
 
     /**
      * Konstruktor
      *
      * @author Paula
-     * @since Sprint5
+     * @since Sprint 5
      */
     public Deck() {
         initialiseStartDeck();
@@ -40,7 +41,7 @@ public class Deck {
      * wird der Ablagestapel zum neuen Nachziehstapel und die restlichen Karten werden gezogen.
      *
      * @author Julia
-     * @since Sprint6
+     * @since Sprint 6
      */
     public void drawHand() {
         if (cardsDeck.size() < 5) {
@@ -66,7 +67,7 @@ public class Deck {
      *
      * @return Kartendeck
      * @author Paula
-     * @since Sprint5
+     * @since Sprint 5
      */
     private ArrayList<Card> initialiseStartDeck() {
         CardPack cardsPack = new JsonCardParser().loadPack("Basispack");
@@ -86,7 +87,7 @@ public class Deck {
      *
      * @return Hand
      * @author Paula
-     * @since Sprint5
+     * @since Sprint 5
      */
     private ArrayList<Card> initialiseHand() {
         Collections.shuffle(cardsDeck);
@@ -103,7 +104,7 @@ public class Deck {
      * Karte wird aus Arrays gelöscht
      *
      * @author Pauia
-     * @since Sprint5
+     * @since Sprint 5
      */
     private void deleteCard(Card card) {
         cardsDeck.remove(card);
@@ -112,11 +113,23 @@ public class Deck {
     }
 
     /**
+     * Hilfsmethode um eine Karte zum Ablagestapel hinzuzufügen
+     *
+     * @param card
+     * @author Paula
+     * @since Sprint 6
+     */
+    public void addCardToDiscardPile(Card card) {
+        discardPile.add(card);
+
+    }
+
+    /**
      * Methode, die den Geldwert eines Spielers berechnet und zurückgibt
      *
      * @return Geldwert der Karten eines Spielers
      * @author Paula
-     * @since Sprint6
+     * @since Sprint 6
      */
     public int actualMoneyFromPlayer() {
         int money = 0;
@@ -133,7 +146,7 @@ public class Deck {
      *
      * @param value Wert einer Geldkarte
      * @author Paula
-     * @since Sprint6
+     * @since Sprint 6
      */
 
     public void discardMoneyCardsForValue(int value) {
@@ -178,6 +191,10 @@ public class Deck {
 
     public ArrayList<Card> getCardsDeck() {
         return cardsDeck;
+    }
+
+    public ArrayList<Card> getTemp() {
+        return temp;
     }
 
     public ArrayList<Card> getActionPile() {

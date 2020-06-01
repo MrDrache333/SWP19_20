@@ -218,13 +218,19 @@ public class GameService extends AbstractService {
             Playground playground = game.get().getPlayground();
             if (req.getCurrentUser().equals(playground.getActualPlayer().getTheUserInThePlayer()) && playground.getActualPhase() == Phase.Type.Buyphase) {
                 try {
-                    Card card = playground.getCardsPackField().getCards().getCardById(req.getCardID());
-                    ChatMessage infoMessage = new ChatMessage(infoUser, req.getCurrentUser().getUsername() + " kauft Karte " + (card != null ? card.getName() : "Undefiniert") + "!");
-                    post(new NewChatMessageRequest(req.getLobbyID().toString(), infoMessage));
-                    int count = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), req.getCardID());
-                    Short costCard = playground.getCompositePhase().getCardFromId(playground.getCardsPackField().getCards(), req.getCardID()).getCosts();
-                    BuyCardMessage buyCard = new BuyCardMessage(req.getLobbyID(), req.getCurrentUser(), req.getCardID(), count, costCard);
-                    sendToAllPlayers(req.getLobbyID(), buyCard);
+                    Card card = playground.getCardsPackField().getCards().getCardForId(req.getCardID());
+                    int moneyValuePlayer = playground.getActualPlayer().getPlayerDeck().actualMoneyFromPlayer();
+                    int additionalMoney = playground.getActualPlayer().getAdditionalMoney();
+                    if (card.getCosts() <= moneyValuePlayer + additionalMoney) {
+                        ChatMessage infoMessage = new ChatMessage(infoUser, req.getCurrentUser().getUsername() + " kauft Karte " + card.getName() + "!");
+                        post(new NewChatMessageRequest(req.getLobbyID().toString(), infoMessage));
+                        int count = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), req.getCardID());
+                        Short costCard = playground.getCompositePhase().getCardFromId(playground.getCardsPackField().getCards(), req.getCardID()).getCosts();
+                        BuyCardMessage buyCard = new BuyCardMessage(req.getLobbyID(), req.getCurrentUser(), req.getCardID(), count, costCard);
+                        sendToAllPlayers(req.getLobbyID(), buyCard);
+                    } else {
+                        throw new NotEnoughMoneyException("Dafür hast du nicht genug Geld! ");
+                    }
                 } catch (NotEnoughMoneyException notEnoughMoney) {
                     sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(req.getLobbyID(), notEnoughMoney.getMessage()));
                 }
@@ -259,10 +265,10 @@ public class GameService extends AbstractService {
                     //sendToSpecificPlayer(playground.getActualPlayer(), new PlayCardMessage(gameID, player, cardID, true));
                     playground.getPlayers().forEach(n -> {
                         PlayCardMessage msg = new PlayCardMessage(gameID, playground.getActualPlayer().getTheUserInThePlayer(), cardID, true,
-                                playground.getIndexOfPlayer(n), playground.getIndexOfPlayer(playground.getActualPlayer()));
+                                playground.getIndexOfPlayer(n), playground.getIndexOfPlayer(playground.getActualPlayer()), playground.getCompositePhase().getExecuteAction().isRemoveCardAfter());
                         sendToSpecificPlayer(n, msg);
                     });
-                    Card card = playground.getCardsPackField().getCards().getCardById(cardID);
+                    Card card = playground.getCardsPackField().getCards().getCardForId(cardID);
                     ChatMessage infoMessage = new ChatMessage(infoUser, playground.getActualPlayer().getTheUserInThePlayer().getUsername() + " spielt Karte " + (card != null ? card.getName() : "Undefiniert") + "!");
                     post(new NewChatMessageRequest(gameID.toString(), infoMessage));
                 } catch (IllegalArgumentException e) {
@@ -273,5 +279,4 @@ public class GameService extends AbstractService {
             LOG.error("Irgendwas ist bei der onSelectCardRequest im GameService falsch gelaufen. Folgende ID: " + gameID);
         }
     }
-
 }

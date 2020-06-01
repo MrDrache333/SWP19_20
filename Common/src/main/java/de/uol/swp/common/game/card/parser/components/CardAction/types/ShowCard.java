@@ -26,9 +26,17 @@ public class ShowCard extends ComplexCardAction {
         this.setCardSource(source);
     }
 
+    public Card getCard() {
+        return card;
+    }
 
-    @Override
-    public boolean execute() {
-        return false;
+
+    /**
+     * Sets new Die Karte, die angezeigt werden soll.
+     *
+     * @param card New value of Die Karte, die angezeigt werden soll.
+     */
+    public void setCard(Card card) {
+        this.card = card;
     }
 }
