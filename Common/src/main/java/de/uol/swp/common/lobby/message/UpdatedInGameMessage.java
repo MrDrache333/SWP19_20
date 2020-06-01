@@ -6,7 +6,7 @@ import java.util.UUID;
  * Message nachdem der inGame-Status der Lobby nach Spielende wieder auf false gesetzt wurde
  *
  * @author Julia
- * @since Sprint6
+ * @since Sprint 6
  */
 public class UpdatedInGameMessage extends AbstractLobbyMessage {
 

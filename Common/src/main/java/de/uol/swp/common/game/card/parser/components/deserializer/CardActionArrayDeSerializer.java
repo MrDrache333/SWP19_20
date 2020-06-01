@@ -42,8 +42,6 @@ public class CardActionArrayDeSerializer implements JsonDeserializer<CardAction>
             return (gson.fromJson(obj.get("Move").toString(), Move.class));
         if (obj.has("ShowCard"))
             return (gson.fromJson(obj.get("ShowCard").toString(), ShowCard.class));
-        if (obj.has("Until"))
-            return (gson.fromJson(obj.get("Until").toString(), While.class));
         if (obj.has("UseCard"))
             return (gson.fromJson(obj.get("UseCard").toString(), UseCard.class));
         if (obj.has("While"))

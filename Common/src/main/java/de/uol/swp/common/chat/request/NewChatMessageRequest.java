@@ -8,12 +8,9 @@ import de.uol.swp.common.message.AbstractRequestMessage;
  */
 public class NewChatMessageRequest extends AbstractRequestMessage {
 
-
     private static final long serialVersionUID = -194748656024041083L;
-
     private String ChatId;
     private ChatMessage Message;
-
 
     /**
      * Erstellt eine neue MainMenu-Chatnachticht-Request

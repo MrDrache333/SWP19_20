@@ -40,21 +40,9 @@
         "name": "Provinz",
         "value": 6,
         "cost": 8
-      },
-      {
-        "id": 30,
-        "name": "Gärten",
-        "value": 6,
-        "cost": 8
       }
     ],
     "ActionCards": [
-      {
-        "id": 7,
-        "name": "Burggraben",
-        "cost": 2,
-        "type": "Reaction"
-      },
       {
         "id": 8,
         "name": "Dorf",
@@ -112,13 +100,13 @@
                 "max": 255
               },
               "cardSource": "HAND",
-              "executionOptional": true,
               "nextAction": {
                 "ForEach": {
                   "actions": [
                     {
                       "Move": {
-                        "CardDestination": "DISCARD"
+                        "cardSource": "HAND",
+                        "cardDestination": "DISCARD"
                       }
                     },
                     {
@@ -168,49 +156,6 @@
         ]
       },
       {
-        "id": 12,
-        "name": "Miliz",
-        "cost": 4,
-        "actions": [
-          {
-            "AddCapablePlayerActivity": {
-              "count": 2,
-              "activity": "MONEY"
-            }
-          },
-          {
-            "While": {
-              "executeType": "Others",
-              "condition": {
-                "left": {
-                  "Count": {
-                    "GetCard": {
-                      "count": 255,
-                      "cardSource": "HAND"
-                    }
-                  }
-                },
-                "operator": "HIGHER",
-                "right": 3
-              },
-              "actions": [
-                {
-                  "GetCard": {
-                    "count": 1,
-                    "cardSource": "HAND",
-                    "nextAction": {
-                      "Move": {
-                        "cardDestination": "DISCARD"
-                      }
-                    }
-                  }
-                }
-              ]
-            }
-          }
-        ]
-      },
-      {
         "id": 13,
         "name": "Mine",
         "cost": 5,
@@ -223,30 +168,25 @@
               "allowedCardType": "MONEYCARD",
               "cardSource": "HAND",
               "nextAction": {
-                "ForEach": {
-                  "actions": [
-                    {
-                      "Move": {
-                        "cardDestination": "TRASH"
-                      }
-                    },
-                    {
-                      "ChooseCard": {
-                        "count": {
-                          "min": 1
-                        },
-                        "cardSource": "BUY",
-                        "allowedCardType": "MONEYCARD",
-                        "hasMoreWorthThenInput": {
-                          "min": 0,
-                          "max": 3
-                        },
-                        "directHand": true
-                      }
-                    }
-                  ]
+                "Move": {
+                  "cardSource": "HAND",
+                  "cardDestination": "TRASH"
                 }
               }
+            }
+          },
+          {
+            "ChooseCard": {
+              "count": {
+                "min": 1
+              },
+              "allowedCardType": "MONEYCARD",
+              "cardSource": "BUY",
+              "hasMoreCostThanInput": {
+                "min": 0,
+                "max": 3
+              },
+              "directHand": true
             }
           }
         ]
@@ -277,27 +217,27 @@
               },
               "cardSource": "HAND",
               "nextAction": {
-                "ForEach": {
-                  "actions": [
-                    {
-                      "Move": {
-                        "cardDestination": "TRASH"
-                      }
-                    },
-                    {
-                      "ChooseCard": {
-                        "count": {
-                          "min": 1
-                        },
-                        "cardSource": "BUY",
-                        "hasMoreWorthThenInput": {
-                          "min": 0,
-                          "max": 2
-                        },
-                        "directHand": true
-                      }
-                    }
-                  ]
+                "Move": {
+                  "cardSource": "HAND",
+                  "cardDestination": "TRASH"
+                }
+              }
+            }
+          },
+          {
+            "ChooseCard": {
+              "count": {
+                "min": 1
+              },
+              "cardSource": "BUY",
+              "hasMoreCostThanInput": {
+                "min": 0,
+                "max": 2
+              },
+              "nextAction": {
+                "Move": {
+                  "cardSource": "BUY",
+                  "cardDestination": "DISCARD"
                 }
               }
             }
@@ -311,137 +251,18 @@
         "actions": [
           {
             "ChooseCard": {
-              "hasWorth": {
+              "count": {
+                "min": 1
+              },
+              "hasCost": {
                 "min": 0,
                 "max": 4
               },
               "cardSource": "BUY",
               "nextAction": {
-                "MoveCard": {
-                  "cardDestination": "DISCARD"
-                }
-              }
-            }
-          }
-        ]
-      },
-      {
-        "id": 17,
-        "name": "Abenteuer",
-        "cost": 6,
-        "actions": [
-          {
-            "While": {
-              "condition": {
-                "left": {
-                  "Count": {
-                    "GetCard": {
-                      "count": 255,
-                      "allowedCardType": "MONEYCARD",
-                      "cardSource": "TEMP"
-                    }
-                  }
-                },
-                "operator": "LOWER",
-                "right": 2
-              },
-              "actions": [
-                {
-                  "GetCard": {
-                    "count": 1,
-                    "cardSource": "DRAW",
-                    "nextAction": {
-                      "Move": {
-                        "cardDestination": "TEMP"
-                      }
-                    }
-                  }
-                }
-              ]
-            },
-            "nextAction": {
-              "GetCard": {
-                "count": 255,
-                "cardSource": "TEMP",
-                "nextAction": {
-                  "Move": {
-                    "allowedCardType": "MONEYCARD",
-                    "cardDestination": "HAND",
-                    "nextAction": {
-                      "Move": {
-                        "cardDestination": "DISCARD"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        ]
-      },
-      {
-        "id": 18,
-        "name": "Bürokrat",
-        "cost": 4,
-        "type": "Attack",
-        "actions": [
-          {
-            "GetCard": {
-              "count": 1,
-              "cardSource": "BUY",
-              "allowedCardType": "MONEYCARD",
-              "hasWorth": {
-                "min": 2
-              },
-              "nextAction": {
                 "Move": {
+                  "cardSource": "BUY",
                   "cardDestination": "DISCARD"
-                }
-              }
-            }
-          },
-          {
-            "If": {
-              "executeType": "OTHERS",
-              "expectedResult": false,
-              "condition": {
-                "left": {
-                  "GetCard": {
-                    "count": 1,
-                    "cardSource": "HAND",
-                    "allowedCardType": "ValueCard"
-                  }
-                }
-              },
-              "conditionedAction": {
-                "GetCard": {
-                  "count": 255,
-                  "cardSource": "HAND",
-                  "nextAction": {
-                    "ShowCard": {}
-                  }
-                }
-              }
-            }
-          },
-          {
-            "GetCard": {
-              "count": 1,
-              "executeType": "OTHERS",
-              "cardSource": "HAND",
-              "allowedCardType": "ValueCard",
-              "nextAction": {
-                "ForEach": {
-                  "actions": [
-                    {
-                      "ShowCard": {}
-                    },
-                    {
-                      "Move": {
-                        "cardDestination": "DISCARD"
-                      }
-                    }
-                  ]
                 }
               }
             }
@@ -466,43 +287,8 @@
               "removeCardAfter": true,
               "nextAction": {
                 "Move": {
+                  "cardSource": "BUY",
                   "cardDestination": "DISCARD"
-                }
-              }
-            }
-          }
-        ]
-      },
-      {
-        "id": 20,
-        "name": "Geldverleiher",
-        "cost": 4,
-        "actions": [
-          {
-            "If": {
-              "expectedResult": true,
-              "condition": {
-                "left": {
-                  "GetCard": {
-                    "executionOptional": true,
-                    "cardSource": "HAND",
-                    "allowedCardType": "MONEYCARD",
-                    "hasWorth": {
-                      "min": 1,
-                      "max": 1
-                    },
-                    "nextAction": {
-                      "Move": {
-                        "cardDestination": "TRASH"
-                      }
-                    }
-                  }
-                }
-              },
-              "conditionedAction": {
-                "AddCapablePlayerActivity": {
-                  "count": 3,
-                  "activity": "MONEY"
                 }
               }
             }
@@ -524,9 +310,11 @@
             "GetCard": {
               "count": 254,
               "executionOptional": true,
+              "executionOptionalMessage": "Willst du deinen kompletten Nachziehstapel ablegen?",
               "cardSource": "DRAW",
               "nextAction": {
                 "Move": {
+                  "cardSource": "DRAW",
                   "cardDestination": "DISCARD"
                 }
               }
@@ -548,6 +336,7 @@
               },
               "nextAction": {
                 "Move": {
+                  "cardSource": "HAND",
                   "cardDestination": "TRASH"
                 }
               }
@@ -576,86 +365,6 @@
         ]
       },
       {
-        "id": 24,
-        "name": "Thronsaal",
-        "cost": 4,
-        "actions": [
-          {
-            "GetCard": {
-              "count": 1,
-              "cardSource": "HAND",
-              "allowedCardType": "ACTION",
-              "nextAction": {
-                "UseCard": {
-                  "count": 2
-                }
-              }
-            }
-          }
-        ]
-      },
-      {
-        "id": 25,
-        "name": "Bibliothek",
-        "cost": 5,
-        "actions": [
-          {
-            "While": {
-              "condition": {
-                "left": {
-                  "Count": {
-                    "GetCard": {
-                      "count": 255,
-                      "cardSource": "HAND"
-                    }
-                  }
-                },
-                "operator": "LOWER",
-                "right": 7
-              },
-              "actions": [
-                {
-                  "GetCard": {
-                    "count": 1,
-                    "cardSource": "DRAW",
-                    "nextAction": {
-                      "Move": {
-                        "cardDestination": "TEMP",
-                        "allowedCardType": "ACTIONCARD",
-                        "nextAction": {
-                          "Move": {
-                            "cardDestination": "HAND"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              ]
-            }
-          },
-          {
-            "GetCard": {
-              "count": 255,
-              "cardSource": "TEMP",
-              "nextAction": {
-                "Move": {
-                  "cardDestination": "DISCARD"
-                }
-              }
-            }
-          }
-        ]
-      },
-      {
-        "id": 26,
-        "name": "Dieb",
-        "cost": 4,
-        "type": "Attack",
-        "actions": [
-        ]
-      },
-      {
         "id": 27,
         "name": "Jahrmarkt",
         "cost": 5,
@@ -676,109 +385,6 @@
             "AddCapablePlayerActivity": {
               "count": 2,
               "activity": "MONEY"
-            }
-          }
-        ]
-      },
-      {
-        "id": 28,
-        "name": "Ratsversammlung",
-        "cost": 5,
-        "actions": [
-          {
-            "GetCard": {
-              "count": 4,
-              "cardSource": "DRAW",
-              "directHand": true
-            }
-          },
-          {
-            "AddCapablePlayerActivity": {
-              "count": 1,
-              "activity": "BUY"
-            }
-          },
-          {
-            "GetCard": {
-              "count": 1,
-              "executeType": "OTHERS",
-              "cardSource": "DRAW",
-              "directHand": true
-            }
-          }
-        ]
-      },
-      {
-        "id": 29,
-        "name": "Spion",
-        "cost": 4,
-        "type": "Attack",
-        "actions": [
-          {
-            "AddCapablePlayerActivity": {
-              "count": 1,
-              "activity": "BUY"
-            }
-          },
-          {
-            "AddCapablePlayerActivity": {
-              "count": 1,
-              "activity": "ACTION"
-            }
-          },
-          {
-            "GetCard": {
-              "executeType": "ALL",
-              "count": 1,
-              "cardSource": "DRAW",
-              "hideCardDuringAction": false,
-              "nextAction": {
-                "ForEach": {
-                  "actions": [
-                    {
-                      "ShowCard": {}
-                    },
-                    {
-                      "ChooseNextAction": {
-                        "nextActions": [
-                          {
-                            "Move": {
-                              "CardDestination": "DISCARD"
-                            }
-                          },
-                          {
-                            "Move": {
-                              "CardDestination": "DRAW"
-                            }
-                          }
-                        ]
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        ]
-      },
-      {
-        "id": 31,
-        "name": "Hexe",
-        "cost": 5,
-        "type": "Attack",
-        "actions": [
-          {
-            "GetCard": {
-              "count": 2,
-              "cardSource": "DRAW",
-              "directHand": true
-            }
-          },
-          {
-            "GetCard": {
-              "count": 1,
-              "allowedCardType": "CURSE",
-              "directHand": true
             }
           }
         ]

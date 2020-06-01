@@ -6,7 +6,7 @@ import de.uol.swp.common.user.UserDTO;
  * Klasse des LeaveAllLobbiesOnLogoutRequest
  *
  * @author Paula
- * @since Sprint2
+ * @since Sprint 2
  */
 public class LeaveAllLobbiesOnLogoutRequest extends AbstractLobbyRequest {
 

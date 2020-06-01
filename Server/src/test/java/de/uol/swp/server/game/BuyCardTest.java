@@ -64,7 +64,7 @@ public class BuyCardTest {
      * Setzt vor jedem Test das aktuelle Event auf null und registriert diese Testklasse auf dem Eventbus
      *
      * @author Paula
-     * @since Sprint6
+     * @since Sprint 6
      */
     @BeforeEach
     void registerBus() {
@@ -76,7 +76,7 @@ public class BuyCardTest {
      * Meldet diese Testklasse nach jedem Test vom Eventbus ab
      *
      * @author Paula
-     * @since Sprint6
+     * @since Sprint 6
      */
     @AfterEach
     void deregisterBus() {
@@ -89,7 +89,7 @@ public class BuyCardTest {
      *
      * @param e das DeadEvent
      * @author Paula
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Subscribe
     void handle(DeadEvent e) {
@@ -101,7 +101,7 @@ public class BuyCardTest {
      * Testet, ob eine gekaufte Karte dem Ablagestapel des Spielers hinzugefügt wird
      *
      * @author Paula, Ferit
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Test
     void testIfCardIsAddedToDiscardPile() {
@@ -118,7 +118,7 @@ public class BuyCardTest {
      * Testet, ob sich die Anzahl der Karten auf dem Playground nach dem Kauf aktualisiert.
      *
      * @author Paula, Ferit
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Test
     void testIfCardOnPlayGroundIsActualAfterBuyingACard() {

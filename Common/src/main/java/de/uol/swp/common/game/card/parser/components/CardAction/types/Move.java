@@ -47,8 +47,17 @@ public class Move extends ComplexCardAction {
         setCardDestination(destination);
     }
 
-    @Override
-    public boolean execute() {
-        return false;
+    public ArrayList<Card> getCardsToMove() {
+        return cardsToMove;
+    }
+
+
+    /**
+     * Sets new Die zu bewegenden Karten.
+     *
+     * @param cardsToMove New value of Die zu bewegenden Karten.
+     */
+    public void setCardsToMove(ArrayList<Card> cardsToMove) {
+        this.cardsToMove = cardsToMove;
     }
 }

@@ -8,7 +8,7 @@ import java.util.UUID;
  * Anfrage, um den Bereitstatus eines Benutzers in einer Lobby zu ändern.
  *
  * @author KenoO, Marvin
- * @since Sprint2
+ * @since Sprint 2
  */
 public class UpdateLobbyReadyStatusRequest extends AbstractLobbyRequest {
 

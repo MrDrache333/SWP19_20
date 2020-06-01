@@ -8,6 +8,7 @@ import de.uol.swp.common.game.card.parser.components.CardAction.SimpleCardAction
 public class UseCard extends SimpleCardAction {
 
     private short count;    //Anzahl an ausführungen
+    private short cardId = 0;
 
     /**
      * Erstellt eine neue UseCard-Aktion.
@@ -20,8 +21,34 @@ public class UseCard extends SimpleCardAction {
         this.count = count;
     }
 
-    @Override
-    public boolean execute() {
-        return false;
+    public short getCount() {
+        return count;
+    }
+
+    /**
+     * Sets new count.
+     *
+     * @param count New value of count.
+     */
+    public void setCount(short count) {
+        this.count = count;
+    }
+
+    /**
+     * Gets cardId.
+     *
+     * @return Value of cardId.
+     */
+    public short getCardId() {
+        return cardId;
+    }
+
+    /**
+     * Sets new cardId.
+     *
+     * @param cardId New value of cardId.
+     */
+    public void setCardId(short cardId) {
+        this.cardId = cardId;
     }
 }

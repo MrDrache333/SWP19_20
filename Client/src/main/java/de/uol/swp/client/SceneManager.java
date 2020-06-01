@@ -37,9 +37,9 @@ import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.text.Text;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -89,7 +89,19 @@ public class SceneManager {
     private PrimaryPresenter primaryPresenter;
     private Scene primaryScene;
 
-
+    /**
+     * Der Konstruktor des SceneManagers
+     *
+     * @param eventBus     der Eventbus
+     * @param userService  der UserService
+     * @param lobbyService der LobbyService
+     * @param injected     der Injektor
+     * @param primaryStage die PrimaryStage
+     * @param chatService  der Chatservice
+     * @param gameService  der Gameservice
+     * @author Marco, Anna, Haschem, Keno O.
+     * @since Sprint 1
+     */
     @Inject
     public SceneManager(EventBus eventBus, UserService userService, LobbyService lobbyService, Injector injected, @Assisted Stage primaryStage, ChatService chatService, GameService gameService) {
         this.eventBus = eventBus;
@@ -110,7 +122,7 @@ public class SceneManager {
      * @param message die Message
      * @param title   der Titel des Alerts
      * @author Paula, Haschem, Ferit
-     * @since Sprint1
+     * @since Sprint 1
      */
     public static void showAlert(Alert.AlertType type, String message, String title) {
         Platform.runLater(() -> {
@@ -173,7 +185,7 @@ public class SceneManager {
      *
      * @param event das Event
      * @author Anna
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void onDeleteAccountEvent(DeleteAccountEvent event) {
@@ -247,7 +259,7 @@ public class SceneManager {
      * @param lobbyID die übergebene LobbyID aus der empfangenen Message in der ClientApp
      * @author Paula, Haschem, Ferit, Anna, Darian
      * @version 0.2
-     * @since Sprint3
+     * @since Sprint 3
      */
     public void showLobbyScreen(User currentUser, String title, UUID lobbyID, UserDTO gameOwner) {
         Platform.runLater(() -> {
@@ -265,7 +277,7 @@ public class SceneManager {
      *
      * @param loggedInUser der eingeloggte User
      * @author Anna, Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     public void showSettingsScreen(User loggedInUser) {
         Platform.runLater(() -> {
@@ -287,7 +299,7 @@ public class SceneManager {
      *
      * @param loggedInUser der eingeloggte User
      * @author Paula
-     * @since Sprint7
+     * @since Sprint 7
      */
 
     public void showCreateLobbyScreen(User loggedInUser) {
@@ -309,7 +321,7 @@ public class SceneManager {
      *
      * @param loggedInUser
      * @author Paula
-     * @since Sprint7
+     * @since Sprint 7
      */
 
     public void showJoinLobbyScreen(User loggedInUser, Lobby lobby) {
@@ -330,7 +342,7 @@ public class SceneManager {
      * Schließt alle Stages
      *
      * @author Julia, Paula
-     * @since Sprint3
+     * @since Sprint 3
      */
     public void closeAllStages() {
         Platform.runLater(() -> {
@@ -404,9 +416,6 @@ public class SceneManager {
             primaryScene = new Scene(rootPane, 1400, 790);
             primaryScene.getStylesheets().add(styleSheet);
             primaryScene.getStylesheets().add(PrimaryPresenter.css);
-            primaryStage.setOnCloseRequest(event -> {
-                userService.logout(currentUser);
-            });
             eventBus.register(primaryPresenter);
             primaryScene.setOnKeyPressed(hotkeyEventHandler);
         }
@@ -532,7 +541,7 @@ public class SceneManager {
      * Strg + L: CreateLobby
      *
      * @author Marvin
-     * @since Sprint7
+     * @since Sprint 7
      */
 
     private EventHandler<KeyEvent> hotkeyEventHandler = new EventHandler<>() {

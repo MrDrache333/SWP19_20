@@ -122,10 +122,7 @@ public class MainMenuPresenter extends AbstractPresenter {
         players.setPrefWidth(66);
         inGame.setPrefWidth(60);
         joinLobby.setPrefWidth(85);
-
-
     }
-
 
     /**
      * Request für Lobby erstellen Fenster
@@ -141,7 +138,6 @@ public class MainMenuPresenter extends AbstractPresenter {
     //--------------------------------------
     // EVENTBUS
     //--------------------------------------
-
 
     /**
      * Login war erfolgreich. Der User tritt dem globalen Chat bei. Lobbys werden aktualisiert
@@ -198,7 +194,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      *
      * @param message die UserDroppedMessage
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void userDropped(UserDroppedMessage message) {
@@ -211,7 +207,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      *
      * @param message die CreateLobbyMessage
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void newLobbyCreated(CreateLobbyMessage message) {
@@ -220,7 +216,6 @@ public class MainMenuPresenter extends AbstractPresenter {
             Platform.runLater(() -> {
                 lobbies.add(0, message.getLobby());
             });
-
         }
     }
 
@@ -229,7 +224,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      *
      * @param message die UserJoinedLobbyMessage
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void userJoinedLobby(UserJoinedLobbyMessage message) {
@@ -246,7 +241,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      *
      * @param message die UserLeftLobbyMessage
      * @author Julia, Darian
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void userLeftLobby(UserLeftLobbyMessage message) {
@@ -268,7 +263,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      *
      * @param message die UserLeftAllLobbiesMessage
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void userLeftAllLobbies(UserLeftAllLobbiesMessage message) {
@@ -285,7 +280,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      *
      * @param message die KickUserMessage
      * @author Julia, Marvin, Darian
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void userKicked(KickUserMessage message) {
@@ -302,7 +297,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      *
      * @param message die SetMaxPlayerMessage
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void maxPlayerSet(SetMaxPlayerMessage message) {
@@ -319,7 +314,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      *
      * @param message die StartGameMessage
      * @author Julia
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Subscribe
     public void onGameStart(StartGameMessage message) {
@@ -345,7 +340,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      *
      * @param message die UpdatedInGameMessage
      * @author Julia
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Subscribe
     public void onGameEnd(UpdatedInGameMessage message) {
@@ -370,7 +365,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      *
      * @param message die UpdatedUserMessage
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void updatedUser(UpdatedUserMessage message) {
@@ -399,7 +394,6 @@ public class MainMenuPresenter extends AbstractPresenter {
                         toAdd.add(lobbyToUpdate);
                     }
                 }
-
                 //Lobbytabelle aktualisieren
                 lobbies.removeAll(toRemove);
                 lobbies.addAll(toAdd);
@@ -431,7 +425,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      *
      * @param allLobbiesResponse Die AllOnlineLobbiesResponse
      * @author Julia
-     * @since Sprint2
+     * @since Sprint 2
      */
     @Subscribe
     public void lobbyTable(AllOnlineLobbiesResponse allLobbiesResponse) {
@@ -441,7 +435,7 @@ public class MainMenuPresenter extends AbstractPresenter {
 
 
     //-----------------
-    // PRIVATE METHODS
+    // PRIVATE METHODEN
     //-----------------
 
     /**
@@ -449,7 +443,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      *
      * @param lobbyList die LobbyListe, die alle Lobbys enthält
      * @author Julia
-     * @since Sprint2
+     * @since Sprint 2
      */
     private void updateLobbiesTable(List<LobbyDTO> lobbyList) {
         Platform.runLater(() -> {
@@ -465,37 +459,26 @@ public class MainMenuPresenter extends AbstractPresenter {
     /**
      * Hilfsmethode zum Erstellen des Buttons zum Betreten einer Lobby
      * beim join wird ebenfalls überprüft ob die Lobby ein lobbyPassword besitzt und ggf. dieses abgefragt
+     * Der "lobby beitreten"-Button wird ausgegraut, wenn der User schon in der Lobby ist,
+     * die Lobby sich im Spiel befindet oder, wenn nicht mehr User in die Lobby können
      *
-     * @author Rike, Julia, Paula, Marvin
-     * @since Sprint3
+     * @author Julia, Paula, Marvin, Rike
+     * @since Sprint 3
      */
-
     private void addJoinLobbyButton() {
         Callback<TableColumn<Lobby, Void>, TableCell<Lobby, Void>> cellFactory = new Callback<>() {
             @Override
             public TableCell<Lobby, Void> call(final TableColumn<Lobby, Void> param) {
                 return new TableCell<>() {
-
                     final Button joinLobbyButton = new Button("Beitreten");
-
                     {
                         joinLobbyButton.setOnAction((ActionEvent event) -> {
                             Lobby lobby = getTableView().getItems().get(getIndex());
-                            if (lobby.getPlayers() == lobby.getMaxPlayer()) {
-                                SceneManager.showAlert(Alert.AlertType.WARNING, "Diese Lobby ist voll!", "Fehler");
-                            } else if (lobby.getUsers().contains(loggedInUser)) {
-                                SceneManager.showAlert(Alert.AlertType.WARNING, "Du bist dieser Lobby schon beigetreten!", "Fehler");
-                            } else if (lobby.getInGame()) {
-                                SceneManager.showAlert(Alert.AlertType.WARNING, "Du kannst einer Lobby nicht beitreten,\nwenn in ihr ein Spiel läuft!", "Fehler");
-                            } else {
-                                if (lobby.getLobbyPassword().isEmpty()) {
-                                    lobbyService.joinLobby(lobby.getLobbyID(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
-                                } else if (!lobby.getLobbyPassword().isEmpty()) {
-                                    OpenJoinLobbyRequest request = new OpenJoinLobbyRequest(loggedInUser, lobby);
-                                    eventBus.post(request);
-
-
-                                }
+                            if (lobby.getLobbyPassword().isEmpty()) {
+                                lobbyService.joinLobby(lobby.getLobbyID(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
+                            } else if (!lobby.getLobbyPassword().isEmpty()) {
+                                OpenJoinLobbyRequest request = new OpenJoinLobbyRequest(loggedInUser, lobby);
+                                eventBus.post(request);
                             }
                         });
                     }
@@ -507,6 +490,15 @@ public class MainMenuPresenter extends AbstractPresenter {
                             setGraphic(null);
                         } else {
                             setGraphic(joinLobbyButton);
+                            Lobby lobby = getTableView().getItems().get(getIndex());
+                            Platform.runLater(() -> {
+                                if (lobby.getUsers().contains(loggedInUser) || lobby.getInGame() || lobby.getPlayers() == lobby.getMaxPlayer()){
+                                    joinLobbyButton.setDisable(true);
+                                }
+                                else{
+                                    joinLobbyButton.setDisable(false);
+                                }
+                            });
                         }
                     }
                 };
@@ -541,7 +533,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      *
      * @param username der Name des Users
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     private void userLeft(String username) {
         Platform.runLater(() -> {

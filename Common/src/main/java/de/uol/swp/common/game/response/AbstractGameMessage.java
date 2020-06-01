@@ -12,14 +12,36 @@ abstract public class AbstractGameMessage extends AbstractServerMessage {
     private short cardID;
 
     /**
+     * Basiskonstruktor der AbstractGameMessage
+     *
+     * @author Devin 6
+     * @since Sprint
+     */
+    public AbstractGameMessage() {
+    }
+
+    /**
+     * Instanziiert GameMessage
+     *
+     * @param gameID Die ID des Games
+     * @param player Der Spieler
+     * @author Paula
+     * @since Sprint 5
+     */
+    public AbstractGameMessage(UUID gameID, User player) {
+        this.gameID = gameID;
+        this.player = player;
+    }
+
+    /**
+     * Überladener Konstruktor
      * Instanziiert GameMessage
      *
      * @param cardID Die ID der Karte
      * @param gameID Die ID des Games
      * @param player Der Spieler
      * @author Paula
-     * @version 1
-     * @since Sprint5
+     * @since Sprint 5
      */
     public AbstractGameMessage(UUID gameID, User player, short cardID) {
         this.gameID = gameID;
@@ -27,34 +49,23 @@ abstract public class AbstractGameMessage extends AbstractServerMessage {
         this.cardID = cardID;
     }
 
-    public AbstractGameMessage() {
-
-    }
-
-    public AbstractGameMessage(UUID gameID, User player) {
-        this.gameID = gameID;
-        this.player = player;
-    }
-
     /**
-     * Gibt GameID zurück
+     * Gibt Game-ID zurück
      *
      * @return GameID
      * @author Paula
-     * @version 1
-     * since Sprint5
+     * @since Sprint 5
      */
     public UUID getGameID() {
         return gameID;
     }
 
     /**
-     * Gibt CardID zurück
+     * Gibt Card-ID zurück
      *
      * @return CardID der ausgewählten Karte
      * @author Paula
-     * @version 1
-     * since Sprint5
+     * @since Sprint 5
      */
     public short getCardID() {
         return cardID;
@@ -65,10 +76,8 @@ abstract public class AbstractGameMessage extends AbstractServerMessage {
      *
      * @return Spieler, der die Karte ausgewählt hat
      * @author Paula
-     * @version 1
-     * since Sprint5
+     * @since Sprint 5
      */
-
     public User getPlayer() {
         return player;
     }

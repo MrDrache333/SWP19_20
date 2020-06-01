@@ -27,14 +27,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Der Lobby Service Test
  *
  * @author Julia
- * @since Sprint3
+ * @since Sprint 3
  */
 class LobbyServiceTest {
     /**
      * Standard Benutzer, Standard Owner und Standard Lobby zum Testen
      *
      * @author Julia
-     * @since Sprint3
+     * @since Sprint 3
      */
     User defaultUser = new UserDTO("Marco", "test", "marco@test.de");
     User defaultOwner = new UserDTO("Owner", "test", "123@test.de");
@@ -44,7 +44,7 @@ class LobbyServiceTest {
      * Der zu verwendete EventBus
      *
      * @author Julia
-     * @since Sprint3
+     * @since Sprint 3
      */
 
     EventBus bus = new EventBus();
@@ -57,7 +57,7 @@ class LobbyServiceTest {
      *
      * @param e Das aufgetretene Dead-Event
      * @author Julia
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     void handle(DeadEvent e) {
@@ -70,7 +70,7 @@ class LobbyServiceTest {
      * Eventbus initialisieren
      *
      * @author Julia
-     * @since Sprint3
+     * @since Sprint 3
      */
     @BeforeEach
     void registerBus() {
@@ -82,7 +82,7 @@ class LobbyServiceTest {
      * Klasse vom EventBus deregistrieren
      *
      * @author Julia
-     * @since Sprint3
+     * @since Sprint 3
      */
     @AfterEach
     void deregisterBus() {
@@ -94,7 +94,7 @@ class LobbyServiceTest {
      *
      * @throws InterruptedException
      * @author Julia
-     * @since Sprint3
+     * @since Sprint 3
      */
 
     @Test
@@ -112,7 +112,7 @@ class LobbyServiceTest {
      *
      * @throws InterruptedException Die evtl. auftretene Fehlermeldung
      * @author Julia, Marvin
-     * @since Sprint3
+     * @since Sprint 3
      */
     private void joinLobby() throws InterruptedException {
         LobbyService userService = new LobbyService(bus);
@@ -125,7 +125,7 @@ class LobbyServiceTest {
      *
      * @throws InterruptedException Die evtl. auftretene Fehlermeldung
      * @author Julia
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Test
     void joinLobbyTest() throws InterruptedException {
@@ -143,7 +143,7 @@ class LobbyServiceTest {
      *
      * @throws InterruptedException Die evtl. auftretene Fehlermeldung
      * @author Julia
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Test
     void leaveLobbyTest() throws InterruptedException {
@@ -169,7 +169,7 @@ class LobbyServiceTest {
      *
      * @throws InterruptedException Die evtl. auftretene Fehlermeldung
      * @author Julia
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Test
     void leaveAllLobbiesOnLogoutTest() throws InterruptedException {
