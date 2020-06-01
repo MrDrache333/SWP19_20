@@ -174,7 +174,6 @@ public class GameViewPresenter extends AbstractPresenter {
     private final ChatViewPresenter chatViewPresenter;
     private final Injector injector;
     private final GameManagement gameManagement;
-    private PathTransition pathTransition;
     private ArrayList<Short> handCardIDs;
     private Map<Short, Label> valuecardLabels = new HashMap<>();
     private ColorAdjust makeImageDarker = new ColorAdjust();
