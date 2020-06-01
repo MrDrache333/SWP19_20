@@ -107,7 +107,7 @@ public class LobbyService extends AbstractService {
      * @since Sprint 3
      */
     @Subscribe
-    public void onLobbyJoinUserRequest(LobbyJoinUserRequest msg) {
+    public void onLobbyJoinUserRequest(LobbyJoinUserRequest msg){
         Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getLobbyID());
         if (lobby.isPresent() && !lobby.get().getUsers().contains(msg.getUser()) && lobby.get().getPlayers() < lobby.get().getMaxPlayer() && !lobby.get().getInGame()) {
             LOG.info("User " + msg.getUser().getUsername() + " is joining lobby " + lobby.get().getName());
@@ -118,8 +118,8 @@ public class LobbyService extends AbstractService {
             if (msg.getBot() == true && lobby.isPresent()) {
                 lobby.get().setReadyStatus(msg.getUser(), true);
                 ServerMessage msg2 = new UpdatedLobbyReadyStatusMessage(lobby.get().getLobbyID(), msg.getUser(), lobby.get().getReadyStatus(msg.getUser()));
-                authenticationService.sendToLoggedInPlayers(msg2);
                 LOG.debug("Sending Updated Status of Bot: " + msg.getUser().getUsername() + " to true in Lobby: " + lobby.get().getLobbyID());
+                authenticationService.sendToLoggedInPlayers(msg2);
                 allPlayersReady(lobby.get());
             }
         } else {
