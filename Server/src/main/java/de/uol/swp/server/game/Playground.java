@@ -139,16 +139,19 @@ public class Playground extends AbstractPlayground {
             nextPlayer = players.get(1);
             sendInitialCardsDeckSize();
             sendInitialHands();
+            actualPoint();
         } else {
             //Spieler muss Clearphase durchlaufen haben
             if (actualPhase != Phase.Type.Clearphase) return;
             if (actualPlayer != latestGavedUpPlayer) {
                 sendPlayersHand();
                 sendCardsDeckSize();
+                actualPoint();
             }
             int index = players.indexOf(nextPlayer);
             actualPlayer = nextPlayer;
             nextPlayer = players.get(++index % players.size());
+            actualPoint();
         }
 
         int turns = playerTurns.get(actualPlayer);
@@ -157,9 +160,11 @@ public class Playground extends AbstractPlayground {
         if (checkForActionCard()) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartActionPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID, timestamp));
+            actualPoint();
             //phaseTimer();
         } else {
             nextPhase();
+            actualPoint();
         }
     }
 
@@ -256,6 +261,9 @@ public class Playground extends AbstractPlayground {
         for (Player player : players) {
             int size = player.getPlayerDeck().getCardsDeck().size();
             gameService.sendToSpecificPlayer(player, new CardsDeckSizeMessage(theSpecificLobbyID, player.getTheUserInThePlayer(), size));
+            actualPlayer.getPlayerDeck().countSiegpunkte();
+            ActualPointMessage actualPointMessage = new ActualPointMessage(theSpecificLobbyID, (UserDTO) actualPlayer.getTheUserInThePlayer(), "Bla", actualPlayer.getPlayerDeck().getSiegpunkte());
+            gameService.sendToSpecificPlayer(player, actualPointMessage);
         }
     }
 
@@ -361,11 +369,8 @@ public class Playground extends AbstractPlayground {
     }
 
     public void actualPoint() {
-
-        // ActualePhase auf ActionPhase Testweise gesetzt.
-        actualPhase = Phase.Type.ActionPhase;
         actualPlayer.getPlayerDeck().countSiegpunkte();
-        ActualPointMessage actualPointMessage = new ActualPointMessage(theSpecificLobbyID, (UserDTO) actualPlayer.getTheUserInThePlayer(), actualPhase.toString(), actualPlayer.getPlayerDeck().getSiegpunkte());
+        ActualPointMessage actualPointMessage = new ActualPointMessage(theSpecificLobbyID, (UserDTO) actualPlayer.getTheUserInThePlayer(), "RemoveMe", actualPlayer.getPlayerDeck().getSiegpunkte());
         gameService.sendToSpecificPlayer(actualPlayer, actualPointMessage);
     }
 

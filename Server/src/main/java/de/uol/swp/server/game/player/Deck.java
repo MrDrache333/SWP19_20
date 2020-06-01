@@ -45,7 +45,7 @@ public class Deck {
         if (siegpunkte != 0) {
             siegpunkte = 0;
             for (Card card : cardsDeck) {
-                if (card.getCardType().equals(Card.Type.ValueCard)) {
+                if (card.getCardType().equals(Card.Type.VALUECARD)) {
                     ValueCard theValueCard = (ValueCard) card;
                     siegpunkte += (int) theValueCard.getValue();
                 }
