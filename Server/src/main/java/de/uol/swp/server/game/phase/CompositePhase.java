@@ -45,14 +45,13 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
     public void executeActionPhase(Player player, short cardId) {
         CardPack cardsPackField = playground.getCardsPackField();
         Card currentCard = getCardFromId(cardsPackField.getCards(), cardId);
-
         // 1. Verifiziere, dass Karte existiert
 
         if (currentCard == null) {
             throw new IllegalArgumentException("CardID wurde nicht gefunden");
         }
         // 2. Überprüfe, ob Spieler diese Karte in der Hand hat
-        if(player.getPlayerDeck().getHand().stream().noneMatch(c -> c.getId() == currentCard.getId())){
+        if (player.getPlayerDeck().getHand().stream().noneMatch(c -> c.getId() == currentCard.getId())) {
             throw new IllegalArgumentException("Die Hand enthält die gesuchte Karte nicht");
         }
         if (!implementedActionCards.contains(currentCard.getId())) {
@@ -64,10 +63,32 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
          */
         executeAction = new ActionCardExecution(cardId, playground);
         playground.getGameService().getBus().register(executeAction);
-        executeAction.execute();
         player.getPlayerDeck().getHand().remove(currentCard);
-        // TODO: Die Aktion der Karte muss noch ausgeführt werden
+        executeAction.execute();
+    }
 
+    /**
+     * Wenn eine Aktionskarte vollständig ausgeführt wurde, wird sie in die Aktionszone des Spielers oder den Müll gelegt.
+     * Ggf. neue Handkarten, die letzte Karte auf dem Ablagestapel und Müll, Anzahl der Karten auf dem Nachziehstapel
+     * werden gesendet.
+     * Der Aktionencounter wird um 1 verringert, dem Spieler wird eine InfoPlayDisplayMessage gesendet und die Phase
+     * wird gewechselt, falls der Spieler keine Aktionen oder Aktionskarten mehr hat.
+     *
+     * @param player       Der Spieler
+     * @param newHandCards Liste neuer Handkarten
+     * @param card         Gespielte Karte
+     * @author Julia, KenoO
+     * @since Sprint 7
+     */
+    public void finishedActionCardExecution(Player player, ArrayList<Short> newHandCards, Card card) {
+        if (!executeAction.isRemoveCardAfter()) {
+            player.getPlayerDeck().getActionPile().add(card);
+        } else {
+            playground.getTrash().add(card);
+        }
+        if (!newHandCards.isEmpty()) {
+            playground.getGameService().sendToSpecificPlayer(player, new DrawHandMessage(newHandCards, playground.getID(), (short) playground.getPlayers().size(), false));
+        }
         playground.sendCardsDeckSize();
     }
 
@@ -247,4 +268,3 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         return implementedActionCards;
     }
 }
-

@@ -9,6 +9,15 @@ import java.util.UUID;
 public class PlayCardMessage extends AbstractServerMessage {
 
     private static final long serialVersionUID = 3669837484946853842L;
+
+    private final UUID gameID;
+    private final User currentUser;
+    private final Short handCardID;
+    private final Boolean isPlayed;
+    private Short userPlaceNumber = null;
+    private Short enemyPlaceNumber = null;
+    private boolean removeCardAfter;
+
     /**
      * Die Message die gesendet wird, wenn eine Handkarte angeklickt wurde
      *
@@ -19,14 +28,12 @@ public class PlayCardMessage extends AbstractServerMessage {
      * @author Rike, Devin
      * @since Sprint 5
      */
-
-    private final UUID gameID;
-    private final User currentUser;
-    private final Short handCardID;
-    private final Boolean isPlayed;
-    private Short userPlaceNumber = null;
-    private Short enemyPlaceNumber = null;
-    private boolean removeCardAfter;
+    public PlayCardMessage(UUID gameID, User currentUser, Short handCardID, Boolean isPlayed) {
+        this.gameID = gameID;
+        this.currentUser = currentUser;
+        this.handCardID = handCardID;
+        this.isPlayed = isPlayed;
+    }
 
     /**
      * Überladener Konstruktor
@@ -41,7 +48,7 @@ public class PlayCardMessage extends AbstractServerMessage {
      * @author Rike, Devin
      * @since Sprint 5
      */
-    public PlayCardMessage(UUID gameID, User currentUser, Short handCardID, Boolean isPlayed, Short userPlaceNumber, Short enemyPlaceNumber) {
+    public PlayCardMessage(UUID gameID, User currentUser, Short handCardID, Boolean isPlayed, Short userPlaceNumber, Short enemyPlaceNumber, boolean removeCardAfter) {
         this.gameID = gameID;
         this.currentUser = currentUser;
         this.handCardID = handCardID;

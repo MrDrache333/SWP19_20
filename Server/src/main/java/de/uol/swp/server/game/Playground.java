@@ -49,6 +49,7 @@ public class Playground extends AbstractPlayground {
     private short lobbySizeOnStart;
     private CardPack cardsPackField;
     private ArrayList<Short> chosenCards;
+    private ArrayList<Card> trash = new ArrayList<>();
     private final UserDTO infoUser = new UserDTO("infoUser", "", "");
     private ArrayList<Card> trash;
 
