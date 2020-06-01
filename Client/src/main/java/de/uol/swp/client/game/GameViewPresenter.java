@@ -11,6 +11,7 @@ import de.uol.swp.client.game.container.HandcardsLayoutContainer;
 import de.uol.swp.client.game.container.PlayedCardLayoutContainer;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
+import de.uol.swp.common.game.AbstractPlayground;
 import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.game.request.BuyCardRequest;
@@ -42,6 +43,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -145,6 +147,8 @@ public class GameViewPresenter extends AbstractPresenter {
     private Button playAllMoneyCardsButton;
     @FXML
     private Button skipPhaseButton;
+    @FXML
+    private Pane valueCardsBox;
 
     private final HandcardsLayoutContainer handcards;
     private final HandcardsLayoutContainer firstEnemyHand;
@@ -966,6 +970,66 @@ public class GameViewPresenter extends AbstractPresenter {
         }
     }
 
+    @Subscribe
+    public void onMoveCardMessage(MoveCardMessage msg) {
+        if (msg.getGameID().equals(lobbyID) && msg.getPlayer().equals(loggedInUser)) {
+            AbstractPlayground.ZoneType source = msg.getMove().getCardSource();
+            AbstractPlayground.ZoneType destination = msg.getMove().getCardDestination();
+            ArrayList<ImageView> cardsToMove = new ArrayList<>();
+            if (source != AbstractPlayground.ZoneType.DRAW) {
+                for (de.uol.swp.common.game.card.Card c : msg.getMove().getCardsToMove()) {
+                    cardsToMove.add(getImageViewFromRegion(getRegionFromZoneType(source, c.getId()), c.getId()));
+                }
+            } else {
+                for (de.uol.swp.common.game.card.Card c : msg.getMove().getCardsToMove()) {
+                    ImageView card2 = new ImageView(new Image("/cards/images/" + c.getId() + ".png"));
+                    card2.setPreserveRatio(true);
+                    card2.setFitHeight(107);
+                    cardsToMove.add(card2);
+                }
+            }
+            for (ImageView card : cardsToMove) {
+                short cardID = Short.parseShort(card.getId());
+                switch (source) {
+                    case TRASH:
+                        //TODO: create Trash-Zone
+                        break;
+                    case HAND:
+                        Platform.runLater(() -> {
+                            playAnimation(destination, card);
+                            handcards.getChildren().remove(card);
+                        });
+                        break;
+                    case BUY:
+                        ImageView card2 = new ImageView(new Image("/cards/images/" + cardID + ".png"));
+                        card2.setPreserveRatio(true);
+                        card2.setFitHeight(107);
+                        card2.setLayoutX(card.getLayoutX());
+                        card2.setLayoutY(card.getLayoutY());
+                        Platform.runLater(() -> {
+                            ((Pane) getRegionFromZoneType(source, cardID)).getChildren().add(card2);
+                            playAnimation(destination, card2);
+                            ((Pane) getRegionFromZoneType(AbstractPlayground.ZoneType.BUY, cardID)).getChildren().remove(card2);
+                        });
+                        break;
+                    case DRAW:
+                        Platform.runLater(() -> {
+                            myDLC.getChildren().add(card);
+                            playAnimation(destination, card);
+                            myDLC.getChildren().remove(card);
+                        });
+                        break;
+                    case DISCARD:
+                        Platform.runLater(() -> {
+                            playAnimation(destination, card);
+                            myDPLC.getChildren().remove(card);
+                        });
+                        break;
+                }
+            }
+        }
+    }
+
     /**
      * Die usersView Liste wird geupdatet.
      * Äquivalent zu MainMenuPresenter.updateUsersList.
@@ -1264,5 +1328,47 @@ public class GameViewPresenter extends AbstractPresenter {
                 }
             });
         }
+    }
+
+    public Region getRegionFromZoneType(AbstractPlayground.ZoneType zoneType, short cardID) {
+        switch (zoneType) {
+            case TRASH:
+                //TODO: create Trash-Zone
+                break;
+            case HAND:
+                return handcards;
+            case BUY:
+                if (cardID > 6 && cardID != 38) {
+                    return shopTeppich;
+                } else {
+                    return valueCardsBox;
+                }
+            case DRAW:
+                return myDLC;
+            case DISCARD:
+                return myDPLC;
+        }
+        return null;
+    }
+
+    public void playAnimation(AbstractPlayground.ZoneType zoneType, ImageView card) {
+        switch (zoneType) {
+            case TRASH:
+                //TODO: create Trash-Zone
+                break;
+            case HAND:
+                AnimationManagement.addToHand(card, handcards.getChildren().size());
+                handcards.getChildren().add(card);
+                break;
+            case DISCARD:
+                AnimationManagement.buyCard(card);
+                myDPLC.getChildren().add(card);
+                break;
+        }
+        LOG.debug("Die Bewegung zur Zone " + zoneType + " wurde noch nicht implementiert");
+    }
+
+    public ImageView getImageViewFromRegion(Region region, short id) {
+        return (ImageView) region.getChildrenUnmodifiable().stream().filter(c -> Short.parseShort(c.getId()) == id).findFirst().get();
     }
 }

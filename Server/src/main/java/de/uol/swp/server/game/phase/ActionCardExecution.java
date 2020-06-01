@@ -106,6 +106,7 @@ public class ActionCardExecution {
         Player helpPlayer = helpMethodToGetThePlayerFromUser(response.getPlayer());
         p.add(helpPlayer);
         if (response.getGameID().equals(gameID) && waitedForPlayerInput && chooseCardPlayers.contains(response.getPlayer())) {
+            LOG.debug(response.getCards() + " wurden ausgewählt");
             waitedForPlayerInput = false;
             if (!startedNextActions) actualStateIndex++;
             if (response.getCards().size() == 1) {
