@@ -59,6 +59,9 @@ public class ActionCardExecution {
     //Ob die Aktionskarte entsorgt werden soll
     private boolean removeCardAfter;
 
+    //Ob die Ausfühung einer Karte schon fertig ist
+    private boolean finishedExecution;
+
     public ActionCardExecution(short cardID, Playground playground) {
         this.waitedForPlayerInput = false;
         this.actualStateIndex = 0;
@@ -189,6 +192,7 @@ public class ActionCardExecution {
         }
 
         checkIfComplete();
+        finishedExecution = false;
         return true;
     }
 
@@ -816,7 +820,10 @@ public class ActionCardExecution {
      */
     private boolean checkIfComplete() {
         if (actualStateIndex == theCard.getActions().size() && !waitedForPlayerInput && finishedNextActions) {
-            playground.getCompositePhase().finishedActionCardExecution(player, newHandCards, theCard);
+            if(!finishedExecution) {
+                finishedExecution = true;
+                playground.getCompositePhase().finishedActionCardExecution(player, newHandCards, theCard);
+            }
             return true;
         }
         return false;
