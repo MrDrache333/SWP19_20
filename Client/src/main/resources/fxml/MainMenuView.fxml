@@ -18,7 +18,7 @@
                 <children>
                     <Label text="Online Lobbys">
                         <Button fx:id="createLobbyButton" maxWidth="160.0" minWidth="160.0"
-                                mnemonicParsing="false" onAction="#onShowLobbyDialogButtonPressed"
+                                mnemonicParsing="false" onAction="#onOpenCreateLobbyView"
                                 prefHeight="27.0" prefWidth="160.0" text="Lobby erstellen"
                                 textAlignment="CENTER"/>
                         <font>

@@ -53,7 +53,7 @@ public class ChooseCardRequest extends AbstractGameMessage {
      * @author KenoO
      * @since Sprint 7
      */
-    public ChooseCardRequest(UUID id, User player, ArrayList<Short> cards, Value countV, AbstractPlayground.ZoneType source, String message, boolean directHand) {
+    public ChooseCardRequest(UUID id, User player, ArrayList<Short> cards, Value countV, User sourcePlayer, AbstractPlayground.ZoneType source, String message, boolean directHand) {
         super(id, player);
         this.cards = cards;
         this.countV = countV;
@@ -140,6 +140,4 @@ public class ChooseCardRequest extends AbstractGameMessage {
     public Value getCountV() {
         return countV;
     }
-}
-
 }
