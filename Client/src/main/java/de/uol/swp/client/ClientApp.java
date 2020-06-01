@@ -26,11 +26,14 @@ import io.netty.channel.Channel;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ClientApp extends Application implements ConnectionListener {
 
@@ -81,7 +84,6 @@ public class ClientApp extends Application implements ConnectionListener {
             host = args.get(0);
             port = Integer.parseInt(args.get(1));
         }
-
         // do not establish connection here
         // if connection is established in this stage, no GUI is shown and
         // exceptions are only visible in console!
@@ -116,7 +118,19 @@ public class ClientApp extends Application implements ConnectionListener {
         new SoundMediaPlayer(SoundMediaPlayer.Sound.Intro, SoundMediaPlayer.Type.Music).play();
 
         //  close request calls method to close all windows
-        primaryStage.setOnCloseRequest(event -> closeAllWindows());
+        primaryStage.setOnCloseRequest(event -> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setResizable(false);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.getDialogPane().setHeaderText("Möchtest du das Spiel wirklich beenden?");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                userService.hardLogout(user);
+                closeAllWindows();
+            } else {
+                event.consume();
+            }
+        });
 
         ClientConnectionFactory connectionFactory = injector.getInstance(ClientConnectionFactory.class);
         clientConnection = connectionFactory.create(host, port);
@@ -149,7 +163,7 @@ public class ClientApp extends Application implements ConnectionListener {
     @Override
     public void stop() {
         if (userService != null && user != null) {
-            userService.logout(user);
+            userService.hardLogout(user);
             user = null;
         }
         eventBus.unregister(this);
@@ -213,7 +227,7 @@ public class ClientApp extends Application implements ConnectionListener {
      * @param message CreateLobbyMessage vom Server, dass die Lobby erstellt worden ist.
      * @author Paula, Haschem, Ferit, Anna, Darian
      * @version 0.2
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onCreateLobbyMessage(CreateLobbyMessage message) {
@@ -234,7 +248,7 @@ public class ClientApp extends Application implements ConnectionListener {
      *
      * @param message UserJoinedLobbyMessage Das ein User der Lobby beigetreten ist.
      * @author Paula, Julia
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onUserJoinedLobbyMessage(UserJoinedLobbyMessage message) {
@@ -244,8 +258,7 @@ public class ClientApp extends Application implements ConnectionListener {
                 sceneManager.closeJoinLobby();
             }
             LOG.info("User " + message.getUser().getUsername() + " joined lobby successfully");
-        }
-       else if (message.getLobby().getLobbyPassword() == null) {
+        } else if (message.getLobby().getLobbyPassword() == null) {
             SceneManager.showAlert(Alert.AlertType.WARNING, "Das Passwort ist falsch!", "Fehler");
         }
     }
@@ -257,7 +270,7 @@ public class ClientApp extends Application implements ConnectionListener {
      *
      * @param message UserLeftLobbyMessage
      * @author Julia, Paula
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
@@ -273,7 +286,7 @@ public class ClientApp extends Application implements ConnectionListener {
      *
      * @param message Die Anfrage zum öffnen des Fensters
      * @author Anna
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void onOpenSettingsRequest(OpenSettingsRequest message) {
@@ -287,7 +300,7 @@ public class ClientApp extends Application implements ConnectionListener {
      *
      * @param message
      * @author Paula
-     * @since Sprint4
+     * @since Sprint 4
      */
 
     @Subscribe
@@ -313,7 +326,7 @@ public class ClientApp extends Application implements ConnectionListener {
      *
      * @param message Nachricht um die neuen Daten des Users anzuzeigen und zu setzen.
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void onUpdatedUserMessage(UpdatedUserMessage message) {
@@ -363,7 +376,7 @@ public class ClientApp extends Application implements ConnectionListener {
      *
      * @param message UserLoggedOutMessage
      * @author Paula, Julia
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Subscribe
     public void onUserLoggedOutMessage(UserLoggedOutMessage message) {
@@ -388,10 +401,12 @@ public class ClientApp extends Application implements ConnectionListener {
      */
     @Subscribe
     public void onSetMaxPlayerMessage(SetMaxPlayerMessage msg) {
+
         if (msg.isSetMaxPlayerSet()) {
             LOG.info("Max. Spieler der Lobby: " + msg.getLobbyID() + " erfolgreich auf " + msg.getMaxPlayer() + " gesetzt.");
         } else {
             LOG.info("Max. Spieler der Lobby: " + msg.getLobbyID() + " nicht gesetzt. User ist nicht der Lobbyowner!");
+            sceneManager.showAlert(Alert.AlertType.INFORMATION, "Max. Spieler nicht geändert :(\nBitte einen User vorher Kicken,\nda mehr Spieler in der Lobby sind\nals der Wert den du ausgewählt hast.", "Fehler 404 - Marco nicht gefunden.");
         }
     }
 
@@ -399,7 +414,7 @@ public class ClientApp extends Application implements ConnectionListener {
      * Nachdem der Account gelöscht wurde, werden alle Fenster geschlossen und der Login-Screen angezeigt
      *
      * @author Anna
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void onUserDroppedMessage(UserDroppedMessage message) {
@@ -414,7 +429,7 @@ public class ClientApp extends Application implements ConnectionListener {
      * Schließen aller Fenster, wenn die Methode aufgerufen wird.
      *
      * @author Julia, Paula
-     * @since Sprint3
+     * @since Sprint 3
      */
     public void closeAllWindows() {
         SoundMediaPlayer.setSound(false);

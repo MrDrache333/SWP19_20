@@ -2,7 +2,7 @@ package de.uol.swp.common.game.exception;
 
 /**
  * @author Paula
- * @since Sprint6
+ * @since Sprint 6
  */
 public class NotEnoughMoneyException extends RuntimeException {
 

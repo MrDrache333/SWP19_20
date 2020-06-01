@@ -7,7 +7,7 @@ import de.uol.swp.common.user.UserDTO;
  *
  * @author Paula, Haschem, Ferit, Rike
  * @version 0.1
- * @since Sprint2
+ * @since Sprint 2
  */
 public class CreateLobbyRequest extends AbstractLobbyRequest {
 

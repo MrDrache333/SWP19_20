@@ -45,7 +45,7 @@ public class AbstractLobbyMessage extends AbstractServerMessage {
      *
      * @return ID der Lobby
      * @author Anna
-     * @since Sprint2
+     * @since Sprint 2
      */
     public UUID getLobbyID() {
         return lobbyID;
@@ -56,7 +56,7 @@ public class AbstractLobbyMessage extends AbstractServerMessage {
      *
      * @return boolean ob die beiden Messages gleich sind
      * @author Keno S, Marvin
-     * @since Sprint3
+     * @since Sprint 3
      */
     @Override
     public boolean equals(Object o) {
@@ -72,7 +72,7 @@ public class AbstractLobbyMessage extends AbstractServerMessage {
      *
      * @return hash.Value
      * @author Keno S, Marvin
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Override
     public int hashCode() {

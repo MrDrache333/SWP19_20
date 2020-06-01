@@ -38,7 +38,6 @@ public class LoginPresenter extends AbstractPresenter {
     public LoginPresenter() {
     }
 
-
     /**
      * Der SoundMediaPlayer wird initialisiert.
      *
@@ -56,7 +55,6 @@ public class LoginPresenter extends AbstractPresenter {
         forgotPasswordButton.setOnMouseEntered(event -> {
             new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play();
         });
-
         soundIcon.setOnMouseClicked(event -> {
             SoundMediaPlayer.setSound(!SoundMediaPlayer.isSoundEnabled());
             soundIcon.setImage(new Image(new File(getClass().getResource(SoundMediaPlayer.isSoundEnabled() ? "/images/sound_on_icon.png" : "/images/sound_off_icon.png").toExternalForm().replace("file:", "")).toURI().toString()));
@@ -64,7 +62,7 @@ public class LoginPresenter extends AbstractPresenter {
     }
 
     /**
-     * Beim drücken des Login-Buttons werden die eingegebenen Daten zum Server geschickt
+     * Beim Drücken des Login-Buttons werden die eingegebenen Daten zum Server geschickt
      *
      * @param event Das Event, dass die Methode Aufruft
      * @author Keno O
@@ -77,9 +75,9 @@ public class LoginPresenter extends AbstractPresenter {
     }
 
     /**
-     * Beim drücken des Registrieren-Buttons wird das Fenster zum registrieren geöffnet
+     * Beim Drücken des Registrieren-Buttons wird das Fenster zum Registrieren geöffnet
      *
-     * @param event Das Event, dass die Methode Aufruft
+     * @param event Das Event, dass die Methode aufruft
      * @author Keno O
      * @since Sprint 4
      */

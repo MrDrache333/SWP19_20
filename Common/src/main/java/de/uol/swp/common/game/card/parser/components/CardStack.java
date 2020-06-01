@@ -48,6 +48,33 @@ public class CardStack {
     }
 
     /**
+     * Gibt alle Karten zurück
+     *
+     * @return cards alle Karten
+     * @author Timo, Fenja, Keno O.
+     */
+    public ArrayList<Card> getAllCards() {
+        ArrayList<Card> cards = new ArrayList<>();
+        cards.addAll(moneyCards);
+        cards.addAll(valueCards);
+        cards.addAll(actionCards);
+        cards.addAll(curseCards);
+        return cards;
+    }
+
+    /**
+     * Gibt die Karte aus dem Kartenstapel zurück mit der die übergebenen ID übereinstimmt
+     *
+     * @param id Die Kartenid
+     * @return Die Karte oder Null
+     * @author Timo, Fenja, KenoO
+     * @since Sprint 7
+     */
+    public Card getCardForId(short id) {
+        return getAllCards().stream().filter(c -> c.getId() == id).findFirst().orElse(null);
+    }
+
+    /**
      * Gibt die money cards zurück
      *
      * @return Die Geldkarten
@@ -83,12 +110,4 @@ public class CardStack {
         return curseCards;
     }
 
-    public ArrayList<Card> getAllCards() {
-        ArrayList<Card> cards = new ArrayList<>();
-        cards.addAll(moneyCards);
-        cards.addAll(valueCards);
-        cards.addAll(actionCards);
-        cards.addAll(curseCards);
-        return cards;
-    }
 }

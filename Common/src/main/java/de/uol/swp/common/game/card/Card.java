@@ -2,11 +2,15 @@ package de.uol.swp.common.game.card;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
  * Die Spielkarte
  */
-public abstract class Card {
+public abstract class Card implements Serializable {
 
+
+    private static final long serialVersionUID = 2834856315139042613L;
     /**
      * The Name.
      */
@@ -93,26 +97,26 @@ public abstract class Card {
         /**
          * Kein Festgelegter Kartentyp
          */
-        None,
+        NONE,
         /**
          * Der Typ Aktionskarte
          */
-        ActionCard,
+        ACTIONCARD,
         /**
          * Der Typ Reaktionskarte
          */
-        ReactionCard,
+        REACTIONCARD,
         /**
          * Der Typ Provinzkarte
          */
-        ValueCard,
+        VALUECARD,
         /**
          * Der Typ Geldkarte
          */
-        MoneyCard,
+        MONEYCARD,
         /**
          * Der Typ Fluchkarte.
          */
-        Cursecard
+        CURSECARD
     }
 }

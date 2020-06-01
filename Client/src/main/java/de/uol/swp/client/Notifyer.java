@@ -7,11 +7,11 @@ import java.awt.*;
  * Java Implementation
  *
  * @author Keno O.
- * @since Sprint3
+ * @since Sprint 3
  */
 public class Notifyer {
 
-    private static boolean muteState = false;
+    private static boolean muteState = true;
 
     /**
      * Überprüft ob Benachrichtigungen unterstützt werden.

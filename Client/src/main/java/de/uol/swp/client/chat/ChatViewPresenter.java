@@ -18,6 +18,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -27,6 +28,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -67,8 +69,8 @@ public class ChatViewPresenter extends AbstractPresenter {
     private final int MAXCHATMESSAGEHISTORY = 100;
 
     //Farbe der Nachrichten Label (eigene Nachrichten) (Hintergrund und Text) bei beiden Themen
-    private final String ChatMessageBubbleBackgroundColor_Me_LIGHT = "#1C6FEE";
-    private final String ChatMessageBubbleBackgroundColor_Me_DARK = "#1C6FEE";
+    private final String ChatMessageBubbleBackgroundColor_Me_LIGHT = "#3D3D3D";
+    private final String ChatMessageBubbleBackgroundColor_Me_DARK = "#3D3D3D";
     private final String ChatMessageBubbleTextColor_Me_LIGHT = "white";
     private final String ChatMessageBubbleTextColor_Me_DARK = "white";
 
@@ -101,6 +103,12 @@ public class ChatViewPresenter extends AbstractPresenter {
     private ChatMessage lastMessage;
 
     private Injector injector;
+
+    // infoUser für Chatinformationen
+    private final UserDTO infoUser = new UserDTO("infoUser", "", "");
+
+    // serverUser für Chatnachrichten
+    private final UserDTO serverUser = new UserDTO("server", "", "");
 
     //Farben des aktuellen Chats
     private String ChatMessageBubbleBackgroundColor_Me;
@@ -137,7 +145,7 @@ public class ChatViewPresenter extends AbstractPresenter {
     };
 
     /**
-     * Instatiziiere einen neuen ChatViewPresenter im Spiel.
+     * Instanziiere einen neuen ChatViewPresenter im Spiel.
      *
      * @param chatTitle   Name des Chats
      * @param theme       THEMA des Chats
@@ -153,12 +161,11 @@ public class ChatViewPresenter extends AbstractPresenter {
         this.loggedInUser = currentUser;
         this.injector = injector;
         this.gameManagement = gameManagement;
-
         setTheme(CHATTHEME);
     }
 
     /**
-     * Instaziiere einen neuen ChatViewPresenter in der lobby.
+     * Instanziiere einen neuen ChatViewPresenter in der lobby.
      *
      * @param chatTitle   Name des Chats
      * @param theme       Thema des Chats
@@ -172,7 +179,6 @@ public class ChatViewPresenter extends AbstractPresenter {
         this.chatService = chatService;
         this.chatId = chatId;
         this.loggedInUser = currentUser;
-
         setTheme(CHATTHEME);
     }
 
@@ -213,7 +219,12 @@ public class ChatViewPresenter extends AbstractPresenter {
 
         //Erstellt eine neue Chat-Historie und übergibt die Liste an die ListView
         updateChatMessages(new ArrayList<>());
-        messageView.setItems(chatMessages);
+        try {
+            messageView.setItems(chatMessages);
+        } catch (Exception ignored) {
+        }
+        //Ignore clickevents on MessageList
+        messageView.addEventFilter(MouseEvent.MOUSE_PRESSED, Event::consume);
 
         //Berechnet die maximale Nachrichtenbreite
         maxChatMessageWidth = (int) chatViewAnchorPane.getPrefWidth() - 70;
@@ -226,6 +237,9 @@ public class ChatViewPresenter extends AbstractPresenter {
 
         //Verwende den richtigen Namen im Label
         titleLabel.setText(chatTitle.toUpperCase() + " CHAT");
+        if (!chatId.equals("global")) {
+            titleLabel.setStyle("-fx-text-fill: white;");
+        }
 
         //Nötige Styles laden und übernehmen
         chatViewAnchorPane.getStylesheets().add(styleSheet);
@@ -236,7 +250,6 @@ public class ChatViewPresenter extends AbstractPresenter {
             LOG.debug("Lade Dark Theme");
             chatViewAnchorPane.getStylesheets().add(styleSheet_dark);
         }
-
         sendButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
     }
 
@@ -264,7 +277,7 @@ public class ChatViewPresenter extends AbstractPresenter {
             if (!loggedInUser.getUsername().equals(msg.getMessage().getSender().getUsername()) && msg.getMessage().getSender().equals("server"))
                 new SoundMediaPlayer(SoundMediaPlayer.Sound.Message_Receive, SoundMediaPlayer.Type.Sound).play();
             Platform.runLater(() -> {
-                //Loesche alte Nachrichten bei bedarf
+                //Loesche alte Nachrichten bei Bedarf
                 if (chatMessages.size() > MAXCHATMESSAGEHISTORY) {
                     chatMessages.remove(0);
                     chatMessageHistory.remove(0);
@@ -272,7 +285,6 @@ public class ChatViewPresenter extends AbstractPresenter {
                 //Fuege neue ChatNachricht hinzu
                 chatMessages.add(chatMessagetoBox(msg.getMessage()));
                 chatMessageHistory.add(msg.getMessage());
-
             });
             lastMessage = msg.getMessage();
         }
@@ -297,7 +309,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      *
      * @param message
      * @author Julia
-     * @since Sprint4
+     * @since Sprint 4
      */
     @Subscribe
     public void updatedUser(UpdatedUserMessage message) {
@@ -307,21 +319,20 @@ public class ChatViewPresenter extends AbstractPresenter {
     }
 
     //--------------------------------------
-    // METHODE
+    // METHODEN
     //--------------------------------------
-
 
     /**
      * Die Methode userJoined gibt eine Nachricht, wenn ein User dem Chat beitritt.
      *
      * @param username the username
-     * @author KenoO
+     * @author KenoO, Fenja, Timo
      * @since Sprint 2
      */
 
     public void userJoined(String username) {
         if (!chatId.equals(""))
-            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(new UserDTO("server", "", ""), username + " ist " + (chatId.equals("global") ? "dem Chat" : "der Lobby") + " beigereten")));
+            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(chatId.equals("global") ? serverUser : infoUser, username + " ist " + (chatId.equals("global") ? "dem Chat" : "der Lobby") + " beigereten")));
     }
 
     /**
@@ -329,25 +340,25 @@ public class ChatViewPresenter extends AbstractPresenter {
      * Ausgabe einer Nachricht, wenn ein User einen Chat verlassen hat.
      *
      * @param username the username
-     * @author KenoO
+     * @author KenoO, Fenja, Timo
      * @since Sprint 2
      */
 
     public void userLeft(String username) {
         if (!chatId.equals(""))
-            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(new UserDTO("server", "", ""), username + " hat " + (chatId.equals("global") ? "den Chat" : "die Lobby") + " verlassen")));
+            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(chatId.equals("global") ? serverUser : infoUser, username + " hat " + (chatId.equals("global") ? "den Chat" : "die Lobby") + " verlassen!")));
     }
 
     /**
      * Nachricht, dass der Spieler gekickt wurde, wird im Chat angezeigt.
      *
      * @param username Benutzername des gekickten Spielers
-     * @author Darian
-     * @since sprint4
+     * @author Darian, Fenja, Timo
+     * @since Sprint 4
      */
     public void userKicked(String username) {
         if (!chatId.equals(""))
-            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(new UserDTO("server", "", ""), username + " wurde aus der Lobby entfernt")));
+            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(chatId.equals("global") ? serverUser : infoUser, username + " wurde aus der Lobby entfernt!")));
     }
 
     /**
@@ -361,27 +372,24 @@ public class ChatViewPresenter extends AbstractPresenter {
         new SoundMediaPlayer(SoundMediaPlayer.Sound.Message_Send, SoundMediaPlayer.Type.Sound).play();
         if (chatId.equals("")) return;
         String message;
-
         message = chatTextField.getText();
         //Prüfe auf leere Nachricht
         if (!message.equals("")) {
             LOG.debug("Sende neue Chatnachricht: User= " + loggedInUser.getUsername() + " Msg= " + message + " ChatID= " + chatId);
             ChatMessage newChatMessage = new ChatMessage(loggedInUser, message);
-
             LOG.debug("Neue Nachricht zum Senden: " + message);
-
             chatTextField.clear();
             this.chatService.sendMessage(chatId, newChatMessage);
         }
     }
 
     /**
-     * Kreiert eine HBox mit dem Label einer gegeben ChatMessage
+     * Kreiert eine HBox mit dem Label einer gegebenen ChatMessage
      *
      * @param msg die Chatnachricht
      * @return eine HBox mit Labels
      * @author KenoO
-     * @since Sprint2
+     * @since Sprint 2
      */
     private VBox chatMessagetoBox(ChatMessage msg) {
         String plainMessage = msg.getMessage();
@@ -393,7 +401,6 @@ public class ChatViewPresenter extends AbstractPresenter {
         //Als Tooltip der Nachricht die Eingangs-Zeit anzeigen
         message.setTooltip(new Tooltip(new SimpleDateFormat("HH:mm:ss").format(msg.getTimeStamp())));
         sender.setStyle("-fx-text-fill: black; -fx-font-size: 12");
-
         //Je nachdem wer die Nachriht gesendet hat, diese auf der richtigen Seite darstellen
         VBox box = new VBox();
         HBox hbox = new HBox();
@@ -401,21 +408,17 @@ public class ChatViewPresenter extends AbstractPresenter {
         pb.setImage(new Image("/images/pb_template.png"));
         pb.setFitHeight(25);
         pb.setFitWidth(25);
-        if (!msg.getSender().getUsername().equals("server")) {
+        if (!msg.getSender().getUsername().equals("server") && !msg.getSender().getUsername().equals("infoUser")) {
             if (msg.getSender().getUsername().equals(loggedInUser.getUsername())) {
                 //Wenn die Nachricht mehrere Zeilen umfasst, dann aendere den Radius der Ecken
-                message.setStyle("-fx-background-radius: " + (plainMessage.length() > message.getMaxWidth() / 10 ? "15" : "90") + ";-fx-background-color: " + ChatMessageBubbleBackgroundColor_Me + ";-fx-text-fill: " + ChatMessageBubbleTextColor_Me + "; -fx-font-size: 16");
+                message.setStyle("-fx-background-radius: " + (plainMessage.length() > message.getMaxWidth() / 10 ? "15" : "90") + ";-fx-background-color: " + ChatMessageBubbleBackgroundColor_Me + ";-fx-text-fill: " + ChatMessageBubbleTextColor_Me + "; -fx-font-size: 16" + ";-fx-opacity: 0.73");
                 sender.setText("Du");
                 sender.setAlignment(Pos.BOTTOM_RIGHT);
                 message.setAlignment(Pos.BOTTOM_RIGHT);
                 message.setPadding(new Insets(5, 5, 5, 5));
-
-
                 hbox.getChildren().add(message);
                 box.alignmentProperty().setValue(Pos.BOTTOM_RIGHT);
                 hbox.alignmentProperty().setValue(Pos.BOTTOM_RIGHT);
-
-
             } else {
                 //Wenn die Nachricht mehrere Zeilen umfasst, dann ändere den Radius der Ecken
                 message.setStyle("-fx-background-radius: " + (plainMessage.length() > message.getMaxWidth() / 10 ? "15" : "90") + ";-fx-background-color: " + ChatMessageBubbleBackgroundColor_Other + ";-fx-text-fill: " + ChatMessageBubbleTextColor_Other + "; -fx-font-size: 16");
@@ -423,9 +426,7 @@ public class ChatViewPresenter extends AbstractPresenter {
                 sender.setPadding(new Insets(0, 0, 0, 40));
                 message.setAlignment(Pos.BOTTOM_LEFT);
                 message.setPadding(new Insets(8, 8, 8, 8));
-
                 hbox.setSpacing(5);
-
                 //Vorrangegangene Einträge ggf. bearbeiten
                 if (chatMessageHistory.size() > 1) {
                     String lastsender = chatMessageHistory.get(chatMessageHistory.size() - 1).getSender().getUsername();
@@ -457,6 +458,11 @@ public class ChatViewPresenter extends AbstractPresenter {
                 box.alignmentProperty().setValue(Pos.BOTTOM_LEFT);
                 hbox.alignmentProperty().setValue(Pos.BOTTOM_LEFT);
             }
+        } else if (msg.getSender().getUsername().equals("infoUser")) {
+            // Wenn die empfangene Nachricht eine Info-Nachricht ist
+            message.setStyle("-fx-text-fill: blue; -fx-background-color: transparent; -fx-font-size: 16");
+            hbox.setAlignment(Pos.CENTER);
+            hbox.getChildren().add(message);
         } else {
             //Wenn die empfangene Nachricht eine ServerMessage ist
             message.setStyle("-fx-text-fill: black; -fx-background-color: transparent; -fx-font-size: 14");
@@ -480,7 +486,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      *
      * @param chatMessageList die Chatnachricht
      * @author KenoO
-     * @since Sprint2
+     * @since Sprint 2
      */
     private void updateChat(List<ChatMessage> chatMessageList) {
         Platform.runLater(() -> {
@@ -491,7 +497,7 @@ public class ChatViewPresenter extends AbstractPresenter {
 
     //Aktualisiert die ListView indem alle übergebenen Nachrichten dieser hinzugefügt werden
     private void updateChatMessages(List<ChatMessage> chatMessageList) {
-        // Warung: Das muss auf dem FX Thread passieren!
+        // Warnung: Das muss auf dem FX Thread passieren!
         Platform.runLater(() -> {
             if (chatMessages == null) {
                 chatMessages = FXCollections.observableArrayList();
@@ -509,7 +515,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      *
      * @param user den User
      * @author KenoO
-     * @since Sprint2
+     * @since Sprint 2
      */
     public void setloggedInUser(User user) {
         loggedInUser = user;
@@ -524,7 +530,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      *
      * @param chatId die chat id
      * @author KenoO
-     * @since Sprint2
+     * @since Sprint 2
      */
     public void setChatId(String chatId) {
         this.chatId = chatId;

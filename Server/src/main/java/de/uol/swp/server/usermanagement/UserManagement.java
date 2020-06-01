@@ -141,6 +141,11 @@ public class UserManagement extends AbstractUserManagement {
         loggedInUsers.remove(user.getUsername());
     }
 
+    @Override
+    public void hardLogout(User user) {
+        loggedInUsers.remove(user.getUsername());
+    }
+
     /**
      * Gibt die Liste der User zurück.
      *

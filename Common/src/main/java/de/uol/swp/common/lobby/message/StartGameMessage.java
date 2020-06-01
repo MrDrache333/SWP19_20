@@ -12,7 +12,7 @@ public class StartGameMessage extends AbstractLobbyMessage {
      *
      * @param lobbyID Die LobbyID
      * @author Darian, Marvin
-     * @since Sprint3
+     * @since Sprint 3
      */
     public StartGameMessage(UUID lobbyID) {
         super(lobbyID, null);

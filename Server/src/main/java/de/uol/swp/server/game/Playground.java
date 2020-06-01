@@ -1,6 +1,8 @@
 package de.uol.swp.server.game;
 
 import com.google.inject.Inject;
+import de.uol.swp.common.chat.ChatMessage;
+import de.uol.swp.common.chat.request.NewChatMessageRequest;
 import de.uol.swp.common.game.AbstractPlayground;
 import de.uol.swp.common.game.card.ActionCard;
 import de.uol.swp.common.game.card.Card;
@@ -48,6 +50,7 @@ public class Playground extends AbstractPlayground {
     private CardPack cardsPackField;
     private ArrayList<Short> chosenCards;
     private ArrayList<Card> trash = new ArrayList<>();
+    private final UserDTO infoUser = new UserDTO("infoUser", "", "");
 
     /**
      * Erstellt ein neues Spielfeld und übergibt die Spieler. Die Reihenfolge der Spieler wird zufällig zusammengestellt.
@@ -85,9 +88,22 @@ public class Playground extends AbstractPlayground {
                 cardField.put(card.getId(), 8);
             } else cardField.put(card.getId(), 12);
         }
-        while (chosenCards.size() <= 10) {
+        // ChosenCard BasicCards
+        if (chosenCards.isEmpty()) {
+            chosenCards.add((short) 8);
+            chosenCards.add((short) 9);
+            chosenCards.add((short) 10);
+            chosenCards.add((short) 11);
+            chosenCards.add((short) 13);
+            chosenCards.add((short) 14);
+            chosenCards.add((short) 15);
+            chosenCards.add((short) 16);
+            chosenCards.add((short) 19);
+            chosenCards.add((short) 21);
+        }
+        while (chosenCards.size() < 10) {
             short random = (short) (Math.random() * 31);
-            if (!chosenCards.contains(random) && random > 6) {
+            if (!chosenCards.contains(random) && compositePhase.getImplementedActionCards().contains(random)) {
                 chosenCards.add(random);
             }
         }
@@ -105,7 +121,6 @@ public class Playground extends AbstractPlayground {
             else if (i == 2) cardField.put(card.getId(), 30);
             else LOG.debug("Komisch: @ initializeCardField- Else Methode in 104 ausgeschlagen.");
         }
-        gameService.sendCardField(theSpecificLobbyID, cardField);
     }
 
     /**
@@ -115,10 +130,11 @@ public class Playground extends AbstractPlayground {
      * Es wird zusätzlich der Timestamp (vom Server) mitgeschickt
      *
      * @author Julia, Ferit
-     * @since Sprint5
+     * @since Sprint 5
      */
     public void newTurn() {
         if (actualPlayer == null && nextPlayer == null) {
+            gameService.sendCardField(theSpecificLobbyID, cardField);
             actualPlayer = players.get(0);
             nextPlayer = players.get(1);
             sendInitialCardsDeckSize();
@@ -141,7 +157,7 @@ public class Playground extends AbstractPlayground {
         if (checkForActionCard()) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartActionPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID, timestamp));
-            phaseTimer();
+            //phaseTimer();
         } else {
             nextPhase();
         }
@@ -176,7 +192,7 @@ public class Playground extends AbstractPlayground {
      * Befindet sich der Spieler in der Clearphase, wird eine GamePhaseException geworfen.
      *
      * @author Julia
-     * @since Sprint5
+     * @since Sprint 5
      */
     public void nextPhase() {
         ArrayList<Short> theIdsFromTheHand = new ArrayList<>(5);
@@ -186,6 +202,10 @@ public class Playground extends AbstractPlayground {
         if (actualPhase == Phase.Type.ActionPhase) {
             actualPhase = Phase.Type.Buyphase;
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartBuyPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
+
+            ChatMessage infoMessage = new ChatMessage(infoUser, getActualPlayer().getTheUserInThePlayer().getUsername() + " ist am Zug!");
+            gameService.getBus().post(new NewChatMessageRequest(theSpecificLobbyID.toString(), infoMessage));
+
             endTimer();
         } else {
             actualPhase = Phase.Type.Clearphase;
@@ -203,15 +223,14 @@ public class Playground extends AbstractPlayground {
      * sendet eine InfoPlayDisplayMessage zum aktualisieren der Anzeige von Aktion/Kauf/Geld
      *
      * @author Ferit, Rike
-     * @version 1
-     * @since Sprint5
+     * @since Sprint 5
      */
     public void sendPlayersHand() {
         ArrayList<Short> theIdsFromTheHand = new ArrayList<>(5);
         for (Card card : actualPlayer.getPlayerDeck().getHand()) {
             theIdsFromTheHand.add(card.getId());
         }
-        DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID, (short) getPlayers().size());
+        DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID, (short) getPlayers().size(), false);
         gameService.sendToSpecificPlayer(actualPlayer, theHandMessage);
     }
 
@@ -219,7 +238,7 @@ public class Playground extends AbstractPlayground {
      * Sendet dem aktuellen Spieler die Anzahl seiner Karten auf dem Nachziehstapel
      *
      * @author Julia
-     * @since Sprint7
+     * @since Sprint 7
      */
     public int sendCardsDeckSize() {
         int size = actualPlayer.getPlayerDeck().getCardsDeck().size();
@@ -231,7 +250,7 @@ public class Playground extends AbstractPlayground {
      * Sendet zu Spielbeginn jedem Spieler die Anzahl seiner Karten auf dem Nachziehstapel
      *
      * @author Julia
-     * @since Sprint7
+     * @since Sprint 7
      */
     public void sendInitialCardsDeckSize() {
         for (Player player : players) {
@@ -243,9 +262,9 @@ public class Playground extends AbstractPlayground {
     /**
      * Die Methode kümmert sich um das Aufgeben des Spielers in dem spezifizierten Game/Playground.
      *
-     * @param lobbyID
-     * @param theGivingUpUser
-     * @param wantsToGiveUp
+     * @param lobbyID         die Lobby-ID
+     * @param theGivingUpUser der aufgebene User
+     * @param wantsToGiveUp   ob der User aufgibt (Boolean)
      * @return Ob der Spieler erfolgreich entfernt worden ist oder nicht.
      * @author Haschem, Ferit
      */
@@ -272,7 +291,7 @@ public class Playground extends AbstractPlayground {
             } else if (nextPlayer.equals(latestGavedUpPlayer)) {
                 if (thePositionInList < this.players.size() - 1) {
                     nextPlayer = this.players.get(++thePositionInList);
-                    this.players.remove(thePositionInList);
+                    this.players.remove(--thePositionInList);
                 } else {
                     this.players.remove(thePositionInList);
                     nextPlayer = this.players.get(0);
@@ -290,11 +309,11 @@ public class Playground extends AbstractPlayground {
     /**
      * Sendet die letzte Karte vom Ablagestapel an den GameService
      *
-     * @param gameID
-     * @param cardID
-     * @param user
+     * @param gameID die Game-ID
+     * @param cardID die Karten-ID
+     * @param user   der User
      * @author Fenja
-     * @since Sprint6
+     * @since Sprint 6
      */
     public void sendLastCardOfDiscardPile(UUID gameID, short cardID, User user) {
         gameService.sendLastCardOfDiscardPile(gameID, cardID, user);
@@ -305,7 +324,7 @@ public class Playground extends AbstractPlayground {
      * sendet eine InfoPlayDisplayMessage zum aktualisieren der Anzeige von Aktion/Kauf/Geld
      *
      * @author Ferit, Rike
-     * @since Sprint6
+     * @since Sprint 6
      */
     public void sendInitialHands() {
         for (Player playerhand : players) {
@@ -313,7 +332,7 @@ public class Playground extends AbstractPlayground {
             for (Card card : playerhand.getPlayerDeck().getHand()) {
                 theIdsFromInitalPlayerDeck.add(card.getId());
             }
-            DrawHandMessage initialHandFromPlayer = new DrawHandMessage(theIdsFromInitalPlayerDeck, theSpecificLobbyID, (short) getPlayers().size());
+            DrawHandMessage initialHandFromPlayer = new DrawHandMessage(theIdsFromInitalPlayerDeck, theSpecificLobbyID, (short) getPlayers().size(), true);
             gameService.sendToSpecificPlayer(playerhand, initialHandFromPlayer);
             int availableAction = playerhand.getAvailableActions();
             int availableBuy = playerhand.getAvailableBuys();
@@ -330,7 +349,7 @@ public class Playground extends AbstractPlayground {
      *
      * @return true, wenn er eine Aktionskarte auf der Hand hat, sonst false
      * @author Julia
-     * @since Sprint5
+     * @since Sprint 5
      */
     public boolean checkForActionCard() {
         for (Card card : actualPlayer.getPlayerDeck().getHand()) {
@@ -346,7 +365,7 @@ public class Playground extends AbstractPlayground {
      *
      * @return Liste mit allen Gewinnern
      * @author Julia
-     * @since Sprint6
+     * @since Sprint 6
      */
     public List<String> calculateWinners() {
         List<String> winners = new ArrayList<>();
@@ -393,7 +412,6 @@ public class Playground extends AbstractPlayground {
         return winners;
     }
 
-
     public List<Player> getPlayers() {
         return players;
     }
@@ -415,8 +433,7 @@ public class Playground extends AbstractPlayground {
      *
      * @return aktuelle Phase
      * @author Paula
-     * @version 1
-     * @since Sprint5
+     * @since Sprint 5
      */
     public Phase.Type getActualPhase() {
         return actualPhase;
@@ -431,7 +448,7 @@ public class Playground extends AbstractPlayground {
      *
      * @return s.o
      * @author Haschem, Ferit
-     * @since Sprint5
+     * @since Sprint 5
      */
     public Player getLatestGavedUpPlayer() {
         return latestGavedUpPlayer;

@@ -9,7 +9,7 @@ import java.util.UUID;
  * Message, die gesendet wird, wenn eine Karte aufgedeckt werden soll.
  *
  * @author Julia
- * @since Sprint6
+ * @since Sprint 6
  */
 public class ShowCardMessage extends AbstractServerMessage {
 

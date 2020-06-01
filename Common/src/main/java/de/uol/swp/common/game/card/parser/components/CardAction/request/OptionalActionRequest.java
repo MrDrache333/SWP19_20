@@ -9,7 +9,7 @@ import java.util.UUID;
  * Request, das gesendet wird, wenn ein Spieler entscheiden kann, ob er eine Aktion ausführen will oder nicht.
  *
  * @author Julia
- * @since Sprint7
+ * @since Sprint 7
  */
 public class OptionalActionRequest extends AbstractGameMessage {
 

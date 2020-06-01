@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * Die Klasse SoundMediaPlayer.
  *
  * @author Keno Oelrichs Garcia
- * @since Sprint3
+ * @since Sprint 3
  */
 public class SoundMediaPlayer implements MediaPlayer {
 
@@ -31,7 +31,7 @@ public class SoundMediaPlayer implements MediaPlayer {
      * @param sound Die Sound Art, die festgelegt werden soll.
      * @param type  Der Typ (entweder Sound oder Music).
      * @author Keno Oelrichs Garcia
-     * @since Sprint3
+     * @since Sprint 3
      */
     public SoundMediaPlayer(Sound sound, Type type) {
         this.sound = sound;
@@ -68,9 +68,8 @@ public class SoundMediaPlayer implements MediaPlayer {
      * Spielt den aktuellen Track ab.
      *
      * @author Keno Oelrichs Garcia
-     * @since Sprint3
+     * @since Sprint 3
      */
-
     @Override
     public void play() {
         if (soundEnabled)
@@ -96,8 +95,7 @@ public class SoundMediaPlayer implements MediaPlayer {
                             started = true;
                         }
                     });
-
-                    //Sounddatei abspielen
+                    // Sounddatei abspielen
                     if (type.equals(Type.Music)) clip.loop(-1);    //Wenn Hintergrundmusic -> Unendlich Loopen
                     clip.start();
                 } catch (Exception e) {
@@ -111,9 +109,8 @@ public class SoundMediaPlayer implements MediaPlayer {
      * Ruft eine Funktion auf, um den Ton für den Player auszuschalten.
      *
      * @author Keno Oelrichs Garcia
-     * @since Sprint3
+     * @since Sprint 3
      */
-
     @Override
     public void mute() {
         setMuted(true);
@@ -124,7 +121,6 @@ public class SoundMediaPlayer implements MediaPlayer {
      *
      * @param muted Der Status, ob der Track stumm sein soll oder nicht.
      */
-
     private void setMuted(boolean muted) {
         BooleanControl muteControl = (BooleanControl) clip
                 .getControl(BooleanControl.Type.MUTE);
@@ -135,9 +131,8 @@ public class SoundMediaPlayer implements MediaPlayer {
      * Stellt den Ton für den Nutzer ein.
      *
      * @author Keno Oelrichs Garcia
-     * @since Sprint3
+     * @since Sprint 3
      */
-
     @Override
     public void unMute() {
         setMuted(false);
@@ -148,9 +143,8 @@ public class SoundMediaPlayer implements MediaPlayer {
      *
      * @param Volume Die finale Lautstärke.
      * @author Keno Oelrichs Garcia
-     * @since Sprint3
+     * @since Sprint 3
      */
-
     @Override
     public void setVolume(double Volume) {
         if (Volume < 0 || Volume > 1) return;
@@ -164,9 +158,8 @@ public class SoundMediaPlayer implements MediaPlayer {
      *
      * @return Den Wert von started.
      * @author Keno Oelrichs Garcia
-     * @since Sprint3
+     * @since Sprint 3
      */
-
     @Override
     public boolean isStarted() {
         return started;
@@ -176,9 +169,8 @@ public class SoundMediaPlayer implements MediaPlayer {
      * Stoppt den aktuellen Player
      *
      * @author Keno Oelrichs Garcia
-     * @since Sprint3
+     * @since Sprint 3
      */
-
     @Override
     public void stop() {
         if (clip != null) clip.stop();
@@ -189,7 +181,7 @@ public class SoundMediaPlayer implements MediaPlayer {
      * Die Enumeration Type.
      *
      * @author Keno Oelrichs Garcia
-     * @since Sprint3
+     * @since Sprint 3
      */
     public enum Type {
 
@@ -208,7 +200,7 @@ public class SoundMediaPlayer implements MediaPlayer {
      * Die Enumeration Sound.
      *
      * @author Keno Oelrichs Garcia
-     * @since Sprint3
+     * @since Sprint 3
      */
     public enum Sound {
 
@@ -249,9 +241,8 @@ public class SoundMediaPlayer implements MediaPlayer {
          *
          * @param path Der Pfad
          * @author Keno Oelrichs Garcia
-         * @since Sprint3
+         * @since Sprint 3
          */
-
         Sound(String path) {
             this.path = path;
         }
@@ -261,7 +252,7 @@ public class SoundMediaPlayer implements MediaPlayer {
          *
          * @return the Path
          * @author Keno Oelrichs Garcia
-         * @since Sprint3
+         * @since Sprint 3
          */
         public String getPath() {
             return this.path;
