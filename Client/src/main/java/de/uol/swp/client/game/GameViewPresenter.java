@@ -213,8 +213,6 @@ public class GameViewPresenter extends AbstractPresenter {
             });
             Platform.runLater(() -> {
                 skipPhaseButton.setDisable(false);
-                choosenCardsId.clear();
-                choosenCards.clear();
                 Platform.runLater(() -> {
                     infoActualPhase.setText(currentInfoText);
                 });
@@ -685,6 +683,8 @@ public class GameViewPresenter extends AbstractPresenter {
     @Subscribe
     public void onChooseCardRequest (ChooseCardRequest req) {
         if (req.getGameID().equals(lobbyID) && req.getPlayer().equals(loggedInUser)) {
+            choosenCardsId.clear();
+            choosenCards.clear();
             ImageView card = (ImageView) mouseEvent.getTarget();
             for ( Node n : handcards.getChildren()) {
                 n.setEffect(null); }
