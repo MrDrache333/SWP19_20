@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RegisterEMailPatternTest {
 
-    private String[] testStrings = {"Test1.1@tEst.dE", "test@test.de", "testtest.de", "test@testde", "test@.de", "@test.de", "@", "testde"};
+    private final String[] testStrings = {"Test1.1@tEst.dE", "test@test.de", "testtest.de", "test@testde", "test@.de", "@test.de", "@", "testde"};
 
     // testString --> Erwarte in erster Linie gar nichts:
 

@@ -3,7 +3,7 @@ package de.uol.swp.server.lobby;
 import com.google.common.eventbus.DeadEvent;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import de.uol.swp.common.chat.request.NewChatMessageRequest;
+import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
 import de.uol.swp.common.lobby.message.UpdatedInGameMessage;
@@ -197,7 +197,7 @@ class LobbyServiceTest {
 
         lock.await(500, TimeUnit.MILLISECONDS);
 
-        assertTrue(event instanceof NewChatMessageRequest);
+        assertTrue(event instanceof NewChatMessage);
     }
 
     void loginUsers() {
