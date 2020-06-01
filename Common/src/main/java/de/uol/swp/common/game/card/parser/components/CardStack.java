@@ -4,8 +4,6 @@ import com.google.gson.annotations.SerializedName;
 import de.uol.swp.common.game.card.*;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Der Cardstack representiert eine Sammlung der verschiedenen Kartentypen.
@@ -50,15 +48,30 @@ public class CardStack {
     }
 
     /**
-     * Gibt die Karte mit der entsprechenden ID zurück
+     * Gibt alle Karten zurück
      *
-     * @return cards die eine Karte
+     * @return cards alle Karten
      * @author Timo, Fenja, Keno O.
      */
-    public Card getCardById(short id) {
-        List<Card> cards = getAllCards().stream().filter(c -> c.getId() == id).collect(Collectors.toList());
-        if (cards.size() > 0) return cards.get(0);
-        return null;
+    public ArrayList<Card> getAllCards() {
+        ArrayList<Card> cards = new ArrayList<>();
+        cards.addAll(moneyCards);
+        cards.addAll(valueCards);
+        cards.addAll(actionCards);
+        cards.addAll(curseCards);
+        return cards;
+    }
+
+    /**
+     * Gibt die Karte aus dem Kartenstapel zurück mit der die übergebenen ID übereinstimmt
+     *
+     * @param id Die Kartenid
+     * @return Die Karte oder Null
+     * @author Timo, Fenja, KenoO
+     * @since Sprint 7
+     */
+    public Card getCardForId(short id) {
+        return getAllCards().stream().filter(c -> c.getId() == id).findFirst().orElse(null);
     }
 
     /**
@@ -97,12 +110,4 @@ public class CardStack {
         return curseCards;
     }
 
-    public ArrayList<Card> getAllCards() {
-        ArrayList<Card> cards = new ArrayList<>();
-        cards.addAll(moneyCards);
-        cards.addAll(valueCards);
-        cards.addAll(actionCards);
-        cards.addAll(curseCards);
-        return cards;
-    }
 }

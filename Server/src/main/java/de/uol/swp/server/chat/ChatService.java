@@ -45,7 +45,6 @@ public class ChatService extends AbstractService {
         this.authenticationService = authenticationService;
     }
 
-
     /**
      * Wenn eine neue ChatNachricht von einem CLient auf dem Bus gesendet wurde.
      *

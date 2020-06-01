@@ -11,6 +11,7 @@ import de.uol.swp.common.game.card.parser.components.CardAction.response.ChooseC
 import de.uol.swp.common.game.card.parser.components.CardAction.response.OptionalActionResponse;
 import de.uol.swp.common.game.card.parser.components.CardAction.types.*;
 import de.uol.swp.common.game.messages.ChooseNextActionMessage;
+import de.uol.swp.common.game.messages.MoveCardMessage;
 import de.uol.swp.common.game.messages.ShowCardMessage;
 import de.uol.swp.common.game.messages.UpdateCardCounterMessage;
 import de.uol.swp.common.user.User;
@@ -25,9 +26,6 @@ public class ActionCardExecution {
 
     private static final Logger LOG = LogManager.getLogger(ActionCardExecution.class);
 
-    //TODO: Subscribe Methode -> waitedForPlayerInput prüfen -> auf false setzen -> benötigen Antwort vom Client
-    // -> ChooseCard (IDs der gewählten Karten) und ChooseNextAction (gewählte Aktion)
-
     private short cardID;
     private Playground playground;
     private Player player;
@@ -35,12 +33,13 @@ public class ActionCardExecution {
     private UUID gameID;
     private List<Player> players;
     private List<User> chooseCardPlayers = new ArrayList<>();
+    //Liste neuer Handkarten
     private ArrayList<Short> newHandCards = new ArrayList<>();
     //Liste aller Unteraktionen einer Aktion
     private List<CardAction> nextActions = new ArrayList<>();
     private Card inputCard;
     private AbstractPlayground.ZoneType chooseCardSource;
-    private boolean removeCardAfter;
+    //
 
     //Ob auf eine Auswahl oder Reaktion des Spielers gewartet werden muss
     private boolean waitedForPlayerInput;
@@ -48,6 +47,7 @@ public class ActionCardExecution {
     //Index der aktuell auszuführenden Aktion
     private int actualStateIndex;
 
+    private boolean startedNextActions;
     //Ob alle Unteraktionen einer Aktion ausgeführt wurden
     private boolean finishedNextActions;
 
@@ -55,7 +55,9 @@ public class ActionCardExecution {
     private int nextActionIndex;
     //Ob eine optionale Aktion ausgeführt werden soll
     private boolean executeOptionalAction;
-    private boolean startedNextActions;
+
+    //Ob die Aktionskarte entsorgt werden soll
+    private boolean removeCardAfter;
 
     public ActionCardExecution(short cardID, Playground playground) {
         this.waitedForPlayerInput = false;
@@ -77,10 +79,11 @@ public class ActionCardExecution {
      *
      * @param response Die OptionalActionResponse
      * @author Julia
-     * @since Sprint7
+     * @since Sprint 7
      */
     @Subscribe
     public void onOptionalActionResponse(OptionalActionResponse response) {
+        LOG.debug("OptionalActionResponse von " + response.getPlayer().getUsername() + " erhalten");
         if (response.getGameID().equals(gameID)) {
             if (!response.isExecute()) actualStateIndex++;
             else executeOptionalAction = true;
@@ -89,10 +92,18 @@ public class ActionCardExecution {
         }
     }
 
+    /**
+     * Reaktion auf eine ChooseCardResponse
+     *
+     * @param response Die ChooseCardResponse
+     * @author Ferit, Julia
+     * @since Sprint 7
+     */
     @Subscribe
     public void onChooseCardResponse(ChooseCardResponse response) {
+        LOG.debug("ChooseCardResponse von " + response.getPlayer().getUsername() + " erhalten");
         List<Player> p = new ArrayList<>();
-        Player helpPlayer = players.get(helpMethodToGetThePlayerFromUser(response.getPlayer()));
+        Player helpPlayer = helpMethodToGetThePlayerFromUser(response.getPlayer());
         p.add(helpPlayer);
         if (response.getGameID().equals(gameID) && waitedForPlayerInput && chooseCardPlayers.contains(response.getPlayer())) {
             waitedForPlayerInput = false;
@@ -140,13 +151,13 @@ public class ActionCardExecution {
      *
      * @return
      * @author KenoO, Julia
+     * @since Sprint 6
      */
     public boolean execute() {
-        //TODO Some pretty nice and clean Code to Execute the Shit out of that Card
         while (actualStateIndex < theCard.getActions().size() && !waitedForPlayerInput && finishedNextActions) {
             startedNextActions = false;
             CardAction action = theCard.getActions().get(actualStateIndex);
-            nextActions = getNextActions(action);
+            getNextActions(action);
             if (action instanceof ComplexCardAction && ((ComplexCardAction) action).isExecutionOptional() && !executeOptionalAction) {
                 playground.getGameService().sendToSpecificPlayer(player, new OptionalActionRequest(gameID, player.getTheUserInThePlayer(), ((ComplexCardAction) action).getExecutionOptionalMessage()));
                 waitedForPlayerInput = true;
@@ -167,13 +178,10 @@ public class ActionCardExecution {
                     finishedNextActions = false;
                 }
 
-                //TODO: ggf. gegebene nextActions müssen wenn Spielerantwort da ist, ausgeführt werden
-                // -> über finishedNextActions kann dies geprüft werden
                 if (!nextActions.isEmpty() && !waitedForPlayerInput) {
                     if (!executeNextActions(playerList)) return false;
                 }
             }
-            //Entsorge ggf. die gespielte Karte
             if (action instanceof ComplexCardAction && ((ComplexCardAction) action).isRemoveCardAfter()) {
                 removeCardAfter = true;
             }
@@ -184,14 +192,12 @@ public class ActionCardExecution {
         return true;
     }
 
-    //TODO: Was passiert, wenn eine Aktion false zurückgibt?
-
     /**
      * Führt alle Unteraktionen einer Action aus
      *
      * @return false sobald eine Aktion nicht erfolgreich ausgeführt werden konnte
      * @author Julia
-     * @since Sprint7
+     * @since Sprint 7
      */
     private boolean executeNextActions(List<Player> playerList) {
         startedNextActions = true;
@@ -227,6 +233,7 @@ public class ActionCardExecution {
      * @param thePlayers Liste aller Player, auf die die Aktion ausgeführt werden soll
      * @return Ob die Ausführung erfolgreich war.
      * @author KenoO
+     * @since Sprint 6
      */
     private boolean executeCardAction(CardAction action, List<Player> thePlayers) {
         if (action == null) throw new NullPointerException("Action can't be null");
@@ -256,6 +263,8 @@ public class ActionCardExecution {
      * @param action Auszuführende Aktion
      * @param input  Eingabe an Karten
      * @return Ergebnis
+     * @author KenoO, Julia
+     * @since Sprint 6
      */
     private ArrayList<Card> executeCardAction(CardAction action, ArrayList<Card> input, List<Player> playerList, boolean foreach) throws NullPointerException {
         if (action == null) throw new NullPointerException("Action can't be null");
@@ -270,10 +279,11 @@ public class ActionCardExecution {
                 ArrayList<Card> c = executeGetCard(getAction, player);
                 if (getAction.isDirectHand()) {
                     int size = c.size();
-                    c.forEach(card -> {
+                    for (int i = 0; i < size; i++) {
+                        Card card = c.get(i);
                         player.getPlayerDeck().getHand().add(card);
                         newHandCards.add(card.getId());
-                    });
+                    }
                     List<Card> remove = new ArrayList<>();
                     if (getAction.getCardSource() == AbstractPlayground.ZoneType.DRAW) {
                         for (int i = 0; i < size; i++) {
@@ -337,34 +347,34 @@ public class ActionCardExecution {
      * @param cards  Die zu filternden Karten
      * @return Das gefilterte Kartenarray
      * @author Julia
-     * @since Sprint6
+     * @since Sprint 6
      */
     private ArrayList<Card> filterCards(ComplexCardAction action, ArrayList<Card> cards) {
         Card.Type allowedType = action.getAllowedCardType();
-        if (allowedType == Card.Type.ActionCard) {
-            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.ActionCard);
-        } else if (allowedType == Card.Type.ReactionCard) {
-            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.ReactionCard);
-        } else if (allowedType == Card.Type.MoneyCard) {
-            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.MoneyCard);
-        } else if (allowedType == Card.Type.ValueCard) {
-            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.ValueCard);
-        } else if (allowedType == Card.Type.Cursecard) {
-            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.Cursecard);
+        if (allowedType == Card.Type.ACTIONCARD) {
+            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.ACTIONCARD);
+        } else if (allowedType == Card.Type.REACTIONCARD) {
+            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.REACTIONCARD);
+        } else if (allowedType == Card.Type.MONEYCARD) {
+            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.MONEYCARD);
+        } else if (allowedType == Card.Type.VALUECARD) {
+            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.VALUECARD);
+        } else if (allowedType == Card.Type.CURSECARD) {
+            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.CURSECARD);
         }
 
         if (action.getHasCost() != null) {
             cards.removeIf(c -> c == null || c.getCosts() < action.getHasCost().getMin() || c.getCosts() > action.getHasCost().getMax());
         }
         if (action.getHasWorth() != null) {
-            cards.removeIf(c -> c.getCardType() == Card.Type.ActionCard || c.getCardType() == Card.Type.ReactionCard);
+            cards.removeIf(c -> c.getCardType() == Card.Type.ACTIONCARD || c.getCardType() == Card.Type.REACTIONCARD);
             List<Card> tmp = new ArrayList<>();
             cards.forEach(card -> {
-                if (card.getCardType() == Card.Type.ValueCard) {
+                if (card.getCardType() == Card.Type.VALUECARD) {
                     if (((ValueCard) card).getValue() < action.getHasWorth().getMin() || ((ValueCard) card).getValue() > action.getHasWorth().getMax()) {
                         tmp.add(card);
                     }
-                } else if (card.getCardType() == Card.Type.MoneyCard) {
+                } else if (card.getCardType() == Card.Type.MONEYCARD) {
                     if (((MoneyCard) card).getValue() < action.getHasWorth().getMin() || ((MoneyCard) card).getValue() > action.getHasWorth().getMax()) {
                         tmp.add(card);
                     }
@@ -404,10 +414,18 @@ public class ActionCardExecution {
         return false;
     }
 
+    /**
+     * Methode, um eine bestimmte Anzahl Karten aus einer Zone zu bekommen
+     *
+     * @param action
+     * @param player
+     * @return Liste der Karten
+     * @author KenoO, Julia
+     * @since Sprint 6
+     */
     private ArrayList<Card> executeGetCard(GetCard action, Player player) {
         if (action.getCardSource() != AbstractPlayground.ZoneType.NONE) {
             switch (action.getCardSource()) {
-
                 case TRASH:
                     action.setCards(playground.getTrash());
                     break;
@@ -425,17 +443,22 @@ public class ActionCardExecution {
                     break;
                 case DRAW:
                     action.setCards(player.getPlayerDeck().getCardsDeck());
-                    if(action.getCards().size() < action.getCount() && action.getCount() < 254) {
+                    if (action.getCards().size() < action.getCount() && action.getCount() < 254) {
                         int missingCards = action.getCount() - action.getCards().size();
                         List<Card> discard = player.getPlayerDeck().getDiscardPile();
                         Collections.shuffle(discard);
-                        player.getPlayerDeck().getDiscardPile().clear();
-                        player.getPlayerDeck().getCardsDeck().addAll(0, discard);
                         int i = 0;
-                        while(i < missingCards && i < discard.size()) {
-                            action.addCard(player.getPlayerDeck().getCardsDeck().get(i));
+                        int size = discard.size();
+                        while (i < missingCards && i < size) {
+                            Card card = discard.get(i);
+                            action.getCards().add(card);
+                            if (discard.size() != size) {
+                                discard.add(i, card);
+                            }
                             i++;
                         }
+                        player.getPlayerDeck().getCardsDeck().addAll(discard);
+                        player.getPlayerDeck().getDiscardPile().clear();
                     }
                     break;
                 case DISCARD:
@@ -463,10 +486,14 @@ public class ActionCardExecution {
      *
      * @param action Die ForEach-Aktion
      * @return
+     * @author KenoO, Julia
+     * @since Sprint 6
      */
     private boolean executeForEach(ForEach action, List<Player> playerList) {
         try {
-            for (Card card : action.getCards()) {
+            int size = action.getCards().size();
+            for (int i = 0; i < size; i++) {
+                Card card = action.getCards().get(i);
                 ArrayList<Card> cards = new ArrayList<>();
                 cards.add(card);
                 for (CardAction cardAction : action.getActions()) {
@@ -476,6 +503,9 @@ public class ActionCardExecution {
                             cards = c;
                         }
                     } else executeCardAction(cardAction, playerList);
+                }
+                if (action.getCards().size() != size) {
+                    action.getCards().add(i, card);
                 }
             }
         } catch (NullPointerException e) {
@@ -491,7 +521,7 @@ public class ActionCardExecution {
      * @param activity Aktion
      * @return true
      * @author Julia
-     * @since Sprint6
+     * @since Sprint 6
      */
     private boolean executeAddCapablePlayerActivity(AddCapablePlayerActivity activity) {
         if (activity.getActivity() == AbstractPlayground.PlayerActivityValue.ACTION) {
@@ -511,7 +541,7 @@ public class ActionCardExecution {
      * @param showCard
      * @return true
      * @author Julia
-     * @since Sprint6
+     * @since Sprint 6
      */
     private boolean executeShowCard(ShowCard showCard, List<Player> thePlayers) {
         for (Player player : thePlayers) {
@@ -539,9 +569,10 @@ public class ActionCardExecution {
      * @param action     Die Anzahl der Karten
      * @param thePlayers Die Player, die Karten auswählen dürfen.
      * @return
+     * @author Ferit, Julia
+     * @since Sprint 7
      */
 
-    //TODO: Überprüfen, ob die Logik stimmt.
     private boolean executeChooseCard(ChooseCard action, List<Player> thePlayers) {
         waitedForPlayerInput = true;
         chooseCardSource = action.getCardSource();
@@ -564,7 +595,7 @@ public class ActionCardExecution {
             if (action.getHasMoreCostThanInput() != null) {
                 if (inputCard == null) return false;
                 tmp.forEach(card -> {
-                    if (card.getCosts() - inputCard.getCosts() <= action.getHasMoreCostThanInput().getMax()) {
+                    if (card != null && card.getCosts() - inputCard.getCosts() <= action.getHasMoreCostThanInput().getMax()) {
                         theSelectableCards.add(card.getId());
                     }
                 });
@@ -591,7 +622,7 @@ public class ActionCardExecution {
      * @param chooseNextAction
      * @return true
      * @author Julia
-     * @since Sprint6
+     * @since Sprint 6
      */
     private boolean executeChooseNextAction(ChooseNextAction chooseNextAction) {
         waitedForPlayerInput = true;
@@ -604,7 +635,7 @@ public class ActionCardExecution {
      *
      * @return true
      * @author Julia
-     * @since Sprint8
+     * @since Sprint 8
      */
     private boolean executeMoveAction(Move action, Player player) {
         ArrayList<Short> theIds = new ArrayList<>();
@@ -688,6 +719,10 @@ public class ActionCardExecution {
                 playground.getGameService().sendToAllPlayers(gameID, message);
                 break;
         }
+        MoveCardMessage msg = new MoveCardMessage(gameID, player.getTheUserInThePlayer(), action);
+        //TODO Evtl. Daten, die andere Spieler nicht erhalten dürfen irgendwie unkenntlich machen? (Karten anderer Spieler)
+        playground.getGameService().sendToAllPlayers(gameID, msg);
+
         return true;
     }
 
@@ -697,7 +732,7 @@ public class ActionCardExecution {
      * @param action die Kartenaktion, deren Unteraktionen herausgefiltert werden sollen
      * @return Liste mit allen Unteraktionen der Aktion
      * @author Julia
-     * @since Sprint7
+     * @since Sprint 7
      */
     private List<CardAction> getNextActions(CardAction action) {
         if (!(action instanceof ComplexCardAction)) return nextActions;
@@ -714,7 +749,7 @@ public class ActionCardExecution {
      * @param action Die CardAction
      * @return Spielerliste mit allen betroffenen Spielern
      * @author Julia
-     * @since Sprint7
+     * @since Sprint 7
      */
     private List<Player> getAffectedPlayers(CardAction action) {
         List<Player> affectedPlayers = new ArrayList<>();
@@ -759,7 +794,7 @@ public class ActionCardExecution {
      * @param player Der Spieler, dessen Hand überprüft werden soll
      * @return true, wenn er eine Reaktionskarte auf der Hand hat, sonst false
      * @author Julia
-     * @since Sprint7
+     * @since Sprint 7
      */
     private boolean checkForReactionCard(Player player) {
         for (Card card : player.getPlayerDeck().getHand()) {
@@ -777,7 +812,7 @@ public class ActionCardExecution {
      * Überprüft ob die Karte vollständig abgearbeitet ist
      *
      * @author Julia
-     * @since Sprint7
+     * @since Sprint 7
      */
     private boolean checkIfComplete() {
         if (actualStateIndex == theCard.getActions().size() && !waitedForPlayerInput && finishedNextActions) {
@@ -787,48 +822,40 @@ public class ActionCardExecution {
         return false;
     }
 
-    // vorläufige Hilfsmethode //
+
+    /**
+     * Hilfsmethode, um die gespielte Aktionskarte aus der Hand des Spielers zu erhalten
+     *
+     * @param cardID ID der Aktionskarte
+     * @author KenoO
+     * @since Sprint 6
+     */
     private void getCardFromHand(short cardID) {
-
-        for (int i = 0; i < player.getPlayerDeck().getHand().size(); i++) {
-
-            if (player.getPlayerDeck().getHand().get(i).getId() == cardID) {
-                theCard = (ActionCard) player.getPlayerDeck().getHand().get(i);
-                break;
-            }
-        }
+        theCard = player.getPlayerDeck().getHand().stream().filter(card -> card.getId() == cardID).findFirst().map(card -> (ActionCard) card).orElse(theCard);
     }
 
-    private int helpMethodToGetThePlayerFromUser(User user) {
-        int thePlayer = -1;
-        for (int i = 0; i < players.size(); i++) {
-            if (user.equals(player.getTheUserInThePlayer())) {
-                thePlayer = i;
-                break;
-
-            }
-        }
-        return thePlayer;
+    /**
+     * Hilsmethode, um den zu einem User gehörigen Player zu bekommmen
+     *
+     * @param user Der User
+     * @return Player
+     * @author Ferit
+     * @since Sprint 7
+     */
+    private Player helpMethodToGetThePlayerFromUser(User user) {
+        return players.stream().filter(p -> user.equals(p.getTheUserInThePlayer())).findFirst().orElse(null);
     }
 
-    private Card helpMethod2GetTheCard(Short shor2) {
-        Card theCard = null;
-        boolean isfound = false;
-        for (Card card : playground.getCardsPackField().getCards().getAllCards()) {
-            for (int i = 0; i < playground.getCardsPackField().getCards().getAllCards().size() - 1; i++) {
-                if (card.getId() == shor2) {
-                    theCard = card;
-
-                    break;
-                }
-
-            }
-            if (isfound) {
-                break;
-            }
-        }
-
-        return theCard;
+    /**
+     * Hilfsmethode, um die zu einer ID gehörige Karte zu bekommen
+     *
+     * @param id ID der Karte
+     * @return die Karte, wenn sie gefunden wurde, sonst null
+     * @author Ferit
+     * @since Sprint 7
+     */
+    private Card helpMethod2GetTheCard(Short id) {
+        return playground.getCardsPackField().getCards().getAllCards().stream().filter(c -> c.getId() == id).findFirst().orElse(null);
     }
 
     public boolean isRemoveCardAfter() {

@@ -1,13 +1,13 @@
 package de.uol.swp.common.game.card.parser.components.CardAction.types;
 
 import de.uol.swp.common.game.card.parser.components.CardAction.CardAction;
-import de.uol.swp.common.game.card.parser.components.CardAction.SimpleCardAction;
+import de.uol.swp.common.game.card.parser.components.CardAction.ComplexCardAction;
 import de.uol.swp.common.game.card.parser.components.CardAction.types.subtypes.Condition;
 
 /**
  * Die IF-Aktion (Bedingte ausführung einer weiteren Aktion).
  */
-public class If extends SimpleCardAction {
+public class If extends ComplexCardAction {
 
     /**
      * Die Aktion, deren ergebnis ausgewertet wird

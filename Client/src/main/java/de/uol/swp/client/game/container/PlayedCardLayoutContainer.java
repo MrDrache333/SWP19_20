@@ -8,7 +8,7 @@ import javafx.scene.layout.Region;
  * Layoutcontainer für die Karten, die von der Hand ausgespielt worden sind.
  *
  * @author Devin
- * @since Sprint6
+ * @since Sprint 6
  */
 
 public class PlayedCardLayoutContainer extends Region {
@@ -17,7 +17,7 @@ public class PlayedCardLayoutContainer extends Region {
      * Instantiiert einen neuen PlayedCardLayoutContainer.
      *
      * @author Devin
-     * @since Sprint6
+     * @since Sprint 6
      */
     public PlayedCardLayoutContainer() {
     }
@@ -30,7 +30,7 @@ public class PlayedCardLayoutContainer extends Region {
      * @param height  Höhe
      * @param width   Breite
      * @author Devin
-     * @since Sprint6
+     * @since Sprint 6
      */
     public PlayedCardLayoutContainer(double layoutX, double layoutY, double height, double width, String id) {
         this.setLayoutX(layoutX);
@@ -38,7 +38,7 @@ public class PlayedCardLayoutContainer extends Region {
         this.setPrefHeight(height);
         this.setPrefWidth(width);
         this.setId(id);
-        if (this.getId().equals("1.PCLC")) {
+        /* if (this.getId().equals("1.PCLC")) {
             this.setRotate(180);
         } else {
             if (this.getId().equals("2.PCLC")) {
@@ -46,7 +46,7 @@ public class PlayedCardLayoutContainer extends Region {
             } else if (this.getId().equals("3.PCLC")) {
                 this.setRotate(270);
             }
-        }
+    }*/
     }
 
     /**
@@ -55,7 +55,7 @@ public class PlayedCardLayoutContainer extends Region {
      * Ansonsten überlappen sie sich, aber immer nur so viel wie nötig.
      *
      * @author Devin
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Override
     protected void layoutChildren() {
@@ -88,7 +88,7 @@ public class PlayedCardLayoutContainer extends Region {
      *
      * @return Kinder
      * @author Devin
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Override
     public ObservableList<Node> getChildren() {

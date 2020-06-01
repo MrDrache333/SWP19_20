@@ -22,7 +22,7 @@ public class UserLoggedInMessage extends AbstractServerMessage {
      *
      * @param username Der aktuelle Username
      * @author Marco Grawunder
-     * @since Sprint2
+     * @since Sprint 2
      */
 
     public UserLoggedInMessage(String username) {
@@ -38,7 +38,7 @@ public class UserLoggedInMessage extends AbstractServerMessage {
      *
      * @param o Das zu vergleichende Objekt.
      * @author Marco Grawunder
-     * @since Sprint3
+     * @since Sprint 3
      */
 
     @Override

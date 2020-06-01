@@ -7,6 +7,7 @@ public class OpenJoinLobbyRequest {
     private User user;
 
     private Lobby lobby;
+
     /**
      * Der Konstruktor der OpenLobbyCreateRequest
      *
@@ -20,7 +21,7 @@ public class OpenJoinLobbyRequest {
     }
 
     /**
-     * Getter der Klasse
+     * Gibt den User zurück
      *
      * @return den gegebenen User
      * @author Paula
@@ -30,6 +31,13 @@ public class OpenJoinLobbyRequest {
         return user;
     }
 
+    /**
+     * Gibt die Lobby zurück.
+     *
+     * @return lobby die Lobby
+     * @author Paula
+     * @since Sprint 7
+     */
     public Lobby getLobby() {
         return lobby;
     }

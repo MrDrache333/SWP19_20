@@ -22,7 +22,7 @@ public class AllOnlineLobbiesResponse extends AbstractResponseMessage {
      *
      * @param lobbies Liste aller Lobbies
      * @author Julia, Tim
-     * @since Sprint3
+     * @since Sprint 3
      */
     public AllOnlineLobbiesResponse(Collection<Lobby> lobbies) {
         for (Lobby lobby : lobbies) {

@@ -7,19 +7,6 @@ import java.util.UUID;
 
 public class BuyCardMessage extends AbstractServerMessage {
 
-    /**
-     * Die Antwort auf die BuyCardRequest
-     *
-     * @param lobbyID       die LobbyID
-     * @param currentUser   der User der die Request gestellt hat
-     * @param cardID        die ID der Karte (String)
-     * @param cardImage     die ImageView der Karte
-     * @param counterCard   Anzahl der Karten (die die selbe ID haben) die man noch kaufen kann
-     * @param costCard      die Kosten der zu kaufenden Karte
-     * @author Rike
-     * @since Sprint 5
-     */
-
     private UUID lobbyID;
     private User currentUser;
     private Short cardID;
@@ -29,6 +16,17 @@ public class BuyCardMessage extends AbstractServerMessage {
     public BuyCardMessage() {
     }
 
+    /**
+     * Die Antwort auf die BuyCardRequest
+     *
+     * @param lobbyID     die LobbyID
+     * @param currentUser der User der die Request gestellt hat
+     * @param cardID      die ID der Karte (String)
+     * @param counterCard Anzahl der Karten (die die selbe ID haben) die man noch kaufen kann
+     * @param costCard    die Kosten der zu kaufenden Karte
+     * @author Rike
+     * @since Sprint 5
+     */
     public BuyCardMessage(UUID lobbyID, User currentUser, Short cardID, int counterCard, Short costCard) {
         this.lobbyID = lobbyID;
         this.currentUser = currentUser;
@@ -37,22 +35,57 @@ public class BuyCardMessage extends AbstractServerMessage {
         this.costCard = costCard;
     }
 
+    /**
+     * Gibt die LobbyID zurück
+     *
+     * @return lobbyID die LobbyID
+     * @author Rike
+     * @since Sprint 3
+     */
     public UUID getLobbyID() {
         return lobbyID;
     }
 
+    /**
+     * Gibt den derzeitigen User zurück
+     *
+     * @return currentUser der aktuelle User
+     * @author Rike
+     * @since Sprint 3
+     */
     public User getCurrentUser() {
         return currentUser;
     }
 
+    /**
+     * Gibt die Karten-ID zurück
+     *
+     * @return cardID die Karten-ID
+     * @author Rike
+     * @since Sprint 3
+     */
     public Short getCardID() {
         return cardID;
     }
 
+    /**
+     * Gibt die Anzahl der verfügbaren Kartenkäufe zurück
+     *
+     * @return counterCard die Anzahl der verfügbaren Kartenkäufe
+     * @author Rike
+     * @since Sprint 3
+     */
     public int getCounterCard() {
         return counterCard;
     }
 
+    /**
+     * Gibt den Kartenpreis zurück
+     *
+     * @return costCard der Kartenpreis
+     * @author Rike
+     * @since Sprint 3
+     */
     public Short getCostCard() {
         return costCard;
     }

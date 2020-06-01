@@ -6,35 +6,62 @@ import de.uol.swp.common.user.UserDTO;
 import java.util.UUID;
 
 /**
- * Erstellt GameGiveUpRequest, welche eine Anfrage vom Client an den Server schickt das ein bestimmter Spieler in dem spezifischen Game aufgeben möchte.
+ * Erstellt einen GameGiveUpRequest, welche eine Anfrage vom Client an den Server schickt, dass ein bestimmter Spieler in dem spezifischen Game aufgeben möchte.
  *
+ * @author Haschem, Ferit
  * @version 1
- * @uthor Haschem, Ferit
- * @since Sprint6
+ * @since Sprint 6
  */
-
 public class GameGiveUpRequest extends AbstractLobbyRequest {
 
     private static final long serialVersionUID = 7986167787009372236L;
-    private UserDTO givingUpUSer;
+    private UserDTO givingUpUser;
     private UUID theSpecificLobbyID;
-
     private Boolean wantsToGiveUP;
 
-    public GameGiveUpRequest(UserDTO givingUpUSer, UUID theSpecificLobbyID) {
-        this.givingUpUSer = givingUpUSer;
+    /**
+     * Der Konstruktor des GameGiveUpRequest
+     *
+     * @param givingUpUser       der User, welcher aufgibt
+     * @param theSpecificLobbyID die Lobby-ID
+     * @author Haschem, Ferit
+     * @since Sprint 6
+     */
+    public GameGiveUpRequest(UserDTO givingUpUser, UUID theSpecificLobbyID) {
+        this.givingUpUser = givingUpUser;
         this.theSpecificLobbyID = theSpecificLobbyID;
         this.wantsToGiveUP = true;
     }
 
-    public UserDTO getGivingUpUSer() {
-        return givingUpUSer;
+    /**
+     * Gigbt den User zurück, welcher aufgeben möchte
+     *
+     * @return givingUpUSer der User, welcher aufgeben möchte
+     * @author Haschem, Ferit
+     * @since Sprint 6
+     */
+    public UserDTO getGivingUpUser() {
+        return givingUpUser;
     }
 
+    /**
+     * Gibt die Lobby-ID zurück
+     *
+     * @return theSpecificLobbyID die Lobby-ID
+     * @author Haschem, Ferit
+     * @since Sprint 6
+     */
     public UUID getTheSpecificLobbyID() {
         return theSpecificLobbyID;
     }
 
+    /**
+     * Gibt zurück, ob der User aufgeben möchte
+     *
+     * @return wantsToGiveUP ob der User aufgeben möchte (Boolean)
+     * @author Haschem, Ferit
+     * @since Sprint 6
+     */
     public Boolean getWantsToGiveUP() {
         return wantsToGiveUP;
     }

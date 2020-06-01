@@ -1,0 +1,808 @@
+{
+  "packname": "Basispack",
+  "_description": "...",
+  "cards": {
+    "MoneyCards": [
+      {
+        "id": 1,
+        "name": "Kupfer",
+        "value": 1,
+        "cost": 0
+      },
+      {
+        "id": 2,
+        "name": "Silber",
+        "value": 2,
+        "cost": 3
+      },
+      {
+        "id": 3,
+        "name": "Gold",
+        "value": 3,
+        "cost": 6
+      }
+    ],
+    "ValueCards": [
+      {
+        "id": 4,
+        "name": "Anwesen",
+        "value": 1,
+        "cost": 2
+      },
+      {
+        "id": 5,
+        "name": "Herzogtum",
+        "value": 3,
+        "cost": 5
+      },
+      {
+        "id": 6,
+        "name": "Provinz",
+        "value": 6,
+        "cost": 8
+      },
+      {
+        "id": 30,
+        "name": "Gärten",
+        "value": 6,
+        "cost": 8
+      }
+    ],
+    "ActionCards": [
+      {
+        "id": 7,
+        "name": "Burggraben",
+        "cost": 2,
+        "type": "Reaction"
+      },
+      {
+        "id": 8,
+        "name": "Dorf",
+        "cost": 3,
+        "actions": [
+          {
+            "GetCard": {
+              "count": 1,
+              "cardSource": "DRAW",
+              "directHand": true
+            }
+          },
+          {
+            "AddCapablePlayerActivity": {
+              "count": 2,
+              "activity": "ACTION"
+            }
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "name": "Holzfäller",
+        "cost": 2,
+        "actions": [
+          {
+            "AddCapablePlayerActivity": {
+              "count": 1,
+              "activity": "BUY"
+            }
+          },
+          {
+            "AddCapablePlayerActivity": {
+              "count": 2,
+              "activity": "MONEY"
+            }
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "name": "Keller",
+        "cost": 2,
+        "actions": [
+          {
+            "AddCapablePlayerActivity": {
+              "count": 1,
+              "activity": "ACTION"
+            }
+          },
+          {
+            "ChooseCard": {
+              "count": {
+                "min": 0,
+                "max": 255
+              },
+              "cardSource": "HAND",
+              "nextAction": {
+                "ForEach": {
+                  "actions": [
+                    {
+                      "Move": {
+                        "cardSource": "HAND",
+                        "cardDestination": "DISCARD"
+                      }
+                    },
+                    {
+                      "GetCard": {
+                        "count": 1,
+                        "cardSource": "DRAW",
+                        "directHand": true
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "name": "Markt",
+        "cost": 5,
+        "actions": [
+          {
+            "GetCard": {
+              "count": 1,
+              "cardSource": "DRAW",
+              "directHand": true
+            }
+          },
+          {
+            "AddCapablePlayerActivity": {
+              "count": 1,
+              "activity": "ACTION"
+            }
+          },
+          {
+            "AddCapablePlayerActivity": {
+              "count": 1,
+              "activity": "BUY"
+            }
+          },
+          {
+            "AddCapablePlayerActivity": {
+              "count": 1,
+              "activity": "MONEY"
+            }
+          }
+        ]
+      },
+      {
+        "id": 12,
+        "name": "Miliz",
+        "cost": 4,
+        "actions": [
+          {
+            "AddCapablePlayerActivity": {
+              "count": 2,
+              "activity": "MONEY"
+            }
+          },
+          {
+            "While": {
+              "executeType": "Others",
+              "condition": {
+                "left": {
+                  "Count": {
+                    "GetCard": {
+                      "count": 255,
+                      "cardSource": "HAND"
+                    }
+                  }
+                },
+                "operator": "HIGHER",
+                "right": 3
+              },
+              "actions": [
+                {
+                  "GetCard": {
+                    "count": 1,
+                    "cardSource": "HAND",
+                    "nextAction": {
+                      "Move": {
+                        "cardSource": "HAND",
+                        "cardDestination": "DISCARD"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": 13,
+        "name": "Mine",
+        "cost": 5,
+        "actions": [
+          {
+            "ChooseCard": {
+              "count": {
+                "min": 1
+              },
+              "allowedCardType": "MONEYCARD",
+              "cardSource": "HAND",
+              "nextAction": {
+                "Move": {
+                  "cardSource": "HAND",
+                  "cardDestination": "TRASH"
+                }
+              }
+            }
+          },
+          {
+            "ChooseCard": {
+              "count": {
+                "min": 1
+              },
+              "allowedCardType": "MONEYCARD",
+              "cardSource": "BUY",
+              "hasMoreCostThanInput": {
+                "min": 0,
+                "max": 3
+              },
+              "directHand": true
+            }
+          }
+        ]
+      },
+      {
+        "id": 14,
+        "name": "Schmiede",
+        "cost": 4,
+        "actions": [
+          {
+            "GetCard": {
+              "count": 3,
+              "cardSource": "DRAW",
+              "directHand": true
+            }
+          }
+        ]
+      },
+      {
+        "id": 15,
+        "name": "Umbau",
+        "cost": 4,
+        "actions": [
+          {
+            "ChooseCard": {
+              "count": {
+                "min": 1
+              },
+              "cardSource": "HAND",
+              "nextAction": {
+                "Move": {
+                  "cardSource": "HAND",
+                  "cardDestination": "TRASH"
+                }
+              }
+            }
+          },
+          {
+            "ChooseCard": {
+              "count": {
+                "min": 1
+              },
+              "cardSource": "BUY",
+              "hasMoreCostThanInput": {
+                "min": 0,
+                "max": 2
+              },
+              "nextAction": {
+                "Move": {
+                  "cardSource": "BUY",
+                  "cardDestination": "DISCARD"
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": 16,
+        "name": "Werkstatt",
+        "cost": 3,
+        "actions": [
+          {
+            "ChooseCard": {
+              "count": {
+                "min": 1
+              },
+              "hasCost": {
+                "min": 0,
+                "max": 4
+              },
+              "cardSource": "BUY",
+              "nextAction": {
+                "Move": {
+                  "cardSource": "BUY",
+                  "cardDestination": "DISCARD"
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": 17,
+        "name": "Abenteuer",
+        "cost": 6,
+        "actions": [
+          {
+            "While": {
+              "condition": {
+                "left": {
+                  "Count": {
+                    "GetCard": {
+                      "count": 255,
+                      "allowedCardType": "MONEYCARD",
+                      "cardSource": "TEMP"
+                    }
+                  }
+                },
+                "operator": "LOWER",
+                "right": 2
+              },
+              "actions": [
+                {
+                  "GetCard": {
+                    "count": 1,
+                    "cardSource": "DRAW",
+                    "nextAction": {
+                      "Move": {
+                        "cardSource": "DRAW",
+                        "cardDestination": "TEMP"
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "nextAction": {
+              "GetCard": {
+                "count": 255,
+                "cardSource": "TEMP",
+                "nextAction": {
+                  "Move": {
+                    "allowedCardType": "MONEYCARD",
+                    "cardSource": "TEMP",
+                    "cardDestination": "HAND",
+                    "nextAction": {
+                      "Move": {
+                        "cardSource": "TEMP",
+                        "cardDestination": "DISCARD"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": 18,
+        "name": "Bürokrat",
+        "cost": 4,
+        "type": "Attack",
+        "actions": [
+          {
+            "GetCard": {
+              "count": 1,
+              "cardSource": "BUY",
+              "allowedCardType": "MONEYCARD",
+              "hasWorth": {
+                "min": 2
+              },
+              "nextAction": {
+                "Move": {
+                  "cardSource": "BUY",
+                  "cardDestination": "DISCARD"
+                }
+              }
+            }
+          },
+          {
+            "If": {
+              "executeType": "OTHERS",
+              "expectedResult": false,
+              "condition": {
+                "left": {
+                  "GetCard": {
+                    "count": 1,
+                    "cardSource": "HAND",
+                    "allowedCardType": "ValueCard"
+                  }
+                }
+              },
+              "conditionedAction": {
+                "GetCard": {
+                  "count": 255,
+                  "cardSource": "HAND",
+                  "nextAction": {
+                    "ShowCard": {}
+                  }
+                }
+              }
+            }
+          },
+          {
+            "GetCard": {
+              "count": 1,
+              "executeType": "OTHERS",
+              "cardSource": "HAND",
+              "allowedCardType": "ValueCard",
+              "nextAction": {
+                "ForEach": {
+                  "actions": [
+                    {
+                      "ShowCard": {}
+                    },
+                    {
+                      "Move": {
+                        "cardSource": "HAND",
+                        "cardDestination": "DISCARD"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": 19,
+        "name": "Festmahl",
+        "cost": 4,
+        "actions": [
+          {
+            "ChooseCard": {
+              "count": {
+                "min": 1
+              },
+              "hasCost": {
+                "min": 0,
+                "max": 5
+              },
+              "cardSource": "BUY",
+              "removeCardAfter": true,
+              "nextAction": {
+                "Move": {
+                  "cardSource": "BUY",
+                  "cardDestination": "DISCARD"
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": 20,
+        "name": "Geldverleiher",
+        "cost": 4,
+        "actions": [
+          {
+            "If": {
+              "expectedResult": true,
+              "condition": {
+                "left": {
+                  "GetCard": {
+                    "executionOptional": true,
+                    "cardSource": "HAND",
+                    "allowedCardType": "MONEYCARD",
+                    "hasWorth": {
+                      "min": 1,
+                      "max": 1
+                    },
+                    "nextAction": {
+                      "Move": {
+                        "cardSource": "HAND",
+                        "cardDestination": "TRASH"
+                      }
+                    }
+                  }
+                }
+              },
+              "conditionedAction": {
+                "AddCapablePlayerActivity": {
+                  "count": 3,
+                  "activity": "MONEY"
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": 21,
+        "name": "Kanzler",
+        "cost": 3,
+        "actions": [
+          {
+            "AddCapablePlayerActivity": {
+              "count": 2,
+              "activity": "MONEY"
+            }
+          },
+          {
+            "GetCard": {
+              "count": 254,
+              "executionOptional": true,
+              "executionOptionalMessage": "Willst du deinen kompletten Nachziehstapel ablegen?",
+              "cardSource": "DRAW",
+              "nextAction": {
+                "Move": {
+                  "cardSource": "DRAW",
+                  "cardDestination": "DISCARD"
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": 22,
+        "name": "Kapelle",
+        "cost": 2,
+        "actions": [
+          {
+            "ChooseCard": {
+              "cardSource": "HAND",
+              "count": {
+                "min": 0,
+                "max": 4
+              },
+              "nextAction": {
+                "Move": {
+                  "cardSource": "HAND",
+                  "cardDestination": "TRASH"
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": 23,
+        "name": "Laboratorium",
+        "cost": 5,
+        "actions": [
+          {
+            "GetCard": {
+              "count": 2,
+              "cardSource": "DRAW",
+              "directHand": true
+            }
+          },
+          {
+            "AddCapablePlayerActivity": {
+              "count": 1,
+              "activity": "ACTION"
+            }
+          }
+        ]
+      },
+      {
+        "id": 24,
+        "name": "Thronsaal",
+        "cost": 4,
+        "actions": [
+          {
+            "GetCard": {
+              "count": 1,
+              "cardSource": "HAND",
+              "allowedCardType": "ACTION",
+              "nextAction": {
+                "UseCard": {
+                  "count": 2
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": 25,
+        "name": "Bibliothek",
+        "cost": 5,
+        "actions": [
+          {
+            "While": {
+              "condition": {
+                "left": {
+                  "Count": {
+                    "GetCard": {
+                      "count": 255,
+                      "cardSource": "HAND"
+                    }
+                  }
+                },
+                "operator": "LOWER",
+                "right": 7
+              },
+              "actions": [
+                {
+                  "GetCard": {
+                    "count": 1,
+                    "cardSource": "DRAW",
+                    "nextAction": {
+                      "Move": {
+                        "cardDestination": "TEMP",
+                        "allowedCardType": "ACTIONCARD",
+                        "nextAction": {
+                          "Move": {
+                            "cardDestination": "HAND"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "GetCard": {
+              "count": 255,
+              "cardSource": "TEMP",
+              "nextAction": {
+                "Move": {
+                  "cardSource": "TEMP",
+                  "cardDestination": "DISCARD"
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": 26,
+        "name": "Dieb",
+        "cost": 4,
+        "type": "Attack",
+        "actions": [
+        ]
+      },
+      {
+        "id": 27,
+        "name": "Jahrmarkt",
+        "cost": 5,
+        "actions": [
+          {
+            "AddCapablePlayerActivity": {
+              "count": 2,
+              "activity": "ACTION"
+            }
+          },
+          {
+            "AddCapablePlayerActivity": {
+              "count": 1,
+              "activity": "BUY"
+            }
+          },
+          {
+            "AddCapablePlayerActivity": {
+              "count": 2,
+              "activity": "MONEY"
+            }
+          }
+        ]
+      },
+      {
+        "id": 28,
+        "name": "Ratsversammlung",
+        "cost": 5,
+        "actions": [
+          {
+            "GetCard": {
+              "count": 4,
+              "cardSource": "DRAW",
+              "directHand": true
+            }
+          },
+          {
+            "AddCapablePlayerActivity": {
+              "count": 1,
+              "activity": "BUY"
+            }
+          },
+          {
+            "GetCard": {
+              "count": 1,
+              "executeType": "OTHERS",
+              "cardSource": "DRAW",
+              "directHand": true
+            }
+          }
+        ]
+      },
+      {
+        "id": 29,
+        "name": "Spion",
+        "cost": 4,
+        "type": "Attack",
+        "actions": [
+          {
+            "AddCapablePlayerActivity": {
+              "count": 1,
+              "activity": "BUY"
+            }
+          },
+          {
+            "AddCapablePlayerActivity": {
+              "count": 1,
+              "activity": "ACTION"
+            }
+          },
+          {
+            "GetCard": {
+              "executeType": "ALL",
+              "count": 1,
+              "cardSource": "DRAW",
+              "hideCardDuringAction": false,
+              "nextAction": {
+                "ForEach": {
+                  "actions": [
+                    {
+                      "ShowCard": {}
+                    },
+                    {
+                      "ChooseNextAction": {
+                        "nextActions": [
+                          {
+                            "Move": {
+                              "cardSource": "DRAW",
+                              "cardDestination": "DISCARD"
+                            }
+                          },
+                          {
+                            "Move": {
+                              "cardSource": "DRAW",
+                              "cardDestination": "DRAW"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": 31,
+        "name": "Hexe",
+        "cost": 5,
+        "type": "Attack",
+        "actions": [
+          {
+            "GetCard": {
+              "count": 2,
+              "cardSource": "DRAW",
+              "directHand": true
+            }
+          },
+          {
+            "GetCard": {
+              "count": 1,
+              "allowedCardType": "CURSE",
+              "directHand": true
+            }
+          }
+        ]
+      }
+    ],
+    "CurseCards": [
+      {
+        "id": 38,
+        "name": "Fluch",
+        "value": -1
+      }
+    ]
+  }
+}

@@ -33,14 +33,13 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      *
      * @param playground das Spielfeld
      * @author Fenja
-     * @since Sprint6
+     * @since Sprint 6
      */
     public CompositePhase(Playground playground) {
         this.playground = playground;
         Short[] actioncards = {(short) 22, (short) 8, (short) 9, (short) 21, (short) 14, (short) 23, (short) 11, (short) 27, (short) 10, (short) 16, (short) 19, (short) 15, (short) 13};
         implementedActionCards = Arrays.asList(actioncards);
     }
-
 
     @Override
     public void executeActionPhase(Player player, short cardId) {
@@ -68,6 +67,19 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         executeAction.execute();
     }
 
+    /**
+     * Wenn eine Aktionskarte vollständig ausgeführt wurde, wird sie in die Aktionszone des Spielers oder den Müll gelegt.
+     * Ggf. neue Handkarten, die letzte Karte auf dem Ablagestapel und Müll, Anzahl der Karten auf dem Nachziehstapel
+     * werden gesendet.
+     * Der Aktionencounter wird um 1 verringert, dem Spieler wird eine InfoPlayDisplayMessage gesendet und die Phase
+     * wird gewechselt, falls der Spieler keine Aktionen oder Aktionskarten mehr hat.
+     *
+     * @param player       Der Spieler
+     * @param newHandCards Liste neuer Handkarten
+     * @param card         Gespielte Karte
+     * @author Julia, KenoO
+     * @since Sprint 7
+     */
     public void finishedActionCardExecution(Player player, ArrayList<Short> newHandCards, Card card) {
         if (!executeAction.isRemoveCardAfter()) {
             player.getPlayerDeck().getActionPile().add(card);
@@ -100,7 +112,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      * @param player Der Spieler
      * @param cardId Die Karten-ID
      * @author Paula
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Override
     public int executeBuyPhase(Player player, short cardId) {
@@ -151,7 +163,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      *
      * @param player Der aktuelle Spieler
      * @author Julia, Fenja
-     * @since Sprint6
+     * @since Sprint 6
      */
     @Override
     public void executeClearPhase(Player player) {
@@ -186,7 +198,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      * @param cardId
      * @return card Karte, zu der die ID gehört
      * @author Paula
-     * @since Sprint6
+     * @since Sprint 6
      */
 
     public Card getCardFromId(CardStack cardStack, short cardId) {
@@ -213,26 +225,22 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      * Überprüft, ob das Spiel in der Clearphase beendet ist
      *
      * @return false, wenn das Spiel nicht vorbei ist
-     * @author Fenja
-     * @since Sprint6
+     * @author Fenja, Keno0
+     * @since Sprint 7
      */
     public boolean checkIfGameIsFinished() {
         if (playground.getCardField().get((short) 6) == 0) {
             return true;
         }
-        int counter = 0;
-        for (Card card : playground.getCardsPackField().getCards().getActionCards()) {
-            if (playground.getCardField().containsKey(card.getId()) && playground.getCardField().get(card.getId()) == 0) {
-                counter++;
-                if (counter >= 3) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        //Prüfen ob min. 3 Aktionskartenstapel leer sind
+        return playground.getCardsPackField().getCards().getActionCards().stream().filter(c -> playground.getCardField().containsKey(c.getId()) && playground.getCardField().get(c.getId()) == 0).count() >= 3;
     }
 
     public ActionCardExecution getExecuteAction() {
         return executeAction;
+    }
+
+    public List<Short> getImplementedActionCards() {
+        return implementedActionCards;
     }
 }

@@ -26,7 +26,7 @@ abstract public class AbstractGameMessage extends AbstractServerMessage {
      * @param gameID Die ID des Games
      * @param player Der Spieler
      * @author Paula, KenoO
-     * @since Sprint7
+     * @since Sprint 7
      */
     public AbstractGameMessage(UUID gameID, User player) {
         this.gameID = gameID;
