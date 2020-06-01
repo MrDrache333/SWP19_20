@@ -22,16 +22,15 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.stage.Modality;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ConcurrentModificationException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("UnstableApiUsage")
@@ -220,7 +219,7 @@ public class PrimaryPresenter extends AbstractPresenter {
      * @param currentUser the current user
      * @param title       der Übergebene Titel aus dem MainMenuPresenter
      * @param lobbyID     die übergebene LobbyID aus der empfangenen Message in der ClientApp
-     * @author Paula, Haschem, Ferit, Anna
+     * @author Paula, Haschem, Ferit, Anna, Marvin
      * @Version 1.0
      * @version 0.2
      * @since Sprint 3
@@ -240,10 +239,19 @@ public class PrimaryPresenter extends AbstractPresenter {
 
             //Auf Schließung des Tabs reagieren
             gameManagement.getPrimaryTab().setOnCloseRequest(event -> {
-                games.remove(gameManagement);
-                lobbyService.leaveLobby(gameManagement.getID(), (UserDTO) loggedInUser);
-                TabView.getTabs().remove(gameManagement.getPrimaryTab());
-                lobbyService.retrieveAllLobbies();
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setResizable(false);
+                alert.initModality(Modality.APPLICATION_MODAL);
+                alert.getDialogPane().setHeaderText("Möchtest du diesen Tab wirklich schließen?");
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    games.remove(gameManagement);
+                    lobbyService.leaveLobby(gameManagement.getID(), (UserDTO) loggedInUser);
+                    TabView.getTabs().remove(gameManagement.getPrimaryTab());
+                    lobbyService.retrieveAllLobbies();
+                } else {
+                    event.consume();
+                }
             });
             TabView.getTabs().add(gameManagement.getPrimaryTab());
             TabView.getSelectionModel().select(gameManagement.getPrimaryTab());
