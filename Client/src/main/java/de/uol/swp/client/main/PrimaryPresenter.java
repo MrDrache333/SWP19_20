@@ -245,10 +245,7 @@ public class PrimaryPresenter extends AbstractPresenter {
                 alert.getDialogPane().setHeaderText("Möchtest du diesen Tab wirklich schließen?");
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
-                    games.remove(gameManagement);
-                    lobbyService.leaveLobby(gameManagement.getID(), (UserDTO) loggedInUser);
-                    TabView.getTabs().remove(gameManagement.getPrimaryTab());
-                    lobbyService.retrieveAllLobbies();
+                    closeTab(lobbyID, true);
                 } else {
                     event.consume();
                 }
