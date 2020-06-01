@@ -160,11 +160,11 @@ public class ActionCardExecution {
         while (actualStateIndex < theCard.getActions().size() && !waitedForPlayerInput && finishedNextActions) {
             startedNextActions = false;
             CardAction action = theCard.getActions().get(actualStateIndex);
-            getNextActions(action);
             if (action instanceof ComplexCardAction && ((ComplexCardAction) action).isExecutionOptional() && !executeOptionalAction) {
                 playground.getGameService().sendToSpecificPlayer(player, new OptionalActionRequest(gameID, player.getTheUserInThePlayer(), ((ComplexCardAction) action).getExecutionOptionalMessage()));
                 waitedForPlayerInput = true;
             } else {
+                getNextActions(action);
                 if (!(action instanceof ChooseNextAction) && !(action instanceof ChooseCard)) {
                     actualStateIndex++;
                 }
@@ -192,7 +192,6 @@ public class ActionCardExecution {
         }
 
         checkIfComplete();
-        finishedExecution = false;
         return true;
     }
 
