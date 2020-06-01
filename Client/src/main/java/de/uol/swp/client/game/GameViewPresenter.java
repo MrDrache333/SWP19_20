@@ -215,7 +215,7 @@ public class GameViewPresenter extends AbstractPresenter {
         firstEnemyPCLC = new PlayedCardLayoutContainer(700, 150, 120, 240, "1.PCLC");
         secondEnemyPCLC = new PlayedCardLayoutContainer(360, 308, 120, 240, "2.PCLC");
         thirdEnemyPCLC = new PlayedCardLayoutContainer(1012, 308, 120, 240, "3.PCLC");
-        // Die Abwerf-Zonen für jeden Spieler
+        // Die Abwurf-Zonen für jeden Spieler
         myDPLC = new DiscardPileLayoutContainer(1050, 630, 110, 60, "My.DPLC");
         firstEnemyDPLC = new DiscardPileLayoutContainer(640, 0, 110, 60, "1.DPLC");
         secondEnemyDPLC = new DiscardPileLayoutContainer(328, 447, 104, 60, "2.DPLC");
@@ -564,7 +564,6 @@ public class GameViewPresenter extends AbstractPresenter {
                             myPCLC.getChildren().add(card);
                         }
                         handcards.getChildren().remove(card);
-                        card.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                     }
                     if (msg.getHandCardID().equals("1") || msg.getHandCardID().equals("2") || msg.getHandCardID().equals("3")) {
                         usableMoney += Integer.parseInt(msg.getHandCardID());
@@ -1080,7 +1079,7 @@ public class GameViewPresenter extends AbstractPresenter {
             buyCardButton.setVisible(false);
             bigCardImageBox.setVisible(true);
         } else {
-            if (id > 6 && id != 38) { //nur Aktionskarten, ohne Fluchkarte
+            if (id > 6 && id != 38 && card.getParent() == handcards) { //nur Aktionskarten, ohne Fluchkarte & nur Karten, welche noch in der Hand zone sind.
                 bigCardImageBox.setVisible(false);
                 for (Node a : handcards.getChildren()) {
                     ImageView b = (ImageView) a;
