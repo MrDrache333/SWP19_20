@@ -116,8 +116,6 @@ public class AnimationManagement {
         pathTransition.play();
         setNewCoordinates(card, pathTransition);
         return true;
-        //}
-        //return false;
     }
 
     /**
@@ -130,7 +128,6 @@ public class AnimationManagement {
      * @author Anna
      * @since Sprint 5
      */
-
     public static Boolean playCard(ImageView card, int count, PlayedCardLayoutContainer action_zone) {
         return createArcToPath(card, keepPosition(card), action_zone.getLayoutX(), action_zone.getLayoutY(), count, true);
     }
