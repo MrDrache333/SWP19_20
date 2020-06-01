@@ -75,8 +75,8 @@ public class GameService {
         bus.post(req);
     }
 
-    public void chooseCardResponse(UUID gameID, User loggedInUser, ArrayList<Short> chosenCards) {
-        ChooseCardResponse response = new ChooseCardResponse(gameID, loggedInUser, chosenCards);
+    public void chooseCardResponse(UUID gameID, User loggedInUser, ArrayList<Short> chosenCards, boolean directHand) {
+        ChooseCardResponse response = new ChooseCardResponse(gameID, loggedInUser, chosenCards, directHand);
         bus.post(response);
     }
 }

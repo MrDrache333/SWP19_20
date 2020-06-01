@@ -179,6 +179,8 @@ public class GameViewPresenter extends AbstractPresenter {
     private ColorAdjust makeImageDarker = new ColorAdjust();
     private boolean chooseCardBecauseOfActionCard = false;
     private ColorAdjust notChosenCard = new ColorAdjust();
+    private boolean directHand;
+    private String infoText;
 
     private final EventHandler<MouseEvent> handCardEventHandler = new EventHandler() {
         @Override
@@ -972,9 +974,17 @@ public class GameViewPresenter extends AbstractPresenter {
         }
     }
 
+    /**
+     * Wenn der Spieler eine Karte oder mehrere Karten auswählen darf, werden alle nicht auswählbaren verdunkelt.
+     *
+     * @param msg der ChooseCardRequest
+     * @author Fenja, Anna
+     * @since Sprint 8
+     */
     @Subscribe
     public void onChooseCardRequest(ChooseCardRequest msg) {
         if (msg.getSource().equals(AbstractPlayground.ZoneType.BUY)) {
+            directHand = msg.getDirectHand();
             for (int i = 0; i < 10; i++) {
                 ImageView iv = (ImageView) shopTeppich.getChildren().get(i);
                 if (!msg.getCards().contains(Short.valueOf(iv.getId()))) {
@@ -990,7 +1000,8 @@ public class GameViewPresenter extends AbstractPresenter {
                 }
             }
             Platform.runLater(() -> {
-                infoActualPhase.setText(msg.getMessage());
+                infoText = infoActualPhase.getText();
+                infoActualPhase.setText("Bitte wähle eine Karte vom Spielfeld aus.");
             });
             chooseCardBecauseOfActionCard = true;
         }
@@ -1208,7 +1219,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     showAlert(Alert.AlertType.INFORMATION, "Du bist nicht dran!", "Fehler");
                 } else {
                     if (chooseCardBecauseOfActionCard) {
-                        gameService.chooseCardResponse(lobbyID, loggedInUser, new ArrayList<>(Collections.singletonList(Short.valueOf(cardID))));
+                        gameService.chooseCardResponse(lobbyID, loggedInUser, new ArrayList<>(Collections.singletonList(Short.valueOf(cardID))), directHand);
                         for (int i = 0; i < 10; i++) {
                             ImageView iv = (ImageView) shopTeppich.getChildren().get(i);
                             if (iv.getEffect() == notChosenCard) {
@@ -1222,6 +1233,9 @@ public class GameViewPresenter extends AbstractPresenter {
                             }
                         }
                         chooseCardBecauseOfActionCard = false;
+                        Platform.runLater(() -> {
+                            infoActualPhase.setText(infoText);
+                        });
                     } else {
                         showAlert(Alert.AlertType.INFORMATION, "Du musst erst deine Geldkarten ausspielen!", "Fehler");
                     }
