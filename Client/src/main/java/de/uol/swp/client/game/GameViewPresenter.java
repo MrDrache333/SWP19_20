@@ -1239,6 +1239,7 @@ public class GameViewPresenter extends AbstractPresenter {
                         Platform.runLater(() -> {
                             infoActualPhase.setText(infoText);
                             infoActualPhase.setStyle("-fx-font-size: 18");
+                            infoActualPhase.setStyle("-fx-font-weight: bold");
                         });
                     } else {
                         showAlert(Alert.AlertType.INFORMATION, "Du musst erst deine Geldkarten ausspielen!", "Fehler");
