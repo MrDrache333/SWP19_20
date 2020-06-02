@@ -611,7 +611,6 @@ public class GameViewPresenter extends AbstractPresenter {
                     for (Node c : handcards.getChildren()) {
                         ImageView cardToBeChecked = (ImageView) c;
                         if (cardToBeChecked.getId().equals("1") || cardToBeChecked.getId().equals("2") || cardToBeChecked.getId().equals("3")) {
-                            playAllMoneyCardsButton.setDisable(false);
                             break;
                         } else {
                             playAllMoneyCardsButton.setDisable(true);
