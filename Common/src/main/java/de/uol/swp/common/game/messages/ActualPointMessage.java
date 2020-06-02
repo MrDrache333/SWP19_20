@@ -16,10 +16,9 @@ public class ActualPointMessage extends AbstractServerMessage {
     private int points;
 
 
-    public ActualPointMessage(UUID lobbyID, UserDTO actualPlayer, String actualPhase, int points) {
+    public ActualPointMessage(UUID lobbyID, UserDTO actualPlayer, int points) {
         this.lobbyID = lobbyID;
         this.actualPlayer = actualPlayer;
-        this.actualPhase = actualPhase;
         this.points = points;
     }
 
