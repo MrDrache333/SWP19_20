@@ -107,7 +107,7 @@ public class LobbyService extends AbstractService {
      * @since Sprint 3
      */
     @Subscribe
-    public void onLobbyJoinUserRequest(LobbyJoinUserRequest msg){
+    public void onLobbyJoinUserRequest(LobbyJoinUserRequest msg) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getLobbyID());
         if (lobby.isPresent() && !lobby.get().getUsers().contains(msg.getUser()) && lobby.get().getPlayers() < lobby.get().getMaxPlayer() && !lobby.get().getInGame()) {
             LOG.info("User " + msg.getUser().getUsername() + " is joining lobby " + lobby.get().getName());
@@ -139,7 +139,8 @@ public class LobbyService extends AbstractService {
     public void onLobbyLeaveUserRequest(LobbyLeaveUserRequest msg) {
         Optional<User> oldOwner = lobbyManagement.getLobbyOwner(msg.getLobbyID());
         //Falls der Besitzer der Lobby aus der Lobby geht wird dieser aktualisiert
-        if (!(lobbyManagement.getLobby(msg.getLobbyID()).get().onlyBotsLeft(msg.getLobbyID())) && lobbyManagement.leaveLobby(msg.getLobbyID(), msg.getUser())) {
+        lobbyManagement.leaveLobby(msg.getLobbyID(), msg.getUser());
+        if (!(lobbyManagement.getLobby(msg.getLobbyID()).get().onlyBotsLeft(msg.getLobbyID()))) {
             Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getLobbyID());
             LOG.info("User " + msg.getUser().getUsername() + " verlässt die Lobby " + msg.getLobbyID());
             ServerMessage returnMessage;
