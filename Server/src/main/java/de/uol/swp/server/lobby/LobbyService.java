@@ -363,11 +363,6 @@ public class LobbyService extends AbstractService {
      * @author Paula
      */
     private boolean containsLobbyName(String name) {
-        for (Lobby lobby : lobbyManagement.getLobbies()) {
-            if (lobby.getName().equals(name)) {
-                return true;
-            }
-        }
-        return false;
+        return lobbyManagement.getLobbies().stream().anyMatch(lobby -> lobby.getName().equals(name));
     }
 }
