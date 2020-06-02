@@ -24,6 +24,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Playground stellt das eigentliche Spielfeld dar
@@ -226,10 +228,7 @@ public class Playground extends AbstractPlayground {
      * @since Sprint 5
      */
     public void sendPlayersHand() {
-        ArrayList<Short> theIdsFromTheHand = new ArrayList<>(5);
-        for (Card card : actualPlayer.getPlayerDeck().getHand()) {
-            theIdsFromTheHand.add(card.getId());
-        }
+        ArrayList<Short> theIdsFromTheHand = actualPlayer.getPlayerDeck().getHand().stream().map(Card::getId).collect(Collectors.toCollection(() -> new ArrayList<>(5)));
         DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID, (short) getPlayers().size(), false);
         gameService.sendToSpecificPlayer(actualPlayer, theHandMessage);
     }
@@ -269,13 +268,7 @@ public class Playground extends AbstractPlayground {
      * @author Haschem, Ferit
      */
     public Boolean playerGaveUp(UUID lobbyID, UserDTO theGivingUpUser, Boolean wantsToGiveUp) {
-        int thePositionInList = -1;
-        for (int i = 0; i < players.size(); i++) {
-            if (players.get(i).getPlayerName().equals(theGivingUpUser.getUsername())) {
-                thePositionInList = i;
-                break;
-            }
-        }
+        int thePositionInList = IntStream.range(0, players.size()).filter(i -> players.get(i).getPlayerName().equals(theGivingUpUser.getUsername())).findFirst().orElse(-1);
         if (this.players.get(thePositionInList).getPlayerName().equals(theGivingUpUser.getUsername()) && wantsToGiveUp && lobbyID.equals(this.theSpecificLobbyID)) {
             latestGavedUpPlayer = this.players.get(thePositionInList);
             gameService.userGavesUpLeavesLobby(lobbyID, theGivingUpUser);
@@ -328,10 +321,7 @@ public class Playground extends AbstractPlayground {
      */
     public void sendInitialHands() {
         for (Player playerhand : players) {
-            ArrayList<Short> theIdsFromInitalPlayerDeck = new ArrayList<>(5);
-            for (Card card : playerhand.getPlayerDeck().getHand()) {
-                theIdsFromInitalPlayerDeck.add(card.getId());
-            }
+            ArrayList<Short> theIdsFromInitalPlayerDeck = playerhand.getPlayerDeck().getHand().stream().map(Card::getId).collect(Collectors.toCollection(() -> new ArrayList<>(5)));
             DrawHandMessage initialHandFromPlayer = new DrawHandMessage(theIdsFromInitalPlayerDeck, theSpecificLobbyID, (short) getPlayers().size(), true);
             gameService.sendToSpecificPlayer(playerhand, initialHandFromPlayer);
             int availableAction = playerhand.getAvailableActions();
@@ -352,12 +342,7 @@ public class Playground extends AbstractPlayground {
      * @since Sprint 5
      */
     public boolean checkForActionCard() {
-        for (Card card : actualPlayer.getPlayerDeck().getHand()) {
-            if (card instanceof ActionCard) {
-                return true;
-            }
-        }
-        return false;
+        return actualPlayer.getPlayerDeck().getHand().stream().anyMatch(card -> card instanceof ActionCard);
     }
 
     /**
@@ -370,18 +355,14 @@ public class Playground extends AbstractPlayground {
     public List<String> calculateWinners() {
         List<String> winners = new ArrayList<>();
         for (Player player : players) {
-            int victoryPoints = 0;
+            int victoryPoints;
             Deck deck = player.getPlayerDeck();
             deck.getCardsDeck().addAll(deck.getHand());
             deck.getCardsDeck().addAll(deck.getDiscardPile());
             deck.getHand().clear();
             deck.getDiscardPile().clear();
 
-            for (Card card : deck.getCardsDeck()) {
-                if (card instanceof ValueCard) {
-                    victoryPoints += ((ValueCard) card).getValue();
-                }
-            }
+            victoryPoints = deck.getCardsDeck().stream().filter(card -> card instanceof ValueCard).mapToInt(card -> ((ValueCard) card).getValue()).sum();
             resultsGame.put(player.getPlayerName(), victoryPoints);
         }
 
