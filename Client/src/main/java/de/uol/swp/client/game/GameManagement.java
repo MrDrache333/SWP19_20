@@ -325,7 +325,6 @@ public class GameManagement {
         } catch (Exception e) {
             throw new RuntimeException("View konnte nicht geladen werden!" + e.getMessage(), e);
         }
-
         return rootPane;
     }
 

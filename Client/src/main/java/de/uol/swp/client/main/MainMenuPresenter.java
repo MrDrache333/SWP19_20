@@ -471,11 +471,12 @@ public class MainMenuPresenter extends AbstractPresenter {
             public TableCell<Lobby, Void> call(final TableColumn<Lobby, Void> param) {
                 return new TableCell<>() {
                     final Button joinLobbyButton = new Button("Beitreten");
+
                     {
                         joinLobbyButton.setOnAction((ActionEvent event) -> {
                             Lobby lobby = getTableView().getItems().get(getIndex());
                             if (lobby.getLobbyPassword().isEmpty()) {
-                                lobbyService.joinLobby(lobby.getLobbyID(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
+                                lobbyService.joinLobby(lobby.getLobbyID(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), false);
                             } else if (!lobby.getLobbyPassword().isEmpty()) {
                                 OpenJoinLobbyRequest request = new OpenJoinLobbyRequest(loggedInUser, lobby);
                                 eventBus.post(request);
@@ -492,10 +493,9 @@ public class MainMenuPresenter extends AbstractPresenter {
                             setGraphic(joinLobbyButton);
                             Lobby lobby = getTableView().getItems().get(getIndex());
                             Platform.runLater(() -> {
-                                if (lobby.getUsers().contains(loggedInUser) || lobby.getInGame() || lobby.getPlayers() == lobby.getMaxPlayer()){
+                                if (lobby.getUsers().contains(loggedInUser) || lobby.getInGame() || lobby.getPlayers() == lobby.getMaxPlayer()) {
                                     joinLobbyButton.setDisable(true);
-                                }
-                                else{
+                                } else {
                                     joinLobbyButton.setDisable(false);
                                 }
                             });
@@ -506,7 +506,6 @@ public class MainMenuPresenter extends AbstractPresenter {
         };
         joinLobby.setCellFactory(cellFactory);
     }
-
 
 
     /**

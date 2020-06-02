@@ -22,9 +22,7 @@ public class LobbyJoinUserRequest extends AbstractLobbyRequest {
      * @since Sprint 3
      */
 
-
-    public LobbyJoinUserRequest() {
-    }
+    Boolean isBot;
 
     /**
      * Instanziiert ein LobbyJoinUserRequest
@@ -34,10 +32,25 @@ public class LobbyJoinUserRequest extends AbstractLobbyRequest {
      * @author Julia, Paula, Marvin
      * @since Sprint 3
      */
-    public LobbyJoinUserRequest(UUID lobbyID, UserDTO user) {
+    public LobbyJoinUserRequest(UUID lobbyID, UserDTO user, Boolean isBot) {
         super(lobbyID, user);
+        this.isBot = isBot;
     }
 
+    /**
+     * Konstruktor für die Serialisierung
+     *
+     * @author Julia, Paula
+     * @since Sprint3
+     */
+
+
+    public LobbyJoinUserRequest() {
+    }
+
+    public Boolean getBot() {
+        return isBot;
+    }
 
 
     /**

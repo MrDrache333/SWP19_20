@@ -83,7 +83,7 @@ class LobbyServiceTest {
     @Test
     void onLobbyJoinUserRequestTest() throws InterruptedException {
         final UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
-        lobbyService.onLobbyJoinUserRequest(new LobbyJoinUserRequest(lobbyID, new UserDTO(lobbyUser.getUsername(), lobbyUser.getPassword(), lobbyUser.getEMail())));
+        lobbyService.onLobbyJoinUserRequest(new LobbyJoinUserRequest(lobbyID, new UserDTO(lobbyUser.getUsername(), lobbyUser.getPassword(), lobbyUser.getEMail()), false));
 
         lock.await(1000, TimeUnit.MILLISECONDS);
 
