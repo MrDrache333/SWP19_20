@@ -231,7 +231,11 @@ public class LobbyService extends AbstractService {
             LOG.debug("Lobby nicht gefunden! ID: " + request.getLobbyID());
     }
 
-    //Hilfsmethode zum Überprüfen
+    /**
+     * Hilfmethode, ob nur noch Bots in der Lobby sind.
+     * @param lobbyID
+     * @return Wahrheitswert
+     */
     public Boolean onlyBotsLeft(UUID lobbyID) {
         for (User user : lobbyManagement.getLobby(lobbyID).get().getUsers()) {
             if (user.getIsBot() == false) {
@@ -406,6 +410,11 @@ public class LobbyService extends AbstractService {
         return false;
     }
 
+    /**
+     * Methode die einen Bot erstellt, wenn der Owner "Bot Hinzufügen" drückt.
+     *
+     * @param request Die Anforderung einen Bot der Lobby hinzuzufügen.
+     */
     @Subscribe
     public void createBotRequest(AddBotRequest request) {
         Lobby thisLobby = lobbyManagement.getLobby(request.getLobbyID()).get();

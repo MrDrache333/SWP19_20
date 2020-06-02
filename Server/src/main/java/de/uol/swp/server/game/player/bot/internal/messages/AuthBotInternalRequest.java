@@ -8,6 +8,12 @@ import de.uol.swp.server.message.ServerInternalMessage;
 
 import java.util.Optional;
 
+/**
+ * Serverseite Request einen Bot zu erstellen.
+ *
+ * @author Fenja, Ferit
+ * @since Sprint7
+ */
 public class AuthBotInternalRequest implements ServerInternalMessage {
 
     private BotPlayer botPlayer;

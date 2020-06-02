@@ -19,9 +19,11 @@ public class BotPlayer extends Player {
     final private boolean isBot = true;
 
     /**
-     * Erstellt einen neuen Spieler
+     * Erstellt einen neuen Bot.
      *
      * @param playerName Der Spielername
+     * @author Fenja, Ferit
+     * @since Sprint7
      */
 
     public BotPlayer(String playerName, EventBus bus, UUID gameID) {
@@ -37,6 +39,11 @@ public class BotPlayer extends Player {
         return isBot;
     }
 
+    /**
+     * Skippt die BuyPhase, wenn der Bot dran ist.
+     *
+     * @param msg BuyPhase Mitteilung
+     */
     @Subscribe
     public void onStartBuyPhaseMessage(StartBuyPhaseMessage msg) {
         if (msg.getUser().getUsername().equals(getTheUserInThePlayer().getUsername())) {
@@ -45,6 +52,11 @@ public class BotPlayer extends Player {
         }
     }
 
+    /**
+     * Skippt die ActionPhase, wenn der Bot dran ist.
+     *
+     * @param msg Actionphase Mitteilung
+     */
     @Subscribe
     public void onStartActionPhaseMessage(StartActionPhaseMessage msg) {
         if (msg.getUser().getUsername().equals(getTheUserInThePlayer().getUsername())) {
