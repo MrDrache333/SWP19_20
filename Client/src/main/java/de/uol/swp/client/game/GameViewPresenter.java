@@ -27,6 +27,7 @@ import javafx.animation.PathTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -738,63 +739,83 @@ public class GameViewPresenter extends AbstractPresenter {
      * @author Devin
      * @since Sprint 7
      */
+
     @FXML
     @Subscribe
     public void onStartClearPhaseMessage(StartClearPhaseMessage msg) {
-        // Wenn die ClearMessage an den currentPlayer geht werden, seine Handkarten und
-        // ausgespielten Karten auf den Ablagestapel getan und fünf neue Karten gezogen.
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                // Wenn ein anderer Spieler eine ClearPhaseMessage erhählt wird dies den anderen Spielern
+                // angezeigt, indem deren Repräsentation des Spieler seine Handkarten und ausgespielten Karten auf den Ablagestapel legt.
+                if (msg.getGameID().equals(lobbyID) && !msg.getCurrentUser().equals(loggedInUser)) {
+                    List<Short> playerIndexNumbers = new ArrayList<>();
+                    playerIndexNumbers.add((short) 0);
+                    playerIndexNumbers.add((short) 1);
+                    playerIndexNumbers.add((short) 2);
+                    playerIndexNumbers.add((short) 3);
+                    playerIndexNumbers.remove(msg.getUserPlaceNumber());
+                    if (playerIndexNumbers.get(0).equals(msg.getEnemyPlaceNumber())) {
+                        Platform.runLater(() -> {
+                            firstEnemyHand.getChildren().clear();
+                            firstEnemyPCLC.getChildren().clear();
+                        });
+                        for (int i = 0; i < 5; i++) {
+                            Card card = new Card("card_back", firstEnemyHand.getLayoutX(), firstEnemyHand.getLayoutY(), 80);
+                            Platform.runLater(() -> {
+                                firstEnemyHand.getChildren().add(card);
+                            });
+                        }
+                    }
+                    if (playerIndexNumbers.get(1).equals(msg.getEnemyPlaceNumber())) {
+                        Platform.runLater(() -> {
+                            secondEnemyHand.getChildren().clear();
+                            secondEnemyPCLC.getChildren().clear();
+                        });
+                        for (int i = 0; i < 5; i++) {
+                            Platform.runLater(() -> {
+                                Card card = new Card("card_back", secondEnemyHand.getLayoutX(), secondEnemyHand.getLayoutY(), 80);
+                                secondEnemyHand.getChildren().add(card);
+                            });
+                        }
+                    }
+                    if (playerIndexNumbers.get(2).equals(msg.getEnemyPlaceNumber())) {
+                        Platform.runLater(() -> {
+                            thirdEnemyHand.getChildren().clear();
+                            thirdEnemyPCLC.getChildren().clear();
+                        });
+                        for (int i = 0; i < 5; i++) {
+                            Platform.runLater(() -> {
+                                Card card = new Card("card_back", thirdEnemyHand.getLayoutX(), thirdEnemyHand.getLayoutY(), 80);
+                                thirdEnemyHand.getChildren().add(card);
+                            });
+                        }
+                    }
+                }
+
+                return null;
+            }
+        };
+
+        Thread th = new Thread(task);
+        th.setDaemon(true);
+        th.start();
+
+    }
+
+    /**
+     * Kümmert sich nur um die eigene Animation (von der Hand zum Discard Pile)
+     *
+     * @param msg
+     */
+    @Subscribe
+    public void onStartClearPhaseMessageOwnHand(StartClearPhaseMessage msg) {
         onStartPhase(msg.getGameID(), msg.getCurrentUser(), msg);
         if (msg.getGameID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
             Platform.runLater(() -> {
                 moveCardsToDiscardPile(handcards.getChildren(), false);
                 moveCardsToDiscardPile(myPCLC.getChildren(), true);
             });
-        }
-        // Wenn ein anderer Spieler eine ClearPhaseMessage erhählt wird dies den anderen Spielern
-        // angezeigt, indem deren Repräsentation des Spieler seine Handkarten und ausgespielten Karten auf den Ablagestapel legt.
-        if (msg.getGameID().equals(lobbyID) && !msg.getCurrentUser().equals(loggedInUser)) {
-            List<Short> playerIndexNumbers = new ArrayList<>();
-            playerIndexNumbers.add((short) 0);
-            playerIndexNumbers.add((short) 1);
-            playerIndexNumbers.add((short) 2);
-            playerIndexNumbers.add((short) 3);
-            playerIndexNumbers.remove(msg.getUserPlaceNumber());
-            if (playerIndexNumbers.get(0).equals(msg.getEnemyPlaceNumber())) {
-                Platform.runLater(() -> {
-                    firstEnemyHand.getChildren().clear();
-                    firstEnemyPCLC.getChildren().clear();
-                });
-                for (int i = 0; i < 5; i++) {
-                    Card card = new Card("card_back", firstEnemyHand.getLayoutX(), firstEnemyHand.getLayoutY(), 80);
-                    Platform.runLater(() -> {
-                        firstEnemyHand.getChildren().add(card);
-                    });
-                }
-            }
-            if (playerIndexNumbers.get(1).equals(msg.getEnemyPlaceNumber())) {
-                Platform.runLater(() -> {
-                    secondEnemyHand.getChildren().clear();
-                    secondEnemyPCLC.getChildren().clear();
-                });
-                for (int i = 0; i < 5; i++) {
-                    Platform.runLater(() -> {
-                        Card card = new Card("card_back", secondEnemyHand.getLayoutX(), secondEnemyHand.getLayoutY(), 80);
-                        secondEnemyHand.getChildren().add(card);
-                    });
-                }
-            }
-            if (playerIndexNumbers.get(2).equals(msg.getEnemyPlaceNumber())) {
-                Platform.runLater(() -> {
-                    thirdEnemyHand.getChildren().clear();
-                    thirdEnemyPCLC.getChildren().clear();
-                });
-                for (int i = 0; i < 5; i++) {
-                    Platform.runLater(() -> {
-                        Card card = new Card("card_back", thirdEnemyHand.getLayoutX(), thirdEnemyHand.getLayoutY(), 80);
-                        thirdEnemyHand.getChildren().add(card);
-                    });
-                }
-            }
         }
     }
 

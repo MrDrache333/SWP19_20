@@ -23,7 +23,7 @@ public class LobbyUser extends UserDTO {
      * @since Sprint 3
      */
     public LobbyUser(User user) {
-        super(user.getUsername(), user.getPassword(), user.getEMail());
+        super(user.getUsername(), user.getPassword(), user.getEMail(), user.getIsBot());
     }
 
     /**
@@ -47,4 +47,6 @@ public class LobbyUser extends UserDTO {
     public void setReady(boolean ready) {
         Ready = ready;
     }
+
+
 }
