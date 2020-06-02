@@ -139,8 +139,8 @@ public class LobbyService extends AbstractService {
     public void onLobbyLeaveUserRequest(LobbyLeaveUserRequest msg) {
         Optional<User> oldOwner = lobbyManagement.getLobbyOwner(msg.getLobbyID());
         //Falls der Besitzer der Lobby aus der Lobby geht wird dieser aktualisiert
-        lobbyManagement.leaveLobby(msg.getLobbyID(), msg.getUser());
-        if (!(lobbyManagement.getLobby(msg.getLobbyID()).get().onlyBotsLeft(msg.getLobbyID()))) {
+        boolean leavedLobbysuccesful = lobbyManagement.leaveLobby(msg.getLobbyID(), msg.getUser());
+        if (leavedLobbysuccesful && !(lobbyManagement.getLobby(msg.getLobbyID()).isEmpty()) && !(lobbyManagement.getLobby(msg.getLobbyID()).get().onlyBotsLeft(msg.getLobbyID()))) {
             Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getLobbyID());
             LOG.info("User " + msg.getUser().getUsername() + " verlässt die Lobby " + msg.getLobbyID());
             ServerMessage returnMessage;
@@ -150,12 +150,16 @@ public class LobbyService extends AbstractService {
                 returnMessage = new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), null, null);
             }
             authenticationService.sendToLoggedInPlayers(returnMessage);
-        } else {
+        } else if (leavedLobbysuccesful && !(lobbyManagement.getLobby(msg.getLobbyID()).isEmpty()) &&
+                (lobbyManagement.getLobby(msg.getLobbyID()).get().onlyBotsLeft(msg.getLobbyID()))) {
             lobbyManagement.dropLobby(msg.getLobbyID());
             ServerMessage returnMessage;
             returnMessage = new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), null, null);
             authenticationService.sendToLoggedInPlayers(returnMessage);
-            LOG.error("Verlassen der Lobby mit der ID " + msg.getLobbyID() + " fehlgeschlagen");
+        } else {
+            ServerMessage returnMessage;
+            returnMessage = new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), null, null);
+            authenticationService.sendToLoggedInPlayers(returnMessage);
         }
     }
 
