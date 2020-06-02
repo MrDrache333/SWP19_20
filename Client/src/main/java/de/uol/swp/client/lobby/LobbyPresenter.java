@@ -245,7 +245,7 @@ public class LobbyPresenter extends AbstractPresenter {
             gamesettingsButton.setText("Spieleinstellungen schließen");
             gameSettingsOpen = true;
             Platform.runLater(() -> {
-                String pfad1 = "file:Client/src/main/resources/cards/images/card_back.png";
+                String pfad1 = "cards/images/card_back.png";
                 Image picture1 = new Image(pfad1);
                 bigCard = new ImageView(picture1);
                 bigCard.setPreserveRatio(true);
@@ -380,7 +380,7 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     public void showBigCardImage(short cardID) {
         Platform.runLater(() -> {
-            String pfad = "file:Client/src/main/resources/cards/images/" + cardID + ".png";
+            String pfad = "cards/images/" + cardID + ".png";
             Image picture = new Image(pfad);
             bigCard.setImage(picture);
             bigCard.setVisible(true);

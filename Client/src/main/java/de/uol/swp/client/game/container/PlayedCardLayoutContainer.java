@@ -10,7 +10,6 @@ import javafx.scene.layout.Region;
  * @author Devin
  * @since Sprint 6
  */
-
 public class PlayedCardLayoutContainer extends Region {
 
     /**
