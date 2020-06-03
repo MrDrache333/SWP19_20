@@ -766,9 +766,9 @@ public class GameViewPresenter extends AbstractPresenter {
                 });
                 Platform.runLater(() -> {
                     if (numberOfCardsToChoose != 255) {
-                        infoActualPhase.setText(numberOfCardsToChoose + " Karten entsorgen");
+                        infoActualPhase.setText(numberOfCardsToChoose + " ablegen");
                     } else {
-                        infoActualPhase.setText("Du kannst beliebig viele Karten entsorgen");
+                        infoActualPhase.setText("Du kannst beliebig viele Karten ablegen");
                     }
                 });
             }
@@ -788,9 +788,7 @@ public class GameViewPresenter extends AbstractPresenter {
                         iv.setEffect(notChosenCard);
                     }
                 }
-                skipPhaseButton.setDisable(true);
                 Platform.runLater(() -> {
-                    infoText = infoActualPhase.getText();
                     infoActualPhase.setText("Nimm dir eine Karte vom Spielfeld.");
                     infoActualPhase.setStyle("-fx-font-size: 15");
                 });
