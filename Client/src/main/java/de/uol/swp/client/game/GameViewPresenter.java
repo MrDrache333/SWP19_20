@@ -792,7 +792,6 @@ public class GameViewPresenter extends AbstractPresenter {
                         iv.setEffect(notChosenCard);
                     }
                 }
-                skipPhaseButton.setDisable(true);
                 Platform.runLater(() -> {
                     infoText = infoActualPhase.getText();
                     infoActualPhase.setText("Nimm dir eine Karte vom Spielfeld.");
