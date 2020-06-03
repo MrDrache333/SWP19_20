@@ -11,6 +11,8 @@ import de.uol.swp.client.game.container.HandcardsLayoutContainer;
 import de.uol.swp.client.game.container.PlayedCardLayoutContainer;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
+import de.uol.swp.common.game.AbstractPlayground;
+import de.uol.swp.common.game.card.parser.components.CardAction.request.ChooseCardRequest;
 import de.uol.swp.common.game.card.parser.components.CardAction.request.OptionalActionRequest;
 import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.phase.Phase;
@@ -23,7 +25,6 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
-import javafx.animation.PathTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -146,6 +147,8 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     private Button playAllMoneyCardsButton;
     @FXML
+    private Pane valueCardsBox;
+    @FXML
     private Button skipPhaseButton;
     @FXML
     private Button yesButton;
@@ -178,6 +181,10 @@ public class GameViewPresenter extends AbstractPresenter {
     private ArrayList<Short> handCardIDs;
     private Map<Short, Label> valuecardLabels = new HashMap<>();
     private ColorAdjust makeImageDarker = new ColorAdjust();
+    private boolean chooseCardBecauseOfActionCard = false;
+    private ColorAdjust notChosenCard = new ColorAdjust();
+    private boolean directHand;
+    private String infoText;
 
     private final EventHandler<MouseEvent> handCardEventHandler = new EventHandler() {
         @Override
@@ -739,7 +746,6 @@ public class GameViewPresenter extends AbstractPresenter {
      * @author Devin
      * @since Sprint 7
      */
-
     @FXML
     @Subscribe
     public void onStartClearPhaseMessage(StartClearPhaseMessage msg) {
@@ -1025,6 +1031,43 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
+     * Wenn der Spieler eine Karte oder mehrere Karten auswählen darf, werden alle nicht auswählbaren verdunkelt.
+     *
+     * @param msg der ChooseCardRequest
+     * @author Fenja, Anna
+     * @since Sprint 8
+     */
+    @Subscribe
+    public void onChooseCardRequest(ChooseCardRequest msg) {
+        if (msg.getGameID().equals(lobbyID) && msg.getPlayer().equals(loggedInUser)) {
+            if (msg.getSource().equals(AbstractPlayground.ZoneType.BUY)) {
+                directHand = msg.getDirectHand();
+                for (int i = 0; i < 10; i++) {
+                    ImageView iv = (ImageView) shopTeppich.getChildren().get(i);
+                    if (!msg.getCards().contains(Short.valueOf(iv.getId()))) {
+                        notChosenCard.setBrightness(-0.7);
+                        iv.setEffect(notChosenCard);
+                    }
+                }
+                for (int i = 0; i < 7; i++) {
+                    ImageView iv = (ImageView) valueCardsBox.getChildren().get(i);
+                    if (!msg.getCards().contains(Short.valueOf(iv.getId()))) {
+                        notChosenCard.setBrightness(-0.7);
+                        iv.setEffect(notChosenCard);
+                    }
+                }
+                skipPhaseButton.setDisable(true);
+                Platform.runLater(() -> {
+                    infoText = infoActualPhase.getText();
+                    infoActualPhase.setText("Nimm dir eine Karte vom Spielfeld.");
+                    infoActualPhase.setStyle("-fx-font-size: 15");
+                });
+                chooseCardBecauseOfActionCard = true;
+            }
+        }
+    }
+
+    /**
      * Die usersView Liste wird geupdatet.
      * Äquivalent zu MainMenuPresenter.updateUsersList.
      *
@@ -1228,7 +1271,29 @@ public class GameViewPresenter extends AbstractPresenter {
         } else {
             String cardID = cardImage.getId();
             bigCardImageBox.setVisible(false);
-            if (playAllMoneyCardsButton.isDisable() && playAllMoneyCardsButton.isVisible()) {
+            if (playAllMoneyCardsButton.isVisible() && playAllMoneyCardsButton.isDisable()) {
+                if (chooseCardBecauseOfActionCard) {
+                    gameService.chooseCardResponse(lobbyID, loggedInUser, new ArrayList<>(Collections.singletonList(Short.valueOf(cardID))), directHand);
+                    for (int i = 0; i < 10; i++) {
+                        ImageView iv = (ImageView) shopTeppich.getChildren().get(i);
+                        if (iv.getEffect() == notChosenCard) {
+                            iv.setEffect(null);
+                        }
+                    }
+                    for (int i = 0; i < 7; i++) {
+                        ImageView iv = (ImageView) valueCardsBox.getChildren().get(i);
+                        if (iv.getEffect() == notChosenCard) {
+                            iv.setEffect(null);
+                        }
+                    }
+                    chooseCardBecauseOfActionCard = false;
+                    skipPhaseButton.setDisable(false);
+                    Platform.runLater(() -> {
+                        infoActualPhase.setText(infoText);
+                        infoActualPhase.setStyle("-fx-font-weight: bold; -fx-font-size: 18");
+                    });
+                    return;
+                }
                 BuyCardRequest req = new BuyCardRequest(lobbyID, loggedInUser, Short.valueOf(cardID));
                 gameService.buyCard(req);
                 this.mouseEvent = mouseEvent;
@@ -1236,7 +1301,6 @@ public class GameViewPresenter extends AbstractPresenter {
                 if (!playAllMoneyCardsButton.isVisible()) {
                     showAlert(Alert.AlertType.INFORMATION, "Du bist nicht dran!", "Fehler");
                 } else {
-                    //TODO: ggf. anpassen, wenn man auch Karten kaufen kann ohne sein Geld vorher gespielt zu haben
                     showAlert(Alert.AlertType.INFORMATION, "Du musst erst deine Geldkarten ausspielen!", "Fehler");
                 }
             }
