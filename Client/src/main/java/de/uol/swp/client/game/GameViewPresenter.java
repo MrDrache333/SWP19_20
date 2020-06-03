@@ -156,6 +156,8 @@ public class GameViewPresenter extends AbstractPresenter {
     private Button yesButton;
     @FXML
     private Button noButton;
+    @FXML
+    private Button selectButton;
 
     private final HandcardsLayoutContainer handcards;
     private final HandcardsLayoutContainer firstEnemyHand;
@@ -173,7 +175,6 @@ public class GameViewPresenter extends AbstractPresenter {
     private final DeckLayoutContainer firstEnemyDLC;
     private final DeckLayoutContainer secondEnemyDLC;
     private final DeckLayoutContainer thirdEnemyDLC;
-    private final Button selectButton;
 
     private ObservableList<String> users;
     private final GameService gameService;
@@ -207,7 +208,6 @@ public class GameViewPresenter extends AbstractPresenter {
         }
     };
 
-
     /**
      * Das Event das den Handkarten gegeben wird, wenn sie auswählbar gemacht werden sollen.
      * @author Devin
@@ -226,6 +226,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * @author Devin
      * @since Sprint 8
      */
+    @FXML
     private final EventHandler<ActionEvent> sendChoosenCardResponse = new EventHandler() {
         @Override
         public void handle(Event event) {
@@ -295,13 +296,6 @@ public class GameViewPresenter extends AbstractPresenter {
         firstEnemyDLC = new DeckLayoutContainer(915, 0, 110, 60, "1.DLC");
         secondEnemyDLC = new DeckLayoutContainer(328, 169, 104, 60, "2.DLC");
         thirdEnemyDLC = new DeckLayoutContainer(1198, 446, 106, 60, "3.DLC");
-        selectButton = new Button("Auswahl abschicken");
-        selectButton.setLayoutX(732);
-        selectButton.setLayoutY(585);
-        selectButton.setOnAction(sendChoosenCardResponse);
-        selectButton.setStyle("-fx-alignment: center");
-        selectButton.setVisible(false);
-        selectButton.setDisable(true);
     }
 
     /**
@@ -369,7 +363,8 @@ public class GameViewPresenter extends AbstractPresenter {
         gameViewWIP.getChildren().add(firstEnemyDLC);
         gameViewWIP.getChildren().add(secondEnemyDLC);
         gameViewWIP.getChildren().add(thirdEnemyDLC);
-        gameViewWIP.getChildren().add(selectButton);
+        selectButton.setVisible(false);
+        selectButton.setOnAction(sendChoosenCardResponse);
         gameViewWIP.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
                 bigCardImageBox.setVisible(false);
@@ -738,14 +733,15 @@ public class GameViewPresenter extends AbstractPresenter {
 
     /**
      * Wenn ein anderer Spieler eine Karte von der Hand entsorgt, wird dies den anderen Spielern angezeigt.
+     * Wenn der Spieler eine Karte oder mehrere Karten auswählen darf, werden alle nicht auswählbaren verdunkelt.
      *
      * @param req       Die Request, die vom server gesendet wird, wenn der jeweilige Spieler eine Karte entsorgt.
-     * @author Devin
+     * @author Devin, Fenja, Anna
      * @since Sprint 7
      */
     @FXML
     @Subscribe
-    public void onChooseCardRequest2 (ChooseCardRequest req) {
+    public void onChooseCardRequest (ChooseCardRequest req) {
         if (req.getGameID().equals(lobbyID) && req.getPlayer().equals(loggedInUser)) {
             choosenCardsId.clear();
             choosenCards.clear();
@@ -756,9 +752,9 @@ public class GameViewPresenter extends AbstractPresenter {
             directHand = req.getDirectHand();
             currentInfoText = infoActualPhase.getText();
             skipPhaseButton.setDisable(true);
-            selectButton.setVisible(true);
-            selectButton.setDisable(false);
             if (req.getSource() == AbstractPlayground.ZoneType.HAND) {
+                selectButton.setVisible(true);
+                selectButton.setDisable(false);
                 playAllMoneyCardsButton.setVisible(false);
                 if (numberOfCardsToChoose != 255) {
                     Platform.runLater(() -> {
@@ -780,31 +776,18 @@ public class GameViewPresenter extends AbstractPresenter {
                     });
                 }
             }
-        }
-    }
-
-    /**
-     * Wenn der Spieler eine Karte oder mehrere Karten auswählen darf, werden alle nicht auswählbaren verdunkelt.
-     *
-     * @param msg der ChooseCardRequest
-     * @author Fenja, Anna
-     * @since Sprint 8
-     */
-    @Subscribe
-    public void onChooseCardRequest(ChooseCardRequest msg) {
-        if (msg.getGameID().equals(lobbyID) && msg.getPlayer().equals(loggedInUser)) {
-            if (msg.getSource().equals(AbstractPlayground.ZoneType.BUY)) {
-                directHand = msg.getDirectHand();
+            if (req.getSource().equals(AbstractPlayground.ZoneType.BUY)) {
+                directHand = req.getDirectHand();
                 for (int i = 0; i < 10; i++) {
                     ImageView iv = (ImageView) shopTeppich.getChildren().get(i);
-                    if (!msg.getCards().contains(Short.valueOf(iv.getId()))) {
+                    if (!req.getCards().contains(Short.valueOf(iv.getId()))) {
                         notChosenCard.setBrightness(-0.7);
                         iv.setEffect(notChosenCard);
                     }
                 }
                 for (int i = 0; i < 7; i++) {
                     ImageView iv = (ImageView) valueCardsBox.getChildren().get(i);
-                    if (!msg.getCards().contains(Short.valueOf(iv.getId()))) {
+                    if (!req.getCards().contains(Short.valueOf(iv.getId()))) {
                         notChosenCard.setBrightness(-0.7);
                         iv.setEffect(notChosenCard);
                     }
@@ -819,8 +802,6 @@ public class GameViewPresenter extends AbstractPresenter {
             }
         }
     }
-
-
 
     /**
      * Wenn ein anderer Spieler sich in der ClearPhase befindet, wird das Entsorgen dessen Handkarten und ausgespielten Karten den anderen Spielern angezeigt
