@@ -68,19 +68,19 @@ public class GameService extends AbstractService {
      * Bisherige Verwendung um einem Spieler die aktuelle Hand zu schicken.
      *
      * @param thePlayer Der Spieler, welcher die spezifizierte Nachricht bekommen soll.
-     * @param message   Momentan wird hierrüber die DrawHandMessage verschickt.
+     * @param msg   Momentan wird hierrüber die DrawHandMessage verschickt.
      * @author Ferit
      * @since Sprint 5
      */
-    public void sendToSpecificPlayer(Player thePlayer, ServerMessage message) {
+    public void sendToSpecificPlayer(Player thePlayer, ServerMessage msg) {
         Set<User> playerToUserSet = new HashSet<>(1);
         playerToUserSet.add(thePlayer.getTheUserInThePlayer());
 
-        message.setReceiver(authenticationService.getSessions(playerToUserSet));
+        msg.setReceiver(authenticationService.getSessions(playerToUserSet));
 
         // TODO: BotSession holen und message.SetReciever setzen.
 
-        post(message);
+        post(msg);
     }
 
     /**
@@ -93,26 +93,25 @@ public class GameService extends AbstractService {
      * @since Sprint6
      */
     public void sendLastCardOfDiscardPile(UUID gameID, short cardID, User user) {
-        DiscardPileLastCardMessage message = new DiscardPileLastCardMessage(gameID, cardID, user);
-        sendToAllPlayers(gameID, message);
+        sendToAllPlayers(gameID, new DiscardPileLastCardMessage(gameID, cardID, user));
     }
 
     /**
      * Sendet eine Nachricht an alle Player eines Games
      *
      * @param gameID  die ID des Games
-     * @param message die Nachricht
+     * @param msg die Nachricht
      * @author Julia
      * @since Sprint5
      */
-    public void sendToAllPlayers(UUID gameID, ServerMessage message) {
+    public void sendToAllPlayers(UUID gameID, ServerMessage msg) {
         Optional<Game> game = gameManagement.getGame(gameID);
         if (game.isPresent()) {
             List<Player> players = game.get().getPlayground().getPlayers();
             Set<User> users = new HashSet<>();
             players.forEach(player -> users.add(player.getTheUserInThePlayer()));
-            message.setReceiver(authenticationService.getSessions(users));
-            post(message);
+            msg.setReceiver(authenticationService.getSessions(users));
+            post(msg);
         } else {
             LOG.error("Es existiert kein Spiel mit der ID " + gameID);
         }
@@ -132,8 +131,7 @@ public class GameService extends AbstractService {
      * @since Sprint 7
      */
     public void sendCardField(UUID gameID, Map<Short, Integer> cardField) {
-        SendCardFieldMessage message = new SendCardFieldMessage(gameID, cardField);
-        sendToAllPlayers(gameID, message);
+        sendToAllPlayers(gameID, new SendCardFieldMessage(gameID, cardField));
     }
 
     /**
@@ -192,8 +190,7 @@ public class GameService extends AbstractService {
     void userGivesUp(GameGiveUpRequest req) {
         Boolean userRemovedSuccessfully = gameManagement.getGame(req.getLobbyID()).get().getPlayground().playerGaveUp(req.getLobbyID(), req.getGivingUpUser(), req.getGivingUp());
         if (userRemovedSuccessfully && !(gameManagement.lobbyIsNotPresent(req.getLobbyID()))) {
-            UserGaveUpMessage gaveUpMsg = new UserGaveUpMessage(req.getLobbyID(), req.getGivingUpUser(), true);
-            sendToAllPlayers(req.getLobbyID(), gaveUpMsg);
+            sendToAllPlayers(req.getLobbyID(), new UserGaveUpMessage(req.getLobbyID(), req.getGivingUpUser(), true));
             sendToAllPlayers(req.getLobbyID(), new NewChatMessage(req.getLobbyID().toString(), new ChatMessage(infoUser, req.getGivingUpUser().getUsername() + " gab auf!")));
         } else {
             LOG.error("User " + req.getGivingUpUser().getUsername() + "konnte nicht aufgeben");
@@ -230,8 +227,7 @@ public class GameService extends AbstractService {
                         post(new NewChatMessageRequest(req.getLobbyID().toString(), infoMessage));
                         int count = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), req.getCardID());
                         Short costCard = playground.getCompositePhase().getCardFromId(playground.getCardsPackField().getCards(), req.getCardID()).getCosts();
-                        BuyCardMessage buyCard = new BuyCardMessage(req.getLobbyID(), req.getCurrentUser(), req.getCardID(), count, costCard);
-                        sendToAllPlayers(req.getLobbyID(), buyCard);
+                        sendToAllPlayers(req.getLobbyID(), new BuyCardMessage(req.getLobbyID(), req.getCurrentUser(), req.getCardID(), count, costCard));
                     } else {
                         throw new NotEnoughMoneyException("Dafür hast du nicht genug Geld! ");
                     }

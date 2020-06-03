@@ -100,19 +100,18 @@ public class LobbyManagement {
      */
 
     public List<UUID> activeGamesOfUser(User user) {
-        List<UUID> activeGames = lobbies.entrySet().stream()
+        return lobbies.entrySet().stream()
                 .filter(e -> e.getValue().getInGame())
                 .filter(e -> e.getValue().getUsers().contains(user))
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
-        return activeGames;
     }
 
     /**
      * Handling das ein User die Lobby verlässt. Überprüft, ob die gegebene Lobby existiert.
      *
-     * @param id   die LobbyID
-     * @param user der User, welches die Lobby verlässt.
+     * @param id   Die LobbyID
+     * @param user Der User, welches die Lobby verlässt.
      * @return Gibt wahr zurück, wenn der User aus der Lobby entfernt worden ist.
      * @author Marvin
      */
@@ -134,8 +133,8 @@ public class LobbyManagement {
     /**
      * Aktualisiert jede Lobby, in der der aktualisierte User drinne ist.
      *
-     * @param updatedUser der aktualisierte User
-     * @param oldUser     der alte User
+     * @param updatedUser Der aktualisierte User
+     * @param oldUser     Der alte User
      * @author Julia, Marvin
      * @since Sprint 4
      */
@@ -169,10 +168,10 @@ public class LobbyManagement {
     /**
      * Benutzer wird aus der Lobby-Liste entfernt wenn der Spielbesitzer ihn gekickt hat.
      *
-     * @param id         die LobbyID
-     * @param userToKick der zu entfernende Benutzer
-     * @param owner      der Lobbybesitzer
-     * @return Boolean ob der Kick gerechtfertigt ist
+     * @param id         Die LobbyID
+     * @param userToKick Der zu entfernende Benutzer
+     * @param owner      Der Lobbybesitzer
+     * @return Boolean   Ob der Kick gerechtfertigt ist
      * @author Darian, Marvin
      * @since Sprint 4
      */
@@ -204,7 +203,7 @@ public class LobbyManagement {
     /**
      * Getter für den Namen der Lobby.
      *
-     * @param lobbyID Die übergebene Lobby ID
+     * @param lobbyID Die übergebene LobbyID
      * @author Marvin
      * @since Sprint 3
      */
@@ -221,10 +220,9 @@ public class LobbyManagement {
      */
     public Optional<User> getLobbyOwner(UUID lobbyID) {
         if (lobbies.containsKey(lobbyID)) {
-            Optional<User> optionalLobby = Optional.ofNullable(lobbies.get(lobbyID).getOwner());
-            return optionalLobby;
+            return Optional.ofNullable(lobbies.get(lobbyID).getOwner());
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
