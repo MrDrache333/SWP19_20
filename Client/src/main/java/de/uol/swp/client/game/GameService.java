@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import de.uol.swp.common.game.card.parser.components.CardAction.response.ChooseCardResponse;
 import de.uol.swp.common.game.card.parser.components.CardAction.response.OptionalActionResponse;
+import de.uol.swp.common.game.card.parser.components.CardAction.response.ChooseCardResponse;
 import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.game.request.GameGiveUpRequest;
 import de.uol.swp.common.game.request.PlayCardRequest;
@@ -59,7 +60,6 @@ public class GameService {
         bus.post(req);
     }
 
-
     public void playCard(UUID gameID, User loggedInUser, Short id) {
         PlayCardRequest req = new PlayCardRequest(gameID, loggedInUser, id);
         bus.post(req);
@@ -97,8 +97,8 @@ public class GameService {
      * @param loggedInUser der User, der Karten auswählen durfte
      * @param chosenCards  die ausgewählten Karten
      * @param directHand   gibt an, ob die gewählten direkt auf die Hand genommen werden
-     * @author Anna, Fenja
-     * @since Sprint 8
+     * @author Anna, Fenja, Devin
+     * @since Sprint 5
      */
     public void chooseCardResponse(UUID gameID, User loggedInUser, ArrayList<Short> chosenCards, boolean directHand) {
         ChooseCardResponse response = new ChooseCardResponse(gameID, loggedInUser, chosenCards, directHand);

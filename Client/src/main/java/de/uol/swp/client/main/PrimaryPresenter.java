@@ -26,7 +26,6 @@ import javafx.scene.control.TabPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -331,6 +330,7 @@ public class PrimaryPresenter extends AbstractPresenter {
      * @author Keno O., Paula
      * @since Sprint3
      */
+
     @Subscribe
     public void updatedUser(UpdatedUserMessage message) {
         if (loggedInUser != null && loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {

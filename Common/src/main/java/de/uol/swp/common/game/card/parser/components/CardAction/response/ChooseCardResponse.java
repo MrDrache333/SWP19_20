@@ -84,3 +84,4 @@ public class ChooseCardResponse extends AbstractRequestMessage {
         return player;
     }
 }
+

@@ -190,6 +190,7 @@
                                 <Button fx:id="playAllMoneyCardsButton" disable="true" layoutX="262.0" layoutY="2.0" mnemonicParsing="false" onAction="#onPlayAllMoneyCardsButtonPressed" text="Alle Geldkarten ausspielen" />
                         <Button fx:id="yesButton" layoutX="290.0" layoutY="2.0" mnemonicParsing="false" onAction="#onYesButtonPressed" prefHeight="25.0" prefWidth="41.0" text="Ja" visible="false" />
                         <Button fx:id="noButton" layoutX="350.0" layoutY="2.0" mnemonicParsing="false" onAction="#onNoButtonPressed" text="Nein" visible="false" />
+                        <Button fx:id="selectButton" layoutX="288.0" layoutY="2.0" mnemonicParsing="false" text="Auswahl beenden" />
                             </children>
                         </Pane>
                         <Pane prefHeight="200.0" prefWidth="150.0">
