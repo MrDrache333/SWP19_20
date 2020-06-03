@@ -313,7 +313,7 @@ public class LobbyService extends AbstractService {
         if (req.getMaxPlayerValue() >= lobbyManagement.getLobby(req.getLobbyID()).get().getPlayers()) {
             boolean setMaxPlayerSet = lobbyManagement.setMaxPlayer(req.getLobbyID(), req.getUser(), req.getMaxPlayerValue());
             ServerMessage returnMessage = new SetMaxPlayerMessage(req.getMaxPlayerValue(), req.getLobbyID(), setMaxPlayerSet, lobbyManagement.getLobbyOwner(req.getLobbyID()).get(), lobby);
-            authenticationService.sendToLobbyOwner(returnMessage, lobby.getOwner());
+            authenticationService.sendToLoggedInPlayers(returnMessage);
         } else {
             ServerMessage returnMessage2 = new SetMaxPlayerMessage(lobbyManagement.getLobby(req.getLobbyID()).get().getMaxPlayer(), req.getLobbyID(), false, lobbyManagement.getLobbyOwner(req.getLobbyID()).get(), lobby);
             authenticationService.sendToLobbyOwner(returnMessage2, lobby.getOwner());
