@@ -756,10 +756,10 @@ public class GameViewPresenter extends AbstractPresenter {
             directHand = req.getDirectHand();
             currentInfoText = infoActualPhase.getText();
             skipPhaseButton.setDisable(true);
-            playAllMoneyCardsButton.setVisible(false);
             selectButton.setVisible(true);
             selectButton.setDisable(false);
             if (req.getSource() == AbstractPlayground.ZoneType.HAND) {
+                playAllMoneyCardsButton.setVisible(false);
                 if (numberOfCardsToChoose != 255) {
                     Platform.runLater(() -> {
                         infoActualPhase.setText(numberOfCardsToChoose + " Karten entsorgen");
