@@ -116,7 +116,7 @@ class LobbyServiceTest {
      */
     private void joinLobby() throws InterruptedException {
         LobbyService userService = new LobbyService(bus);
-        userService.joinLobby(defaultLobby.getLobbyID(), new UserDTO(defaultUser.getUsername(), defaultUser.getPassword(), defaultUser.getEMail()));
+        userService.joinLobby(defaultLobby.getLobbyID(), new UserDTO(defaultUser.getUsername(), defaultUser.getPassword(), defaultUser.getEMail()), false);
         lock.await(1000, TimeUnit.MILLISECONDS);
     }
 

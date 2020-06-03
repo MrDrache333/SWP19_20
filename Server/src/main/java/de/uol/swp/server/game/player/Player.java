@@ -13,6 +13,7 @@ public class Player {
     private int availableActions;
     private int availableBuys;
     private int additionalMoney;
+    private boolean isBot = false;
 
     /**
      * Erstellt einen neuen Spieler
@@ -79,5 +80,13 @@ public class Player {
 
     public void setAdditionalMoney(int additionalMoney) {
         this.additionalMoney = additionalMoney;
+    }
+
+    public boolean isBot() {
+        return isBot;
+    }
+
+    public void setBot(boolean bot) {
+        isBot = bot;
     }
 }

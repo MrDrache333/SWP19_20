@@ -17,6 +17,7 @@ import de.uol.swp.common.game.request.PlayCardRequest;
 import de.uol.swp.common.game.request.SkipPhaseRequest;
 import de.uol.swp.common.lobby.request.LobbyLeaveUserRequest;
 import de.uol.swp.common.lobby.request.UpdateInGameRequest;
+import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
@@ -36,7 +37,6 @@ import java.util.*;
 public class GameService extends AbstractService {
 
     private static final Logger LOG = LogManager.getLogger(GameService.class);
-
     private final GameManagement gameManagement;
     private final AuthenticationService authenticationService;
     private final UserDTO infoUser = new UserDTO("infoUser", "", "");
@@ -71,11 +71,14 @@ public class GameService extends AbstractService {
      * @author Ferit
      * @since Sprint 5
      */
-    // TODO: Wenn PlaygroundService implementiert ist, dann verschieben der Methode dorthin.
     public void sendToSpecificPlayer(Player thePlayer, ServerMessage message) {
         Set<User> playerToUserSet = new HashSet<User>(1);
         playerToUserSet.add(thePlayer.getTheUserInThePlayer());
+
         message.setReceiver(authenticationService.getSessions(playerToUserSet));
+
+        // TODO: BotSession holen und message.SetReciever setzen.
+
         post(message);
     }
 
@@ -165,7 +168,7 @@ public class GameService extends AbstractService {
         Optional<Game> game = gameManagement.getGame(msg.getGameID());
         if (game.isPresent()) {
             Playground playground = game.get().getPlayground();
-            if (playground.getActualPlayer().getTheUserInThePlayer().equals(msg.getUser())) {
+            if (playground.getActualPlayer().getTheUserInThePlayer().getUsername().equals(msg.getUser().getUsername())) {
                 try {
                     playground.nextPhase();
                 } catch (GamePhaseException e) {
@@ -187,12 +190,13 @@ public class GameService extends AbstractService {
     @Subscribe
     void userGivesUp(GameGiveUpRequest msg) {
         Boolean userRemovedSuccesfully = gameManagement.getGame(msg.getTheSpecificLobbyID()).get().getPlayground().playerGaveUp(msg.getTheSpecificLobbyID(), msg.getGivingUpUser(), msg.getWantsToGiveUP());
-        if (userRemovedSuccesfully) {
+        if (userRemovedSuccesfully && !(gameManagement.lobbyIsNotPresent(msg.getLobbyID()))) {
             UserGaveUpMessage gaveUp = new UserGaveUpMessage(msg.getTheSpecificLobbyID(), msg.getGivingUpUser(), true);
             sendToAllPlayers(msg.getTheSpecificLobbyID(), gaveUp);
             ChatMessage infoMessage = new ChatMessage(infoUser, msg.getGivingUpUser().getUsername() + " gab auf!");
             post(new NewChatMessageRequest(msg.getTheSpecificLobbyID().toString(), infoMessage));
         } else {
+            post(new AllOnlineLobbiesResponse(gameManagement.getAllLobies()));
             // TODO: Implementierung: Was passiert wenn der User nicht entfernt werden kann? Welche Fälle gibt es?
         }
     }
@@ -277,5 +281,9 @@ public class GameService extends AbstractService {
         } else {
             LOG.error("Irgendwas ist bei der onSelectCardRequest im GameService falsch gelaufen. Folgende ID: " + gameID);
         }
+    }
+
+    public GameManagement getGameManagement() {
+        return gameManagement;
     }
 }

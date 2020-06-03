@@ -3,6 +3,8 @@ package de.uol.swp.client.game;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import de.uol.swp.common.game.card.parser.components.CardAction.response.ChooseCardResponse;
+import de.uol.swp.common.game.card.parser.components.CardAction.request.OptionalActionRequest;
+import de.uol.swp.common.game.card.parser.components.CardAction.response.OptionalActionResponse;
 import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.game.request.GameGiveUpRequest;
 import de.uol.swp.common.game.request.PlayCardRequest;
@@ -75,6 +77,19 @@ public class GameService {
         bus.post(req);
     }
 
+    /**
+     * Erstellt OptionalActionResponse und postet diese auf den EventBus.
+     *
+     * @param gameID die LobbyID der zugehörigen Lobby
+     * @param user   der User der die Entscheidung getroffen hat
+     * @param answer die Antwort von dem User auf die Frage von der Request
+     * @author Darian
+     * @since Sprint8
+     */
+    public void optionalAction(User user, UUID gameID, boolean answer) {
+        OptionalActionResponse msg = new OptionalActionResponse(gameID, user, answer);
+        bus.post(msg);
+    }
     public void chooseCardResponse(UUID gameID, User loggedInUser, ArrayList<Short> chosenCards, boolean directHand) {
         ChooseCardResponse response = new ChooseCardResponse(gameID, loggedInUser, chosenCards, directHand);
         bus.post(response);
