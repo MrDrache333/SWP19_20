@@ -766,7 +766,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     });
                 } else {
                     Platform.runLater(() -> {
-                        infoActualPhase.setText("Du kannst beliebig viele Karten entsorgen");
+                        infoActualPhase.setText("Du kannst beliebig viele Karten ablegen");
                         handcards.getChildren().forEach((n) -> {
                             if (!card.equals(n)) {
                                 n.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
