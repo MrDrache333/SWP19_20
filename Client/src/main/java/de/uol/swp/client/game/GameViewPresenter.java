@@ -768,7 +768,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     if (numberOfCardsToChoose != 255) {
                         infoActualPhase.setText(numberOfCardsToChoose + " ablegen");
                     } else {
-                        infoActualPhase.setText("Du kannst beliebig viele Karten ablegen");
+                        infoActualPhase.setText("Legen beliebig viele Karten ab ");
                     }
                 });
             }
