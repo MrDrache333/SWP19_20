@@ -38,6 +38,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
@@ -122,7 +123,7 @@ public class SceneManager {
      * @param message die Message
      * @param title   der Titel des Alerts
      * @author Paula, Haschem, Ferit
-     * @since Sprint 1
+     * @since Sprint1
      */
     public static void showAlert(Alert.AlertType type, String message, String title) {
         Platform.runLater(() -> {
@@ -185,7 +186,7 @@ public class SceneManager {
      *
      * @param event das Event
      * @author Anna
-     * @since Sprint 4
+     * @since Sprint4
      */
     @Subscribe
     public void onDeleteAccountEvent(DeleteAccountEvent event) {
@@ -259,7 +260,7 @@ public class SceneManager {
      * @param lobbyID die übergebene LobbyID aus der empfangenen Message in der ClientApp
      * @author Paula, Haschem, Ferit, Anna, Darian
      * @version 0.2
-     * @since Sprint 3
+     * @since Sprint3
      */
     public void showLobbyScreen(User currentUser, String title, UUID lobbyID, UserDTO gameOwner) {
         Platform.runLater(() -> {
@@ -277,7 +278,7 @@ public class SceneManager {
      *
      * @param loggedInUser der eingeloggte User
      * @author Anna, Julia
-     * @since Sprint 4
+     * @since Sprint4
      */
     public void showSettingsScreen(User loggedInUser) {
         Platform.runLater(() -> {
@@ -299,9 +300,8 @@ public class SceneManager {
      *
      * @param loggedInUser der eingeloggte User
      * @author Paula
-     * @since Sprint 7
+     * @since Sprint7
      */
-
     public void showCreateLobbyScreen(User loggedInUser) {
         Platform.runLater(() -> {
             createLobbyPresenter = new CreateLobbyPresenter(loggedInUser, lobbyService, userService, eventBus);
@@ -319,11 +319,10 @@ public class SceneManager {
     /**
      * Öffnet das Lobby beitreten Fenster,falls man aufgefordert wird sein Passwort anzugeben
      *
-     * @param loggedInUser
+     * @param loggedInUser Der angemeldete Nutzer
      * @author Paula
-     * @since Sprint 7
+     * @since Sprint7
      */
-
     public void showJoinLobbyScreen(User loggedInUser, Lobby lobby) {
         Platform.runLater(() -> {
             joinLobbyPresenter = new JoinLobbyPresenter(loggedInUser, lobbyService, userService, eventBus, lobby);
@@ -342,7 +341,7 @@ public class SceneManager {
      * Schließt alle Stages
      *
      * @author Julia, Paula
-     * @since Sprint 3
+     * @since Sprint3
      */
     public void closeAllStages() {
         Platform.runLater(() -> {
@@ -367,7 +366,6 @@ public class SceneManager {
         if (joinLobbyStage != null)
         Platform.runLater(() -> joinLobbyStage.close());
     }
-
 
     //-----------------
     // PRIVATE METHODS
@@ -416,6 +414,7 @@ public class SceneManager {
             primaryScene = new Scene(rootPane, 1400, 790);
             primaryScene.getStylesheets().add(styleSheet);
             primaryScene.getStylesheets().add(PrimaryPresenter.css);
+            primaryStage.setOnCloseRequest(event -> userService.logout(currentUser));
             eventBus.register(primaryPresenter);
             primaryScene.setOnKeyPressed(hotkeyEventHandler);
         }
@@ -518,14 +517,14 @@ public class SceneManager {
     private void initCreateLobbyView(CreateLobbyPresenter createLobbyPresenter) {
         if (createLobbyScene == null) {
             Parent rootPane = initCreateLobbyPresenter(createLobbyPresenter);
-            createLobbyScene = new Scene(rootPane, 400, 255);
+            createLobbyScene = new Scene(rootPane, 350, 250);
             createLobbyScene.getStylesheets().add(CreateLobbyPresenter.css);
         }
     }
 
     private void initJoinLobbyView(JoinLobbyPresenter joinLobbyPresenter) {
         Parent rootPane = initJoinLobbyPresenter(joinLobbyPresenter);
-        joinLobbyScene = new Scene(rootPane, 400, 255);
+        joinLobbyScene = new Scene(rootPane, 350, 250);
         joinLobbyScene.getStylesheets().add(JoinLobbyPresenter.css);
 
     }
@@ -541,7 +540,7 @@ public class SceneManager {
      * Strg + L: CreateLobby
      *
      * @author Marvin
-     * @since Sprint 7
+     * @since Sprint7
      */
 
     private EventHandler<KeyEvent> hotkeyEventHandler = new EventHandler<>() {
@@ -572,11 +571,9 @@ public class SceneManager {
                     }
                     event.consume();
                 } else if (focusedTab.equals("Menu")) {
-                    switch (event.getCode()) {
-                        case L:
-                            LOG.debug("Create Lobby Hotkey pressed");
-                            showCreateLobbyScreen(primaryPresenter.getUser());
-                            break;
+                    if (event.getCode() == KeyCode.L) {
+                        LOG.debug("Create Lobby Hotkey pressed");
+                        showCreateLobbyScreen(primaryPresenter.getUser());
                     }
                     event.consume();
                 }

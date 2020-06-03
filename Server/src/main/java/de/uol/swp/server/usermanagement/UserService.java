@@ -39,27 +39,27 @@ public class UserService extends AbstractService {
     /**
      * Wenn auf dem Bus eine Anfrage zum erstellen eines Benutzers gesendet wurde
      *
-     * @param msg Der RegisterUser Request
+     * @param req Der RegisterUser Request
      */
     @Subscribe
-    private void onRegisterUserRequest(RegisterUserRequest msg) {
+    private void onRegisterUserRequest(RegisterUserRequest req) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Neue Registrierungsanfrage mit folgendem User erhalten: " + msg.getUser());
+            LOG.debug("Neue Registrierungsanfrage mit folgendem User erhalten: " + req.getUser());
         }
         ResponseMessage returnMessage;
         try {
             //Versuchen den übergebenen neuen Benutzer zu registieren
-            userManagement.createUser(msg.getUser());
+            userManagement.createUser(req.getUser());
             returnMessage = new RegistrationSuccessfulResponse();
         } catch (Exception e) {
             LOG.error(e);
             //Bei Fehlern die Fehlermeldung an den Sender zurück senden
-            returnMessage = new RegistrationExceptionMessage("Anlegen des folgenden User schlug fehl: " + msg.getUser() + " " + e.getMessage());
+            returnMessage = new RegistrationExceptionMessage("Anlegen des folgenden User schlug fehl: " + req.getUser() + " " + e.getMessage());
         }
 
         //Wenn ein Kontext in dem Request übergeben wurde, dann übernehme diesen
-        if (msg.getMessageContext().isPresent()) {
-            returnMessage.setMessageContext(msg.getMessageContext().get());
+        if (req.getMessageContext().isPresent()) {
+            returnMessage.setMessageContext(req.getMessageContext().get());
         }
         post(returnMessage);
     }

@@ -15,9 +15,9 @@ import java.util.UUID;
 public class GameGiveUpRequest extends AbstractLobbyRequest {
 
     private static final long serialVersionUID = 7986167787009372236L;
-    private UserDTO givingUpUser;
-    private UUID theSpecificLobbyID;
-    private Boolean wantsToGiveUP;
+    private final UserDTO givingUpUser;
+    private final UUID LobbyID;
+    private final Boolean givingUp;
 
     /**
      * Der Konstruktor des GameGiveUpRequest
@@ -29,8 +29,8 @@ public class GameGiveUpRequest extends AbstractLobbyRequest {
      */
     public GameGiveUpRequest(UserDTO givingUpUser, UUID theSpecificLobbyID) {
         this.givingUpUser = givingUpUser;
-        this.theSpecificLobbyID = theSpecificLobbyID;
-        this.wantsToGiveUP = true;
+        this.LobbyID = theSpecificLobbyID;
+        this.givingUp = true;
     }
 
     /**
@@ -51,8 +51,8 @@ public class GameGiveUpRequest extends AbstractLobbyRequest {
      * @author Haschem, Ferit
      * @since Sprint 6
      */
-    public UUID getTheSpecificLobbyID() {
-        return theSpecificLobbyID;
+    public UUID getLobbyID() {
+        return LobbyID;
     }
 
     /**
@@ -62,7 +62,7 @@ public class GameGiveUpRequest extends AbstractLobbyRequest {
      * @author Haschem, Ferit
      * @since Sprint 6
      */
-    public Boolean getWantsToGiveUP() {
-        return wantsToGiveUP;
+    public Boolean getGivingUp() {
+        return givingUp;
     }
 }

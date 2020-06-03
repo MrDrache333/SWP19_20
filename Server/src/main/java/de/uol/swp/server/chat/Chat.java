@@ -12,18 +12,18 @@ import java.util.ArrayList;
  */
 public class Chat implements de.uol.swp.common.chat.Chat {
 
-    private String ChatId;
-    private ArrayList<ChatMessage> Messages = new ArrayList<>();
+    private String chatID;
+    private ArrayList<ChatMessage> messages = new ArrayList<>();
 
     /**
      * Initalisiert einen neuen Chat
      *
-     * @param chatId
+     * @param chatID Die Chat ID
      * @author Keno S
      * @since Sprint 2
      */
-    public Chat(String chatId) {
-        this.ChatId = chatId;
+    public Chat(String chatID) {
+        this.chatID = chatID;
     }
 
     /**
@@ -34,18 +34,18 @@ public class Chat implements de.uol.swp.common.chat.Chat {
      * @since Sprint 2
      */
     public String getChatId() {
-        return ChatId;
+        return chatID;
     }
 
     /**
      * Setzt die ChatID
      *
-     * @param ChatId Neuer Wert der ChatID.
+     * @param chatID Neuer Wert der ChatID.
      * @author KenoS
      * @since Sprint 3
      */
-    public void setChatId(String ChatId) {
-        this.ChatId = ChatId;
+    public void setChatId(String chatID) {
+        this.chatID = chatID;
     }
 
     /**
@@ -56,17 +56,17 @@ public class Chat implements de.uol.swp.common.chat.Chat {
      * @since Sprint 2
      */
     public ArrayList<ChatMessage> getMessages() {
-        return Messages;
+        return messages;
     }
 
     /**
      * Setzt die Nachrichten
      *
-     * @param Messages Neuen Wert der Nachricht.
+     * @param messages Neuen Wert der Nachricht.
      * @author KenoO
      * @since Sprint 2
      */
-    public void setMessages(ArrayList<ChatMessage> Messages) {
-        this.Messages = Messages;
+    public void setMessages(ArrayList<ChatMessage> messages) {
+        this.messages = messages;
     }
 }
