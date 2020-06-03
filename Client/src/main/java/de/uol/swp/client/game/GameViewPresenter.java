@@ -188,7 +188,6 @@ public class GameViewPresenter extends AbstractPresenter {
     private boolean chooseCardBecauseOfActionCard = false;
     private ColorAdjust notChosenCard = new ColorAdjust();
     private boolean directHand;
-    private String infoText;
     private ArrayList<Short> choosenCardsId = new ArrayList<>();
     private ArrayList<ImageView> choosenCards = new ArrayList<>();
     private int numberOfCardsToChoose;
@@ -1370,7 +1369,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     chooseCardBecauseOfActionCard = false;
                     skipPhaseButton.setDisable(false);
                     Platform.runLater(() -> {
-                        infoActualPhase.setText(infoText);
+                        infoActualPhase.setText(currentInfoText);
                         infoActualPhase.setStyle("-fx-font-weight: bold; -fx-font-size: 18");
                     });
                     return;
