@@ -192,8 +192,13 @@ public class GameViewPresenter extends AbstractPresenter {
     private ArrayList<ImageView> choosenCards = new ArrayList<>();
     private int numberOfCardsToChoose;
     private String currentInfoText;
-    private boolean directHand;
 
+
+    /**
+     * Das Event das den Handkarten gegeben wird, wenn sie ausspielbar sein sollen.
+     * @author Devin
+     * @since Sprint 5
+     */
     private final EventHandler<MouseEvent> handCardEventHandler = new EventHandler() {
         @Override
         public void handle(Event event) {
@@ -202,6 +207,12 @@ public class GameViewPresenter extends AbstractPresenter {
         }
     };
 
+
+    /**
+     * Das Event das den Handkarten gegeben wird, wenn sie auswählbar gemacht werden sollen.
+     * @author Devin
+     * @since Sprint 8
+     */
     private final EventHandler<MouseEvent> discardCardEventHandler = new EventHandler() {
         @Override
         public void handle(Event event) {
@@ -210,6 +221,11 @@ public class GameViewPresenter extends AbstractPresenter {
         }
     };
 
+    /**
+     * Das Event für den "Auswahl senden"-Button, er sendet eine ChooseCardResponse an den Server über den GameService
+     * @author Devin
+     * @since Sprint 8
+     */
     private final EventHandler<ActionEvent> sendChoosenCardResponse = new EventHandler() {
         @Override
         public void handle(Event event) {
@@ -217,7 +233,10 @@ public class GameViewPresenter extends AbstractPresenter {
             selectButton.setDisable(true);
             playAllMoneyCardsButton.setVisible(true);
             for (ImageView card : choosenCards) {
-                choosenCardsId.add(Short.parseShort(card.getId())); }
+                choosenCardsId.add(Short.parseShort(card.getId()));
+                handcards.getChildren().remove(card);
+
+            }
             gameService.chooseCard(loggedInUser, lobbyID, choosenCardsId, directHand);
             handcards.getChildren().forEach((n) -> {
                     n.removeEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
@@ -726,7 +745,7 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @FXML
     @Subscribe
-    public void onChooseCardRequest (ChooseCardRequest req) {
+    public void onChooseCardRequest2 (ChooseCardRequest req) {
         if (req.getGameID().equals(lobbyID) && req.getPlayer().equals(loggedInUser)) {
             choosenCardsId.clear();
             choosenCards.clear();
@@ -753,7 +772,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     Platform.runLater(() -> {
                         infoActualPhase.setText("Du kannst beliebig viele Karten entsorgen");
                         handcards.getChildren().forEach((n) -> {
-                            if (card.getId() != n.getId()) {
+                            if (!card.equals(n)) {
                                 n.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                                 n.addEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
                             }
@@ -763,6 +782,46 @@ public class GameViewPresenter extends AbstractPresenter {
             }
         }
     }
+
+    /**
+     * Wenn der Spieler eine Karte oder mehrere Karten auswählen darf, werden alle nicht auswählbaren verdunkelt.
+     *
+     * @param msg der ChooseCardRequest
+     * @author Fenja, Anna
+     * @since Sprint 8
+     */
+    @Subscribe
+    public void onChooseCardRequest(ChooseCardRequest msg) {
+        if (msg.getGameID().equals(lobbyID) && msg.getPlayer().equals(loggedInUser)) {
+            if (msg.getSource().equals(AbstractPlayground.ZoneType.BUY)) {
+                directHand = msg.getDirectHand();
+                for (int i = 0; i < 10; i++) {
+                    ImageView iv = (ImageView) shopTeppich.getChildren().get(i);
+                    if (!msg.getCards().contains(Short.valueOf(iv.getId()))) {
+                        notChosenCard.setBrightness(-0.7);
+                        iv.setEffect(notChosenCard);
+                    }
+                }
+                for (int i = 0; i < 7; i++) {
+                    ImageView iv = (ImageView) valueCardsBox.getChildren().get(i);
+                    if (!msg.getCards().contains(Short.valueOf(iv.getId()))) {
+                        notChosenCard.setBrightness(-0.7);
+                        iv.setEffect(notChosenCard);
+                    }
+                }
+                skipPhaseButton.setDisable(true);
+                Platform.runLater(() -> {
+                    infoText = infoActualPhase.getText();
+                    infoActualPhase.setText("Nimm dir eine Karte vom Spielfeld.");
+                    infoActualPhase.setStyle("-fx-font-size: 15");
+                });
+                chooseCardBecauseOfActionCard = true;
+            }
+        }
+    }
+
+
+
     /**
      * Wenn ein anderer Spieler sich in der ClearPhase befindet, wird das Entsorgen dessen Handkarten und ausgespielten Karten den anderen Spielern angezeigt
      *
@@ -1055,43 +1114,6 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Wenn der Spieler eine Karte oder mehrere Karten auswählen darf, werden alle nicht auswählbaren verdunkelt.
-     *
-     * @param msg der ChooseCardRequest
-     * @author Fenja, Anna
-     * @since Sprint 8
-     */
-    @Subscribe
-    public void onChooseCardRequest(ChooseCardRequest msg) {
-        if (msg.getGameID().equals(lobbyID) && msg.getPlayer().equals(loggedInUser)) {
-            if (msg.getSource().equals(AbstractPlayground.ZoneType.BUY)) {
-                directHand = msg.getDirectHand();
-                for (int i = 0; i < 10; i++) {
-                    ImageView iv = (ImageView) shopTeppich.getChildren().get(i);
-                    if (!msg.getCards().contains(Short.valueOf(iv.getId()))) {
-                        notChosenCard.setBrightness(-0.7);
-                        iv.setEffect(notChosenCard);
-                    }
-                }
-                for (int i = 0; i < 7; i++) {
-                    ImageView iv = (ImageView) valueCardsBox.getChildren().get(i);
-                    if (!msg.getCards().contains(Short.valueOf(iv.getId()))) {
-                        notChosenCard.setBrightness(-0.7);
-                        iv.setEffect(notChosenCard);
-                    }
-                }
-                skipPhaseButton.setDisable(true);
-                Platform.runLater(() -> {
-                    infoText = infoActualPhase.getText();
-                    infoActualPhase.setText("Nimm dir eine Karte vom Spielfeld.");
-                    infoActualPhase.setStyle("-fx-font-size: 15");
-                });
-                chooseCardBecauseOfActionCard = true;
-            }
-        }
-    }
-
-    /**
      * Die usersView Liste wird geupdatet.
      * Äquivalent zu MainMenuPresenter.updateUsersList.
      *
@@ -1272,8 +1294,6 @@ public class GameViewPresenter extends AbstractPresenter {
             selectButton.setDisable(true);
             playAllMoneyCardsButton.setVisible(true);
             skipPhaseButton.setDisable(false);
-            choosenCardsId.clear();
-            choosenCards.clear();
             Platform.runLater(() -> {
                 infoActualPhase.setText(currentInfoText);
             });
