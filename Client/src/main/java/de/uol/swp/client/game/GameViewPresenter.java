@@ -25,7 +25,6 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
-import javafx.animation.PathTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -1040,29 +1039,31 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void onChooseCardRequest(ChooseCardRequest msg) {
-        if (msg.getSource().equals(AbstractPlayground.ZoneType.BUY)) {
-            directHand = msg.getDirectHand();
-            for (int i = 0; i < 10; i++) {
-                ImageView iv = (ImageView) shopTeppich.getChildren().get(i);
-                if (!msg.getCards().contains(Short.valueOf(iv.getId()))) {
-                    notChosenCard.setBrightness(-0.7);
-                    iv.setEffect(notChosenCard);
+        if (msg.getGameID().equals(lobbyID) && msg.getPlayer().equals(loggedInUser)) {
+            if (msg.getSource().equals(AbstractPlayground.ZoneType.BUY)) {
+                directHand = msg.getDirectHand();
+                for (int i = 0; i < 10; i++) {
+                    ImageView iv = (ImageView) shopTeppich.getChildren().get(i);
+                    if (!msg.getCards().contains(Short.valueOf(iv.getId()))) {
+                        notChosenCard.setBrightness(-0.7);
+                        iv.setEffect(notChosenCard);
+                    }
                 }
-            }
-            for (int i = 0; i < 7; i++) {
-                ImageView iv = (ImageView) valueCardsBox.getChildren().get(i);
-                if (!msg.getCards().contains(Short.valueOf(iv.getId()))) {
-                    notChosenCard.setBrightness(-0.7);
-                    iv.setEffect(notChosenCard);
+                for (int i = 0; i < 7; i++) {
+                    ImageView iv = (ImageView) valueCardsBox.getChildren().get(i);
+                    if (!msg.getCards().contains(Short.valueOf(iv.getId()))) {
+                        notChosenCard.setBrightness(-0.7);
+                        iv.setEffect(notChosenCard);
+                    }
                 }
+                skipPhaseButton.setDisable(true);
+                Platform.runLater(() -> {
+                    infoText = infoActualPhase.getText();
+                    infoActualPhase.setText("Nimm dir eine Karte vom Spielfeld.");
+                    infoActualPhase.setStyle("-fx-font-size: 15");
+                });
+                chooseCardBecauseOfActionCard = true;
             }
-            skipPhaseButton.setDisable(true);
-            Platform.runLater(() -> {
-                infoText = infoActualPhase.getText();
-                infoActualPhase.setText("Nimm dir eine Karte vom Spielfeld.");
-                infoActualPhase.setStyle("-fx-font-size: 15");
-            });
-            chooseCardBecauseOfActionCard = true;
         }
     }
 
@@ -1270,7 +1271,29 @@ public class GameViewPresenter extends AbstractPresenter {
         } else {
             String cardID = cardImage.getId();
             bigCardImageBox.setVisible(false);
-            if (playAllMoneyCardsButton.isDisable() && playAllMoneyCardsButton.isVisible()) {
+            if (playAllMoneyCardsButton.isVisible() && playAllMoneyCardsButton.isDisable()) {
+                if (chooseCardBecauseOfActionCard) {
+                    gameService.chooseCardResponse(lobbyID, loggedInUser, new ArrayList<>(Collections.singletonList(Short.valueOf(cardID))), directHand);
+                    for (int i = 0; i < 10; i++) {
+                        ImageView iv = (ImageView) shopTeppich.getChildren().get(i);
+                        if (iv.getEffect() == notChosenCard) {
+                            iv.setEffect(null);
+                        }
+                    }
+                    for (int i = 0; i < 7; i++) {
+                        ImageView iv = (ImageView) valueCardsBox.getChildren().get(i);
+                        if (iv.getEffect() == notChosenCard) {
+                            iv.setEffect(null);
+                        }
+                    }
+                    chooseCardBecauseOfActionCard = false;
+                    skipPhaseButton.setDisable(false);
+                    Platform.runLater(() -> {
+                        infoActualPhase.setText(infoText);
+                        infoActualPhase.setStyle("-fx-font-weight: bold; -fx-font-size: 18");
+                    });
+                    return;
+                }
                 BuyCardRequest req = new BuyCardRequest(lobbyID, loggedInUser, Short.valueOf(cardID));
                 gameService.buyCard(req);
                 this.mouseEvent = mouseEvent;
@@ -1278,30 +1301,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 if (!playAllMoneyCardsButton.isVisible()) {
                     showAlert(Alert.AlertType.INFORMATION, "Du bist nicht dran!", "Fehler");
                 } else {
-                    if (chooseCardBecauseOfActionCard) {
-                        gameService.chooseCardResponse(lobbyID, loggedInUser, new ArrayList<>(Collections.singletonList(Short.valueOf(cardID))), directHand);
-                        for (int i = 0; i < 10; i++) {
-                            ImageView iv = (ImageView) shopTeppich.getChildren().get(i);
-                            if (iv.getEffect() == notChosenCard) {
-                                iv.setEffect(null);
-                            }
-                        }
-                        for (int i = 0; i < 7; i++) {
-                            ImageView iv = (ImageView) valueCardsBox.getChildren().get(i);
-                            if (iv.getEffect() == notChosenCard) {
-                                iv.setEffect(null);
-                            }
-                        }
-                        chooseCardBecauseOfActionCard = false;
-                        skipPhaseButton.setDisable(false);
-                        Platform.runLater(() -> {
-                            infoActualPhase.setText(infoText);
-                            infoActualPhase.setStyle("-fx-font-size: 18");
-                            infoActualPhase.setStyle("-fx-font-weight: bold");
-                        });
-                    } else {
-                        showAlert(Alert.AlertType.INFORMATION, "Du musst erst deine Geldkarten ausspielen!", "Fehler");
-                    }
+                    showAlert(Alert.AlertType.INFORMATION, "Du musst erst deine Geldkarten ausspielen!", "Fehler");
                 }
             }
         }
