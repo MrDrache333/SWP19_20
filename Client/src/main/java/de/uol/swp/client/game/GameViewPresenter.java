@@ -793,7 +793,6 @@ public class GameViewPresenter extends AbstractPresenter {
                     }
                 }
                 Platform.runLater(() -> {
-                    infoText = infoActualPhase.getText();
                     infoActualPhase.setText("Nimm dir eine Karte vom Spielfeld.");
                     infoActualPhase.setStyle("-fx-font-size: 15");
                 });
