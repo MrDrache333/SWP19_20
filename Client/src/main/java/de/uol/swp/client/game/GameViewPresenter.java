@@ -238,7 +238,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 handcards.getChildren().remove(card);
 
             }
-            gameService.chooseCard(loggedInUser, lobbyID, choosenCardsId, directHand);
+            gameService.chooseCardResponse( lobbyID, loggedInUser, choosenCardsId, directHand);
             handcards.getChildren().forEach((n) -> {
                     n.removeEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
                     n.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
@@ -746,35 +746,31 @@ public class GameViewPresenter extends AbstractPresenter {
             choosenCardsId.clear();
             choosenCards.clear();
             ImageView card = (ImageView) mouseEvent.getTarget();
-            for ( Node n : handcards.getChildren()) {
-                n.setEffect(null); }
             numberOfCardsToChoose = req.getCount();
             directHand = req.getDirectHand();
             currentInfoText = infoActualPhase.getText();
             skipPhaseButton.setDisable(true);
             if (req.getSource() == AbstractPlayground.ZoneType.HAND) {
+                for ( Node n : handcards.getChildren()) {
+                    n.setEffect(null); }
                 selectButton.setVisible(true);
                 selectButton.setDisable(false);
                 playAllMoneyCardsButton.setVisible(false);
-                if (numberOfCardsToChoose != 255) {
-                    Platform.runLater(() -> {
-                        infoActualPhase.setText(numberOfCardsToChoose + " Karten entsorgen");
-                        handcards.getChildren().forEach((n) -> {
+                Platform.runLater(() -> {
+                    handcards.getChildren().forEach((n) -> {
+                        if (!card.equals(n)) {
                             n.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                             n.addEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
-                        });
+                        }
                     });
-                } else {
-                    Platform.runLater(() -> {
+                });
+                Platform.runLater(() -> {
+                    if (numberOfCardsToChoose != 255) {
+                        infoActualPhase.setText(numberOfCardsToChoose + " Karten entsorgen");
+                    } else {
                         infoActualPhase.setText("Du kannst beliebig viele Karten entsorgen");
-                        handcards.getChildren().forEach((n) -> {
-                            if (!card.equals(n)) {
-                                n.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
-                                n.addEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
-                            }
-                        });
-                    });
-                }
+                    }
+                });
             }
             if (req.getSource().equals(AbstractPlayground.ZoneType.BUY)) {
                 directHand = req.getDirectHand();
@@ -1270,7 +1266,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     n.removeEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
                     n.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
             });
-            gameService.chooseCard(loggedInUser, gameID, choosenCardsId, directHand);
+            gameService.chooseCardResponse( gameID, loggedInUser, choosenCardsId, directHand);
             selectButton.setVisible(false);
             selectButton.setDisable(true);
             playAllMoneyCardsButton.setVisible(true);

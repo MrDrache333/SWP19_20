@@ -60,19 +60,6 @@ public class GameService {
         bus.post(req);
     }
 
-    /**
-     * Erstellt ChooseCardResponse
-     *
-     * @param gameID die LobbyID zum Lobbynamen
-     * @param user   der User der Karten ausgewählt hat
-     * @author Devin
-     * @since Sprint5
-     */
-    public void chooseCard(User user, UUID gameID, ArrayList<Short> cardIDs, boolean directHand) {
-        ChooseCardResponse resp = new ChooseCardResponse(gameID, user, cardIDs, directHand);
-        bus.post(resp);
-    }
-
     public void playCard(UUID gameID, User loggedInUser, Short id) {
         PlayCardRequest req = new PlayCardRequest(gameID, loggedInUser, id);
         bus.post(req);
@@ -110,8 +97,8 @@ public class GameService {
      * @param loggedInUser der User, der Karten auswählen durfte
      * @param chosenCards  die ausgewählten Karten
      * @param directHand   gibt an, ob die gewählten direkt auf die Hand genommen werden
-     * @author Anna, Fenja
-     * @since Sprint 8
+     * @author Anna, Fenja, Devin
+     * @since Sprint 5
      */
     public void chooseCardResponse(UUID gameID, User loggedInUser, ArrayList<Short> chosenCards, boolean directHand) {
         ChooseCardResponse response = new ChooseCardResponse(gameID, loggedInUser, chosenCards, directHand);
