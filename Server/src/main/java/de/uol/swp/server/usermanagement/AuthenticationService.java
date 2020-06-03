@@ -18,6 +18,8 @@ import de.uol.swp.common.user.request.*;
 import de.uol.swp.common.user.response.AllOnlineUsersResponse;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.communication.UUIDSession;
+import de.uol.swp.server.game.player.bot.BotPlayer;
+import de.uol.swp.server.game.player.bot.internal.messages.AuthBotInternalRequest;
 import de.uol.swp.server.lobby.LobbyManagement;
 import de.uol.swp.server.message.ClientAuthorizedMessage;
 import de.uol.swp.server.message.ServerExceptionMessage;
@@ -44,6 +46,7 @@ public class AuthenticationService extends AbstractService {
      * @since Start
      */
     final private Map<Session, User> userSessions = new HashMap<>();
+    final private Map<Session, User> botSessions = new HashMap<>();
 
     private final UserManagement userManagement;
     private final LobbyManagement lobbyManagement;
@@ -73,6 +76,10 @@ public class AuthenticationService extends AbstractService {
      */
     public Optional<Session> getSession(User user) {
         Optional<Map.Entry<Session, User>> entry = userSessions.entrySet().stream().filter(e -> e.getValue().equals(user)).findFirst();
+        if (entry.isEmpty()) {
+            entry = botSessions.entrySet().stream().filter(e -> e.getValue().getUsername().equals(user.getUsername())).findFirst();
+            return entry.map(Map.Entry::getKey);
+        }
         return entry.map(Map.Entry::getKey);
     }
 
@@ -121,6 +128,20 @@ public class AuthenticationService extends AbstractService {
         }
         post(returnMessage);
     }
+
+    @Subscribe
+    public void onBotCreatedRequest(AuthBotInternalRequest req) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Bot Request kommt im Auth Service an");
+        }
+        try {
+            Session newSession = UUIDSession.create(req.getBotPlayer().getTheUserInThePlayer());
+            botSessions.put(newSession, req.getBotPlayer().getTheUserInThePlayer());
+        } catch (Exception e) {
+            LOG.error(e);
+        }
+    }
+
 
     /**
      * Serverlogik vom LogoutRequest

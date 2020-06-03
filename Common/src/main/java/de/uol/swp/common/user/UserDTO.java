@@ -13,6 +13,7 @@ public class UserDTO implements User {
     private final String username;
     private final String password;
     private final String eMail;
+    private boolean isBot;
 
     /**
      * Initialisiert ein neues UserDTO.
@@ -27,6 +28,15 @@ public class UserDTO implements User {
         this.username = username;
         this.password = password;
         this.eMail = eMail;
+    }
+
+    public UserDTO(String username, String password, String eMail, boolean isBot) {
+        assert Objects.nonNull(username);
+        assert Objects.nonNull(password);
+        this.username = username;
+        this.password = password;
+        this.eMail = eMail;
+        this.isBot = isBot;
     }
 
     /**
@@ -134,5 +144,10 @@ public class UserDTO implements User {
     @Override
     public int hashCode() {
         return Objects.hashCode(username);
+    }
+
+
+    public boolean getIsBot() {
+        return this.isBot;
     }
 }

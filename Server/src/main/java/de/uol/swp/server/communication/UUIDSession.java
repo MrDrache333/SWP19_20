@@ -2,6 +2,7 @@ package de.uol.swp.server.communication;
 
 import de.uol.swp.common.user.Session;
 import de.uol.swp.common.user.User;
+import de.uol.swp.server.game.player.bot.BotPlayer;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -10,6 +11,7 @@ public class UUIDSession implements Session {
 
     private final String sessionId;
     private User user;
+    private BotPlayer bot;
 
     /**
      * Instanziiert neue Session mit zufälliger UUID
@@ -25,6 +27,13 @@ public class UUIDSession implements Session {
         }
     }
 
+    private UUIDSession(BotPlayer botPlayer) {
+        synchronized (UUIDSession.class) {
+            this.sessionId = String.valueOf(UUID.randomUUID());
+            this.bot = botPlayer;
+        }
+    }
+
     /**
      * Erstellt neue Session mit zufälliger UUID
      *
@@ -35,6 +44,10 @@ public class UUIDSession implements Session {
      */
     public static Session create(User user) {
         return new UUIDSession(user);
+    }
+
+    public static Session create(BotPlayer bot) {
+        return new UUIDSession(bot);
     }
 
     /**

@@ -201,4 +201,14 @@ public class LobbyDTO implements Lobby, Serializable {
     public void setChosenCards(ArrayList<Short> chosenCards) {
         this.chosenCards = chosenCards;
     }
+
+    @Override
+    public boolean onlyBotsLeft(UUID lobbyID) {
+        for (User user : getUsers()) {
+            if (user.getIsBot() == false) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

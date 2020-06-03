@@ -80,8 +80,8 @@ public class LobbyManagement {
      * @since Sprint 5
      */
     public boolean isUserIngame(User user) {
-        for (Map.Entry<UUID, Lobby> lobby : lobbies.entrySet()){
-            if (lobby.getValue().getUsers().contains(user) ){
+        for (Map.Entry<UUID, Lobby> lobby : lobbies.entrySet()) {
+            if (lobby.getValue().getUsers().contains(user)) {
                 if (lobby.getValue().getInGame()) {
                     return true;
                 }
@@ -120,7 +120,7 @@ public class LobbyManagement {
         Optional<Lobby> lobby = this.getLobby(id);
         if (lobby.isPresent()) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("User " + user.getUsername() + " verlässt die Lobby " + getLobby(id));
+                LOG.debug("User " + user.getUsername() + " verlässt die Lobby " + getLobby(id).get());
             }
             lobby.get().leaveUser(user);
             if (lobby.get().getPlayers() == 0) {
@@ -180,7 +180,7 @@ public class LobbyManagement {
         Optional<Lobby> lobby = this.getLobby(id);
         if (lobby.isPresent() && lobby.get().getOwner().getUsername().equals(owner.getUsername())) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("User " + userToKick.getUsername() + " ist von der Lobby gekickt worden " + getLobby(id));
+                LOG.debug("User " + userToKick.getUsername() + " ist von der Lobby gekickt worden " + getLobby(id).get());
             }
             lobby.get().leaveUser(userToKick);
             if (lobby.get().getPlayers() == 0) {
@@ -216,12 +216,15 @@ public class LobbyManagement {
      * Getter für den Lobby Besitzer.
      *
      * @param lobbyID Die ID der Lobby, von der der Besitzer zurückgegeben werden soll.
-     * @author Timo, Rike, Marvin
+     * @author Timo, Rike, Marvin, Ferit, Fenja
      * @since Sprint 3
      */
-    public User getLobbyOwner(UUID lobbyID) {
-
-        return lobbies.get(lobbyID).getOwner();
+    public Optional<User> getLobbyOwner(UUID lobbyID) {
+        if (lobbies.containsKey(lobbyID)) {
+            Optional<User> optionalLobby = Optional.ofNullable(lobbies.get(lobbyID).getOwner());
+            return optionalLobby;
+        }
+        return null;
     }
 
     /**

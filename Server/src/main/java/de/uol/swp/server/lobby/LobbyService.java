@@ -19,6 +19,9 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.chat.ChatManagement;
+import de.uol.swp.server.game.player.Player;
+import de.uol.swp.server.game.player.bot.BotPlayer;
+import de.uol.swp.server.game.player.bot.internal.messages.AuthBotInternalRequest;
 import de.uol.swp.server.message.StartGameInternalMessage;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import org.apache.logging.log4j.LogManager;
@@ -41,6 +44,7 @@ public class LobbyService extends AbstractService {
     private final LobbyManagement lobbyManagement;
     private final ChatManagement chatManagement;
     private final AuthenticationService authenticationService;
+    private final EventBus eventBus;
 
     /**
      * Instanziiert einen neuen Lobby Service
@@ -55,6 +59,7 @@ public class LobbyService extends AbstractService {
     @Inject
     public LobbyService(LobbyManagement lobbyManagement, AuthenticationService authenticationService, ChatManagement chatManagement, EventBus eventBus) {
         super(eventBus);
+        this.eventBus = eventBus;
         this.lobbyManagement = lobbyManagement;
         this.authenticationService = authenticationService;
         this.chatManagement = chatManagement;
@@ -106,9 +111,17 @@ public class LobbyService extends AbstractService {
         Optional<Lobby> lobby = lobbyManagement.getLobby(req.getLobbyID());
         if (lobby.isPresent() && !lobby.get().getUsers().contains(req.getUser()) && lobby.get().getPlayers() < lobby.get().getMaxPlayer() && !lobby.get().getInGame()) {
             LOG.info("User " + req.getUser().getUsername() + " is joining lobby " + lobby.get().getName());
-            lobby.get().joinUser(new LobbyUser(req.getUser()));
+            LobbyUser theLobbyUser = new LobbyUser(req.getUser());
+            lobby.get().joinUser(theLobbyUser);
             ServerMessage returnMessage = new UserJoinedLobbyMessage(req.getLobbyID(), req.getUser(), (UserDTO) lobby.get().getOwner(), (LobbyDTO) lobby.get());
             authenticationService.sendToLoggedInPlayers(returnMessage);
+            if (req.getBot() == true && lobby.isPresent()) {
+                lobby.get().setReadyStatus(req.getUser(), true);
+                ServerMessage msg2 = new UpdatedLobbyReadyStatusMessage(lobby.get().getLobbyID(), req.getUser(), lobby.get().getReadyStatus(req.getUser()));
+                LOG.debug("Sending Updated Status of Bot: " + req.getUser().getUsername() + " to true in Lobby: " + lobby.get().getLobbyID());
+                authenticationService.sendToLoggedInPlayers(msg2);
+                allPlayersReady(lobby.get());
+            }
         } else {
             LOG.error("Beitreten der Lobby mit der ID " + req.getLobbyID() + " fehlgeschlagen");
         }
@@ -123,21 +136,30 @@ public class LobbyService extends AbstractService {
      * @since Sprint 3
      */
     @Subscribe
-    public void onLobbyLeaveUserRequest(LobbyLeaveUserRequest req) {
-        User oldOwner = lobbyManagement.getLobbyOwner(req.getLobbyID());
+    public void onLobbyLeaveUserRequest(LobbyLeaveUserRequest msg) {
+        Optional<User> oldOwner = lobbyManagement.getLobbyOwner(msg.getLobbyID());
         //Falls der Besitzer der Lobby aus der Lobby geht wird dieser aktualisiert
-        if (lobbyManagement.leaveLobby(req.getLobbyID(), req.getUser())) {
-            Optional<Lobby> lobby = lobbyManagement.getLobby(req.getLobbyID());
-            LOG.info("User " + req.getUser().getUsername() + " verlässt die Lobby " + req.getLobbyID());
+        boolean leavedLobbysuccesful = lobbyManagement.leaveLobby(msg.getLobbyID(), msg.getUser());
+        if (leavedLobbysuccesful && !(lobbyManagement.getLobby(msg.getLobbyID()).isEmpty()) && !(lobbyManagement.getLobby(msg.getLobbyID()).get().onlyBotsLeft(msg.getLobbyID()))) {
+            Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getLobbyID());
+            LOG.info("User " + msg.getUser().getUsername() + " verlässt die Lobby " + msg.getLobbyID());
             ServerMessage returnMessage;
             if (lobby.isPresent()) {
-                returnMessage = new UserLeftLobbyMessage(req.getLobbyID(), req.getUser(), (UserDTO) lobby.get().getOwner(), (LobbyDTO) lobby.get());
+                returnMessage = new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), (UserDTO) lobby.get().getOwner(), (LobbyDTO) lobby.get());
             } else {
-                returnMessage = new UserLeftLobbyMessage(req.getLobbyID(), req.getUser(), null, null);
+                returnMessage = new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), null, null);
             }
             authenticationService.sendToLoggedInPlayers(returnMessage);
+        } else if (leavedLobbysuccesful && !(lobbyManagement.getLobby(msg.getLobbyID()).isEmpty()) &&
+                (lobbyManagement.getLobby(msg.getLobbyID()).get().onlyBotsLeft(msg.getLobbyID()))) {
+            lobbyManagement.dropLobby(msg.getLobbyID());
+            ServerMessage returnMessage;
+            returnMessage = new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), null, null);
+            authenticationService.sendToLoggedInPlayers(returnMessage);
         } else {
-            LOG.error("Verlassen der Lobby mit der ID " + req.getLobbyID() + " fehlgeschlagen");
+            ServerMessage returnMessage;
+            returnMessage = new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), null, null);
+            authenticationService.sendToLoggedInPlayers(returnMessage);
         }
     }
 
@@ -197,13 +219,30 @@ public class LobbyService extends AbstractService {
     @Subscribe
     public void onGameEnd(UpdateInGameRequest req) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(req.getLobbyID());
-        if (lobby.isPresent()) {
+        if (lobby.isPresent() && !(onlyBotsLeft(req.getLobbyID()))) {
             LOG.info("Spiel in Lobby " + req.getLobbyID() + " beendet.");
             lobby.get().setInGame(false);
             ServerMessage msg = new UpdatedInGameMessage(req.getLobbyID());
             authenticationService.sendToLoggedInPlayers(msg);
+
+        } else if (lobby.isPresent() && onlyBotsLeft(req.getLobbyID())) {
+            lobbyManagement.dropLobby(req.getLobbyID());
         } else
             LOG.debug("Lobby nicht gefunden! ID: " + req.getLobbyID());
+    }
+
+    /**
+     * Hilfmethode, ob nur noch Bots in der Lobby sind.
+     * @param lobbyID Die LobbyID
+     * @return Wahrheitswert
+     */
+    public Boolean onlyBotsLeft(UUID lobbyID) {
+        for (User user : lobbyManagement.getLobby(lobbyID).get().getUsers()) {
+            if (user.getIsBot() == false) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -277,14 +316,14 @@ public class LobbyService extends AbstractService {
      * @since Sprint 3
      */
     @Subscribe
-    public void onSetMaxPlayerRequest(SetMaxPlayerRequest req) {
-        LobbyDTO lobby = (LobbyDTO) lobbyManagement.getLobby(req.getLobbyID()).get();
-        if (req.getMaxPlayerValue() >= lobbyManagement.getLobby(req.getLobbyID()).get().getPlayers()) {
-            boolean setMaxPlayerSet = lobbyManagement.setMaxPlayer(req.getLobbyID(), req.getUser(), req.getMaxPlayerValue());
-            ServerMessage returnMessage = new SetMaxPlayerMessage(req.getMaxPlayerValue(), req.getLobbyID(), setMaxPlayerSet, lobbyManagement.getLobbyOwner(req.getLobbyID()), lobby);
-            authenticationService.sendToLoggedInPlayers(returnMessage);
+    public void onSetMaxPlayerRequest(SetMaxPlayerRequest msg) {
+        LobbyDTO lobby = (LobbyDTO) lobbyManagement.getLobby(msg.getLobbyID()).get();
+        if (msg.getMaxPlayerValue() >= lobbyManagement.getLobby(msg.getLobbyID()).get().getPlayers()) {
+            boolean setMaxPlayerSet = lobbyManagement.setMaxPlayer(msg.getLobbyID(), msg.getUser(), msg.getMaxPlayerValue());
+            ServerMessage returnMessage = new SetMaxPlayerMessage(msg.getMaxPlayerValue(), msg.getLobbyID(), setMaxPlayerSet, lobbyManagement.getLobbyOwner(msg.getLobbyID()).get(), lobby);
+            authenticationService.sendToLobbyOwner(returnMessage, lobby.getOwner());
         } else {
-            ServerMessage returnMessage2 = new SetMaxPlayerMessage(lobbyManagement.getLobby(req.getLobbyID()).get().getMaxPlayer(), req.getLobbyID(), false, lobbyManagement.getLobbyOwner(req.getLobbyID()), lobby);
+            ServerMessage returnMessage2 = new SetMaxPlayerMessage(lobbyManagement.getLobby(msg.getLobbyID()).get().getMaxPlayer(), msg.getLobbyID(), false, lobbyManagement.getLobbyOwner(msg.getLobbyID()).get(), lobby);
             authenticationService.sendToLobbyOwner(returnMessage2, lobby.getOwner());
         }
     }
@@ -372,5 +411,26 @@ public class LobbyService extends AbstractService {
             }
         }
         return false;
+    }
+
+    /**
+     * Methode die einen Bot erstellt, wenn der Owner "Bot Hinzufügen" drückt.
+     *
+     * @param request Die Anforderung einen Bot der Lobby hinzuzufügen.
+     */
+    @Subscribe
+    public void createBotRequest(AddBotRequest request) {
+        Lobby thisLobby = lobbyManagement.getLobby(request.getLobbyID()).get();
+        String[] collectionBotName = {"King Arthur", "Merlin", "Die Queen", "Prinzessin Diana"};
+        if (thisLobby.getUsers().size() < thisLobby.getMaxPlayer()) {
+            String theRandomBotName = collectionBotName[(int) (Math.random() * 4)];
+            theRandomBotName = theRandomBotName + String.valueOf(((int) (Math.random() * 999)));
+            BotPlayer createdBot = new BotPlayer(theRandomBotName, eventBus, request.getLobbyID());
+            UserDTO userDT = new UserDTO(createdBot.getTheUserInThePlayer().getUsername(), createdBot.getTheUserInThePlayer().getPassword(), createdBot.getTheUserInThePlayer().getEMail(), true);
+            AuthBotInternalRequest createReq = new AuthBotInternalRequest(createdBot);
+            LobbyJoinUserRequest req = new LobbyJoinUserRequest(thisLobby.getLobbyID(), userDT, true);
+            eventBus.post(createReq);
+            eventBus.post(req);
+        }
     }
 }
