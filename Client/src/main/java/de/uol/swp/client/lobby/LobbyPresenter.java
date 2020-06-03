@@ -4,11 +4,14 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.common.chat.ChatService;
 import de.uol.swp.common.game.card.parser.JsonCardParser;
 import de.uol.swp.common.game.card.parser.components.CardPack;
+import de.uol.swp.common.lobby.exception.JoinLobbyExceptionMessage;
+import de.uol.swp.common.lobby.exception.LobbyExceptionMessage;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.lobby.response.SetChosenCardsResponse;
@@ -537,6 +540,18 @@ public class LobbyPresenter extends AbstractPresenter {
         if (!message.getLobbyID().equals(lobbyID)) return;
         LOG.debug("User " + message.getLobby().getName() + " wurde aus der Lobby gekickt!");
         userLeftLobby(message.getUser().getUsername(), true);
+    }
+
+    /**
+     * Hier wird die LobbyExceptionMessage abgefangen und die Nachricht in einem neuem Fenster angezeigt
+     *
+     * @param msg die Nachricht
+     * @author Darian
+     * @since Sprint 8
+     */
+    @Subscribe
+    public void LobbyExceptionMessage(LobbyExceptionMessage msg) {
+        SceneManager.showAlert(Alert.AlertType.ERROR, msg.getMessage(), "Lobby");
     }
 
     //--------------------------------------

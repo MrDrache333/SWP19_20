@@ -8,6 +8,10 @@ import de.uol.swp.common.chat.request.NewChatMessageRequest;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.LobbyUser;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
+import de.uol.swp.common.lobby.exception.JoinLobbyExceptionMessage;
+import de.uol.swp.common.lobby.exception.KickPlayerException;
+import de.uol.swp.common.lobby.exception.LeaveLobbyException;
+import de.uol.swp.common.lobby.exception.LobbyExceptionMessage;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.request.*;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
@@ -111,6 +115,7 @@ public class LobbyService extends AbstractService {
             authenticationService.sendToLoggedInPlayers(returnMessage);
         } else {
             LOG.error("Beitreten der Lobby mit der ID " + msg.getLobbyID() + " fehlgeschlagen");
+            authenticationService.sendToLobbyOwner(new JoinLobbyExceptionMessage("Beitreten der Lobby ist fehlgeschlagen"), msg.getUser());
         }
     }
 
@@ -124,9 +129,8 @@ public class LobbyService extends AbstractService {
      */
     @Subscribe
     public void onLobbyLeaveUserRequest(LobbyLeaveUserRequest msg) {
-        User oldOwner = lobbyManagement.getLobbyOwner(msg.getLobbyID());
-        //Falls der Besitzer der Lobby aus der Lobby geht wird dieser aktualisiert
-        if (lobbyManagement.leaveLobby(msg.getLobbyID(), msg.getUser())) {
+        try{
+            lobbyManagement.leaveLobby(msg.getLobbyID(), msg.getUser());
             Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getLobbyID());
             LOG.info("User " + msg.getUser().getUsername() + " verlässt die Lobby " + msg.getLobbyID());
             ServerMessage returnMessage;
@@ -136,8 +140,9 @@ public class LobbyService extends AbstractService {
                 returnMessage = new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), null, null);
             }
             authenticationService.sendToLoggedInPlayers(returnMessage);
-        } else {
-            LOG.error("Verlassen der Lobby mit der ID " + msg.getLobbyID() + " fehlgeschlagen");
+        } catch(LeaveLobbyException e) {
+            authenticationService.sendToLobbyOwner(new LobbyExceptionMessage(msg.getLobbyID(), e.getMessage()), msg.getUser());
+            LOG.error("Verlassen der Lobby mit der ID " + msg.getLobbyID() + " fehlgeschlagen.");
         }
     }
 
@@ -260,12 +265,15 @@ public class LobbyService extends AbstractService {
      */
     @Subscribe
     public void onKickUserRequest(KickUserRequest msg) {
-        if (lobbyManagement.kickUser(msg.getLobbyID(), msg.getUserToKick(), msg.getUser())) {
+        try {
+            lobbyManagement.kickUser(msg.getLobbyID(), msg.getUserToKick(), msg.getUser());
             LOG.info("User " + msg.getUser().getUsername() + " wurde von der Lobby mit folgender ID " + msg.getLobbyID() + " gekickt!");
             ServerMessage returnMessage = new KickUserMessage(msg.getLobbyID(), msg.getUserToKick(), (LobbyDTO) lobbyManagement.getLobby(msg.getLobbyID()).get());
             authenticationService.sendToLoggedInPlayers(returnMessage);
-        } else {
-            LOG.error("Kicken des Users " + msg.getUserToKick() + " von Lobby mit der ID " + msg.getLobbyID() + " ist fehlgeschlagen");
+        }
+        catch (KickPlayerException e){
+            authenticationService.sendToLobbyOwner(new LobbyExceptionMessage(msg.getLobbyID(), e.getMessage()), msg.getUser());
+            LOG.error(e.getMessage());
         }
     }
 
