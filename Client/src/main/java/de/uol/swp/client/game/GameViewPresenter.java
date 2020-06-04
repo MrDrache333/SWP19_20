@@ -5,10 +5,7 @@ import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
-import de.uol.swp.client.game.container.DeckLayoutContainer;
-import de.uol.swp.client.game.container.DiscardPileLayoutContainer;
-import de.uol.swp.client.game.container.HandcardsLayoutContainer;
-import de.uol.swp.client.game.container.PlayedCardLayoutContainer;
+import de.uol.swp.client.game.container.GeneralLayoutContainer;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.common.game.AbstractPlayground;
@@ -158,22 +155,22 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     private Button selectButton;
 
-    private final HandcardsLayoutContainer handcards;
-    private final HandcardsLayoutContainer firstEnemyHand;
-    private final HandcardsLayoutContainer secondEnemyHand;
-    private final HandcardsLayoutContainer thirdEnemyHand;
-    private final PlayedCardLayoutContainer myPCLC;
-    private final PlayedCardLayoutContainer firstEnemyPCLC;
-    private final PlayedCardLayoutContainer secondEnemyPCLC;
-    private final PlayedCardLayoutContainer thirdEnemyPCLC;
-    private final DiscardPileLayoutContainer myDPLC;
-    private final DiscardPileLayoutContainer firstEnemyDPLC;
-    private final DiscardPileLayoutContainer secondEnemyDPLC;
-    private final DiscardPileLayoutContainer thirdEnemyDPLC;
-    private final DeckLayoutContainer myDLC;
-    private final DeckLayoutContainer firstEnemyDLC;
-    private final DeckLayoutContainer secondEnemyDLC;
-    private final DeckLayoutContainer thirdEnemyDLC;
+    private final GeneralLayoutContainer handcards;
+    private final GeneralLayoutContainer firstEnemyHand;
+    private final GeneralLayoutContainer secondEnemyHand;
+    private final GeneralLayoutContainer thirdEnemyHand;
+    private final GeneralLayoutContainer myPCLC;
+    private final GeneralLayoutContainer firstEnemyPCLC;
+    private final GeneralLayoutContainer secondEnemyPCLC;
+    private final GeneralLayoutContainer thirdEnemyPCLC;
+    private final GeneralLayoutContainer myDPLC;
+    private final GeneralLayoutContainer firstEnemyDPLC;
+    private final GeneralLayoutContainer secondEnemyDPLC;
+    private final GeneralLayoutContainer thirdEnemyDPLC;
+    private final GeneralLayoutContainer myDLC;
+    private final GeneralLayoutContainer firstEnemyDLC;
+    private final GeneralLayoutContainer secondEnemyDLC;
+    private final GeneralLayoutContainer thirdEnemyDLC;
 
     private ObservableList<String> users;
     private final GameService gameService;
@@ -271,26 +268,26 @@ public class GameViewPresenter extends AbstractPresenter {
         this.gameService = gameService;
         makeImageDarker.setBrightness(-0.7);
         // Die Hände für jeden Spieler
-        handcards = new HandcardsLayoutContainer(575, 630, 110, 420, "My.HCLC");
-        firstEnemyHand = new HandcardsLayoutContainer(700, 110, 110, 215, "1.HCLC");
-        secondEnemyHand = new HandcardsLayoutContainer(300, 308, 105, 215, "2.HCLC");
-        thirdEnemyHand = new HandcardsLayoutContainer(1070, 308, 105, 215, "3.HCLC");
+        handcards = new GeneralLayoutContainer(575, 630, 110, 420, "My.HCLC");
+        firstEnemyHand = new GeneralLayoutContainer(700, 110, 110, 215, "1.HCLC");
+        secondEnemyHand = new GeneralLayoutContainer(300, 308, 105, 215, "2.HCLC");
+        thirdEnemyHand = new GeneralLayoutContainer(1070, 308, 105, 215, "3.HCLC");
         // Die Aktion-Zonen für jeden Spieler
-        myPCLC = new PlayedCardLayoutContainer(960, 480, 100, 200, "My.PCLC");
-        firstEnemyPCLC = new PlayedCardLayoutContainer(700, 150, 120, 240, "1.PCLC");
-        secondEnemyPCLC = new PlayedCardLayoutContainer(360, 308, 120, 240, "2.PCLC");
-        thirdEnemyPCLC = new PlayedCardLayoutContainer(1012, 308, 120, 240, "3.PCLC");
+        myPCLC = new GeneralLayoutContainer(960, 480, 100, 200, "My.PCLC");
+        firstEnemyPCLC = new GeneralLayoutContainer(700, 150, 120, 240, "1.PCLC");
+        secondEnemyPCLC = new GeneralLayoutContainer(360, 308, 120, 240, "2.PCLC");
+        thirdEnemyPCLC = new GeneralLayoutContainer(1012, 308, 120, 240, "3.PCLC");
         // Die Abwurf-Zonen für jeden Spieler
-        myDPLC = new DiscardPileLayoutContainer(1050, 630, 110, 60, "My.DPLC");
-        firstEnemyDPLC = new DiscardPileLayoutContainer(640, 0, 110, 60, "1.DPLC");
-        secondEnemyDPLC = new DiscardPileLayoutContainer(328, 447, 104, 60, "2.DPLC");
-        thirdEnemyDPLC = new DiscardPileLayoutContainer(1198, 169, 106, 60, "3.DPLC");
+        myDPLC = new GeneralLayoutContainer(1050, 630, 110, 60, "My.DPLC");
+        firstEnemyDPLC = new GeneralLayoutContainer(640, 0, 110, 60, "1.DPLC");
+        secondEnemyDPLC = new GeneralLayoutContainer(328, 447, 104, 60, "2.DPLC");
+        thirdEnemyDPLC = new GeneralLayoutContainer(1198, 169, 106, 60, "3.DPLC");
         // Die Decks für jeden Spieler
-        //myDLC = new DeckLayoutContainer(513,630,110,60,"My.DLC");
-        myDLC = new DeckLayoutContainer(0, 630, 110, 60, "My.DLC");
-        firstEnemyDLC = new DeckLayoutContainer(915, 0, 110, 60, "1.DLC");
-        secondEnemyDLC = new DeckLayoutContainer(328, 169, 104, 60, "2.DLC");
-        thirdEnemyDLC = new DeckLayoutContainer(1198, 446, 106, 60, "3.DLC");
+        //myDLC = new GeneralLayoutContainer(513,630,110,60,"My.DLC");
+        myDLC = new GeneralLayoutContainer(0, 630, 110, 60, "My.DLC");
+        firstEnemyDLC = new GeneralLayoutContainer(915, 0, 110, 60, "1.DLC");
+        secondEnemyDLC = new GeneralLayoutContainer(328, 169, 104, 60, "2.DLC");
+        thirdEnemyDLC = new GeneralLayoutContainer(1198, 446, 106, 60, "3.DLC");
     }
 
     /**
@@ -428,7 +425,7 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Ereignis wenn der Spieler den "Nein"-Button drückt. Es wird true an den Server zurückgegeben
      *
-     * @param actionEvent
+     * @param actionEvent das ActionEvent
      * @author Darian
      * @since Sprint 8
      */
@@ -440,7 +437,7 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Ereignis wenn der Spieler den "Nein"-Button drückt. Es wird false an den Server zurückgegeben
      *
-     * @param actionEvent
+     * @param actionEvent das ActionEvent
      * @author Darian
      * @since Sprint 8
      */
@@ -609,9 +606,9 @@ public class GameViewPresenter extends AbstractPresenter {
                 // entfernt die genutzen Geldkarten aus der Aktionszone (wichtig, wenn der User mehr als 1 Kauf hat)
                 Platform.runLater(() -> {
                     int money = 0;
-                    int playedCardLayoutContainerSize = myPCLC.getChildren().size() - 1;
+                    int GeneralLayoutContainerSize = myPCLC.getChildren().size() - 1;
                     ObservableList<Node> removeMoneyCardList = FXCollections.observableArrayList();
-                    for (int i = playedCardLayoutContainerSize; i >= 0; i--) {
+                    for (int i = GeneralLayoutContainerSize; i >= 0; i--) {
                         Node removeCards = myPCLC.getChildren().get(i);
                         if (removeCards.getId().equals("1") || removeCards.getId().equals("2") || removeCards.getId().equals("3")) {
                             money += Integer.parseInt(removeCards.getId());
@@ -860,7 +857,7 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Kümmert sich nur um die eigene Animation (von der Hand zum Discard Pile)
      *
-     * @param msg
+     * @param msg die Message
      */
     @Subscribe
     public void onStartClearPhaseMessageOwnHand(StartClearPhaseMessage msg) {
