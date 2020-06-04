@@ -59,6 +59,9 @@ public class ActionCardExecution {
     //Ob die Aktionskarte entsorgt werden soll
     private boolean removeCardAfter;
 
+    //Ob die Ausfühung einer Karte schon fertig ist
+    private boolean finishedExecution;
+
     public ActionCardExecution(short cardID, Playground playground) {
         this.waitedForPlayerInput = false;
         this.actualStateIndex = 0;
@@ -158,11 +161,11 @@ public class ActionCardExecution {
         while (actualStateIndex < theCard.getActions().size() && !waitedForPlayerInput && finishedNextActions) {
             startedNextActions = false;
             CardAction action = theCard.getActions().get(actualStateIndex);
-            getNextActions(action);
             if (action instanceof ComplexCardAction && ((ComplexCardAction) action).isExecutionOptional() && !executeOptionalAction) {
                 playground.getGameService().sendToSpecificPlayer(player, new OptionalActionRequest(gameID, player.getTheUserInThePlayer(), ((ComplexCardAction) action).getExecutionOptionalMessage()));
                 waitedForPlayerInput = true;
             } else {
+                getNextActions(action);
                 if (!(action instanceof ChooseNextAction) && !(action instanceof ChooseCard)) {
                     actualStateIndex++;
                 }
@@ -817,7 +820,10 @@ public class ActionCardExecution {
      */
     private boolean checkIfComplete() {
         if (actualStateIndex == theCard.getActions().size() && !waitedForPlayerInput && finishedNextActions) {
-            playground.getCompositePhase().finishedActionCardExecution(player, newHandCards, theCard);
+            if(!finishedExecution) {
+                finishedExecution = true;
+                playground.getCompositePhase().finishedActionCardExecution(player, newHandCards, theCard);
+            }
             return true;
         }
         return false;

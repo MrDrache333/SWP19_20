@@ -14,15 +14,15 @@ public class Game {
     /**
      * The Chat.
      */
-    private Chat chat;
+    private final Chat chat;
     /**
      * The Playground.
      */
-    private Playground playground;
+    private final Playground playground;
     /**
      * The Game id.
      */
-    private UUID gameID;
+    private final UUID gameID;
 
     /**
      * Erstellt ein neues Spiel

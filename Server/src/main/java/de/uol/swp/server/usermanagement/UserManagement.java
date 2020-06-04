@@ -30,7 +30,7 @@ public class UserManagement extends AbstractUserManagement {
      * @param username Der Benutzername des Users
      * @param password Das Passwort des Users
      * @return den Benutzer
-     * @throws SecurityException
+     * @throws SecurityException Eine SecurityException
      * @author Marco, Keno S
      * @since Basisprojekt
      */
@@ -110,8 +110,8 @@ public class UserManagement extends AbstractUserManagement {
     /**
      * Löscht einen Nutzer.
      *
-     * @param userToDrop der zu löschende Benutzer
-     * @throws UserManagementException wenn der Benutzer nicht bekannt ist.
+     * @param userToDrop Der zu löschende Benutzer
+     * @throws UserManagementException Wenn der Benutzer nicht bekannt ist.
      * @author Marco, Julia
      * @since Basisprojekt
      */
@@ -132,7 +132,7 @@ public class UserManagement extends AbstractUserManagement {
     /**
      * Meldet einen Benutzer ab.
      *
-     * @param user der User
+     * @param user Der User
      * @author Marco
      * @since Basisprojekt
      */
@@ -149,7 +149,7 @@ public class UserManagement extends AbstractUserManagement {
     /**
      * Gibt die Liste der User zurück.
      *
-     * @return User-Liste
+     * @return Userliste
      * @author Marco
      * @since Basisprojekt
      */

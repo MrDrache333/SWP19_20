@@ -17,6 +17,10 @@
             <VBox prefHeight="200.0" prefWidth="100.0">
                 <children>
                     <Label text="Online Lobbys">
+                        <Button fx:id="createLobbyButton" maxWidth="160.0" minWidth="160.0"
+                                mnemonicParsing="false" onAction="#onOpenCreateLobbyView"
+                                prefHeight="27.0" prefWidth="160.0" text="Lobby erstellen"
+                                textAlignment="CENTER"/>
                         <font>
                             <Font name="Trattatello" size="26.0" />
                         </font>

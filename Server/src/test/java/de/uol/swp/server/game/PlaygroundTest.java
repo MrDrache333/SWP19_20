@@ -47,7 +47,6 @@ public class PlaygroundTest {
     private static ArrayList<Short> chosenCards = new ArrayList<Short>();
 
 
-
     static UUID gameID;
     private Object event;
 
@@ -257,5 +256,4 @@ public class PlaygroundTest {
         size = playground.sendCardsDeckSize();
         assertEquals(5, size);
     }
-
 }

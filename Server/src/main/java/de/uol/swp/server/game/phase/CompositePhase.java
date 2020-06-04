@@ -66,7 +66,6 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         player.getPlayerDeck().getHand().remove(currentCard);
         executeAction.execute();
     }
-
     /**
      * Wenn eine Aktionskarte vollständig ausgeführt wurde, wird sie in die Aktionszone des Spielers oder den Müll gelegt.
      * Ggf. neue Handkarten, die letzte Karte auf dem Ablagestapel und Müll, Anzahl der Karten auf dem Nachziehstapel
@@ -90,7 +89,9 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
             playground.getGameService().sendToSpecificPlayer(player, new DrawHandMessage(newHandCards, playground.getID(), (short) playground.getPlayers().size(), false));
         }
         playground.sendCardsDeckSize();
-        player.setAvailableActions(player.getAvailableActions() - 1);
+        if(player.getAvailableActions() > 0) {
+            player.setAvailableActions(player.getAvailableActions() - 1);
+        }
         //Sende alle neuen Informationen bezüglich seiner möglichen Aktioen des Spielers an den Spieler zurück
         playground.getGameService().sendToSpecificPlayer(player,
                 new InfoPlayDisplayMessage(
