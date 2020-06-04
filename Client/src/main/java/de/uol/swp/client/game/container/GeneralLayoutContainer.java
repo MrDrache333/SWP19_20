@@ -5,7 +5,7 @@ import javafx.scene.Node;
 import javafx.scene.layout.Region;
 
 /**
- * Genereller Layout-Container für Karten als zusammenfassender Container für den DeckLayoutContainer, DiscardPileLayoutContainer und den HandcardsLayoutContainer
+ * Genereller Layout-Container für Karten als zusammenfassender Container für den DeckLayoutContainer, DiscardPileLayoutContainer, HandcardsLayoutContainer und den PlayedCardLayoutContainer
  *
  * @author Timo
  * @since Sprint 9
@@ -49,6 +49,8 @@ public class GeneralLayoutContainer extends Region {
                 this.setRotate(270);
             }
         }
+        // Dieser Code wird vorgehalten um nachträglich eine Ratation der gespielten Karten implementieren zu können. Integration via if(... || this.getId().equals("..."))
+        // Kommentar aus dem PlayedCardLayoutContainer: "1.PCLC" --> this.setRotate(180), "2.PCLC" --> this.setRotate(90), "3.PCLC" --> this.setRotate(270)
     }
 
     /**

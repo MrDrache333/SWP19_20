@@ -1,7 +1,6 @@
 package de.uol.swp.client.game;
 
 import de.uol.swp.client.game.container.GeneralLayoutContainer;
-import de.uol.swp.client.game.container.PlayedCardLayoutContainer;
 import javafx.animation.PathTransition;
 import javafx.scene.Parent;
 import javafx.scene.image.ImageView;
@@ -128,7 +127,7 @@ public class AnimationManagement {
      * @author Anna
      * @since Sprint 5
      */
-    public static Boolean playCard(ImageView card, int count, PlayedCardLayoutContainer action_zone) {
+    public static Boolean playCard(ImageView card, int count, GeneralLayoutContainer action_zone) {
         return createArcToPath(card, keepPosition(card), action_zone.getLayoutX(), action_zone.getLayoutY(), count, true);
     }
 

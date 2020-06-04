@@ -6,7 +6,6 @@ import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.container.GeneralLayoutContainer;
-import de.uol.swp.client.game.container.PlayedCardLayoutContainer;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.common.game.AbstractPlayground;
@@ -159,10 +158,10 @@ public class GameViewPresenter extends AbstractPresenter {
     private final GeneralLayoutContainer firstEnemyHand;
     private final GeneralLayoutContainer secondEnemyHand;
     private final GeneralLayoutContainer thirdEnemyHand;
-    private final PlayedCardLayoutContainer myPCLC;
-    private final PlayedCardLayoutContainer firstEnemyPCLC;
-    private final PlayedCardLayoutContainer secondEnemyPCLC;
-    private final PlayedCardLayoutContainer thirdEnemyPCLC;
+    private final GeneralLayoutContainer myPCLC;
+    private final GeneralLayoutContainer firstEnemyPCLC;
+    private final GeneralLayoutContainer secondEnemyPCLC;
+    private final GeneralLayoutContainer thirdEnemyPCLC;
     private final GeneralLayoutContainer myDPLC;
     private final GeneralLayoutContainer firstEnemyDPLC;
     private final GeneralLayoutContainer secondEnemyDPLC;
@@ -276,10 +275,10 @@ public class GameViewPresenter extends AbstractPresenter {
         secondEnemyHand = new GeneralLayoutContainer(300, 308, 105, 215, "2.HCLC");
         thirdEnemyHand = new GeneralLayoutContainer(1070, 308, 105, 215, "3.HCLC");
         // Die Aktion-Zonen für jeden Spieler
-        myPCLC = new PlayedCardLayoutContainer(960, 480, 100, 200, "My.PCLC");
-        firstEnemyPCLC = new PlayedCardLayoutContainer(700, 150, 120, 240, "1.PCLC");
-        secondEnemyPCLC = new PlayedCardLayoutContainer(360, 308, 120, 240, "2.PCLC");
-        thirdEnemyPCLC = new PlayedCardLayoutContainer(1012, 308, 120, 240, "3.PCLC");
+        myPCLC = new GeneralLayoutContainer(960, 480, 100, 200, "My.PCLC");
+        firstEnemyPCLC = new GeneralLayoutContainer(700, 150, 120, 240, "1.PCLC");
+        secondEnemyPCLC = new GeneralLayoutContainer(360, 308, 120, 240, "2.PCLC");
+        thirdEnemyPCLC = new GeneralLayoutContainer(1012, 308, 120, 240, "3.PCLC");
         // Die Abwurf-Zonen für jeden Spieler
         myDPLC = new GeneralLayoutContainer(1050, 630, 110, 60, "My.DPLC");
         firstEnemyDPLC = new GeneralLayoutContainer(640, 0, 110, 60, "1.DPLC");
@@ -609,9 +608,9 @@ public class GameViewPresenter extends AbstractPresenter {
                 // entfernt die genutzen Geldkarten aus der Aktionszone (wichtig, wenn der User mehr als 1 Kauf hat)
                 Platform.runLater(() -> {
                     int money = 0;
-                    int playedCardLayoutContainerSize = myPCLC.getChildren().size() - 1;
+                    int GeneralLayoutContainerSize = myPCLC.getChildren().size() - 1;
                     ObservableList<Node> removeMoneyCardList = FXCollections.observableArrayList();
-                    for (int i = playedCardLayoutContainerSize; i >= 0; i--) {
+                    for (int i = GeneralLayoutContainerSize; i >= 0; i--) {
                         Node removeCards = myPCLC.getChildren().get(i);
                         if (removeCards.getId().equals("1") || removeCards.getId().equals("2") || removeCards.getId().equals("3")) {
                             money += Integer.parseInt(removeCards.getId());
