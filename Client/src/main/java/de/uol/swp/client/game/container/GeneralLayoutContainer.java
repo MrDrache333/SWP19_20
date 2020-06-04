@@ -5,7 +5,7 @@ import javafx.scene.Node;
 import javafx.scene.layout.Region;
 
 /**
- * Genereller Layout-Container für Karten
+ * Genereller Layout-Container für Karten als zusammenfassender Container für den DeckLayoutContainer, DiscardPileLayoutContainer und den HandcardsLayoutContainer
  *
  * @author Timo
  * @since Sprint 9
