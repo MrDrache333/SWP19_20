@@ -2,7 +2,7 @@ package de.uol.swp.client.game.container;
 
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.Region;
 
 /**
  * Genereller Layout-Container für Karten
@@ -10,7 +10,7 @@ import javafx.scene.layout.StackPane;
  * @author Timo
  * @since Sprint 9
  */
-public class GeneralLayoutContainer extends StackPane {
+public class GeneralLayoutContainer extends Region {
 
     /**
      * Instanziiert einen neuen GeneralLayoutContainer

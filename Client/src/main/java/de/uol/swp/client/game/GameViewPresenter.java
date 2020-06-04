@@ -6,7 +6,6 @@ import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.container.GeneralLayoutContainer;
-import de.uol.swp.client.game.container.HandcardsLayoutContainer;
 import de.uol.swp.client.game.container.PlayedCardLayoutContainer;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
@@ -156,10 +155,10 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     private Button selectButton;
 
-    private final HandcardsLayoutContainer handcards;
-    private final HandcardsLayoutContainer firstEnemyHand;
-    private final HandcardsLayoutContainer secondEnemyHand;
-    private final HandcardsLayoutContainer thirdEnemyHand;
+    private final GeneralLayoutContainer handcards;
+    private final GeneralLayoutContainer firstEnemyHand;
+    private final GeneralLayoutContainer secondEnemyHand;
+    private final GeneralLayoutContainer thirdEnemyHand;
     private final PlayedCardLayoutContainer myPCLC;
     private final PlayedCardLayoutContainer firstEnemyPCLC;
     private final PlayedCardLayoutContainer secondEnemyPCLC;
@@ -272,10 +271,10 @@ public class GameViewPresenter extends AbstractPresenter {
         this.gameService = gameService;
         makeImageDarker.setBrightness(-0.7);
         // Die Hände für jeden Spieler
-        handcards = new HandcardsLayoutContainer(575, 630, 110, 420, "My.HCLC");
-        firstEnemyHand = new HandcardsLayoutContainer(700, 110, 110, 215, "1.HCLC");
-        secondEnemyHand = new HandcardsLayoutContainer(300, 308, 105, 215, "2.HCLC");
-        thirdEnemyHand = new HandcardsLayoutContainer(1070, 308, 105, 215, "3.HCLC");
+        handcards = new GeneralLayoutContainer(575, 630, 110, 420, "My.HCLC");
+        firstEnemyHand = new GeneralLayoutContainer(700, 110, 110, 215, "1.HCLC");
+        secondEnemyHand = new GeneralLayoutContainer(300, 308, 105, 215, "2.HCLC");
+        thirdEnemyHand = new GeneralLayoutContainer(1070, 308, 105, 215, "3.HCLC");
         // Die Aktion-Zonen für jeden Spieler
         myPCLC = new PlayedCardLayoutContainer(960, 480, 100, 200, "My.PCLC");
         firstEnemyPCLC = new PlayedCardLayoutContainer(700, 150, 120, 240, "1.PCLC");

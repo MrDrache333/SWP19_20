@@ -1,6 +1,6 @@
 package de.uol.swp.client.game;
 
-import de.uol.swp.client.game.container.HandcardsLayoutContainer;
+import de.uol.swp.client.game.container.GeneralLayoutContainer;
 import de.uol.swp.client.game.container.PlayedCardLayoutContainer;
 import javafx.application.Application;
 import javafx.geometry.Pos;
@@ -138,7 +138,7 @@ public class AnimationTest extends Application {
         primaryStage.setScene(new Scene(bg, 1280, 750));
         primaryStage.show();
 
-        HandcardsLayoutContainer handcards = new HandcardsLayoutContainer();
+        GeneralLayoutContainer handcards = new GeneralLayoutContainer();
         handcards.setLayoutX(284);
         handcards.setLayoutY(598);
         handcards.setPrefHeight(130);
