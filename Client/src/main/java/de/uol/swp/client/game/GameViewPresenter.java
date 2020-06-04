@@ -5,8 +5,7 @@ import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
-import de.uol.swp.client.game.container.DeckLayoutContainer;
-import de.uol.swp.client.game.container.DiscardPileLayoutContainer;
+import de.uol.swp.client.game.container.GeneralLayoutContainer;
 import de.uol.swp.client.game.container.HandcardsLayoutContainer;
 import de.uol.swp.client.game.container.PlayedCardLayoutContainer;
 import de.uol.swp.client.lobby.LobbyService;
@@ -14,8 +13,6 @@ import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.common.game.AbstractPlayground;
 import de.uol.swp.common.game.card.parser.components.CardAction.request.ChooseCardRequest;
 import de.uol.swp.common.game.card.parser.components.CardAction.request.OptionalActionRequest;
-import de.uol.swp.common.game.AbstractPlayground;
-import de.uol.swp.common.game.card.parser.components.CardAction.request.ChooseCardRequest;
 import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.game.request.BuyCardRequest;
@@ -167,14 +164,14 @@ public class GameViewPresenter extends AbstractPresenter {
     private final PlayedCardLayoutContainer firstEnemyPCLC;
     private final PlayedCardLayoutContainer secondEnemyPCLC;
     private final PlayedCardLayoutContainer thirdEnemyPCLC;
-    private final DiscardPileLayoutContainer myDPLC;
-    private final DiscardPileLayoutContainer firstEnemyDPLC;
-    private final DiscardPileLayoutContainer secondEnemyDPLC;
-    private final DiscardPileLayoutContainer thirdEnemyDPLC;
-    private final DeckLayoutContainer myDLC;
-    private final DeckLayoutContainer firstEnemyDLC;
-    private final DeckLayoutContainer secondEnemyDLC;
-    private final DeckLayoutContainer thirdEnemyDLC;
+    private final GeneralLayoutContainer myDPLC;
+    private final GeneralLayoutContainer firstEnemyDPLC;
+    private final GeneralLayoutContainer secondEnemyDPLC;
+    private final GeneralLayoutContainer thirdEnemyDPLC;
+    private final GeneralLayoutContainer myDLC;
+    private final GeneralLayoutContainer firstEnemyDLC;
+    private final GeneralLayoutContainer secondEnemyDLC;
+    private final GeneralLayoutContainer thirdEnemyDLC;
 
     private ObservableList<String> users;
     private final GameService gameService;
@@ -285,16 +282,16 @@ public class GameViewPresenter extends AbstractPresenter {
         secondEnemyPCLC = new PlayedCardLayoutContainer(360, 308, 120, 240, "2.PCLC");
         thirdEnemyPCLC = new PlayedCardLayoutContainer(1012, 308, 120, 240, "3.PCLC");
         // Die Abwurf-Zonen für jeden Spieler
-        myDPLC = new DiscardPileLayoutContainer(1050, 630, 110, 60, "My.DPLC");
-        firstEnemyDPLC = new DiscardPileLayoutContainer(640, 0, 110, 60, "1.DPLC");
-        secondEnemyDPLC = new DiscardPileLayoutContainer(328, 447, 104, 60, "2.DPLC");
-        thirdEnemyDPLC = new DiscardPileLayoutContainer(1198, 169, 106, 60, "3.DPLC");
+        myDPLC = new GeneralLayoutContainer(1050, 630, 110, 60, "My.DPLC");
+        firstEnemyDPLC = new GeneralLayoutContainer(640, 0, 110, 60, "1.DPLC");
+        secondEnemyDPLC = new GeneralLayoutContainer(328, 447, 104, 60, "2.DPLC");
+        thirdEnemyDPLC = new GeneralLayoutContainer(1198, 169, 106, 60, "3.DPLC");
         // Die Decks für jeden Spieler
-        //myDLC = new DeckLayoutContainer(513,630,110,60,"My.DLC");
-        myDLC = new DeckLayoutContainer(0, 630, 110, 60, "My.DLC");
-        firstEnemyDLC = new DeckLayoutContainer(915, 0, 110, 60, "1.DLC");
-        secondEnemyDLC = new DeckLayoutContainer(328, 169, 104, 60, "2.DLC");
-        thirdEnemyDLC = new DeckLayoutContainer(1198, 446, 106, 60, "3.DLC");
+        //myDLC = new GeneralLayoutContainer(513,630,110,60,"My.DLC");
+        myDLC = new GeneralLayoutContainer(0, 630, 110, 60, "My.DLC");
+        firstEnemyDLC = new GeneralLayoutContainer(915, 0, 110, 60, "1.DLC");
+        secondEnemyDLC = new GeneralLayoutContainer(328, 169, 104, 60, "2.DLC");
+        thirdEnemyDLC = new GeneralLayoutContainer(1198, 446, 106, 60, "3.DLC");
     }
 
     /**
@@ -432,7 +429,7 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Ereignis wenn der Spieler den "Nein"-Button drückt. Es wird true an den Server zurückgegeben
      *
-     * @param actionEvent
+     * @param actionEvent das ActionEvent
      * @author Darian
      * @since Sprint 8
      */
@@ -444,7 +441,7 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Ereignis wenn der Spieler den "Nein"-Button drückt. Es wird false an den Server zurückgegeben
      *
-     * @param actionEvent
+     * @param actionEvent das ActionEvent
      * @author Darian
      * @since Sprint 8
      */
@@ -869,7 +866,7 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Kümmert sich nur um die eigene Animation (von der Hand zum Discard Pile)
      *
-     * @param msg
+     * @param msg die Message
      */
     @Subscribe
     public void onStartClearPhaseMessageOwnHand(StartClearPhaseMessage msg) {

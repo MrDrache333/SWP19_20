@@ -5,47 +5,47 @@ import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
 
 /**
- * Layoutcontainer für die Karten, die verworfen wurden.
+ * Genereller Layout-Container für Karten
  *
- * @author Devin
- * @since Sprint 7
+ * @author Timo
+ * @since Sprint 9
  */
-
-public class DiscardPileLayoutContainer extends StackPane {
+public class GeneralLayoutContainer extends StackPane {
 
     /**
-     * Instanziiert einen neuen PlayedCardLayoutContainer.
+     * Instanziiert einen neuen GeneralLayoutContainer
      *
-     * @author Devin
-     * @since Sprint 7
+     * @author Timo
+     * @since Sprint 9
      */
-    public DiscardPileLayoutContainer() {
+    public GeneralLayoutContainer() {
+
     }
 
-
     /**
-     * Instanziiert einen neuen PlayedCardLayoutContainer.
+     * Überladener Konstruktur
+     * Instanziiert einen neuen GeneralLayoutContainer
      *
-     * @param layoutX x-Koordinate des Containers
-     * @param layoutY y-Koordinate des Containers
+     * @param id      ID des Containers
      * @param height  Höhe des Containers
      * @param width   Breite des Containers
-     * @param id      ID des Containers
-     * @author Devin
-     * @since Sprint 7
+     * @param layoutX X-Koordinate des Containers
+     * @param layoutY Y-Koordinate des Containers
+     * @author Timo
+     * @since Sprint 9
      */
-    public DiscardPileLayoutContainer(double layoutX, double layoutY, double height, double width, String id) {
+    public GeneralLayoutContainer(double layoutX, double layoutY, double height, double width, String id) {
         this.setLayoutX(layoutX);
         this.setLayoutY(layoutY);
         this.setPrefHeight(height);
         this.setPrefWidth(width);
         this.setId(id);
-        if (this.getId().equals("1.DPLC")) {
+        if (this.getId().equals("1.DPLC") || this.getId().equals("1.DLC") || this.getId().equals("1.HCLC")) {
             this.setRotate(180);
         } else {
-            if (this.getId().equals("2.DPLC")) {
+            if (this.getId().equals("2.DPLC") || this.getId().equals("2.DLC") || this.getId().equals("2.HCLC")) {
                 this.setRotate(90);
-            } else if (this.getId().equals("3.DPLC")) {
+            } else if (this.getId().equals("3.DPLC") || this.getId().equals("3.DLC") || this.getId().equals("3.HCLC")) {
                 this.setRotate(270);
             }
         }
@@ -56,8 +56,8 @@ public class DiscardPileLayoutContainer extends StackPane {
      * Wenn die Pane breit genug ordnen sie sich, von der Mitte ausgehend, direkt nebeneinander an.
      * Ansonsten überlappen sie sich, aber immer nur so viel wie nötig.
      *
-     * @author Devin
-     * @since Sprint 6
+     * @author Anna, Devin, Timo
+     * @since Sprint 9
      */
     @Override
     protected void layoutChildren() {
@@ -89,12 +89,11 @@ public class DiscardPileLayoutContainer extends StackPane {
      * Getter für fie Liste der Kinderknoten
      *
      * @return Kinder
-     * @author Devin
-     * @since Sprint 6
+     * @author Anna, Devin, Timo
+     * @since Sprint 9
      */
     @Override
     public ObservableList<Node> getChildren() {
         return super.getChildren();
     }
-
 }
