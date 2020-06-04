@@ -234,8 +234,8 @@ public class GameViewPresenter extends AbstractPresenter {
             }
             gameService.chooseCardResponse( lobbyID, loggedInUser, choosenCardsId, directHand);
             handcards.getChildren().forEach((n) -> {
-                    n.removeEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
-                    n.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+                n.removeEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
+                n.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                 n.setEffect(null);
             });
             Platform.runLater(() -> {
@@ -849,15 +849,12 @@ public class GameViewPresenter extends AbstractPresenter {
                         }
                     }
                 }
-
                 return null;
             }
         };
-
         Thread th = new Thread(task);
         th.setDaemon(true);
         th.start();
-
     }
 
     /**
@@ -1081,6 +1078,15 @@ public class GameViewPresenter extends AbstractPresenter {
         }
     }
 
+    /**
+     * Die Karten werden von einem Ort zum Anderen bewegt.
+     * Beim Ablagetsapel und der Hand können die Karten direkt aus dem Container geholt und bewegt werden, bei den
+     * anderen Zonen müssen die Karten erst erstellt werden.
+     *
+     * @param msg die MoveCardMessage
+     * @author Anna
+     * @since Sprint 9
+     */
     @Subscribe
     public void onMoveCardMessage(MoveCardMessage msg) {
         if (msg.getGameID().equals(lobbyID) && msg.getPlayer().equals(loggedInUser)) {
@@ -1089,24 +1095,26 @@ public class GameViewPresenter extends AbstractPresenter {
             switch (source) {
                 case HAND:
                 case DISCARD:
-                    synchronized (msg.getMove().getCardsToMove()) {
-                        for (de.uol.swp.common.game.card.Card c : msg.getMove().getCardsToMove()) {
-                            Platform.runLater(() -> {
-                                playAnimation(destination, getImageViewFromRegion(getRegionFromZoneType(source, c.getId()), c.getId()), source);
-                            });
+                    ArrayList<ImageView> cardsToMove = new ArrayList<>();
+                    for (de.uol.swp.common.game.card.Card c : msg.getMove().getCardsToMove()) {
+                        int i = 0;
+                        ImageView iv = getImageViewFromRegion(getRegionFromZoneType(source, c.getId()), c.getId(), i);
+                        while (cardsToMove.contains(iv)) {
+                            i++;
+                            iv = getImageViewFromRegion(getRegionFromZoneType(source, c.getId()), c.getId(), i);
                         }
+                        cardsToMove.add(iv);
+                    }
+                    for (ImageView card : cardsToMove) {
+                        Platform.runLater(() -> {
+                            playAnimation(destination, card, source);
+                        });
                     }
                     break;
                 case BUY:
                     for (de.uol.swp.common.game.card.Card c : msg.getMove().getCardsToMove()) {
                         ImageView card = getImageViewFromRegion(getRegionFromZoneType(source, c.getId()), c.getId());
-                        ImageView card2 = new ImageView(new Image("cards/images/" + c.getId() + ".png"));
-                        card2.setPreserveRatio(true);
-                        card2.setFitHeight(107);
-                        card2.setFitWidth(card2.getBoundsInLocal().getWidth());
-                        card2.setLayoutX(card.getLayoutX());
-                        card2.setLayoutY(card.getLayoutY());
-                        card2.setId(card.getId());
+                        ImageView card2 = new Card(card.getId(), card.getLayoutX(), card.getLayoutY(), 107);
                         Platform.runLater(() -> {
                             gameViewWIP.getChildren().add(card2);
                             playAnimation(destination, card2, source);
@@ -1115,12 +1123,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     break;
                 case DRAW:
                     for (de.uol.swp.common.game.card.Card c : msg.getMove().getCardsToMove()) {
-                        ImageView card2 = new ImageView(new Image("cards/images/" + c.getId() + ".png"));
-                        card2.setPreserveRatio(true);
-                        card2.setFitHeight(107);
-                        card2.setFitWidth(card2.getBoundsInLocal().getWidth());
-                        card2.setId(String.valueOf(c.getId()));
-                        card2.setLayoutY(300);
+                        ImageView card2 = new Card(String.valueOf(c.getId()));
                         Platform.runLater(() -> {
                             myDLC.getChildren().add(card2);
                             playAnimation(destination, card2, source);
@@ -1129,12 +1132,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     break;
                 case TRASH:
                     for (de.uol.swp.common.game.card.Card c : msg.getMove().getCardsToMove()) {
-                        ImageView card2 = new ImageView(new Image("cards/images/" + c.getId() + ".png"));
-                        card2.setPreserveRatio(true);
-                        card2.setFitHeight(107);
-                        card2.setFitWidth(card2.getBoundsInLocal().getWidth());
-                        card2.setId(String.valueOf(c.getId()));
-                        card2.setLayoutY(300);
+                        ImageView card2 = new Card(String.valueOf(c.getId()), 300, 0, 107);
                         Platform.runLater(() -> {
                             gameViewWIP.getChildren().add(card2);
                             playAnimation(destination, card2, source);
@@ -1525,6 +1523,14 @@ public class GameViewPresenter extends AbstractPresenter {
         }
     }
 
+    /**
+     * Die Region, die zu der übergebenen Zone gehört, wird zurückgegeben.
+     *
+     * @param zoneType die Zone
+     * @param cardID   id der Karte in der Region
+     * @author Anna
+     * @since Sprint 9
+     */
     public Region getRegionFromZoneType(AbstractPlayground.ZoneType zoneType, short cardID) {
         switch (zoneType) {
             case TRASH:
@@ -1545,6 +1551,14 @@ public class GameViewPresenter extends AbstractPresenter {
         return null;
     }
 
+    /**
+     * Die zur Zielzone passende Animation wird ausgeführt und die Karte wird auch zur neuen Zone hinzugefügt und aus
+     * der alten Zone entfernt
+     *
+     * @param destination die Zielzone
+     * @param card        die zu bewegende Karte
+     * @param source      die ursprüngliche Zone
+     */
     public void playAnimation(AbstractPlayground.ZoneType destination, ImageView card, AbstractPlayground.ZoneType source) {
         switch (destination) {
             case TRASH:
@@ -1578,18 +1592,39 @@ public class GameViewPresenter extends AbstractPresenter {
         }
     }
 
+    /**
+     * Die erste Karte mit passender ID und aus der übergebenen Region wird zurückgegeben.
+     *
+     * @param region die Region, in der die Karte sich befindet
+     * @param id     die ID der Karte
+     * @author Anna
+     * @since Sprint 9
+     */
     public ImageView getImageViewFromRegion(Region region, short id) {
         return (ImageView) region.getChildrenUnmodifiable().stream().filter(c -> Short.parseShort(c.getId()) == id).findFirst().get();
     }
 
     /**
+     * Die erste Karte mit passender ID und Index und aus der übergebenen Region wird zurückgegeben.
+     *
+     * @param region die Region, in der die Karte sich befindet
+     * @param id     die ID der Karte
+     * @param i      der Index
+     * @author Anna
+     * @since Sprint 9
+     */
+    public ImageView getImageViewFromRegion(Region region, short id, int i) {
+        return (ImageView) region.getChildrenUnmodifiable().stream().filter(c -> Short.parseShort(c.getId()) == id).toArray()[i];
+    }
+
+    /**
      * Die Antwort auf die OptionalActionRequest wird zum Server gesendet und die Buttons verschwinden wieder.
      *
-     * @param answer  Die Entscheidung des Spielers
+     * @param answer Die Entscheidung des Spielers
      * @author Darian
      * @since Sprint 8
      */
-    private void optionalAction(boolean answer){
+    private void optionalAction(boolean answer) {
         gameManagement.getGameService().optionalAction(loggedInUser, lobbyID, answer);
         Platform.runLater(() -> {
             yesButton.setVisible(false);
