@@ -12,11 +12,8 @@ import de.uol.swp.client.game.container.PlayedCardLayoutContainer;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.common.game.AbstractPlayground;
-import de.uol.swp.common.game.AbstractPlayground;
 import de.uol.swp.common.game.card.parser.components.CardAction.request.ChooseCardRequest;
 import de.uol.swp.common.game.card.parser.components.CardAction.request.OptionalActionRequest;
-import de.uol.swp.common.game.AbstractPlayground;
-import de.uol.swp.common.game.card.parser.components.CardAction.request.ChooseCardRequest;
 import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.game.request.BuyCardRequest;
@@ -195,7 +192,6 @@ public class GameViewPresenter extends AbstractPresenter {
     private int numberOfCardsToChoose;
     private String currentInfoText;
 
-
     /**
      * Das Event das den Handkarten gegeben wird, wenn sie ausspielbar sein sollen.
      * @author Devin
@@ -232,17 +228,15 @@ public class GameViewPresenter extends AbstractPresenter {
         @Override
         public void handle(Event event) {
             selectButton.setVisible(false);
-            selectButton.setDisable(true);
             playAllMoneyCardsButton.setVisible(true);
             for (ImageView card : choosenCards) {
                 choosenCardsId.add(Short.parseShort(card.getId()));
-                handcards.getChildren().remove(card);
-
             }
             gameService.chooseCardResponse( lobbyID, loggedInUser, choosenCardsId, directHand);
             handcards.getChildren().forEach((n) -> {
                     n.removeEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
                     n.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+                n.setEffect(null);
             });
             Platform.runLater(() -> {
                 skipPhaseButton.setDisable(false);
@@ -755,7 +749,6 @@ public class GameViewPresenter extends AbstractPresenter {
                 for ( Node n : handcards.getChildren()) {
                     n.setEffect(null); }
                 selectButton.setVisible(true);
-                selectButton.setDisable(false);
                 playAllMoneyCardsButton.setVisible(false);
                 Platform.runLater(() -> {
                     handcards.getChildren().forEach((n) -> {
@@ -767,14 +760,13 @@ public class GameViewPresenter extends AbstractPresenter {
                 });
                 Platform.runLater(() -> {
                     if (numberOfCardsToChoose != 255) {
-                        infoActualPhase.setText(numberOfCardsToChoose + " ablegen");
+                        infoActualPhase.setText(numberOfCardsToChoose + " Karte(n) entsorgen");
                     } else {
-                        infoActualPhase.setText("Legen beliebig viele Karten ab ");
+                        infoActualPhase.setText("Lege beliebig viele Karten ab ");
                     }
                 });
             }
             if (req.getSource().equals(AbstractPlayground.ZoneType.BUY)) {
-                directHand = req.getDirectHand();
                 for (int i = 0; i < 10; i++) {
                     ImageView iv = (ImageView) shopTeppich.getChildren().get(i);
                     if (!req.getCards().contains(Short.valueOf(iv.getId()))) {
@@ -1094,57 +1086,60 @@ public class GameViewPresenter extends AbstractPresenter {
         if (msg.getGameID().equals(lobbyID) && msg.getPlayer().equals(loggedInUser)) {
             AbstractPlayground.ZoneType source = msg.getMove().getCardSource();
             AbstractPlayground.ZoneType destination = msg.getMove().getCardDestination();
-            ArrayList<ImageView> cardsToMove = new ArrayList<>();
-            if (source != AbstractPlayground.ZoneType.DRAW) {
-                for (de.uol.swp.common.game.card.Card c : msg.getMove().getCardsToMove()) {
-                    cardsToMove.add(getImageViewFromRegion(getRegionFromZoneType(source, c.getId()), c.getId()));
-                }
-            } else {
-                for (de.uol.swp.common.game.card.Card c : msg.getMove().getCardsToMove()) {
-                    ImageView card2 = new ImageView(new Image("/cards/images/" + c.getId() + ".png"));
-                    card2.setPreserveRatio(true);
-                    card2.setFitHeight(107);
-                    cardsToMove.add(card2);
-                }
-            }
-            for (ImageView card : cardsToMove) {
-                short cardID = Short.parseShort(card.getId());
-                switch (source) {
-                    case TRASH:
-                        //TODO: create Trash-Zone
-                        break;
-                    case HAND:
-                        Platform.runLater(() -> {
-                            playAnimation(destination, card);
-                            handcards.getChildren().remove(card);
-                        });
-                        break;
-                    case BUY:
-                        ImageView card2 = new ImageView(new Image("/cards/images/" + cardID + ".png"));
+            switch (source) {
+                case HAND:
+                case DISCARD:
+                    synchronized (msg.getMove().getCardsToMove()) {
+                        for (de.uol.swp.common.game.card.Card c : msg.getMove().getCardsToMove()) {
+                            Platform.runLater(() -> {
+                                playAnimation(destination, getImageViewFromRegion(getRegionFromZoneType(source, c.getId()), c.getId()), source);
+                            });
+                        }
+                    }
+                    break;
+                case BUY:
+                    for (de.uol.swp.common.game.card.Card c : msg.getMove().getCardsToMove()) {
+                        ImageView card = getImageViewFromRegion(getRegionFromZoneType(source, c.getId()), c.getId());
+                        ImageView card2 = new ImageView(new Image("cards/images/" + c.getId() + ".png"));
                         card2.setPreserveRatio(true);
                         card2.setFitHeight(107);
+                        card2.setFitWidth(card2.getBoundsInLocal().getWidth());
                         card2.setLayoutX(card.getLayoutX());
                         card2.setLayoutY(card.getLayoutY());
+                        card2.setId(card.getId());
                         Platform.runLater(() -> {
-                            ((Pane) getRegionFromZoneType(source, cardID)).getChildren().add(card2);
-                            playAnimation(destination, card2);
-                            ((Pane) getRegionFromZoneType(AbstractPlayground.ZoneType.BUY, cardID)).getChildren().remove(card2);
+                            gameViewWIP.getChildren().add(card2);
+                            playAnimation(destination, card2, source);
                         });
-                        break;
-                    case DRAW:
+                    }
+                    break;
+                case DRAW:
+                    for (de.uol.swp.common.game.card.Card c : msg.getMove().getCardsToMove()) {
+                        ImageView card2 = new ImageView(new Image("cards/images/" + c.getId() + ".png"));
+                        card2.setPreserveRatio(true);
+                        card2.setFitHeight(107);
+                        card2.setFitWidth(card2.getBoundsInLocal().getWidth());
+                        card2.setId(String.valueOf(c.getId()));
+                        card2.setLayoutY(300);
                         Platform.runLater(() -> {
-                            myDLC.getChildren().add(card);
-                            playAnimation(destination, card);
-                            myDLC.getChildren().remove(card);
+                            myDLC.getChildren().add(card2);
+                            playAnimation(destination, card2, source);
                         });
-                        break;
-                    case DISCARD:
+                    }
+                    break;
+                case TRASH:
+                    for (de.uol.swp.common.game.card.Card c : msg.getMove().getCardsToMove()) {
+                        ImageView card2 = new ImageView(new Image("cards/images/" + c.getId() + ".png"));
+                        card2.setPreserveRatio(true);
+                        card2.setFitHeight(107);
+                        card2.setFitWidth(card2.getBoundsInLocal().getWidth());
+                        card2.setId(String.valueOf(c.getId()));
+                        card2.setLayoutY(300);
                         Platform.runLater(() -> {
-                            playAnimation(destination, card);
-                            myDPLC.getChildren().remove(card);
+                            gameViewWIP.getChildren().add(card2);
+                            playAnimation(destination, card2, source);
                         });
-                        break;
-                }
+                    }
             }
         }
     }
@@ -1318,16 +1313,16 @@ public class GameViewPresenter extends AbstractPresenter {
             }
         }
         if(numberOfCardsToChoose == 0) {
-
             for (ImageView card2 : choosenCards) {
-                choosenCardsId.add(Short.parseShort(card2.getId())); }
+                choosenCardsId.add(Short.parseShort(card2.getId()));
+            }
             handcards.getChildren().forEach((n) -> {
-                    n.removeEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
-                    n.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+                n.removeEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
+                n.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+                n.setEffect(null);
             });
-            gameService.chooseCardResponse( gameID, loggedInUser, choosenCardsId, directHand);
+            gameService.chooseCardResponse(gameID, loggedInUser, choosenCardsId, directHand);
             selectButton.setVisible(false);
-            selectButton.setDisable(true);
             playAllMoneyCardsButton.setVisible(true);
             skipPhaseButton.setDisable(false);
             Platform.runLater(() -> {
@@ -1533,7 +1528,6 @@ public class GameViewPresenter extends AbstractPresenter {
     public Region getRegionFromZoneType(AbstractPlayground.ZoneType zoneType, short cardID) {
         switch (zoneType) {
             case TRASH:
-                //TODO: create Trash-Zone
                 break;
             case HAND:
                 return handcards;
@@ -1551,11 +1545,11 @@ public class GameViewPresenter extends AbstractPresenter {
         return null;
     }
 
-    public void playAnimation(AbstractPlayground.ZoneType zoneType, ImageView card) {
-        switch (zoneType) {
+    public void playAnimation(AbstractPlayground.ZoneType destination, ImageView card, AbstractPlayground.ZoneType source) {
+        switch (destination) {
             case TRASH:
-                //TODO: create Trash-Zone
-                break;
+                AnimationManagement.deleteCard(card);
+                return;
             case HAND:
                 AnimationManagement.addToHand(card, handcards.getChildren().size());
                 handcards.getChildren().add(card);
@@ -1564,8 +1558,24 @@ public class GameViewPresenter extends AbstractPresenter {
                 AnimationManagement.buyCard(card);
                 myDPLC.getChildren().add(card);
                 break;
+            default:
+                LOG.debug("Die Bewegung zur Zone " + destination + " wurde noch nicht implementiert");
         }
-        LOG.debug("Die Bewegung zur Zone " + zoneType + " wurde noch nicht implementiert");
+        switch (source) {
+            case TRASH:
+            case BUY:
+                gameViewWIP.getChildren().remove(card);
+                break;
+            case DRAW:
+                myDLC.getChildren().remove(card);
+                break;
+            case DISCARD:
+                myDPLC.getChildren().remove(card);
+                break;
+            case HAND:
+                handcards.getChildren().remove(card);
+                break;
+        }
     }
 
     public ImageView getImageViewFromRegion(Region region, short id) {
