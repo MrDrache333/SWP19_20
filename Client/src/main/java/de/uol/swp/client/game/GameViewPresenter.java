@@ -194,7 +194,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * @author Devin
      * @since Sprint 5
      */
-    private final EventHandler<MouseEvent> handCardEventHandler = new EventHandler() {
+    private final EventHandler handCardEventHandler = new EventHandler() {
         @Override
         public void handle(Event event) {
             ImageView card = (ImageView) event.getSource();
@@ -207,7 +207,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * @author Devin
      * @since Sprint 8
      */
-    private final EventHandler<MouseEvent> discardCardEventHandler = new EventHandler() {
+    private final EventHandler discardCardEventHandler = new EventHandler() {
         @Override
         public void handle(Event event) {
             ImageView card = (ImageView) event.getSource();
@@ -221,7 +221,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * @since Sprint 8
      */
     @FXML
-    private final EventHandler<ActionEvent> sendChoosenCardResponse = new EventHandler() {
+    private final EventHandler sendChoosenCardResponse = new EventHandler() {
         @Override
         public void handle(Event event) {
             selectButton.setVisible(false);
