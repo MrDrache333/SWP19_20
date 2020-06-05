@@ -340,9 +340,7 @@ public class LobbyService extends AbstractService {
     private void allPlayersReady(Lobby lobby) {
         if (lobby.getPlayers() == 1) return;
         //Prüfen, ob jeder Spieler in der Lobby fertig ist
-        for (User user : lobby.getUsers()) {
-            if (!lobby.getReadyStatus(user)) return;
-        }
+        if (lobby.getUsers().stream().anyMatch(user -> !lobby.getReadyStatus(user))) return;
         //Lobby starten
         LOG.debug("Spiel in Lobby: " + lobby.getName() + " startet.");
         lobby.setInGame(true);
