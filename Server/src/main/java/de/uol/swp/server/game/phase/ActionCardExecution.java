@@ -701,6 +701,7 @@ public class ActionCardExecution {
                     }
                 }
                 toRemove.forEach(c -> player.getPlayerDeck().getCardsDeck().remove(c));
+                action.setCardsToMove((ArrayList) toRemove);
                 break;
             case BUY:
                 Map<Short, Integer> newCount = new HashMap<>();

@@ -275,8 +275,8 @@ public class GameViewPresenter extends AbstractPresenter {
         // Die Aktion-Zonen für jeden Spieler
         myPCLC = new GeneralLayoutContainer(960, 480, 100, 200, "My.PCLC");
         firstEnemyPCLC = new GeneralLayoutContainer(700, 150, 120, 240, "1.PCLC");
-        secondEnemyPCLC = new GeneralLayoutContainer(360, 308, 120, 240, "2.PCLC");
-        thirdEnemyPCLC = new GeneralLayoutContainer(1012, 308, 120, 240, "3.PCLC");
+        secondEnemyPCLC = new GeneralLayoutContainer(360, 308, 120, 160, "2.PCLC");
+        thirdEnemyPCLC = new GeneralLayoutContainer(1062, 308, 120, 160, "3.PCLC");
         // Die Abwurf-Zonen für jeden Spieler
         myDPLC = new GeneralLayoutContainer(1050, 630, 110, 60, "My.DPLC");
         firstEnemyDPLC = new GeneralLayoutContainer(640, 0, 110, 60, "1.DPLC");
@@ -284,7 +284,7 @@ public class GameViewPresenter extends AbstractPresenter {
         thirdEnemyDPLC = new GeneralLayoutContainer(1198, 169, 106, 60, "3.DPLC");
         // Die Decks für jeden Spieler
         //myDLC = new GeneralLayoutContainer(513,630,110,60,"My.DLC");
-        myDLC = new GeneralLayoutContainer(0, 630, 110, 60, "My.DLC");
+        myDLC = new GeneralLayoutContainer(350, 630, 110, 60, "My.DLC");
         firstEnemyDLC = new GeneralLayoutContainer(915, 0, 110, 60, "1.DLC");
         secondEnemyDLC = new GeneralLayoutContainer(328, 169, 104, 60, "2.DLC");
         thirdEnemyDLC = new GeneralLayoutContainer(1198, 446, 106, 60, "3.DLC");
@@ -660,20 +660,14 @@ public class GameViewPresenter extends AbstractPresenter {
                         if (!msg.isRemoveCardAfter()) {
                             AnimationManagement.playCard(card, myPCLC.getChildren().size(), myPCLC);
                             myPCLC.getChildren().add(card);
+                            handcards.getChildren().remove(card);
+                        } else {
+                            AnimationManagement.deleteCard(card);
                         }
-                        handcards.getChildren().remove(card);
                     }
                     if (msg.getHandCardID().equals("1") || msg.getHandCardID().equals("2") || msg.getHandCardID().equals("3")) {
                         usableMoney += Integer.parseInt(msg.getHandCardID());
                         numberOfMoney.setText(usableMoney + " Geld");
-                    }
-                    for (Node c : handcards.getChildren()) {
-                        ImageView cardToBeChecked = (ImageView) c;
-                        if (cardToBeChecked.getId().equals("1") || cardToBeChecked.getId().equals("2") || cardToBeChecked.getId().equals("3")) {
-                            break;
-                        } else {
-                            playAllMoneyCardsButton.setDisable(true);
-                        }
                     }
                 });
             } else {
@@ -743,15 +737,18 @@ public class GameViewPresenter extends AbstractPresenter {
             currentInfoText = infoActualPhase.getText();
             skipPhaseButton.setDisable(true);
             if (req.getSource() == AbstractPlayground.ZoneType.HAND) {
-                for ( Node n : handcards.getChildren()) {
-                    n.setEffect(null); }
+                for (Node n : handcards.getChildren()) {
+                    n.setEffect(null);
+                }
                 selectButton.setVisible(true);
                 playAllMoneyCardsButton.setVisible(false);
                 Platform.runLater(() -> {
                     handcards.getChildren().forEach((n) -> {
                         if (!card.equals(n)) {
                             n.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
-                            n.addEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
+                            if (req.getCards().contains(Short.parseShort(n.getId()))) {
+                                n.addEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
+                            }
                         }
                     });
                 });
@@ -764,17 +761,16 @@ public class GameViewPresenter extends AbstractPresenter {
                 });
             }
             if (req.getSource().equals(AbstractPlayground.ZoneType.BUY)) {
+                notChosenCard.setBrightness(-0.7);
                 for (int i = 0; i < 10; i++) {
                     ImageView iv = (ImageView) shopTeppich.getChildren().get(i);
                     if (!req.getCards().contains(Short.valueOf(iv.getId()))) {
-                        notChosenCard.setBrightness(-0.7);
                         iv.setEffect(notChosenCard);
                     }
                 }
                 for (int i = 0; i < 7; i++) {
                     ImageView iv = (ImageView) valueCardsBox.getChildren().get(i);
                     if (!req.getCards().contains(Short.valueOf(iv.getId()))) {
-                        notChosenCard.setBrightness(-0.7);
                         iv.setEffect(notChosenCard);
                     }
                 }
@@ -916,14 +912,11 @@ public class GameViewPresenter extends AbstractPresenter {
                     card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
                     myDLC.getChildren().add(card);
                     synchronized (handcards) {
-                        //AnimationManagement.addToHand(card, handcards.getChildren().size());
+                        AnimationManagement.addToHand(card, handcards.getChildren().size());
                         myDLC.getChildren().remove(card);
                         handcards.getChildren().add(card);
                     }
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
-                    if (playAllMoneyCardsButton.isDisable() && (n == 1 || n == 2 || n == 3)) {
-                        playAllMoneyCardsButton.setDisable(false);
-                    }
                 });
                 if (numberOfPlayersInGame == 1) {
                     return;
@@ -1100,11 +1093,11 @@ public class GameViewPresenter extends AbstractPresenter {
                             i++;
                             iv = getImageViewFromRegion(getRegionFromZoneType(source, c.getId()), c.getId(), i);
                         }
+                        iv.setLayoutY(107);
                         cardsToMove.add(iv);
-                    }
-                    for (ImageView card : cardsToMove) {
+                        ImageView finalIv = iv;
                         Platform.runLater(() -> {
-                            playAnimation(destination, card, source);
+                            playAnimation(destination, finalIv, source);
                         });
                     }
                     break;
@@ -1120,7 +1113,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     break;
                 case DRAW:
                     for (de.uol.swp.common.game.card.Card c : msg.getMove().getCardsToMove()) {
-                        ImageView card2 = new Card(String.valueOf(c.getId()));
+                        ImageView card2 = new Card(String.valueOf(c.getId()), 0, 107, 107);
                         Platform.runLater(() -> {
                             myDLC.getChildren().add(card2);
                             playAnimation(destination, card2, source);
@@ -1365,13 +1358,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * @since Sprint 5
      */
     private void chosenBuyableCard(MouseEvent mouseEvent) {
-        //double mouseX = mouseEvent.getSceneX();
-        //double mouseY = mouseEvent.getSceneY();
         ImageView cardImage = (ImageView) mouseEvent.getSource();
-        // Überprüfung ob sich die angeklickte Karte innerhalb des Shops befindet und nicht bereits auf dem Ablagestapel
-        //    if (mouseX > shopTeppich.getLayoutX() && mouseX < (shopTeppich.getLayoutX() + shopTeppich.getWidth()) &&
-        //          mouseY > shopTeppich.getLayoutY() && mouseY < (shopTeppich.getLayoutY() + shopTeppich.getHeight()) && cardImage.getEffect() == null) {
-        // Karte befindet sich im Shop
         //Karte hat noch keinen Effekt gesetzt bekommen, ist also noch im Shop vorhanden
         if (cardImage.getEffect() != null) {
             return;
@@ -1379,7 +1366,6 @@ public class GameViewPresenter extends AbstractPresenter {
         if (mouseEvent.getButton() != MouseButton.PRIMARY) {
             String cardID = cardImage.getId();
             String PathCardLargeView = "cards/images/" + cardID + ".png";
-            // ein großes Bild der Karte wird hinzugefügt
             bigCardImage.setImage(new Image(PathCardLargeView));
             // Aktion hinter dem Kauf-Button
             buyCardButton.setVisible(true);
@@ -1590,7 +1576,7 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Die erste Karte mit passender ID und aus der übergebenen Region wird zurückgegeben.
+     * Die erste Karte mit passender ID, die aus der übergebenen Region stammt, wird zurückgegeben.
      *
      * @param region die Region, in der die Karte sich befindet
      * @param id     die ID der Karte
@@ -1602,7 +1588,7 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Die erste Karte mit passender ID und Index und aus der übergebenen Region wird zurückgegeben.
+     * Die erste Karte mit passender ID und Index, die aus der übergebenen Region stammt, wird zurückgegeben.
      *
      * @param region die Region, in der die Karte sich befindet
      * @param id     die ID der Karte

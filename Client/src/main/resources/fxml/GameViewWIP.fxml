@@ -6,7 +6,6 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
-
 <AnchorPane fx:id="gameViewWIP" prefHeight="750.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <ImageView fitHeight="750.0" fitWidth="1280.0" pickOnBounds="true">
@@ -66,7 +65,6 @@
             </children>
         </VBox>
         <VBox layoutX="300.0" prefHeight="750.0" prefWidth="980.0">
-
             <children>
                 <HBox prefHeight="150.0" prefWidth="980.0">
                     <children>
@@ -272,7 +270,6 @@
                     <Circle fx:id="countCurseCardCircle" fill="darkred" radius="12" />
                     <Label fx:id="countCurseCardLabel" style="-fx-font-style: Bold; -fx-font-size: 14" text="10" textFill="white" />
                 </StackPane>
-
             </children>
         </Pane>
     </children>

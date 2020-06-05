@@ -1,6 +1,8 @@
 package de.uol.swp.client.game;
 
 import de.uol.swp.client.game.container.GeneralLayoutContainer;
+import javafx.animation.FadeTransition;
+import javafx.animation.ParallelTransition;
 import javafx.animation.PathTransition;
 import javafx.animation.ScaleTransition;
 import javafx.scene.Parent;
@@ -61,7 +63,6 @@ public class AnimationManagement {
         Parent parent = card.getParent();
         double startPointX = parent.getLayoutX() + parent.getBoundsInLocal().getWidth() / 2 - w - EndPointX + x;
         double startPointY = parent.getLayoutY() + parent.getBoundsInLocal().getHeight() / 2 - 2 * h - EndPointY + y;
-        if (x != EndPointX || y != EndPointY) {
             Path path = new Path();
             path.getElements().add(new MoveTo(startPointX, startPointY));
             path.getElements().add(new LineTo(w / 2, h / 2));
@@ -74,8 +75,6 @@ public class AnimationManagement {
             pathTransition.play();
             setNewCoordinates(card, pathTransition);
             return pathTransition;
-        }
-        return null;
     }
 
     /**
@@ -102,7 +101,6 @@ public class AnimationManagement {
         double startPointX = parent.getLayoutX() + parent.getBoundsInLocal().getWidth() / 2 - w - EndPointX - w * 2 * count + 300;
         double startPointY = parent.getLayoutY() + parent.getBoundsInLocal().getHeight() / 2 - h - EndPointY;
         Path path = new Path();
-        //if (moveTo.getX() != EndPointX || moveTo.getY() != EndPointY) {
         path.getElements().add(new MoveTo(startPointX, startPointY));
         path.getElements().add(new ArcTo(30, 20, 0, w, h, largeArc, !largeArc));
         PathTransition pathTransition = new PathTransition();
@@ -199,7 +197,7 @@ public class AnimationManagement {
         ParallelTransition parallelTransition = new ParallelTransition(fadeTransition, scaleTransition);
         parallelTransition.play();
         parallelTransition.setOnFinished(e -> {
-            ((HandcardsLayoutContainer) card.getParent()).getChildren().remove(card);
+            ((GeneralLayoutContainer) card.getParent()).getChildren().remove(card);
         });
 
         return parallelTransition;
@@ -221,7 +219,6 @@ public class AnimationManagement {
         double w = card.getFitWidth() / 2;
         double h = card.getFitHeight() / 2;
         double startPointX = parent.getLayoutX() + parent.getBoundsInLocal().getWidth() / 2 - w - HAND_X - w * 2 * count;
-        startPointX += 350;
         parent.toBack();
         if (HAND_X + count * w != startPointX) {
             Path path = new Path();
