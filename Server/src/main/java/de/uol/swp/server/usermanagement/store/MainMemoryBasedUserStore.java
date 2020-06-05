@@ -73,6 +73,11 @@ public class MainMemoryBasedUserStore extends AbstractUserStore implements UserS
         return usr;
     }
 
+    @Override
+    public User updateUser(String username, String password, String eMail, String oldUsername) {
+        return null;
+    }
+
     /**
      * Der alte Nutzer wird aus dem Store entfernt und der aus den übergeben Daten neu ertsellte dafür hinzugefügt.
      *

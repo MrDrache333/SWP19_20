@@ -5,78 +5,57 @@ import de.uol.swp.common.user.User;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Der UserStore
- *
- * @author Marco
- * @since Start
- */
-
 public interface UserStore {
 
     /**
-     * Findet den User mit dem Username und dem Passwort
+     * Find a user by username and password
      *
-     * @param username der Username
-     * @param password das Passwort des Users
-     * @return Der User ohne Passwortinformationen, wenn er gefunden wurde
-     * @author Marco
-     * @since Start
+     * @param username
+     * @param password
+     * @return The User without password information, if found
      */
     Optional<User> findUser(String username, String password);
 
     /**
-     * Findet einen User nur mit dem Namen
+     * Find a user only by name
      *
-     * @param username der Username
-     * @return der User ohne Passwortinformationen, wenn er gefunden wurde
-     * @author Marco
-     * @since Start
+     * @param username
+     * @return The User without password information, if found
      */
     Optional<User> findUser(String username);
 
     /**
-     * Erstellt einen neuen User
+     * Create a new user
      *
-     * @param username der gewählte Username
-     * @param password das gewählte Passwort
-     * @param eMail    die angegebene E-Mail-Adresse
-     * @return der User ohne Passwortinformationen
-     * @author Marco
-     * @since Start
+     * @param username
+     * @param password
+     * @param eMail
+     * @return The User without password information
      */
     User createUser(String username, String password, String eMail);
 
     /**
-     * Aktualisiert einen User
+     * Update user
      *
-     * @param username        der neue Username
-     * @param password        das Passwort des Users
-     * @param eMail           die E-Mail-Adresse des Users
-     * @param oldUser         der alter User
-     * @param currentPassword das momentane Passwort des Users
-     * @return den aktualisierten User
-     * @author Marco, Julia, Darian
-     * @since Start
+     * @param username
+     * @param password
+     * @param eMail
+     * @return the updated user
      */
-    User updateUser(String username, String password, String eMail, User oldUser, String currentPassword);
+    User updateUser(String username, String password, String eMail, String oldUsername);
 
     /**
-     * Löscht einen User aus der Liste
+     * Remove user from store
      *
-     * @param username der zu löschende User
-     * @author Marco
-     * @since Start
+     * @param username
      */
     void removeUser(String username);
 
 
     /**
-     * Gibt die Liste aller User wieder
+     * Retrieves the list of all users.
      *
-     * @return Eine Liste mit allen Usern ohne Passwortinformationenen
-     * @author Marco
-     * @since Start
+     * @return A list of all users without password information
      */
     List<User> getAllUsers();
 
