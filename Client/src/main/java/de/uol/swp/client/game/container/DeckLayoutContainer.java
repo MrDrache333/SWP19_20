@@ -13,7 +13,6 @@ import javafx.scene.layout.StackPane;
  * @author Devin
  * @since Sprint 7
  */
-
 public class DeckLayoutContainer extends StackPane {
 
     /**
@@ -100,5 +99,4 @@ public class DeckLayoutContainer extends StackPane {
     public ObservableList<Node> getChildren() {
         return super.getChildren();
     }
-
 }

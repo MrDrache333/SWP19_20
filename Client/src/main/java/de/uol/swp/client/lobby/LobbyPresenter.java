@@ -4,15 +4,15 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
-import de.uol.swp.client.ClientApp;
 import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.common.chat.ChatService;
 import de.uol.swp.common.game.card.parser.JsonCardParser;
 import de.uol.swp.common.game.card.parser.components.CardPack;
+import de.uol.swp.common.lobby.exception.JoinLobbyExceptionMessage;
+import de.uol.swp.common.lobby.exception.LobbyExceptionMessage;
 import de.uol.swp.common.lobby.message.*;
-import de.uol.swp.common.lobby.request.SetMaxPlayerRequest;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.lobby.response.SetChosenCardsResponse;
 import de.uol.swp.common.user.User;
@@ -27,7 +27,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.NodeOrientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -40,8 +39,6 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -85,8 +82,20 @@ public class LobbyPresenter extends AbstractPresenter {
     private Label settingOwner;
     @FXML
     private Label maxSettingOwner;
-
-    private ImageView bigCard;
+    @FXML
+    private VBox gameSettingsVBox;
+    @FXML
+    private ScrollPane scrollPane;
+    @FXML
+    private TilePane chosenCards;
+    @FXML
+    private TextFlow textFlow;
+    @FXML
+    private Button sendCards;
+    @FXML
+    private TilePane choosableCards;
+    @FXML
+    private ImageView bigCardImage;
 
     private ImageView crownView = new ImageView("images/crown.png");
 
@@ -244,83 +253,28 @@ public class LobbyPresenter extends AbstractPresenter {
         if (!gameSettingsOpen) {
             gamesettingsButton.setText("Spieleinstellungen schließen");
             gameSettingsOpen = true;
+            gameSettingsVBox.setVisible(true);
+            lobbyViewWIP.setOnMouseClicked(mouseEvent -> {
+                if (bigCardImage.isVisible()) {
+                    bigCardImage.setVisible(false);
+                }
+            });
             Platform.runLater(() -> {
-                String pfad1 = "file:Client/src/main/resources/cards/images/card_back.png";
-                Image picture1 = new Image(pfad1);
-                bigCard = new ImageView(picture1);
-                bigCard.setPreserveRatio(true);
-                bigCard.setFitWidth(250);
-                bigCard.setLayoutX(400);
-                bigCard.setLayoutY(100);
-                bigCard.setVisible(false);
-                lobbyViewWIP.setOnMouseClicked(mouseEvent -> {
-                    if (bigCard.isVisible()) {
-                        bigCard.setVisible(false);
-                    }
-                });
-                lobbyViewWIP.getChildren().add(bigCard);
-
-                VBox gameSettingsVBox = new VBox();
-                gameSettingsVBox.setSpacing(20);
-                gameSettingsVBox.setPrefSize(450, 630);
-                gameSettingsVBox.setId("gameSettingsVBox");
-
-                //Ausgewählte Karten anzeigen
-                TilePane chosenCards = new TilePane();
-                chosenCards.setPrefSize(400, 160);
-                chosenCards.setStyle("-fx-background-color: #3D3D3D");
-                chosenCards.setOpacity(0.5);
-                chosenCards.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
-                TextFlow textFlow = new TextFlow();
-                textFlow.setPrefSize(200, 50);
-                textFlow.setTextAlignment(TextAlignment.CENTER);
-                Text text = new Text("Wähle Karten aus...");
-                text.setFill(Paint.valueOf("white"));
-                text.setStyle("-fx-font-size: 24");
-                textFlow.getChildren().add(text);
-                chosenCards.getChildren().add(textFlow);
-
-                //Button zum Abschicken der Nachricht für die Karten
-                Button sendCards = new Button();
-                sendCards.setText("Auswahl abschicken");
-                sendCards.setPrefSize(450, 31);
-                sendCards.setVisible(false);
-                sendCards.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent e) {
-                        if (chosenCards.getChildren().size() > 0) {
-                            ArrayList<Short> chosenCardIDs = new ArrayList<>();
-                            for (Node n : chosenCards.getChildren()) {
-                                chosenCardIDs.add(Short.valueOf(n.getId()));
-                            }
-                            lobbyService.sendChosenCards(lobbyID, chosenCardIDs);
-                        }
-                    }
-                });
-
-                //auswählbare Karten initilaisieren
-                TilePane tilePane = new TilePane();
-                tilePane.setPrefHeight(500);
-                tilePane.setPrefWidth(500);
-                tilePane.setMaxWidth(500);
-                tilePane.setVgap(10);
-                tilePane.setHgap(10);
-                tilePane.setStyle("-fx-background-color: #3D3D3D");
                 for (int i = 0; i < cardpack.getCards().getActionCards().size(); i++) {
                     short cardID = cardpack.getCards().getActionCards().get(i).getId();
-                    String pfad = "file:Client/src/main/resources/cards/images/" + cardID + "_sm.png";
+                    String pfad = "cards/images/" + cardID + "_sm.png";
                     if (pfad != null) {
                         Image picture = new Image(pfad);
                         ImageView card = new ImageView(picture);
                         card.setPreserveRatio(true);
                         card.setFitWidth(100);
-                        tilePane.getChildren().add(card);
+                        choosableCards.getChildren().add(card);
                         card.setOnMouseClicked(event ->
                         {
                             if (event.getButton() == MouseButton.PRIMARY) {
                                 if (chosenCards.getChildren().size() < 10) {
                                     chosenCards.getChildren().remove(textFlow);
-                                    tilePane.getChildren().remove(card);
+                                    choosableCards.getChildren().remove(card);
                                     ImageView chosenCard = new ImageView(picture);
                                     chosenCard.setPreserveRatio(true);
                                     chosenCard.setFitWidth(80);
@@ -330,7 +284,7 @@ public class LobbyPresenter extends AbstractPresenter {
                                     chosenCard.setOnMouseClicked(event2 -> {
                                         if (event2.getButton() == MouseButton.PRIMARY) {
                                             chosenCards.getChildren().remove(chosenCard);
-                                            tilePane.getChildren().add(0, card);
+                                            choosableCards.getChildren().add(0, card);
                                             if (chosenCards.getChildren().size() == 0) {
                                                 chosenCards.getChildren().add(textFlow);
                                                 sendCards.setVisible(false);
@@ -346,28 +300,28 @@ public class LobbyPresenter extends AbstractPresenter {
                         });
                     }
                 }
-
-                ScrollPane scrollPane = new ScrollPane(tilePane);
-                scrollPane.setPrefHeight(500);
-                scrollPane.setPrefWidth(620);
-                scrollPane.setMaxWidth(620);
-                scrollPane.setStyle("-fx-background-color: #3D3D3D");
-                scrollPane.setOpacity(0.73);
-                scrollPane.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
-
-                gameSettingsVBox.getChildren().add(scrollPane);
-                gameSettingsVBox.getChildren().add(chosenCards);
-                gameSettingsVBox.getChildren().add(sendCards);
-                lobbyHBox.getChildren().add(gameSettingsVBox);
             });
         } else {
-            lobbyHBox.getChildren().forEach(t -> {
-                if (t.getId().equals("gameSettingsVBox")) {
-                    Platform.runLater(() -> lobbyHBox.getChildren().remove(t));
-                    gameSettingsOpen = false;
-                }
-            });
+            gameSettingsVBox.setVisible(false);
             gamesettingsButton.setText("Spieleinstellungen");
+        }
+    }
+
+    /**
+     * Methode für den Klick des Buttons Auswahl-abschicken
+     *
+     * @param event
+     * @author Anna
+     * @since Sprint 8
+     */
+    @FXML
+    public void sendChosenCards(ActionEvent event) {
+        if (chosenCards.getChildren().size() > 0) {
+            ArrayList<Short> chosenCardIDs = new ArrayList<>();
+            for (Node n : chosenCards.getChildren()) {
+                chosenCardIDs.add(Short.valueOf(n.getId()));
+            }
+            lobbyService.sendChosenCards(lobbyID, chosenCardIDs);
         }
     }
 
@@ -380,10 +334,10 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     public void showBigCardImage(short cardID) {
         Platform.runLater(() -> {
-            String pfad = "file:Client/src/main/resources/cards/images/" + cardID + ".png";
+            String pfad = "cards/images/" + cardID + ".png";
             Image picture = new Image(pfad);
-            bigCard.setImage(picture);
-            bigCard.setVisible(true);
+            bigCardImage.setImage(picture);
+            bigCardImage.setVisible(true);
         });
     }
 
@@ -586,6 +540,18 @@ public class LobbyPresenter extends AbstractPresenter {
         if (!message.getLobbyID().equals(lobbyID)) return;
         LOG.debug("User " + message.getLobby().getName() + " wurde aus der Lobby gekickt!");
         userLeftLobby(message.getUser().getUsername(), true);
+    }
+
+    /**
+     * Hier wird die LobbyExceptionMessage abgefangen und die Nachricht in einem neuem Fenster angezeigt
+     *
+     * @param msg die Nachricht
+     * @author Darian
+     * @since Sprint 8
+     */
+    @Subscribe
+    public void LobbyExceptionMessage(LobbyExceptionMessage msg) {
+        SceneManager.showAlert(Alert.AlertType.ERROR, msg.getMessage(), "Lobby");
     }
 
     //--------------------------------------

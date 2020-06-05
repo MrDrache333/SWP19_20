@@ -2,11 +2,14 @@ package de.uol.swp.server.lobby;
 
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
+import de.uol.swp.common.lobby.exception.KickPlayerException;
+import de.uol.swp.common.lobby.exception.LeaveLobbyException;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.security.KeyException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -116,7 +119,7 @@ public class LobbyManagement {
      * @return Gibt wahr zurück, wenn der User aus der Lobby entfernt worden ist.
      * @author Marvin
      */
-    public boolean leaveLobby(UUID id, User user) {
+    public void leaveLobby(UUID id, User user) {
         Optional<Lobby> lobby = this.getLobby(id);
         if (lobby.isPresent()) {
             if (LOG.isDebugEnabled()) {
@@ -126,9 +129,10 @@ public class LobbyManagement {
             if (lobby.get().getPlayers() == 0) {
                 this.dropLobby(id);
             }
-            return true;
         }
-        return false;
+        else{
+            throw new LeaveLobbyException("Verlassen der Lobby ist fehlgeschlagen.");
+        }
     }
 
     /**
@@ -176,7 +180,7 @@ public class LobbyManagement {
      * @author Darian, Marvin
      * @since Sprint 4
      */
-    public boolean kickUser(UUID id, User userToKick, User owner) {
+    public void kickUser(UUID id, User userToKick, User owner) {
         Optional<Lobby> lobby = this.getLobby(id);
         if (lobby.isPresent() && lobby.get().getOwner().getUsername().equals(owner.getUsername())) {
             if (LOG.isDebugEnabled()) {
@@ -186,9 +190,10 @@ public class LobbyManagement {
             if (lobby.get().getPlayers() == 0) {
                 this.dropLobby(id);
             }
-            return true;
         }
-        return false;
+        else{
+            throw new KickPlayerException("Kicken des Benutzers " + userToKick.getUsername() + " aus der Lobby ist fehlgeschlagen");
+        }
         // TODO: error handling not existing lobby
     }
 

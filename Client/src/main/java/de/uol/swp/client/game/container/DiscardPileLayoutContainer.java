@@ -10,7 +10,6 @@ import javafx.scene.layout.StackPane;
  * @author Devin
  * @since Sprint 7
  */
-
 public class DiscardPileLayoutContainer extends StackPane {
 
     /**
@@ -21,7 +20,6 @@ public class DiscardPileLayoutContainer extends StackPane {
      */
     public DiscardPileLayoutContainer() {
     }
-
 
     /**
      * Instantiiert einen neuen PlayedCardLayoutContainer.
@@ -96,5 +94,4 @@ public class DiscardPileLayoutContainer extends StackPane {
     public ObservableList<Node> getChildren() {
         return super.getChildren();
     }
-
 }

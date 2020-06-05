@@ -29,7 +29,7 @@ public class Card extends ImageView {
      * @since Sprint 7
      */
     public Card(String id) {
-        this.setImage(new Image("file:Client/src/main/resources/cards/images/" + id + ".png"));
+        this.setImage(new Image("cards/images/" + id + ".png"));
     }
 
     /**
@@ -44,7 +44,7 @@ public class Card extends ImageView {
      * @since Sprint 7
      */
     public Card(String id, double layout_x, double layout_y, double height) {
-        this.setImage(new Image("file:Client/src/main/resources/cards/images/" + id + ".png"));
+        this.setImage(new Image("cards/images/" + id + ".png"));
         this.setPreserveRatio(true);
         this.setLayoutX(layout_x);
         this.setLayoutY(layout_y);
