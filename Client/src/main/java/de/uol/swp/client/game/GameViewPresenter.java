@@ -595,6 +595,9 @@ public class GameViewPresenter extends AbstractPresenter {
                 newCardImage.setFitHeight(107);
                 newCardImage.setFitWidth(Math.round(newCardImage.getBoundsInLocal().getWidth()));
                 newCardImage.setLayoutX(selectedCard.getLayoutX());
+                if (Short.parseShort(selectedCard.getId()) < 7 ||Short.parseShort(selectedCard.getId()) == 38 ) {
+                    newCardImage.setLayoutX(selectedCard.getLayoutX() + 450);
+                }
                 newCardImage.setLayoutY(selectedCard.getLayoutY());
                 newCardImage.setId(String.valueOf(msg.getCardID()));
                 Platform.runLater(() -> {
@@ -1105,6 +1108,9 @@ public class GameViewPresenter extends AbstractPresenter {
                     for (de.uol.swp.common.game.card.Card c : msg.getMove().getCardsToMove()) {
                         ImageView card = getImageViewFromRegion(getRegionFromZoneType(source, c.getId()), c.getId());
                         ImageView card2 = new Card(card.getId(), card.getLayoutX(), card.getLayoutY(), 107);
+                        if (c.getId() < 7 || c.getId() == 38 ) {
+                            card2.setLayoutX(card.getLayoutX() + 450);
+                        }
                         Platform.runLater(() -> {
                             gameViewWIP.getChildren().add(card2);
                             playAnimation(destination, card2, source);
@@ -1541,6 +1547,8 @@ public class GameViewPresenter extends AbstractPresenter {
      * @param destination die Zielzone
      * @param card        die zu bewegende Karte
      * @param source      die ursprüngliche Zone
+     * @author Anna
+     * @since Sprint 9
      */
     public void playAnimation(AbstractPlayground.ZoneType destination, ImageView card, AbstractPlayground.ZoneType source) {
         switch (destination) {
