@@ -1154,7 +1154,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     users = FXCollections.observableArrayList();
                     usersView.setItems(users);
                 } else {
-                    LOG.debug("No users in Lobby.");
+                    LOG.debug("Keine User in der Lobby.");
                 }
                 users.clear();
                 userList.forEach(u -> users.add(u.getUsername()));
@@ -1216,9 +1216,13 @@ public class GameViewPresenter extends AbstractPresenter {
      * @since Sprint 7
      */
     private void updateUsersInGame(Set<User> usersList) {
-        // TODO: Deaktiviert, da NullPointer. NullPointer muss behoben werden.
-        // updateEnemiesOnBoard(usersList);
-        // updateUsersList(usersList);
+        if (usersList != null && !usersList.isEmpty()) {
+            updateEnemiesOnBoard(usersList);
+            updateUsersList(usersList);
+            LOG.debug("Spielerliste erfolgreich aktualisiert - updateUsersInGame Methode");
+        } else {
+            LOG.error("Aktualisierung der Spielerliste fehlgeschlagen - updateUsersInGame Methode");
+        }
     }
 
     /**
