@@ -165,12 +165,6 @@ public class AnimationTest extends Application {
             handcards.getChildren().add(cards.get(i));
         }
 
-
-        //Wenn auf die Karte geklickt wird, spielt der Gegenspieler eine Karte aus
-        cardToPlayByOpponent.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            AnimationManagement.opponentPlaysCard(cardToPlayByOpponent, 0);
-        });
-
         //Wenn auf die Karte geklickt wird, spielt der Spieler sie aus
 
         GeneralLayoutContainer pclc = new GeneralLayoutContainer(700, 500, 100, 200, "My.PCLC");

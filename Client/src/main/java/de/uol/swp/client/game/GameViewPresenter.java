@@ -595,16 +595,13 @@ public class GameViewPresenter extends AbstractPresenter {
                 newCardImage.setFitHeight(107);
                 newCardImage.setFitWidth(Math.round(newCardImage.getBoundsInLocal().getWidth()));
                 newCardImage.setLayoutX(selectedCard.getLayoutX());
-                if (Short.parseShort(selectedCard.getId()) < 7 ||Short.parseShort(selectedCard.getId()) == 38 ) {
-                    newCardImage.setLayoutX(selectedCard.getLayoutX() + 450);
-                }
                 newCardImage.setLayoutY(selectedCard.getLayoutY());
                 newCardImage.setId(String.valueOf(msg.getCardID()));
                 Platform.runLater(() -> {
-                    gameViewWIP.getChildren().add(newCardImage);
+                    ((Pane) getRegionFromZoneType(AbstractPlayground.ZoneType.BUY, msg.getCardID())).getChildren().add(newCardImage);
                     AnimationManagement.buyCard(newCardImage);
-                    gameViewWIP.getChildren().remove(newCardImage);
                     myDPLC.getChildren().add(newCardImage);
+                    ((Pane) getRegionFromZoneType(AbstractPlayground.ZoneType.BUY, msg.getCardID())).getChildren().remove(newCardImage);
                 });
                 // entfernt die genutzen Geldkarten aus der Aktionszone (wichtig, wenn der User mehr als 1 Kauf hat)
                 Platform.runLater(() -> {
@@ -1096,7 +1093,6 @@ public class GameViewPresenter extends AbstractPresenter {
                             i++;
                             iv = getImageViewFromRegion(getRegionFromZoneType(source, c.getId()), c.getId(), i);
                         }
-                        iv.setLayoutY(107);
                         cardsToMove.add(iv);
                         ImageView finalIv = iv;
                         Platform.runLater(() -> {
@@ -1108,18 +1104,15 @@ public class GameViewPresenter extends AbstractPresenter {
                     for (de.uol.swp.common.game.card.Card c : msg.getMove().getCardsToMove()) {
                         ImageView card = getImageViewFromRegion(getRegionFromZoneType(source, c.getId()), c.getId());
                         ImageView card2 = new Card(card.getId(), card.getLayoutX(), card.getLayoutY(), 107);
-                        if (c.getId() < 7 || c.getId() == 38 ) {
-                            card2.setLayoutX(card.getLayoutX() + 450);
-                        }
                         Platform.runLater(() -> {
-                            gameViewWIP.getChildren().add(card2);
+                            ((Pane) getRegionFromZoneType(AbstractPlayground.ZoneType.BUY, c.getId())).getChildren().add(card2);
                             playAnimation(destination, card2, source);
                         });
                     }
                     break;
                 case DRAW:
                     for (de.uol.swp.common.game.card.Card c : msg.getMove().getCardsToMove()) {
-                        ImageView card2 = new Card(String.valueOf(c.getId()), 0, 107, 107);
+                        ImageView card2 = new Card(String.valueOf(c.getId()));
                         Platform.runLater(() -> {
                             myDLC.getChildren().add(card2);
                             playAnimation(destination, card2, source);
@@ -1338,16 +1331,16 @@ public class GameViewPresenter extends AbstractPresenter {
             Platform.runLater(() -> {
                 ImageView card = (ImageView) c;
                 String pfad = "cards/images/" + card.getId() + ".png";
-                if (actionCards) {
+                /*if (actionCards) {
                     card.setLayoutX(c.getLayoutX() - 400);
                     card.setLayoutY(0);//433);
                 } else {
                     card.setLayoutX(c.getLayoutX() - 845);
                     card.setLayoutY(145);
-                }
+                }*/
                 card.setId(String.valueOf(c));
-                myDPLC.getChildren().add(card);
-                AnimationManagement.clearCards(card, myDPLC);
+                AnimationManagement.clearCards((ImageView) c, myDPLC);
+                myDPLC.getChildren().add(c);
                 children.remove(c);
             });
         }
@@ -1568,8 +1561,9 @@ public class GameViewPresenter extends AbstractPresenter {
         }
         switch (source) {
             case TRASH:
-            case BUY:
                 gameViewWIP.getChildren().remove(card);
+            case BUY:
+                ((Pane) getRegionFromZoneType(AbstractPlayground.ZoneType.BUY, Short.parseShort(card.getId()))).getChildren().remove(card);
                 break;
             case DRAW:
                 myDLC.getChildren().remove(card);
