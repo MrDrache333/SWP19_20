@@ -28,6 +28,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.NodeOrientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -40,6 +41,8 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -105,20 +108,12 @@ public class LobbyPresenter extends AbstractPresenter {
     private TilePane choosableCards;
     @FXML
     private ImageView bigCardImage;
+    @FXML
+    private ImageView bigCard;
 
     private ImageView crownView = new ImageView("images/crown.png");
 
-    private ObservableList<HBox> userHBoxes;
 
-    private GameManagement gameManagement;
-
-    private CardPack cardpack;
-
-    private boolean gameSettingsOpen;
-    @FXML
-    private ImageView bigCard;
-    @FXML
-    private final ImageView crownView = new ImageView("images/crown.png");
 
     /**
      * Instanziiert einen neuen LobbyPresenter.
@@ -514,8 +509,6 @@ public class LobbyPresenter extends AbstractPresenter {
                 chooseMaxPlayer.setDisable(false);
                 chooseMaxPlayer.setValue(msg.getMaxPlayer());
                 LOG.info("Max. Spieler der Lobby: " + msg.getLobby().getName() + " erfolgreich auf " + msg.getMaxPlayer() + " gesetzt.");
-            } else if (msg.getOwner().equals(loggedInUser) && lobbyID.equals(msg.getLobbyID()) && !msg.isSetMaxPlayerSet()){
-                LOG.error("Max. Spieler der Lobby: " + msg.getLobby().getName() + " wurde nicht auf " + msg.getMaxPlayer() + " gesetzt.");
             }
         });
     }
