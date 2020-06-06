@@ -31,7 +31,7 @@ class ServerApp {
      * Startet den Server in einem festgelegten Portbereich.
      * Bei Fehlern wird eine Exception geworfen.
      *
-     * @param args
+     * @param args Die übergebenen Startargumente
      * @throws Exception Die Exception
      * @author Marco Grawunder
      * @since Sprint 0
@@ -60,7 +60,6 @@ class ServerApp {
      * Erstellt einen neuen Service inkl. eines Usermanagements und eines Chatmanagements.
      *
      * @param injector Der Injector
-     * @throws Exception Die Exception
      * @author Marco Grawunder, Keno O
      * @since Sprint 0
      */

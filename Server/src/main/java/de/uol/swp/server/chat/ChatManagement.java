@@ -2,7 +2,6 @@ package de.uol.swp.server.chat;
 
 import de.uol.swp.common.chat.ChatMessage;
 import de.uol.swp.common.chat.exception.ChatException;
-import de.uol.swp.common.user.User;
 
 import java.util.Optional;
 import java.util.SortedMap;
@@ -16,20 +15,20 @@ public class ChatManagement extends AbstractChatManagement {
 
     private final short CHATMESSAGEHISTORYSIZE = 20;
 
-    private SortedMap<String, Chat> Chats = new TreeMap<>();
+    private final SortedMap<String, Chat> chats = new TreeMap<>();
 
     /**
      * Gibt den Chat mit Chat ID zurück.
      *
-     * @param chatId die Chat ID
+     * @param chatID die Chat ID
      * @return den Chat
-     * @throws NullPointerException
+     * @throws NullPointerException NullPointerException
      * @author Keno O
      * @since Sprint 1
      */
-    public Optional<Chat> getChat(String chatId) {
+    public Optional<Chat> getChat(String chatID) {
         try {
-            Chat chat = Chats.get(chatId);
+            Chat chat = chats.get(chatID);
             return Optional.of(chat);
         } catch (NullPointerException e) {
             return Optional.empty();
@@ -45,53 +44,54 @@ public class ChatManagement extends AbstractChatManagement {
      */
     synchronized public String createChat() {
         String id = String.valueOf(UUID.randomUUID());
-        Chats.put(id, new Chat(id));
+        chats.put(id, new Chat(id));
         return id;
     }
 
     /**
      * Chat wird erstellt.
      *
-     * @param ChatId die Chat ID
+     * @param chatID die Chat ID
      * @throws ChatException die Chat Fehlermeldung
      * @author Keno O
      * @since Sprint 1
      */
-    synchronized public void createChat(String ChatId) throws ChatException {
-        if (getChat(ChatId).isPresent()) throw new ChatException("Chat mit der ID " + ChatId + " existiert bereits!");
-        Chats.put(ChatId, new Chat(ChatId));
+    synchronized public void createChat(String chatID) throws ChatException {
+        if (getChat(chatID).isPresent()) throw new ChatException("Chat mit der ID " + chatID + " existiert bereits!");
+        chats.put(chatID, new Chat(chatID));
     }
 
     /**
      * Chat nach Chat ID löschen.
      *
-     * @param ChatId die Chat ID
+     * @param chatID die Chat ID
      * @throws ChatException beim Fehler den Chat zu löschen.
      * @author Keno O
      * @since Sprint 1
      */
-    public void deleteChat(String ChatId) throws ChatException {
-        if (Chats.size() > 0 && Chats.get(ChatId) != null) Chats.remove(ChatId);
-        if (getChat(ChatId).isPresent()) throw new ChatException("Chat mit der ID " + ChatId + " konnte nicht entfernt werden!");
+    public void deleteChat(String chatID) throws ChatException {
+        if (chats.size() > 0 && chats.get(chatID) != null) chats.remove(chatID);
+        if (getChat(chatID).isPresent())
+            throw new ChatException("Chat mit der ID " + chatID + " konnte nicht entfernt werden!");
     }
 
     /**
      * Nachricht zu einem Chat hinzufügen.
      *
-     * @param chatId  die Chat ID
+     * @param chatID  die Chat ID
      * @param message die Nachricht
      * @throws ChatException wenn es den Chat mir der ID nicht gibt.
      * @author Keno O
      * @since Sprint 1
      */
-    synchronized public void addMessage(String chatId, ChatMessage message) throws ChatException {
-        Optional<Chat> chat = getChat(chatId);
+    synchronized public void addMessage(String chatID, ChatMessage message) throws ChatException {
+        Optional<Chat> chat = getChat(chatID);
         //CHeck if this is an existing chat
         if (chat.isPresent()) {
             chat.get().getMessages().add(message);
             //Keep only the newest Messages
             if (chat.get().getMessages().size() > CHATMESSAGEHISTORYSIZE) chat.get().getMessages().remove(0);
-        } else throw new ChatException("Chat mit der ID " + chatId + " existiert nicht!");
+        } else throw new ChatException("Chat mit der ID " + chatID + " existiert nicht!");
     }
 
     /**
@@ -109,40 +109,13 @@ public class ChatManagement extends AbstractChatManagement {
     /**
      * sendet eine Nachricht an Chat mit bestimmter ID.
      *
-     * @param ChatId  the chat id
+     * @param chatID  the chat id
      * @param message the message
      * @author Keno O
      * @since Sprint 1
      */
     @Override
-    public void sendMessage(String ChatId, ChatMessage message) {
-        addMessage(ChatId, message);
-    }
-
-    /**
-     * Gibt den Chatverlauf des globalen Chats zurück.
-     *
-     * @param sender der Benutzer
-     * @return der Chatverlauf
-     * @author Keno O
-     * @since Sprint 1
-     */
-    @Override
-    public Chat getChatHistory(User sender) {
-        return getChatHistory(sender);
-    }
-
-    /**
-     * Gibt den Chatverlauf eines bestimmten Chats zurück.
-     *
-     * @param ChatId the chat id
-     * @param sender der Benutzer
-     * @return der Chatverlauf
-     * @author Keno O
-     * @since Sprint 1
-     */
-    @Override
-    public Chat getChatHistory(String ChatId, User sender) {
-        return getChatHistory(ChatId, sender);
+    public void sendMessage(String chatID, ChatMessage message) {
+        addMessage(chatID, message);
     }
 }

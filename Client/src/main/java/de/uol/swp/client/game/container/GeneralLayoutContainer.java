@@ -1,52 +1,56 @@
 package de.uol.swp.client.game.container;
 
-
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
 
 /**
- * Layoutcontainer für die Karten auf der Hand.
+ * Genereller Layout-Container für Karten als zusammenfassender Container für den DeckLayoutContainer, DiscardPileLayoutContainer, HandcardsLayoutContainer und den PlayedCardLayoutContainer
  *
- * @author Anna
- * @since Sprint 6
+ * @author Timo
+ * @since Sprint 9
  */
-public class HandcardsLayoutContainer extends Region {
+public class GeneralLayoutContainer extends Region {
 
     /**
-     * Instantiiert einen neuen HandcardsLayoutContainer.
+     * Instanziiert einen neuen GeneralLayoutContainer
      *
-     * @author Anna
-     * @since Sprint 6
+     * @author Timo
+     * @since Sprint 9
      */
-    public HandcardsLayoutContainer() {
+    public GeneralLayoutContainer() {
+
     }
 
     /**
-     * Instantiiert einen neuen HandcardsLayoutContainer.
+     * Überladener Konstruktur
+     * Instanziiert einen neuen GeneralLayoutContainer
      *
-     * @param layoutX x-Koordinate
-     * @param layoutY y-Koordinate
-     * @param height  Höhe
-     * @param width   Breite
-     * @author Anna
-     * @since Sprint 6
+     * @param id      ID des Containers
+     * @param height  Höhe des Containers
+     * @param width   Breite des Containers
+     * @param layoutX X-Koordinate des Containers
+     * @param layoutY Y-Koordinate des Containers
+     * @author Timo
+     * @since Sprint 9
      */
-    public HandcardsLayoutContainer(double layoutX, double layoutY, double height, double width, String id) {
+    public GeneralLayoutContainer(double layoutX, double layoutY, double height, double width, String id) {
         this.setLayoutX(layoutX);
         this.setLayoutY(layoutY);
         this.setPrefHeight(height);
         this.setPrefWidth(width);
-        super.setId(id);
-        if (this.getId().equals("1.HCLC")) {
+        this.setId(id);
+        if (this.getId().equals("1.DPLC") || this.getId().equals("1.DLC") || this.getId().equals("1.HCLC")) {
             this.setRotate(180);
         } else {
-            if (this.getId().equals("2.HCLC")) {
+            if (this.getId().equals("2.DPLC") || this.getId().equals("2.DLC") || this.getId().equals("2.HCLC")) {
                 this.setRotate(90);
-            } else if (this.getId().equals("3.HCLC")) {
+            } else if (this.getId().equals("3.DPLC") || this.getId().equals("3.DLC") || this.getId().equals("3.HCLC")) {
                 this.setRotate(270);
             }
         }
+        // Dieser Code wird vorgehalten um nachträglich eine Ratation der gespielten Karten implementieren zu können. Integration via if(... || this.getId().equals("..."))
+        // Kommentar aus dem PlayedCardLayoutContainer: "1.PCLC" --> this.setRotate(180), "2.PCLC" --> this.setRotate(90), "3.PCLC" --> this.setRotate(270)
     }
 
     /**
@@ -54,8 +58,8 @@ public class HandcardsLayoutContainer extends Region {
      * Wenn die Pane breit genug ordnen sie sich, von der Mitte ausgehend, direkt nebeneinander an.
      * Ansonsten überlappen sie sich, aber immer nur so viel wie nötig.
      *
-     * @author Anna
-     * @since Sprint 6
+     * @author Anna, Devin, Timo
+     * @since Sprint 9
      */
     @Override
     protected void layoutChildren() {
@@ -87,12 +91,11 @@ public class HandcardsLayoutContainer extends Region {
      * Getter für fie Liste der Kinderknoten
      *
      * @return Kinder
-     * @author Anna
-     * @since Sprint 6
+     * @author Anna, Devin, Timo
+     * @since Sprint 9
      */
     @Override
     public ObservableList<Node> getChildren() {
         return super.getChildren();
     }
 }
-

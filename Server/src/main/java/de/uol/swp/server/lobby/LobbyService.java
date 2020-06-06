@@ -4,7 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import de.uol.swp.common.chat.ChatMessage;
-import de.uol.swp.common.chat.request.NewChatMessageRequest;
+import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.LobbyUser;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
@@ -20,6 +20,8 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.chat.ChatManagement;
+import de.uol.swp.server.game.player.bot.BotPlayer;
+import de.uol.swp.server.game.player.bot.internal.messages.AuthBotInternalRequest;
 import de.uol.swp.server.message.StartGameInternalMessage;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import org.apache.logging.log4j.LogManager;
@@ -42,20 +44,22 @@ public class LobbyService extends AbstractService {
     private final LobbyManagement lobbyManagement;
     private final ChatManagement chatManagement;
     private final AuthenticationService authenticationService;
+    private final EventBus eventBus;
 
     /**
      * Instanziiert einen neuen Lobby Service
      *
-     * @param lobbyManagement       das Lobby management
-     * @param authenticationService den Authetifizierenden Service
-     * @param chatManagement        den Chat Mannagement
-     * @param eventBus              den Eventbus
+     * @param lobbyManagement       Das LobbyManagement
+     * @param authenticationService Den AuthenticationService
+     * @param chatManagement        Den ChatManagement
+     * @param eventBus              Den Eventbus
      * @author KenoO
      * @since Sprint 2
      */
     @Inject
     public LobbyService(LobbyManagement lobbyManagement, AuthenticationService authenticationService, ChatManagement chatManagement, EventBus eventBus) {
         super(eventBus);
+        this.eventBus = eventBus;
         this.lobbyManagement = lobbyManagement;
         this.authenticationService = authenticationService;
         this.chatManagement = chatManagement;
@@ -70,23 +74,23 @@ public class LobbyService extends AbstractService {
      * LobbyManagement auf dem Server wird aufgerufen und übergibt LobbyNamen, LobbyPassword und den Besitzer.
      * Wenn dies erfolgt ist, folgt eine returnMessage an den Client die LobbyView anzuzeigen.
      *
-     * @param msg enthält die Message vom Client mit den benötigten Daten, um die Lobby zu erstellen.
+     * @param req Enthält den Request vom Client mit den benötigten Daten, um die Lobby zu erstellen.
      * @author Haschem, Ferit, Rike, Marvin, Paula
      * @version 0.2
      * @since Sprint 2
      */
     @Subscribe
-    public void onCreateLobbyRequest(CreateLobbyRequest msg) {
-        if (containsLobbyName(msg.getLobbyName())) {
+    public void onCreateLobbyRequest(CreateLobbyRequest req) {
+        if (containsLobbyName(req.getLobbyName())) {
             LOG.info("Lobby wurde nicht erstellt");
-            ServerMessage returnMessage = new CreateLobbyMessage(null, null, msg.getUser(), null, null);
+            ServerMessage returnMessage = new CreateLobbyMessage(null, null, req.getUser(), null, null);
             authenticationService.sendToLoggedInPlayers(returnMessage);
         } else {
-            UUID chatID = lobbyManagement.createLobby(msg.getLobbyName(), msg.getLobbyPassword(), new LobbyUser(msg.getOwner()));
+            UUID chatID = lobbyManagement.createLobby(req.getLobbyName(), req.getLobbyPassword(), new LobbyUser(req.getOwner()));
             chatManagement.createChat(chatID.toString());
             LOG.info("Der Chat mit der UUID " + chatID + " wurde erfolgreich erstellt!");
             Optional<Lobby> lobby = lobbyManagement.getLobby(chatID);
-            ServerMessage returnMessage = new CreateLobbyMessage(msg.getLobbyName(), msg.getLobbyPassword(), msg.getUser(), chatID, (LobbyDTO) lobby.get());
+            ServerMessage returnMessage = new CreateLobbyMessage(req.getLobbyName(), req.getLobbyPassword(), req.getUser(), chatID, (LobbyDTO) lobby.get());
             authenticationService.sendToLoggedInPlayers(returnMessage);
             LOG.info("onCreateLobbyRequest wird auf dem Server aufgerufen.");
 
@@ -98,20 +102,28 @@ public class LobbyService extends AbstractService {
      * LobbyManagement auf dem Server wird aufgerufen und übergibt den Namen des Nutzers.
      * Wenn dies erfolgt ist, folgt eine UserJoinedLobbyMessage an den Client, um den User zur Lobby hinzuzufügen
      *
-     * @param msg the msg
+     * @param req Der LobbyJoinUserRequest
      * @author Paula, Julia, Marvin
      * @since Sprint 3
      */
     @Subscribe
-    public void onLobbyJoinUserRequest(LobbyJoinUserRequest msg) {
-        Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getLobbyID());
-        if (lobby.isPresent() && !lobby.get().getUsers().contains(msg.getUser()) && lobby.get().getPlayers() < lobby.get().getMaxPlayer() && !lobby.get().getInGame()) {
-            LOG.info("User " + msg.getUser().getUsername() + " is joining lobby " + lobby.get().getName());
-            lobby.get().joinUser(new LobbyUser(msg.getUser()));
-            ServerMessage returnMessage = new UserJoinedLobbyMessage(msg.getLobbyID(), msg.getUser(), (UserDTO) lobby.get().getOwner(), (LobbyDTO) lobby.get());
+    public void onLobbyJoinUserRequest(LobbyJoinUserRequest req) {
+        Optional<Lobby> lobby = lobbyManagement.getLobby(req.getLobbyID());
+        if (lobby.isPresent() && !lobby.get().getUsers().contains(req.getUser()) && lobby.get().getPlayers() < lobby.get().getMaxPlayer() && !lobby.get().getInGame()) {
+            LOG.info("User " + req.getUser().getUsername() + " is joining lobby " + lobby.get().getName());
+            LobbyUser theLobbyUser = new LobbyUser(req.getUser());
+            lobby.get().joinUser(theLobbyUser);
+            ServerMessage returnMessage = new UserJoinedLobbyMessage(req.getLobbyID(), req.getUser(), (UserDTO) lobby.get().getOwner(), (LobbyDTO) lobby.get());
             authenticationService.sendToLoggedInPlayers(returnMessage);
+            if (req.getBot()) {
+                lobby.get().setReadyStatus(req.getUser(), true);
+                ServerMessage msg2 = new UpdatedLobbyReadyStatusMessage(lobby.get().getLobbyID(), req.getUser(), lobby.get().getReadyStatus(req.getUser()));
+                LOG.debug("Sending Updated Status of Bot: " + req.getUser().getUsername() + " to true in Lobby: " + lobby.get().getLobbyID());
+                authenticationService.sendToLoggedInPlayers(msg2);
+                allPlayersReady(lobby.get());
+            }
         } else {
-            LOG.error("Beitreten der Lobby mit der ID " + msg.getLobbyID() + " fehlgeschlagen");
+            LOG.error("Beitreten der Lobby mit der ID " + req.getLobbyID() + " fehlgeschlagen");
             authenticationService.sendToLobbyOwner(new JoinLobbyExceptionMessage("Beitreten der Lobby ist fehlgeschlagen"), msg.getUser());
         }
     }
@@ -120,7 +132,7 @@ public class LobbyService extends AbstractService {
      * LobbyManagement wird aufgerufen und übergibt Namen der Lobby und User.
      * UserLeftLobbyMessage wird an Client gesendet
      *
-     * @param msg the msg
+     * @param req Der LobbyLeaveUserRequest
      * @author Julia, Paula, Darian, Marvin
      * @since Sprint 3
      */
@@ -142,21 +154,21 @@ public class LobbyService extends AbstractService {
     /**
      * Lobbys, in denen User drinnen ist, werden verlassen
      *
-     * @param msg the msg
+     * @param req Der LeaveAllLobbiesOnLogoutRequest
      * @author Paula, Julia, Marvin, Darian
      * @since Sprint 3
      */
     @Subscribe
-    public void onLeaveAllLobbiesOnLogoutRequest(LeaveAllLobbiesOnLogoutRequest msg) {
+    public void onLeaveAllLobbiesOnLogoutRequest(LeaveAllLobbiesOnLogoutRequest req) {
         List<LobbyDTO> toLeave = new ArrayList<>();
         lobbyManagement.getLobbies().forEach(lobby -> {
             List<User> users = new ArrayList<>(lobby.getUsers());
-            if (users.contains(msg.getUser()) && !lobby.getInGame()) {
+            if (users.contains(req.getUser()) && !lobby.getInGame()) {
                 toLeave.add((LobbyDTO) lobby);
             }
         });
-        LOG.info("User " + msg.getUser().getUsername() + " verlässt alle Lobbys");
-        toLeave.forEach(lobby -> lobbyManagement.leaveLobby(lobby.getLobbyID(), msg.getUser()));
+        LOG.info("User " + req.getUser().getUsername() + " verlässt alle Lobbys");
+        toLeave.forEach(lobby -> lobbyManagement.leaveLobby(lobby.getLobbyID(), req.getUser()));
         toLeave.clear();
         lobbyManagement.getLobbies().forEach(lobby -> toLeave.add((LobbyDTO) lobby));
         ServerMessage returnMessage = new UserLeftAllLobbiesMessage(msg.getUser(), toLeave);
@@ -166,103 +178,119 @@ public class LobbyService extends AbstractService {
     /**
      * Der Status eines Spielers wird abgefragt, ob der geupdatet wurde
      *
-     * @param request den geupdateteten Status des Users
+     * @param req Der geupdatetete Status des Users
      * @author Keno Oelrichs Garcia
      * @since Sprint 3
      */
     @Subscribe
-    public void onUpdateLobbyReadyStatusRequest(UpdateLobbyReadyStatusRequest request) {
-        Optional<Lobby> lobby = lobbyManagement.getLobby(request.getLobbyID());
+    public void onUpdateLobbyReadyStatusRequest(UpdateLobbyReadyStatusRequest req) {
+        Optional<Lobby> lobby = lobbyManagement.getLobby(req.getLobbyID());
         if (lobby.isPresent()) {
-            lobby.get().setReadyStatus(request.getUser(), request.isReady());
-            ServerMessage msg = new UpdatedLobbyReadyStatusMessage(lobby.get().getLobbyID(), request.getUser(), lobby.get().getReadyStatus(request.getUser()));
-            authenticationService.sendToLoggedInPlayers(msg);
-            LOG.debug("Sending Updated Status of User " + request.getUser().getUsername() + " to " + request.isReady() + " in Lobby: " + lobby.get().getLobbyID());
+            lobby.get().setReadyStatus(req.getUser(), req.isReady());
+            ServerMessage msg = new UpdatedLobbyReadyStatusMessage(lobby.get().getLobbyID(), req.getUser(), lobby.get().getReadyStatus(req.getUser()));
+            sendToAll(lobby.get().getLobbyID(), msg);
+            LOG.debug("Sending Updated Status of User " + req.getUser().getUsername() + " to " + req.isReady() + " in Lobby: " + lobby.get().getLobbyID());
             allPlayersReady(lobby.get());
         } else
-            LOG.debug("Lobby nicht gefunden! ID: " + request.getLobbyID());
+            LOG.debug("Lobby nicht gefunden! ID: " + req.getLobbyID());
     }
 
     /**
      * Setzt den inGame-Status der Lobby bei Spielende wieder auf false
      *
-     * @param request das UpdateInGameRequest
+     * @param req Der UpdateInGameRequest
      * @author Julia
      * @since Sprint 6
      */
     @Subscribe
-    public void onGameEnd(UpdateInGameRequest request) {
-        Optional<Lobby> lobby = lobbyManagement.getLobby(request.getLobbyID());
-        if (lobby.isPresent()) {
-            LOG.info("Spiel in Lobby " + request.getLobbyID() + " beendet.");
+    public void onGameEnd(UpdateInGameRequest req) {
+        Optional<Lobby> lobby = lobbyManagement.getLobby(req.getLobbyID());
+        if (lobby.isPresent() && !(onlyBotsLeft(req.getLobbyID()))) {
+            LOG.info("Spiel in Lobby " + req.getLobbyID() + " beendet.");
             lobby.get().setInGame(false);
-            ServerMessage msg = new UpdatedInGameMessage(request.getLobbyID());
-            authenticationService.sendToLoggedInPlayers(msg);
+            authenticationService.sendToLoggedInPlayers(new UpdatedInGameMessage(req.getLobbyID()));
+
+        } else if (lobby.isPresent() && onlyBotsLeft(req.getLobbyID())) {
+            lobbyManagement.dropLobby(req.getLobbyID());
         } else
-            LOG.debug("Lobby nicht gefunden! ID: " + request.getLobbyID());
+            LOG.debug("Lobby nicht gefunden! ID: " + req.getLobbyID());
+    }
+
+    /**
+     * Hilfmethode, ob nur noch Bots in der Lobby sind.
+     * @param lobbyID Die LobbyID
+     * @return Wahrheitswert
+     */
+    public Boolean onlyBotsLeft(UUID lobbyID) {
+        for (User user : lobbyManagement.getLobby(lobbyID).get().getUsers()) {
+            if (!user.getIsBot()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
      * Ruft alle Online User in der Lobby ab
      *
-     * @param request die RetrieveAllOnlineUsersInLobbyRequest
+     * @param req die RetrieveAllOnlineUsersInLobbyRequest
      * @author Marvin
      * @since Sprint 3
      */
     @Subscribe
-    public void onRetrieveAllOnlineUsersInLobbyRequest(RetrieveAllOnlineUsersInLobbyRequest request) {
-        Optional<Lobby> lobby = lobbyManagement.getLobby(request.getLobbyID());
+    public void onRetrieveAllOnlineUsersInLobbyRequest(RetrieveAllOnlineUsersInLobbyRequest req) {
+        Optional<Lobby> lobby = lobbyManagement.getLobby(req.getLobbyID());
         if (lobby.isPresent()) {
             ResponseMessage msg = new AllOnlineUsersInLobbyResponse(lobby.get().getLobbyID(), lobby.get().getUsers(), lobby.get().getEveryReadyStatus());
-            msg.initWithMessage(request);
+            msg.initWithMessage(req);
             post(msg);
         } else {
-            LOG.debug("Lobby nicht gefunden! ID: " + request.getLobbyID());
+            LOG.debug("Lobby nicht gefunden! ID: " + req.getLobbyID());
         }
     }
 
     /**
      * Erstellt eine AllOnlineLobbiesResponse mit allen Lobbies im LobbyManagement und schickt diese ab
      *
-     * @param msg the msg
+     * @param req Der RetrieveAllOnlineLobbiesRequest
      * @author Julia
      * @since Sprint 2
      */
     @Subscribe
-    public void onRetrieveAllOnlineLobbiesRequest(RetrieveAllOnlineLobbiesRequest msg) {
+    public void onRetrieveAllOnlineLobbiesRequest(RetrieveAllOnlineLobbiesRequest req) {
         AllOnlineLobbiesResponse response = new AllOnlineLobbiesResponse(lobbyManagement.getLobbies());
-        response.initWithMessage(msg);
+        response.initWithMessage(req);
         post(response);
     }
 
     /**
      * Lobbies werden aktualisiert nachdem ein User seine Daten geändert hat
      *
-     * @param msg
+     * @param req Der UpdateLobbiesRequest
      * @author Julis
      * @since Sprint 4
      */
     @Subscribe
-    public void onUpdateLobbiesRequest(UpdateLobbiesRequest msg) {
-        lobbyManagement.updateLobbies(msg.getUpdatedUser(), msg.getOldUser());
+    public void onUpdateLobbiesRequest(UpdateLobbiesRequest req) {
+        lobbyManagement.updateLobbies(req.getUpdatedUser(), req.getOldUser());
     }
 
     /**
      * Bei der Anfrage einen Spieler aus einer Lobby zu entfernen, wird dieser entfernt.
      *
-     * @param msg the request message
+     * @param req Der KickUserRequest
      * @author Marvin, Darian
      */
     @Subscribe
-    public void onKickUserRequest(KickUserRequest msg) {
+    public void onKickUserRequest(KickUserRequest req) {
         try {
-            lobbyManagement.kickUser(msg.getLobbyID(), msg.getUserToKick(), msg.getUser());
-            LOG.info("User " + msg.getUser().getUsername() + " wurde von der Lobby mit folgender ID " + msg.getLobbyID() + " gekickt!");
-            ServerMessage returnMessage = new KickUserMessage(msg.getLobbyID(), msg.getUserToKick(), (LobbyDTO) lobbyManagement.getLobby(msg.getLobbyID()).get());
+            lobbyManagement.kickUser(req.getLobbyID(), req.getUserToKick(), req.getUser());
+            LOG.info("User " + req.getUser().getUsername() + " wurde von der Lobby mit folgender ID " + req.getLobbyID() + " gekickt!");
+            ServerMessage returnMessage = new KickUserMessage(req.getLobbyID(), req.getUserToKick(), (LobbyDTO) lobbyManagement.getLobby(req.getLobbyID()).get());
             authenticationService.sendToLoggedInPlayers(returnMessage);
         }
         catch (KickPlayerException e){
-            authenticationService.sendToLobbyOwner(new LobbyExceptionMessage(msg.getLobbyID(), e.getMessage()), msg.getUser());
+            authenticationService.sendToLobbyOwner(new LobbyExceptionMessage(req.getLobbyID(), e.getMessage()), req.getUser());
             LOG.error(e.getMessage());
         }
     }
@@ -270,19 +298,20 @@ public class LobbyService extends AbstractService {
     /**
      * Abarbeitung des Requests.
      *
+     * @param req Der SetMaxPlayerRequest
      * @author Timo, Rike, Marvin, Ferit, Darian
      * @since Sprint 3
      */
     @Subscribe
-    public void onSetMaxPlayerRequest(SetMaxPlayerRequest msg) {
-        LobbyDTO lobby = (LobbyDTO) lobbyManagement.getLobby(msg.getLobbyID()).get();
+    public void onSetMaxPlayerRequest(SetMaxPlayerRequest req) {
+        LobbyDTO lobby = (LobbyDTO) lobbyManagement.getLobby(req.getLobbyID()).get();
          try{
-            lobbyManagement.setMaxPlayer(msg.getLobbyID(), msg.getUser(), msg.getMaxPlayerValue());
-            ServerMessage returnMessage = new SetMaxPlayerMessage(msg.getMaxPlayerValue(), msg.getLobbyID(), lobbyManagement.getLobbyOwner(msg.getLobbyID()), lobby);
-            authenticationService.sendToLobbyOwner(returnMessage, lobby.getOwner());
+            lobbyManagement.setMaxPlayer(req.getLobbyID(), req.getUser(), req.getMaxPlayerValue());
+            ServerMessage returnMessage = new SetMaxPlayerMessage(req.getMaxPlayerValue(), req.getLobbyID(), lobbyManagement.getLobbyOwner(msg.getLobbyID()), lobby);
+            authenticationService.sendToLoggedInPlayers(returnMessage, lobby.getOwner());
         }
         catch(SetMaxPlayerException e){
-            ServerMessage returnMessage2 = new LobbyExceptionMessage(msg.getLobbyID(),e.getMessage());
+            ServerMessage returnMessage2 = new LobbyExceptionMessage(req.getLobbyID(), e.getMessage());
             authenticationService.sendToLobbyOwner(returnMessage2, lobby.getOwner());
             LOG.debug(e.getMessage());
         }
@@ -291,20 +320,20 @@ public class LobbyService extends AbstractService {
     /**
      * Sende die Anfrage, der ausgewählten Karten
      *
-     * @param msg
+     * @param req Die SendChosenCardsRequest
      * @author Fenja, Anna
      * @since Sprint 7
      */
     @Subscribe
-    public void onSendChosenCardsRequest(SendChosenCardsRequest msg) {
+    public void onSendChosenCardsRequest(SendChosenCardsRequest req) {
         LOG.debug("Ausgewählte Karten erhalten");
-        LobbyDTO lobby = (LobbyDTO) lobbyManagement.getLobby(msg.getLobbyID()).get();
-        lobby.setChosenCards(msg.getChosenCards());
+        LobbyDTO lobby = (LobbyDTO) lobbyManagement.getLobby(req.getLobbyID()).get();
+        lobby.setChosenCards(req.getChosenCards());
 
-        SetChosenCardsResponse response = new SetChosenCardsResponse(msg.getLobbyID(), true);
-        response.initWithMessage(msg);
+        SetChosenCardsResponse response = new SetChosenCardsResponse(req.getLobbyID(), true);
+        response.initWithMessage(req);
         post(response);
-        post(new NewChatMessageRequest(msg.getLobbyID().toString(), new ChatMessage(new UserDTO("server", "", ""), "Karten wurden ausgewählt")));
+        sendToAll(req.getLobbyID(), new NewChatMessage(req.getLobbyID().toString(), new ChatMessage(new UserDTO("server", "", ""), "Karten wurden ausgewählt")));
     }
 
     //--------------------------------------
@@ -314,25 +343,27 @@ public class LobbyService extends AbstractService {
     /**
      * Hilfsmethode, die die Nachricht an alle Spieler in der Lobby sendet
      *
-     * @param lobbyID die LobbyID
-     * @param message die Nachricht
+     * @param lobbyID Die LobbyID
+     * @param msg Die Nachricht
      * @author KenoO, Paula, Marvin
      * @since Sprint 2
      */
-    public void sendToAll(UUID lobbyID, ServerMessage message) {
+    public void sendToAll(UUID lobbyID, ServerMessage msg) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyID);
         if (lobby.isPresent()) {
-            message.setReceiver(authenticationService.getSessions(lobby.get().getUsers()));
-            post(message);
+            msg.setReceiver(authenticationService.getSessions(lobby.get().getUsers()));
+            post(msg);
         }
-        // TODO: error handling not existing lobby
+        else {
+            LOG.error("Die Lobby mit der LobbyID " + lobbyID + " konnte nicht gefunden werden!");
+        }
     }
 
     /**
      * Überprüft ob alle Spieler bereit sind
      * Spiel startet wenn alle in der Lobby vorhandenen Spieler Bereit sind
      *
-     * @param lobby the lobby
+     * @param lobby Die Lobby
      * @author Darian, Keno, Marvin
      * @since Sprint 4
      */
@@ -344,12 +375,10 @@ public class LobbyService extends AbstractService {
         LOG.debug("Spiel in Lobby: " + lobby.getName() + " startet.");
         lobby.setInGame(true);
 
-        StartGameMessage msg = new StartGameMessage(lobby.getLobbyID());
-        authenticationService.sendToLoggedInPlayers(msg);
+        authenticationService.sendToLoggedInPlayers(new StartGameMessage(lobby.getLobbyID()));
 
         // Sendet eine interne Nachricht, welche die Erstellung des Games initiiert.
-        StartGameInternalMessage internalMessage = new StartGameInternalMessage(lobby.getLobbyID());
-        post(internalMessage);
+        post(new StartGameInternalMessage(lobby.getLobbyID()));
     }
 
     /**
@@ -361,5 +390,24 @@ public class LobbyService extends AbstractService {
      */
     private boolean containsLobbyName(String name) {
         return lobbyManagement.getLobbies().stream().anyMatch(lobby -> lobby.getName().equals(name));
+    }
+
+    /**
+     * Methode die einen Bot erstellt, wenn der Owner "Bot Hinzufügen" drückt.
+     *
+     * @param request Die Anforderung einen Bot der Lobby hinzuzufügen.
+     * @author Ferit
+     */
+    @Subscribe
+    public void createBotRequest(AddBotRequest request) {
+        Lobby thisLobby = lobbyManagement.getLobby(request.getLobbyID()).get();
+        String[] collectionBotName = {"King Arthur", "Merlin", "Die Queen", "Prinzessin Diana", "Donald Trump"};
+        if (thisLobby.getUsers().size() < thisLobby.getMaxPlayer()) {
+            String theRandomBotName = collectionBotName[(int) (Math.random() * collectionBotName.length)] + (int) (Math.random() * 999);
+            BotPlayer createdBot = new BotPlayer(theRandomBotName, eventBus, request.getLobbyID());
+            UserDTO userDT = new UserDTO(createdBot.getTheUserInThePlayer().getUsername(), createdBot.getTheUserInThePlayer().getPassword(), createdBot.getTheUserInThePlayer().getEMail(), true);
+            eventBus.post(new AuthBotInternalRequest(createdBot));
+            eventBus.post(new LobbyJoinUserRequest(thisLobby.getLobbyID(), userDT, true));
+        }
     }
 }

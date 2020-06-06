@@ -18,6 +18,7 @@ import de.uol.swp.common.user.request.*;
 import de.uol.swp.common.user.response.AllOnlineUsersResponse;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.communication.UUIDSession;
+import de.uol.swp.server.game.player.bot.internal.messages.AuthBotInternalRequest;
 import de.uol.swp.server.lobby.LobbyManagement;
 import de.uol.swp.server.message.ClientAuthorizedMessage;
 import de.uol.swp.server.message.ServerExceptionMessage;
@@ -44,6 +45,7 @@ public class AuthenticationService extends AbstractService {
      * @since Start
      */
     final private Map<Session, User> userSessions = new HashMap<>();
+    final private Map<Session, User> botSessions = new HashMap<>();
 
     private final UserManagement userManagement;
     private final LobbyManagement lobbyManagement;
@@ -73,6 +75,10 @@ public class AuthenticationService extends AbstractService {
      */
     public Optional<Session> getSession(User user) {
         Optional<Map.Entry<Session, User>> entry = userSessions.entrySet().stream().filter(e -> e.getValue().equals(user)).findFirst();
+        if (entry.isEmpty()) {
+            entry = botSessions.entrySet().stream().filter(e -> e.getValue().getUsername().equals(user.getUsername())).findFirst();
+            return entry.map(Map.Entry::getKey);
+        }
         return entry.map(Map.Entry::getKey);
     }
 
@@ -96,49 +102,63 @@ public class AuthenticationService extends AbstractService {
     /**
      * Servlogik vom LoginRequest
      *
-     * @param msg LoginRequest
+     * @param req LoginRequest
      * @author Marco
      * @since Start
      */
     @Subscribe
-    public void onLoginRequest(LoginRequest msg) {
+    public void onLoginRequest(LoginRequest req) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Neue Authentifizierung Nachricht erhalten mit " + msg.getUsername() + " " + msg.getPassword());
+            LOG.debug("Neue Authentifizierung Nachricht erhalten mit " + req.getUsername() + " " + req.getPassword());
         }
         ServerInternalMessage returnMessage;
         try {
-            User newUser = userManagement.login(msg.getUsername(), msg.getPassword());
+            User newUser = userManagement.login(req.getUsername(), req.getPassword());
             returnMessage = new ClientAuthorizedMessage(newUser);
             Session newSession = UUIDSession.create(newUser);
             userSessions.put(newSession, newUser);
             returnMessage.setSession(newSession);
         } catch (Exception e) {
             LOG.error(e);
-            returnMessage = new ServerExceptionMessage(new LoginException("Authentifizierung des Users " + msg.getUsername() + " fehlgeschlagen!"));
+            returnMessage = new ServerExceptionMessage(new LoginException("Authentifizierung des Users " + req.getUsername() + " fehlgeschlagen!"));
         }
-        if (msg.getMessageContext().isPresent()) {
-            returnMessage.setMessageContext(msg.getMessageContext().get());
+        if (req.getMessageContext().isPresent()) {
+            returnMessage.setMessageContext(req.getMessageContext().get());
         }
         post(returnMessage);
     }
 
+    @Subscribe
+    public void onBotCreatedRequest(AuthBotInternalRequest req) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Bot Request kommt im Auth Service an");
+        }
+        try {
+            Session newSession = UUIDSession.create(req.getBotPlayer().getTheUserInThePlayer());
+            botSessions.put(newSession, req.getBotPlayer().getTheUserInThePlayer());
+        } catch (Exception e) {
+            LOG.error(e);
+        }
+    }
+
+
     /**
      * Serverlogik vom LogoutRequest
      *
-     * @param msg LogoutRequest
+     * @param req LogoutRequest
      * @author Marco, Darian, Marvin
      * @since Start
      */
     @Subscribe
-    public void onLogoutRequest(LogoutRequest msg) {
-        if (msg.getSession().isPresent()) {
-            Session session = msg.getSession().get();
+    public void onLogoutRequest(LogoutRequest req) {
+        if (req.getSession().isPresent()) {
+            Session session = req.getSession().get();
             User userToLogOut = session.getUser();
-            if (msg.isHardLogout()) {
+            if (req.isHardLogout()) {
                 lobbyManagement.activeGamesOfUser(userToLogOut)
                         .forEach(game -> post(new GameGiveUpRequest((UserDTO) userToLogOut, game)));
             }
-            if (!lobbyManagement.isUserIngame(userToLogOut) || msg.isHardLogout()) {
+            if (!lobbyManagement.isUserIngame(userToLogOut) || req.isHardLogout()) {
                 // Could be already logged out
                 if (userToLogOut != null) {
                     if (LOG.isDebugEnabled()) {
@@ -161,14 +181,14 @@ public class AuthenticationService extends AbstractService {
     /**
      * Serverlogik vom RetrieveAllOnlineUsersRequest
      *
-     * @param msg RetrieveAllOnlineUsersRequest
+     * @param req RetrieveAllOnlineUsersRequest
      * @author Marco
      * @since Start
      */
     @Subscribe
-    public void onRetrieveAllOnlineUsersRequest(RetrieveAllOnlineUsersRequest msg) {
+    public void onRetrieveAllOnlineUsersRequest(RetrieveAllOnlineUsersRequest req) {
         AllOnlineUsersResponse response = new AllOnlineUsersResponse(userSessions.values());
-        response.initWithMessage(msg);
+        response.initWithMessage(req);
         post(response);
     }
 
@@ -176,25 +196,25 @@ public class AuthenticationService extends AbstractService {
      * Aktualisierung des Users wird versucht, bei Erfolg wird eine UpdatedUserMessage gesendet, andernfalls wird eine UpdateUserFailedMessage
      * mit entsprechender Fehlermeldung gesendet
      *
-     * @param msg die UpdateUserRequest
+     * @param req die UpdateUserRequest
      * @author Julia
      * @since Sprint 4
      */
     @Subscribe
-    public void onUpdateUserRequest(UpdateUserRequest msg) {
-        userSessions.put(msg.getSession().get(), msg.getUser());
-        msg.getSession().get().updateUser(msg.getUser());
+    public void onUpdateUserRequest(UpdateUserRequest req) {
+        userSessions.put(req.getSession().get(), req.getUser());
+        req.getSession().get().updateUser(req.getUser());
         ServerMessage returnMessage;
         try {
-            User user = userManagement.updateUser(msg.getUser(), msg.getOldUser(), msg.getCurrentPassword());
-            returnMessage = new UpdatedUserMessage(user, msg.getOldUser());
-            LOG.info("User " + msg.getOldUser().getUsername() + " erfolreich aktualisiert");
-            post(new UpdateLobbiesRequest((UserDTO) user, (UserDTO) msg.getOldUser()));
+            User user = userManagement.updateUser(req.getUser(), req.getOldUser(), req.getCurrentPassword());
+            returnMessage = new UpdatedUserMessage(user, req.getOldUser());
+            LOG.info("User " + req.getOldUser().getUsername() + " erfolreich aktualisiert");
+            post(new UpdateLobbiesRequest((UserDTO) user, (UserDTO) req.getOldUser()));
         } catch (UserUpdateException e) {
-            userSessions.replace(msg.getSession().get(), msg.getOldUser());
-            msg.getSession().get().updateUser(msg.getOldUser());
-            returnMessage = new UpdateUserFailedMessage(msg.getOldUser(), e.getMessage());
-            LOG.info("Aktualisierung des Users " + msg.getOldUser().getUsername() + " fehlgeschlagen");
+            userSessions.replace(req.getSession().get(), req.getOldUser());
+            req.getSession().get().updateUser(req.getOldUser());
+            returnMessage = new UpdateUserFailedMessage(req.getOldUser(), e.getMessage());
+            LOG.info("Aktualisierung des Users " + req.getOldUser().getUsername() + " fehlgeschlagen");
         }
         sendToLoggedInPlayers(returnMessage);
     }
@@ -206,8 +226,8 @@ public class AuthenticationService extends AbstractService {
      * @since Sprint 4
      */
     @Subscribe
-    public void onDropUserRequest(DropUserRequest msg) {
-        User userToDrop = msg.getUser();
+    public void onDropUserRequest(DropUserRequest req) {
+        User userToDrop = req.getUser();
 
         // Could be already logged out/removed or he is in a game
         if (userToDrop != null) {
@@ -215,11 +235,10 @@ public class AuthenticationService extends AbstractService {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Lösche User " + userToDrop.getUsername());
                 }
-                userSessions.remove(msg.getSession().get());
+                userSessions.remove(req.getSession().get());
                 userManagement.dropUser(userToDrop);
 
-                ServerMessage returnMessage = new UserDroppedMessage(userToDrop);
-                sendToLoggedInPlayers(returnMessage);
+                sendToLoggedInPlayers(new UserDroppedMessage(userToDrop));
             } else {
                 UpdateUserFailedMessage returnMessage = new UpdateUserFailedMessage(userToDrop, "Der Account befindet sich in einem laufenden Spiel. Du kannst deinen Account nicht löschen!");
                 sendToLoggedInPlayers(returnMessage);
@@ -230,25 +249,24 @@ public class AuthenticationService extends AbstractService {
     /**
      * Die Funktion sendet eine Nachricht an alle angemeldeten User.
      *
-     * @param message Die zu übertragende Nachricht
+     * @param msg Die zu übertragende Nachricht
      * @author Keno S.
      * @since Sprint 7
      */
 
-    public void sendToLoggedInPlayers(ServerMessage message) {
-
-        Set<User> loggedInUsers = new TreeSet<>(userSessions.values());
-
-        message.setReceiver(getSessions(loggedInUsers));
-        post(message);
+    public void sendToLoggedInPlayers(ServerMessage msg) {
+        if(!userSessions.isEmpty()) {
+            msg.setReceiver(getSessions(new TreeSet<>(userSessions.values())));
+            post(msg);
+        }
     }
 
-    public void sendToLobbyOwner(ServerMessage message, User owner) {
+    public void sendToLobbyOwner(ServerMessage msg, User owner) {
 
         Set<User> owner2 = new HashSet<>(1);
         owner2.add(owner);
 
-        message.setReceiver(getSessions(owner2));
-        post(message);
+        msg.setReceiver(getSessions(owner2));
+        post(msg);
     }
 }

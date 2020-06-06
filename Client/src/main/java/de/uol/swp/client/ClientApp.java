@@ -284,38 +284,38 @@ public class ClientApp extends Application implements ConnectionListener {
      * Empfängt die Nachricht (vom MainMenuPresenter), dass das Einstellungsfenster geöffnet werden soll.
      * Öffnet das Einstellungsfenster.
      *
-     * @param message Die Anfrage zum öffnen des Fensters
+     * @param req Die Anfrage zum Öffnen des Fensters
      * @author Anna
      * @since Sprint 4
      */
     @Subscribe
-    public void onOpenSettingsRequest(OpenSettingsRequest message) {
-        if (message.getUser().getUsername().equals(user.getUsername())) {
-            sceneManager.showSettingsScreen(message.getUser());
+    public void onOpenSettingsRequest(OpenSettingsRequest req) {
+        if (req.getUser().getUsername().equals(user.getUsername())) {
+            sceneManager.showSettingsScreen(req.getUser());
         }
     }
 
     /**
      * Empfängt Nachricht, dass das Lobby erstellen Fenster geöffnet werden soll
      *
-     * @param message
+     * @param req Die OpenLobbyCreateRequest
      * @author Paula
      * @since Sprint 4
      */
 
     @Subscribe
-    public void onOpenCreateLobby(OpenLobbyCreateRequest message) {
-        if (message.getUser().getUsername().equals(user.getUsername())) {
-            sceneManager.showCreateLobbyScreen(message.getUser());
+    public void onOpenCreateLobby(OpenLobbyCreateRequest req) {
+        if (req.getUser().getUsername().equals(user.getUsername())) {
+            sceneManager.showCreateLobbyScreen(req.getUser());
 
 
         }
     }
 
     @Subscribe
-    public void onOpenJoinLobby(OpenJoinLobbyRequest message) {
-        if (message.getUser().getUsername().equals(user.getUsername())) {
-            sceneManager.showJoinLobbyScreen(message.getUser(), message.getLobby());
+    public void onOpenJoinLobby(OpenJoinLobbyRequest req) {
+        if (req.getUser().getUsername().equals(user.getUsername())) {
+            sceneManager.showJoinLobbyScreen(req.getUser(), req.getLobby());
 
 
         }

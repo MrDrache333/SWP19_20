@@ -91,6 +91,13 @@
                                         <Font size="15.0"/>
                                     </font>
                                 </Button>
+                                <Button fx:id="createBotButton" alignment="CENTER" mnemonicParsing="false"
+                                        prefHeight="31.0" prefWidth="419.0" text="Bot hinzufügen"
+                                        onAction="#onCreateBotButtonPressed" visible="false">
+                                    <font>
+                                        <Font size="15.0"/>
+                                    </font>
+                                </Button>
                             </children>
                             <VBox.margin>
                                 <Insets bottom="5.0" left="15.0" right="15.0" top="75.0" />

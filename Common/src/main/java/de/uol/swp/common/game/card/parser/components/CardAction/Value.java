@@ -1,9 +1,11 @@
 package de.uol.swp.common.game.card.parser.components.CardAction;
 
+import java.io.Serializable;
+
 /**
  * Beschreibt einen Bereich mittels eines minimalen und maximalen Wert
  */
-public class Value {
+public class Value implements Serializable {
 
     /**
      * Minimaler Wert

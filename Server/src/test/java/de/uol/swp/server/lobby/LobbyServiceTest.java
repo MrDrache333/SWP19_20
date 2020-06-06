@@ -3,7 +3,7 @@ package de.uol.swp.server.lobby;
 import com.google.common.eventbus.DeadEvent;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import de.uol.swp.common.chat.request.NewChatMessageRequest;
+import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
 import de.uol.swp.common.lobby.message.UpdatedInGameMessage;
@@ -13,6 +13,7 @@ import de.uol.swp.common.lobby.request.*;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
+import de.uol.swp.common.user.request.LoginRequest;
 import de.uol.swp.server.chat.ChatManagement;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import de.uol.swp.server.usermanagement.UserManagement;
@@ -42,8 +43,9 @@ class LobbyServiceTest {
     final EventBus bus = new EventBus();
     final UserManagement userManagement = new UserManagement(new MainMemoryBasedUserStore());
     final LobbyManagement lobbyManagement = new LobbyManagement();
-    final LobbyService lobbyService = new LobbyService(lobbyManagement, new AuthenticationService(bus, userManagement, lobbyManagement), new ChatManagement(), bus);
-    private CountDownLatch lock = new CountDownLatch(1);
+    final AuthenticationService authenticationService = new AuthenticationService(bus, userManagement, lobbyManagement);
+    final LobbyService lobbyService = new LobbyService(lobbyManagement, authenticationService, new ChatManagement(), bus);
+    private final CountDownLatch lock = new CountDownLatch(1);
     private Object event;
 
     @Subscribe
@@ -66,7 +68,9 @@ class LobbyServiceTest {
 
     @Test
     void onCreateLobbyRequestTest() throws InterruptedException {
-        lobbyService.onCreateLobbyRequest(new CreateLobbyRequest(defaultLobbyName, new UserDTO(lobbyOwner.getUsername(), lobbyOwner.getPassword(), lobbyOwner.getEMail()), ""));
+        loginUsers();
+
+        lobbyService.onCreateLobbyRequest(new CreateLobbyRequest(defaultLobbyName, (UserDTO) lobbyOwner, ""));
 
         lock.await(1000, TimeUnit.MILLISECONDS);
 
@@ -82,8 +86,10 @@ class LobbyServiceTest {
 
     @Test
     void onLobbyJoinUserRequestTest() throws InterruptedException {
+        loginUsers();
+
         final UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
-        lobbyService.onLobbyJoinUserRequest(new LobbyJoinUserRequest(lobbyID, new UserDTO(lobbyUser.getUsername(), lobbyUser.getPassword(), lobbyUser.getEMail())));
+        lobbyService.onLobbyJoinUserRequest(new LobbyJoinUserRequest(lobbyID, new UserDTO(lobbyUser.getUsername(), lobbyUser.getPassword(), lobbyUser.getEMail()), false));
 
         lock.await(1000, TimeUnit.MILLISECONDS);
 
@@ -100,6 +106,8 @@ class LobbyServiceTest {
 
     @Test
     void onLobbyLeaveUserRequestTest() throws InterruptedException {
+        loginUsers();
+
         final UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
         lobbyManagement.getLobby(lobbyID).get().joinUser(lobbyUser);
         lobbyService.onLobbyLeaveUserRequest(new LobbyLeaveUserRequest(lobbyID, new UserDTO(lobbyOwner.getUsername(), lobbyOwner.getPassword(), lobbyOwner.getEMail())));
@@ -126,6 +134,8 @@ class LobbyServiceTest {
 
     @Test
     void onLeaveAllLobbiesOnLogoutRequestTest() {
+        loginUsers();
+
         UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
         UUID lobbyID2 = lobbyManagement.createLobby("Lobby2", "", lobbyOwner);
         lobbyManagement.getLobby(lobbyID).get().joinUser(lobbyUser);
@@ -141,6 +151,8 @@ class LobbyServiceTest {
 
     @Test
     void onRetrieveAllOnlineLobbiesRequestTest() throws InterruptedException {
+        loginUsers();
+
         lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
         lobbyManagement.createLobby("Lobby2", defaultLobbyPassword, lobbyOwner);
         lobbyService.onRetrieveAllOnlineLobbiesRequest(new RetrieveAllOnlineLobbiesRequest());
@@ -159,6 +171,8 @@ class LobbyServiceTest {
 
     @Test
     void onGameEndTest() throws InterruptedException {
+        loginUsers();
+
         UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
         lobbyManagement.getLobby(lobbyID).get().setInGame(true);
         lobbyService.onGameEnd(new UpdateInGameRequest(lobbyID));
@@ -173,6 +187,8 @@ class LobbyServiceTest {
 
     @Test
     void onSendChosenCardsTest() throws InterruptedException {
+        loginUsers();
+
         UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
         ArrayList<Short> chosenCards = new ArrayList<>();
         chosenCards.add((short) 5);
@@ -181,6 +197,14 @@ class LobbyServiceTest {
 
         lock.await(500, TimeUnit.MILLISECONDS);
 
-        assertTrue(event instanceof NewChatMessageRequest);
+        assertTrue(event instanceof NewChatMessage);
+    }
+
+    void loginUsers() {
+        userManagement.createUser(lobbyUser);
+        userManagement.createUser(lobbyOwner);
+
+        authenticationService.onLoginRequest(new LoginRequest(lobbyOwner.getUsername(), lobbyOwner.getPassword()));
+        authenticationService.onLoginRequest(new LoginRequest(lobbyUser.getUsername(), lobbyUser.getPassword()));
     }
 }

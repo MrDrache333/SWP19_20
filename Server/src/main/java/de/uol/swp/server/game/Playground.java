@@ -13,6 +13,7 @@ import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.lobby.Lobby;
+import de.uol.swp.common.lobby.LobbyUser;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
@@ -65,10 +66,19 @@ public class Playground extends AbstractPlayground {
     @Inject
     Playground(Lobby lobby, GameService gameService) {
         for (User user : lobby.getUsers()) {
-            Player player = new Player(user.getUsername());
-            player.setTheUserInThePlayer(user);
-            players.add(player);
-            playerTurns.put(player, 0);
+            if (user.getIsBot() == false) {
+                Player player = new Player(user.getUsername());
+                player.setTheUserInThePlayer(user);
+                player.setBot(false);
+                players.add(player);
+                playerTurns.put(player, 0);
+            } else {
+                Player player = new Player(user.getUsername());
+                player.setTheUserInThePlayer(user);
+                player.setBot(true);
+                players.add(player);
+                playerTurns.put(player, 0);
+            }
         }
         Collections.shuffle(players);
         this.gameService = gameService;
@@ -175,6 +185,11 @@ public class Playground extends AbstractPlayground {
         gameService.dropFinishedGame(lobbyID);
     }
 
+    public void endGame(UUID lobbyID) {
+        gameService.dropFinishedGame(lobbyID);
+        // gameService.getGameManagement().deleteLobbyWithOnlyBots(lobbyID);
+    }
+
     /**
      * Ein Timer skippt nach 35 Sekunden die aktuelle Phase, sofern der Timer vorher nicht gecancelt worden ist. Hilfmethode endTimer ganz unten in der Klasse. Timer wird im GameService gecancelt, wenn eine Karte innerhalb der Zeit ausgewählt worden ist.
      */
@@ -271,16 +286,21 @@ public class Playground extends AbstractPlayground {
         if (this.players.get(thePositionInList).getPlayerName().equals(theGivingUpUser.getUsername()) && wantsToGiveUp && lobbyID.equals(this.theSpecificLobbyID)) {
             latestGavedUpPlayer = this.players.get(thePositionInList);
             gameService.userGavesUpLeavesLobby(lobbyID, theGivingUpUser);
+
             if (this.players.size() == 2) {
                 this.players.remove(thePositionInList);
                 List<String> winners = calculateWinners();
                 GameOverMessage gameOverByGaveUp = new GameOverMessage(lobbyID, winners, resultsGame);
-                endGame(lobbyID, gameOverByGaveUp);
-            } else if (actualPlayer.equals(latestGavedUpPlayer)) {
+                if (this.players.get(0).isBot() == false) {
+                    endGame(lobbyID, gameOverByGaveUp);
+                } else {
+                    endGame(lobbyID);
+                }
+            } else if (actualPlayer.equals(latestGavedUpPlayer) && !(onlyBotsLeft())) {
                 this.players.remove(thePositionInList);
                 actualPhase = Phase.Type.Clearphase;
                 newTurn();
-            } else if (nextPlayer.equals(latestGavedUpPlayer)) {
+            } else if (nextPlayer.equals(latestGavedUpPlayer) && !(onlyBotsLeft())) {
                 if (thePositionInList < this.players.size() - 1) {
                     nextPlayer = this.players.get(++thePositionInList);
                     this.players.remove(--thePositionInList);
@@ -291,11 +311,22 @@ public class Playground extends AbstractPlayground {
             } else {
                 this.players.remove(thePositionInList);
             }
+
             return true;
         }
         else {
             return false;
         }
+    }
+
+    //Hilfsmethode zum Überprüfen
+    public Boolean onlyBotsLeft() {
+        for (Player player : players) {
+            if (player.isBot() == true) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
