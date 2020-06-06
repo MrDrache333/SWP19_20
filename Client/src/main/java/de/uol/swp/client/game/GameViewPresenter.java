@@ -1160,9 +1160,13 @@ public class GameViewPresenter extends AbstractPresenter {
      * @since Sprint 7
      */
     private void updateUsersInGame(Set<User> usersList) {
-        // TODO: Deaktiviert, da NullPointer. NullPointer muss behoben werden.
-        // updateEnemiesOnBoard(usersList);
-        // updateUsersList(usersList);
+        if (usersList != null && !usersList.isEmpty()) {
+            updateEnemiesOnBoard(usersList);
+            updateUsersList(usersList);
+            LOG.debug("Spielerliste erfolgreich aktualisiert - updateUsersInGame Methode");
+        } else {
+            LOG.error("Aktualisierung der Spielerliste fehlgeschlagen - updateUsersInGame Methode");
+        }
     }
 
     /**
