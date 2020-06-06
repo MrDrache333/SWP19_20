@@ -1,7 +1,10 @@
 package de.uol.swp.client.game;
 
 import de.uol.swp.client.game.container.GeneralLayoutContainer;
+import javafx.animation.FadeTransition;
+import javafx.animation.ParallelTransition;
 import javafx.animation.PathTransition;
+import javafx.animation.ScaleTransition;
 import javafx.scene.Parent;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.ArcTo;
@@ -15,8 +18,8 @@ public class AnimationManagement {
 
     private static final double HAND_X = 460;
 
-    private static final double ABLAGE_X = 1170;
-    private static final double ABLAGE_Y = 610;
+    private static final double ABLAGE_X = 1050;
+    private static final double ABLAGE_Y = 630;
 
     private static final double ACTION_ZONE_X = 510;
     private static final double ACTION_ZONE_Y = 600;
@@ -24,8 +27,6 @@ public class AnimationManagement {
     private static final double ACTION_ZONE_OPPONENT_X = ACTION_ZONE_X;
     private static final double ACTION_ZONE_OPPONENT_Y = 205;
 
-    private static final double TRASH_X = 150;
-    private static final double TRASH_Y = 455;
 
     /**
      * Erstellt ein neues MoveTo Objekt für den Pfad, wobei die aktuellen Koordinaten der Karte übernommen werden.
@@ -62,7 +63,6 @@ public class AnimationManagement {
         Parent parent = card.getParent();
         double startPointX = parent.getLayoutX() + parent.getBoundsInLocal().getWidth() / 2 - w - EndPointX + x;
         double startPointY = parent.getLayoutY() + parent.getBoundsInLocal().getHeight() / 2 - 2 * h - EndPointY + y;
-        if (x != EndPointX || y != EndPointY) {
             Path path = new Path();
             path.getElements().add(new MoveTo(startPointX, startPointY));
             path.getElements().add(new LineTo(w / 2, h / 2));
@@ -75,8 +75,6 @@ public class AnimationManagement {
             pathTransition.play();
             setNewCoordinates(card, pathTransition);
             return pathTransition;
-        }
-        return null;
     }
 
     /**
@@ -103,7 +101,6 @@ public class AnimationManagement {
         double startPointX = parent.getLayoutX() + parent.getBoundsInLocal().getWidth() / 2 - w - EndPointX - w * 2 * count + 300;
         double startPointY = parent.getLayoutY() + parent.getBoundsInLocal().getHeight() / 2 - h - EndPointY;
         Path path = new Path();
-        //if (moveTo.getX() != EndPointX || moveTo.getY() != EndPointY) {
         path.getElements().add(new MoveTo(startPointX, startPointY));
         path.getElements().add(new ArcTo(30, 20, 0, w, h, largeArc, !largeArc));
         PathTransition pathTransition = new PathTransition();
@@ -182,15 +179,29 @@ public class AnimationManagement {
     }
 
     /**
-     * Die Karte wird auf den Müllstapel gelegt.
+     * Die Karte wird gelöscht.
      *
      * @param card die Karte
-     * @return boolean ob die Bewegung durchgeführt wurde
      * @author Anna
      * @since Sprint 5
      */
-    public static Boolean deleteCard(ImageView card) {
-        return createArcToPath(card, keepPosition(card), TRASH_X, TRASH_Y, 0, true);
+    public static ParallelTransition deleteCard(ImageView card) {
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(700), card);
+        fadeTransition.setFromValue(10);
+        fadeTransition.setToValue(0.01);
+
+        ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(700), card);
+        scaleTransition.setToX(0.01f);
+        scaleTransition.setToY(0.01f);
+
+        ParallelTransition parallelTransition = new ParallelTransition(fadeTransition, scaleTransition);
+        parallelTransition.play();
+        parallelTransition.setOnFinished(e -> {
+            ((GeneralLayoutContainer) card.getParent()).getChildren().remove(card);
+        });
+
+        return parallelTransition;
+
     }
 
     /**
@@ -208,7 +219,6 @@ public class AnimationManagement {
         double w = card.getFitWidth() / 2;
         double h = card.getFitHeight() / 2;
         double startPointX = parent.getLayoutX() + parent.getBoundsInLocal().getWidth() / 2 - w - HAND_X - w * 2 * count;
-        startPointX += 350;
         parent.toBack();
         if (HAND_X + count * w != startPointX) {
             Path path = new Path();

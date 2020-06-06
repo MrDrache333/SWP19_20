@@ -339,7 +339,6 @@ public class ActionCardExecution {
                 return c;
             }
         }
-
         return null;
     }
 
@@ -660,7 +659,6 @@ public class ActionCardExecution {
                 player.getPlayerDeck().getHand().addAll(action.getCardsToMove());
                 break;
         }
-
         int size = action.getCardsToMove().size();
         List<Card> toRemove = new ArrayList<>();
         switch (action.getCardSource()) {
@@ -703,6 +701,7 @@ public class ActionCardExecution {
                     }
                 }
                 toRemove.forEach(c -> player.getPlayerDeck().getCardsDeck().remove(c));
+                action.setCardsToMove((ArrayList) toRemove);
                 break;
             case BUY:
                 Map<Short, Integer> newCount = new HashMap<>();
@@ -722,7 +721,7 @@ public class ActionCardExecution {
                 playground.getGameService().sendToAllPlayers(gameID, message);
                 break;
         }
-        MoveCardMessage msg = new MoveCardMessage(gameID, player.getTheUserInThePlayer(), action);
+        MoveCardMessage msg = new MoveCardMessage(gameID, player.getTheUserInThePlayer(), new Move(action.getCardsToMove(), action.getCardSource(), action.getCardDestination()));
         //TODO Evtl. Daten, die andere Spieler nicht erhalten dürfen irgendwie unkenntlich machen? (Karten anderer Spieler)
         playground.getGameService().sendToAllPlayers(gameID, msg);
 

@@ -30,6 +30,10 @@ public class Card extends ImageView {
      */
     public Card(String id) {
         this.setImage(new Image("file:Client/src/main/resources/cards/images/" + id + ".png"));
+        this.setPreserveRatio(true);
+        this.setFitHeight(107);
+        this.setFitWidth(this.getBoundsInLocal().getWidth());
+        this.setId(id);
     }
 
     /**
