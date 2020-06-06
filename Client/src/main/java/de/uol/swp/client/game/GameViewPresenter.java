@@ -1098,7 +1098,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     users = FXCollections.observableArrayList();
                     usersView.setItems(users);
                 } else {
-                    LOG.debug("No users in Lobby.");
+                    LOG.debug("Keine User in der Lobby.");
                 }
                 users.clear();
                 userList.forEach(u -> users.add(u.getUsername()));
