@@ -394,23 +394,6 @@ public class ClientApp extends Application implements ConnectionListener {
     // -----------------------------------------------------
 
     /**
-     * Aktualisiert die Max Player Anzahl der Lobbys wenn eine SetMaxPlayerMessage eingeht.
-     *
-     * @author Timo, Rike
-     * @since Sprint 3
-     */
-    @Subscribe
-    public void onSetMaxPlayerMessage(SetMaxPlayerMessage msg) {
-
-        if (msg.isSetMaxPlayerSet()) {
-            LOG.info("Max. Spieler der Lobby: " + msg.getLobbyID() + " erfolgreich auf " + msg.getMaxPlayer() + " gesetzt.");
-        } else {
-            LOG.info("Max. Spieler der Lobby: " + msg.getLobbyID() + " nicht gesetzt. User ist nicht der Lobbyowner!");
-            sceneManager.showAlert(Alert.AlertType.INFORMATION, "Max. Spieler nicht geändert :(\nBitte einen User vorher Kicken,\nda mehr Spieler in der Lobby sind\nals der Wert den du ausgewählt hast.", "Fehler 404 - Marco nicht gefunden.");
-        }
-    }
-
-    /**
      * Nachdem der Account gelöscht wurde, werden alle Fenster geschlossen und der Login-Screen angezeigt
      *
      * @author Anna

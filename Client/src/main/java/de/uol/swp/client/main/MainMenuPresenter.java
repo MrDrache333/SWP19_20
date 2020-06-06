@@ -304,12 +304,12 @@ public class MainMenuPresenter extends AbstractPresenter {
      * Aktualisiert die Lobbytabelle, nachdem die max. Spielerzahl einer Lobby gesetzt wurde
      *
      * @param message die SetMaxPlayerMessage
-     * @author Julia
+     * @author Julia, Darian
      * @since Sprint 4
      */
     @Subscribe
     public void maxPlayerSet(SetMaxPlayerMessage message) {
-        if (message.isSetMaxPlayerSet() && lobbies != null) {
+        if (lobbies != null) {
             Platform.runLater(() -> {
                 lobbies.removeIf(lobby -> lobby.getLobbyID().equals(message.getLobby().getLobbyID()));
                 lobbies.add(0, message.getLobby());

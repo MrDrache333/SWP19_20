@@ -8,10 +8,7 @@ import de.uol.swp.common.chat.request.NewChatMessageRequest;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.LobbyUser;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
-import de.uol.swp.common.lobby.exception.JoinLobbyExceptionMessage;
-import de.uol.swp.common.lobby.exception.KickPlayerException;
-import de.uol.swp.common.lobby.exception.LeaveLobbyException;
-import de.uol.swp.common.lobby.exception.LobbyExceptionMessage;
+import de.uol.swp.common.lobby.exception.*;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.request.*;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
@@ -134,15 +131,11 @@ public class LobbyService extends AbstractService {
             Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getLobbyID());
             LOG.info("User " + msg.getUser().getUsername() + " verlässt die Lobby " + msg.getLobbyID());
             ServerMessage returnMessage;
-            if (lobby.isPresent()) {
-                returnMessage = new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), (UserDTO) lobby.get().getOwner(), (LobbyDTO) lobby.get());
-            } else {
-                returnMessage = new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), null, null);
-            }
+            returnMessage = new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), (UserDTO) lobby.get().getOwner(), (LobbyDTO) lobby.get());
             authenticationService.sendToLoggedInPlayers(returnMessage);
         } catch(LeaveLobbyException e) {
             authenticationService.sendToLobbyOwner(new LobbyExceptionMessage(msg.getLobbyID(), e.getMessage()), msg.getUser());
-            LOG.error("Verlassen der Lobby mit der ID " + msg.getLobbyID() + " fehlgeschlagen.");
+            LOG.error(e.getMessage());
         }
     }
 
@@ -166,7 +159,6 @@ public class LobbyService extends AbstractService {
         toLeave.forEach(lobby -> lobbyManagement.leaveLobby(lobby.getLobbyID(), msg.getUser()));
         toLeave.clear();
         lobbyManagement.getLobbies().forEach(lobby -> toLeave.add((LobbyDTO) lobby));
-
         ServerMessage returnMessage = new UserLeftAllLobbiesMessage(msg.getUser(), toLeave);
         authenticationService.sendToLoggedInPlayers(returnMessage);
     }
@@ -181,7 +173,6 @@ public class LobbyService extends AbstractService {
     @Subscribe
     public void onUpdateLobbyReadyStatusRequest(UpdateLobbyReadyStatusRequest request) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(request.getLobbyID());
-
         if (lobby.isPresent()) {
             lobby.get().setReadyStatus(request.getUser(), request.isReady());
             ServerMessage msg = new UpdatedLobbyReadyStatusMessage(lobby.get().getLobbyID(), request.getUser(), lobby.get().getReadyStatus(request.getUser()));
@@ -256,12 +247,11 @@ public class LobbyService extends AbstractService {
         lobbyManagement.updateLobbies(msg.getUpdatedUser(), msg.getOldUser());
     }
 
-
     /**
      * Bei der Anfrage einen Spieler aus einer Lobby zu entfernen, wird dieser entfernt.
      *
      * @param msg the request message
-     * @author Darian, Marvin
+     * @author Marvin, Darian
      */
     @Subscribe
     public void onKickUserRequest(KickUserRequest msg) {
@@ -280,19 +270,21 @@ public class LobbyService extends AbstractService {
     /**
      * Abarbeitung des Requests.
      *
-     * @author Timo, Rike, Marvin, Ferit
+     * @author Timo, Rike, Marvin, Ferit, Darian
      * @since Sprint 3
      */
     @Subscribe
     public void onSetMaxPlayerRequest(SetMaxPlayerRequest msg) {
         LobbyDTO lobby = (LobbyDTO) lobbyManagement.getLobby(msg.getLobbyID()).get();
-        if (msg.getMaxPlayerValue() >= lobbyManagement.getLobby(msg.getLobbyID()).get().getPlayers()) {
-            boolean setMaxPlayerSet = lobbyManagement.setMaxPlayer(msg.getLobbyID(), msg.getUser(), msg.getMaxPlayerValue());
-            ServerMessage returnMessage = new SetMaxPlayerMessage(msg.getMaxPlayerValue(), msg.getLobbyID(), setMaxPlayerSet, lobbyManagement.getLobbyOwner(msg.getLobbyID()), lobby);
+         try{
+            lobbyManagement.setMaxPlayer(msg.getLobbyID(), msg.getUser(), msg.getMaxPlayerValue());
+            ServerMessage returnMessage = new SetMaxPlayerMessage(msg.getMaxPlayerValue(), msg.getLobbyID(), lobbyManagement.getLobbyOwner(msg.getLobbyID()), lobby);
             authenticationService.sendToLobbyOwner(returnMessage, lobby.getOwner());
-        } else {
-            ServerMessage returnMessage2 = new SetMaxPlayerMessage(lobbyManagement.getLobby(msg.getLobbyID()).get().getMaxPlayer(), msg.getLobbyID(), false, lobbyManagement.getLobbyOwner(msg.getLobbyID()), lobby);
+        }
+        catch(SetMaxPlayerException e){
+            ServerMessage returnMessage2 = new LobbyExceptionMessage(msg.getLobbyID(),e.getMessage());
             authenticationService.sendToLobbyOwner(returnMessage2, lobby.getOwner());
+            LOG.debug(e.getMessage());
         }
     }
 
@@ -335,7 +327,6 @@ public class LobbyService extends AbstractService {
         }
         // TODO: error handling not existing lobby
     }
-
 
     /**
      * Überprüft ob alle Spieler bereit sind

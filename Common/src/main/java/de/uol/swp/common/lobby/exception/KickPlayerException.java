@@ -7,6 +7,7 @@ public class KickPlayerException extends RuntimeException {
      * Erstellt einen neuen KickPlayer-Fehler
      *
      * @param message die Fehlernachricht
+     * @author Darian
      */
     public KickPlayerException(String message) {
         super(message);

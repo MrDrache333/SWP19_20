@@ -431,13 +431,13 @@ public class LobbyPresenter extends AbstractPresenter {
      * Deaktivieren der Max. Spieler ChoiceBox, sofern der eingeloggte Nutzer nicht der Lobbyowner ist.
      *
      * @param msg die SetMaxPlayerMessage
-     * @author Timo, Rike
+     * @author Timo, Rike, Darian
      * @since Sprint 3
      */
     @Subscribe
     public void onSetMaxPlayerMessage(SetMaxPlayerMessage msg) {
         Platform.runLater(() -> {
-            if (msg.getOwner().equals(loggedInUser) && lobbyID == msg.getLobbyID() && msg.isSetMaxPlayerSet()) {
+            if (msg.getOwner().equals(loggedInUser) && lobbyID == msg.getLobbyID()) {
                 chooseMaxPlayer.setDisable(false);
                 chooseMaxPlayer.setValue(msg.getMaxPlayer());
                 LOG.info("Max. Spieler der Lobby: " + msg.getLobbyID() + " erfolgreich auf " + msg.getMaxPlayer() + " gesetzt.");
