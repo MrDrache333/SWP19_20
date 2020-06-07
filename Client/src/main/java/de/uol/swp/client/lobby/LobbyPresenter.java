@@ -588,7 +588,15 @@ public class LobbyPresenter extends AbstractPresenter {
             gameOwner = message.getGameOwner();
             userLeftLobby(message.getUser().getUsername(), false);
             if (gameOwner.getUsername().equals(loggedInUser.getUsername())) {
-                gamesettingsButton.setVisible(true);
+                Platform.runLater(() -> {
+                    gamesettingsButton.setVisible(true);
+                    chooseMaxPlayer.setVisible(true);
+                    createBotButton.setVisible(true);
+                    maxSettingOwner.setVisible(true);
+                    settingOwner.setVisible(true);
+                    chooseMaxPlayer.setDisable(false);
+                    chooseMaxPlayer.setValue(message.getLobby().getMaxPlayer());
+                });
             }
         }
     }
