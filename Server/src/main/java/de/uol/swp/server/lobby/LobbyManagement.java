@@ -119,7 +119,7 @@ public class LobbyManagement {
      * @throws LeaveLobbyException Wenn die Lobby nicht existiert.
      * @author Marvin
      */
-    public void leaveLobby(UUID id, User user) {
+    public boolean leaveLobby(UUID id, User user) {
         Optional<Lobby> lobby = this.getLobby(id);
         if (lobby.isPresent()) {
             if (LOG.isDebugEnabled()) {

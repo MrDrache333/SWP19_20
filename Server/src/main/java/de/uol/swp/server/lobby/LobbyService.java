@@ -136,24 +136,38 @@ public class LobbyService extends AbstractService {
      * @since Sprint 3
      */
     @Subscribe
-    public void onLobbyLeaveUserRequest(LobbyLeaveUserRequest req) {
+    public void onLobbyLeaveUserRequest(LobbyLeaveUserRequest msg) {
         try{
-            lobbyManagement.leaveLobby(req.getLobbyID(), req.getUser());
-            Optional<Lobby> lobby = lobbyManagement.getLobby(req.getLobbyID());
-            ServerMessage returnMessage;
-            if(lobby.isPresent()) {
-                LOG.info("User " + req.getUser().getUsername() + " verlässt die Lobby " + req.getLobbyID());
-                returnMessage = new UserLeftLobbyMessage(req.getLobbyID(), req.getUser(), (UserDTO) lobby.get().getOwner(), (LobbyDTO) lobby.get());
+            Optional<User> oldOwner = lobbyManagement.getLobbyOwner(msg.getLobbyID());
+            //Falls der Besitzer der Lobby aus der Lobby geht wird dieser aktualisiert
+            boolean leavedLobbysuccesful = lobbyManagement.leaveLobby(msg.getLobbyID(), msg.getUser());
+            if (leavedLobbysuccesful && !(lobbyManagement.getLobby(msg.getLobbyID()).isEmpty()) && !(lobbyManagement.getLobby(msg.getLobbyID()).get().onlyBotsLeft(msg.getLobbyID()))) {
+                Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getLobbyID());
+                LOG.info("User " + msg.getUser().getUsername() + " verlässt die Lobby " + msg.getLobbyID());
+                ServerMessage returnMessage;
+                if (lobby.isPresent()) {
+                    returnMessage = new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), (UserDTO) lobby.get().getOwner(), (LobbyDTO) lobby.get());
+                } else {
+                    returnMessage = new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), null, null);
+                }
+                authenticationService.sendToLoggedInPlayers(returnMessage);
+            } else if (leavedLobbysuccesful && !(lobbyManagement.getLobby(msg.getLobbyID()).isEmpty()) &&
+                    (lobbyManagement.getLobby(msg.getLobbyID()).get().onlyBotsLeft(msg.getLobbyID()))) {
+                lobbyManagement.dropLobby(msg.getLobbyID());
+                ServerMessage returnMessage;
+                returnMessage = new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), null, null);
+                authenticationService.sendToLoggedInPlayers(returnMessage);
+            } else {
+                ServerMessage returnMessage;
+                returnMessage = new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), null, null);
+                authenticationService.sendToLoggedInPlayers(returnMessage);
             }
-            else{
-                returnMessage = new UserLeftLobbyMessage(req.getLobbyID(), req.getUser(), null, null);
-                LOG.info("User " + req.getUser().getUsername() + " verlässt die Lobby " + req.getLobbyID() + " und die Lobby wird geschlossen.");
-            }
-            authenticationService.sendToLoggedInPlayers(returnMessage);
         } catch(LeaveLobbyException e) {
             authenticationService.sendToUser(new LobbyExceptionMessage(req.getLobbyID(), e.getMessage()), req.getUser());
             LOG.error(e.getMessage());
         }
+
+
     }
 
     /**
