@@ -32,13 +32,17 @@ public class AnimationManagement {
      * @author Anna
      * @since Sprint 5
      */
-    public static PathTransition createLineToPath(ImageView card, double EndPointX, double EndPointY) {
+    public static PathTransition createLineToPath(ImageView card, double EndPointX, double EndPointY, boolean playedByOpponent) {
         double x = Math.max(card.getLayoutX(), card.getBoundsInParent().getMinX());
         double y = Math.max(card.getLayoutY(), card.getBoundsInParent().getMinY());
         double w = card.getFitWidth();
         double h = card.getFitHeight();
-        double startPointX = -(EndPointX - sumParentX(card) - x);
-        double startPointY = -(EndPointY - sumParentY(card) - y);
+        double startPointX = (EndPointX - sumParentX(card) - x);
+        double startPointY = (EndPointY - sumParentY(card) - y);
+        if (!playedByOpponent) {
+            startPointX *= -1;
+            startPointY *= -1;
+        }
         Path path = new Path();
         path.getElements().add(new MoveTo(startPointX, startPointY));
         path.getElements().add(new LineTo(w / 2, h / 2));
@@ -111,7 +115,11 @@ public class AnimationManagement {
      * @since Sprint 5
      */
     public static PathTransition buyCard(ImageView card) {
-        return createLineToPath(card, ABLAGE_X, ABLAGE_Y);
+        return createLineToPath(card, ABLAGE_X, ABLAGE_Y, false);
+    }
+
+    public static void opponentBuysCard(ImageView card, GeneralLayoutContainer container) {
+        createLineToPath(card, container.getLayoutX(), container.getLayoutY(), true);
     }
 
     /**
@@ -123,7 +131,7 @@ public class AnimationManagement {
      * @since Sprint 7
      */
     public static PathTransition clearCards(ImageView card, GeneralLayoutContainer discardPile) {
-        return createLineToPath(card, discardPile.getLayoutX(), discardPile.getLayoutY());
+        return createLineToPath(card, discardPile.getLayoutX(), discardPile.getLayoutY(), false);
     }
 
     /**
