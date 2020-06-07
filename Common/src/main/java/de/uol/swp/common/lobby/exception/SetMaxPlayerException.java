@@ -13,4 +13,3 @@ public class SetMaxPlayerException extends RuntimeException{
         super(message);
     }
 }
-
