@@ -10,16 +10,15 @@ import de.uol.swp.client.game.GameService;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.lobby.OpenJoinLobbyRequest;
 import de.uol.swp.client.sound.SoundMediaPlayer;
-import de.uol.swp.common.lobby.message.*;
+import de.uol.swp.common.lobby.message.CreateLobbyMessage;
+import de.uol.swp.common.lobby.message.KickUserMessage;
+import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
+import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.lobby.request.OpenLobbyCreateRequest;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.exception.RegistrationExceptionMessage;
-import de.uol.swp.common.user.message.UpdateUserFailedMessage;
-import de.uol.swp.common.user.message.UpdatedUserMessage;
-import de.uol.swp.common.user.message.UserDroppedMessage;
-import de.uol.swp.common.user.message.UserLoggedOutMessage;
-import de.uol.swp.common.user.request.OpenSettingsRequest;
+import de.uol.swp.common.user.message.*;
 import de.uol.swp.common.user.response.LoginSuccessfulResponse;
 import de.uol.swp.common.user.response.RegistrationSuccessfulResponse;
 import io.netty.channel.Channel;
@@ -281,17 +280,20 @@ public class ClientApp extends Application implements ConnectionListener {
     }
 
     /**
-     * Empfängt die Nachricht (vom MainMenuPresenter), dass das Einstellungsfenster geöffnet werden soll.
-     * Öffnet das Einstellungsfenster.
+     * Öffnet das Einstellungsfenster oder zeigt eine Fehlermeldung, wenn dies nicht möglich ist.
      *
-     * @param req Die Anfrage zum Öffnen des Fensters
-     * @author Anna
+     * @param msg Die OpenSettingsMessage
+     * @author Anna, Julia
      * @since Sprint 4
      */
     @Subscribe
-    public void onOpenSettingsRequest(OpenSettingsRequest req) {
-        if (req.getUser().getUsername().equals(user.getUsername())) {
-            sceneManager.showSettingsScreen(req.getUser());
+    public void onOpenSettingsRequest(OpenSettingsMessage msg) {
+        if (msg.getUser().getUsername().equals(user.getUsername())) {
+            if (!msg.isInLobby()) {
+                sceneManager.showSettingsScreen(msg.getUser());
+            } else {
+                sceneManager.showError("Du kannst deine Daten nicht ändern,\nwenn du in einer Lobby bist.");
+            }
         }
     }
 

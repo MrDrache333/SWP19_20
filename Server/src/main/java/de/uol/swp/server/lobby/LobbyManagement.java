@@ -10,7 +10,6 @@ import de.uol.swp.common.user.UserDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.security.KeyException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -247,14 +246,25 @@ public class LobbyManagement {
      */
     public void setMaxPlayer(UUID lobbyID, User loggedInUser, Integer maxPlayerValue) {
         if (lobbies.get(lobbyID).getOwner().equals(loggedInUser)) {
-            if (maxPlayerValue >= getLobby(lobbyID).get().getPlayers()){
+            if (maxPlayerValue >= getLobby(lobbyID).get().getPlayers()) {
                 lobbies.get(lobbyID).setMaxPlayer(maxPlayerValue);
-            }
-            else {
+            } else {
                 throw new SetMaxPlayerException("Es sind zu viele Benutzer in der Lobby, um die maximale Spierleranzahl ändern.");
             }
         } else {
-            throw new SetMaxPlayerException(loggedInUser+" ist nicht der Lobbybesitzer und kann nicht die maximale Spierleranzahl ändern.");
+            throw new SetMaxPlayerException(loggedInUser + " ist nicht der Lobbybesitzer und kann nicht die maximale Spierleranzahl ändern.");
         }
+    }
+
+    /**
+     * Überprüft, ob sich der User in einer Lobby befindet.
+     *
+     * @param user Der User
+     * @return true wenn ja, sonst false
+     * @author Julia
+     * @since Sprint 9
+     */
+    public boolean userInLobby(User user) {
+        return lobbies.values().stream().flatMap(l -> l.getUsers().stream()).anyMatch(u -> u.equals(user));
     }
 }
