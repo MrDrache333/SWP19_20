@@ -87,11 +87,11 @@ public class GameOverViewPresenter extends AbstractPresenter {
             flow.getChildren().add(player);
         }
         if (winners.contains(loggedInUser.getUsername())) {
-            background.setImage(new Image("file:Client/src/main/resources/images/burgHohenzollern.jpg"));
+            background.setImage(new Image("images/burgHohenzollern.jpg"));
             bannerText.setText("Du hast gewonnen!");
             bannerTextBox.setAlignment(Pos.CENTER_LEFT);
             bannerTextBox.setLayoutX(80);
-            ImageView confettiShot = new ImageView(new Image("file:Client/src/main/resources/images/confettiShot.gif"));
+            ImageView confettiShot = new ImageView(new Image("images/confettiShot.gif"));
             confettiShot.setLayoutX(30);
             confettiShot.setLayoutY(5);
             confettiShot.setPreserveRatio(true);
@@ -104,13 +104,13 @@ public class GameOverViewPresenter extends AbstractPresenter {
             bannerTextSmall.toFront();
             trophy.setVisible(true);
             trophy.toFront();
-            ImageView confettiGoldSlow = new ImageView(new Image("file:Client/src/main/resources/images/confettiGoldSlow.gif"));
+            ImageView confettiGoldSlow = new ImageView(new Image("images/confettiGoldSlow.gif"));
             confettiGoldSlow.setPreserveRatio(true);
             confettiGoldSlow.setFitWidth(420);
             anchorPane.getChildren().add(confettiGoldSlow);
         } else {
             trophy.setVisible(false);
-            background.setImage(new Image("file:Client/src/main/resources/images/burgHohenzollernDarker.jpg"));
+            background.setImage(new Image("images/burgHohenzollernDarker.jpg"));
             if (winners.size() == 1) {
                 bannerText.setText(winners.get(0) + " hat gewonnen!");
             } else {
@@ -141,10 +141,10 @@ public class GameOverViewPresenter extends AbstractPresenter {
             }
             bannerTextSmall.setText("Vielleicht klappt's beim nächsten Mal.");
             bannerTextSmall.setLayoutX(80);
-            ImageView rain = new ImageView(new Image("file:Client/src/main/resources/images/rain.gif"));
+            ImageView rain = new ImageView(new Image("images/rain.gif"));
             rain.setPreserveRatio(true);
             rain.setFitWidth(420);
-            ImageView uTried = new ImageView(new Image("file:Client/src/main/resources/images/uTried.gif"));
+            ImageView uTried = new ImageView(new Image("images/uTried.gif"));
             uTried.setLayoutX(65);
             uTried.setLayoutY(45);
             uTried.setPreserveRatio(true);

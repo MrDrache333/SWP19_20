@@ -343,7 +343,6 @@ public class ChatViewPresenter extends AbstractPresenter {
      * @author KenoO, Fenja, Timo
      * @since Sprint 2
      */
-
     public void userLeft(String username) {
         if (!chatID.equals(""))
             onNewChatMessage(new NewChatMessage(chatID, new ChatMessage(chatID.equals("global") ? serverUser : infoUser, username + " hat " + (chatID.equals("global") ? "den Chat" : "die Lobby") + " verlassen!")));
