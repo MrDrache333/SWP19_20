@@ -7,14 +7,14 @@ import de.uol.swp.server.game.GameManagement;
 import de.uol.swp.server.lobby.LobbyManagement;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import de.uol.swp.server.usermanagement.UserManagement;
-import de.uol.swp.server.usermanagement.store.MainMemoryBasedUserStore;
+import de.uol.swp.server.usermanagement.store.DatabaseBasedUserStore;
 import de.uol.swp.server.usermanagement.store.UserStore;
 
 @SuppressWarnings("UnstableApiUsage")
 public class ServerModule extends AbstractModule {
 
     private final EventBus bus = new EventBus();
-    private final UserStore store = new MainMemoryBasedUserStore();
+    private final UserStore store = new DatabaseBasedUserStore(false);
     private final UserManagement userManagement = new UserManagement(store);
     private final ChatManagement chatManagement = new ChatManagement();
     private final LobbyManagement lobbyManagement = new LobbyManagement();
