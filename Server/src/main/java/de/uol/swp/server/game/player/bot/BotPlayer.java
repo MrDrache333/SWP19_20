@@ -5,6 +5,7 @@ import com.google.common.eventbus.Subscribe;
 import de.uol.swp.common.game.card.Card;
 import de.uol.swp.common.game.card.parser.components.CardAction.request.ChooseCardRequest;
 import de.uol.swp.common.game.card.parser.components.CardAction.request.OptionalActionRequest;
+import de.uol.swp.common.game.card.parser.components.CardAction.response.ChooseCardResponse;
 import de.uol.swp.common.game.card.parser.components.CardAction.response.OptionalActionResponse;
 import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.request.BuyCardRequest;
@@ -26,8 +27,9 @@ public class BotPlayer extends Player {
     final private boolean isBot = true;
 
     private ArrayList<Short> cardsOnHandIDs;
-    private ArrayList<Short> cardsInPossession;
+    private ArrayList<Short> cardsInPossessionIDs;
     private int moneyOnTheHand;
+    private int round = 0;
 
     /**
      * Erstellt einen neuen Bot.
@@ -54,12 +56,28 @@ public class BotPlayer extends Player {
      * Skippt die BuyPhase, wenn der Bot dran ist.
      *
      * @param msg BuyPhase Mitteilung
+     * @author Darian
      */
     @Subscribe
     public void onStartBuyPhaseMessage(StartBuyPhaseMessage msg) {
-        if (msg.getUser().getUsername().equals(getTheUserInThePlayer().getUsername()) && msg.getGameID().equals(gameId)) {
-            short buyCardID = 1;
-
+        if(msg.getUser().getUsername().equals(getTheUserInThePlayer().getUsername()) && msg.getGameID().equals(gameId)) {
+            short buyCardID=1;
+            int actionCardCounter = 0;
+            for(short cardID : cardsInPossessionIDs){
+                if(cardID > 6){
+                    actionCardCounter++;
+                }
+            }
+            float actionCardPercentage = actionCardCounter/cardsInPossessionIDs.size();
+            if(actionCardPercentage < 20){
+                //Aktionskarte kaufen
+            }
+            else if(moneyOnTheHand>=6){
+                buyCardID = 3;
+            }
+            else if(moneyOnTheHand>=3){
+                buyCardID = 2;
+            }
             BuyCardRequest req = new BuyCardRequest(gameId, this.getTheUserInThePlayer(), buyCardID);
             eventBus.post(req);
         }
@@ -73,7 +91,7 @@ public class BotPlayer extends Player {
      */
     @Subscribe
     public void onStartActionPhaseMessage(StartActionPhaseMessage msg) {
-        if (msg.getUser().getUsername().equals(getTheUserInThePlayer().getUsername()) && msg.getGameID().equals(gameId)) {
+        if(msg.getUser().getUsername().equals(getTheUserInThePlayer().getUsername()) && msg.getGameID().equals(gameId)) {
             PlayCardRequest req = null;
             for(short cardID : cardsOnHandIDs){
                 if(cardID > 6 && cardID != 38){
@@ -89,7 +107,7 @@ public class BotPlayer extends Player {
 
     @Subscribe
     public void onCardsDeckSizeMessage(CardsDeckSizeMessage msg) {
-
+        //Wird wahrscheinlich nicht benötigt
     }
 
     @Subscribe
@@ -104,7 +122,9 @@ public class BotPlayer extends Player {
 
     @Subscribe
     public void onBuyCardMessage(BuyCardMessage msg) {
-
+        if (msg.getCurrentUser().getUsername().equals(getTheUserInThePlayer().getUsername()) && msg.getGameID().equals(gameId)) {
+            cardsInPossessionIDs.add(msg.getCardID());
+        }
     }
 
     @Subscribe
@@ -120,8 +140,12 @@ public class BotPlayer extends Player {
      */
     @Subscribe
     public void onDrawHandMessage(DrawHandMessage msg) {
-        if (msg.getUser().getUsername().equals(getTheUserInThePlayer().getUsername()) && msg.getTheLobbyID().equals(gameId)) {
+        if(msg.getUser().getUsername().equals(getTheUserInThePlayer().getUsername()) && msg.getTheLobbyID().equals(gameId)) {
+            round++;
             cardsOnHandIDs = msg.getCardsOnHand();
+            if(round <= 2){
+                cardsInPossessionIDs.addAll(cardsOnHandIDs);
+            }
             moneyOnTheHand = 0;
             for(short cardID : cardsOnHandIDs){
                 switch(cardID) {
@@ -147,8 +171,10 @@ public class BotPlayer extends Player {
      */
     @Subscribe
     public void onGameExceptionMessage(GameExceptionMessage msg) {
-        SkipPhaseRequest req = new SkipPhaseRequest(this.getTheUserInThePlayer(), gameId);
-        eventBus.post(req);
+        if(msg.getUser().getUsername().equals(getTheUserInThePlayer().getUsername()) && msg.getGameID().equals(gameId)) {
+            SkipPhaseRequest req = new SkipPhaseRequest(this.getTheUserInThePlayer(), gameId);
+            eventBus.post(req);
+        }
     }
 
     @Subscribe
@@ -224,7 +250,7 @@ public class BotPlayer extends Player {
     @Subscribe
     public void onChooseCardRequest(ChooseCardRequest msg) {
         if (msg.getPlayer().getUsername().equals(getTheUserInThePlayer().getUsername()) && msg.getGameID().equals(gameId)) {
-            //ChooseCardRequest res = new ChooseCardRequest();
+            //ChooseCardResponse res = new ChooseCardResponse();
             //eventBus.post(res);
         }
     }

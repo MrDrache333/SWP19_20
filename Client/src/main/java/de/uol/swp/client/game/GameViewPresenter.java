@@ -575,7 +575,7 @@ public class GameViewPresenter extends AbstractPresenter {
     // TODO: Karte wenn sie gekauft wird, von der richtigen Postition einfliegen lassen. ( Weiter nach rechts)
     @Subscribe
     public void onBuyCardMessage(BuyCardMessage msg) {
-        if (msg.getLobbyID().equals(lobbyID)) {
+        if (msg.getGameID().equals(lobbyID)) {
             if (valuecardLabels.containsKey(msg.getCardID())) {
                 Platform.runLater(() -> {
                     valuecardLabels.get(msg.getCardID()).setText(String.valueOf(msg.getCounterCard()));
@@ -901,7 +901,7 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     @Subscribe
     public void onDrawHandMessage(DrawHandMessage message) {
-        if (message.getTheLobbyID().equals(this.gameManagement.getID()) && message.getUser().equals(this.loggedInUser)) {
+        if (message.getUser().equals(this.loggedInUser)) {
             numberOfPlayersInGame = message.getNumberOfPlayers();
             Platform.runLater(() -> {
                 if (lobbyID.equals(message.getTheLobbyID())) {
