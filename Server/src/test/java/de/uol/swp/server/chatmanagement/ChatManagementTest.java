@@ -1,11 +1,20 @@
 package de.uol.swp.server.chatmanagement;
 
+import com.google.common.eventbus.DeadEvent;
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import de.uol.swp.common.chat.ChatMessage;
+import de.uol.swp.common.chat.exception.ChatException;
+import de.uol.swp.common.lobby.message.CreateLobbyMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.chat.ChatManagement;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,10 +30,31 @@ class ChatManagementTest {
      */
     static final User chatMember = new UserDTO("Keno riecht", "nach Sportstunde", "Keno@OG.com");
 
+    private final CountDownLatch lock = new CountDownLatch(1);
+    private Object event;
     /**
      * Der Eventbus.
      */
     final EventBus bus = new EventBus();
+
+    @Subscribe
+    void handle(DeadEvent e) {
+        this.event = e.getEvent();
+        System.out.print(e.getEvent());
+        lock.countDown();
+    }
+
+    @BeforeEach
+    void registerBus() {
+        event = null;
+        bus.register(this);
+    }
+
+    @AfterEach
+    void deregisterBus() {
+        bus.unregister(this);
+    }
+
     /**
      * Der Chat Management.
      */
@@ -53,7 +83,7 @@ class ChatManagementTest {
      * Erstellt einen Chat und speichert dessen Wert in einer Variable und löscht diesen wieder. Pfüfung, ob der Chat Null ist.
      */
     @Test
-    void deleteChat() {
+    void deleteChat() throws InterruptedException {
         String newChat = chatManagement.createChat();
         chatManagement.deleteChat(newChat);
         assertFalse(chatManagement.getChat(newChat).isPresent());

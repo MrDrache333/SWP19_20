@@ -1,14 +1,23 @@
 package de.uol.swp.server.lobby;
 
+import com.google.common.eventbus.DeadEvent;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import de.uol.swp.common.lobby.Lobby;
+import de.uol.swp.common.lobby.exception.KickPlayerException;
+import de.uol.swp.common.lobby.exception.SetMaxPlayerException;
+import de.uol.swp.common.lobby.message.CreateLobbyMessage;
 import de.uol.swp.common.lobby.message.UpdatedLobbyReadyStatusMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -20,7 +29,28 @@ class LobbyManagementTest {
     static final String defaultLobbyName = "Lobby";
     static final String defaultLobbyPassword = "Lobby";
     final LobbyManagement lobbyManagement = new LobbyManagement();
+    private EventBus bus = new EventBus();
     private UUID lobbyID;
+    private final CountDownLatch lock = new CountDownLatch(1);
+    private Object event;
+
+    @Subscribe
+    void handle(DeadEvent e) {
+        this.event = e.getEvent();
+        System.out.print(e.getEvent());
+        lock.countDown();
+    }
+
+    @BeforeEach
+    void registerBus() {
+        event = null;
+        bus.register(this);
+    }
+
+    @AfterEach
+    void deregisterBus() {
+        bus.unregister(this);
+    }
 
     /**
      * Vor jedem Test wird eine Lobby erstellt.
@@ -145,4 +175,54 @@ class LobbyManagementTest {
         lobby.get().setInGame(true);
         assertTrue(lobbyManagement.isUserIngame(defaultLobbyOwner));
     }
+
+    @Test
+    void updateLobbiesTest() {
+        UserDTO oldUser = (UserDTO) defaultLobbyOwner;
+        UserDTO newUser = new UserDTO("newOwner", "test", "test123@web.de");
+        lobbyManagement.updateLobbies(newUser, oldUser);
+        assertTrue(lobbyManagement.getLobby(lobbyID).get().getOwner().getUsername().equals(newUser.getUsername()));
+    }
+
+    @Test
+    void kickUserTest() {
+        lobbyManagement.kickUser(lobbyID, (User) defaultLobbyOwner, defaultLobbyOwner);
+        assertFalse(lobbyManagement.getLobby(lobbyID).isPresent());
+    }
+
+    @Test
+    void getLobbyOwnerTest() {
+        lobbyManagement.leaveLobby(lobbyID, defaultLobbyOwner);
+        assertTrue(lobbyManagement.getLobbyOwner(lobbyID).isEmpty());
+        lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, defaultLobbyOwner);
+        assertTrue(lobbyManagement.getLobbyOwner(lobbyID).get().equals(defaultLobbyOwner));
+
+    }
+
+    @Test
+    void setMaxPlayerTest() {
+        lobbyManagement.setMaxPlayer(lobbyID, defaultLobbyOwner, 3);
+        assertTrue(lobbyManagement.getLobby(lobbyID).get().getMaxPlayer() == 3);
+    }
+
+    @Test
+    void setMaxPlayerTestException() {
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            lobbyManagement.getLobby(lobbyID).get().joinUser((User) secondUser);
+            User thirdUser = new UserDTO("abc", "abc123", "abc@web.de");
+            lobbyManagement.getLobby(lobbyID).get().joinUser(thirdUser);
+            lobbyManagement.setMaxPlayer(lobbyID, defaultLobbyOwner, 2);
+        });
+        assertTrue(exception instanceof SetMaxPlayerException);
+
+        Exception exception2 = assertThrows(RuntimeException.class, () -> {
+            lobbyManagement.getLobby(lobbyID).get().joinUser((User) secondUser);
+            User thirdUser = new UserDTO("abc", "abc123", "abc@web.de");
+            lobbyManagement.getLobby(lobbyID).get().joinUser(thirdUser);
+            lobbyManagement.setMaxPlayer(lobbyID, secondUser, 3);
+        });
+        assertTrue(exception2 instanceof SetMaxPlayerException);
+    }
+
+
 }
