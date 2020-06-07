@@ -131,13 +131,13 @@ public class LobbyService extends AbstractService {
      * LobbyManagement wird aufgerufen und übergibt Namen der Lobby und User.
      * UserLeftLobbyMessage wird an Client gesendet
      *
-     * @param req Der LobbyLeaveUserRequest
+     * @param msg Der LobbyLeaveUserRequest
      * @author Julia, Paula, Darian, Marvin
      * @since Sprint 3
      */
     @Subscribe
     public void onLobbyLeaveUserRequest(LobbyLeaveUserRequest msg) {
-        try{
+        try {
             Optional<User> oldOwner = lobbyManagement.getLobbyOwner(msg.getLobbyID());
             //Falls der Besitzer der Lobby aus der Lobby geht wird dieser aktualisiert
             boolean leavedLobbysuccesful = lobbyManagement.leaveLobby(msg.getLobbyID(), msg.getUser());
@@ -162,8 +162,8 @@ public class LobbyService extends AbstractService {
                 returnMessage = new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), null, null);
                 authenticationService.sendToLoggedInPlayers(returnMessage);
             }
-        } catch(LeaveLobbyException e) {
-            authenticationService.sendToUser(new LobbyExceptionMessage(req.getLobbyID(), e.getMessage()), req.getUser());
+        } catch (LeaveLobbyException e) {
+            authenticationService.sendToUser(new LobbyExceptionMessage(msg.getLobbyID(), e.getMessage()), msg.getUser());
             LOG.error(e.getMessage());
         }
 
@@ -237,6 +237,7 @@ public class LobbyService extends AbstractService {
 
     /**
      * Hilfmethode, ob nur noch Bots in der Lobby sind.
+     *
      * @param lobbyID Die LobbyID
      * @return Wahrheitswert
      */
@@ -307,8 +308,7 @@ public class LobbyService extends AbstractService {
             LOG.info("User " + req.getUser().getUsername() + " wurde von der Lobby mit folgender ID " + req.getLobbyID() + " gekickt!");
             ServerMessage returnMessage = new KickUserMessage(req.getLobbyID(), req.getUserToKick(), (LobbyDTO) lobbyManagement.getLobby(req.getLobbyID()).get());
             authenticationService.sendToLoggedInPlayers(returnMessage);
-        }
-        catch (KickPlayerException e){
+        } catch (KickPlayerException e) {
             authenticationService.sendToUser(new LobbyExceptionMessage(req.getLobbyID(), e.getMessage()), req.getUser());
             LOG.error(e.getMessage());
         }
@@ -324,12 +324,11 @@ public class LobbyService extends AbstractService {
     @Subscribe
     public void onSetMaxPlayerRequest(SetMaxPlayerRequest req) {
         LobbyDTO lobby = (LobbyDTO) lobbyManagement.getLobby(req.getLobbyID()).get();
-         try{
+        try {
             lobbyManagement.setMaxPlayer(req.getLobbyID(), req.getUser(), req.getMaxPlayerValue());
             ServerMessage returnMessage = new SetMaxPlayerMessage(req.getMaxPlayerValue(), req.getLobbyID(), lobbyManagement.getLobbyOwner(req.getLobbyID()).get(), lobby);
             authenticationService.sendToLoggedInPlayers(returnMessage);
-        }
-        catch(SetMaxPlayerException e){
+        } catch (SetMaxPlayerException e) {
             ServerMessage returnMessage2 = new LobbyExceptionMessage(req.getLobbyID(), e.getMessage());
             authenticationService.sendToUser(returnMessage2, lobby.getOwner());
             LOG.debug(e.getMessage());
@@ -363,7 +362,7 @@ public class LobbyService extends AbstractService {
      * Hilfsmethode, die die Nachricht an alle Spieler in der Lobby sendet
      *
      * @param lobbyID Die LobbyID
-     * @param msg Die Nachricht
+     * @param msg     Die Nachricht
      * @author KenoO, Paula, Marvin
      * @since Sprint 2
      */
@@ -372,8 +371,7 @@ public class LobbyService extends AbstractService {
         if (lobby.isPresent()) {
             msg.setReceiver(authenticationService.getSessions(lobby.get().getUsers()));
             post(msg);
-        }
-        else {
+        } else {
             LOG.error("Die Lobby mit der LobbyID " + lobbyID + " konnte nicht gefunden werden!");
         }
     }

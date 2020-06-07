@@ -121,6 +121,7 @@ public class LobbyManagement {
      */
     public boolean leaveLobby(UUID id, User user) {
         Optional<Lobby> lobby = this.getLobby(id);
+        boolean theReturn = false;
         if (lobby.isPresent()) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("User " + user.getUsername() + " verlässt die Lobby " + getLobby(id).get());
@@ -128,11 +129,12 @@ public class LobbyManagement {
             lobby.get().leaveUser(user);
             if (lobby.get().getPlayers() == 0) {
                 this.dropLobby(id);
+                theReturn = true;
             }
-        }
-        else{
+        } else {
             throw new LeaveLobbyException("Die zu verlassende Lobby existiert nicht.");
         }
+        return theReturn;
     }
 
     /**
@@ -183,7 +185,7 @@ public class LobbyManagement {
     public void kickUser(UUID id, User userToKick, User owner) {
         Optional<Lobby> lobby = this.getLobby(id);
         if (lobby.isPresent()) {
-            if(lobby.get().getOwner().getUsername().equals(owner.getUsername())) {
+            if (lobby.get().getOwner().getUsername().equals(owner.getUsername())) {
                 lobby.get().leaveUser(userToKick);
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("User " + userToKick.getUsername() + " ist von der Lobby gekickt worden " + getLobby(id));
@@ -191,12 +193,10 @@ public class LobbyManagement {
                 if (lobby.get().getPlayers() == 0) {
                     this.dropLobby(id);
                 }
+            } else {
+                throw new KickPlayerException("Benutzer kann nicht aus der Lobby gekickt werden, da " + owner + " nicht der Lobbybesitzer ist.");
             }
-            else{
-                throw new KickPlayerException("Benutzer kann nicht aus der Lobby gekickt werden, da "+owner+" nicht der Lobbybesitzer ist.");
-            }
-        }
-        else{
+        } else {
             throw new KickPlayerException("Die Lobby existiert nicht, in der der Benutzer gekickt werden soll.");
         }
     }
@@ -247,14 +247,13 @@ public class LobbyManagement {
      */
     public void setMaxPlayer(UUID lobbyID, User loggedInUser, Integer maxPlayerValue) {
         if (lobbies.get(lobbyID).getOwner().equals(loggedInUser)) {
-            if (maxPlayerValue >= getLobby(lobbyID).get().getPlayers()){
+            if (maxPlayerValue >= getLobby(lobbyID).get().getPlayers()) {
                 lobbies.get(lobbyID).setMaxPlayer(maxPlayerValue);
-            }
-            else {
+            } else {
                 throw new SetMaxPlayerException("Es sind zu viele Benutzer in der Lobby, um die maximale Spierleranzahl ändern.");
             }
         } else {
-            throw new SetMaxPlayerException(loggedInUser+" ist nicht der Lobbybesitzer und kann nicht die maximale Spierleranzahl ändern.");
+            throw new SetMaxPlayerException(loggedInUser + " ist nicht der Lobbybesitzer und kann nicht die maximale Spierleranzahl ändern.");
         }
     }
 }
