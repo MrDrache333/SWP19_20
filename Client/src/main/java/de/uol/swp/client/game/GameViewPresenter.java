@@ -3,6 +3,7 @@ package de.uol.swp.client.game;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.container.GeneralLayoutContainer;
@@ -581,7 +582,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     valuecardLabels.get(msg.getCardID()).setText(String.valueOf(msg.getCounterCard()));
                 });
             }
-            ImageView selectedCard = (ImageView) mouseEvent.getSource();
+            ImageView selectedCard = getCardFromCardfield(msg.getCardID());
             if (msg.getCounterCard() < 1) {
                 selectedCard.setEffect(makeImageDarker);
             }
@@ -1627,5 +1628,20 @@ public class GameViewPresenter extends AbstractPresenter {
             playAllMoneyCardsButton.setVisible(true);
             infoActualPhase.setStyle("-fx-font-size: 17; -fx-font-weight: bold;");
         });
+    }
+
+    /**
+     * Gibt die gesuchte Karte vom Spielfeld zurück.
+     *
+     * @param cardID die ID der gewünschten Karte
+     * @return die Karte
+     * @author Anna
+     * @since Sprint 8
+     */
+    public ImageView getCardFromCardfield(short cardID) {
+        if (cardID > 6 && cardID != 38) {
+            return (ImageView) shopTeppich.getChildren().stream().filter(c -> Short.parseShort(c.getId()) == cardID).findFirst().get();
+        }
+        return (ImageView) valueCardsBox.getChildren().stream().filter(c -> Short.parseShort(c.getId()) == cardID).findFirst().get();
     }
 }

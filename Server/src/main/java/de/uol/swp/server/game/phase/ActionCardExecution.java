@@ -454,6 +454,7 @@ public class ActionCardExecution {
                         while (i < missingCards && i < size) {
                             Card card = discard.get(i);
                             action.getCards().add(card);
+                            player.getPlayerDeck().getCardsDeck().remove(card);
                             if (discard.size() != size) {
                                 discard.add(i, card);
                             }

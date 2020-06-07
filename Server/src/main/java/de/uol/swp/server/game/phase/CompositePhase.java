@@ -3,7 +3,6 @@ package de.uol.swp.server.game.phase;
 import de.uol.swp.common.game.card.Card;
 import de.uol.swp.common.game.card.parser.components.CardPack;
 import de.uol.swp.common.game.card.parser.components.CardStack;
-import de.uol.swp.common.game.exception.NotEnoughMoneyException;
 import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.game.messages.GameOverMessage;
 import de.uol.swp.common.game.messages.InfoPlayDisplayMessage;
@@ -133,10 +132,6 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
             */
             int moneyValuePlayer = player.getPlayerDeck().actualMoneyFromPlayer();
             int additionalMoney = player.getAdditionalMoney();
-            if (moneyValuePlayer + additionalMoney < currentCard.getCosts()) {
-                LOG.error("Nicht genug Geld");
-                throw new NotEnoughMoneyException("Nicht genug Geld vorhanden");
-            }
             if (moneyValuePlayer < currentCard.getCosts()) {
                 int diff = currentCard.getCosts() - moneyValuePlayer;
                 player.setAdditionalMoney(additionalMoney - diff);

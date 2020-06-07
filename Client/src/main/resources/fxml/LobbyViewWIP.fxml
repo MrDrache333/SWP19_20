@@ -130,14 +130,39 @@
               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="0.0"
               AnchorPane.topAnchor="0.0">
             <children>
-
                 <Pane fx:id="chatView" maxHeight="630.0" maxWidth="450.0" minHeight="630.0" minWidth="400.0"
                       nodeOrientation="LEFT_TO_RIGHT" prefHeight="630.0" prefWidth="450.0">
                     <VBox.margin>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="5.0"/>
                     </VBox.margin>
                 </Pane>
+                <VBox fx:id="gameSettingsVBox" spacing="20" prefWidth="450" prefHeight="630" visible="false">
+                    <children>
+                        <ScrollPane fx:id="scrollPane" prefHeight="500" prefWidth="620" maxWidth="620"
+                                    style="-fx-background-color: #3D3D3D" opacity="0.73"
+                                    nodeOrientation="LEFT_TO_RIGHT">
+                            <TilePane fx:id="choosableCards" prefHeight="500" prefWidth="500" maxWidth="500"
+                                      vgap="10" hgap="10" style="-fx-background-color: #3D3D3D"/>
+                        </ScrollPane>
+                        <TilePane fx:id="chosenCards" prefWidth="400" prefHeight="160"
+                                  style="-fx-background-color: #3D3D3D"
+                                  opacity="0.5" nodeOrientation="LEFT_TO_RIGHT">
+                            <children>
+                                <TextFlow fx:id="textFlow" prefHeight="50" prefWidth="200" textAlignment="CENTER">
+                                    <children>
+                                        <Text text="Wähle Karten aus..." fill="white" style="-fx-font-size: 24"/>
+                                    </children>
+                                </TextFlow>
+                            </children>
+                        </TilePane>
+                        <Button fx:id="sendCards" text="Auswahl abschicken" prefWidth="450" prefHeight="31"
+                                visible="false"
+                                onAction="#sendChosenCards"/>
+                    </children>
+                </VBox>
             </children>
         </HBox>
+        <ImageView fx:id="bigCardImage" preserveRatio="true" fitWidth="250" layoutY="100" layoutX="400"
+                   visible="false"/>
     </children>
 </AnchorPane>

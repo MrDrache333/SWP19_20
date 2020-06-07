@@ -5,8 +5,10 @@ import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.OpenJoinLobbyRequest;
+import de.uol.swp.common.game.messages.GameExceptionMessage;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
+import de.uol.swp.common.lobby.exception.JoinLobbyExceptionMessage;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.request.OpenLobbyCreateRequest;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
@@ -26,10 +28,16 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Callback;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -295,12 +303,12 @@ public class MainMenuPresenter extends AbstractPresenter {
      * Aktualisiert die Lobbytabelle, nachdem die max. Spielerzahl einer Lobby gesetzt wurde
      *
      * @param message die SetMaxPlayerMessage
-     * @author Julia
+     * @author Julia, Darian
      * @since Sprint 4
      */
     @Subscribe
     public void maxPlayerSet(SetMaxPlayerMessage message) {
-        if (message.isSetMaxPlayerSet() && lobbies != null) {
+        if (lobbies != null) {
             Platform.runLater(() -> {
                 lobbies.removeIf(lobby -> lobby.getLobbyID().equals(message.getLobby().getLobbyID()));
                 lobbies.add(0, message.getLobby());
@@ -434,6 +442,17 @@ public class MainMenuPresenter extends AbstractPresenter {
         updateLobbiesTable(allLobbiesResponse.getLobbies());
     }
 
+    /**
+     * Hier wird die JoinLobbyExceptionMessage abgefangen und die Nachricht in einem neuem Fenster angezeigt
+     *
+     * @param msg die Nachricht
+     * @author Darian
+     * @since Sprint 8
+     */
+    @Subscribe
+    public void onJoinLobbyExceptionMessage(JoinLobbyExceptionMessage msg) {
+        SceneManager.showAlert(Alert.AlertType.ERROR, msg.getMessage(), "Lobby");
+    }
 
     //-----------------
     // PRIVATE METHODEN

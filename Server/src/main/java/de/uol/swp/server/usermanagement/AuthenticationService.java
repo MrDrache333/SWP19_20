@@ -261,12 +261,10 @@ public class AuthenticationService extends AbstractService {
         }
     }
 
-    public void sendToLobbyOwner(ServerMessage msg, User owner) {
-
-        Set<User> owner2 = new HashSet<>(1);
-        owner2.add(owner);
-
-        msg.setReceiver(getSessions(owner2));
+    public void sendToUser(ServerMessage msg, User user) {
+        Set<User> user2 = new HashSet<>(1);
+        user2.add(user);
+        msg.setReceiver(getSessions(user2));
         post(msg);
     }
 }
