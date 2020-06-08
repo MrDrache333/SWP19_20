@@ -1193,12 +1193,12 @@ public class GameViewPresenter extends AbstractPresenter {
                     } else if (enemyCounter == 2) {
                         player2_label.setText(u.getUsername());
                         player2_label.setVisible(true);
-                        avatar_icon_top.setImage(new Image("images/user/128x128/128_14.png"));
+                        avatar_icon_left.setImage(new Image("images/user/128x128/128_14.png"));
                         avatar_icon_left.setVisible(true);
                     } else if (enemyCounter == 3) {
                         player3_label.setText(u.getUsername());
                         player3_label.setVisible(true);
-                        avatar_icon_top.setImage(new Image("images/user/128x128/128_2.png"));
+                        avatar_icon_right.setImage(new Image("images/user/128x128/128_2.png"));
                         avatar_icon_right.setVisible(true);
                     }
                 }
