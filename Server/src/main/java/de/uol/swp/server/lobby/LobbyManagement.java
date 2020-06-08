@@ -121,7 +121,6 @@ public class LobbyManagement {
      */
     public boolean leaveLobby(UUID id, User user) {
         Optional<Lobby> lobby = this.getLobby(id);
-        boolean theReturn = false;
         if (lobby.isPresent()) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("User " + user.getUsername() + " verlässt die Lobby " + getLobby(id).get());
@@ -129,12 +128,13 @@ public class LobbyManagement {
             lobby.get().leaveUser(user);
             if (lobby.get().getPlayers() == 0) {
                 this.dropLobby(id);
-                theReturn = true;
+                return true;
             }
+            return true;
         } else {
             throw new LeaveLobbyException("Die zu verlassende Lobby existiert nicht.");
         }
-        return theReturn;
+
     }
 
     /**
