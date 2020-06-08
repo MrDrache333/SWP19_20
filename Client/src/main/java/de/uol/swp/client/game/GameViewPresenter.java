@@ -810,61 +810,72 @@ public class GameViewPresenter extends AbstractPresenter {
     public void onDrawHandMessage(DrawHandMessage message) {
         numberOfPlayersInGame = message.getNumberOfPlayers();
         if (lobbyID.equals(message.getTheLobbyID())) {
-            handCardIDs = message.getCardsOnHand();
-            handCardIDs.forEach((n) -> {
-                String pfad = "cards/images/" + n + ".png";
-                Image picture = new Image(pfad);
-                ImageView card = new ImageView(picture);
-                card.setFitHeight(107);
-                card.setPreserveRatio(true);
-                card.setId(n.toString());
-                card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
-                Platform.runLater(() -> {
-                    myDLC.getChildren().add(card);
-                    synchronized (handcards) {
-                        if (!message.isInitialHand()) {
-                            AnimationManagement.addToHand(card, handcards);
-                        }
-                        myDLC.getChildren().remove(card);
-                        handcards.getChildren().add(card);
-                    }
-                    card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
-                });
-            });
-            if (message.isInitialHand()) {
-                String pfad = "cards/images/card_back.png";
-                Image picture = new Image(pfad);
-                for (int i = 0; i < 5; i++) {
+            if ((message.getPlayer() == null || message.getPlayer().equals(loggedInUser))) {
+                handCardIDs = message.getCardsOnHand();
+                handCardIDs.forEach((n) -> {
+                    String pfad = "cards/images/" + n + ".png";
+                    Image picture = new Image(pfad);
                     ImageView card = new ImageView(picture);
-                    ImageView card2 = new ImageView(picture);
-                    ImageView card3 = new ImageView(picture);
-                    card.setFitHeight(80);
+                    card.setFitHeight(107);
                     card.setPreserveRatio(true);
+                    card.setId(n.toString());
                     card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
-                    card2.setFitHeight(card.getFitWidth());
-                    card2.setPreserveRatio(true);
-                    card2.setFitWidth(card.getFitHeight());
-                    card3.setFitHeight(card.getFitWidth());
-                    card3.setPreserveRatio(true);
-                    card3.setFitWidth(card.getFitHeight());
-                    Task<Void> task = new Task<Void>() {
-                        @Override
-                        protected Void call() throws Exception {
-                            Platform.runLater(() -> {
-                                firstEnemyHand.getChildren().add(card);
-                                if (numberOfPlayersInGame >= 3) {
-                                    secondEnemyHand.getChildren().add(card2);
-                                    if (numberOfPlayersInGame == 4) {
-                                        thirdEnemyHand.getChildren().add(card3);
-                                    }
-                                }
-                            });
-                            return null;
+                    Platform.runLater(() -> {
+                        myDLC.getChildren().add(card);
+                        synchronized (handcards) {
+                            if (!message.isInitialHand()) {
+                                AnimationManagement.addToHand(card, handcards);
+                            }
+                            myDLC.getChildren().remove(card);
+                            handcards.getChildren().add(card);
                         }
-                    };
-                    Thread th = new Thread(task);
-                    th.setDaemon(true);
-                    th.start();
+                        card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+                    });
+                });
+                if (message.isInitialHand()) {
+                    String pfad = "cards/images/card_back.png";
+                    Image picture = new Image(pfad);
+                    for (int i = 0; i < 5; i++) {
+                        ImageView card = new ImageView(picture);
+                        card.setFitHeight(80);
+                        card.setPreserveRatio(true);
+                        card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
+                        Task<Void> task = new Task<Void>() {
+                            @Override
+                            protected Void call() throws Exception {
+                                Platform.runLater(() -> {
+                                    firstEnemyHand.getChildren().add(card);
+                                    if (numberOfPlayersInGame >= 3) {
+                                        ImageView card2 = new ImageView(picture);
+                                        card2.setFitHeight(card.getFitWidth());
+                                        card2.setPreserveRatio(true);
+                                        card2.setFitWidth(card.getFitHeight());
+                                        secondEnemyHand.getChildren().add(card2);
+                                        if (numberOfPlayersInGame == 4) {
+                                            ImageView card3 = new ImageView(picture);
+                                            card3.setFitHeight(card.getFitWidth());
+                                            card3.setPreserveRatio(true);
+                                            card3.setFitWidth(card.getFitHeight());
+                                            thirdEnemyHand.getChildren().add(card3);
+                                        }
+                                    }
+                                });
+                                return null;
+                            }
+                        };
+                        Thread th = new Thread(task);
+                        th.setDaemon(true);
+                        th.start();
+                    }
+                }
+            }
+            else if (message.getPlayer() != null && !message.getPlayer().equals(loggedInUser)) {
+                for (int i = 0; i < message.getCardsOnHand().size(); i++) {
+                    ImageView card = new Card("card_back", 0, 0, 80);
+                    Platform.runLater(() -> {
+                        usersContainer.get(message.getPlayer().getUsername()).get(AbstractPlayground.ZoneType.HAND)
+                                .getChildren().add(card);
+                    });
                 }
             }
         }
