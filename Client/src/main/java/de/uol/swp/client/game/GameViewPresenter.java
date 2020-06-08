@@ -581,7 +581,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     valuecardLabels.get(msg.getCardID()).setText(String.valueOf(msg.getCounterCard()));
                 });
             }
-            ImageView selectedCard = (ImageView) mouseEvent.getSource();
+            ImageView selectedCard = (ImageView)getCardFromCardfield(msg.getCardID());
             if (msg.getCounterCard() < 1) {
                 selectedCard.setEffect(makeImageDarker);
             }
@@ -1627,5 +1627,45 @@ public class GameViewPresenter extends AbstractPresenter {
             playAllMoneyCardsButton.setVisible(true);
             infoActualPhase.setStyle("-fx-font-size: 17; -fx-font-weight: bold;");
         });
+    }
+
+    /**
+     * Anhand der CardID holt man sich hier die entsprehcende Karte
+     *
+     * @param cardID
+     * @author Paula
+     * @return Karte mit entsprechender ID
+     * @since Sprint9
+     */
+    public ImageView getCardFromCardfield(short cardID) {
+        if (cardID > 6 && cardID != 38) {
+            return (ImageView) shopTeppich.getChildren().stream().filter(c -> Short.parseShort(c.getId()) == cardID).findFirst().get();
+        }
+        return (ImageView) valueCardsBox.getChildren().stream().filter(c -> Short.parseShort(c.getId()) == cardID).findFirst().get();
+    }
+
+    /**
+     * Bei der UpdateCardCounterMessage wird die Karte, sobald keine mehr vorhanden ist, ausgefgraut
+     *
+     * @param msg die UpdateCounterMessage
+     * @author Paula
+     * @since  Sprint9
+     */
+
+    private void onUpdateCardCounterMessage (UpdateCardCounterMessage msg) {
+        for ( short id : msg.getCardCounts().keySet()) {
+            if (valuecardLabels.containsKey(id)) {
+                Platform.runLater(() -> {
+                    valuecardLabels.get(id).setText(String.valueOf(msg.getCardCounts().get(id)));
+                });
+            }
+            ImageView selectedCard = (ImageView) getCardFromCardfield(id);
+            if (msg.getCardCounts().get(id) < 1) {
+                selectedCard.setEffect(makeImageDarker);
+            }
+
+        }
+
+
     }
 }
