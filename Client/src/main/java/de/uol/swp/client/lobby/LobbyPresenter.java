@@ -4,11 +4,14 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.common.chat.ChatService;
 import de.uol.swp.common.game.card.parser.JsonCardParser;
 import de.uol.swp.common.game.card.parser.components.CardPack;
+import de.uol.swp.common.lobby.exception.JoinLobbyExceptionMessage;
+import de.uol.swp.common.lobby.exception.LobbyExceptionMessage;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.request.AddBotRequest;
 import de.uol.swp.common.lobby.request.SetMaxPlayerRequest;
@@ -70,7 +73,8 @@ public class LobbyPresenter extends AbstractPresenter {
     private UserDTO gameOwner;
     private boolean gameSettingsOpen;
     private boolean ownReadyStatus = false;
-
+    private int maxPlayerValue = 4;
+    private int oldMaxPlayerValue;
     @FXML
     private ChoiceBox<Integer> chooseMaxPlayer;
     @FXML
@@ -92,9 +96,24 @@ public class LobbyPresenter extends AbstractPresenter {
     @FXML
     private Label maxSettingOwner;
     @FXML
-    private ImageView bigCard;
+    private VBox gameSettingsVBox;
     @FXML
-    private final ImageView crownView = new ImageView("images/crown.png");
+    private ScrollPane scrollPane;
+    @FXML
+    private TilePane chosenCards;
+    @FXML
+    private TextFlow textFlow;
+    @FXML
+    private Button sendCards;
+    @FXML
+    private TilePane choosableCards;
+    @FXML
+    private ImageView bigCardImage;
+    @FXML
+    private ImageView bigCard;
+
+    private ImageView crownView = new ImageView("images/crown.png");
+
 
     /**
      * Instanziiert einen neuen LobbyPresenter.
@@ -170,9 +189,8 @@ public class LobbyPresenter extends AbstractPresenter {
         if (gameOwner.equals(loggedInUser)) {
             gamesettingsButton.setVisible(true);
             createBotButton.setVisible(true);
-
             chooseMaxPlayer.setDisable(false);
-            chooseMaxPlayer.setValue(4);
+            chooseMaxPlayer.setValue(maxPlayerValue);
         } else {
             gamesettingsButton.setVisible(false);
             createBotButton.setVisible(false);
@@ -228,8 +246,10 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     @FXML
     public void onMaxPlayerSelected(ActionEvent actionEvent) {
-        if (gameOwner.equals(loggedInUser)) {
+        if (gameOwner.equals(loggedInUser) && chooseMaxPlayer.getValue() != maxPlayerValue) {
             lobbyService.setMaxPlayer(this.getLobbyID(), this.loggedInUser, chooseMaxPlayer.getValue());
+            oldMaxPlayerValue = maxPlayerValue;
+            maxPlayerValue = chooseMaxPlayer.getValue();
         }
     }
 
@@ -317,18 +337,18 @@ public class LobbyPresenter extends AbstractPresenter {
                 tilePane.setStyle("-fx-background-color: #3D3D3D");
                 for (int i = 0; i < cardpack.getCards().getActionCards().size(); i++) {
                     short cardID = cardpack.getCards().getActionCards().get(i).getId();
-                    String pfad = "file:Client/src/main/resources/cards/images/" + cardID + "_sm.png";
+                    String pfad = "cards/images/" + cardID + "_sm.png";
                     Image picture = new Image(pfad);
                     ImageView card = new ImageView(picture);
                     card.setPreserveRatio(true);
                     card.setFitWidth(100);
-                    tilePane.getChildren().add(card);
+                    choosableCards.getChildren().add(card);
                     card.setOnMouseClicked(event ->
                     {
                         if (event.getButton() == MouseButton.PRIMARY) {
                             if (chosenCards.getChildren().size() < 10) {
                                 chosenCards.getChildren().remove(textFlow);
-                                tilePane.getChildren().remove(card);
+                                choosableCards.getChildren().remove(card);
                                 ImageView chosenCard = new ImageView(picture);
                                 chosenCard.setPreserveRatio(true);
                                 chosenCard.setFitWidth(80);
@@ -338,7 +358,7 @@ public class LobbyPresenter extends AbstractPresenter {
                                 chosenCard.setOnMouseClicked(event2 -> {
                                     if (event2.getButton() == MouseButton.PRIMARY) {
                                         chosenCards.getChildren().remove(chosenCard);
-                                        tilePane.getChildren().add(0, card);
+                                        choosableCards.getChildren().add(0, card);
                                         if (chosenCards.getChildren().size() == 0) {
                                             chosenCards.getChildren().add(textFlow);
                                             sendCards.setVisible(false);
@@ -353,28 +373,28 @@ public class LobbyPresenter extends AbstractPresenter {
                         }
                     });
                 }
-
-                ScrollPane scrollPane = new ScrollPane(tilePane);
-                scrollPane.setPrefHeight(500);
-                scrollPane.setPrefWidth(620);
-                scrollPane.setMaxWidth(620);
-                scrollPane.setStyle("-fx-background-color: #3D3D3D");
-                scrollPane.setOpacity(0.73);
-                scrollPane.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
-
-                gameSettingsVBox.getChildren().add(scrollPane);
-                gameSettingsVBox.getChildren().add(chosenCards);
-                gameSettingsVBox.getChildren().add(sendCards);
-                lobbyHBox.getChildren().add(gameSettingsVBox);
             });
         } else {
-            lobbyHBox.getChildren().forEach(t -> {
-                if (t.getId().equals("gameSettingsVBox")) {
-                    Platform.runLater(() -> lobbyHBox.getChildren().remove(t));
-                    gameSettingsOpen = false;
-                }
-            });
+            gameSettingsVBox.setVisible(false);
             gamesettingsButton.setText("Spieleinstellungen");
+        }
+    }
+
+    /**
+     * Methode für den Klick des Buttons Auswahl-abschicken
+     *
+     * @param event
+     * @author Anna
+     * @since Sprint 8
+     */
+    @FXML
+    public void sendChosenCards(ActionEvent event) {
+        if (chosenCards.getChildren().size() > 0) {
+            ArrayList<Short> chosenCardIDs = new ArrayList<>();
+            for (Node n : chosenCards.getChildren()) {
+                chosenCardIDs.add(Short.valueOf(n.getId()));
+            }
+            lobbyService.sendChosenCards(lobbyID, chosenCardIDs);
         }
     }
 
@@ -387,10 +407,10 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     public void showBigCardImage(short cardID) {
         Platform.runLater(() -> {
-            String pfad = "file:Client/src/main/resources/cards/images/" + cardID + ".png";
+            String pfad = "cards/images/" + cardID + ".png";
             Image picture = new Image(pfad);
-            bigCard.setImage(picture);
-            bigCard.setVisible(true);
+            bigCardImage.setImage(picture);
+            bigCardImage.setVisible(true);
         });
     }
 
@@ -480,18 +500,15 @@ public class LobbyPresenter extends AbstractPresenter {
      * Deaktivieren der Max. Spieler ChoiceBox, sofern der eingeloggte Nutzer nicht der Lobbyowner ist.
      *
      * @param msg Die SetMaxPlayerMessage
-     * @author Timo, Rike
+     * @author Timo, Rike, Darian
      * @since Sprint 3
      */
     @Subscribe
     public void onSetMaxPlayerMessage(SetMaxPlayerMessage msg) {
         Platform.runLater(() -> {
-            if (msg.getOwner().equals(loggedInUser) && lobbyID == msg.getLobbyID() && msg.isSetMaxPlayerSet()) {
-                chooseMaxPlayer.setDisable(false);
+            if (msg.getOwner().equals(loggedInUser) && lobbyID == msg.getLobbyID()) {
                 chooseMaxPlayer.setValue(msg.getMaxPlayer());
                 LOG.info("Max. Spieler der Lobby: " + msg.getLobby().getName() + " erfolgreich auf " + msg.getMaxPlayer() + " gesetzt.");
-            } else if (msg.getOwner().equals(loggedInUser) && lobbyID.equals(msg.getLobbyID()) && !msg.isSetMaxPlayerSet()){
-                LOG.error("Max. Spieler der Lobby: " + msg.getLobby().getName() + " wurde nicht auf " + msg.getMaxPlayer() + " gesetzt.");
             }
         });
     }
@@ -571,7 +588,15 @@ public class LobbyPresenter extends AbstractPresenter {
             gameOwner = message.getGameOwner();
             userLeftLobby(message.getUser().getUsername(), false);
             if (gameOwner.getUsername().equals(loggedInUser.getUsername())) {
-                gamesettingsButton.setVisible(true);
+                Platform.runLater(() -> {
+                    gamesettingsButton.setVisible(true);
+                    chooseMaxPlayer.setVisible(true);
+                    createBotButton.setVisible(true);
+                    maxSettingOwner.setVisible(true);
+                    settingOwner.setVisible(true);
+                    chooseMaxPlayer.setDisable(false);
+                    chooseMaxPlayer.setValue(message.getLobby().getMaxPlayer());
+                });
             }
         }
     }
@@ -589,6 +614,23 @@ public class LobbyPresenter extends AbstractPresenter {
         if (!message.getLobbyID().equals(lobbyID)) return;
         LOG.debug("User " + message.getLobby().getName() + " wurde aus der Lobby gekickt!");
         userLeftLobby(message.getUser().getUsername(), true);
+    }
+
+    /**
+     * Hier wird die LobbyExceptionMessage abgefangen und die Nachricht in einem neuem Fenster angezeigt
+     *
+     * @param msg die Nachricht
+     * @author Darian
+     * @since Sprint 8
+     */
+    @Subscribe
+    public void LobbyExceptionMessage(LobbyExceptionMessage msg) {
+        Platform.runLater(() -> {
+            if (msg.getMessage().contains("Es sind zu viele Benutzer in der Lobby, um die maximale")) {
+                chooseMaxPlayer.setValue(oldMaxPlayerValue);
+            }
+        });
+        SceneManager.showAlert(Alert.AlertType.ERROR, msg.getMessage(), "Lobby");
     }
 
     //--------------------------------------

@@ -3,6 +3,7 @@ package de.uol.swp.client.game;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.container.GeneralLayoutContainer;
@@ -191,6 +192,7 @@ public class GameViewPresenter extends AbstractPresenter {
 
     /**
      * Das Event das den Handkarten gegeben wird, wenn sie ausspielbar sein sollen.
+     *
      * @author Devin
      * @since Sprint 5
      */
@@ -204,6 +206,7 @@ public class GameViewPresenter extends AbstractPresenter {
 
     /**
      * Das Event das den Handkarten gegeben wird, wenn sie auswählbar gemacht werden sollen.
+     *
      * @author Devin
      * @since Sprint 8
      */
@@ -217,6 +220,7 @@ public class GameViewPresenter extends AbstractPresenter {
 
     /**
      * Das Event für den "Auswahl senden"-Button, er sendet eine ChooseCardResponse an den Server über den GameService
+     *
      * @author Devin
      * @since Sprint 8
      */
@@ -229,7 +233,7 @@ public class GameViewPresenter extends AbstractPresenter {
             for (ImageView card : choosenCards) {
                 choosenCardsId.add(Short.parseShort(card.getId()));
             }
-            gameService.chooseCardResponse( lobbyID, loggedInUser, choosenCardsId, directHand);
+            gameService.chooseCardResponse(lobbyID, loggedInUser, choosenCardsId, directHand);
             handcards.getChildren().forEach((n) -> {
                 n.removeEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
                 n.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
@@ -581,7 +585,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     valuecardLabels.get(msg.getCardID()).setText(String.valueOf(msg.getCounterCard()));
                 });
             }
-            ImageView selectedCard = (ImageView)getCardFromCardfield(msg.getCardID());
+            ImageView selectedCard = getCardFromCardfield(msg.getCardID());
             if (msg.getCounterCard() < 1) {
                 selectedCard.setEffect(makeImageDarker);
             }
@@ -595,7 +599,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 newCardImage.setFitHeight(107);
                 newCardImage.setFitWidth(Math.round(newCardImage.getBoundsInLocal().getWidth()));
                 newCardImage.setLayoutX(selectedCard.getLayoutX());
-                if (Short.parseShort(selectedCard.getId()) < 7 ||Short.parseShort(selectedCard.getId()) == 38 ) {
+                if (Short.parseShort(selectedCard.getId()) < 7 || Short.parseShort(selectedCard.getId()) == 38) {
                     newCardImage.setLayoutX(selectedCard.getLayoutX() + 450);
                 }
                 newCardImage.setLayoutY(selectedCard.getLayoutY());
@@ -629,8 +633,8 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     @Subscribe
-    public void onOptionalActionRequest(OptionalActionRequest msg){
-        if (msg.getGameID().equals(lobbyID) && msg.getPlayer().equals(loggedInUser)){
+    public void onOptionalActionRequest(OptionalActionRequest msg) {
+        if (msg.getGameID().equals(lobbyID) && msg.getPlayer().equals(loggedInUser)) {
             Platform.runLater(() -> {
                 yesButton.setVisible(true);
                 noButton.setVisible(true);
@@ -724,13 +728,13 @@ public class GameViewPresenter extends AbstractPresenter {
      * Wenn ein anderer Spieler eine Karte von der Hand entsorgt, wird dies den anderen Spielern angezeigt.
      * Wenn der Spieler eine Karte oder mehrere Karten auswählen darf, werden alle nicht auswählbaren verdunkelt.
      *
-     * @param req       Die Request, die vom server gesendet wird, wenn der jeweilige Spieler eine Karte entsorgt.
+     * @param req Die Request, die vom server gesendet wird, wenn der jeweilige Spieler eine Karte entsorgt.
      * @author Devin, Fenja, Anna
      * @since Sprint 7
      */
     @FXML
     @Subscribe
-    public void onChooseCardRequest (ChooseCardRequest req) {
+    public void onChooseCardRequest(ChooseCardRequest req) {
         if (req.getGameID().equals(lobbyID) && req.getPlayer().equals(loggedInUser)) {
             choosenCardsId.clear();
             choosenCards.clear();
@@ -1108,7 +1112,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     for (de.uol.swp.common.game.card.Card c : msg.getMove().getCardsToMove()) {
                         ImageView card = getImageViewFromRegion(getRegionFromZoneType(source, c.getId()), c.getId());
                         ImageView card2 = new Card(card.getId(), card.getLayoutX(), card.getLayoutY(), 107);
-                        if (c.getId() < 7 || c.getId() == 38 ) {
+                        if (c.getId() < 7 || c.getId() == 38) {
                             card2.setLayoutX(card.getLayoutX() + 450);
                         }
                         Platform.runLater(() -> {
@@ -1184,14 +1188,17 @@ public class GameViewPresenter extends AbstractPresenter {
                     if (enemyCounter == 1) {
                         player1_label.setText(u.getUsername());
                         player1_label.setVisible(true);
+                        avatar_icon_top.setImage(new Image("images/user/128x128/128_16.png"));
                         avatar_icon_top.setVisible(true);
                     } else if (enemyCounter == 2) {
                         player2_label.setText(u.getUsername());
                         player2_label.setVisible(true);
+                        avatar_icon_top.setImage(new Image("images/user/128x128/128_14.png"));
                         avatar_icon_left.setVisible(true);
                     } else if (enemyCounter == 3) {
                         player3_label.setText(u.getUsername());
                         player3_label.setVisible(true);
+                        avatar_icon_top.setImage(new Image("images/user/128x128/128_2.png"));
                         avatar_icon_right.setVisible(true);
                     }
                 }
@@ -1293,7 +1300,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 choosenCards.add(card);
                 card.setEffect(makeImageDarker);
                 bigCardImageBox.setVisible(false);
-                if(numberOfCardsToChoose != 255) {
+                if (numberOfCardsToChoose != 255) {
                     numberOfCardsToChoose -= 1;
                     Platform.runLater(() -> {
                         infoActualPhase.setText(numberOfCardsToChoose + " Karten entsorgen");
@@ -1302,7 +1309,7 @@ public class GameViewPresenter extends AbstractPresenter {
             } else {
                 choosenCards.remove(card);
                 card.setEffect(null);
-                if(numberOfCardsToChoose != 255) {
+                if (numberOfCardsToChoose != 255) {
                     numberOfCardsToChoose += 1;
                     Platform.runLater(() -> {
                         infoActualPhase.setText(numberOfCardsToChoose + " Karten entsorgen");
@@ -1310,7 +1317,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 }
             }
         }
-        if(numberOfCardsToChoose == 0) {
+        if (numberOfCardsToChoose == 0) {
             for (ImageView card2 : choosenCards) {
                 choosenCardsId.add(Short.parseShort(card2.getId()));
             }
@@ -1630,12 +1637,12 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Anhand der CardID holt man sich hier die entsprehcende Karte
+     * Gibt die gesuchte Karte vom Spielfeld zurück.
      *
-     * @param cardID
-     * @author Paula
-     * @return Karte mit entsprechender ID
-     * @since Sprint9
+     * @param cardID die ID der gewünschten Karte
+     * @return die Karte
+     * @author Anna
+     * @since Sprint 8
      */
     public ImageView getCardFromCardfield(short cardID) {
         if (cardID > 6 && cardID != 38) {
@@ -1643,7 +1650,6 @@ public class GameViewPresenter extends AbstractPresenter {
         }
         return (ImageView) valueCardsBox.getChildren().stream().filter(c -> Short.parseShort(c.getId()) == cardID).findFirst().get();
     }
-
     /**
      * Bei der UpdateCardCounterMessage wird die Karte, sobald keine mehr vorhanden ist, ausgefgraut
      *
