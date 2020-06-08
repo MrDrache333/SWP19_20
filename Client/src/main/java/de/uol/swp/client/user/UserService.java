@@ -14,66 +14,132 @@ import java.util.List;
  * implements IClientUserService
  *
  * @author Marco Grawunder
- *
  */
 
 public class UserService implements de.uol.swp.common.user.UserService {
 
-	private static final Logger LOG = LogManager.getLogger(UserService.class);
-	private final EventBus bus;
+    private static final Logger LOG = LogManager.getLogger(UserService.class);
+    private final EventBus bus;
 
-	@Inject
-	public UserService(EventBus bus) {
-		this.bus = bus;
-		// Currently not need, will only post on bus
-		//bus.register(this);
-	}
+    /**
+     * Injector der einer Instanz automatisch den final EventBus der Klasse zuordnet
+     *
+     * @param bus Der EventBus
+     * @author Marco Grawunder
+     * @since Start
+     */
+    @Inject
+    public UserService(EventBus bus) {
+        this.bus = bus;
+        // Currently not need, will only post on bus
+        //bus.register(this);
+    }
 
-	@Override
-	public User login(String username, String password){
-		LoginRequest msg = new LoginRequest(username, password);
-		bus.post(msg);
-		return null; // asynch call
-	}
+    /**
+     * Postet LoginRequest auf den Bus
+     *
+     * @param username Der Username des Users
+     * @param password Das Passwort des Users
+     * @return null
+     * @author Marco Grawunder
+     * @since Start
+     */
+    @Override
+    public User login(String username, String password) {
+        LoginRequest msg = new LoginRequest(username, password);
+        bus.post(msg);
+        return null; // async call
+    }
 
+    //TODO Implementieren oder löschen
+    /**
+     * Noch nicht implementiert, würde überprüfen ob der Nutzer angemeldet ist
+     *
+     * @param user Der zu überprüfende Benutzer
+     * @return momentan nichts (true wenn angemeldet, false falls nicht)
+     * @throws UnsupportedOperationException Noch nicht implementiert
+     * @author Marco Grawunder
+     * @since Start
+     */
     @Override
     public boolean isLoggedIn(User user) {
-        throw new UnsupportedOperationException("Currently, not implemented");
+        throw new UnsupportedOperationException("Currently not implemented");
     }
 
-	@Override
-	public void logout(User username){
-		LogoutRequest msg = new LogoutRequest();
-		bus.post(msg);
-	}
+    /**
+     * Postet LogoutRequest auf den Bus
+     *
+     * @param username Der auszuloggende Nutzer
+     * @author Marco Grawunder
+     * @since Start
+     */
+    @Override
+    public void logout(User username) {
+        LogoutRequest msg = new LogoutRequest();
+        bus.post(msg);
+    }
 
-	@Override
-	public User createUser(User user) {
-		RegisterUserRequest request = new RegisterUserRequest(user);
-		bus.post(request);
-		return null;
-	}
+    public void hardLogout(User username) {
+        LogoutRequest msg = new LogoutRequest(true);
+        bus.post(msg);
+    }
 
+    /**
+     * Postet RegisterUserRequest auf den Bus
+     *
+     * @param user User, welcher angelegt werden soll
+     * @return null
+     * @author Marco Grawunder
+     * @since Start
+     */
+    @Override
+    public User createUser(User user) {
+        RegisterUserRequest request = new RegisterUserRequest(user);
+        bus.post(request);
+        return null;
+    }
+
+    /**
+     * Postet DropUserRequest auf den Bus
+     *
+     * @param user User, welcher gelöscht werden soll
+     * @author Anna
+     * @since Sprint 4
+     */
     public void dropUser(User user) {
-        //TODO: Implement me
+        DropUserRequest request = new DropUserRequest(user);
+        bus.post(request);
     }
 
-	@Override
-	public User updateUser(User user) {
-		UpdateUserRequest request = new UpdateUserRequest(user);
-		bus.post(request);
-		return null;
-	}
+    /**
+     * Postet UpdateUserRequest auf den Bus
+     *
+     * @param user            User mit neuen Daten
+     * @param oldUser         User mit alten Daten
+     * @param currentPassword Das Passwort des Users
+     * @return null
+     * @author (Marco Grawunder), Julia
+     * @since (Start), Sprint 4
+     */
+    @Override
+    public User updateUser(User user, User oldUser, String currentPassword) {
+        UpdateUserRequest request = new UpdateUserRequest(user, oldUser, currentPassword);
+        bus.post(request);
+        return null;
+    }
 
-
-	@Override
-	public List<User> retrieveAllUsers() {
-		RetrieveAllOnlineUsersRequest cmd = new RetrieveAllOnlineUsersRequest();
-		bus.post(cmd);
-		return null; // asynch call
-	}
-
-
-
+    /**
+     * Postet RetrieveAllOnlineUsersRequest auf den Bus
+     *
+     * @return null
+     * @author Marco Grawunder
+     * @since Start
+     */
+    @Override
+    public List<User> retrieveAllUsers() {
+        RetrieveAllOnlineUsersRequest cmd = new RetrieveAllOnlineUsersRequest();
+        bus.post(cmd);
+        return null; // async call
+    }
 
 }

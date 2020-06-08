@@ -1,0 +1,43 @@
+.table-view {
+    -fx-background-color: transparent;
+    -fx-border-color: black;
+    -fx-border-width: 2;
+}
+
+.table-row-cell {
+    -fx-table-cell-border-color: black;
+}
+
+.table-view .column-header, .table-view .column-header .filler, .table-view .column-header .background .filler {
+    -fx-background-color: #967b6f;
+    -fx-text-fill: #2b170c;
+    -fx-prompt-text-fill: #e5c7ba;
+    -fx-background-color-opacity: 0.1;
+    -fx-blend-mode: darken;
+}
+
+.list-view {
+    -fx-background-color: transparent;
+    -fx-border-color: black;
+    -fx-border-width: 2;
+}
+
+.separator {
+    -fx-border-color: black;
+    -fx-background-color: black;
+    -fx-border-width: 2;
+}
+
+.cell {
+    -fx-background-color: rgba(150, 123, 111, 0.65);
+}
+
+.text-field {
+    -fx-background-color: #967b6f;
+    -fx-text-fill: #2b170c;
+    -fx-prompt-text-fill: #e5c7ba;
+    -fx-border-radius: 90;
+    -fx-border-color: #2b170c;
+    -fx-border-width: 1.5;
+    -fx-background-radius: 90;
+}

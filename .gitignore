@@ -2,3 +2,11 @@
 bin/
 target/
 .idea
+*.iml
+*.db
+!.idea
+.idea/inspectionProfiles/Project_Default.xml
+
+*.xml
+
+.idea/

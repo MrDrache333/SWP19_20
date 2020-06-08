@@ -1,22 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.Blend?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.layout.*?>
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="de.uol.swp.client.main.MainMenuPresenter">
-   <children>
-      <GridPane layoutX="-5.0" layoutY="-4.0" prefHeight="410.0" prefWidth="600.0">
+<AnchorPane maxHeight="750.0" maxWidth="1280.0" prefHeight="750.0" prefWidth="1280.0" stylesheets="@../css/MainMenuPresenter.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.uol.swp.client.main.MainMenuPresenter">
+    <GridPane hgap="10.0" maxHeight="750.0" maxWidth="1280.0" prefHeight="750.0" prefWidth="1280.0">
+        <children>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+                <children>
+                    <Label text="Online Lobbys">
+                        <Button fx:id="createLobbyButton" maxWidth="160.0" minWidth="160.0"
+                                mnemonicParsing="false" onAction="#onOpenCreateLobbyView"
+                                prefHeight="27.0" prefWidth="160.0" text="Lobby erstellen"
+                                textAlignment="CENTER"/>
+                        <font>
+                            <Font name="Trattatello" size="26.0" />
+                        </font>
+                        <VBox.margin>
+                            <Insets left="10.0" />
+                        </VBox.margin>
+                    </Label>
+                    <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-border-color: black;" VBox.vgrow="ALWAYS">
+                        <children>
+                            <TableView fx:id="lobbiesView" prefHeight="670.0" prefWidth="548.0" style="-fx-border-width: 1;" VBox.vgrow="ALWAYS">
+                                <effect>
+                                    <Blend />
+                                </effect>
+                            </TableView>
+                            <ButtonBar minWidth="70.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="54.0" prefWidth="558.0" style="-fx-border-color: black;">
+                                <buttons>
+                           <Button fx:id="openCreateLobbyView" mnemonicParsing="false" onAction="#onOpenCreateLobbyView" text="Lobby erstellen" />
+                                </buttons>
+                                <padding>
+                                    <Insets bottom="5.0" right="5.0" top="5.0" />
+                                </padding>
+                            </ButtonBar>
+                        </children>
+                    </VBox>
+                </children>
+            </VBox>
+            <Pane fx:id="chatView" minHeight="630.0" minWidth="434.0" style="-fx-border-color: black; -fx-border-width: 2;" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+                <GridPane.margin>
+                    <Insets top="49.0" />
+                </GridPane.margin>
+            </Pane>
+            <VBox prefHeight="200.0" prefWidth="226.0" GridPane.columnIndex="2">
+                <children>
+                    <Label stylesheets="@../css/global.css" text="Online Spieler">
+                        <font>
+                            <Font name="Trattatello" size="26.0" />
+                        </font>
+                        <VBox.margin>
+                            <Insets left="10.0" />
+                        </VBox.margin>
+                    </Label>
+                    <ListView fx:id="usersView" minWidth="100.0" prefHeight="701.0" prefWidth="258.0" VBox.vgrow="ALWAYS" />
+                </children>
+            </VBox>
+        </children>
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints maxWidth="567.5" minWidth="278.5" prefWidth="567.5" />
+            <ColumnConstraints maxWidth="523.0" minWidth="174.0" prefWidth="454.0" />
+            <ColumnConstraints maxWidth="599.0" minWidth="258.0" prefWidth="258.0" />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="1297.0" minHeight="673.0" prefHeight="692.0" />
         </rowConstraints>
-         <children>
-            <ListView fx:id="usersView" prefHeight="200.0" prefWidth="200.0" />
-         </children>
-      </GridPane>
-   </children>
+        <opaqueInsets>
+            <Insets />
+        </opaqueInsets>
+        <padding>
+            <Insets left="10.0" right="10.0" />
+        </padding>
+    </GridPane>
 </AnchorPane>

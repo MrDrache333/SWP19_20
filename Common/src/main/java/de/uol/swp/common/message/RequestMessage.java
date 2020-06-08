@@ -1,17 +1,17 @@
 package de.uol.swp.common.message;
 
 /**
- * A base interface for all messages from client to server
+ * Ein Basis Interface für alle Nachrichten vom Client zum Server.
  *
- * @Author: Marco Grawunder
+ * @author: Marco
+ * @since Start
  */
 
 public interface RequestMessage extends Message {
 
     /**
-     * State, if this request can only be used, if
-     * the user is authorized (typically has a valid auth)
-     * @return
+     * Gibt an ob diese Anfrage nur benutzt werden kann, wenn der Nutzer authorisiert ist
+     * (hat typischerweise den Wert auth)
      */
     boolean authorizationNeeded();
 

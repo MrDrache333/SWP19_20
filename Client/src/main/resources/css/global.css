@@ -1,0 +1,17 @@
+@font-face {
+    font-family: 'Trattatello';
+    src: url('../fonts/Trattatello.ttf');
+}
+
+
+.button:hover {
+    -fx-background-color: #4f1b1e;
+    -fx-cursor: hand;
+}
+
+.button {
+    -fx-background-color: #2b170c;
+    -fx-text-fill: #e5c7ba;
+    -fx-background-radius: 90;
+    -fx-border-radius: 90;
+}
