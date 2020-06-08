@@ -160,7 +160,7 @@ public class AnimationTest extends Application {
         }
 
         for (int i = 0; i < cards.size(); i++) {
-            AnimationManagement.addToHand(cards.get(i), i);
+            AnimationManagement.addToHand(cards.get(i), handcards);
             deckPane.getChildren().remove(cards.get(i));
             handcards.getChildren().add(cards.get(i));
         }
@@ -180,7 +180,7 @@ public class AnimationTest extends Application {
 
         //Wenn auf die Karte geklickt wird, wird sie vom Spieler gekauft
         cardToBuy.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            AnimationManagement.buyCard(cardToBuy);
+            AnimationManagement.buyCard(cardToBuy, new GeneralLayoutContainer(300, 200, 100, 100, ""), 0);
         });
 
         //Wenn auf die Karte geklickt wird, wird sie auf den Müll gelegt

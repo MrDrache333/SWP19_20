@@ -16,10 +16,6 @@ import javafx.util.Duration;
 
 public class AnimationManagement {
 
-    private static final double HAND_X = 575;
-    private static final double ABLAGE_X = 1050;
-    private static final double ABLAGE_Y = 630;
-
     /**
      * Erstellt einen neuen geradlinigen Pfad.
      * Die bewegte Karte wird dabei in den Vordergrund gerückt.
@@ -32,16 +28,26 @@ public class AnimationManagement {
      * @author Anna
      * @since Sprint 5
      */
-    public static PathTransition createLineToPath(ImageView card, double EndPointX, double EndPointY, boolean playedByOpponent) {
+    public static PathTransition createLineToPath(ImageView card, double EndPointX, double EndPointY, int player) {
         double x = Math.max(card.getLayoutX(), card.getBoundsInParent().getMinX());
         double y = Math.max(card.getLayoutY(), card.getBoundsInParent().getMinY());
         double w = card.getFitWidth();
         double h = card.getFitHeight();
-        double startPointX = (EndPointX - sumParentX(card) - x);
-        double startPointY = (EndPointY - sumParentY(card) - y);
-        if (!playedByOpponent) {
+        double startPointX = -(EndPointX - sumParentX(card) - x);
+        double startPointY = -(EndPointY - sumParentY(card) - y);
+        if (player == 1) {
             startPointX *= -1;
             startPointY *= -1;
+        }
+        else if (player == 2) {
+            double tmp = startPointX;
+            startPointX = startPointY;
+            startPointY = -tmp;
+        }
+        else if (player == 3) {
+            double tmp = startPointX;
+            startPointX = -startPointY;
+            startPointY = tmp;
         }
         Path path = new Path();
         path.getElements().add(new MoveTo(startPointX, startPointY));
@@ -114,12 +120,8 @@ public class AnimationManagement {
      * @author Anna
      * @since Sprint 5
      */
-    public static PathTransition buyCard(ImageView card) {
-        return createLineToPath(card, ABLAGE_X, ABLAGE_Y, false);
-    }
-
-    public static void opponentBuysCard(ImageView card, GeneralLayoutContainer container) {
-        createLineToPath(card, container.getLayoutX(), container.getLayoutY(), true);
+    public static PathTransition buyCard(ImageView card, GeneralLayoutContainer dplc, int player) {
+        return createLineToPath(card, dplc.getLayoutX(), dplc.getLayoutY(), player);
     }
 
     /**
@@ -131,7 +133,7 @@ public class AnimationManagement {
      * @since Sprint 7
      */
     public static PathTransition clearCards(ImageView card, GeneralLayoutContainer discardPile) {
-        return createLineToPath(card, discardPile.getLayoutX(), discardPile.getLayoutY(), false);
+        return createLineToPath(card, discardPile.getLayoutX(), discardPile.getLayoutY(), 0);
     }
 
     /**
@@ -161,18 +163,17 @@ public class AnimationManagement {
      * Die bewegte Karte wird dabei in den Vordergrund gerückt.
      * Die neuen Koordinaten werden übernommen.
      *
-     * @param card  die Karte
-     * @param count gibt an, die wievielte Karte hinzugefügt wird
+     * @param card          die Karte
+     * @param handcards     der Container, dem die KArte hinzugefügt werden soll
      * @author Anna
      * @since Sprint 5
      */
-    public static Boolean addToHand(ImageView card, int count) {
+    public static Boolean addToHand(ImageView card, GeneralLayoutContainer handcards) {
         Parent parent = card.getParent();
         double w = card.getFitWidth() / 2;
         double h = card.getFitHeight() / 2;
-        double startPointX = parent.getLayoutX() + parent.getBoundsInLocal().getWidth() / 2 - w - HAND_X - w * 2 * count;
-        parent.toBack();
-        if (HAND_X + count * w != startPointX) {
+        double startPointX = parent.getLayoutX() + parent.getBoundsInLocal().getWidth() / 2 - w - handcards.getLayoutX() - w * 2 * handcards.getChildren().size();
+        if (handcards.getLayoutX() + handcards.getChildren().size() * w != startPointX) {
             Path path = new Path();
             path.getElements().add(new MoveTo(startPointX, h));
             card.toFront();
