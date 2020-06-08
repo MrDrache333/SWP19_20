@@ -3,14 +3,17 @@ package de.uol.swp.server.lobby;
 import com.google.common.eventbus.DeadEvent;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.google.inject.internal.cglib.proxy.$UndeclaredThrowableException;
 import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.lobby.Lobby;
-import de.uol.swp.common.lobby.message.CreateLobbyMessage;
-import de.uol.swp.common.lobby.message.UpdatedInGameMessage;
-import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
-import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
+import de.uol.swp.common.lobby.exception.JoinLobbyExceptionMessage;
+import de.uol.swp.common.lobby.exception.KickPlayerException;
+import de.uol.swp.common.lobby.exception.SetMaxPlayerException;
+import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.request.*;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
+import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
+import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.request.LoginRequest;
@@ -82,6 +85,13 @@ class LobbyServiceTest {
         //Test if lobby was created
         assertTrue(lobbyManagement.getLobby(message.getLobby().getLobbyID()).isPresent());
         assertEquals(lobbyOwner, lobbyManagement.getLobby(message.getLobby().getLobbyID()).get().getUsers().iterator().next());
+
+        lobbyService.onCreateLobbyRequest(new CreateLobbyRequest(defaultLobbyName, (UserDTO) lobbyOwner, ""));
+        lock.await(1000, TimeUnit.MILLISECONDS);
+
+        assertTrue(event instanceof CreateLobbyMessage);
+        CreateLobbyMessage message2 = (CreateLobbyMessage) event;
+        assertTrue(message2.getLobbyName() == null);
     }
 
     @Test
@@ -91,7 +101,7 @@ class LobbyServiceTest {
         final UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
         lobbyService.onLobbyJoinUserRequest(new LobbyJoinUserRequest(lobbyID, new UserDTO(lobbyUser.getUsername(), lobbyUser.getPassword(), lobbyUser.getEMail()), false));
 
-        lock.await(1000, TimeUnit.MILLISECONDS);
+        lock.await(200, TimeUnit.MILLISECONDS);
 
         assertTrue(event instanceof UserJoinedLobbyMessage);
         UserJoinedLobbyMessage message = (UserJoinedLobbyMessage) event;
@@ -102,6 +112,11 @@ class LobbyServiceTest {
 
         //Test if user joined lobby
         assertEquals(2, lobbyManagement.getLobby(lobbyID).get().getUsers().size());
+
+        lobbyService.onLobbyJoinUserRequest(new LobbyJoinUserRequest(lobbyID, new UserDTO(lobbyUser.getUsername(), lobbyUser.getPassword(), lobbyUser.getEMail()), false));
+
+        lock.await(200, TimeUnit.MILLISECONDS);
+        assertTrue(event instanceof JoinLobbyExceptionMessage);
     }
 
     @Test
@@ -198,6 +213,49 @@ class LobbyServiceTest {
         lock.await(500, TimeUnit.MILLISECONDS);
 
         assertTrue(event instanceof NewChatMessage);
+    }
+
+    @Test
+    void onUpdateLobbyReadyStatusReqTest() {
+        loginUsers();
+        UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
+        lobbyService.onUpdateLobbyReadyStatusRequest(new UpdateLobbyReadyStatusRequest(lobbyID, (UserDTO) lobbyOwner, true));
+        assertTrue(lobbyManagement.getLobby(lobbyID).get().getReadyStatus(lobbyOwner));
+    }
+
+    /**
+     * Testet, ob eine AllOnlineUsersInLobbyResponse auf Anfrage versendet wird.
+     *
+     * @throws InterruptedException
+     * @author Ferit
+     * @since Sprint8
+     */
+    @Test
+    void onRetrieveAllOnlineUsersInLobbyRequestTest() throws InterruptedException {
+        UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
+        lobbyService.onRetrieveAllOnlineUsersInLobbyRequest(new RetrieveAllOnlineUsersInLobbyRequest(lobbyID));
+        lock.await(500, TimeUnit.MILLISECONDS);
+
+        assertTrue(event instanceof AllOnlineUsersInLobbyResponse);
+    }
+
+    @Test
+    void kickPlayerTest() throws InterruptedException {
+        UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
+        lobbyManagement.getLobby(lobbyID).get().joinUser(lobbyUser);
+        lobbyService.onKickUserRequest(new KickUserRequest(lobbyID, (UserDTO) lobbyOwner, (UserDTO) lobbyUser));
+        lock.await(1000, TimeUnit.MILLISECONDS);
+        assertTrue(lobbyManagement.getLobby(lobbyID).get().getPlayers() == 1);
+    }
+
+    @Test
+    void onSetMaxPlayerReqTest() {
+        UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
+        lobbyService.onSetMaxPlayerRequest(new SetMaxPlayerRequest(lobbyID, (UserDTO) lobbyOwner, 3));
+        assertTrue(lobbyManagement.getLobby(lobbyID).get().getMaxPlayer() == 3);
+        lobbyService.onSetMaxPlayerRequest(new SetMaxPlayerRequest(lobbyID, (UserDTO) lobbyOwner, 0));
+        assertTrue(lobbyManagement.getLobby(lobbyID).get().getMaxPlayer() == 3);
+
     }
 
     void loginUsers() {

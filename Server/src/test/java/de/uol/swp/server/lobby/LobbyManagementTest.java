@@ -176,6 +176,12 @@ class LobbyManagementTest {
         assertTrue(lobbyManagement.isUserIngame(defaultLobbyOwner));
     }
 
+    /**
+     * Es wird getestet, ob der Owner mit seinen neuen Daten in den Lobbies aktualisiert wird.
+     *
+     * @author Ferit
+     * @since Sprint8
+     */
     @Test
     void updateLobbiesTest() {
         UserDTO oldUser = (UserDTO) defaultLobbyOwner;
@@ -184,27 +190,77 @@ class LobbyManagementTest {
         assertTrue(lobbyManagement.getLobby(lobbyID).get().getOwner().getUsername().equals(newUser.getUsername()));
     }
 
+    /**
+     * Es wird getestet, ob ein User erfolgreich gekickt werden kann.
+     *
+     * @author Ferit
+     * @since Sprint8
+     */
     @Test
     void kickUserTest() {
-        lobbyManagement.kickUser(lobbyID, (User) defaultLobbyOwner, defaultLobbyOwner);
-        assertFalse(lobbyManagement.getLobby(lobbyID).isPresent());
+        lobbyManagement.getLobby(lobbyID).get().joinUser(secondUser);
+        lobbyManagement.kickUser(lobbyID, (User) secondUser, defaultLobbyOwner);
+        assertTrue(lobbyManagement.getLobby(lobbyID).isPresent());
+        assertTrue(lobbyManagement.getLobby(lobbyID).get().getUsers().contains(defaultLobbyOwner) && lobbyManagement.getLobby(lobbyID).get().getPlayers() == 1);
     }
+    /**
+     * Es wird getestet, ob ein User nicht erfolgreich gekickt werden kann.
+     *
+     * @author Ferit
+     * @since Sprint8
+     */
+    @Test
+    void kickUserTestException() {
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            lobbyManagement.getLobby(lobbyID).get().joinUser(secondUser);
+            lobbyManagement.kickUser(lobbyID, (User) secondUser, secondUser);
+            assertTrue(lobbyManagement.getLobby(lobbyID).isPresent());
+            assertTrue(lobbyManagement.getLobby(lobbyID).get().getUsers().contains(defaultLobbyOwner) && lobbyManagement.getLobby(lobbyID).get().getPlayers() == 1);
 
+        });
+        assertTrue(exception instanceof KickPlayerException);
+
+        Exception exception2 = assertThrows(RuntimeException.class, () -> {
+            lobbyManagement.dropLobby(lobbyID);
+            lobbyManagement.kickUser(lobbyID, (User) secondUser, secondUser);
+            assertFalse(lobbyManagement.getLobby(lobbyID).isPresent());
+        });
+        assertTrue(exception2 instanceof KickPlayerException);
+
+           }
+
+    /**
+     * Es wird getestet, ob der LobbyOwner richtig geholt wird.
+     *
+     * @author Ferit
+     * @since Sprint8
+     */
     @Test
     void getLobbyOwnerTest() {
         lobbyManagement.leaveLobby(lobbyID, defaultLobbyOwner);
         assertTrue(lobbyManagement.getLobbyOwner(lobbyID).isEmpty());
         lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, defaultLobbyOwner);
         assertTrue(lobbyManagement.getLobbyOwner(lobbyID).get().equals(defaultLobbyOwner));
-
     }
 
+    /**
+     * Es wird die setMaxPlayer getestet.
+     *
+     * @author Ferit
+     * @since Sprint8
+     */
     @Test
     void setMaxPlayerTest() {
         lobbyManagement.setMaxPlayer(lobbyID, defaultLobbyOwner, 3);
         assertTrue(lobbyManagement.getLobby(lobbyID).get().getMaxPlayer() == 3);
     }
 
+    /**
+     * Es wird die setMaxPlayer getestet, hier aber nur die Exception möglichkeiten.
+     *
+     * @author Ferit
+     * @since Sprint8
+     */
     @Test
     void setMaxPlayerTestException() {
         Exception exception = assertThrows(RuntimeException.class, () -> {
@@ -223,6 +279,4 @@ class LobbyManagementTest {
         });
         assertTrue(exception2 instanceof SetMaxPlayerException);
     }
-
-
 }

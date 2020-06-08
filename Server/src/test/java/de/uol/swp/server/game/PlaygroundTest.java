@@ -6,11 +6,16 @@ import com.google.common.eventbus.Subscribe;
 import de.uol.swp.common.game.card.Card;
 import de.uol.swp.common.game.card.parser.components.CardPack;
 import de.uol.swp.common.game.exception.GamePhaseException;
+import de.uol.swp.common.game.messages.GameExceptionMessage;
 import de.uol.swp.common.game.phase.Phase;
+import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.game.request.GameGiveUpRequest;
+import de.uol.swp.common.game.request.PlayCardRequest;
+import de.uol.swp.common.game.request.SkipPhaseRequest;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.chat.ChatManagement;
+import de.uol.swp.server.game.player.Player;
 import de.uol.swp.server.lobby.LobbyManagement;
 import de.uol.swp.server.message.StartGameInternalMessage;
 import de.uol.swp.server.usermanagement.AuthenticationService;
@@ -255,5 +260,46 @@ public class PlaygroundTest {
         playground.getCompositePhase().executeClearPhase(playground.getActualPlayer());
         size = playground.sendCardsDeckSize();
         assertEquals(5, size);
+    }
+
+    // <----GameService Test ------->
+    @Test
+    void dropFinishedGameTest() {
+        gameService.dropFinishedGame(gameID);
+        assertFalse(gameManagement.getGame(gameID).isPresent());
+    }
+
+    @Test
+    void onSkipPhaseRequestTest() {
+        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
+        Player oldActualPlayer = playground.getActualPlayer();
+        gameService.onSkipPhaseRequest(new SkipPhaseRequest(playground.getActualPlayer().getTheUserInThePlayer(), gameID));
+        assertTrue(!(playground.getActualPlayer().equals(oldActualPlayer)));
+    }
+
+    //TODO: funzt noch net
+    @Test
+    void onBuyCardRequestTest() {
+        gameManagement.getGame(gameID).get().getPlayground().playerGaveUp(gameID, (UserDTO) thirdPlayer, true);
+
+        if (gameManagement.getGame(gameID).get().getPlayground().getActualPlayer().getPlayerDeck().actualMoneyFromPlayer() >= 1) {
+            if (gameManagement.getGame(gameID).get().getPlayground().getActualPlayer().getAvailableActions() >= 1) {
+                gameManagement.getGame(gameID).get().getPlayground().nextPhase();
+            }
+            gameService.onBuyCardRequest(new BuyCardRequest(gameID, gameManagement.getGame(gameID).get().getPlayground().getActualPlayer().getTheUserInThePlayer(), (short) 1));
+
+        }
+        assertTrue(gameManagement.getGame(gameID).get().getPlayground().getNextPlayer().getPlayerDeck().getDiscardPile().get(0).getId() == 1);
+    }
+
+    @Test
+    void onPlayCardTest() {
+        // UUID gameID, User currentUser, Short handCardID
+        gameManagement.getGame(gameID).get().getPlayground().setActualPhase(Phase.Type.ActionPhase);
+        gameManagement.getGame(gameID).get().getPlayground().getActualPlayer().getPlayerDeck().getHand().add(gameManagement.getGame(gameID).get().getPlayground().getCardsPackField().getCards().getCardForId((short) 9));
+        gameService.onPlayCardRequest(new PlayCardRequest(gameID, gameManagement.getGame(gameID).get().getPlayground().getActualPlayer().getTheUserInThePlayer(), (short) 9));
+        assertEquals(2, gameManagement.getGame(gameID).get().getPlayground().getActualPlayer().getAvailableBuys());
+        assertEquals(2, gameManagement.getGame(gameID).get().getPlayground().getActualPlayer().getAdditionalMoney());
+        assertEquals(Phase.Type.Buyphase, gameManagement.getGame(gameID).get().getPlayground().getActualPhase());
     }
 }

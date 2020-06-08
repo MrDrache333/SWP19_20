@@ -248,15 +248,10 @@ public class ActionCardExecution {
             return executeChooseNextAction((ChooseNextAction) action);
         if (action instanceof ForEach)
             return executeForEach((ForEach) action, thePlayers);
-        if (action instanceof If)
-            return executeIf((If) action, thePlayers);
         if (action instanceof ShowCard)
             return executeShowCard((ShowCard) action, thePlayers);
         if (action instanceof UseCard)
             return executeUseCard((UseCard) action);
-        if (action instanceof While)
-            return executeWhile((While) action, thePlayers);
-
         return false;
     }
 
@@ -393,11 +388,6 @@ public class ActionCardExecution {
         return cards;
     }
 
-    private boolean executeWhile(While action, List<Player> thePlayers) {
-        //TODO
-        return false;
-    }
-
     private boolean executeUseCard(UseCard action) {
         if (action.getCardId() == 0) {
             LOG.debug("No CardId specified! Using current Card(" + cardID + ")");
@@ -409,11 +399,6 @@ public class ActionCardExecution {
             if (!execution.execute()) return false;
         }
         return true;
-    }
-
-    private boolean executeIf(If action, List<Player> thePlayers) {
-        //TODO
-        return false;
     }
 
     /**
