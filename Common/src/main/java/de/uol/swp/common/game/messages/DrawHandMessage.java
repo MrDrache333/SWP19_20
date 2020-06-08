@@ -1,6 +1,7 @@
 package de.uol.swp.common.game.messages;
 
 import de.uol.swp.common.message.AbstractServerMessage;
+import de.uol.swp.common.user.User;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -10,6 +11,7 @@ public class DrawHandMessage extends AbstractServerMessage {
     private UUID theLobbyID;
     private Short numberOfPlayers;
     private boolean initialHand;
+    private User player;
 
     /**
      * Konstruktor, welcher die ArrayList mit den IDs der Hand übergeben bekommt. Entweder die Standart-Hand mit Größe 5 oder wenn er Karten
@@ -24,6 +26,14 @@ public class DrawHandMessage extends AbstractServerMessage {
         this.theLobbyID = specificLobbyID;
         this.numberOfPlayers = numberOfPlayers;
         this.initialHand = initialHand;
+        this.player = null;
+    }
+
+    public DrawHandMessage(ArrayList<Short> theIDsFromTheCards, UUID specificLobbyID, Short numberOfPlayers, User player) {
+        this.cardsOnHand = theIDsFromTheCards;
+        this.theLobbyID = specificLobbyID;
+        this.numberOfPlayers = numberOfPlayers;
+        this.player = player;
     }
 
     /**
@@ -62,4 +72,6 @@ public class DrawHandMessage extends AbstractServerMessage {
     public boolean isInitialHand() {
         return initialHand;
     }
+
+    public User getPlayer() { return player;}
 }
