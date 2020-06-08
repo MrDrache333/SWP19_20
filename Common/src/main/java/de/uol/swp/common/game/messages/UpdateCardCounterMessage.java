@@ -15,7 +15,7 @@ import java.util.UUID;
 public class UpdateCardCounterMessage extends AbstractGameMessage {
 
     private static final long serialVersionUID = 710636197251694523L;
-    private Map<Short, Integer> cardCounts;
+    private final Map<Short, Integer> cardCounts;
 
     public UpdateCardCounterMessage(UUID gameID, User player, Map<Short, Integer> cardCounts) {
         super(gameID, player);

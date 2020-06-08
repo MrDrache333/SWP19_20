@@ -14,8 +14,8 @@ public class ChatExceptionMessage extends AbstractResponseMessage {
 
     private static final long serialVersionUID = 2939228420446388785L;
 
-    private User Sender;
-    private ChatException exception;
+    private final User Sender;
+    private final ChatException exception;
 
     /**
      * Konstruktor der Chat exception message.

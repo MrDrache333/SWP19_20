@@ -10,7 +10,6 @@ import de.uol.swp.common.user.UserDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.security.KeyException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -167,7 +166,7 @@ public class LobbyManagement {
                 updatedLobbies.put(lobbyToUpdate.getLobbyID(), lobbyToUpdate);
             }
         }
-        updatedLobbies.entrySet().forEach(l -> lobbies.replace(l.getKey(), l.getValue()));
+        updatedLobbies.forEach(lobbies::replace);
     }
 
     /**

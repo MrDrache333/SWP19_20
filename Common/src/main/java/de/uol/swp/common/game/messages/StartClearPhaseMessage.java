@@ -9,10 +9,10 @@ import java.util.UUID;
 public class StartClearPhaseMessage extends AbstractServerMessage {
 
     private static final long serialVersionUID = -4262409792917076822L;
-    private UUID gameID;
-    private User currentUser;
-    private Short userPlaceNumber;
-    private Short enemyPlaceNumber;
+    private final UUID gameID;
+    private final User currentUser;
+    private final Short userPlaceNumber;
+    private final Short enemyPlaceNumber;
 
     /**
      * Message die signalisiert, dass sich der User jetzt in der Clearphase befindet

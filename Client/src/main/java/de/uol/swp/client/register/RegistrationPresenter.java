@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 /**
  * Die Presenter-Klasse des Registrierungsfensters.
  */
+@SuppressWarnings("UnstableApiUsage")
 public class RegistrationPresenter extends AbstractPresenter {
 
     public static final String fxml = "/fxml/RegistrationView.fxml";
@@ -65,12 +66,8 @@ public class RegistrationPresenter extends AbstractPresenter {
      */
     @FXML
     private void initialize() {
-        registerButton.setOnMouseEntered(event -> {
-            new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play();
-        });
-        cancelButton.setOnMouseEntered(event -> {
-            new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play();
-        });
+        registerButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
+        cancelButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
         SoundMediaPlayer.setSound(true);
         soundIcon.setImage(new Image(new File(getClass().getResource(SoundMediaPlayer.isSoundEnabled() ? "/images/sound_on_icon.png" : "/images/sound_off_icon.png").toExternalForm().replace("file:", "")).toURI().toString()));
         soundIcon.setOnMouseClicked(event -> {
@@ -108,7 +105,7 @@ public class RegistrationPresenter extends AbstractPresenter {
             eventBus.post(new RegistrationErrorEvent("Das Passwortfeld darf nicht leer sein!"));
         } else if (Strings.isNullOrEmpty(mailField.getText())) {
             eventBus.post(new RegistrationErrorEvent("Das E-Mailfeld darf nicht leer sein!"));
-        } else if (!(Pattern.matches("(?:[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-zA-Z0-9-]*[a-zA-Z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])", mailField.getText()))) {
+        } else if (!(Pattern.matches("(?:[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-zA-Z0-9-]*[a-zA-Z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)])", mailField.getText()))) {
             eventBus.post(new RegistrationErrorEvent("Ungültige E-Mail-Adresse!"));
         } else {
             userService.createUser(new UserDTO(loginField.getText(), passwordField1.getText(), mailField.getText()));

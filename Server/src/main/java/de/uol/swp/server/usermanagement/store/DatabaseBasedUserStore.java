@@ -28,16 +28,12 @@ public class DatabaseBasedUserStore extends AbstractUserStore implements UserSto
     //private final Map<String, User> users = new HashMap<>();
     // TODO: Spalte username in der DB ggf. anpassen?
 
-    private static boolean test;
-    private static final String SQL_SELECT_ALL_USER = "SELECT username, password, email FROM " + (test ? "userTest" : "user");
-    private static final String SQL_SELECT_USER = "SELECT username, password, email FROM " + (test ? "userTest" : "user") + " WHERE username = ?";
-    private static final String SQL_SELECT_USER_PWD = "SELECT username, password, email FROM " + (test ? "userTest" : "user") + " WHERE username = ? AND password = PASSWORD(?)";
-    private static final String SQL_DELETE_USER = "DELETE FROM " + (test ? "userTest" : "user") + " WHERE username = ?";
-    private static final String SQL_UPDATE_USER = "UPDATE " + (test ? "userTest" : "user") + " SET username = ?, password = PASSWORD(?), email = ? WHERE username = ? AND password = PASSWORD(?)";
-    private static final String SQL_INSERT_USER = "INSERT INTO " + (test ? "userTest" : "user") + " (username, password, email) " + "VALUES (?, PASSWORD(?), ?);";
-    public DatabaseBasedUserStore (boolean test) {
-        DatabaseBasedUserStore.test = test;
-    }
+    private static final String SQL_SELECT_ALL_USER = "SELECT username, password, email FROM user";
+    private static final String SQL_SELECT_USER = "SELECT username, password, email FROM user WHERE username = ?";
+    private static final String SQL_SELECT_USER_PWD = "SELECT username, password, email FROM user WHERE username = ? AND password = PASSWORD(?)";
+    private static final String SQL_DELETE_USER = "DELETE FROM user WHERE username = ?";
+    private static final String SQL_UPDATE_USER = "UPDATE user SET username = ?, password = PASSWORD(?), email = ? WHERE username = ? AND password = PASSWORD(?)";
+    private static final String SQL_INSERT_USER = "INSERT INTO user (username, password, email) VALUES (?, PASSWORD(?), ?);";
 
     private Connection establishConnection() {
 
@@ -61,7 +57,7 @@ public class DatabaseBasedUserStore extends AbstractUserStore implements UserSto
     @Override
     public Optional<User> findUser(String username, String password) {
 
-        User usr = null;
+        User user = null;
 
         try {
 
@@ -75,7 +71,7 @@ public class DatabaseBasedUserStore extends AbstractUserStore implements UserSto
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                usr = new UserDTO(rs.getString("username"), "", rs.getString("email"));
+                user = new UserDTO(rs.getString("username"), "", rs.getString("email"));
             }
 
             rs.close();
@@ -86,8 +82,8 @@ public class DatabaseBasedUserStore extends AbstractUserStore implements UserSto
             LOG.debug(e.getMessage());
         }
 
-        if (usr != null) {
-            return Optional.of(usr);
+        if (user != null) {
+            return Optional.of(user);
         } else {
             return Optional.empty();
         }
@@ -102,7 +98,7 @@ public class DatabaseBasedUserStore extends AbstractUserStore implements UserSto
     @Override
     public Optional<User> findUser(String username) {
 
-        User usr = null;
+        User user = null;
 
         try {
             Connection conn = establishConnection();
@@ -114,7 +110,7 @@ public class DatabaseBasedUserStore extends AbstractUserStore implements UserSto
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                usr = new UserDTO(rs.getString("username"), "", rs.getString("email"));
+                user = new UserDTO(rs.getString("username"), "", rs.getString("email"));
             }
 
             rs.close();
@@ -125,8 +121,8 @@ public class DatabaseBasedUserStore extends AbstractUserStore implements UserSto
             LOG.debug(e.getMessage());
         }
 
-        if (usr != null) {
-            return Optional.of(usr);
+        if (user != null) {
+            return Optional.of(user);
         } else {
             return Optional.empty();
         }
@@ -150,7 +146,7 @@ public class DatabaseBasedUserStore extends AbstractUserStore implements UserSto
         else if (Strings.isNullOrEmpty(eMail))
             throw new IllegalArgumentException("E-Mail darf nicht leer sein!");
 
-        User usr = null;
+        User user = null;
 
         try {
             Connection conn = establishConnection();
@@ -171,7 +167,7 @@ public class DatabaseBasedUserStore extends AbstractUserStore implements UserSto
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next())
-                usr = new UserDTO(rs.getString("username"), "", rs.getString("email"));
+                user = new UserDTO(rs.getString("username"), "", rs.getString("email"));
 
             rs.close();
             conn.close();
@@ -181,7 +177,7 @@ public class DatabaseBasedUserStore extends AbstractUserStore implements UserSto
             LOG.debug(e.getMessage());
         }
 
-        return usr;
+        return user;
 
         /*
         User usr = new UserDTO(username, password, eMail);
@@ -193,7 +189,7 @@ public class DatabaseBasedUserStore extends AbstractUserStore implements UserSto
     @Override
     public User updateUser(String username, String password, String eMail, User oldUser, String currentPassword) {
 
-        User usr = null;
+        User user = null;
 
         try {
             Connection conn = establishConnection();
@@ -215,7 +211,7 @@ public class DatabaseBasedUserStore extends AbstractUserStore implements UserSto
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next())
-                usr = new UserDTO(rs.getString("username"), "", rs.getString("email"));
+                user = new UserDTO(rs.getString("username"), "", rs.getString("email"));
 
             rs.close();
             conn.close();
@@ -224,10 +220,10 @@ public class DatabaseBasedUserStore extends AbstractUserStore implements UserSto
         } catch (SQLException e) {
             LOG.debug(e.getMessage());
         }
-        if (usr == null)
+        if (user == null)
             throw new UserUpdateException("Das eingegebene Passwort ist nicht korrekt.\n\n Gib dein aktuelles Passwort ein.");
         else
-            return usr;
+            return user;
 
         /*
         users.remove(oldUsername);
@@ -261,7 +257,7 @@ public class DatabaseBasedUserStore extends AbstractUserStore implements UserSto
 
     @Override
     public List<User> getAllUsers() {
-        List<User> retUsers = new ArrayList<>();
+        List<User> allUsers = new ArrayList<>();
 
         try {
             Connection conn = establishConnection();
@@ -271,7 +267,7 @@ public class DatabaseBasedUserStore extends AbstractUserStore implements UserSto
             ResultSet rs = stmt.executeQuery(SQL_SELECT_ALL_USER);
 
             while (rs.next()) {
-                retUsers.add(new UserDTO(rs.getString("username"), "", rs.getString("email")));
+                allUsers.add(new UserDTO(rs.getString("username"), "", rs.getString("email")));
             }
 
             rs.close();
@@ -282,7 +278,7 @@ public class DatabaseBasedUserStore extends AbstractUserStore implements UserSto
             LOG.debug(e.getMessage());
         }
 
-        return retUsers;
+        return allUsers;
 
         /*
         users.values().forEach(u -> retUsers.add(u.getWithoutPassword()));

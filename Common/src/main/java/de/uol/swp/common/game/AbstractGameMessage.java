@@ -14,11 +14,11 @@ abstract public class AbstractGameMessage extends AbstractServerMessage {
     /**
      * Der Spieler, für den die Nachricht ist
      */
-    private User player;
+    private final User player;
     /**
      * Die ID des Spiels
      */
-    private UUID gameID;
+    private final UUID gameID;
 
     /**
      * Instanziiert GameMessage

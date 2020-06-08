@@ -30,6 +30,7 @@ import java.net.InetSocketAddress;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+@SuppressWarnings("UnstableApiUsage")
 public class Server implements ServerHandlerDelegate {
 
     private static final Logger LOG = LogManager.getLogger(Server.class);

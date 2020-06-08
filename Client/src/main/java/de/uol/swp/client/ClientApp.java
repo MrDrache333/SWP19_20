@@ -10,7 +10,10 @@ import de.uol.swp.client.game.GameService;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.lobby.OpenJoinLobbyRequest;
 import de.uol.swp.client.sound.SoundMediaPlayer;
-import de.uol.swp.common.lobby.message.*;
+import de.uol.swp.common.lobby.message.CreateLobbyMessage;
+import de.uol.swp.common.lobby.message.KickUserMessage;
+import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
+import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.lobby.request.OpenLobbyCreateRequest;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
@@ -35,6 +38,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 import java.util.Optional;
 
+@SuppressWarnings("UnstableApiUsage")
 public class ClientApp extends Application implements ConnectionListener {
 
     private static final Logger LOG = LogManager.getLogger(ClientApp.class);

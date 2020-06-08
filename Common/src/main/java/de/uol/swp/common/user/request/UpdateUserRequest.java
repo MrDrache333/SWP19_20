@@ -15,8 +15,8 @@ public class UpdateUserRequest extends AbstractRequestMessage {
 
     private static final long serialVersionUID = 1834977681414180873L;
     final private User toUpdate;
-    private User oldUser;
-    private String currentPassword;
+    private final User oldUser;
+    private final String currentPassword;
 
     /**
      * Benutzeranfrage aktualisieren

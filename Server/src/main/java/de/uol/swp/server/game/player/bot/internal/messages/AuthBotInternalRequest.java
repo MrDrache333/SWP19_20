@@ -16,7 +16,7 @@ import java.util.Optional;
  */
 public class AuthBotInternalRequest implements ServerInternalMessage {
 
-    private BotPlayer botPlayer;
+    private final BotPlayer botPlayer;
 
     public AuthBotInternalRequest(BotPlayer theCreatedBot) {
         this.botPlayer = theCreatedBot;

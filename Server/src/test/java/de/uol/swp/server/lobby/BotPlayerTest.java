@@ -4,11 +4,9 @@ import com.google.common.eventbus.DeadEvent;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.common.lobby.request.AddBotRequest;
-
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.chat.ChatManagement;
-import de.uol.swp.server.lobby.LobbyManagement;
 import de.uol.swp.server.game.GameManagement;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import de.uol.swp.server.usermanagement.UserManagement;
@@ -17,13 +15,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-
-import java.util.*;
-
-import static org.junit.jupiter.api.Assertions.*;
-
+import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BotPlayerTest {
 
@@ -36,7 +32,7 @@ class BotPlayerTest {
     final LobbyService lobbyService = new LobbyService(lobbyManagement, new AuthenticationService(bus, userManagement, lobbyManagement), new ChatManagement(), bus);
     private UUID lobbyID;
     final GameManagement gameManagement = new GameManagement(new ChatManagement(), lobbyManagement);
-    private CountDownLatch lock = new CountDownLatch(1);
+    private final CountDownLatch lock = new CountDownLatch(1);
     private Object event;
 
     @Subscribe

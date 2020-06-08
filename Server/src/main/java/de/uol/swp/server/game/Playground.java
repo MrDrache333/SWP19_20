@@ -13,7 +13,6 @@ import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.lobby.Lobby;
-import de.uol.swp.common.lobby.LobbyUser;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
@@ -31,28 +30,29 @@ import java.util.stream.IntStream;
 /**
  * Playground stellt das eigentliche Spielfeld dar
  */
+@SuppressWarnings("UnstableApiUsage")
 public class Playground extends AbstractPlayground {
 
     private static final Logger LOG = LogManager.getLogger(Playground.class);
-    private Map<Short, Integer> cardField = new TreeMap<>();
+    private final Map<Short, Integer> cardField = new TreeMap<>();
     /**
      * Die Spieler
      */
-    private List<Player> players = new ArrayList<>();
-    private Map<String, Integer> resultsGame = new TreeMap<>();
-    private Map<Player, Integer> playerTurns = new HashMap<>();
+    private final List<Player> players = new ArrayList<>();
+    private final Map<String, Integer> resultsGame = new TreeMap<>();
+    private final Map<Player, Integer> playerTurns = new HashMap<>();
     private Player actualPlayer;
     private Player nextPlayer;
     private Player latestGavedUpPlayer;
     private Phase.Type actualPhase;
-    private GameService gameService;
-    private UUID theSpecificLobbyID;
-    private CompositePhase compositePhase;
-    private Timer timer = new Timer();
-    private short lobbySizeOnStart;
-    private CardPack cardsPackField;
-    private ArrayList<Short> chosenCards;
-    private ArrayList<Card> trash = new ArrayList<>();
+    private final GameService gameService;
+    private final UUID theSpecificLobbyID;
+    private final CompositePhase compositePhase;
+    private final Timer timer = new Timer();
+    private final short lobbySizeOnStart;
+    private final CardPack cardsPackField;
+    private final ArrayList<Short> chosenCards;
+    private final ArrayList<Card> trash = new ArrayList<>();
     private final UserDTO infoUser = new UserDTO("infoUser", "", "");
 
     /**
@@ -66,7 +66,7 @@ public class Playground extends AbstractPlayground {
     @Inject
     Playground(Lobby lobby, GameService gameService) {
         for (User user : lobby.getUsers()) {
-            if (user.getIsBot() == false) {
+            if (!user.getIsBot()) {
                 Player player = new Player(user.getUsername());
                 player.setTheUserInThePlayer(user);
                 player.setBot(false);
@@ -291,7 +291,7 @@ public class Playground extends AbstractPlayground {
                 this.players.remove(thePositionInList);
                 List<String> winners = calculateWinners();
                 GameOverMessage gameOverByGaveUp = new GameOverMessage(lobbyID, winners, resultsGame);
-                if (this.players.get(0).isBot() == false) {
+                if (!this.players.get(0).isBot()) {
                     endGame(lobbyID, gameOverByGaveUp);
                 } else {
                     endGame(lobbyID);
@@ -322,7 +322,7 @@ public class Playground extends AbstractPlayground {
     //Hilfsmethode zum Überprüfen
     public Boolean onlyBotsLeft() {
         for (Player player : players) {
-            if (player.isBot() == true) {
+            if (player.isBot()) {
                 return true;
             }
         }

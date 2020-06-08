@@ -10,7 +10,7 @@ import java.util.UUID;
  */
 public class StartGameInternalMessage extends AbstractServerInternalMessage {
 
-    private UUID lobbyID;
+    private final UUID lobbyID;
 
     public StartGameInternalMessage(UUID lobbyID) {
         this.lobbyID = lobbyID;

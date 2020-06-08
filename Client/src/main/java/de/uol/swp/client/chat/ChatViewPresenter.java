@@ -46,6 +46,8 @@ import java.util.UUID;
  * @author KenoO
  * @since Sprint 2
  */
+
+@SuppressWarnings("UnstableApiUsage")
 public class ChatViewPresenter extends AbstractPresenter {
     /**
      * Pfad zu der verwendeten FXML.

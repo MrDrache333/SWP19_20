@@ -33,7 +33,7 @@ class CompositePhaseTest {
     private static final AuthenticationService authenticationService = new AuthenticationService(bus, new UserManagement(new MainMemoryBasedUserStore()), lobbyManagement);
     @SuppressWarnings("unused")
     private static final GameService gameService = new GameService(bus, gameManagement, authenticationService);
-    private static ArrayList<Short> chosenCards = new ArrayList<>();
+    private static final ArrayList<Short> chosenCards = new ArrayList<>();
 
     private static UUID gameID;
 

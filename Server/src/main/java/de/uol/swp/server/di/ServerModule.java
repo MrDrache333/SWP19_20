@@ -14,7 +14,7 @@ import de.uol.swp.server.usermanagement.store.UserStore;
 public class ServerModule extends AbstractModule {
 
     private final EventBus bus = new EventBus();
-    private final UserStore store = new DatabaseBasedUserStore(false);
+    private final UserStore store = new DatabaseBasedUserStore();
     private final UserManagement userManagement = new UserManagement(store);
     private final ChatManagement chatManagement = new ChatManagement();
     private final LobbyManagement lobbyManagement = new LobbyManagement();

@@ -38,6 +38,7 @@ import java.util.UUID;
  * @author KenoO
  * @since Sprint 2
  */
+@SuppressWarnings("UnstableApiUsage")
 public class LobbyService extends AbstractService {
     private static final Logger LOG = LogManager.getLogger(LobbyService.class);
 

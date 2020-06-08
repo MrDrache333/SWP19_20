@@ -11,7 +11,7 @@ import java.util.List;
 class UserMessageSerializableTest {
 
     private static final int SIZE = 10;
-    private static List<String> users = new ArrayList<>();
+    private static final List<String> users = new ArrayList<>();
 
     /**
      *Zehn Nutzer werden der Liste hinzugefügt.

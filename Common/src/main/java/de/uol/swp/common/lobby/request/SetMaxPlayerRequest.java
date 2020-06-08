@@ -12,7 +12,7 @@ import java.util.UUID;
  */
 public class SetMaxPlayerRequest extends AbstractLobbyRequest {
     private static final long serialVersionUID = -8642526060768371983L;
-    private Integer maxPlayerValue;
+    private final Integer maxPlayerValue;
 
     /**
      * Initialisiert eine neue setMaxPlayerRequest

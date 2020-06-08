@@ -18,12 +18,12 @@ import java.util.ArrayList;
 public class SoundMediaPlayer implements MediaPlayer {
 
     private static boolean soundEnabled = true;
-    private static ArrayList<SoundMediaPlayer> playingSounds = new ArrayList<>();
-    private Logger LOG = LogManager.getLogger(getClass());
-    private Sound sound;
+    private static final ArrayList<SoundMediaPlayer> playingSounds = new ArrayList<>();
+    private final Logger LOG = LogManager.getLogger(getClass());
+    private final Sound sound;
     private boolean started;
     private Clip clip;
-    private Type type;
+    private final Type type;
 
     /**
      * Initialisiert einen neuen SoundMediaPlayer.
@@ -57,9 +57,9 @@ public class SoundMediaPlayer implements MediaPlayer {
     public static void setSound(boolean play) {
         soundEnabled = play;
         if (!play) {
-            playingSounds.forEach(e -> e.stop());
+            playingSounds.forEach(SoundMediaPlayer::stop);
             ArrayList<SoundMediaPlayer> temp = new ArrayList<>(playingSounds);
-            temp.stream().filter(e -> e.type.equals(Type.Sound)).forEach(e -> playingSounds.remove(e));
+            temp.stream().filter(e -> e.type.equals(Type.Sound)).forEach(playingSounds::remove);
         } else
             playingSounds.stream().filter(e -> e.type.equals(Type.Music)).forEach(SoundMediaPlayer::play);
     }
@@ -234,7 +234,7 @@ public class SoundMediaPlayer implements MediaPlayer {
          */
         Message_Receive("/sounds/message_receive.wav");
 
-        private String path;
+        private final String path;
 
         /**
          * Setzt den Pfad-String.

@@ -22,6 +22,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.regex.Pattern;
 
+@SuppressWarnings("UnstableApiUsage")
 public class CreateLobbyPresenter extends AbstractPresenter {
 
     /**
@@ -32,7 +33,7 @@ public class CreateLobbyPresenter extends AbstractPresenter {
     private static final Logger LOG = LogManager.getLogger(CreateLobbyPresenter.class);
 
     private User loggedInUser;
-    private EventBus eventBus;
+    private final EventBus eventBus;
 
     @FXML
     private Button cancelButton;
@@ -64,7 +65,7 @@ public class CreateLobbyPresenter extends AbstractPresenter {
      * Sobald der Lobby erstellen Button gedrückt wird, öffnet sich ein Dialog. Hier wird man aufgefordert einen Namen für die Lobby anzugeben. Das Passwortfeld ist optional
      * auszufüllen. Bleibt das Passwortfeld leer, wird die Lobby offen. Wird ein Passwort angegegben, wird dieses gespeicherrt und die Lobby wird privat
      *
-     * @param actionEvent
+     * @param actionEvent Das ActionEvent
      * @author Paula
      * @since Sprint 7
      */
@@ -91,7 +92,7 @@ public class CreateLobbyPresenter extends AbstractPresenter {
      *
      * Beim Drücken auf den Abbrechen Button schließt sich das Fenster.
      *
-     * @param actionEvent
+     * @param actionEvent Das ActionEvent
      * @author Paula
      * @since Sprint 7
      */
@@ -105,7 +106,7 @@ public class CreateLobbyPresenter extends AbstractPresenter {
      *
      * Benutzer wird geupdated.
      *
-     * @param message
+     * @param message Die UpdatedUserMessage
      * @author Paula
      * @since Sprint 7
      */

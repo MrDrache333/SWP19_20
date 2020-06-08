@@ -12,7 +12,7 @@ import de.uol.swp.common.user.User;
 public class OpenSettingsRequest extends AbstractRequestMessage {
 
     private static final long serialVersionUID = -4996091811171165930L;
-    private User user;
+    private final User user;
 
     /**
      * Der Konstruktor der OpenSettingsRequest

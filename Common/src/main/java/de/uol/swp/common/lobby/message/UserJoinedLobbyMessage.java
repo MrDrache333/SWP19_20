@@ -11,8 +11,8 @@ import java.util.UUID;
 public class UserJoinedLobbyMessage extends AbstractLobbyMessage {
 
     private static final long serialVersionUID = -2228023228166981549L;
-    private UserDTO gameOwner;
-    private LobbyDTO lobby;
+    private final UserDTO gameOwner;
+    private final LobbyDTO lobby;
 
     /**
      * Initialisiert eine neue UserJoinedLobbyMessage.

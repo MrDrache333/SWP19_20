@@ -10,11 +10,9 @@ import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.common.chat.ChatService;
 import de.uol.swp.common.game.card.parser.JsonCardParser;
 import de.uol.swp.common.game.card.parser.components.CardPack;
-import de.uol.swp.common.lobby.exception.JoinLobbyExceptionMessage;
 import de.uol.swp.common.lobby.exception.LobbyExceptionMessage;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.request.AddBotRequest;
-import de.uol.swp.common.lobby.request.SetMaxPlayerRequest;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.lobby.response.SetChosenCardsResponse;
 import de.uol.swp.common.user.User;
@@ -53,6 +51,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 
+@SuppressWarnings("UnstableApiUsage")
 public class LobbyPresenter extends AbstractPresenter {
 
     public static final String fxml = "/fxml/LobbyViewWIP.fxml";
@@ -111,7 +110,7 @@ public class LobbyPresenter extends AbstractPresenter {
     @FXML
     private ImageView bigCard;
 
-    private ImageView crownView = new ImageView("images/crown.png");
+    private final ImageView crownView = new ImageView("images/crown.png");
 
 
 
@@ -382,7 +381,7 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Methode für den Klick des Buttons Auswahl-abschicken
      *
-     * @param event
+     * @param event Das ActionEvent
      * @author Anna
      * @since Sprint 8
      */
@@ -526,20 +525,6 @@ public class LobbyPresenter extends AbstractPresenter {
         LOG.debug("Spieler in der Lobby mit der ID" + message.getLobbyID() + " startet.");
         gameManagement.showGameView();
     }
-
-    /**
-     * Nachdem der Nutzer sich ausgeloggt hat, wird er auch aus der Lobbyliste gelöscht.
-     *
-     * @param message Die UserLoggedOutMessage
-     * @author Darian
-     * @since Sprint 3
-     */
-//    @Subscribe
-//    public void onUserLoggedOutMessage(UserLoggedOutMessage message) {
-//        userLeftLobby(message.getUsername(), false);
-//    }
-//
-//    Überflüssig, da man beim ausloggen inzwischen schon jede Lobby verlässt. (Siehe LeaveAllLobbiesOnLogoutRequest)
 
     /**
      * User wird aus der Liste entfernt, wenn er seinen Account gelöscht hat

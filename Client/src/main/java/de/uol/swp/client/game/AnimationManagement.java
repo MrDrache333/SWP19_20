@@ -196,9 +196,7 @@ public class AnimationManagement {
 
         ParallelTransition parallelTransition = new ParallelTransition(fadeTransition, scaleTransition);
         parallelTransition.play();
-        parallelTransition.setOnFinished(e -> {
-            ((GeneralLayoutContainer) card.getParent()).getChildren().remove(card);
-        });
+        parallelTransition.setOnFinished(e -> ((GeneralLayoutContainer) card.getParent()).getChildren().remove(card));
 
         return parallelTransition;
 

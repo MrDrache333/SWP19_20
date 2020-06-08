@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 
-
+@SuppressWarnings("UnstableApiUsage")
 public class LoginPresenter extends AbstractPresenter {
 
     public static final String fxml = "/fxml/LoginView.fxml";

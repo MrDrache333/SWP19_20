@@ -36,12 +36,22 @@ public class UserManagement extends AbstractUserManagement {
      */
     @Override
     public User login(String username, String password) {
+
+        if (username.isEmpty() || password.isEmpty()) {
+            throw new SecurityException("Usernamen und Passwort eingeben!");
+        }
+
         Optional<User> user = userStore.findUser(username, password);
+
         if (user.isPresent() && !loggedInUsers.containsKey(username)) {
             this.loggedInUsers.put(username, user.get());
             return user.get();
+        } else if (user.isPresent() && loggedInUsers.containsKey(username)) {
+            throw new SecurityException("User ist bereits angemeldet!");
+        } else if (user.isEmpty()) {
+            throw new SecurityException("Username oder Passwort falsch eingegeben!");
         } else {
-            throw new SecurityException("Authentifizierung des Users " + username + " fehlgeschlagen!");
+            throw new SecurityException("Authentifizierung fehlgeschlagen, versuche es erneut!");
         }
     }
 

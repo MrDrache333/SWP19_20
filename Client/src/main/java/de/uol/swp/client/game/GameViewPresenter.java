@@ -3,7 +3,6 @@ package de.uol.swp.client.game;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
-import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.container.GeneralLayoutContainer;
@@ -61,6 +60,7 @@ import java.util.*;
  * @author fenja, hashem, marvin
  * @since Sprint 3
  */
+@SuppressWarnings("UnstableApiUsage")
 public class GameViewPresenter extends AbstractPresenter {
 
     /**
@@ -180,13 +180,13 @@ public class GameViewPresenter extends AbstractPresenter {
     private final Injector injector;
     private final GameManagement gameManagement;
     private ArrayList<Short> handCardIDs;
-    private Map<Short, Label> valuecardLabels = new HashMap<>();
-    private ColorAdjust makeImageDarker = new ColorAdjust();
+    private final Map<Short, Label> valuecardLabels = new HashMap<>();
+    private final ColorAdjust makeImageDarker = new ColorAdjust();
     private boolean chooseCardBecauseOfActionCard = false;
-    private ColorAdjust notChosenCard = new ColorAdjust();
+    private final ColorAdjust notChosenCard = new ColorAdjust();
     private boolean directHand;
-    private ArrayList<Short> choosenCardsId = new ArrayList<>();
-    private ArrayList<ImageView> choosenCards = new ArrayList<>();
+    private final ArrayList<Short> choosenCardsId = new ArrayList<>();
+    private final ArrayList<ImageView> choosenCards = new ArrayList<>();
     private int numberOfCardsToChoose;
     private String currentInfoText;
 
@@ -238,9 +238,7 @@ public class GameViewPresenter extends AbstractPresenter {
             });
             Platform.runLater(() -> {
                 skipPhaseButton.setDisable(false);
-                Platform.runLater(() -> {
-                    infoActualPhase.setText(currentInfoText);
-                });
+                Platform.runLater(() -> infoActualPhase.setText(currentInfoText));
             });
         }
     };
@@ -318,7 +316,7 @@ public class GameViewPresenter extends AbstractPresenter {
         alert.initModality(Modality.APPLICATION_MODAL);
         alert.getDialogPane().setContentText(message);
         alert.getDialogPane().setHeaderText(title);
-        Optional<ButtonType> result = alert.showAndWait();
+        alert.showAndWait();
     }
 
     /**
@@ -553,9 +551,7 @@ public class GameViewPresenter extends AbstractPresenter {
         if (response.getLobbyID().equals(this.lobbyID)) {
             LOG.debug("Aktualisieren der Userliste mit " + response.getUsers());
 
-            response.getUsers().forEach(user -> {
-                LOG.debug("Füge den folgenden Nutzer der Liste hinzu: " + user.getUsername());
-            });
+            response.getUsers().forEach(user -> LOG.debug("Füge den folgenden Nutzer der Liste hinzu: " + user.getUsername()));
 
             updateUsersInGame(response.getUsers());
         } else {
@@ -578,9 +574,7 @@ public class GameViewPresenter extends AbstractPresenter {
     public void onBuyCardMessage(BuyCardMessage msg) {
         if (msg.getLobbyID().equals(lobbyID)) {
             if (valuecardLabels.containsKey(msg.getCardID())) {
-                Platform.runLater(() -> {
-                    valuecardLabels.get(msg.getCardID()).setText(String.valueOf(msg.getCounterCard()));
-                });
+                Platform.runLater(() -> valuecardLabels.get(msg.getCardID()).setText(String.valueOf(msg.getCounterCard())));
             }
             ImageView selectedCard = getCardFromCardfield(msg.getCardID());
             if (msg.getCounterCard() < 1) {
@@ -746,16 +740,14 @@ public class GameViewPresenter extends AbstractPresenter {
                 }
                 selectButton.setVisible(true);
                 playAllMoneyCardsButton.setVisible(false);
-                Platform.runLater(() -> {
-                    handcards.getChildren().forEach((n) -> {
-                        if (!card.equals(n)) {
-                            n.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
-                            if (req.getCards().contains(Short.parseShort(n.getId()))) {
-                                n.addEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
-                            }
+                Platform.runLater(() -> handcards.getChildren().forEach((n) -> {
+                    if (!card.equals(n)) {
+                        n.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+                        if (req.getCards().contains(Short.parseShort(n.getId()))) {
+                            n.addEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
                         }
-                    });
-                });
+                    }
+                }));
                 Platform.runLater(() -> {
                     if (numberOfCardsToChoose != 255) {
                         infoActualPhase.setText(numberOfCardsToChoose + " Karte(n) entsorgen");
@@ -797,9 +789,9 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     @Subscribe
     public void onStartClearPhaseMessage(StartClearPhaseMessage msg) {
-        Task<Void> task = new Task<Void>() {
+        Task<Void> task = new Task<>() {
             @Override
-            protected Void call() throws Exception {
+            protected Void call() {
                 // Wenn ein anderer Spieler eine ClearPhaseMessage erhählt wird dies den anderen Spielern
                 // angezeigt, indem deren Repräsentation des Spieler seine Handkarten und ausgespielten Karten auf den Ablagestapel legt.
                 if (msg.getGameID().equals(lobbyID) && !msg.getCurrentUser().equals(loggedInUser)) {
@@ -816,9 +808,7 @@ public class GameViewPresenter extends AbstractPresenter {
                         });
                         for (int i = 0; i < 5; i++) {
                             Card card = new Card("card_back", firstEnemyHand.getLayoutX(), firstEnemyHand.getLayoutY(), 80);
-                            Platform.runLater(() -> {
-                                firstEnemyHand.getChildren().add(card);
-                            });
+                            Platform.runLater(() -> firstEnemyHand.getChildren().add(card));
                         }
                     }
                     if (playerIndexNumbers.get(1).equals(msg.getEnemyPlaceNumber())) {
@@ -974,9 +964,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 Stage dialogStage = new Stage(StageStyle.UTILITY);
                 for (ButtonType buttonType : root.getButtonTypes()) {
                     ButtonBase button = (ButtonBase) root.lookupButton(buttonType);
-                    button.setOnAction(evt -> {
-                        dialogStage.close();
-                    });
+                    button.setOnAction(evt -> dialogStage.close());
                 }
                 root.getScene().setRoot(new Group());
                 root.setPadding(new Insets(10, 0, 10, 0));
@@ -1100,9 +1088,7 @@ public class GameViewPresenter extends AbstractPresenter {
                         iv.setLayoutY(107);
                         cardsToMove.add(iv);
                         ImageView finalIv = iv;
-                        Platform.runLater(() -> {
-                            playAnimation(destination, finalIv, source);
-                        });
+                        Platform.runLater(() -> playAnimation(destination, finalIv, source));
                     }
                     break;
                 case BUY:
@@ -1178,9 +1164,7 @@ public class GameViewPresenter extends AbstractPresenter {
         Platform.runLater(() -> {
             int enemyCounter = 0;
             for (User u : usersList) {
-                if (loggedInUser != null && u.getUsername().equals(loggedInUser.getUsername())) {
-                    //skip self
-                } else {
+                if (loggedInUser == null || !u.getUsername().equals(loggedInUser.getUsername())) {
                     enemyCounter++;
                     if (enemyCounter == 1) {
                         player1_label.setText(u.getUsername());
@@ -1296,18 +1280,14 @@ public class GameViewPresenter extends AbstractPresenter {
                 bigCardImageBox.setVisible(false);
                 if(numberOfCardsToChoose != 255) {
                     numberOfCardsToChoose -= 1;
-                    Platform.runLater(() -> {
-                        infoActualPhase.setText(numberOfCardsToChoose + " Karten entsorgen");
-                    });
+                    Platform.runLater(() -> infoActualPhase.setText(numberOfCardsToChoose + " Karten entsorgen"));
                 }
             } else {
                 choosenCards.remove(card);
                 card.setEffect(null);
                 if(numberOfCardsToChoose != 255) {
                     numberOfCardsToChoose += 1;
-                    Platform.runLater(() -> {
-                        infoActualPhase.setText(numberOfCardsToChoose + " Karten entsorgen");
-                    });
+                    Platform.runLater(() -> infoActualPhase.setText(numberOfCardsToChoose + " Karten entsorgen"));
                 }
             }
         }
@@ -1324,9 +1304,7 @@ public class GameViewPresenter extends AbstractPresenter {
             selectButton.setVisible(false);
             playAllMoneyCardsButton.setVisible(true);
             skipPhaseButton.setDisable(false);
-            Platform.runLater(() -> {
-                infoActualPhase.setText(currentInfoText);
-            });
+            Platform.runLater(() -> infoActualPhase.setText(currentInfoText));
         }
     }
 
@@ -1374,8 +1352,8 @@ public class GameViewPresenter extends AbstractPresenter {
         if (cardImage.getEffect() != null) {
             return;
         }
+        String cardID = cardImage.getId();
         if (mouseEvent.getButton() != MouseButton.PRIMARY) {
-            String cardID = cardImage.getId();
             String PathCardLargeView = "cards/images/" + cardID + ".png";
             bigCardImage.setImage(new Image(PathCardLargeView));
             // Aktion hinter dem Kauf-Button
@@ -1398,7 +1376,6 @@ public class GameViewPresenter extends AbstractPresenter {
             bigCardImageBox.setVisible(true);
             bigCardImageBox.toFront();
         } else {
-            String cardID = cardImage.getId();
             bigCardImageBox.setVisible(false);
             if (playAllMoneyCardsButton.isVisible() && playAllMoneyCardsButton.isDisable()) {
                 if (chooseCardBecauseOfActionCard) {

@@ -27,6 +27,7 @@ import java.util.UUID;
  * @author Marco
  * @since Start
  */
+@SuppressWarnings("UnstableApiUsage")
 public class LobbyService {
 
     private static final Logger LOG = LogManager.getLogger(LobbyService.class);
