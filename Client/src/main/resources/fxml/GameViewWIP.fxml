@@ -72,9 +72,6 @@
                         <Pane prefHeight="200.0" prefWidth="380.0">
                             <children>
                                 <ImageView fx:id="avatar_icon_top" fitHeight="73.0" fitWidth="128.0" layoutX="154.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" visible="false">
-                                    <image>
-                                        <Image url="@../cards/circle_profil.png" />
-                                    </image>
                                 </ImageView>
                         <Label fx:id="player1_label" alignment="CENTER" contentDisplay="TEXT_ONLY" layoutY="93.0" prefHeight="17.0" prefWidth="380.0" text="Spieler 1" textFill="WHITE" visible="false" />
                             </children>
@@ -89,9 +86,6 @@
                                 <Pane prefHeight="430.0" prefWidth="209.0">
                                     <children>
                                         <ImageView fx:id="avatar_icon_left" fitHeight="73.0" fitWidth="128.0" layoutX="7.5" layoutY="178.5" pickOnBounds="true" preserveRatio="true" visible="false">
-                                            <image>
-                                                <Image url="@../cards/circle_profil.png" />
-                                            </image>
                                         </ImageView>
                               <Label fx:id="player2_label" layoutX="6.0" layoutY="258.0" prefHeight="17.0" prefWidth="196.0" text="Spieler 2" textFill="WHITE" visible="false" />
                                     </children>
@@ -147,9 +141,6 @@
                                 <Pane prefHeight="430.0" prefWidth="203.0">
                                     <children>
                                         <ImageView fx:id="avatar_icon_right" fitHeight="73.0" fitWidth="128.0" layoutX="122.5" layoutY="178.5" pickOnBounds="true" preserveRatio="true" visible="false">
-                                            <image>
-                                                <Image url="@../cards/circle_profil.png" />
-                                            </image>
                                         </ImageView>
                               <Label fx:id="player3_label" alignment="CENTER_RIGHT" contentDisplay="TEXT_ONLY" layoutX="3.0" layoutY="258.0" prefHeight="17.0" prefWidth="196.0" text="Spieler 3" textFill="WHITE" visible="false" />
                                     </children>
