@@ -73,7 +73,8 @@ public class LobbyPresenter extends AbstractPresenter {
     private UserDTO gameOwner;
     private boolean gameSettingsOpen;
     private boolean ownReadyStatus = false;
-
+    private int maxPlayerValue = 4;
+    private int oldMaxPlayerValue;
     @FXML
     private ChoiceBox<Integer> chooseMaxPlayer;
     @FXML
@@ -112,7 +113,6 @@ public class LobbyPresenter extends AbstractPresenter {
     private ImageView bigCard;
 
     private ImageView crownView = new ImageView("images/crown.png");
-
 
 
     /**
@@ -189,9 +189,8 @@ public class LobbyPresenter extends AbstractPresenter {
         if (gameOwner.equals(loggedInUser)) {
             gamesettingsButton.setVisible(true);
             createBotButton.setVisible(true);
-
             chooseMaxPlayer.setDisable(false);
-            chooseMaxPlayer.setValue(4);
+            chooseMaxPlayer.setValue(maxPlayerValue);
         } else {
             gamesettingsButton.setVisible(false);
             createBotButton.setVisible(false);
@@ -247,8 +246,10 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     @FXML
     public void onMaxPlayerSelected(ActionEvent actionEvent) {
-        if (gameOwner.equals(loggedInUser)) {
+        if (gameOwner.equals(loggedInUser) && chooseMaxPlayer.getValue() != maxPlayerValue) {
             lobbyService.setMaxPlayer(this.getLobbyID(), this.loggedInUser, chooseMaxPlayer.getValue());
+            oldMaxPlayerValue = maxPlayerValue;
+            maxPlayerValue = chooseMaxPlayer.getValue();
         }
     }
 
@@ -506,7 +507,6 @@ public class LobbyPresenter extends AbstractPresenter {
     public void onSetMaxPlayerMessage(SetMaxPlayerMessage msg) {
         Platform.runLater(() -> {
             if (msg.getOwner().equals(loggedInUser) && lobbyID == msg.getLobbyID()) {
-                chooseMaxPlayer.setDisable(false);
                 chooseMaxPlayer.setValue(msg.getMaxPlayer());
                 LOG.info("Max. Spieler der Lobby: " + msg.getLobby().getName() + " erfolgreich auf " + msg.getMaxPlayer() + " gesetzt.");
             }
@@ -588,7 +588,15 @@ public class LobbyPresenter extends AbstractPresenter {
             gameOwner = message.getGameOwner();
             userLeftLobby(message.getUser().getUsername(), false);
             if (gameOwner.getUsername().equals(loggedInUser.getUsername())) {
-                gamesettingsButton.setVisible(true);
+                Platform.runLater(() -> {
+                    gamesettingsButton.setVisible(true);
+                    chooseMaxPlayer.setVisible(true);
+                    createBotButton.setVisible(true);
+                    maxSettingOwner.setVisible(true);
+                    settingOwner.setVisible(true);
+                    chooseMaxPlayer.setDisable(false);
+                    chooseMaxPlayer.setValue(message.getLobby().getMaxPlayer());
+                });
             }
         }
     }
@@ -617,6 +625,11 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void LobbyExceptionMessage(LobbyExceptionMessage msg) {
+        Platform.runLater(() -> {
+            if (msg.getMessage().contains("Es sind zu viele Benutzer in der Lobby, um die maximale")) {
+                chooseMaxPlayer.setValue(oldMaxPlayerValue);
+            }
+        });
         SceneManager.showAlert(Alert.AlertType.ERROR, msg.getMessage(), "Lobby");
     }
 
