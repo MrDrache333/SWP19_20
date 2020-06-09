@@ -3,13 +3,13 @@ package de.uol.swp.client.game;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
-import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.container.GeneralLayoutContainer;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.common.game.AbstractPlayground;
+import de.uol.swp.common.game.AbstractPlayground.ZoneType;
 import de.uol.swp.common.game.card.parser.components.CardAction.request.ChooseCardRequest;
 import de.uol.swp.common.game.card.parser.components.CardAction.request.OptionalActionRequest;
 import de.uol.swp.common.game.messages.*;
@@ -186,7 +186,8 @@ public class GameViewPresenter extends AbstractPresenter {
     private ArrayList<ImageView> choosenCards = new ArrayList<>();
     private int numberOfCardsToChoose;
     private String currentInfoText;
-    private HashMap<String, HashMap<AbstractPlayground.ZoneType, GeneralLayoutContainer>> usersContainer = new HashMap<>();
+    int handCardToRemoveFromOpponent = 0;
+    private HashMap<String, HashMap<ZoneType, GeneralLayoutContainer>> usersContainer = new HashMap<>();
 
     /**
      * Das Event das den Handkarten gegeben wird, wenn sie ausspielbar sein sollen.
@@ -289,11 +290,11 @@ public class GameViewPresenter extends AbstractPresenter {
         firstEnemyDLC = new GeneralLayoutContainer(915, 0, 110, 60, "1.DLC");
         secondEnemyDLC = new GeneralLayoutContainer(328, 169, 104, 60, "2.DLC");
         thirdEnemyDLC = new GeneralLayoutContainer(1198, 446, 106, 60, "3.DLC");
-        HashMap<AbstractPlayground.ZoneType, GeneralLayoutContainer> myContainer = new HashMap<>();
-        myContainer.put(AbstractPlayground.ZoneType.HAND, handcards);
-        myContainer.put(AbstractPlayground.ZoneType.PLAY, myPCLC);
-        myContainer.put(AbstractPlayground.ZoneType.DISCARD, myDPLC);
-        myContainer.put(AbstractPlayground.ZoneType.DRAW, myDLC);
+        HashMap<ZoneType, GeneralLayoutContainer> myContainer = new HashMap<>();
+        myContainer.put(ZoneType.HAND, handcards);
+        myContainer.put(ZoneType.PLAY, myPCLC);
+        myContainer.put(ZoneType.DISCARD, myDPLC);
+        myContainer.put(ZoneType.DRAW, myDLC);
         usersContainer.put(loggedInUser.getUsername(), myContainer);
     }
 
@@ -607,8 +608,8 @@ public class GameViewPresenter extends AbstractPresenter {
             }
             ImageView finalIv = newCardImage;
             Platform.runLater(() -> {
-                ((Pane) getRegionFromZoneType(AbstractPlayground.ZoneType.BUY, msg.getCardID(), loggedInUser)).getChildren().add( finalIv);
-                playAnimation(AbstractPlayground.ZoneType.DISCARD, finalIv, AbstractPlayground.ZoneType.BUY, msg.getCurrentUser());
+                ((Pane) getRegionFromZoneType(ZoneType.BUY, msg.getCardID(), loggedInUser)).getChildren().add(finalIv);
+                playAnimation(ZoneType.DISCARD, finalIv, ZoneType.BUY, msg.getCurrentUser());
             });
         }
     }
@@ -667,8 +668,8 @@ public class GameViewPresenter extends AbstractPresenter {
             else {
                 ImageView card = new Card(msg.getHandCardID());
                 Platform.runLater(() -> {
-                    usersContainer.get(msg.getCurrentUser().getUsername()).get(AbstractPlayground.ZoneType.HAND).getChildren().remove(0);
-                    usersContainer.get(msg.getCurrentUser().getUsername()).get(AbstractPlayground.ZoneType.PLAY).getChildren().add(card);
+                    usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.HAND).getChildren().remove(0);
+                    usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.PLAY).getChildren().add(card);
                 });
             }
         }
@@ -693,7 +694,7 @@ public class GameViewPresenter extends AbstractPresenter {
             directHand = req.getDirectHand();
             currentInfoText = infoActualPhase.getText();
             skipPhaseButton.setDisable(true);
-            if (req.getSource() == AbstractPlayground.ZoneType.HAND) {
+            if (req.getSource() == ZoneType.HAND) {
                 for (Node n : handcards.getChildren()) {
                     n.setEffect(null);
                 }
@@ -717,7 +718,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     }
                 });
             }
-            if (req.getSource().equals(AbstractPlayground.ZoneType.BUY)) {
+            if (req.getSource().equals(ZoneType.BUY)) {
                 notChosenCard.setBrightness(-0.7);
                 for (int i = 0; i < 10; i++) {
                     ImageView iv = (ImageView) shopTeppich.getChildren().get(i);
@@ -761,12 +762,12 @@ public class GameViewPresenter extends AbstractPresenter {
                     // Wenn ein anderer Spieler eine ClearPhaseMessage erhählt wird dies den anderen Spielern
                     // angezeigt, indem deren Repräsentation des Spieler seine Handkarten und ausgespielten Karten auf den Ablagestapel legt.
                     Platform.runLater(() -> {
-                        usersContainer.get(msg.getCurrentUser().getUsername()).get(AbstractPlayground.ZoneType.HAND)
+                        usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.HAND)
                                 .getChildren().clear();
-                        usersContainer.get(msg.getCurrentUser().getUsername()).get(AbstractPlayground.ZoneType.PLAY)
+                        usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.PLAY)
                                 .getChildren().clear();
                         for (int i = 0; i < 5; i++) {
-                            usersContainer.get(msg.getCurrentUser().getUsername()).get(AbstractPlayground.ZoneType.HAND)
+                            usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.HAND)
                                     .getChildren().add(new Card("card_back", 0, 0, 80));
                         }
                     });
@@ -796,7 +797,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 }
                 else {
                     ImageView card = new Card(String.valueOf(msg.getCardID()), 0, 0, 80);
-                    usersContainer.get(msg.getUser().getUsername()).get(AbstractPlayground.ZoneType.DISCARD).getChildren().add(card);
+                    usersContainer.get(msg.getUser().getUsername()).get(ZoneType.DISCARD).getChildren().add(card);
                 }
             }
         });
@@ -817,13 +818,7 @@ public class GameViewPresenter extends AbstractPresenter {
             if ((message.getPlayer() == null || message.getPlayer().equals(loggedInUser))) {
                 handCardIDs = message.getCardsOnHand();
                 handCardIDs.forEach((n) -> {
-                    String pfad = "cards/images/" + n + ".png";
-                    Image picture = new Image(pfad);
-                    ImageView card = new ImageView(picture);
-                    card.setFitHeight(107);
-                    card.setPreserveRatio(true);
-                    card.setId(n.toString());
-                    card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
+                    ImageView card = new Card(String.valueOf(n));
                     Platform.runLater(() -> {
                         myDLC.getChildren().add(card);
                         synchronized (handcards) {
@@ -874,11 +869,11 @@ public class GameViewPresenter extends AbstractPresenter {
                 }
             }
             else if (message.getPlayer() != null && !message.getPlayer().equals(loggedInUser)) {
+                handCardToRemoveFromOpponent = 0;
                 for (int i = 0; i < message.getCardsOnHand().size(); i++) {
                     ImageView card = new Card("card_back", 0, 0, 80);
                     Platform.runLater(() -> {
-                        usersContainer.get(message.getPlayer().getUsername()).get(AbstractPlayground.ZoneType.HAND)
-                                .getChildren().add(card);
+                        usersContainer.get(message.getPlayer().getUsername()).get(ZoneType.HAND).getChildren().add(card);
                     });
                 }
             }
@@ -933,7 +928,7 @@ public class GameViewPresenter extends AbstractPresenter {
             }
             if (msg.getDiscardPileWasCleared()) {
                 Platform.runLater(() -> {
-                    usersContainer.get(msg.getPlayer().getUsername()).get(AbstractPlayground.ZoneType.DISCARD).getChildren().clear();
+                    usersContainer.get(msg.getPlayer().getUsername()).get(ZoneType.DISCARD).getChildren().clear();
                 });
             }
         }
@@ -1015,10 +1010,9 @@ public class GameViewPresenter extends AbstractPresenter {
         if (msg.getGameID().equals(lobbyID)) {
             User user = msg.getPlayer();
             boolean isOpponent = !msg.getPlayer().equals(loggedInUser);
-            AbstractPlayground.ZoneType source = msg.getMove().getCardSource();
-            AbstractPlayground.ZoneType destination = msg.getMove().getCardDestination();
+            ZoneType source = msg.getMove().getCardSource();
+            ZoneType destination = msg.getMove().getCardDestination();
             ArrayList<ImageView> cardsToMove = new ArrayList<>();
-            int j = 0;
             for (de.uol.swp.common.game.card.Card c : msg.getMove().getCardsToMove()) {
                 ImageView card = null;
                 switch (source) {
@@ -1035,11 +1029,11 @@ public class GameViewPresenter extends AbstractPresenter {
                             card = iv;
                         }
                         if (source == AbstractPlayground.ZoneType.HAND && isOpponent) {
-                             card = (ImageView) usersContainer.get(user.getUsername()).get(AbstractPlayground.ZoneType.HAND)
-                                     .getChildren().get(j);
-                             card.setId(String.valueOf(c.getId()));
-                             card.setImage(new Image("cards/images/" + c.getId() + ".png"));
-                             j++;
+                            card = (ImageView) usersContainer.get(user.getUsername()).get(ZoneType.HAND)
+                                    .getChildren().get(handCardToRemoveFromOpponent);
+                            card.setId(String.valueOf(c.getId()));
+                            card.setImage(new Image("cards/images/" + c.getId() + ".png"));
+                            handCardToRemoveFromOpponent++;
                         }
                         break;
                     case BUY:
@@ -1052,12 +1046,12 @@ public class GameViewPresenter extends AbstractPresenter {
                         }
                         ImageView finalCard2 = card;
                         Platform.runLater(() -> {
-                                ((Pane) getRegionFromZoneType(AbstractPlayground.ZoneType.BUY, c.getId(), user)).getChildren().add(finalCard2);
+                            ((Pane) getRegionFromZoneType(ZoneType.BUY, c.getId(), user)).getChildren().add(finalCard2);
                             });
                         break;
                     case DRAW:
                         if (isOpponent) {
-                            card = new Card(String.valueOf(c.getId()), 0, 0, 80);
+                            card = new Card(String.valueOf(c.getId()), 80);
                         }
                         else {
                             card = new Card(String.valueOf(c.getId()));
@@ -1129,42 +1123,36 @@ public class GameViewPresenter extends AbstractPresenter {
                 //skip self
             } else {
                 enemyCounter++;
-                HashMap<AbstractPlayground.ZoneType, GeneralLayoutContainer> enemyContainer = new HashMap<>();
+                HashMap<ZoneType, GeneralLayoutContainer> enemyContainer = new HashMap<>();
                 if (enemyCounter == 1) {
-                    Platform.runLater(() -> {
-                        player1_label.setText(u.getUsername());
-                    });
+                    Platform.runLater(() -> player1_label.setText(u.getUsername()));
                     player1_label.setVisible(true);
                     avatar_icon_top.setVisible(true);
-                    enemyContainer.put(AbstractPlayground.ZoneType.HAND, firstEnemyHand);
-                    enemyContainer.put(AbstractPlayground.ZoneType.PLAY, firstEnemyPCLC);
-                    enemyContainer.put(AbstractPlayground.ZoneType.DISCARD, firstEnemyDPLC);
-                    enemyContainer.put(AbstractPlayground.ZoneType.DRAW, firstEnemyDLC);
+                    enemyContainer.put(ZoneType.HAND, firstEnemyHand);
+                    enemyContainer.put(ZoneType.PLAY, firstEnemyPCLC);
+                    enemyContainer.put(ZoneType.DISCARD, firstEnemyDPLC);
+                    enemyContainer.put(ZoneType.DRAW, firstEnemyDLC);
                 } else if (enemyCounter == 2) {
-                    Platform.runLater(() -> {
-                        player2_label.setText(u.getUsername());
-                    });
+                    Platform.runLater(() -> player2_label.setText(u.getUsername()));
                     player2_label.setVisible(true);
                     avatar_icon_left.setVisible(true);
-                    enemyContainer.put(AbstractPlayground.ZoneType.HAND, secondEnemyHand);
-                    enemyContainer.put(AbstractPlayground.ZoneType.PLAY, secondEnemyPCLC);
-                    enemyContainer.put(AbstractPlayground.ZoneType.DISCARD, secondEnemyDPLC);
-                    enemyContainer.put(AbstractPlayground.ZoneType.DRAW, secondEnemyDLC);
+                    enemyContainer.put(ZoneType.HAND, secondEnemyHand);
+                    enemyContainer.put(ZoneType.PLAY, secondEnemyPCLC);
+                    enemyContainer.put(ZoneType.DISCARD, secondEnemyDPLC);
+                    enemyContainer.put(ZoneType.DRAW, secondEnemyDLC);
                 } else if (enemyCounter == 3) {
-                    Platform.runLater(() -> {
-                        player3_label.setText(u.getUsername());
-                    });
+                    Platform.runLater(() -> player3_label.setText(u.getUsername()));
                     player3_label.setVisible(true);
                     avatar_icon_right.setVisible(true);
-                    enemyContainer.put(AbstractPlayground.ZoneType.HAND, thirdEnemyHand);
-                    enemyContainer.put(AbstractPlayground.ZoneType.PLAY, thirdEnemyPCLC);
-                    enemyContainer.put(AbstractPlayground.ZoneType.DISCARD, thirdEnemyDPLC);
-                    enemyContainer.put(AbstractPlayground.ZoneType.DRAW, thirdEnemyDLC);
+                    enemyContainer.put(ZoneType.HAND, thirdEnemyHand);
+                    enemyContainer.put(ZoneType.PLAY, thirdEnemyPCLC);
+                    enemyContainer.put(ZoneType.DISCARD, thirdEnemyDPLC);
+                    enemyContainer.put(ZoneType.DRAW, thirdEnemyDLC);
                 }
                 usersContainer.put(u.getUsername(), enemyContainer);
                 Platform.runLater(() -> {
                     enemyContainer.values().forEach(gameViewWIP.getChildren()::add);
-                    enemyContainer.get(AbstractPlayground.ZoneType.PLAY).toFront();
+                    enemyContainer.get(ZoneType.PLAY).toFront();
                 });
             }
         }
@@ -1474,10 +1462,11 @@ public class GameViewPresenter extends AbstractPresenter {
      *
      * @param zoneType die Zone
      * @param cardID   id der Karte in der Region
+     * @param user     der Spieler, für den die Methode ausgeführt werden soll
      * @author Anna
      * @since Sprint 9
      */
-    public Region getRegionFromZoneType(AbstractPlayground.ZoneType zoneType, short cardID, User user) {
+    public Region getRegionFromZoneType(ZoneType zoneType, short cardID, User user) {
         switch (zoneType) {
             case TRASH:
                 break;
@@ -1502,14 +1491,15 @@ public class GameViewPresenter extends AbstractPresenter {
      * @param destination die Zielzone
      * @param card        die zu bewegende Karte
      * @param source      die ursprüngliche Zone
+     * @param user        der Spieler, für den die Methode ausgeführt werden soll
      * @author Anna
      * @since Sprint 9
      */
-    public void playAnimation(AbstractPlayground.ZoneType destination, ImageView card, AbstractPlayground.ZoneType source, User user) {
-        boolean playedByOpponent = !loggedInUser.getUsername().equals(user.getUsername());
+    public void playAnimation(ZoneType destination, ImageView card, ZoneType source, User user) {
         switch (destination) {
             case TRASH:
                 AnimationManagement.deleteCard(card);
+                handCardToRemoveFromOpponent = 0;
                 return;
             case HAND:
                 AnimationManagement.addToHand(card, usersContainer.get(user.getUsername()).get(destination));
@@ -1525,26 +1515,15 @@ public class GameViewPresenter extends AbstractPresenter {
             case TRASH:
                 gameViewWIP.getChildren().remove(card);
             case BUY:
-                ((Pane) getRegionFromZoneType(AbstractPlayground.ZoneType.BUY, Short.parseShort(card.getId()), user)).getChildren().remove(card);
+                ((Pane) getRegionFromZoneType(ZoneType.BUY, Short.parseShort(card.getId()), user)).getChildren().remove(card);
                 break;
             case DRAW:
             case DISCARD:
             case HAND:
                 usersContainer.get(user.getUsername()).get(source).getChildren().remove(card);
+                handCardToRemoveFromOpponent = 0;
                 break;
         }
-    }
-
-    /**
-     * Die erste Karte mit passender ID, die aus der übergebenen Region stammt, wird zurückgegeben.
-     *
-     * @param region die Region, in der die Karte sich befindet
-     * @param id     die ID der Karte
-     * @author Anna
-     * @since Sprint 9
-     */
-    public ImageView getImageViewFromRegion(Region region, short id) {
-        return (ImageView) region.getChildrenUnmodifiable().stream().filter(c -> Short.parseShort(c.getId()) == id).findFirst().get();
     }
 
     /**

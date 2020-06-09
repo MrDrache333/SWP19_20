@@ -37,6 +37,20 @@ public class Card extends ImageView {
     }
 
     /**
+     * Instanziiert eine ImageView einer Karte.
+     *
+     * @author Anna
+     * @since Sprint 9
+     */
+    public Card(String id, int height) {
+        this.setImage(new Image("cards/images/" + id + ".png"));
+        this.setPreserveRatio(true);
+        this.setFitHeight(height);
+        this.setFitWidth(this.getBoundsInLocal().getWidth());
+        this.setId(id);
+    }
+
+    /**
      * Überladener Konstruktor
      * Instanziiert eine ImageView einer Karte.
      *
