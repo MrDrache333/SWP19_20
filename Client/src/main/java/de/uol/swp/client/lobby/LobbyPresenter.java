@@ -184,6 +184,11 @@ public class LobbyPresenter extends AbstractPresenter {
             createBotButton.setVisible(true);
             chooseMaxPlayer.setDisable(false);
             chooseMaxPlayer.setValue(maxPlayerValue);
+            lobbyViewWIP.setOnMouseClicked(mouseEvent -> {
+                if (bigCardImage.isVisible()) {
+                    bigCardImage.setVisible(false);
+                }
+            });
         } else {
             gamesettingsButton.setVisible(false);
             createBotButton.setVisible(false);
@@ -270,21 +275,8 @@ public class LobbyPresenter extends AbstractPresenter {
             gamesettingsButton.setText("Spieleinstellungen schließen");
             gameSettingsOpen = true;
             gameSettingsVBox.setVisible(true);
+            sendCards.setVisible(false);
             Platform.runLater(() -> {
-                lobbyViewWIP.setOnMouseClicked(mouseEvent -> {
-                    if (bigCardImage.isVisible()) {
-                        bigCardImage.setVisible(false);
-                    }
-                });
-                sendCards.setOnAction(e -> {
-                    if (chosenCards.getChildren().size() > 0) {
-                        ArrayList<Short> chosenCardIDs = new ArrayList<>();
-                        for (Node n : chosenCards.getChildren()) {
-                            chosenCardIDs.add(Short.valueOf(n.getId()));
-                        }
-                        lobbyService.sendChosenCards(lobbyID, chosenCardIDs);
-                    }
-                });
                 for (int i = 0; i < cardpack.getCards().getActionCards().size(); i++) {
                     short cardID = cardpack.getCards().getActionCards().get(i).getId();
                     String pfad = "cards/images/" + cardID + "_sm.png";
@@ -326,9 +318,9 @@ public class LobbyPresenter extends AbstractPresenter {
             });
         } else {
             gameSettingsVBox.setVisible(false);
-            gamesettingsButton.setText("Spieleinstellungen");
             gameSettingsOpen = false;
             Platform.runLater(() -> {
+                gamesettingsButton.setText("Spieleinstellungen");
                 choosableCards.getChildren().clear();
                 chosenCards.getChildren().clear();
             });
@@ -344,12 +336,20 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     @FXML
     public void sendChosenCards(ActionEvent event) {
+        gameSettingsVBox.setVisible(false);
+        gameSettingsOpen = false;
+        Platform.runLater(() -> {
+            gamesettingsButton.setText("Spieleinstellungen");
+            choosableCards.getChildren().clear();
+            chosenCards.getChildren().clear();
+        });
         if (chosenCards.getChildren().size() > 0) {
             ArrayList<Short> chosenCardIDs = new ArrayList<>();
             for (Node n : chosenCards.getChildren()) {
                 chosenCardIDs.add(Short.valueOf(n.getId()));
             }
             lobbyService.sendChosenCards(lobbyID, chosenCardIDs);
+
         }
     }
 

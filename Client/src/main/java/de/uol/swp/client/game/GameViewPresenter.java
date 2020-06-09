@@ -8,7 +8,6 @@ import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.container.GeneralLayoutContainer;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
-import de.uol.swp.common.game.AbstractPlayground;
 import de.uol.swp.common.game.AbstractPlayground.ZoneType;
 import de.uol.swp.common.game.card.parser.components.CardAction.request.ChooseCardRequest;
 import de.uol.swp.common.game.card.parser.components.CardAction.request.OptionalActionRequest;
@@ -23,6 +22,7 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
+import javafx.animation.ParallelTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -188,6 +188,8 @@ public class GameViewPresenter extends AbstractPresenter {
     private String currentInfoText;
     int handCardToRemoveFromOpponent = 0;
     private HashMap<String, HashMap<ZoneType, GeneralLayoutContainer>> usersContainer = new HashMap<>();
+    private boolean deleteHandCardsFromOpponent = false;
+
 
     /**
      * Das Event das den Handkarten gegeben wird, wenn sie ausspielbar sein sollen.
@@ -666,6 +668,14 @@ public class GameViewPresenter extends AbstractPresenter {
                 }
             }
             else {
+                /*if (deleteHandCardsFromOpponent) {
+                    if (handCardToRemoveFromOpponent > 0) {
+                        Platform.runLater(() -> usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.HAND)
+                                .getChildren().subList(0, handCardToRemoveFromOpponent).clear());
+                    }
+                    deleteHandCardsFromOpponent = false;
+                    handCardToRemoveFromOpponent = 0;
+                }*/
                 ImageView card = new Card(msg.getHandCardID());
                 Platform.runLater(() -> {
                     usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.HAND).getChildren().remove(0);
@@ -869,9 +879,8 @@ public class GameViewPresenter extends AbstractPresenter {
                 }
             }
             else if (message.getPlayer() != null && !message.getPlayer().equals(loggedInUser)) {
-                handCardToRemoveFromOpponent = 0;
                 for (int i = 0; i < message.getCardsOnHand().size(); i++) {
-                    ImageView card = new Card("card_back", 0, 0, 80);
+                    ImageView card = new Card("card_back", 80);
                     Platform.runLater(() -> {
                         usersContainer.get(message.getPlayer().getUsername()).get(ZoneType.HAND).getChildren().add(card);
                     });
@@ -1013,12 +1022,13 @@ public class GameViewPresenter extends AbstractPresenter {
             ZoneType source = msg.getMove().getCardSource();
             ZoneType destination = msg.getMove().getCardDestination();
             ArrayList<ImageView> cardsToMove = new ArrayList<>();
+            int j = 0;
             for (de.uol.swp.common.game.card.Card c : msg.getMove().getCardsToMove()) {
                 ImageView card = null;
                 switch (source) {
                     case DISCARD:
                     case HAND:
-                        if (!isOpponent) {
+                        if (!isOpponent || source == ZoneType.DISCARD) {
                             int i = 0;
                             ImageView iv = getImageViewFromRegion(getRegionFromZoneType(source, c.getId(), user), c.getId(), i);
                             while (cardsToMove.contains(iv)) {
@@ -1028,12 +1038,15 @@ public class GameViewPresenter extends AbstractPresenter {
                             cardsToMove.add(iv);
                             card = iv;
                         }
-                        if (source == AbstractPlayground.ZoneType.HAND && isOpponent) {
-                            card = (ImageView) usersContainer.get(user.getUsername()).get(ZoneType.HAND)
-                                    .getChildren().get(handCardToRemoveFromOpponent);
+                        else {
+                            if (destination != ZoneType.TRASH) {
+                                while (deleteHandCardsFromOpponent) {}
+                                deleteHandCardsFromOpponent = true;
+                            }
+                            card = (ImageView) usersContainer.get(user.getUsername()).get(ZoneType.HAND).getChildren().get(j);
                             card.setId(String.valueOf(c.getId()));
                             card.setImage(new Image("cards/images/" + c.getId() + ".png"));
-                            handCardToRemoveFromOpponent++;
+                            j++;
                         }
                         break;
                     case BUY:
@@ -1498,8 +1511,10 @@ public class GameViewPresenter extends AbstractPresenter {
     public void playAnimation(ZoneType destination, ImageView card, ZoneType source, User user) {
         switch (destination) {
             case TRASH:
-                AnimationManagement.deleteCard(card);
-                handCardToRemoveFromOpponent = 0;
+                ParallelTransition parallelTransition = AnimationManagement.deleteCard(card);
+                parallelTransition.setOnFinished(event -> {
+                    usersContainer.get(user.getUsername()).get(source).getChildren().remove(card);
+                });
                 return;
             case HAND:
                 AnimationManagement.addToHand(card, usersContainer.get(user.getUsername()).get(destination));
@@ -1519,9 +1534,11 @@ public class GameViewPresenter extends AbstractPresenter {
                 break;
             case DRAW:
             case DISCARD:
+                usersContainer.get(user.getUsername()).get(source).getChildren().remove(card);
+                break;
             case HAND:
                 usersContainer.get(user.getUsername()).get(source).getChildren().remove(card);
-                handCardToRemoveFromOpponent = 0;
+                deleteHandCardsFromOpponent = false;
                 break;
         }
     }
