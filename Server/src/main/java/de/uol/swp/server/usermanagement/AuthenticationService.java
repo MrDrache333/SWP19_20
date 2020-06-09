@@ -202,21 +202,25 @@ public class AuthenticationService extends AbstractService {
      */
     @Subscribe
     public void onUpdateUserRequest(UpdateUserRequest req) {
-        userSessions.put(req.getSession().get(), req.getUser());
-        req.getSession().get().updateUser(req.getUser());
-        ServerMessage returnMessage;
-        try {
-            User user = userManagement.updateUser(req.getUser(), req.getOldUser(), req.getCurrentPassword());
-            returnMessage = new UpdatedUserMessage(user, req.getOldUser());
-            LOG.info("User " + req.getOldUser().getUsername() + " erfolreich aktualisiert");
-            post(new UpdateLobbiesRequest((UserDTO) user, (UserDTO) req.getOldUser()));
-        } catch (UserUpdateException e) {
-            userSessions.replace(req.getSession().get(), req.getOldUser());
-            req.getSession().get().updateUser(req.getOldUser());
-            returnMessage = new UpdateUserFailedMessage(req.getOldUser(), e.getMessage());
-            LOG.info("Aktualisierung des Users " + req.getOldUser().getUsername() + " fehlgeschlagen");
+        if (lobbyManagement.userInLobby(req.getOldUser())) {
+            sendToUser(new UpdateUserFailedMessage(req.getOldUser(), "Du kannst deine Daten nicht ändern,\nwenn du in einer Lobby bist."), req.getOldUser());
+        } else {
+            userSessions.put(req.getSession().get(), req.getUser());
+            req.getSession().get().updateUser(req.getUser());
+            ServerMessage returnMessage;
+            try {
+                User user = userManagement.updateUser(req.getUser(), req.getOldUser(), req.getCurrentPassword());
+                returnMessage = new UpdatedUserMessage(user, req.getOldUser());
+                LOG.info("User " + req.getOldUser().getUsername() + " erfolreich aktualisiert");
+                post(new UpdateLobbiesRequest((UserDTO) user, (UserDTO) req.getOldUser()));
+            } catch (UserUpdateException e) {
+                userSessions.replace(req.getSession().get(), req.getOldUser());
+                req.getSession().get().updateUser(req.getOldUser());
+                returnMessage = new UpdateUserFailedMessage(req.getOldUser(), e.getMessage());
+                LOG.info("Aktualisierung des Users " + req.getOldUser().getUsername() + " fehlgeschlagen");
+            }
+            sendToLoggedInPlayers(returnMessage);
         }
-        sendToLoggedInPlayers(returnMessage);
     }
 
     /**

@@ -18,8 +18,6 @@ import de.uol.swp.common.message.ResponseMessage;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
-import de.uol.swp.common.user.message.OpenSettingsMessage;
-import de.uol.swp.common.user.request.OpenSettingsRequest;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.chat.ChatManagement;
 import de.uol.swp.server.game.player.bot.BotPlayer;
@@ -221,20 +219,6 @@ public class LobbyService extends AbstractService {
             lobbyManagement.dropLobby(req.getLobbyID());
         } else
             LOG.debug("Lobby nicht gefunden! ID: " + req.getLobbyID());
-    }
-
-    /**
-     * Empfängt ein OpenSettingsRequest und sendet eine OpenSettingsMessage mit der Info,
-     * ob der User in einer Lobby ist, zurück.
-     *
-     * @param req Der OpenSettingsRequest
-     * @author Julia
-     * @since Sprint 9
-     */
-    @Subscribe
-    public void onOpenSettingsRequest(OpenSettingsRequest req) {
-        boolean inLobby = lobbyManagement.userInLobby(req.getUser());
-        authenticationService.sendToUser(new OpenSettingsMessage(req.getUser(), inLobby), req.getUser());
     }
 
     /**

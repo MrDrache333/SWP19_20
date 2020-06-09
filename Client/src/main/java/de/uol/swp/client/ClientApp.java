@@ -18,7 +18,11 @@ import de.uol.swp.common.lobby.request.OpenLobbyCreateRequest;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.exception.RegistrationExceptionMessage;
-import de.uol.swp.common.user.message.*;
+import de.uol.swp.common.user.message.UpdateUserFailedMessage;
+import de.uol.swp.common.user.message.UpdatedUserMessage;
+import de.uol.swp.common.user.message.UserDroppedMessage;
+import de.uol.swp.common.user.message.UserLoggedOutMessage;
+import de.uol.swp.common.user.request.OpenSettingsRequest;
 import de.uol.swp.common.user.response.LoginSuccessfulResponse;
 import de.uol.swp.common.user.response.RegistrationSuccessfulResponse;
 import io.netty.channel.Channel;
@@ -280,20 +284,17 @@ public class ClientApp extends Application implements ConnectionListener {
     }
 
     /**
-     * Öffnet das Einstellungsfenster oder zeigt eine Fehlermeldung, wenn dies nicht möglich ist.
+     * Empfängt die Nachricht (vom MainMenuPresenter), dass das Einstellungsfenster geöffnet werden soll.
+     * Öffnet das Einstellungsfenster.
      *
-     * @param msg Die OpenSettingsMessage
-     * @author Anna, Julia
+     * @param req Die Anfrage zum Öffnen des Fensters
+     * @author Anna
      * @since Sprint 4
      */
     @Subscribe
-    public void onOpenSettingsMessage(OpenSettingsMessage msg) {
-        if (msg.getUser().getUsername().equals(user.getUsername())) {
-            if (!msg.isInLobby()) {
-                sceneManager.showSettingsScreen(msg.getUser());
-            } else {
-                sceneManager.showError("Du kannst deine Daten nicht ändern,\nwenn du in einer Lobby bist.");
-            }
+    public void onOpenSettingsRequest(OpenSettingsRequest req) {
+        if (req.getUser().getUsername().equals(user.getUsername())) {
+            sceneManager.showSettingsScreen(req.getUser());
         }
     }
 
