@@ -41,7 +41,7 @@ public class SoundMediaPlayer implements MediaPlayer {
     }
 
     /**
-     * Is sound enabled boolean.
+     * Gibt an, ob der Sound aktiviert ist
      *
      * @return the boolean
      */

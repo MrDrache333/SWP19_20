@@ -10,6 +10,7 @@ import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.settings.event.CloseSettingsEvent;
 import de.uol.swp.client.settings.event.DeleteAccountEvent;
+import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
@@ -22,6 +23,7 @@ import javafx.scene.image.ImageView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.util.regex.Pattern;
 
 
@@ -65,6 +67,10 @@ public class SettingsPresenter extends AbstractPresenter {
     private ImageView chatMuteImage;
     @FXML
     private ToggleButton chatMuteToggleButton;
+    @FXML
+    private ImageView soundIcon;
+    @FXML
+    private ToggleButton soundIconToggleButton;
 
     /**
      * Konstruktor des SettingPresenters
@@ -179,6 +185,20 @@ public class SettingsPresenter extends AbstractPresenter {
             chatMuteImage.setImage(new Image("images/chat_on_icon.png"));
         else
             chatMuteImage.setImage(new Image("images/chat_off_icon.png"));
+    }
+
+    /**
+     * Schaltet den Sound an bzw. aus
+     *
+     * @param actionEvent
+     * @author Rike
+     * @since Sprint 9
+     */
+    @FXML
+    public void onSoundIconToggleButtonPressed(ActionEvent actionEvent) {
+        Notifyer.setMuteState(soundIconToggleButton.isSelected());
+        SoundMediaPlayer.setSound(!SoundMediaPlayer.isSoundEnabled());
+        soundIcon.setImage(new Image(new File(getClass().getResource(SoundMediaPlayer.isSoundEnabled() ? "/images/sound_on_icon.png" : "/images/sound_off_icon.png").toExternalForm().replace("file:", "")).toURI().toString()));
     }
 
     /**
