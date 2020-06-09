@@ -287,7 +287,7 @@ public class ClientApp extends Application implements ConnectionListener {
      * @since Sprint 4
      */
     @Subscribe
-    public void onOpenSettingsRequest(OpenSettingsMessage msg) {
+    public void onOpenSettingsMessage(OpenSettingsMessage msg) {
         if (msg.getUser().getUsername().equals(user.getUsername())) {
             if (!msg.isInLobby()) {
                 sceneManager.showSettingsScreen(msg.getUser());
