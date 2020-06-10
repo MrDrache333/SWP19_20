@@ -8,13 +8,14 @@ import de.uol.swp.server.lobby.LobbyManagement;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import de.uol.swp.server.usermanagement.UserManagement;
 import de.uol.swp.server.usermanagement.store.DatabaseBasedUserStore;
+import de.uol.swp.server.usermanagement.store.MainMemoryBasedUserStore;
 import de.uol.swp.server.usermanagement.store.UserStore;
 
 @SuppressWarnings("UnstableApiUsage")
 public class ServerModule extends AbstractModule {
 
     private final EventBus bus = new EventBus();
-    private final UserStore store = new DatabaseBasedUserStore();
+    private UserStore store;
     private final UserManagement userManagement = new UserManagement(store);
     private final ChatManagement chatManagement = new ChatManagement();
     private final LobbyManagement lobbyManagement = new LobbyManagement();
@@ -30,6 +31,14 @@ public class ServerModule extends AbstractModule {
      */
     @Override
     protected void configure() {
+        //Hier kann zwischen MainMemoryBasedUserStrore oder DatabaseBasedUserStore gewählt werden.
+        boolean databaseUserStore = false;
+
+        if (databaseUserStore)
+            store = new DatabaseBasedUserStore();
+        else
+            store = new MainMemoryBasedUserStore();
+
         // All usermanagements and eventbusses must be the same instance (!)
         bind(UserManagement.class).toInstance(userManagement);
         bind(ChatManagement.class).toInstance(chatManagement);
