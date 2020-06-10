@@ -255,4 +255,16 @@ public class LobbyManagement {
             throw new SetMaxPlayerException(loggedInUser + " ist nicht der Lobbybesitzer und kann nicht die maximale Spierleranzahl ändern.");
         }
     }
+
+    /**
+     * Überprüft, ob sich der User in einer Lobby befindet.
+     *
+     * @param user Der User
+     * @return true wenn ja, sonst false
+     * @author Julia
+     * @since Sprint 9
+     */
+    public boolean userInLobby(User user) {
+        return lobbies.values().stream().flatMap(l -> l.getUsers().stream()).anyMatch(u -> u.equals(user));
+    }
 }

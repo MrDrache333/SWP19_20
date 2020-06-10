@@ -187,7 +187,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void userLoggedOut(UserLoggedOutMessage message) {
-        LOG.debug("User " + message.getUsername() + " logged out");
+        LOG.debug("User " + message.getUsername() + " ausgeloggt");
         userLeft(message.getUsername());
     }
 
