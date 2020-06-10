@@ -3,7 +3,6 @@ package de.uol.swp.client.game;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
-import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.container.GeneralLayoutContainer;
@@ -1649,5 +1648,27 @@ public class GameViewPresenter extends AbstractPresenter {
             return (ImageView) shopTeppich.getChildren().stream().filter(c -> Short.parseShort(c.getId()) == cardID).findFirst().get();
         }
         return (ImageView) valueCardsBox.getChildren().stream().filter(c -> Short.parseShort(c.getId()) == cardID).findFirst().get();
+    }
+
+    /**
+     * Bei der UpdateCardCounterMessage wird die Karte, sobald keine mehr vorhanden ist, ausgegraut
+     *
+     * @param msg die UpdateCounterMessage
+     * @author Paula
+     * @since Sprint9
+     */
+    @Subscribe
+    private void onUpdateCardCounterMessage(UpdateCardCounterMessage msg) {
+        for (short id : msg.getCardCounts().keySet()) {
+            if (valuecardLabels.containsKey(id)) {
+                Platform.runLater(() -> {
+                    valuecardLabels.get(id).setText(String.valueOf(msg.getCardCounts().get(id)));
+                });
+            }
+            ImageView selectedCard = getCardFromCardfield(id);
+            if (msg.getCardCounts().get(id) < 1) {
+                selectedCard.setEffect(makeImageDarker);
+            }
+        }
     }
 }
