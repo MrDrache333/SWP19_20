@@ -270,7 +270,8 @@ public class GameViewPresenter extends AbstractPresenter {
         this.injector = injector;
         this.gameManagement = gameManagement;
         this.gameService = gameService;
-        makeImageDarker.setBrightness(-0.7);// Die Hände für jeden Spieler
+        makeImageDarker.setBrightness(-0.7);
+        // Die Hände für jeden Spieler
         handcards = new GeneralLayoutContainer(575, 630, 110, 420, "My.HCLC");
         firstEnemyHand = new GeneralLayoutContainer(700, 110, 110, 215, "1.HCLC");
         secondEnemyHand = new GeneralLayoutContainer(300, 308, 105, 215, "2.HCLC");
@@ -1558,5 +1559,27 @@ public class GameViewPresenter extends AbstractPresenter {
             return 3;
         }
         return 0;
+    }
+
+    /**
+     * Bei der UpdateCardCounterMessage wird die Karte, sobald keine mehr vorhanden ist, ausgegraut
+     *
+     * @param msg die UpdateCounterMessage
+     * @author Paula
+     * @since Sprint9
+     */
+    @Subscribe
+    private void onUpdateCardCounterMessage(UpdateCardCounterMessage msg) {
+        for (short id : msg.getCardCounts().keySet()) {
+            if (valuecardLabels.containsKey(id)) {
+                Platform.runLater(() -> {
+                    valuecardLabels.get(id).setText(String.valueOf(msg.getCardCounts().get(id)));
+                });
+            }
+            ImageView selectedCard = getCardFromCardfield(id);
+            if (msg.getCardCounts().get(id) < 1) {
+                selectedCard.setEffect(makeImageDarker);
+            }
+        }
     }
 }
