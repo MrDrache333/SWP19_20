@@ -44,10 +44,10 @@ public class SettingsPresenter extends AbstractPresenter {
     private static final Logger LOG = LogManager.getLogger(SettingsPresenter.class);
 
     private User loggedInUser;
-    private LobbyService lobbyService;
-    private UserService userService;
-    private Injector injector;
-    private EventBus eventBus;
+    private final LobbyService lobbyService;
+    private final UserService userService;
+    private final Injector injector;
+    private final EventBus eventBus;
 
     @FXML
     private Button cancelButton;

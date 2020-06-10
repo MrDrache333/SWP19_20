@@ -4,7 +4,7 @@ import de.uol.swp.common.message.AbstractRequestMessage;
 import de.uol.swp.common.user.User;
 
 public class OpenLobbyCreateRequest extends AbstractRequestMessage {
-    private User user;
+    private final User user;
     
     /**
      * Der Konstruktor der OpenLobbyCreateRequest

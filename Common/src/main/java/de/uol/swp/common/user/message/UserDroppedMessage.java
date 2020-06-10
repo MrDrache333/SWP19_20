@@ -12,7 +12,7 @@ import de.uol.swp.common.user.User;
 public class UserDroppedMessage extends AbstractServerMessage {
 
     private static final long serialVersionUID = -8939300536981907236L;
-    private User user;
+    private final User user;
 
     /**
      * Erstellt eine neue User dropped message.

@@ -44,7 +44,7 @@ public class PlaygroundTest {
     static final GameService gameService = new GameService(bus, gameManagement, authService);
     static UUID id;
     private final CountDownLatch lock = new CountDownLatch(1);
-    private static ArrayList<Short> chosenCards = new ArrayList<Short>();
+    private static final ArrayList<Short> chosenCards = new ArrayList<Short>();
 
 
     static UUID gameID;

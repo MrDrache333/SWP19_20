@@ -32,7 +32,7 @@ public class CreateLobbyPresenter extends AbstractPresenter {
     private static final Logger LOG = LogManager.getLogger(CreateLobbyPresenter.class);
 
     private User loggedInUser;
-    private EventBus eventBus;
+    private final EventBus eventBus;
 
     @FXML
     private Button cancelButton;

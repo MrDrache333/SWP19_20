@@ -4,7 +4,7 @@ import de.uol.swp.common.user.User;
 
 public class DeleteAccountEvent {
 
-    private User user;
+    private final User user;
 
     /**
      * Konstruktor des DeleteAccountEvent

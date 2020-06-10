@@ -46,27 +46,27 @@ public class GameManagement {
     static final Logger LOG = LogManager.getLogger(GameManagement.class);
     static final String styleSheet = "css/global.css";
 
-    private LobbyPresenter lobbyPresenter;
-    private GameViewPresenter gameViewPresenter;
-    private ChatViewPresenter chatViewPresenter;
-    private UUID id;    //Die Lobby, Chat and GameID
+    private final LobbyPresenter lobbyPresenter;
+    private final GameViewPresenter gameViewPresenter;
+    private final ChatViewPresenter chatViewPresenter;
+    private final UUID id;    //Die Lobby, Chat and GameID
     private User loggedInUser;  //Der aktuell angemeldete Benutzer
-    private UserDTO gameOwner;
-    private String lobbyName;
+    private final UserDTO gameOwner;
+    private final String lobbyName;
 
     private Pane gamePane;
     private Pane lobbyPane;
     private Scene gameOverScene;
 
-    private Tab primaryTab;
-    private PrimaryPresenter primaryPresenter;
+    private final Tab primaryTab;
+    private final PrimaryPresenter primaryPresenter;
 
-    private Injector injector;
-    private EventBus eventBus;
+    private final Injector injector;
+    private final EventBus eventBus;
 
-    private Stage gameOverStage;
+    private final Stage gameOverStage;
 
-    private GameService gameService;
+    private final GameService gameService;
 
 
     /**

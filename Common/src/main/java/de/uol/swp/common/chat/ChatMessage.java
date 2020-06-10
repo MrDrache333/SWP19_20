@@ -15,9 +15,9 @@ public class ChatMessage implements Serializable {
 
     private static final long serialVersionUID = 9222541795987990407L;
 
-    private User sender;
-    private String message;
-    private Date timeStamp;
+    private final User sender;
+    private final String message;
+    private final Date timeStamp;
 
     /**
      * Instanziiert eine ChatMessage

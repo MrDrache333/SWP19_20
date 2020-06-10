@@ -19,10 +19,10 @@ public class Deck {
      * @author Paula
      * @since Sprint 5
      */
-    private ArrayList<Card> cardsDeck = new ArrayList<>();
-    private ArrayList<Card> discardPile = new ArrayList<>();
-    private ArrayList<Card> hand = new ArrayList<>();
-    private ArrayList<Card> temp = new ArrayList<>();
+    private final ArrayList<Card> cardsDeck = new ArrayList<>();
+    private final ArrayList<Card> discardPile = new ArrayList<>();
+    private final ArrayList<Card> hand = new ArrayList<>();
+    private final ArrayList<Card> temp = new ArrayList<>();
     private final ArrayList<Card> actionPile = new ArrayList<>();
 
     /**

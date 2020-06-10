@@ -8,7 +8,7 @@ import java.util.List;
 public class UserLeftAllLobbiesMessage extends AbstractLobbyMessage {
 
     private UserDTO user;
-    private List<LobbyDTO> lobbies;
+    private final List<LobbyDTO> lobbies;
 
     /**
      * Instanziiert eine UserLeftAllLobbiesMessage

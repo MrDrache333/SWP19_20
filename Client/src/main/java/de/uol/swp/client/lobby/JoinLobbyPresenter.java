@@ -28,11 +28,11 @@ public class JoinLobbyPresenter {
     private static final Logger LOG = LogManager.getLogger(JoinLobbyPresenter.class);
 
     private User loggedInUser;
-    private LobbyService lobbyService;
+    private final LobbyService lobbyService;
     private MainMenuPresenter mainMenuPresenter;
-    private UserService userService;
-    private EventBus eventBus;
-    private Lobby lobby;
+    private final UserService userService;
+    private final EventBus eventBus;
+    private final Lobby lobby;
 
     @FXML
     private Button cancelButton;

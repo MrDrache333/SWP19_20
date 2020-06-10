@@ -13,11 +13,11 @@ public class ActionCard extends Card {
     /**
      * Die Kartenaktionen
      */
-    private ArrayList<CardAction> actions;
+    private final ArrayList<CardAction> actions;
     /**
      * Der Spezialisierungstyp
      */
-    private ActionType type;
+    private final ActionType type;
 
     /**
      * Erstellt eine neue Aktionskarte

@@ -14,7 +14,7 @@ import java.util.UUID;
 public class CardsDeckSizeMessage extends AbstractGameMessage {
 
     private static final long serialVersionUID = -1794612026541058915L;
-    private int cardsDeckSize;
+    private final int cardsDeckSize;
     private boolean discardPileWasCleared;
 
     /**

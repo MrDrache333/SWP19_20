@@ -10,11 +10,9 @@ import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.common.chat.ChatService;
 import de.uol.swp.common.game.card.parser.JsonCardParser;
 import de.uol.swp.common.game.card.parser.components.CardPack;
-import de.uol.swp.common.lobby.exception.JoinLobbyExceptionMessage;
 import de.uol.swp.common.lobby.exception.LobbyExceptionMessage;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.request.AddBotRequest;
-import de.uol.swp.common.lobby.request.SetMaxPlayerRequest;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.lobby.response.SetChosenCardsResponse;
 import de.uol.swp.common.user.User;
@@ -111,7 +109,7 @@ public class LobbyPresenter extends AbstractPresenter {
     @FXML
     private ImageView bigCard;
 
-    private ImageView crownView = new ImageView("images/crown.png");
+    private final ImageView crownView = new ImageView("images/crown.png");
 
 
 
@@ -713,7 +711,10 @@ public class LobbyPresenter extends AbstractPresenter {
         if (!box.getChildren().contains(crownView) && user.getUsername().equals(gameOwner.getUsername())) {
             crownView.setFitHeight(15);
             crownView.setFitWidth(15);
-            Platform.runLater(() -> box.getChildren().add(crownView));
+            Platform.runLater(() -> {
+                if(!box.getChildren().contains(crownView))
+                    box.getChildren().add(crownView);
+            });
         }
         return box;
     }

@@ -14,7 +14,7 @@ import java.util.UUID;
 public class OptionalActionRequest extends AbstractGameMessage {
 
     private static final long serialVersionUID = -2721566171106710582L;
-    private String textMessage;
+    private final String textMessage;
 
     public OptionalActionRequest(UUID gameID, User player, String message) {
         super(gameID, player);

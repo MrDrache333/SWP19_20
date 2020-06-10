@@ -47,11 +47,11 @@ public class GameOverViewPresenter extends AbstractPresenter {
     @FXML
     Text bannerText;
 
-    private GameManagement gameManagement;
+    private final GameManagement gameManagement;
 
-    private User loggedInUser;
-    private List<String> winners;
-    private Map<String, Integer> results;
+    private final User loggedInUser;
+    private final List<String> winners;
+    private final Map<String, Integer> results;
 
     /**
      * Initialisiert einen neuen GameOverViewPresenter.

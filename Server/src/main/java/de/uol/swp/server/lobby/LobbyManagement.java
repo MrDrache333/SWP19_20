@@ -10,7 +10,6 @@ import de.uol.swp.common.user.UserDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.security.KeyException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -55,8 +54,10 @@ public class LobbyManagement {
         if (!lobbies.containsKey(id)) {
             throw new IllegalArgumentException("LobbyID nicht gefunden! ID: " + id);
         }
+        if(getLobby(id).isPresent())
+            LOG.info("Lobby " + getLobby(id).get().getName() + " entfernt");
+
         lobbies.remove(id);
-        LOG.info("Lobby " + getLobby(id) + "entfernt");
     }
 
     /**

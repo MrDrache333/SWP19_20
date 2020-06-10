@@ -14,9 +14,9 @@ import java.util.UUID;
 public class ShowCardMessage extends AbstractServerMessage {
 
     private static final long serialVersionUID = 6597124709953167310L;
-    private short cardID;
-    private AbstractPlayground.ZoneType zone;
-    private UUID gameID;
+    private final short cardID;
+    private final AbstractPlayground.ZoneType zone;
+    private final UUID gameID;
 
     public ShowCardMessage(short cardID, AbstractPlayground.ZoneType zone, UUID gameID) {
         this.cardID = cardID;

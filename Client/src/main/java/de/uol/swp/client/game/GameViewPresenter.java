@@ -3,7 +3,6 @@ package de.uol.swp.client.game;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
-import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.container.GeneralLayoutContainer;
@@ -180,13 +179,13 @@ public class GameViewPresenter extends AbstractPresenter {
     private final Injector injector;
     private final GameManagement gameManagement;
     private ArrayList<Short> handCardIDs;
-    private Map<Short, Label> valuecardLabels = new HashMap<>();
-    private ColorAdjust makeImageDarker = new ColorAdjust();
+    private final Map<Short, Label> valuecardLabels = new HashMap<>();
+    private final ColorAdjust makeImageDarker = new ColorAdjust();
     private boolean chooseCardBecauseOfActionCard = false;
-    private ColorAdjust notChosenCard = new ColorAdjust();
+    private final ColorAdjust notChosenCard = new ColorAdjust();
     private boolean directHand;
-    private ArrayList<Short> choosenCardsId = new ArrayList<>();
-    private ArrayList<ImageView> choosenCards = new ArrayList<>();
+    private final ArrayList<Short> choosenCardsId = new ArrayList<>();
+    private final ArrayList<ImageView> choosenCards = new ArrayList<>();
     private int numberOfCardsToChoose;
     private String currentInfoText;
 

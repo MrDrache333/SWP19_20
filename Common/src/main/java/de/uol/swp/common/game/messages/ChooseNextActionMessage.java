@@ -15,8 +15,8 @@ import java.util.UUID;
 public class ChooseNextActionMessage extends AbstractServerMessage {
 
     private static final long serialVersionUID = 860181339817068498L;
-    private UUID gameID;
-    private List<CardAction> actions;
+    private final UUID gameID;
+    private final List<CardAction> actions;
 
     public ChooseNextActionMessage(UUID gameID, List<CardAction> actions) {
         this.gameID = gameID;

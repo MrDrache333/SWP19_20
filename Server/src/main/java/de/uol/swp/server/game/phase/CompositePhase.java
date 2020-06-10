@@ -24,7 +24,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
 
     private final Playground playground;
     private static final Logger LOG = LogManager.getLogger(CompositePhase.class);
-    private List<Short> implementedActionCards;
+    private final List<Short> implementedActionCards;
     private ActionCardExecution executeAction;
 
     /**

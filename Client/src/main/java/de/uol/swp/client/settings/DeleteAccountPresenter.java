@@ -29,10 +29,10 @@ public class DeleteAccountPresenter {
     public static final String css = "css/DeleteAccountPresenter.css";
     private static final Logger LOG = LogManager.getLogger(DeleteAccountPresenter.class);
 
-    private User loggedInUser;
-    private LobbyService lobbyService;
-    private UserService userService;
-    private EventBus eventBus;
+    private final User loggedInUser;
+    private final LobbyService lobbyService;
+    private final UserService userService;
+    private final EventBus eventBus;
 
     /**
      * Instanziert ein neuen DeleteAccountPresenter.

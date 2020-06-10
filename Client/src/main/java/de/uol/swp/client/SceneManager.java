@@ -543,7 +543,7 @@ public class SceneManager {
      * @since Sprint7
      */
 
-    private EventHandler<KeyEvent> hotkeyEventHandler = new EventHandler<>() {
+    private final EventHandler<KeyEvent> hotkeyEventHandler = new EventHandler<>() {
         @Override
         public void handle(KeyEvent event) {
             if (event.isControlDown()) {

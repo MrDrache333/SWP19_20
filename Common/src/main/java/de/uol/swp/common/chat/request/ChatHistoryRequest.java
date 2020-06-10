@@ -7,8 +7,8 @@ public class ChatHistoryRequest extends AbstractRequestMessage {
 
     private static final long serialVersionUID = -2223203712515500868L;
 
-    private String ChatId;
-    private User Sender;
+    private final String ChatId;
+    private final User Sender;
 
     /**
      * Konstruktor für ChatHistoryRequest mit ChatID

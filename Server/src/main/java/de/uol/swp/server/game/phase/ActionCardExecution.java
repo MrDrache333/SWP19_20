@@ -26,17 +26,17 @@ public class ActionCardExecution {
 
     private static final Logger LOG = LogManager.getLogger(ActionCardExecution.class);
 
-    private short cardID;
-    private Playground playground;
-    private Player player;
+    private final short cardID;
+    private final Playground playground;
+    private final Player player;
     private ActionCard theCard;
-    private UUID gameID;
-    private List<Player> players;
-    private List<User> chooseCardPlayers = new ArrayList<>();
+    private final UUID gameID;
+    private final List<Player> players;
+    private final List<User> chooseCardPlayers = new ArrayList<>();
     //Liste neuer Handkarten
-    private ArrayList<Short> newHandCards = new ArrayList<>();
+    private final ArrayList<Short> newHandCards = new ArrayList<>();
     //Liste aller Unteraktionen einer Aktion
-    private List<CardAction> nextActions = new ArrayList<>();
+    private final List<CardAction> nextActions = new ArrayList<>();
     private Card inputCard;
     private AbstractPlayground.ZoneType chooseCardSource;
     //

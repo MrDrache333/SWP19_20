@@ -17,10 +17,10 @@ public class LobbyDTO implements Lobby, Serializable {
     private static final long serialVersionUID = 998701048176852816L;
     private final String name;
     private User owner;
-    private TreeMap<String, Boolean> readyStatus = new TreeMap<>();
+    private final TreeMap<String, Boolean> readyStatus = new TreeMap<>();
     private Set<User> users = new TreeSet<>();
     private int players;
-    private String lobbyPassword;
+    private final String lobbyPassword;
     private UUID lobbyID;
     private Integer maxPlayer;
     private boolean inGame;
