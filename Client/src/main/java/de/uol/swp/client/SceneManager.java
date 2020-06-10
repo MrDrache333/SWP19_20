@@ -43,7 +43,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -285,7 +284,6 @@ public class SceneManager {
             settingsPresenter = new SettingsPresenter(loggedInUser, lobbyService, userService, injector, eventBus);
             initSettingsView(settingsPresenter);
             settingsStage = new Stage();
-            settingsStage.initStyle(StageStyle.UNDECORATED);
             settingsStage.setTitle("Einstellungen");
             settingsStage.setScene(settingsScene);
             settingsStage.setResizable(false);
