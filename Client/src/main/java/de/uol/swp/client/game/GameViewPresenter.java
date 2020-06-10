@@ -22,7 +22,6 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
-import javafx.animation.ParallelTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -188,6 +187,7 @@ public class GameViewPresenter extends AbstractPresenter {
     private String currentInfoText;
     private HashMap<String, HashMap<ZoneType, GeneralLayoutContainer>> usersContainer = new HashMap<>();
     private volatile boolean deleteHandCardsFromOpponent = false;
+    private ArrayList<ImageView> cardsToMove = new ArrayList<>();
 
 
     /**
@@ -811,6 +811,7 @@ public class GameViewPresenter extends AbstractPresenter {
         numberOfPlayersInGame = message.getNumberOfPlayers();
         if (lobbyID.equals(message.getTheLobbyID())) {
             if ((message.getPlayer() == null || message.getPlayer().equals(loggedInUser))) {
+                cardsToMove.clear();
                 handCardIDs = message.getCardsOnHand();
                 handCardIDs.forEach((n) -> {
                     ImageView card = new Card(String.valueOf(n));
@@ -1002,7 +1003,6 @@ public class GameViewPresenter extends AbstractPresenter {
             boolean isOpponent = !msg.getPlayer().equals(loggedInUser);
             ZoneType source = msg.getMove().getCardSource();
             ZoneType destination = msg.getMove().getCardDestination();
-            ArrayList<ImageView> cardsToMove = new ArrayList<>();
             int j = 0;
             for (de.uol.swp.common.game.card.Card c : msg.getMove().getCardsToMove()) {
                 ImageView card = null;
@@ -1105,6 +1105,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 if (enemyCounter == 1) {
                     Platform.runLater(() -> player1_label.setText(u.getUsername()));
                     player1_label.setVisible(true);
+                    avatar_icon_top.setImage(new Image("images/user/128x128/128_16.png"));
                     avatar_icon_top.setVisible(true);
                     enemyContainer.put(ZoneType.HAND, firstEnemyHand);
                     enemyContainer.put(ZoneType.PLAY, firstEnemyPCLC);
@@ -1113,6 +1114,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 } else if (enemyCounter == 2) {
                     Platform.runLater(() -> player2_label.setText(u.getUsername()));
                     player2_label.setVisible(true);
+                    avatar_icon_left.setImage(new Image("images/user/128x128/128_14.png"));
                     avatar_icon_left.setVisible(true);
                     enemyContainer.put(ZoneType.HAND, secondEnemyHand);
                     enemyContainer.put(ZoneType.PLAY, secondEnemyPCLC);
@@ -1121,6 +1123,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 } else if (enemyCounter == 3) {
                     Platform.runLater(() -> player3_label.setText(u.getUsername()));
                     player3_label.setVisible(true);
+                    avatar_icon_right.setImage(new Image("images/user/128x128/128_2.png"));
                     avatar_icon_right.setVisible(true);
                     enemyContainer.put(ZoneType.HAND, thirdEnemyHand);
                     enemyContainer.put(ZoneType.PLAY, thirdEnemyPCLC);
@@ -1468,8 +1471,7 @@ public class GameViewPresenter extends AbstractPresenter {
     public void playAnimation(ZoneType destination, ImageView card, ZoneType source, User user) {
         switch (destination) {
             case TRASH:
-                ParallelTransition parallelTransition = AnimationManagement.deleteCard(card);
-                parallelTransition.setOnFinished(event -> usersContainer.get(user.getUsername()).get(source).getChildren().remove(card));
+                AnimationManagement.deleteCard(card);
                 return;
             case HAND:
                 AnimationManagement.addToHand(card, usersContainer.get(user.getUsername()).get(destination));

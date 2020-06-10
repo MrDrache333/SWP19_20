@@ -151,6 +151,7 @@ public class AnimationManagement {
         scaleTransition.setToX(0.01f);
         scaleTransition.setToY(0.01f);
         ParallelTransition parallelTransition = new ParallelTransition(fadeTransition, scaleTransition);
+        parallelTransition.setOnFinished(event -> ((GeneralLayoutContainer) card.getParent()).getChildren().remove(card));
         parallelTransition.play();
         return parallelTransition;
     }
