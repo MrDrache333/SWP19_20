@@ -71,7 +71,6 @@ public class GameViewPresenter extends AbstractPresenter {
     private final UUID lobbyID;
     private User loggedInUser;
     private Short numberOfPlayersInGame;
-
     private int usableMoney;
 
     @FXML
@@ -169,7 +168,6 @@ public class GameViewPresenter extends AbstractPresenter {
     private final GeneralLayoutContainer firstEnemyDLC;
     private final GeneralLayoutContainer secondEnemyDLC;
     private final GeneralLayoutContainer thirdEnemyDLC;
-
     private ObservableList<String> users;
     private final GameService gameService;
     private MouseEvent mouseEvent;
@@ -188,7 +186,6 @@ public class GameViewPresenter extends AbstractPresenter {
     private String currentInfoText;
     private HashMap<String, HashMap<ZoneType, GeneralLayoutContainer>> usersContainer = new HashMap<>();
     private volatile boolean deleteHandCardsFromOpponent = false;
-
 
     /**
      * Das Event das den Handkarten gegeben wird, wenn sie ausspielbar sein sollen.

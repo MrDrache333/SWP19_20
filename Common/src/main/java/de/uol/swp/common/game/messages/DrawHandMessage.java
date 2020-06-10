@@ -29,11 +29,24 @@ public class DrawHandMessage extends AbstractServerMessage {
         this.player = null;
     }
 
+    /**
+     * Konstruktor, welcher die ArrayList mit den IDs der Hand übergeben bekommt. Entweder die Standart-Hand mit Größe 5
+     * oder wenn er Karten aktiviert und somit mehr auf der Hand hat. Außerdem wird der Spieler, um dessen Hand es sich
+     * handelt, mit übergeben.
+     *
+     * @param theIDsFromTheCards theIDsFromTheCards die KartenIDs
+     * @param specificLobbyID    die LobbyID
+     * @param numberOfPlayers    Anzahl der Spieler
+     * @param player             der Spieler
+     * @author Anna
+     * @since Sprint 9
+     */
     public DrawHandMessage(ArrayList<Short> theIDsFromTheCards, UUID specificLobbyID, Short numberOfPlayers, User player) {
         this.cardsOnHand = theIDsFromTheCards;
         this.theLobbyID = specificLobbyID;
         this.numberOfPlayers = numberOfPlayers;
         this.player = player;
+        this.initialHand = false;
     }
 
     /**
@@ -73,5 +86,14 @@ public class DrawHandMessage extends AbstractServerMessage {
         return initialHand;
     }
 
-    public User getPlayer() { return player;}
+    /**
+     * Gibt den Spieler zurück.
+     *
+     * @return der Spieler
+     * @author Anna
+     * @since Sprint 9
+     */
+    public User getPlayer() {
+        return player;
+    }
 }
