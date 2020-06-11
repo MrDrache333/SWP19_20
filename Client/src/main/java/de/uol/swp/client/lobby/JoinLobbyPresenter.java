@@ -80,9 +80,6 @@ public class JoinLobbyPresenter {
         }
         //Passwörter stimmen nicht überein
         else {
-            if (lobby.getLobbyPassword() == null) {
-                passwordField.getText();
-            }
             SceneManager.showAlert(Alert.AlertType.ERROR, "Das eingegebene Passwort ist falsch.", "Fehler");
         }
         passwordField.clear();

@@ -99,7 +99,6 @@ public class Deck {
         return hand;
     }
 
-
     /**
      * Karte wird aus Arrays gelöscht
      *
@@ -157,10 +156,8 @@ public class Deck {
                 money += ((MoneyCard) item).getValue();
                 discardPile.add(item);
                 removeCards.add(item);
-                if (money >= value) {
+                if (money >= value)
                     break;
-                }
-
             }
         }
         for (Card card : removeCards) {
@@ -178,7 +175,6 @@ public class Deck {
     public boolean discardPileWasCleared() {
         return discardPile.size() == 0;
     }
-
 
     public ArrayList<Card> getHand() {
         return hand;

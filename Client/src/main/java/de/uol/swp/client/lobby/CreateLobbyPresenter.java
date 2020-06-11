@@ -84,8 +84,6 @@ public class CreateLobbyPresenter extends AbstractPresenter {
         lobbynameField.clear();
         passwordField.clear();
         lobbynameField.requestFocus();
-
-
     }
 
     /**
@@ -102,6 +100,7 @@ public class CreateLobbyPresenter extends AbstractPresenter {
         passwordField.clear();
         lobbynameField.clear();
     }
+
     /**
      *
      * Benutzer wird geupdated.
@@ -112,9 +111,8 @@ public class CreateLobbyPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void updatedUser(UpdatedUserMessage message) {
-        if(loggedInUser != null && loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
+        if(loggedInUser != null && loggedInUser.getUsername().equals(message.getOldUser().getUsername()))
             loggedInUser = message.getUser();
-        }
     }
 }
 

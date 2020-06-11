@@ -15,12 +15,15 @@ import de.uol.swp.server.usermanagement.store.UserStore;
 public class ServerModule extends AbstractModule {
 
     private final EventBus bus = new EventBus();
-    private UserStore store;
+    private final UserStore store = setUserStore();
     private final UserManagement userManagement = new UserManagement(store);
     private final ChatManagement chatManagement = new ChatManagement();
     private final LobbyManagement lobbyManagement = new LobbyManagement();
     private final AuthenticationService authenticationService = new AuthenticationService(bus, userManagement, lobbyManagement);
     private final GameManagement gameManagement = new GameManagement(chatManagement, lobbyManagement);
+
+    //Hier kann zwischen MainMemoryBasedUserStrore oder DatabaseBasedUserStore gewählt werden.
+    boolean isDatabaseBasedUserStore = false;
 
 
     /**
@@ -31,15 +34,9 @@ public class ServerModule extends AbstractModule {
      */
     @Override
     protected void configure() {
-        //Hier kann zwischen MainMemoryBasedUserStrore oder DatabaseBasedUserStore gewählt werden.
-        boolean databaseUserStore = false;
 
-        if (databaseUserStore)
-            store = new DatabaseBasedUserStore();
-        else
-            store = new MainMemoryBasedUserStore();
 
-        // All usermanagements and eventbusses must be the same instance (!)
+        // Alle UserManagements und EventBusse müssen die selbe Instanz sein!
         bind(UserManagement.class).toInstance(userManagement);
         bind(ChatManagement.class).toInstance(chatManagement);
         bind(LobbyManagement.class).toInstance(lobbyManagement);
@@ -49,6 +46,18 @@ public class ServerModule extends AbstractModule {
         bind(UserStore.class).toInstance(store);
         bind(EventBus.class).toInstance(bus);
         bind(AuthenticationService.class).toInstance(authenticationService);
+    }
+    //Gibt zurück, ob der aktuelle UserStore ein DatabaseBasedUserStore ist
+    public boolean isDatabaseBasedUserStore () {
+        return isDatabaseBasedUserStore;
+    }
+
+    //Gibt einen neuen UserStore zurück
+    private UserStore setUserStore () {
+        if (isDatabaseBasedUserStore)
+            return new DatabaseBasedUserStore();
+        else
+            return new MainMemoryBasedUserStore();
     }
 }
 

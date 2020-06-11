@@ -36,13 +36,10 @@ public class UserManagement extends AbstractUserManagement {
      */
     @Override
     public User login(String username, String password) {
-
         if (username.isEmpty() || password.isEmpty()) {
             throw new SecurityException("Usernamen und Passwort eingeben!");
         }
-
         Optional<User> user = userStore.findUser(username, password);
-
         if (user.isPresent() && !loggedInUsers.containsKey(username)) {
             this.loggedInUsers.put(username, user.get());
             return user.get();

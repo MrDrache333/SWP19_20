@@ -19,8 +19,10 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@SuppressWarnings("UnstableApiUsage")
 class BotPlayerTest {
 
     static final User lobbyOwner = new UserDTO("Marco", "Marco", "Marco@Grawunder.com");
@@ -71,27 +73,30 @@ class BotPlayerTest {
 
     @Test
     void createBotPlayertest() {
-        AddBotRequest newReq = new AddBotRequest(lobbyID);
-        bus.post(newReq);
-        assertTrue(lobbyManagement.getLobby(lobbyID).get().getPlayers() == 2);
+        if (lobbyManagement.getLobby(lobbyID).isPresent()) {
+            AddBotRequest newReq = new AddBotRequest(lobbyID);
+            bus.post(newReq);
+            assertEquals(2, lobbyManagement.getLobby(lobbyID).get().getPlayers());
+        }
     }
 
     @Test
     void botIsReadyTest() {
-        AddBotRequest newReq = new AddBotRequest(lobbyID);
-        bus.post(newReq);
+        if (lobbyManagement.getLobby(lobbyID).isPresent()) {
+            AddBotRequest newReq = new AddBotRequest(lobbyID);
+            bus.post(newReq);
 
-        ArrayList<User> theUser = new ArrayList<>();
-        for (User user : lobbyManagement.getLobby(lobbyID).get().getUsers()) {
-            theUser.add(user);
+            ArrayList<User> theUser;
+            theUser = new ArrayList<>(lobbyManagement.getLobby(lobbyID).get().getUsers());
+
+            User theBotPlayer;
+            if (theUser.get(0).getIsBot()) {
+                theBotPlayer = theUser.get(0);
+            } else {
+                theBotPlayer = theUser.get(1);
+            }
+            assertTrue(lobbyManagement.getLobby(lobbyID).get().getReadyStatus(theBotPlayer));
         }
-        User theBotPlayer;
-        if (theUser.get(0).getIsBot() == true) {
-            theBotPlayer = theUser.get(0);
-        } else {
-            theBotPlayer = theUser.get(1);
-        }
-        assertTrue(lobbyManagement.getLobby(lobbyID).get().getReadyStatus(theBotPlayer) == true);
     }
 
 

@@ -14,13 +14,12 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * This is a user store that is based on a database.
+ * Dieser UserStore benutzt eine Datenbank zum Speichern von Usern.
+ * Wichtig: Dieser UserStore gibt niemals das Passwort eines Users zurück!
  *
  * @author Keno S
- * <p>
- * Important: This store will never return the password of a user
+ * @since Sprint 9
  */
-
 public class DatabaseBasedUserStore extends AbstractUserStore implements UserStore {
 
     private static final Logger LOG = LogManager.getLogger(DatabaseBasedUserStore.class);
@@ -35,6 +34,14 @@ public class DatabaseBasedUserStore extends AbstractUserStore implements UserSto
     private static final String SQL_UPDATE_USER = "UPDATE user SET username = ?, password = PASSWORD(?), email = ? WHERE username = ? AND password = PASSWORD(?)";
     private static final String SQL_INSERT_USER = "INSERT INTO user (username, password, email) VALUES (?, PASSWORD(?), ?);";
 
+    /**
+     * Diese Hilfsmethode stellt eine Verbindung mit einer Datenbank her und gibt diese zurück.
+     *
+     * @author Keno S.
+     * @return Die neue Datenbankverbindung
+     * @since Sprint 9
+     *
+     */
     private Connection establishConnection() {
 
         Connection conn = null;
@@ -54,6 +61,17 @@ public class DatabaseBasedUserStore extends AbstractUserStore implements UserSto
         return conn;
     }
 
+    /**
+     * Stellt eine User Abfrage an die Datenbank mit dem Namen und Passwort der Anfrage.
+     * Wenn ein User gefunden wird, wird dieser ohne Passwort zurückgegeben.
+     * Sonst wird ein Optional.empty() zurückgegeben.
+     *
+     * @author Keno S.
+     * @param username Der Username
+     * @param password Das Passwort des Users
+     * @return Den (nicht) gefundenen User der Datenbank
+     * @since Sprint 9
+     */
     @Override
     public Optional<User> findUser(String username, String password) {
 
@@ -95,6 +113,16 @@ public class DatabaseBasedUserStore extends AbstractUserStore implements UserSto
         return Optional.empty();*/
     }
 
+    /**
+     * Stellt eine User Abfrage an die Datenbank mit dem Namen der Anfrage.
+     * Wenn ein User gefunden wird, wird dieser ohne Passwort zurückgegeben.
+     * Sonst wird ein Optional.empty() zurückgegeben.
+     *
+     * @author Keno S.
+     * @param username Der Username
+     * @return Den (nicht) gefundenen User der Datenbank
+     * @since Sprint 9
+     */
     @Override
     public Optional<User> findUser(String username) {
 
@@ -136,6 +164,16 @@ public class DatabaseBasedUserStore extends AbstractUserStore implements UserSto
         */
     }
 
+    /**
+     * Mit den gegebenen Strings wird eine Insert Abfrage an die Datenbank gestellt, um den User hinzuzufügen.
+     *
+     * @author Keno S.
+     * @param username Der gewählte Username
+     * @param password Das gewählte Passwort
+     * @param eMail    Die angegebene E-Mail-Adresse
+     * @return Den (nicht) hinzugefügten Nutzer
+     * @since Sprint )
+     */
     @Override
     public User createUser(String username, String password, String eMail) {
 
@@ -186,6 +224,21 @@ public class DatabaseBasedUserStore extends AbstractUserStore implements UserSto
         */
     }
 
+    /**
+     * Aktualisiert in der Datenbank einen bereits vorhandenen User, indem zuerst eine normale Update Anfrage an die Datenbank gestellt wird.
+     * Wenn dieser keinen Eintrag findet, wird nichts aktualisiert. Wenn einer gefunden wurde, dann wird dieser aktualiert.
+     * Anschließend wird eine Abfrage mit den aktualisierten Daten gestellt um zu gucken, ob die Update Anfrage erfolgreich war.
+     * Wenn der User Null ist, wirft die Methode einen Fehler.
+     *
+     * @author Keno S.
+     * @param username        Der neue Username
+     * @param password        Das neue Passwort des Users
+     * @param eMail           Die neue E-Mail-Adresse des Users
+     * @param oldUser         Der alte User
+     * @param currentPassword Das momentane Passwort des Users
+     * @return Den aktualisierten User
+     * @since Sprint 9
+     */
     @Override
     public User updateUser(String username, String password, String eMail, User oldUser, String currentPassword) {
 
@@ -233,6 +286,13 @@ public class DatabaseBasedUserStore extends AbstractUserStore implements UserSto
         */
     }
 
+    /**
+     * Entfernt einen User aus der Datenbank, wenn dieser vorhanden ist.
+     *
+     * @author Keno S.
+     * @param username Der zu löschende User
+     * @since Sprint 9
+     */
     @Override
     public void removeUser(String username) {
 
@@ -255,6 +315,13 @@ public class DatabaseBasedUserStore extends AbstractUserStore implements UserSto
         //users.remove(username);
     }
 
+    /**
+     * Diese Funktion gibt alle User aus der Datenbank in einer ArrayList zurück.
+     *
+     * @author Keno S.
+     * @return Alle Usereinträge der Datenbank
+     * @since Sprint 9
+     */
     @Override
     public List<User> getAllUsers() {
         List<User> allUsers = new ArrayList<>();

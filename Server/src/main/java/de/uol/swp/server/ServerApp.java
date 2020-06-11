@@ -2,6 +2,7 @@ package de.uol.swp.server;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.chat.ChatManagement;
 import de.uol.swp.server.chat.ChatService;
 import de.uol.swp.server.communication.Server;
@@ -10,6 +11,7 @@ import de.uol.swp.server.game.GameManagement;
 import de.uol.swp.server.game.GameService;
 import de.uol.swp.server.lobby.LobbyService;
 import de.uol.swp.server.usermanagement.AuthenticationService;
+import de.uol.swp.server.usermanagement.UserManagement;
 import de.uol.swp.server.usermanagement.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -63,6 +65,16 @@ class ServerApp {
      */
     private static void createServices(Injector injector) {
 
+        boolean test = injector.getInstance(ServerModule.class).isDatabaseBasedUserStore();
+
+        UserManagement userManagement = injector.getInstance(UserManagement.class);
+
+        //Wenn der benutzte UserStore lokal ist, sollen Testnutzer erstellt werden
+        if (!test) {
+            // Testuser erstellen für den MainMemoryBasedUserStore
+            for (int i = 1; i <= 10; i++)
+                userManagement.createUser(new UserDTO("test" + i, "test" + i, "test" + i + "@test.de"));
+        }
         // Erstelle den globalen Chat
         injector.getInstance(ChatManagement.class).createChat("global");
 
