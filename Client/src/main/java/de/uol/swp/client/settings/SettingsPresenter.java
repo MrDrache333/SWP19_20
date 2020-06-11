@@ -198,7 +198,7 @@ public class SettingsPresenter extends AbstractPresenter {
     public void onSoundIconToggleButtonPressed(ActionEvent actionEvent) {
         Notifyer.setMuteState(soundIconToggleButton.isSelected());
         SoundMediaPlayer.setSound(!SoundMediaPlayer.isSoundEnabled());
-        soundIcon.setImage(new Image(new File(getClass().getResource(SoundMediaPlayer.isSoundEnabled() ? "/images/sound_on_icon.png" : "/images/sound_off_icon.png").toExternalForm().replace("file:", "")).toURI().toString()));
+        setSoundIcon();
     }
 
     /**
@@ -227,5 +227,15 @@ public class SettingsPresenter extends AbstractPresenter {
         passwordField.clear();
         password2Field.clear();
         currentPasswordField.clear();
+    }
+
+    /**
+     * Hilfsmethode die das SoundIcon setzt, falls es außerhalb der Einstellungen (bspw. im Login-Screen oder im Registration-Screen verändert wurde)
+     *
+     * @author Rike
+     * @since Sprint 9
+     */
+    public void setSoundIcon(){
+        soundIcon.setImage(new Image(new File(getClass().getResource(SoundMediaPlayer.isSoundEnabled() ? "/images/sound_on_icon.png" : "/images/sound_off_icon.png").toExternalForm().replace("file:", "")).toURI().toString()));
     }
 }
