@@ -247,7 +247,7 @@ public class GameManagement {
      * @since Sprint 6
      */
     public void closeGameOverView() {
-        Platform.runLater(() -> gameOverStage.close());
+        Platform.runLater(gameOverStage::close);
     }
 
     /**
@@ -257,9 +257,10 @@ public class GameManagement {
      * @since Sprint 6
      */
     public void closeGameOverViewAndLeaveLobby() {
-        Platform.runLater(() -> gameOverStage.close());
+        Platform.runLater(gameOverStage::close);
         primaryPresenter.closeTab(id, true);
-        lobbyPresenter.getLobbyService().leaveLobby(id, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
+        if(lobbyPresenter.getLobbyService().retrieveAllLobbies().contains(lobbyName))
+            lobbyPresenter.getLobbyService().leaveLobby(id, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
     }
 
     /**
