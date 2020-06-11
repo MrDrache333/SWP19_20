@@ -104,7 +104,7 @@ public class LobbyPresenter extends AbstractPresenter {
     @FXML
     private ImageView bigCardImage;
 
-    private ImageView crownView = new ImageView("images/crown.png");
+    private final ImageView crownView = new ImageView("images/crown.png");
 
 
     /**
@@ -169,8 +169,8 @@ public class LobbyPresenter extends AbstractPresenter {
         loader.setLocation(getClass().getResource(ChatViewPresenter.fxml));
         loader.setController(chatViewPresenter);
         chatView.getChildren().add(loader.load());
-        ((Pane) chatView.getChildren().get(0)).setPrefHeight(chatView.getPrefHeight());
-        ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getPrefWidth());
+        ((Pane) chatView.getChildren().get(0)).setPrefHeight(chatView.getMinHeight());
+        ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getMinWidth());
         chatViewPresenter.userJoined(loggedInUser.getUsername());
 
         lobbyService.retrieveAllUsersInLobby(lobbyID);
