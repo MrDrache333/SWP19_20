@@ -16,65 +16,51 @@ import javafx.util.Duration;
 
 public class AnimationManagement {
 
-    private static final double HAND_X = 460;
-
-    private static final double ABLAGE_X = 1050;
-    private static final double ABLAGE_Y = 630;
-
-    private static final double ACTION_ZONE_X = 510;
-    private static final double ACTION_ZONE_Y = 600;
-
-    private static final double ACTION_ZONE_OPPONENT_X = ACTION_ZONE_X;
-    private static final double ACTION_ZONE_OPPONENT_Y = 205;
-
-
-    /**
-     * Erstellt ein neues MoveTo Objekt für den Pfad, wobei die aktuellen Koordinaten der Karte übernommen werden.
-     *
-     * @param card die Kare
-     * @return MoveTo
-     * @author Anna
-     * @since Sprint 5
-     */
-    public static MoveTo keepPosition(ImageView card) {
-        double w = card.getFitWidth() / 2;
-        double h = card.getFitHeight() / 2;
-        return new MoveTo(w + card.getParent().getLayoutX(), h + card.getParent().getLayoutY());
-    }
-
     /**
      * Erstellt einen neuen geradlinigen Pfad.
      * Die bewegte Karte wird dabei in den Vordergrund gerückt.
      * Die neuen Koordinaten werden am Ende übernommen.
      *
      * @param card      die zu bewegende Karte
-     * @param moveTo    der Startpunkt
      * @param EndPointX die X-Koordinate des Endpunktes
      * @param EndPointY die Y-Koordinate des Endpunktes
      * @return boolean ob die Bewegung durchgeführt wurde
      * @author Anna
      * @since Sprint 5
      */
-    public static PathTransition createLineToPath(ImageView card, MoveTo moveTo, double EndPointX, double EndPointY) {
-        double x = card.getLayoutX();
-        double y = card.getLayoutY();
+    public static PathTransition createLineToPath(ImageView card, double EndPointX, double EndPointY, int player) {
+        double x = Math.max(card.getLayoutX(), card.getBoundsInParent().getMinX());
+        double y = Math.max(card.getLayoutY(), card.getBoundsInParent().getMinY());
         double w = card.getFitWidth();
         double h = card.getFitHeight();
-        Parent parent = card.getParent();
-        double startPointX = parent.getLayoutX() + parent.getBoundsInLocal().getWidth() / 2 - w - EndPointX + x;
-        double startPointY = parent.getLayoutY() + parent.getBoundsInLocal().getHeight() / 2 - 2 * h - EndPointY + y;
-            Path path = new Path();
-            path.getElements().add(new MoveTo(startPointX, startPointY));
-            path.getElements().add(new LineTo(w / 2, h / 2));
-            PathTransition pathTransition = new PathTransition();
-            pathTransition.setDuration(Duration.millis(1000));
-            pathTransition.setNode(card);
-            pathTransition.setPath(path);
-            pathTransition.setCycleCount(1);
-            card.toFront();
-            pathTransition.play();
-            setNewCoordinates(card, pathTransition);
-            return pathTransition;
+        double startPointX = -(EndPointX - sumParentX(card) - x);
+        double startPointY = -(EndPointY - sumParentY(card) - y);
+        if (player == 1) {
+            startPointX *= -1;
+            startPointY *= -1;
+        }
+        else if (player == 2) {
+            double tmp = startPointX;
+            startPointX = startPointY;
+            startPointY = -tmp;
+        }
+        else if (player == 3) {
+            double tmp = startPointX;
+            startPointX = -startPointY;
+            startPointY = tmp;
+        }
+        Path path = new Path();
+        path.getElements().add(new MoveTo(startPointX, startPointY));
+        path.getElements().add(new LineTo(w / 2, h / 2));
+        PathTransition pathTransition = new PathTransition();
+        pathTransition.setDuration(Duration.millis(1000));
+        pathTransition.setNode(card);
+        pathTransition.setPath(path);
+        pathTransition.setCycleCount(1);
+        card.toFront();
+        pathTransition.play();
+        setNewCoordinates(card, pathTransition);
+        return pathTransition;
     }
 
     /**
@@ -83,7 +69,6 @@ public class AnimationManagement {
      * Die neuen Koordinaten werden am Ende übernommen.
      *
      * @param card      die zu bewegende Karte
-     * @param moveTo    der Startpunkt
      * @param EndPointX die x-Koordinate des Endpunktes
      * @param EndPointY die y-Koordinate des Endpunktes
      * @param count     gibt an, die wievielte Karte gespielt wird
@@ -92,9 +77,7 @@ public class AnimationManagement {
      * @author Anna
      * @since Sprint 5
      */
-    public static Boolean createArcToPath(ImageView card, MoveTo moveTo, double EndPointX, double EndPointY, int count, boolean largeArc) {
-        double x = card.getBoundsInParent().getMinX();
-        double y = card.getBoundsInParent().getMinY();
+    public static Boolean createArcToPath(ImageView card, double EndPointX, double EndPointY, int count, boolean largeArc) {
         double w = card.getFitWidth() / 2;
         double h = card.getFitHeight() / 2;
         Parent parent = card.getParent();
@@ -125,20 +108,7 @@ public class AnimationManagement {
      * @since Sprint 5
      */
     public static Boolean playCard(ImageView card, int count, GeneralLayoutContainer action_zone) {
-        return createArcToPath(card, keepPosition(card), action_zone.getLayoutX(), action_zone.getLayoutY(), count, true);
-    }
-
-    /**
-     * Wenn ein Gegenspieler eine Karte ausspielt, wird sie in seine Aktionszone bewegt.
-     *
-     * @param card  die Karte
-     * @param count gibt an, die wievielte Karte gerade gespielt wird
-     * @return boolean ob die Bewegung durchgeführt wurde
-     * @author Anna
-     * @since Sprint 5
-     */
-    public static Boolean opponentPlaysCard(ImageView card, int count) {
-        return createArcToPath(card, new MoveTo(500 - card.getLayoutX(), -70 - card.getLayoutY()), ACTION_ZONE_OPPONENT_X, ACTION_ZONE_OPPONENT_Y, count, false);
+        return createArcToPath(card, action_zone.getLayoutX(), action_zone.getLayoutY(), count, true);
     }
 
     /**
@@ -150,8 +120,8 @@ public class AnimationManagement {
      * @author Anna
      * @since Sprint 5
      */
-    public static PathTransition buyCard(ImageView card) {
-        return createLineToPath(card, keepPosition(card), ABLAGE_X, ABLAGE_Y);
+    public static PathTransition buyCard(ImageView card, GeneralLayoutContainer dplc, int player) {
+        return createLineToPath(card, dplc.getLayoutX(), dplc.getLayoutY(), player);
     }
 
     /**
@@ -163,19 +133,7 @@ public class AnimationManagement {
      * @since Sprint 7
      */
     public static PathTransition clearCards(ImageView card, GeneralLayoutContainer discardPile) {
-        return createLineToPath(card, keepPosition(card), discardPile.getLayoutX(), discardPile.getLayoutY());
-    }
-
-    /**
-     * Wenn ein Gegenspieler eine Karte kauft, wird sie aus dem Spielfeld bewegt.
-     *
-     * @param card die Karte
-     * @return boolean ob die Bewegung durchgeführt wurde
-     * @author Anna
-     * @since Sprint 5
-     */
-    public static PathTransition opponentBuysCard(ImageView card) {
-        return createLineToPath(card, keepPosition(card), 334, -300);
+        return createLineToPath(card, discardPile.getLayoutX(), discardPile.getLayoutY(), 0);
     }
 
     /**
@@ -189,19 +147,13 @@ public class AnimationManagement {
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(700), card);
         fadeTransition.setFromValue(10);
         fadeTransition.setToValue(0.01);
-
         ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(700), card);
         scaleTransition.setToX(0.01f);
         scaleTransition.setToY(0.01f);
-
         ParallelTransition parallelTransition = new ParallelTransition(fadeTransition, scaleTransition);
+        parallelTransition.setOnFinished(event -> ((GeneralLayoutContainer) card.getParent()).getChildren().remove(card));
         parallelTransition.play();
-        parallelTransition.setOnFinished(e -> {
-            ((GeneralLayoutContainer) card.getParent()).getChildren().remove(card);
-        });
-
         return parallelTransition;
-
     }
 
     /**
@@ -209,18 +161,17 @@ public class AnimationManagement {
      * Die bewegte Karte wird dabei in den Vordergrund gerückt.
      * Die neuen Koordinaten werden übernommen.
      *
-     * @param card  die Karte
-     * @param count gibt an, die wievielte Karte hinzugefügt wird
+     * @param card          die Karte
+     * @param handcards     der Container, dem die KArte hinzugefügt werden soll
      * @author Anna
      * @since Sprint 5
      */
-    public static Boolean addToHand(ImageView card, int count) {
+    public static Boolean addToHand(ImageView card, GeneralLayoutContainer handcards) {
         Parent parent = card.getParent();
         double w = card.getFitWidth() / 2;
         double h = card.getFitHeight() / 2;
-        double startPointX = parent.getLayoutX() + parent.getBoundsInLocal().getWidth() / 2 - w - HAND_X - w * 2 * count;
-        parent.toBack();
-        if (HAND_X + count * w != startPointX) {
+        double startPointX = parent.getLayoutX() + parent.getBoundsInLocal().getWidth() / 2 - w - handcards.getLayoutX() - w * 2 * handcards.getChildren().size();
+        if (handcards.getLayoutX() + handcards.getChildren().size() * w != startPointX) {
             Path path = new Path();
             path.getElements().add(new MoveTo(startPointX, h));
             card.toFront();
@@ -252,5 +203,39 @@ public class AnimationManagement {
             card.setTranslateX(0);
             card.setTranslateY(0);
         });
+    }
+
+    /**
+     * Die x-Koordinate wird berechnet, indem die x-Koordinaten aller Eltern der Karte aufsummiert werden.
+     *
+     * @param card  die Karte
+     * @author Anna
+     * @since Sprint 9
+     */
+    public static double sumParentX(ImageView card) {
+        Parent parent = card.getParent();
+        double sum = 0;
+        while (parent.getParent() != null) {
+            sum += Math.max(parent.getBoundsInParent().getMinX(), parent.getLayoutX());
+            parent = parent.getParent();
+        }
+        return sum;
+    }
+
+    /**
+     * Die y-Koordinate wird berechnet, indem die y-Koordinaten aller Eltern der Karte aufsummiert werden.
+     *
+     * @param card  die Karte
+     * @author Anna
+     * @since Sprint 9
+     */
+    public static double sumParentY(ImageView card) {
+        Parent parent = card.getParent();
+        double sum = 0;
+        while (parent.getParent() != null) {
+            sum += Math.max(parent.getBoundsInParent().getMinY(), parent.getLayoutY());
+            parent = parent.getParent();
+        }
+        return sum;
     }
 }
