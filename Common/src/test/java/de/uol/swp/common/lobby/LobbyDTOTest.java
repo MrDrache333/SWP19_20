@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Testklasse für die LobbyDTO
  *
- * @author Maro
+ * @author Marco
  * @since Start
  */
 class LobbyDTOTest {
