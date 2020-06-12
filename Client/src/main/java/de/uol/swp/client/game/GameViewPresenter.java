@@ -1565,7 +1565,7 @@ public class GameViewPresenter extends AbstractPresenter {
      *
      * @param msg die UpdateCounterMessage
      * @author Paula
-     * @since Sprint9
+     * @since Sprint 9
      */
     @Subscribe
     private void onUpdateCardCounterMessage(UpdateCardCounterMessage msg) {

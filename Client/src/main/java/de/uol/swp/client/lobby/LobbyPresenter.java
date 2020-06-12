@@ -106,7 +106,6 @@ public class LobbyPresenter extends AbstractPresenter {
 
     private ImageView crownView = new ImageView("images/crown.png");
 
-
     /**
      * Instanziiert einen neuen LobbyPresenter.
      *
