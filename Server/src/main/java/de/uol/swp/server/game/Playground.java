@@ -13,7 +13,6 @@ import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.lobby.Lobby;
-import de.uol.swp.common.lobby.LobbyUser;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
@@ -187,7 +186,7 @@ public class Playground extends AbstractPlayground {
 
     public void endGame(UUID lobbyID) {
         gameService.dropFinishedGame(lobbyID);
-        // gameService.getGameManagement().deleteLobbyWithOnlyBots(lobbyID);
+        gameService.getGameManagement().deleteLobbyWithOnlyBots(lobbyID);
     }
 
     /**
@@ -255,7 +254,7 @@ public class Playground extends AbstractPlayground {
      */
     public int sendCardsDeckSize() {
         int size = actualPlayer.getPlayerDeck().getCardsDeck().size();
-        gameService.sendToSpecificPlayer(actualPlayer, new CardsDeckSizeMessage(theSpecificLobbyID, actualPlayer.getTheUserInThePlayer(), size, actualPlayer.getPlayerDeck().discardPileWasCleared()));
+        gameService.sendToAllPlayers(theSpecificLobbyID, new CardsDeckSizeMessage(theSpecificLobbyID, actualPlayer.getTheUserInThePlayer(), size, actualPlayer.getPlayerDeck().discardPileWasCleared()));
         return size;
     }
 
@@ -313,8 +312,7 @@ public class Playground extends AbstractPlayground {
             }
 
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
