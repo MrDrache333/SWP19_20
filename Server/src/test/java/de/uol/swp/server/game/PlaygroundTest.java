@@ -154,9 +154,12 @@ public class PlaygroundTest {
      */
     @Test
     void testCheckForActionCard() {
+        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         //Bei Spielbeginn hat der Spieler keine Aktionskarten auf der Hand
-        assertFalse(gameManagement.getGame(gameID).get().getPlayground().checkForActionCard());
-        //TODO: weitere Fälle testen, wenn weitere Funktion (Kauf von Aktionskarten) implementiert wurde
+        assertFalse(playground.checkForActionCard());
+        Card actionCard = playground.getCardsPackField().getCards().getActionCards().get(0);
+        playground.getActualPlayer().getPlayerDeck().getHand().add(actionCard);
+        assertTrue(playground.checkForActionCard());
     }
 
     /**
