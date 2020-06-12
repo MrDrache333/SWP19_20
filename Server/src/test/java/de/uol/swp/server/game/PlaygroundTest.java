@@ -29,6 +29,12 @@ import java.util.concurrent.CountDownLatch;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Testklasse für den Playground
+ *
+ * @author Julia
+ * @since Sprint 5
+ */
 public class PlaygroundTest {
 
     static final User defaultOwner = new UserDTO("test1", "test1", "test1@test.de");
@@ -46,10 +52,15 @@ public class PlaygroundTest {
     private final CountDownLatch lock = new CountDownLatch(1);
     private static ArrayList<Short> chosenCards = new ArrayList<Short>();
 
-
     static UUID gameID;
     private Object event;
 
+    /**
+     * Initialisiert die benötigten Objekte/Parameter
+     *
+     * @author Julia
+     * @since Sprint 5
+     */
     @BeforeAll
     static void init() {
         gameID = lobbyManagement.createLobby("Test", "", defaultOwner);
@@ -145,7 +156,6 @@ public class PlaygroundTest {
     void testCheckForActionCard() {
         //Bei Spielbeginn hat der Spieler keine Aktionskarten auf der Hand
         assertFalse(gameManagement.getGame(gameID).get().getPlayground().checkForActionCard());
-
         //TODO: weitere Fälle testen, wenn weitere Funktion (Kauf von Aktionskarten) implementiert wurde
     }
 
@@ -159,10 +169,8 @@ public class PlaygroundTest {
     void testNextPhase() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         playground.setActualPhase(Phase.Type.ActionPhase);
-
         playground.nextPhase();
         assertEquals(Phase.Type.Buyphase, playground.getActualPhase());
-
         playground.nextPhase();
         if (playground.checkForActionCard()) {
             assertEquals(Phase.Type.ActionPhase, playground.getActualPhase());
@@ -230,7 +238,6 @@ public class PlaygroundTest {
         List<String> winners = playground.calculateWinners();
         assertEquals(2, winners.size());
         assertFalse(winners.contains(playground.getActualPlayer().getPlayerName()));
-
         playground.setActualPhase(Phase.Type.Clearphase);
         playground.newTurn();
         winners = playground.calculateWinners();
