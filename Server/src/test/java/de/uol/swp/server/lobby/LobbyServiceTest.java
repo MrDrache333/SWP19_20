@@ -243,7 +243,7 @@ class LobbyServiceTest {
     }
 
     /**
-     * Regelt den Umgang mit DeadEvents
+     * Testet die Funktion onSendChoosenCards
      *
      * @author Anna
      * @since Sprint 7

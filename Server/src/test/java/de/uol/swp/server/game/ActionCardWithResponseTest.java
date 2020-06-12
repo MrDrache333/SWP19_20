@@ -51,7 +51,6 @@ public class ActionCardWithResponseTest {
     private final CountDownLatch lock = new CountDownLatch(1);
     private Object event;
 
-
     /**
      * Initialisiert alle benötigten Objekte/Parameter
      *
@@ -172,9 +171,6 @@ public class ActionCardWithResponseTest {
         }
     }
 
-    // TODO: NullPointerException ermitteln. Funktioniert sonst bis darauf das ein Nullpointer manchmal auftritt.
-    // Wie wird bei einer Lobby wo keine Karten ausgewählt werden die Auswahl der Karten getroffen?
-
     /**
      * Testet die Karte Umbau
      *
@@ -195,8 +191,6 @@ public class ActionCardWithResponseTest {
         assertTrue(playground.getActualPlayer().getPlayerDeck().getDiscardPile().get(0).getCosts() >= playground.getActualPlayer().getPlayerDeck().getHand().get(cardsToSelect).getCosts());
     }
 
-    // Ebenfalls gleicher Nullpointer.
-
     /**
      * Testet die Karte Werkstatt
      *
@@ -213,8 +207,6 @@ public class ActionCardWithResponseTest {
         bus.post(theResponse);
         assertTrue(playground.getActualPlayer().getPlayerDeck().getDiscardPile().get(0).equals(playground.getCardsPackField().getCards().getCardForId((short) 15)));
     }
-
-    // Ebenfalls hin und wieder Nullpointer
 
     /**
      * Testet die Karte Festmahl
