@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Klassen um den JsonCardParser zu Testen
+ * Klasse um den JsonCardParser zu testen
  *
  * @author Keno O.
  * @since Sprint 6
