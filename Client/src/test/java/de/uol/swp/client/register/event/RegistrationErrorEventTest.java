@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Testet das RegisterErrorEvent
  *
- * @author Marci
+ * @author Marco
  * @since Start
  */
 class RegistrationErrorEventTest {
