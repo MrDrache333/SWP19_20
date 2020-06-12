@@ -17,7 +17,7 @@ import javafx.scene.control.PasswordField;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@SuppressWarnings("UnstableApiUsage")
+@SuppressWarnings("UnstableApiUsage, unused")
 public class JoinLobbyPresenter {
 
     /**

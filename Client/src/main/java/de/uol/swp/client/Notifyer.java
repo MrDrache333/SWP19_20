@@ -64,10 +64,6 @@ public class Notifyer {
         Notifyer.muteState = muteState;
     }
 
-    public static boolean getMuteState () {
-        return muteState;
-    }
-
     /**
      * Der enum MessageType.
      */

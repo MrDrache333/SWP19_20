@@ -8,8 +8,6 @@ import de.uol.swp.client.register.event.RegistrationCanceledEvent;
 import de.uol.swp.client.register.event.RegistrationErrorEvent;
 import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.user.UserDTO;
-import de.uol.swp.common.user.UserService;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
@@ -51,11 +49,8 @@ public class RegistrationPresenter extends AbstractPresenter {
     @FXML
     private ImageView soundIcon;
 
-    public RegistrationPresenter() {
-    }
-
     @Inject
-    public RegistrationPresenter(EventBus eventBus, UserService userService) {
+    public RegistrationPresenter(EventBus eventBus) {
         setEventBus(eventBus);
     }
 
@@ -80,7 +75,7 @@ public class RegistrationPresenter extends AbstractPresenter {
     // FXML METHODS
     //--------------------------------------
     @FXML
-    void onCancelButtonPressed(ActionEvent event) {
+    void onCancelButtonPressed() {
         new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Pressed, SoundMediaPlayer.Type.Sound).play();
         eventBus.post(registrationCanceledEvent);
     }
@@ -90,12 +85,11 @@ public class RegistrationPresenter extends AbstractPresenter {
      * Prüft auch, ob die Felder des Registrierungsformulars richtig ausgefüllt wurden
      * Dazu gehört: Leere Felder, ungültige Email
      *
-     * @param event Referenz auf das ActionEvent-Objekt
      * @author Timo Siems, Keno S, Keno O
      * @since Sprint 1
      */
     @FXML
-    void onRegisterButtonPressed(ActionEvent event) {
+    void onRegisterButtonPressed() {
         new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Pressed, SoundMediaPlayer.Type.Sound).play();
         if (Strings.isNullOrEmpty(loginField.getText())) {
             eventBus.post(new RegistrationErrorEvent("Der Benutzername darf nicht leer sein!"));

@@ -19,7 +19,6 @@ import de.uol.swp.common.user.message.UserLoggedOutMessage;
 import de.uol.swp.common.user.request.OpenSettingsRequest;
 import de.uol.swp.common.user.response.LoginSuccessfulResponse;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -32,7 +31,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("UnstableApiUsage")
+@SuppressWarnings("UnstableApiUsage, unused")
 public class PrimaryPresenter extends AbstractPresenter {
 
     /**
@@ -131,13 +130,12 @@ public class PrimaryPresenter extends AbstractPresenter {
     /**
      * Methode fängt Button-Klick ab, User verlässt alle Lobbies, in denen er angemeldet ist und wird ausgeloggt
      *
-     * @param actionEvent Das Actionevent
      * @author Julia, Paula
      * @version 1.0
      * @since Sprint3
      */
     @FXML
-    public void onLogoutButtonPressed(ActionEvent actionEvent) {
+    public void onLogoutButtonPressed() {
         userService.logout(loggedInUser);
     }
 
@@ -170,13 +168,12 @@ public class PrimaryPresenter extends AbstractPresenter {
     /**
      * Beim Drücken des instructions Button
      *
-     * @param actionEvent das Actionevent
      * @author Keno Oelrichs Garcia
      * @version 1.0
      * @since Sprint3
      */
     @FXML
-    public void onInstructionsButtonPressed(ActionEvent actionEvent) {
+    public void onInstructionsButtonPressed() {
         try {
             this.lobbyService.startWebView();
         } catch (Exception e1) {
@@ -201,12 +198,11 @@ public class PrimaryPresenter extends AbstractPresenter {
     /**
      * Die Methode postet ein Request auf den Bus, wenn der Einstellungen-Button gedrückt wird
      *
-     * @param actionEvent Das ActionEvent
      * @author Anna
      * @since Sprint4
      */
     @FXML
-    public void onSettingsButtonPressed(ActionEvent actionEvent) {
+    public void onSettingsButtonPressed() {
         OpenSettingsRequest request = new OpenSettingsRequest(loggedInUser);
         eventBus.post(request);
     }
@@ -343,17 +339,16 @@ public class PrimaryPresenter extends AbstractPresenter {
      * und dann die Tabs geschlossen, da man sonst, während man über die Spiele iteriert, Spiele beendet.
      *
      * @author Julia, Paula, Marvin
-     * @Version 1.0
+     * @version 1.0
      * @since Sprint3
      */
     public void closeAllTabs() {
         Platform.runLater(() -> {
             List<UUID> gameIDs = games.values()
                     .stream()
-                    .map(g -> g.getID())
+                    .map(GameManagement::getID)
                     .collect(Collectors.toList());
-            gameIDs.stream()
-                    .forEach(g -> closeTab(g, true));
+            gameIDs.forEach(g -> closeTab(g, true));
         });
     }
 

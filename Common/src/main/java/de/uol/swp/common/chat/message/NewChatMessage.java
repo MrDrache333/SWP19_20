@@ -10,11 +10,8 @@ public class NewChatMessage extends AbstractServerMessage {
 
     private static final long serialVersionUID = -254449775979067706L;
 
-    private String chatId;
-    private ChatMessage message;
-
-    public NewChatMessage() {
-    }
+    private final String chatId;
+    private final ChatMessage message;
 
     /**
      * Initialisiert eine neue NewChatMessage.

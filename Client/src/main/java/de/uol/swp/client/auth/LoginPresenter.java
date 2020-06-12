@@ -3,7 +3,6 @@ package de.uol.swp.client.auth;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.register.event.ShowRegistrationViewEvent;
 import de.uol.swp.client.sound.SoundMediaPlayer;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
@@ -58,12 +57,11 @@ public class LoginPresenter extends AbstractPresenter {
     /**
      * Beim Drücken des Login-Buttons werden die eingegebenen Daten zum Server geschickt
      *
-     * @param event Das Event, dass die Methode Aufruft
      * @author Keno O
      * @since Sprint 4
      */
     @FXML
-    private void onLoginButtonPressed(ActionEvent event) {
+    private void onLoginButtonPressed() {
         new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Pressed, SoundMediaPlayer.Type.Sound).play();
         userService.login(userField.getText(), passwordField.getText());
     }
@@ -71,12 +69,11 @@ public class LoginPresenter extends AbstractPresenter {
     /**
      * Beim Drücken des Registrieren-Buttons wird das Fenster zum Registrieren geöffnet
      *
-     * @param event Das Event, dass die Methode aufruft
      * @author Keno O
      * @since Sprint 4
      */
     @FXML
-    private void onRegisterButtonPressed(ActionEvent event) {
+    private void onRegisterButtonPressed() {
         new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Pressed, SoundMediaPlayer.Type.Sound).play();
         eventBus.post(showRegViewMessage);
     }

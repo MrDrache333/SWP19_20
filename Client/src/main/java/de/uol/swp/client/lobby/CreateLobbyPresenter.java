@@ -22,7 +22,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.regex.Pattern;
 
-@SuppressWarnings("UnstableApiUsage")
+@SuppressWarnings("UnstableApiUsage, unused")
 public class CreateLobbyPresenter extends AbstractPresenter {
 
     /**

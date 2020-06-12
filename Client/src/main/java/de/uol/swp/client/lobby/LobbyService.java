@@ -2,8 +2,6 @@ package de.uol.swp.client.lobby;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
-import de.uol.swp.common.lobby.Lobby;
-import de.uol.swp.common.lobby.LobbyUser;
 import de.uol.swp.common.lobby.request.*;
 import de.uol.swp.common.message.RequestMessage;
 import de.uol.swp.common.user.User;
@@ -18,7 +16,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -81,10 +78,9 @@ public class LobbyService {
      * @since Sprint 2
      */
 
-    public List<Lobby> retrieveAllLobbies() {
+    public void retrieveAllLobbies() {
         RetrieveAllOnlineLobbiesRequest request = new RetrieveAllOnlineLobbiesRequest();
         bus.post(request);
-        return null;
     }
 
     /**
@@ -95,10 +91,9 @@ public class LobbyService {
      * @since Sprint 3
      */
 
-    public ArrayList<LobbyUser> retrieveAllUsersInLobby(UUID lobbyID) {
+    public void retrieveAllUsersInLobby(UUID lobbyID) {
         RequestMessage request = new RetrieveAllOnlineUsersInLobbyRequest(lobbyID);
         bus.post(request);
-        return null;
     }
 
 

@@ -6,24 +6,17 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.assistedinject.Assisted;
 import de.uol.swp.client.auth.LoginPresenter;
-import de.uol.swp.client.auth.events.ShowLoginViewEvent;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.client.game.GameService;
 import de.uol.swp.client.lobby.CreateLobbyPresenter;
 import de.uol.swp.client.lobby.JoinLobbyPresenter;
 import de.uol.swp.client.lobby.LobbyService;
-import de.uol.swp.client.lobby.event.CloseCreateLobbyEvent;
-import de.uol.swp.client.lobby.event.CloseJoinLobbyEvent;
 import de.uol.swp.client.main.PrimaryPresenter;
 import de.uol.swp.client.register.RegistrationPresenter;
-import de.uol.swp.client.register.event.RegistrationCanceledEvent;
 import de.uol.swp.client.register.event.RegistrationErrorEvent;
-import de.uol.swp.client.register.event.ShowRegistrationViewEvent;
 import de.uol.swp.client.settings.DeleteAccountPresenter;
 import de.uol.swp.client.settings.SettingsPresenter;
-import de.uol.swp.client.settings.event.CloseDeleteAccountEvent;
-import de.uol.swp.client.settings.event.CloseSettingsEvent;
 import de.uol.swp.client.settings.event.DeleteAccountEvent;
 import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.client.user.UserService;
@@ -56,7 +49,7 @@ import java.util.UUID;
  * @author Marco
  * @since Start
  */
-@SuppressWarnings("UnstableApiUsage")
+@SuppressWarnings("UnstableApiUsage, unused")
 public class SceneManager {
 
     static final Logger LOG = LogManager.getLogger(SceneManager.class);
@@ -140,17 +133,17 @@ public class SceneManager {
     }
 
     @Subscribe
-    public void onShowRegistrationViewEvent(ShowRegistrationViewEvent event) {
+    public void onShowRegistrationViewEvent() {
         showRegistrationScreen();
     }
 
     @Subscribe
-    public void onShowLoginViewEvent(ShowLoginViewEvent event) {
+    public void onShowLoginViewEvent() {
         showLoginScreen();
     }
 
     @Subscribe
-    public void onRegistrationCanceledEvent(RegistrationCanceledEvent event) {
+    public void onRegistrationCanceledEvent() {
         showScene(lastScene, lastTitle);
     }
 
@@ -160,22 +153,22 @@ public class SceneManager {
     }
 
     @Subscribe
-    public void onCloseSettingsEvent(CloseSettingsEvent event) {
+    public void onCloseSettingsEvent() {
         closeSettings();
     }
 
     @Subscribe
-    public void onCloseDeleteAccountEvent(CloseDeleteAccountEvent event) {
+    public void onCloseDeleteAccountEvent() {
         closeDeleteAccount();
     }
 
     @Subscribe
-    public void onCloseCreateLobbyEvent(CloseCreateLobbyEvent event) {
+    public void onCloseCreateLobbyEvent() {
         closeCreateLobby();
     }
 
     @Subscribe
-    public void onCloseJoinLobbyEvent(CloseJoinLobbyEvent event) {
+    public void onCloseJoinLobbyEvent() {
         closeJoinLobby();
     }
 
@@ -281,7 +274,7 @@ public class SceneManager {
      */
     public void showSettingsScreen(User loggedInUser) {
         Platform.runLater(() -> {
-            settingsPresenter = new SettingsPresenter(loggedInUser, lobbyService, userService, injector, eventBus);
+            settingsPresenter = new SettingsPresenter(loggedInUser, userService, eventBus);
             initSettingsView(settingsPresenter);
             settingsStage = new Stage();
             settingsStage.setTitle("Einstellungen");
@@ -542,7 +535,7 @@ public class SceneManager {
 
     private void initDeleteAccountView() {
         if (deleteAccountScene == null) {
-            Parent rootPane = initDeleteAccountPresenter(new DeleteAccountPresenter(currentUser, lobbyService, userService, eventBus));
+            Parent rootPane = initDeleteAccountPresenter(new DeleteAccountPresenter(currentUser, userService, eventBus));
             deleteAccountScene = new Scene(rootPane, 450, 250);
             deleteAccountScene.getStylesheets().add(SettingsPresenter.css);
 

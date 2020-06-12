@@ -30,7 +30,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author Marco Grawunder
  * @since Start
  */
-@SuppressWarnings("UnstableApiUsage")
+@SuppressWarnings("UnstableApiUsage, unused")
 public class ClientConnection {
 
     private static final Logger LOG = LogManager.getLogger(ClientConnection.class);

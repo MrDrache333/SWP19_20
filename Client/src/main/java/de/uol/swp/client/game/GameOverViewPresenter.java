@@ -2,7 +2,6 @@ package de.uol.swp.client.game;
 
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.common.user.User;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
@@ -158,12 +157,11 @@ public class GameOverViewPresenter extends AbstractPresenter {
      * Wird aufgerufen, wenn der Spieler auf den "nochmal" Button drückt.
      * Spieler kehrt zurück zur Lobby.
      *
-     * @param actionEvent das Ereignis der Aktion
      * @author Anna
      * @since Sprint 6
      */
     @FXML
-    public void onAgainButtonPressed(ActionEvent actionEvent) {
+    public void onAgainButtonPressed() {
         LOG.debug("Spieler " + loggedInUser.getUsername() + " möchte noch einmal spielen.");
         gameManagement.showLobbyView();
         gameManagement.closeGameOverView();
@@ -173,12 +171,11 @@ public class GameOverViewPresenter extends AbstractPresenter {
      * Wird aufgerufen, wenn der Spieler auf den "aufhören" Button drückt.
      * Spieler verlässt Lobby und gelangt zurück zum Hauptmenü.
      *
-     * @param actionEvent das Ereignis der Aktion
      * @author Anna
      * @since Sprint 6
      */
     @FXML
-    public void onReturnButtonPressed(ActionEvent actionEvent) {
+    public void onReturnButtonPressed() {
         LOG.debug("Spieler " + loggedInUser.getUsername() + " möchte zum Hauptmenü zurückkehren.");
         gameManagement.closeGameOverViewAndLeaveLobby();
     }

@@ -7,7 +7,7 @@ public class ChatException extends RuntimeException {
     /**
      * Definiert eine ChatException, die einen String bekommt und diese als Nachricht an RuntimeException weitergibt.
      *
-     * @param message
+     * @param message Die Exception Message
      * @author Keno O.
      * @since Sprint 2
      */

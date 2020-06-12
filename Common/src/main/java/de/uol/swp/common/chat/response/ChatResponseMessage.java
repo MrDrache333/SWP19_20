@@ -11,14 +11,8 @@ public class ChatResponseMessage extends AbstractResponseMessage implements Resp
 
     private static final long serialVersionUID = -7034555716301881050L;
 
-    private Chat chat;
-    private String sender;
-
-    /**
-     * Initiierung einer ChatResponseMessage
-     */
-    public ChatResponseMessage() {
-    }
+    private final Chat chat;
+    private final String sender;
 
     /**
      * Initiierung einer ChatResponseMessage mit dem übergebenen Chat und dem Namen des Senders.

@@ -23,7 +23,6 @@ import de.uol.swp.common.user.message.UserDroppedMessage;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -48,7 +47,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 
-@SuppressWarnings("UnstableApiUsage")
+@SuppressWarnings("UnstableApiUsage, unused")
 public class LobbyPresenter extends AbstractPresenter {
 
     public static final String fxml = "/fxml/LobbyViewWIP.fxml";
@@ -146,12 +145,11 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Wird aufgerufen wenn der Lobby verlassen Button gedrückt wird.
      *
-     * @param actionEvent Das ActionEvent
      * @author Julia, Keno S., Marvin
      * @since Sprint 3
      */
     @FXML
-    public void onLeaveLobbyButtonPressed(ActionEvent actionEvent) {
+    public void onLeaveLobbyButtonPressed() {
         lobbyService.leaveLobby(lobbyID, loggedInUserDTO);
     }
 
@@ -216,12 +214,11 @@ public class LobbyPresenter extends AbstractPresenter {
      * Wird aufgerufen wenn der Bereit-Button gedrückt wird.
      * Der Text auf dem Button und der ownReadyStatus werden dabei jeweils geändert.
      *
-     * @param actionEvent Das ActionEvent
      * @author Darian, Keno S, Keno O.
      * @since Sprint 3
      */
     @FXML
-    public void onReadyButtonPressed(ActionEvent actionEvent) {
+    public void onReadyButtonPressed() {
         if (ownReadyStatus) {
             readyButton.setText("Bereit");
             ownReadyStatus = false;
@@ -237,12 +234,11 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Wird aufgerufen wenn der Wert in der max. Spieler-Box geändert wird.
      *
-     * @param actionEvent Das ActionEvent
      * @author Timo, Rike
      * @since Sprint 3
      */
     @FXML
-    public void onMaxPlayerSelected(ActionEvent actionEvent) {
+    public void onMaxPlayerSelected() {
         if (gameOwner.equals(loggedInUser) && chooseMaxPlayer.getValue() != maxPlayerValue) {
             lobbyService.setMaxPlayer(this.getLobbyID(), this.loggedInUser, chooseMaxPlayer.getValue());
             oldMaxPlayerValue = maxPlayerValue;
@@ -253,10 +249,10 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Wenn der BotButton gepresst wird.
      *
-     * @param actionEvent
+     * @author Ferit
      */
     @FXML
-    public void onCreateBotButtonPressed(ActionEvent actionEvent) {
+    public void onCreateBotButtonPressed() {
         AddBotRequest request = new AddBotRequest(lobbyID);
         eventBus.post(request);
     }
@@ -264,12 +260,11 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Wird aufgerufen, wenn der Button für die Spieleinstellungen betätigt wird.
      *
-     * @param actionEvent Das ActionEvent
      * @author Fenja, Anna
      * @since Sprint 7
      */
     @FXML
-    public void onGamesettingsButtonPressed(ActionEvent actionEvent) {
+    public void onGamesettingsButtonPressed() {
         if (!gameSettingsVBox.isVisible()) {
             gamesettingsButton.setText("Spieleinstellungen schließen");
             gameSettingsVBox.setVisible(true);
@@ -327,12 +322,11 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Methode für den Klick des Buttons Auswahl-abschicken
      *
-     * @param event Das ActionEvent
      * @author Anna
      * @since Sprint 8
      */
     @FXML
-    public void sendChosenCards(ActionEvent event) {
+    public void sendChosenCards() {
         if (chosenCards.getChildren().size() > 0) {
             ArrayList<Short> chosenCardIDs = new ArrayList<>();
             for (Node n : chosenCards.getChildren()) {

@@ -26,7 +26,6 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -61,7 +60,7 @@ import java.util.*;
  * @since Sprint 3
  */
 
-@SuppressWarnings("UnstableApiUsage")
+@SuppressWarnings({"UnstableApiUsage", "unused"})
 public class GameViewPresenter extends AbstractPresenter {
 
     /**
@@ -323,7 +322,7 @@ public class GameViewPresenter extends AbstractPresenter {
         alert.initModality(Modality.APPLICATION_MODAL);
         alert.getDialogPane().setContentText(message);
         alert.getDialogPane().setHeaderText(title);
-        Optional<ButtonType> result = alert.showAndWait();
+        alert.showAndWait();
     }
 
     /**
@@ -395,48 +394,44 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Aufgeben Button gedrückt Ereignis.
      *
-     * @param actionEvent das Ereignis der Aktion.
      * @author Haschem
      * @since Sprint 3
      */
     @FXML
-    public void onGiveUpButtonPressed(ActionEvent actionEvent) {
+    public void onGiveUpButtonPressed() {
         showGiveUpAlert(" ", "Möchtest du wirklich aufgeben?");
     }
 
     /**
      * Ereignis das ausgeführt wird, wenn der User den Button "Alle Geldkarten spielen" drückt
      *
-     * @param actionEvent das Action-Event
      * @author Rike
      * @since Sprint 7
      */
     @FXML
-    public void onPlayAllMoneyCardsButtonPressed(ActionEvent actionEvent) {
+    public void onPlayAllMoneyCardsButtonPressed() {
         playAllMoneyCardsOnHand();
     }
 
     /**
      * Ereignis wenn der Spieler den "Nein"-Button drückt. Es wird true an den Server zurückgegeben
      *
-     * @param actionEvent das ActionEvent
      * @author Darian
      * @since Sprint 8
      */
     @FXML
-    public void onYesButtonPressed(ActionEvent actionEvent) {
+    public void onYesButtonPressed() {
         optionalAction(true);
     }
 
     /**
      * Ereignis wenn der Spieler den "Nein"-Button drückt. Es wird false an den Server zurückgegeben
      *
-     * @param actionEvent das ActionEvent
      * @author Darian
      * @since Sprint 8
      */
     @FXML
-    public void onNoButtonPressed(ActionEvent actionEvent) {
+    public void onNoButtonPressed() {
         optionalAction(false);
     }
 
@@ -1149,7 +1144,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * @since Sprint 6
      */
     @FXML
-    public void onSkipPhaseButtonPressed(ActionEvent actionEvent) {
+    public void onSkipPhaseButtonPressed() {
         gameManagement.getGameService().skipPhase(loggedInUser, lobbyID);
     }
 

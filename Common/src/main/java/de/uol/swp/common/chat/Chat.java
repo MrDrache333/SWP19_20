@@ -28,11 +28,4 @@ public interface Chat extends Serializable {
      * @return Value of ChatId.
      */
     String getChatId();
-
-    /**
-     * Sets new ChatId.
-     *
-     * @param ChatId New value of ChatId.
-     */
-    void setChatId(String ChatId);
 }
