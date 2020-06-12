@@ -267,7 +267,7 @@ class LobbyServiceTest {
      * @since Sprint 9
      */
     @Test
-    void checkIfPasswordIsSetCorrectly() {
+    void checkIfPasswordIsSet() {
         UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
 
         // Prüft ob die Lobby vorhanden ist.
@@ -275,6 +275,20 @@ class LobbyServiceTest {
 
         // Prüft ob ein Password gesetzt wurde
         assertFalse(lobbyManagement.getLobby(lobbyID).get().getLobbyPassword().isEmpty());
+    }
+
+    /**
+     * Testet ob das Password der Lobby korrekt gesetzt wurde
+     *
+     * @author Timo
+     * @since Sprint 9
+     */
+    @Test
+    void checkIfPasswordIsSetCorrectly() {
+        UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
+
+        // Prüft ob die Lobby vorhanden ist.
+        assertTrue(lobbyManagement.getLobby(lobbyID).isPresent());
 
         // Prüft ob das korrekte Password gesetzt wurde
         assertEquals(lobbyManagement.getLobby(lobbyID).get().getLobbyPassword(), defaultLobbyPassword);
