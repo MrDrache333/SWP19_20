@@ -120,7 +120,7 @@ public class ActionCardTest {
     }
 
     /**
-     * Testet die Karte Holzfäller Jahrmarkt
+     * Testet die Karte Jahrmarkt
      *
      * @author Julia
      * @since Sprint 8
