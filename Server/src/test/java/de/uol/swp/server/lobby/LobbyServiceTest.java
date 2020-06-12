@@ -195,7 +195,7 @@ class LobbyServiceTest {
     }
 
     /**
-     * Überprüft diee LobbyListe
+     * Überprüft die Lobby-Liste
      *
      * @author Julia
      * @since Sprint 3
@@ -258,6 +258,26 @@ class LobbyServiceTest {
         lobbyService.onSendChosenCardsRequest(new SendChosenCardsRequest(lobbyID, chosenCards));
         lock.await(500, TimeUnit.MILLISECONDS);
         assertTrue(event instanceof NewChatMessage);
+    }
+
+    /**
+     * Testet ob das Password der Lobby erfolgreich gesetzt wurde
+     *
+     * @author Timo
+     * @since Sprint 9
+     */
+    @Test
+    void checkIfPasswordIsSetCorrectly() {
+        UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
+
+        // Prüft ob die Lobby vorhanden ist.
+        assertTrue(lobbyManagement.getLobby(lobbyID).isPresent());
+
+        // Prüft ob ein Password gesetzt wurde
+        assertFalse(lobbyManagement.getLobby(lobbyID).get().getLobbyPassword().isEmpty());
+
+        // Prüft ob das korrekte Password gesetzt wurde
+        assertEquals(lobbyManagement.getLobby(lobbyID).get().getLobbyPassword(), defaultLobbyPassword);
     }
 
     /**
