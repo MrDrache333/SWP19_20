@@ -1,7 +1,7 @@
 package de.uol.swp.server.game.phase;
 
-import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.game.exception.NotEnoughMoneyException;
+import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.server.game.player.Player;
 
 /**
@@ -15,7 +15,6 @@ interface BuyPhase extends Phase {
      * @param player Der Spieler
      * @param cardId Die Karten-ID
      * @author KenoO
-     * @Version 1.0
      * @since Sprint 5
      */
     int executeBuyPhase(Player player, short cardId) throws IllegalArgumentException, NotEnoughMoneyException;

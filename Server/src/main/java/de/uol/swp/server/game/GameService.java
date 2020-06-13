@@ -194,7 +194,7 @@ public class GameService extends AbstractService {
             sendToAllPlayers(req.getLobbyID(), new NewChatMessage(req.getLobbyID().toString(), new ChatMessage(infoUser, req.getGivingUpUser().getUsername() + " gab auf!")));
         } else {
             LOG.error("User " + req.getGivingUpUser().getUsername() + "konnte nicht aufgeben");
-            post(new AllOnlineLobbiesResponse(gameManagement.getAllLobies()));
+            post(new AllOnlineLobbiesResponse(gameManagement.getAllLobbies()));
             // TODO: Implementierung: Was passiert wenn der User nicht entfernt werden kann? Welche Fälle gibt es?
         }
     }

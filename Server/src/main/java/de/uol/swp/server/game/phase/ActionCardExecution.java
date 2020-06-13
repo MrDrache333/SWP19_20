@@ -33,13 +33,9 @@ public class ActionCardExecution {
     private UUID gameID;
     private List<Player> players;
     private List<User> chooseCardPlayers = new ArrayList<>();
-    //Liste neuer Handkarten
-    private ArrayList<Short> newHandCards = new ArrayList<>();
     //Liste aller Unteraktionen einer Aktion
     private List<CardAction> nextActions = new ArrayList<>();
     private Card inputCard;
-    private AbstractPlayground.ZoneType chooseCardSource;
-    //
 
     //Ob auf eine Auswahl oder Reaktion des Spielers gewartet werden muss
     private boolean waitedForPlayerInput;
@@ -85,6 +81,7 @@ public class ActionCardExecution {
      * @since Sprint 7
      */
     @Subscribe
+    @SuppressWarnings("UnstableApiUsage")
     public void onOptionalActionResponse(OptionalActionResponse response) {
         LOG.debug("OptionalActionResponse von " + response.getPlayer().getUsername() + " erhalten");
         if (response.getGameID().equals(gameID)) {
@@ -103,6 +100,7 @@ public class ActionCardExecution {
      * @since Sprint 7
      */
     @Subscribe
+    @SuppressWarnings("UnstapleApiUsage")
     public void onChooseCardResponse(ChooseCardResponse response) {
         LOG.debug("ChooseCardResponse von " + response.getPlayer().getUsername() + " erhalten");
         List<Player> p = new ArrayList<>();
@@ -117,29 +115,7 @@ public class ActionCardExecution {
 
             ArrayList<Card> cards = new ArrayList<>();
             response.getCards().forEach(c -> cards.add(helpMethod2GetTheCard(c)));
-
-            if (response.getDirectHand()) {
-                helpPlayer.getPlayerDeck().getHand().addAll(cards);
-                newHandCards.addAll(response.getCards());
-                if (chooseCardSource == AbstractPlayground.ZoneType.BUY) {
-                    Map<Short, Integer> newCount = new HashMap<>();
-                    int size = cards.size();
-                    for (int i = 0; i < size; i++) {
-                        Card card = cards.get(i);
-                        short id = cards.get(i).getId();
-                        int count = playground.getCardField().get(id);
-                        if (count > 0) {
-                            playground.getCardField().replace(id, --count);
-                            newCount.put(id, count);
-                        }
-                        if (cards.size() != size) {
-                            cards.add(i, card);
-                        }
-                    }
-                    UpdateCardCounterMessage message = new UpdateCardCounterMessage(gameID, player.getTheUserInThePlayer(), newCount);
-                    playground.getGameService().sendToAllPlayers(gameID, message);
-                }
-            } else if (nextActions.get(nextActionIndex) instanceof Move) {
+            if (nextActions.get(nextActionIndex) instanceof Move) {
                 ((Move) nextActions.get(nextActionIndex)).setCardsToMove(cards);
             } else if (nextActions.get(nextActionIndex) instanceof ForEach) {
                 ((ForEach) nextActions.get(nextActionIndex)).setCards(cards);
@@ -280,53 +256,7 @@ public class ActionCardExecution {
             } else if (action instanceof GetCard) {
                 GetCard getAction = (GetCard) action;
                 ArrayList<Card> c = executeGetCard(getAction, player);
-                if (getAction.isDirectHand()) {
-                    int size = c.size();
-                    for (int i = 0; i < size; i++) {
-                        Card card = c.get(i);
-                        player.getPlayerDeck().getHand().add(card);
-                        newHandCards.add(card.getId());
-                    }
-                    List<Card> remove = new ArrayList<>();
-                    if (getAction.getCardSource() == AbstractPlayground.ZoneType.DRAW) {
-                        for (int i = 0; i < size; i++) {
-                            Card card = c.get(i);
-                            player.getPlayerDeck().getCardsDeck().stream().filter(a -> a.getId() == card.getId()).findFirst().ifPresent(remove::add);
-                            if (c.size() != size) {
-                                c.add(i, card);
-                            }
-                        }
-                        remove.forEach(t -> player.getPlayerDeck().getCardsDeck().remove(t));
-                    } else if (getAction.getCardSource() == AbstractPlayground.ZoneType.DISCARD) {
-                        for (int i = 0; i < size; i++) {
-                            Card card = c.get(i);
-                            player.getPlayerDeck().getDiscardPile().stream().filter(a -> a.getId() == card.getId()).findFirst().ifPresent(remove::add);
-                            if (c.size() != size) {
-                                c.add(i, card);
-                            }
-                        }
-                        remove.forEach(t -> player.getPlayerDeck().getDiscardPile().remove(t));
-                    } else if (getAction.getCardSource() == AbstractPlayground.ZoneType.TEMP) {
-                        for (int i = 0; i < size; i++) {
-                            Card card = c.get(i);
-                            player.getPlayerDeck().getTemp().stream().filter(a -> a.getId() == card.getId()).findFirst().ifPresent(remove::add);
-                            if (c.size() != size) {
-                                c.add(i, card);
-                            }
-                        }
-                        remove.forEach(t -> player.getPlayerDeck().getTemp().remove(t));
-                    } else if (getAction.getCardSource() == AbstractPlayground.ZoneType.TRASH) {
-                        for (int i = 0; i < size; i++) {
-                            Card card = c.get(i);
-                            playground.getTrash().stream().filter(a -> a.getId() == card.getId()).findFirst().ifPresent(remove::add);
-                            if (c.size() != size) {
-                                c.add(i, card);
-                            }
-                        }
-                        remove.forEach(t -> playground.getTrash().remove(t));
-                    }
-
-                } else if (!foreach) {
+                if (!foreach) {
                     CardAction nextAction = nextActions.get(nextActionIndex);
                     if (nextAction instanceof Move) {
                         ((Move) nextAction).setCardsToMove(c);
@@ -488,7 +418,7 @@ public class ActionCardExecution {
      * Führt eine Reihe von Aktionen auf eine beliebige Anzahl an Karten aus
      *
      * @param action Die ForEach-Aktion
-     * @return
+     * @return True wenn die Aktion erfolgreich ausgeführt wurde, sonst false
      * @author KenoO, Julia
      * @since Sprint 6
      */
@@ -541,7 +471,7 @@ public class ActionCardExecution {
      * Sendet eine Message mit der ID der Karte, die angezeigt werden soll und der Zone,
      * in der sie angezeigt werden soll an den aktuellen Spieler.
      *
-     * @param showCard
+     * @param showCard Die ShowCardMessage
      * @return true
      * @author Julia
      * @since Sprint 6
@@ -578,7 +508,6 @@ public class ActionCardExecution {
 
     private boolean executeChooseCard(ChooseCard action, List<Player> thePlayers) {
         waitedForPlayerInput = true;
-        chooseCardSource = action.getCardSource();
         for (Player playerChooseCard : thePlayers) {
             this.chooseCardPlayers.add(playerChooseCard.getTheUserInThePlayer());
             ArrayList<Card> tmp = new ArrayList<>();
@@ -607,11 +536,11 @@ public class ActionCardExecution {
             }
             ChooseCardRequest request;
             if (action.getCount().getMin() == action.getCount().getMax()) {
-                request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount().getMin(), playerChooseCard.getTheUserInThePlayer(), action.getCardSource(), "Bitte die Anzahl der Karten auswählen von dem Bereich der dir angezeigt wird!", action.isDirectHand());
+                request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount().getMin(), playerChooseCard.getTheUserInThePlayer(), action.getCardSource(), "Bitte die Anzahl der Karten auswählen von dem Bereich der dir angezeigt wird!");
             } else if (action.getCount().getMin() == 0) {
-                request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount().getMax(), playerChooseCard.getTheUserInThePlayer(), action.getCardSource(), "Bitte die Anzahl der Karten auswählen von dem Bereich der dir angezeigt wird!", action.isDirectHand());
+                request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount().getMax(), playerChooseCard.getTheUserInThePlayer(), action.getCardSource(), "Bitte die Anzahl der Karten auswählen von dem Bereich der dir angezeigt wird!");
             } else {
-                request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount(), playerChooseCard.getTheUserInThePlayer(), action.getCardSource(), "Bitte die Anzahl der Karten auswählen von dem Bereich der dir angezeigt wird!", action.isDirectHand());
+                request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount(), playerChooseCard.getTheUserInThePlayer(), action.getCardSource(), "Bitte die Anzahl der Karten auswählen von dem Bereich der dir angezeigt wird!");
             }
             playground.getGameService().sendToSpecificPlayer(player, request);
         }
@@ -641,8 +570,6 @@ public class ActionCardExecution {
      * @since Sprint 8
      */
     private boolean executeMoveAction(Move action, Player player) {
-        ArrayList<Short> theIds = new ArrayList<>();
-        action.getCardsToMove().forEach(c -> theIds.add(c.getId()));
         switch (action.getCardDestination()) {
             case DISCARD:
                 player.getPlayerDeck().getDiscardPile().addAll(action.getCardsToMove());
@@ -661,7 +588,7 @@ public class ActionCardExecution {
                 break;
         }
         int size = action.getCardsToMove().size();
-        List<Card> toRemove = new ArrayList<>();
+        ArrayList<Card> toRemove = new ArrayList<>();
         switch (action.getCardSource()) {
             case HAND:
                 for (int i = 0; i < size; i++) {
@@ -702,7 +629,7 @@ public class ActionCardExecution {
                     }
                 }
                 toRemove.forEach(c -> player.getPlayerDeck().getCardsDeck().remove(c));
-                action.setCardsToMove((ArrayList) toRemove);
+                action.setCardsToMove(toRemove);
                 break;
             case BUY:
                 Map<Short, Integer> newCount = new HashMap<>();
@@ -821,7 +748,7 @@ public class ActionCardExecution {
         if (actualStateIndex == theCard.getActions().size() && !waitedForPlayerInput && finishedNextActions) {
             if(!finishedExecution) {
                 finishedExecution = true;
-                playground.getCompositePhase().finishedActionCardExecution(player, newHandCards, theCard);
+                playground.getCompositePhase().finishedActionCardExecution(player, theCard);
             }
             return true;
         }

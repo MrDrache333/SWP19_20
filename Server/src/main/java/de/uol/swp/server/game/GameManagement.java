@@ -18,12 +18,12 @@ import java.util.*;
  * @since Sprint 4
  */
 public class GameManagement {
+
     private static final Logger LOG = LogManager.getLogger(GameManagement.class);
     private static final Map<UUID, Game> games = new TreeMap<>();
     private final LobbyManagement lobbyManagement;
     private final ChatManagement chatManagement;
     private GameService gameService;
-
 
     /**
      * Erstellt ein neues GameManagement
@@ -99,16 +99,23 @@ public class GameManagement {
         }
     }
 
-    public void setGameService(GameService gameService) {
-        this.gameService = gameService;
-    }
-
-    //Hilfsmethode zum Überprüfen
+    /**
+     * Überprüft, ob die Lobby nicht mehr existiert
+     *
+     * @param lobbyID Die ID der Lobby
+     * @return True wenn keine Lobby mit der lobbyID existiert, sonst false
+     * @author Ferit
+     * @since Sprint 8
+     */
     public boolean lobbyIsNotPresent(UUID lobbyID) {
         return lobbyManagement.getLobby(lobbyID).isEmpty();
     }
 
-    public Collection<Lobby> getAllLobies() {
+    public Collection<Lobby> getAllLobbies() {
         return lobbyManagement.getLobbies();
+    }
+
+    public void setGameService(GameService gameService) {
+        this.gameService = gameService;
     }
 }

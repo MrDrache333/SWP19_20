@@ -38,7 +38,6 @@ public class ChooseCardRequest extends AbstractGameMessage {
     private Value countV;
 
     private int count;
-    private boolean directHand;
 
     /**
      * Erstellt einen neuen Request
@@ -53,14 +52,13 @@ public class ChooseCardRequest extends AbstractGameMessage {
      * @author KenoO
      * @since Sprint 7
      */
-    public ChooseCardRequest(UUID id, User player, ArrayList<Short> cards, Value countV, User sourcePlayer, AbstractPlayground.ZoneType source, String message, boolean directHand) {
+    public ChooseCardRequest(UUID id, User player, ArrayList<Short> cards, Value countV, User sourcePlayer, AbstractPlayground.ZoneType source, String message) {
         super(id, player);
         this.cards = cards;
         this.countV = countV;
         this.source = source;
         if (message.equals("")) message = DEFAULT_MESSAGE;
         this.message = message;
-        this.directHand = directHand;
     }
 
     /**
@@ -75,14 +73,13 @@ public class ChooseCardRequest extends AbstractGameMessage {
      * @author KenoO
      * @since Sprint 7
      */
-    public ChooseCardRequest(UUID id, User player, ArrayList<Short> cards, int count, User sourcePlayer, AbstractPlayground.ZoneType source, String message, boolean directHand) {
+    public ChooseCardRequest(UUID id, User player, ArrayList<Short> cards, int count, User sourcePlayer, AbstractPlayground.ZoneType source, String message) {
         super(id, player);
         this.cards = cards;
         this.count = count;
         this.source = source;
         if (message.equals("")) message = DEFAULT_MESSAGE;
         this.message = message;
-        this.directHand = directHand;
     }
 
     //***********************
@@ -131,10 +128,6 @@ public class ChooseCardRequest extends AbstractGameMessage {
      */
     public int getCount() {
         return count;
-    }
-
-    public boolean getDirectHand() {
-        return directHand;
     }
 
     public Value getCountV() {

@@ -65,11 +65,10 @@ public class Deck {
     /**
      * Startdeck wird initialisiert (7x Money, 3x Anwesen)
      *
-     * @return Kartendeck
      * @author Paula
      * @since Sprint 5
      */
-    private ArrayList<Card> initialiseStartDeck() {
+    private void initialiseStartDeck() {
         CardPack cardsPack = new JsonCardParser().loadPack("Basispack");
         for (int i = 0; i < 3; i++) {
             Card card = cardsPack.getCards().getValueCards().get(0);
@@ -79,49 +78,21 @@ public class Deck {
             Card card = cardsPack.getCards().getMoneyCards().get(0);
             cardsDeck.add(card);
         }
-        return cardsDeck;
     }
 
     /**
      * Hand wird initialisiert; 5 Karten aus Startdeck
      *
-     * @return Hand
      * @author Paula
      * @since Sprint 5
      */
-    private ArrayList<Card> initialiseHand() {
+    private void initialiseHand() {
         Collections.shuffle(cardsDeck);
         for (int i = 0; i < 5; i++) {
             Card tmpCard = cardsDeck.get(i);
             hand.add(tmpCard);
         }
         hand.forEach(card -> cardsDeck.remove(card));
-        return hand;
-    }
-
-
-    /**
-     * Karte wird aus Arrays gelöscht
-     *
-     * @author Pauia
-     * @since Sprint 5
-     */
-    private void deleteCard(Card card) {
-        cardsDeck.remove(card);
-        hand.remove(card);
-        discardPile.remove(card);
-    }
-
-    /**
-     * Hilfsmethode um eine Karte zum Ablagestapel hinzuzufügen
-     *
-     * @param card
-     * @author Paula
-     * @since Sprint 6
-     */
-    public void addCardToDiscardPile(Card card) {
-        discardPile.add(card);
-
     }
 
     /**
@@ -153,7 +124,7 @@ public class Deck {
         int money = 0;
         int sizeHand = hand.size();
         ArrayList<Card> removeCards = new ArrayList<>();
-        for (int i=0; i<sizeHand; i++){
+        for (int i = 0; i < sizeHand; i++) {
             if (hand.get(i) instanceof MoneyCard) {
                 money += ((MoneyCard) hand.get(i)).getValue();
                 discardPile.add(hand.get(i));
