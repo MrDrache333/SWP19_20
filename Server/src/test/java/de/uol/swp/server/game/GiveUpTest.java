@@ -17,6 +17,12 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Testklasse, in der das Aufgeben getestet wird
+ *
+ * @author Ferit
+ * @since Sprint 6
+ */
 public class GiveUpTest {
     static final User defaultOwner = new UserDTO("test1", "test1", "test1@test.de");
     static final User secondPlayer = new UserDTO("test2", "test2", "test2@test2.de");
@@ -30,6 +36,12 @@ public class GiveUpTest {
     private static final ArrayList<Short> chosenCards = new ArrayList<Short>();
     static UUID gameID;
 
+    /**
+     * Initialisiert die benötigten Objekte/Parameter
+     *
+     * @author Ferit
+     * @since Sprint 6
+     */
     @BeforeAll
     static void init() {
         gameID = lobbyManagement.createLobby("Test", "", defaultOwner);

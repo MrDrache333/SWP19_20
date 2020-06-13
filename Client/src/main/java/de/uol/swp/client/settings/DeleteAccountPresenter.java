@@ -60,8 +60,10 @@ public class DeleteAccountPresenter {
      */
     @FXML
     public void onYesButtonPressed(ActionEvent actionEvent) {
-        LOG.debug("Der Benutzer " + loggedInUser.getUsername() + " löscht seinen Account!");
+        userService.hardLogout(loggedInUser);
+        LOG.debug("Der Benutzer " + loggedInUser.getUsername() + " wurde ausgeloggt!");
         userService.dropUser(loggedInUser);
+        LOG.debug("Der Benutzer " + loggedInUser.getUsername() + " hat seinen Account gelöscht!");
     }
 
     /**

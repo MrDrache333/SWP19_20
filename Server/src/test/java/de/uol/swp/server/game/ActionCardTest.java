@@ -49,6 +49,12 @@ public class ActionCardTest {
     private final CountDownLatch lock = new CountDownLatch(1);
     private Object event;
 
+    /**
+     * Initialisiert alle benötigten Objekte/Parameter
+     *
+     * @author Julia
+     * @since Sprint 8
+     */
     @BeforeAll
     static void init() {
         gameID = lobbyManagement.createLobby("Test", "", defaultOwner);
@@ -96,6 +102,12 @@ public class ActionCardTest {
         bus.unregister(this);
     }
 
+    /**
+     * Testet die Karte Holzfäller
+     *
+     * @author Julia
+     * @since Sprint 8
+     */
     @Test
     void testHolzfäller() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
@@ -107,6 +119,12 @@ public class ActionCardTest {
         assertEquals(Phase.Type.Buyphase, playground.getActualPhase());
     }
 
+    /**
+     * Testet die Karte Jahrmarkt
+     *
+     * @author Julia
+     * @since Sprint 8
+     */
     @Test
     void testJahrmarkt() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
@@ -123,6 +141,12 @@ public class ActionCardTest {
         }
     }
 
+    /**
+     * Testet die Karte Dorf
+     *
+     * @author Julia
+     * @since Sprint 8
+     */
     @Test
     void testDorf() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
@@ -141,6 +165,12 @@ public class ActionCardTest {
         }
     }
 
+    /**
+     * Testet die Karte Schmiede
+     *
+     * @author Julia
+     * @since Sprint 8
+     */
     @Test
     void testSchmiede() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
@@ -158,6 +188,12 @@ public class ActionCardTest {
         assertEquals(Phase.Type.Buyphase, playground.getActualPhase());
     }
 
+    /**
+     * Testet die Karte Labaratorium
+     *
+     * @author Julia
+     * @since Sprint 8
+     */
     @Test
     void testLaboratorium() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
@@ -178,6 +214,12 @@ public class ActionCardTest {
         }
     }
 
+    /**
+     * Testet die Karte Markt
+     *
+     * @author Julia
+     * @since Sprint 8
+     */
     @Test
     void testMarkt() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();

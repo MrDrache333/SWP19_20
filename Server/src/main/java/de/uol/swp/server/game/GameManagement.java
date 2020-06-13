@@ -78,6 +78,10 @@ public class GameManagement {
         games.remove(id);
     }
 
+    public void deleteLobbyWithOnlyBots(UUID lobbyID) {
+        games.remove(lobbyID);
+    }
+
     /**
      * Gibt ein Spiel anhand der Spiel-ID aus der Liste zurück
      *

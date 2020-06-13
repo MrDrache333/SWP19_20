@@ -268,8 +268,8 @@ public class GameService extends AbstractService {
                     playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), cardID);
                     //sendToSpecificPlayer(playground.getActualPlayer(), new PlayCardMessage(gameID, player, cardID, true));
                     playground.getPlayers().forEach(n -> {
-                        PlayCardMessage msg = new PlayCardMessage(gameID, playground.getActualPlayer().getTheUserInThePlayer(), cardID, true,
-                                playground.getIndexOfPlayer(n), playground.getIndexOfPlayer(playground.getActualPlayer()), playground.getCompositePhase().getExecuteAction().isRemoveCardAfter());
+                        PlayCardMessage msg = new PlayCardMessage(gameID, playground.getActualPlayer().getTheUserInThePlayer(),
+                                cardID, true, playground.getCompositePhase().getExecuteAction().isRemoveCardAfter());
                         sendToSpecificPlayer(n, msg);
                     });
                     Card card = playground.getCardsPackField().getCards().getCardForId(cardID);

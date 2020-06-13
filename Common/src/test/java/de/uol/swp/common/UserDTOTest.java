@@ -6,7 +6,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
+/**
+ * Testklasse der UserDTO
+ *
+ * @author Marco
+ * @since Start
+ */
 class UserDTOTest {
     private static final User defaultUser = new UserDTO("marco", "marco", "marco@grawunder.de");
     private static final User secondsUser = new UserDTO("marco2", "marco", "marco@grawunder.de");
