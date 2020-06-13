@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Ferit
  * @since Sprint 8
  */
+@SuppressWarnings("UnstableApiUsage")
 public class ActionCardWithResponseTest {
 
     static final User defaultOwner = new UserDTO("test1", "test1", "test1@test.de");
@@ -128,7 +129,6 @@ public class ActionCardWithResponseTest {
         int cardsToSelect = (int) (Math.random() * 4);
         ArrayList<Short> kartenAbwurf = new ArrayList<>();
         playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 10);
-        int handSize = playground.getActualPlayer().getPlayerDeck().getHand().size();
         assertEquals(2, playground.getActualPlayer().getAvailableActions());
         for (int i = 0; i < cardsToSelect; i++) {
             kartenAbwurf.add(playground.getActualPlayer().getPlayerDeck().getHand().get(i).getId());

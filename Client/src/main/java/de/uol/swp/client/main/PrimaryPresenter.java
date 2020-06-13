@@ -64,7 +64,6 @@ public class PrimaryPresenter extends AbstractPresenter {
      * @param userService  Der Userservice
      * @param injector     Der Injector
      * @author Fenja Oelrichs Garcia
-     * @version 1.0
      * @since Sprint4
      */
     public void initialise(EventBus eventBus, User loggedInUser, ChatService chatService, LobbyService lobbyService, UserService userService, Injector injector, GameService gameService) {
@@ -133,7 +132,6 @@ public class PrimaryPresenter extends AbstractPresenter {
      *
      * @param actionEvent Das Actionevent
      * @author Julia, Paula
-     * @version 1.0
      * @since Sprint3
      */
     @FXML
@@ -172,7 +170,6 @@ public class PrimaryPresenter extends AbstractPresenter {
      *
      * @param actionEvent das Actionevent
      * @author Keno Oelrichs Garcia
-     * @version 1.0
      * @since Sprint3
      */
     @FXML
@@ -217,7 +214,6 @@ public class PrimaryPresenter extends AbstractPresenter {
      * @param title       Der Übergebene Titel aus dem MainMenuPresenter
      * @param lobbyID     Die übergebene LobbyID aus der empfangenen Message in der ClientApp
      * @author Paula, Haschem, Ferit, Anna
-     * @version 1.0
      * @since Sprint3
      */
     public void createLobby(User currentUser, String title, UUID lobbyID, UserDTO gameOwner) {
@@ -342,7 +338,6 @@ public class PrimaryPresenter extends AbstractPresenter {
      * und dann die Tabs geschlossen, da man sonst, während man über die Spiele iteriert, Spiele beendet.
      *
      * @author Julia, Paula, Marvin
-     * @version 1.0
      * @since Sprint3
      */
     public void closeAllTabs() {
