@@ -1458,8 +1458,9 @@ public class GameViewPresenter extends AbstractPresenter {
                 AnimationManagement.deleteCard(card);
                 return;
             case HAND:
-                if (Short.valueOf(card.getId()) < 4 && user.equals(loggedInUser)) {
-                    card.setEffect(makeImageDarker);
+                if (user.equals(loggedInUser)) {
+                    if (Short.valueOf(card.getId()) < 4) card.setEffect(makeImageDarker);
+                    card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                 }
                 AnimationManagement.addToHand(card, usersContainer.get(user.getUsername()).get(destination));
                 break;
