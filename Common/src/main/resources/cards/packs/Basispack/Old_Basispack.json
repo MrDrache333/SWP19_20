@@ -824,14 +824,25 @@
             "GetCard": {
               "count": 2,
               "cardSource": "DRAW",
-              "directHand": true
+              "nextAction": {
+                "Move": {
+                  "cardSource": "DRAW",
+                  "cardDestination": "HAND"
+                }
+              }
             }
           },
           {
             "GetCard": {
               "count": 1,
               "allowedCardType": "CURSE",
-              "directHand": true
+              "cardSource": "BUY",
+              "nextAction": {
+                "Move": {
+                  "cardSource": "BUY",
+                  "cardDestination": "HAND"
+                }
+              }
             }
           }
         ]
