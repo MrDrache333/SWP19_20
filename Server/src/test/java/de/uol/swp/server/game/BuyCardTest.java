@@ -44,7 +44,6 @@ public class BuyCardTest {
     static final GameService gameService = new GameService(bus, gameManagement, authenticationService);
     private final ArrayList<Short> chosenCards = new ArrayList<>();
 
-
     static UUID gameID;
     private final CountDownLatch lock = new CountDownLatch(1);
 
@@ -75,8 +74,6 @@ public class BuyCardTest {
         gameManagement.deleteGame(gameID);
         lobbyManagement.dropLobby(gameID);
         chatManagement.deleteChat(gameID.toString());
-
-
     }
 
     /**
@@ -125,8 +122,8 @@ public class BuyCardTest {
     void testIfCardIsAddedToDiscardPile() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         playground.getActualPlayer().setAvailableBuys(2);
+        playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), (short) 10);
         assertEquals(3, playground.getActualPlayer().getPlayerDeck().getDiscardPile().size());
-
     }
 
     /**
@@ -138,6 +135,7 @@ public class BuyCardTest {
     @Test
     void testIfCardOnPlayGroundIsActualAfterBuyingACard() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
+        playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), (short) 10);
         assertTrue(playground.getCardField().get(card.getId()).equals(9));
     }
 }
