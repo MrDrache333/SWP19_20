@@ -20,7 +20,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
@@ -28,6 +27,12 @@ import java.util.concurrent.CountDownLatch;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Testklasse der ActionCardWithRespone
+ *
+ * @author Ferit
+ * @since Sprint 8
+ */
 public class ActionCardWithResponseTest {
 
     static final User defaultOwner = new UserDTO("test1", "test1", "test1@test.de");
@@ -46,6 +51,12 @@ public class ActionCardWithResponseTest {
     private final CountDownLatch lock = new CountDownLatch(1);
     private Object event;
 
+    /**
+     * Initialisiert alle benötigten Objekte/Parameter
+     *
+     * @author Ferit
+     * @since Sprint 8
+     */
     static void init() {
         gameID = lobbyManagement.createLobby("Test", "", defaultOwner);
         chatManagement.createChat(gameID.toString());
@@ -107,7 +118,7 @@ public class ActionCardWithResponseTest {
      * Die "ausgewählten" Karten beginnen hier im Test von Position 0 von der Hand.
      *
      * @author Ferit
-     * @since Sprint8
+     * @since Sprint 8
      */
     @Test
     void testKeller() {
@@ -128,7 +139,10 @@ public class ActionCardWithResponseTest {
     }
 
     /**
+     * Testet die Karte Mine
      *
+     * @author Ferit
+     * @since Sprint 8
      */
     @Test
     void testMine() {
@@ -157,8 +171,12 @@ public class ActionCardWithResponseTest {
         }
     }
 
-    // TODO: NullPointerException ermitteln. Funktioniert sonst bis darauf das ein Nullpointer manchmal auftritt.
-    // Wie wird bei einer Lobby wo keine Karten ausgewählt werden die Auswahl der Karten getroffen?
+    /**
+     * Testet die Karte Umbau
+     *
+     * @author Ferit
+     * @since Sprint 8
+     */
     @Test
     void testUmbau() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
@@ -173,7 +191,12 @@ public class ActionCardWithResponseTest {
         assertTrue(playground.getActualPlayer().getPlayerDeck().getDiscardPile().get(0).getCosts() >= playground.getActualPlayer().getPlayerDeck().getHand().get(cardsToSelect).getCosts());
     }
 
-    // Ebenfalls gleicher Nullpointer.
+    /**
+     * Testet die Karte Werkstatt
+     *
+     * @author Ferit
+     * @since Sprint 8
+     */
     @Test
     void testWerkstatt() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
@@ -185,7 +208,12 @@ public class ActionCardWithResponseTest {
         assertTrue(playground.getActualPlayer().getPlayerDeck().getDiscardPile().get(0).equals(playground.getCardsPackField().getCards().getCardForId((short) 15)));
     }
 
-    // Ebenfalls hin und wieder Nullpointer
+    /**
+     * Testet die Karte Festmahl
+     *
+     * @author Ferit
+     * @since Sprint 8
+     */
     @Test
     void testFestmahl() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
@@ -199,7 +227,10 @@ public class ActionCardWithResponseTest {
     }
 
     /**
-     * Funktioniert.
+     * Testet die Karte Kanzler
+     *
+     * @author Ferit
+     * @since Sprint 8
      */
     @Test
     void testKanzler() {
@@ -214,7 +245,10 @@ public class ActionCardWithResponseTest {
     }
 
     /**
-     * Funktioniert.
+     * Testet die Karte Kapelle
+     *
+     * @author Ferit
+     * @since Sprint 8
      */
     @Test
     void testKapelle() {

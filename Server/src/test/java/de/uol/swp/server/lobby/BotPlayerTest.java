@@ -19,9 +19,14 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Testklasse des Botplayers
+ *
+ * @author Ferit
+ * @since Sprint 8
+ */
 @SuppressWarnings("UnstableApiUsage")
 class BotPlayerTest {
 
@@ -37,6 +42,12 @@ class BotPlayerTest {
     private final CountDownLatch lock = new CountDownLatch(1);
     private Object event;
 
+    /**
+     * Definiert den Umgang mit Dead-Events
+     *
+     * @author Ferit
+     * @since Sprint 8
+     */
     @Subscribe
     void handle(DeadEvent e) {
         this.event = e.getEvent();
@@ -44,12 +55,24 @@ class BotPlayerTest {
         lock.countDown();
     }
 
+    /**
+     * Registriert den EventBus
+     *
+     * @author Ferit
+     * @since Sprint 8
+     */
     @BeforeEach
     void registerBus() {
         event = null;
         bus.register(this);
     }
 
+    /**
+     * Deregistriert den EventBus
+     *
+     * @author Ferit
+     * @since Sprint 8
+     */
     @AfterEach
     void deregisterBus() {
         bus.unregister(this);
@@ -66,11 +89,23 @@ class BotPlayerTest {
         lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
     }
 
+    /**
+     * Löscht eine Lobby
+     *
+     * @author Ferit
+     * @since Sprint 8
+     */
     @AfterEach
     void dropLobby() {
         lobbyManagement.dropLobby(lobbyID);
     }
 
+    /**
+     * Erzeugt einen BotPlayer
+     *
+     * @author Ferit
+     * @since Sprint 8
+     */
     @Test
     void createBotPlayertest() {
         if (lobbyManagement.getLobby(lobbyID).isPresent()) {
@@ -80,6 +115,12 @@ class BotPlayerTest {
         }
     }
 
+    /**
+     * Prüft ob der Bot bereit ist
+     *
+     * @author Ferit
+     * @since Sprint 8
+     */
     @Test
     void botIsReadyTest() {
         if (lobbyManagement.getLobby(lobbyID).isPresent()) {
@@ -98,7 +139,5 @@ class BotPlayerTest {
             assertTrue(lobbyManagement.getLobby(lobbyID).get().getReadyStatus(theBotPlayer));
         }
     }
-
-
     // TODO: Weitere Tests implementieren, wenn die Botlogik ausgebaut wird.
 }

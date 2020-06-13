@@ -1,7 +1,6 @@
 package de.uol.swp.server.lobby;
 
 import de.uol.swp.common.lobby.Lobby;
-import de.uol.swp.common.lobby.message.UpdatedLobbyReadyStatusMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,9 +10,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
-
+/**
+ * Testklasse des LobbyManagement
+ *
+ * @author Julia
+ * @since Sprint 3
+ */
 class LobbyManagementTest {
     static final User defaultLobbyOwner = new UserDTO("Owner", "Test", "123@test.de");
     static final User secondUser = new UserDTO("Test", "Test", "1234@test.de");
@@ -43,21 +46,6 @@ class LobbyManagementTest {
     void createLobbyTest() {
         Optional<Lobby> lobby = lobbyManagement.getLobby(lobbyID);
         assertTrue(lobby.isPresent());
-    }
-
-    /**
-     * Da das Lobbysystem nun auf UUIDs basiert ist ein doppelter Name kein Problem mehr.
-     * <p>
-     * Es wird getestet ob ein Fehler auftritt, wenn eine Lobby erstellt wird.
-     *
-     * @author Julia, Marvin
-     * @since Sprint 3
-     */
-    @Test
-    void createLobbyFailedTest() {
-        //Lobby name already exists
-        //assertThrows(IllegalArgumentException.class, () -> lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, defaultLobbyOwner));
-        assertTrue(true);
     }
 
     /**
