@@ -15,7 +15,7 @@ public class AllOnlineUsersInLobbyResponse extends AbstractResponseMessage {
 
     private static final long serialVersionUID = -2995292304508692414L;
     private final Set<User> users = new TreeSet<>();
-    private TreeMap<String, Boolean> readyStatus = new TreeMap<>();
+    private final TreeMap<String, Boolean> readyStatus;
     private final UUID lobbyID;
 
     /**

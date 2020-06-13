@@ -19,7 +19,7 @@ import org.apache.logging.log4j.Logger;
  * @author KenoO
  * @since Sprint 1
  */
-@SuppressWarnings("UnstableApiUsage")
+@SuppressWarnings("UnstableApiUsage, unused")
 public class ChatService extends AbstractService {
 
 

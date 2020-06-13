@@ -6,7 +6,7 @@ import de.uol.swp.common.user.User;
 /**
  * Eine Klasse, die eine OpenSettingsRequest erstellt, um die Einstellungen öffnen zu können
  *
- * @auhtor Anna
+ * @author Anna
  * @since 3
  */
 public class OpenSettingsRequest extends AbstractRequestMessage {

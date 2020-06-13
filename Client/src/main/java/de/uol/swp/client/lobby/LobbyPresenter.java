@@ -23,6 +23,7 @@ import de.uol.swp.common.user.message.UserDroppedMessage;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -145,11 +146,12 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Wird aufgerufen wenn der Lobby verlassen Button gedrückt wird.
      *
+     * @param actionEvent Das ActionEvent
      * @author Julia, Keno S., Marvin
      * @since Sprint 3
      */
     @FXML
-    public void onLeaveLobbyButtonPressed() {
+    public void onLeaveLobbyButtonPressed(ActionEvent actionEvent) {
         lobbyService.leaveLobby(lobbyID, loggedInUserDTO);
     }
 
@@ -214,11 +216,12 @@ public class LobbyPresenter extends AbstractPresenter {
      * Wird aufgerufen wenn der Bereit-Button gedrückt wird.
      * Der Text auf dem Button und der ownReadyStatus werden dabei jeweils geändert.
      *
+     * @param actionEvent Das ActionEvent
      * @author Darian, Keno S, Keno O.
      * @since Sprint 3
      */
     @FXML
-    public void onReadyButtonPressed() {
+    public void onReadyButtonPressed(ActionEvent actionEvent) {
         if (ownReadyStatus) {
             readyButton.setText("Bereit");
             ownReadyStatus = false;
@@ -234,11 +237,12 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Wird aufgerufen wenn der Wert in der max. Spieler-Box geändert wird.
      *
+     * @param actionEvent Das ActionEvent
      * @author Timo, Rike
      * @since Sprint 3
      */
     @FXML
-    public void onMaxPlayerSelected() {
+    public void onMaxPlayerSelected(ActionEvent actionEvent) {
         if (gameOwner.equals(loggedInUser) && chooseMaxPlayer.getValue() != maxPlayerValue) {
             lobbyService.setMaxPlayer(this.getLobbyID(), this.loggedInUser, chooseMaxPlayer.getValue());
             oldMaxPlayerValue = maxPlayerValue;
@@ -249,10 +253,10 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Wenn der BotButton gepresst wird.
      *
-     * @author Ferit
+     * @param actionEvent Das ActionEvent
      */
     @FXML
-    public void onCreateBotButtonPressed() {
+    public void onCreateBotButtonPressed(ActionEvent actionEvent) {
         AddBotRequest request = new AddBotRequest(lobbyID);
         eventBus.post(request);
     }
@@ -260,11 +264,12 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Wird aufgerufen, wenn der Button für die Spieleinstellungen betätigt wird.
      *
+     * @param actionEvent Das ActionEvent
      * @author Fenja, Anna
      * @since Sprint 7
      */
     @FXML
-    public void onGamesettingsButtonPressed() {
+    public void onGamesettingsButtonPressed(ActionEvent actionEvent) {
         if (!gameSettingsVBox.isVisible()) {
             gamesettingsButton.setText("Spieleinstellungen schließen");
             gameSettingsVBox.setVisible(true);
@@ -322,11 +327,12 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Methode für den Klick des Buttons Auswahl-abschicken
      *
+     * @param event Das ActionEvent
      * @author Anna
      * @since Sprint 8
      */
     @FXML
-    public void sendChosenCards() {
+    public void sendChosenCards(ActionEvent event) {
         if (chosenCards.getChildren().size() > 0) {
             ArrayList<Short> chosenCardIDs = new ArrayList<>();
             for (Node n : chosenCards.getChildren()) {
@@ -649,7 +655,10 @@ public class LobbyPresenter extends AbstractPresenter {
         if (!box.getChildren().contains(crownView) && user.getUsername().equals(gameOwner.getUsername())) {
             crownView.setFitHeight(15);
             crownView.setFitWidth(15);
-            Platform.runLater(() -> box.getChildren().add(crownView));
+            Platform.runLater(() -> {
+                if (!box.getChildren().contains(crownView))
+                    box.getChildren().add(crownView);
+            });
         }
         return box;
     }

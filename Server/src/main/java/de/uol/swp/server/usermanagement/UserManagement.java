@@ -1,6 +1,5 @@
 package de.uol.swp.server.usermanagement;
 
-import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import de.uol.swp.common.user.User;
 import de.uol.swp.server.usermanagement.store.UserStore;
@@ -130,10 +129,6 @@ public class UserManagement extends AbstractUserManagement {
         }
         logout(userToDrop);
         userStore.removeUser(userToDrop.getUsername());
-    }
-
-    private String firstNotNull(String firstValue, String secondValue) {
-        return Strings.isNullOrEmpty(firstValue) ? secondValue : firstValue;
     }
 
     /**

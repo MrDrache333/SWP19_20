@@ -72,7 +72,7 @@ public class UserDTO implements User {
     /**
      * Das Passwort des Benutzers wird zurückgeben
      *
-     * @retrun das Passwort des Benutzers
+     * @return das Passwort des Benutzers
      * @author Marco
      * @since Start
      */
@@ -84,7 +84,7 @@ public class UserDTO implements User {
     /**
      * Die Email des Benutzers wird zurückgeben
      *
-     * @retrun Die Email des Benutzers
+     * @return Die Email des Benutzers
      * @author Marco
      * @since Start
      */
@@ -96,7 +96,7 @@ public class UserDTO implements User {
     /**
      * Der Benutzers wird zurückgeben ohne Passwort
      *
-     * @retrun Der Benutzer ohne Passwort
+     * @return Der Benutzer ohne Passwort
      * @author Marco
      * @since Start
      */
@@ -121,7 +121,7 @@ public class UserDTO implements User {
     /**
      * Es wird überprüft ob die zwei Objekte gleich sind
      *
-     * @param o Das Objekt mit der verglichen werden soll
+     * @param obj Das Objekt mit der verglichen werden soll
      * @return True wenn die Objekte gleich sind
      * @author Marco
      * @since Start

@@ -12,9 +12,9 @@ import org.apache.logging.log4j.Logger;
 import java.util.*;
 
 /**
- * Das Gamemanagement verwaltet die laufenden Spiele
+ * Das GameManagement verwaltet die laufenden Spiele
  *
- * @author kenoO
+ * @author Keno O.
  * @since Sprint 4
  */
 public class GameManagement {
@@ -41,7 +41,7 @@ public class GameManagement {
      * Erstellt ein neues Spiel, übergibt die zugehörige Lobby und den Chat und fügt dies dann der Map hinzu
      *
      * @param lobbyID Die LobbyID
-     * @author KenoO
+     * @author Keno O.
      * @since Sprint5
      */
     void createGame(UUID lobbyID) {
@@ -70,7 +70,7 @@ public class GameManagement {
      * Löscht ein Spiel aus der Liste
      *
      * @param id Die ID
-     * @author KenoO
+     * @author Keno O.
      * @since Sprint5
      */
     public void deleteGame(UUID id) {
@@ -86,7 +86,7 @@ public class GameManagement {
      *
      * @param id Die ID
      * @return Das Spiel
-     * @author KenoO
+     * @author Keno O.
      * @since Sprint5
      */
     public Optional<Game> getGame(UUID id) {
@@ -107,7 +107,7 @@ public class GameManagement {
         return lobbyManagement.getLobby(lobbyID).isEmpty();
     }
 
-    public Collection<Lobby> getAllLobies() {
+    public Collection<Lobby> getAllLobbies() {
         return lobbyManagement.getLobbies();
     }
 }

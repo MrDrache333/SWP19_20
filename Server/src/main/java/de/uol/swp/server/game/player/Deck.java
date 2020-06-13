@@ -11,6 +11,7 @@ import java.util.Collections;
 /**
  * Kartendeck eines Spielers
  */
+@SuppressWarnings("unused")
 public class Deck {
 
     /**

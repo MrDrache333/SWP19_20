@@ -22,7 +22,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
-@SuppressWarnings("UnstableApiUsage")
+@SuppressWarnings("UnstableApiUsage, unused")
 public class ActionCardExecution {
 
     private static final Logger LOG = LogManager.getLogger(ActionCardExecution.class);

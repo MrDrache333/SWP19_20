@@ -29,7 +29,7 @@ public class LobbyExceptionMessage extends AbstractServerMessage {
      * @author Darian
      * @since Sprint 8
      */
-    public UUID getlobbyID() {
+    public UUID getLobbyID() {
         return lobbyID;
     }
 

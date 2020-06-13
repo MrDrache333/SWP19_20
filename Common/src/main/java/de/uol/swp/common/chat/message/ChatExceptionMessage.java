@@ -5,7 +5,7 @@ import de.uol.swp.common.message.AbstractResponseMessage;
 import de.uol.swp.common.user.User;
 
 /**
- * Die Klasse der Chat exception message.
+ * Die Klasse der ChatExceptionMessage.
  *
  * @author Keno O.
  * @since Sprint 2
@@ -18,7 +18,7 @@ public class ChatExceptionMessage extends AbstractResponseMessage {
     private final ChatException exception;
 
     /**
-     * Konstruktor der Chat exception message.
+     * Konstruktor der ChatExceptionMessage.
      *
      * @param sender Der Sender
      * @param e      Die Exception
@@ -33,7 +33,7 @@ public class ChatExceptionMessage extends AbstractResponseMessage {
     /**
      * Gibt den Sender zurück.
      *
-     * @return Sender the sender
+     * @return Sender Der sender
      * @author Keno O.
      * @since Sprint 2
      */

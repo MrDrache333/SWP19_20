@@ -11,11 +11,12 @@ import java.nio.charset.StandardCharsets;
  * @author Marco
  * @since Start
  */
+@SuppressWarnings("UnstableApiUsage")
 public abstract class AbstractUserStore implements UserStore {
 
     /**
-     * @param toHash
-     * @return Hash
+     * @param toHash Der String, der gehasht werden möchte
+     * @return Hash Der gehashte String
      * @author Marco
      * @since Start
      */

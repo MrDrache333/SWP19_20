@@ -7,7 +7,6 @@ import java.util.List;
 
 public class UserLeftAllLobbiesMessage extends AbstractLobbyMessage {
 
-    private UserDTO user;
     private final List<LobbyDTO> lobbies;
 
     /**

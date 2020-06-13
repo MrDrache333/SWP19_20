@@ -116,7 +116,7 @@ public class ActionCardTest {
         playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 9);
         assertEquals(2, playground.getActualPlayer().getAvailableBuys());
         assertEquals(2, playground.getActualPlayer().getAdditionalMoney());
-        assertEquals(Phase.Type.Buyphase, playground.getActualPhase());
+        assertEquals(Phase.Type.BuyPhase, playground.getActualPhase());
     }
 
     /**
@@ -137,7 +137,7 @@ public class ActionCardTest {
         if (playground.checkForActionCard()) {
             assertEquals(Phase.Type.ActionPhase, playground.getActualPhase());
         } else {
-            assertEquals(Phase.Type.Buyphase, playground.getActualPhase());
+            assertEquals(Phase.Type.BuyPhase, playground.getActualPhase());
         }
     }
 
@@ -161,7 +161,7 @@ public class ActionCardTest {
         if (playground.checkForActionCard()) {
             assertEquals(Phase.Type.ActionPhase, playground.getActualPhase());
         } else {
-            assertEquals(Phase.Type.Buyphase, playground.getActualPhase());
+            assertEquals(Phase.Type.BuyPhase, playground.getActualPhase());
         }
     }
 
@@ -185,7 +185,7 @@ public class ActionCardTest {
         assertTrue(playground.getActualPlayer().getPlayerDeck().getHand().contains(card1));
         assertTrue(playground.getActualPlayer().getPlayerDeck().getHand().contains(card2));
         assertTrue(playground.getActualPlayer().getPlayerDeck().getHand().contains(card3));
-        assertEquals(Phase.Type.Buyphase, playground.getActualPhase());
+        assertEquals(Phase.Type.BuyPhase, playground.getActualPhase());
     }
 
     /**
@@ -210,7 +210,7 @@ public class ActionCardTest {
         if (playground.checkForActionCard()) {
             assertEquals(Phase.Type.ActionPhase, playground.getActualPhase());
         } else {
-            assertEquals(Phase.Type.Buyphase, playground.getActualPhase());
+            assertEquals(Phase.Type.BuyPhase, playground.getActualPhase());
         }
     }
 
@@ -236,7 +236,7 @@ public class ActionCardTest {
         if (playground.checkForActionCard()) {
             assertEquals(Phase.Type.ActionPhase, playground.getActualPhase());
         } else {
-            assertEquals(Phase.Type.Buyphase, playground.getActualPhase());
+            assertEquals(Phase.Type.BuyPhase, playground.getActualPhase());
         }
     }
 }

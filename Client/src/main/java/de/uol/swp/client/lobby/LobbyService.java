@@ -2,6 +2,8 @@ package de.uol.swp.client.lobby;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
+import de.uol.swp.common.lobby.Lobby;
+import de.uol.swp.common.lobby.LobbyUser;
 import de.uol.swp.common.lobby.request.*;
 import de.uol.swp.common.message.RequestMessage;
 import de.uol.swp.common.user.User;
@@ -16,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -55,6 +58,7 @@ public class LobbyService {
     public void joinLobby(UUID lobbyID, UserDTO user, Boolean isBot) {
         LobbyJoinUserRequest request = new LobbyJoinUserRequest(lobbyID, user, isBot);
         bus.post(request);
+        LOG.info("LobbyJoinUserRequest wurde gesendet.");
     }
 
     /**
@@ -78,9 +82,10 @@ public class LobbyService {
      * @since Sprint 2
      */
 
-    public void retrieveAllLobbies() {
+    public List<Lobby> retrieveAllLobbies() {
         RetrieveAllOnlineLobbiesRequest request = new RetrieveAllOnlineLobbiesRequest();
         bus.post(request);
+        return null;
     }
 
     /**
@@ -91,9 +96,10 @@ public class LobbyService {
      * @since Sprint 3
      */
 
-    public void retrieveAllUsersInLobby(UUID lobbyID) {
+    public ArrayList<LobbyUser> retrieveAllUsersInLobby(UUID lobbyID) {
         RequestMessage request = new RetrieveAllOnlineUsersInLobbyRequest(lobbyID);
         bus.post(request);
+        return null;
     }
 
 
@@ -134,12 +140,12 @@ public class LobbyService {
      * Erstellt einen SendChosenCardsRequest, um die ausgewählten Karten an den Server zu schicken.
      *
      * @param lobbyID     die ID der Lobby
-     * @param chosencards die gewählten Aktionskarten
+     * @param chosenCards die gewählten Aktionskarten
      * @author Anna, Fenja
      * @since Sprint 7
      */
-    public void sendChosenCards(UUID lobbyID, ArrayList<Short> chosencards) {
-        SendChosenCardsRequest requestMessage = new SendChosenCardsRequest(lobbyID, chosencards);
+    public void sendChosenCards(UUID lobbyID, ArrayList<Short> chosenCards) {
+        SendChosenCardsRequest requestMessage = new SendChosenCardsRequest(lobbyID, chosenCards);
         bus.post(requestMessage);
     }
 

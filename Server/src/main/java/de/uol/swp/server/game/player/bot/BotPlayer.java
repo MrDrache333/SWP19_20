@@ -11,7 +11,7 @@ import de.uol.swp.server.game.player.Player;
 
 import java.util.UUID;
 
-@SuppressWarnings("UnstableApiUsage")
+@SuppressWarnings("UnstableApiUsage, unused")
 public class BotPlayer extends Player {
     protected EventBus eventBus;
 

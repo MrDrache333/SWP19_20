@@ -3,15 +3,18 @@ package de.uol.swp.client.settings;
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.Notifyer;
 import de.uol.swp.client.SceneManager;
+import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.settings.event.CloseSettingsEvent;
 import de.uol.swp.client.settings.event.DeleteAccountEvent;
+import de.uol.swp.client.user.UserService;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
-import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -42,7 +45,9 @@ public class SettingsPresenter extends AbstractPresenter {
     private static final Logger LOG = LogManager.getLogger(SettingsPresenter.class);
 
     private User loggedInUser;
+    private final LobbyService lobbyService;
     private final UserService userService;
+    private final Injector injector;
     private final EventBus eventBus;
 
     @FXML
@@ -66,14 +71,18 @@ public class SettingsPresenter extends AbstractPresenter {
      * Konstruktor des SettingPresenters
      *
      * @param loggedInUser Der eingeloggte User
+     * @param lobbyService DerLobbyService
      * @param userService Der UserService
+     * @param injector Der injector
      * @param eventBus Der EventBus
      * @author Julia, Keno S.
      * @since Sprint 4
      */
-    public SettingsPresenter(User loggedInUser, UserService userService, EventBus eventBus) {
+    public SettingsPresenter(User loggedInUser, LobbyService lobbyService, UserService userService, Injector injector, EventBus eventBus) {
         this.loggedInUser = loggedInUser;
+        this.lobbyService = lobbyService;
         this.userService = userService;
+        this.injector = injector;
         this.eventBus = eventBus;
     }
 
@@ -81,11 +90,12 @@ public class SettingsPresenter extends AbstractPresenter {
      * Überprüft die Benutzereingaben. Falls alle gültig sind, wird im UserService die Methode updateUser aufgerufen,
      * ansonsten wird eine entsprechende Fehlermeldung angezeigt
      *
+     * @param event Das ActionEvent
      * @author Julia
      * @since Sprint 4
      */
     @FXML
-    public void onSaveButtonPressed() {
+    public void onSaveButtonPressed(ActionEvent event) {
         String username = usernameField.getText();
         String email = emailField.getText();
         String password = passwordField.getText();
@@ -134,22 +144,24 @@ public class SettingsPresenter extends AbstractPresenter {
     /**
      * Postet auf den EventBus das Accountlöschung-Event
      *
+     * @param actionEvent Das ActionEvent
      * @author Julia
      * @since Sprint 4
      */
     @FXML
-    public void onDeleteAccountButtonPressed() {
+    public void onDeleteAccountButtonPressed(ActionEvent actionEvent) {
         eventBus.post(new DeleteAccountEvent(loggedInUser));
     }
 
     /**
      * Postet auf den EventBus das Schließe-Settings-Event
      *
+     * @param actionEvent Das ActionEvent
      * @author Julia
      * @since Sprint 4
      */
     @FXML
-    public void onCancelButtonPressed() {
+    public void onCancelButtonPressed(ActionEvent actionEvent) {
         eventBus.post(new CloseSettingsEvent());
         clearAll();
     }
@@ -157,11 +169,12 @@ public class SettingsPresenter extends AbstractPresenter {
     /**
      * Mutet alle Benachrichtigungen beim Aufruf
      *
+     * @param actionEvent Das ActionEvent
      * @author Keno S.
      * @since Sprint 7
      */
     @FXML
-    public void onChatMuteToggleButtonPressed() {
+    public void onChatMuteToggleButtonPressed(ActionEvent actionEvent) {
         Notifyer.setMuteState(chatMuteToggleButton.isSelected());
         if (chatMuteToggleButton.isSelected())
             chatMuteImage.setImage(new Image("images/chat_on_icon.png"));

@@ -107,11 +107,11 @@ class BotPlayerTest {
      * @since Sprint 8
      */
     @Test
-    void createBotPlayertest() {
+    void createBotPlayerTest() {
         if (lobbyManagement.getLobby(lobbyID).isPresent()) {
             AddBotRequest newReq = new AddBotRequest(lobbyID);
             bus.post(newReq);
-            assertEquals(2, lobbyManagement.getLobby(lobbyID).get().getPlayers());
+            assertTrue(lobbyManagement.getLobby(lobbyID).get().getPlayers() == 2);
         }
     }
 

@@ -32,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Marco
  * @since Start
  */
+@SuppressWarnings("UnstableApiUsage, unused")
 class AuthenticationServiceTest {
 
     final User user = new UserDTO("name", "password", "email@test.de");
@@ -85,7 +86,7 @@ class AuthenticationServiceTest {
     /**
      * Test für einen erfolgreichen Login
      *
-     * @throws InterruptedException
+     * @throws InterruptedException InterruptedException
      * @author Marco
      * @since Start
      */
@@ -104,7 +105,7 @@ class AuthenticationServiceTest {
     /**
      * Test für einen fehlgeschlagenen Login
      *
-     * @throws InterruptedException
+     * @throws InterruptedException InterruptedException
      * @author Marco
      * @since Start
      */
@@ -123,7 +124,7 @@ class AuthenticationServiceTest {
     /**
      * Test für den Logout
      *
-     * @throws InterruptedException
+     * @throws InterruptedException InterruptedException
      * @author Marco
      * @since Start
      */
@@ -148,7 +149,7 @@ class AuthenticationServiceTest {
     /**
      * Testet die retrieveAllOnlineUsers() Methode bei einem eingeloggten User
      *
-     * @throws InterruptedException
+     * @throws InterruptedException InterruptedException
      * @author Marco
      * @since Start
      */
@@ -169,7 +170,7 @@ class AuthenticationServiceTest {
     /**
      * Testet die retrieveAllOnlineUsers() Methode bei zwei eingeloggten Usern
      *
-     * @throws InterruptedException
+     * @throws InterruptedException InterruptedException
      * @author Marco
      * @since Start
      */
@@ -201,7 +202,7 @@ class AuthenticationServiceTest {
     /**
      * Testet die retrieveAllOnlineUsers() Methode bei null eingeloggten Usern
      *
-     * @throws InterruptedException
+     * @throws InterruptedException InterruptedException
      * @author Marco
      * @since Start
      */

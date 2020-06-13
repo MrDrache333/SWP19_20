@@ -6,6 +6,8 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import de.uol.swp.client.di.ClientModule;
+import de.uol.swp.client.game.GameService;
+import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.lobby.OpenJoinLobbyRequest;
 import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
@@ -44,6 +46,8 @@ public class ClientApp extends Application implements ConnectionListener {
     private String host;
     private int port;
     private UserService userService;
+    private LobbyService lobbyService;
+    private GameService gameService;
     private User user;
     private ClientConnection clientConnection;
     private EventBus eventBus;
@@ -103,6 +107,8 @@ public class ClientApp extends Application implements ConnectionListener {
 
         // get user service from guice, is needed for logout
         this.userService = injector.getInstance(UserService.class);
+        this.lobbyService = injector.getInstance(LobbyService.class);
+        this.gameService = injector.getInstance(GameService.class);
 
         // get event bus from guice
         eventBus = injector.getInstance(EventBus.class);

@@ -4,8 +4,8 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.lobby.event.CloseJoinLobbyEvent;
+import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.common.lobby.Lobby;
-import de.uol.swp.common.lobby.request.LobbyJoinUserRequest;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
@@ -29,6 +29,7 @@ public class JoinLobbyPresenter {
 
     private User loggedInUser;
     private final LobbyService lobbyService;
+    private MainMenuPresenter mainMenuPresenter;
     private final UserService userService;
     private final EventBus eventBus;
     private final Lobby lobby;
@@ -71,12 +72,8 @@ public class JoinLobbyPresenter {
     @FXML
     public void onJoinButtonPressed(javafx.event.ActionEvent actionEvent) {
         // Passwörter stimmen überein
-        if (lobby.getLobbyPassword().equals(String.valueOf(passwordField.getText()))) {
+        if (lobby.getLobbyPassword().equals(String.valueOf(passwordField.getText())) || lobby.getLobbyPassword() == null) {
             lobbyService.joinLobby(lobby.getLobbyID(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), false);
-            LobbyJoinUserRequest msg = new LobbyJoinUserRequest(lobby.getLobbyID(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), false);
-            eventBus.post(msg);
-            LOG.info("LobbyJoinUserRequest wurde gesendet.");
-
         }
         //Passwörter stimmen nicht überein
         else {
