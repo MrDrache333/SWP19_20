@@ -9,9 +9,11 @@ import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.server.game.Playground;
 import de.uol.swp.server.game.player.Deck;
 import de.uol.swp.server.game.player.Player;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Die Funktionsklasse aller Phasen
@@ -19,7 +21,7 @@ import java.util.List;
 public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
 
     private final Playground playground;
-    private List<Short> implementedActionCards;
+    private final List<Short> implementedActionCards;
     private ActionCardExecution executeAction;
 
     /**
@@ -36,7 +38,6 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
     }
 
     @Override
-    @SuppressWarnings("UnstapleApiUsage")
     public void executeActionPhase(Player player, short cardId) {
         CardPack cardsPackField = playground.getCardsPackField();
         Card currentCard = getCardFromId(cardsPackField.getCards(), cardId);
@@ -184,7 +185,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      * Hilfsmethode um an die Daten über die ID zu kommen
      *
      * @param cardStack Der Kartenstapel
-     * @param cardId    Die ID der Karte
+     * @param cardId Die KartenID
      * @return card Karte, zu der die ID gehört
      * @author Paula
      * @since Sprint 6

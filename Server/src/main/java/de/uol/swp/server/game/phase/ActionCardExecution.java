@@ -22,19 +22,20 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
+@SuppressWarnings("UnstableApiUsage, unused")
 public class ActionCardExecution {
 
     private static final Logger LOG = LogManager.getLogger(ActionCardExecution.class);
 
-    private short cardID;
-    private Playground playground;
-    private Player player;
+    private final short cardID;
+    private final Playground playground;
+    private final Player player;
     private ActionCard theCard;
-    private UUID gameID;
-    private List<Player> players;
-    private List<User> chooseCardPlayers = new ArrayList<>();
+    private final UUID gameID;
+    private final List<Player> players;
+    private final List<User> chooseCardPlayers = new ArrayList<>();
     //Liste aller Unteraktionen einer Aktion
-    private List<CardAction> nextActions = new ArrayList<>();
+    private final List<CardAction> nextActions = new ArrayList<>();
     private Card inputCard;
 
     //Ob auf eine Auswahl oder Reaktion des Spielers gewartet werden muss
@@ -81,7 +82,6 @@ public class ActionCardExecution {
      * @since Sprint 7
      */
     @Subscribe
-    @SuppressWarnings("UnstableApiUsage")
     public void onOptionalActionResponse(OptionalActionResponse response) {
         LOG.debug("OptionalActionResponse von " + response.getPlayer().getUsername() + " erhalten");
         if (response.getGameID().equals(gameID)) {
@@ -100,7 +100,6 @@ public class ActionCardExecution {
      * @since Sprint 7
      */
     @Subscribe
-    @SuppressWarnings("UnstapleApiUsage")
     public void onChooseCardResponse(ChooseCardResponse response) {
         LOG.debug("ChooseCardResponse von " + response.getPlayer().getUsername() + " erhalten");
         List<Player> p = new ArrayList<>();
@@ -128,7 +127,7 @@ public class ActionCardExecution {
     /**
      * Führt beim Aufruf alle enthaltenen Aktionen der Aktionskarte aus
      *
-     * @return
+     * @return Boolean, ob die Aktionen ausgeführt worden sind
      * @author KenoO, Julia
      * @since Sprint 6
      */
@@ -349,8 +348,8 @@ public class ActionCardExecution {
     /**
      * Methode, um eine bestimmte Anzahl Karten aus einer Zone zu bekommen
      *
-     * @param action
-     * @param player
+     * @param action Die Aktion
+     * @param player Der Spieler
      * @return Liste der Karten
      * @author KenoO, Julia
      * @since Sprint 6
@@ -418,7 +417,7 @@ public class ActionCardExecution {
      * Führt eine Reihe von Aktionen auf eine beliebige Anzahl an Karten aus
      *
      * @param action Die ForEach-Aktion
-     * @return True wenn die Aktion erfolgreich ausgeführt wurde, sonst false
+     * @return Ob die Ausführung erfolgreich war
      * @author KenoO, Julia
      * @since Sprint 6
      */
@@ -471,7 +470,7 @@ public class ActionCardExecution {
      * Sendet eine Message mit der ID der Karte, die angezeigt werden soll und der Zone,
      * in der sie angezeigt werden soll an den aktuellen Spieler.
      *
-     * @param showCard Die ShowCardMessage
+     * @param showCard Die anzuzeigende Karte
      * @return true
      * @author Julia
      * @since Sprint 6
@@ -501,7 +500,7 @@ public class ActionCardExecution {
      *
      * @param action     Die Anzahl der Karten
      * @param thePlayers Die Player, die Karten auswählen dürfen.
-     * @return
+     * @return Ob die Methode erfolgreich war
      * @author Ferit, Julia
      * @since Sprint 7
      */
@@ -551,7 +550,7 @@ public class ActionCardExecution {
     /**
      * Sendet dem Spieler eine Nachricht mit den Aktionen, aus denen er eine auswählen kann
      *
-     * @param chooseNextAction
+     * @param chooseNextAction Die ChooseNextAction
      * @return true
      * @author Julia
      * @since Sprint 6

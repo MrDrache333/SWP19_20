@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Ferit
  * @since Sprint 8
  */
+@SuppressWarnings("UnstableApiUsage")
 class BotPlayerTest {
 
     static final User lobbyOwner = new UserDTO("Marco", "Marco", "Marco@Grawunder.com");
@@ -38,7 +39,7 @@ class BotPlayerTest {
     final LobbyService lobbyService = new LobbyService(lobbyManagement, new AuthenticationService(bus, userManagement, lobbyManagement), new ChatManagement(), bus);
     private UUID lobbyID;
     final GameManagement gameManagement = new GameManagement(new ChatManagement(), lobbyManagement);
-    private CountDownLatch lock = new CountDownLatch(1);
+    private final CountDownLatch lock = new CountDownLatch(1);
     private Object event;
 
     /**
@@ -106,10 +107,12 @@ class BotPlayerTest {
      * @since Sprint 8
      */
     @Test
-    void createBotPlayertest() {
-        AddBotRequest newReq = new AddBotRequest(lobbyID);
-        bus.post(newReq);
-        assertTrue(lobbyManagement.getLobby(lobbyID).get().getPlayers() == 2);
+    void createBotPlayerTest() {
+        if (lobbyManagement.getLobby(lobbyID).isPresent()) {
+            AddBotRequest newReq = new AddBotRequest(lobbyID);
+            bus.post(newReq);
+            assertTrue(lobbyManagement.getLobby(lobbyID).get().getPlayers() == 2);
+        }
     }
 
     /**
@@ -120,20 +123,21 @@ class BotPlayerTest {
      */
     @Test
     void botIsReadyTest() {
-        AddBotRequest newReq = new AddBotRequest(lobbyID);
-        bus.post(newReq);
+        if (lobbyManagement.getLobby(lobbyID).isPresent()) {
+            AddBotRequest newReq = new AddBotRequest(lobbyID);
+            bus.post(newReq);
 
-        ArrayList<User> theUser = new ArrayList<>();
-        for (User user : lobbyManagement.getLobby(lobbyID).get().getUsers()) {
-            theUser.add(user);
+            ArrayList<User> theUser;
+            theUser = new ArrayList<>(lobbyManagement.getLobby(lobbyID).get().getUsers());
+
+            User theBotPlayer;
+            if (theUser.get(0).getIsBot()) {
+                theBotPlayer = theUser.get(0);
+            } else {
+                theBotPlayer = theUser.get(1);
+            }
+            assertTrue(lobbyManagement.getLobby(lobbyID).get().getReadyStatus(theBotPlayer));
         }
-        User theBotPlayer;
-        if (theUser.get(0).getIsBot() == true) {
-            theBotPlayer = theUser.get(0);
-        } else {
-            theBotPlayer = theUser.get(1);
-        }
-        assertTrue(lobbyManagement.getLobby(lobbyID).get().getReadyStatus(theBotPlayer) == true);
     }
     // TODO: Weitere Tests implementieren, wenn die Botlogik ausgebaut wird.
 }

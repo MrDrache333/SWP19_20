@@ -2,13 +2,12 @@ package de.uol.swp.common.lobby.exception;
 
 import de.uol.swp.common.message.AbstractServerMessage;
 
-import java.util.AbstractSet;
 import java.util.UUID;
 
 public class LobbyExceptionMessage extends AbstractServerMessage {
     private static final long serialVersionUID = 4391739520074356159L;
-    private UUID lobbyID;
-    private String message;
+    private final UUID lobbyID;
+    private final String message;
 
     /**
      * Konstruktor der LobbyExceptionMessage
@@ -30,7 +29,7 @@ public class LobbyExceptionMessage extends AbstractServerMessage {
      * @author Darian
      * @since Sprint 8
      */
-    public UUID getlobbyID() {
+    public UUID getLobbyID() {
         return lobbyID;
     }
 

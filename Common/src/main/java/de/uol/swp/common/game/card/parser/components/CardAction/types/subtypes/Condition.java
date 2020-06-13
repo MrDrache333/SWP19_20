@@ -12,15 +12,15 @@ public class Condition<T> {
     /**
      * Linker Parameter
      */
-    private T left;
+    private final T left;
     /**
      * Logischer Operator
      */
-    private Operator operator;
+    private final Operator operator;
     /**
      * Der Rechte Parameter
      */
-    private T right;
+    private final T right;
 
 
     /**

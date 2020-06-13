@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.UUID;
 
+@SuppressWarnings("UnstableApiUsage")
 public class GameService {
     private static final Logger LOG = LogManager.getLogger(GameService.class);
     private final EventBus bus;

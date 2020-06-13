@@ -19,10 +19,10 @@ public class Deck {
      * @author Paula
      * @since Sprint 5
      */
-    private ArrayList<Card> cardsDeck = new ArrayList<>();
-    private ArrayList<Card> discardPile = new ArrayList<>();
-    private ArrayList<Card> hand = new ArrayList<>();
-    private ArrayList<Card> temp = new ArrayList<>();
+    private final ArrayList<Card> cardsDeck = new ArrayList<>();
+    private final ArrayList<Card> discardPile = new ArrayList<>();
+    private final ArrayList<Card> hand = new ArrayList<>();
+    private final ArrayList<Card> temp = new ArrayList<>();
     private final ArrayList<Card> actionPile = new ArrayList<>();
 
     /**
@@ -56,7 +56,7 @@ public class Deck {
                 tmp.add(cardsDeck.get(i));
             }
             hand.addAll(tmp);
-            tmp.forEach(card -> cardsDeck.remove(card));
+            tmp.forEach(cardsDeck::remove);
         } else {
             initialiseHand();
         }
@@ -92,7 +92,7 @@ public class Deck {
             Card tmpCard = cardsDeck.get(i);
             hand.add(tmpCard);
         }
-        hand.forEach(card -> cardsDeck.remove(card));
+        hand.forEach(cardsDeck::remove);
     }
 
     /**
@@ -122,17 +122,14 @@ public class Deck {
 
     public void discardMoneyCardsForValue(int value) {
         int money = 0;
-        int sizeHand = hand.size();
         ArrayList<Card> removeCards = new ArrayList<>();
-        for (int i = 0; i < sizeHand; i++) {
-            if (hand.get(i) instanceof MoneyCard) {
-                money += ((MoneyCard) hand.get(i)).getValue();
-                discardPile.add(hand.get(i));
-                removeCards.add(hand.get(i));
-                if (money >= value) {
+        for (Card item : hand) {
+            if (item instanceof MoneyCard) {
+                money += ((MoneyCard) item).getValue();
+                discardPile.add(item);
+                removeCards.add(item);
+                if (money >= value)
                     break;
-                }
-
             }
         }
         for (Card card : removeCards) {
@@ -150,7 +147,6 @@ public class Deck {
     public boolean discardPileWasCleared() {
         return discardPile.size() == 0;
     }
-
 
     public ArrayList<Card> getHand() {
         return hand;

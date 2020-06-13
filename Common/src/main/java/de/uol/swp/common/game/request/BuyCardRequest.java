@@ -10,9 +10,9 @@ public class BuyCardRequest extends AbstractRequestMessage {
 
 
     private static final long serialVersionUID = -2002420509720238588L;
-    private UUID lobbyID;
-    private User currentUser;
-    private Short cardID;
+    private final UUID lobbyID;
+    private final User currentUser;
+    private final Short cardID;
 
     /**
      * Die Request die gestellt wird, wenn ein User eine Karte kaufen möchte

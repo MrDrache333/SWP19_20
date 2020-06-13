@@ -57,9 +57,11 @@ import java.util.*;
 /**
  * Der Presenter für die Spielansicht.
  *
- * @author fenja, hashem, marvin
+ * @author Fenja, Haschem, Marvin
  * @since Sprint 3
  */
+
+@SuppressWarnings({"UnstableApiUsage", "unused"})
 public class GameViewPresenter extends AbstractPresenter {
 
     /**
@@ -173,18 +175,17 @@ public class GameViewPresenter extends AbstractPresenter {
     private final ChatViewPresenter chatViewPresenter;
     private final Injector injector;
     private final GameManagement gameManagement;
-    private ArrayList<Short> handCardIDs;
-    private Map<Short, Label> valuecardLabels = new HashMap<>();
-    private ColorAdjust makeImageDarker = new ColorAdjust();
+    private final Map<Short, Label> valueCardLabels = new HashMap<>();
+    private final ColorAdjust makeImageDarker = new ColorAdjust();
     private boolean chooseCardBecauseOfActionCard = false;
-    private ColorAdjust notChosenCard = new ColorAdjust();
-    private ArrayList<Short> choosenCardsId = new ArrayList<>();
-    private ArrayList<ImageView> choosenCards = new ArrayList<>();
+    private final ColorAdjust notChosenCard = new ColorAdjust();
+    private final ArrayList<Short> chosenCardsId = new ArrayList<>();
+    private final ArrayList<ImageView> chosenCards = new ArrayList<>();
     private int numberOfCardsToChoose;
     private String currentInfoText;
-    private HashMap<String, HashMap<ZoneType, GeneralLayoutContainer>> usersContainer = new HashMap<>();
+    private final HashMap<String, HashMap<ZoneType, GeneralLayoutContainer>> usersContainer = new HashMap<>();
     private volatile boolean deleteHandCardsFromOpponent = false;
-    private ArrayList<ImageView> cardsToMove = new ArrayList<>();
+    private final ArrayList<ImageView> cardsToMove = new ArrayList<>();
 
     /**
      * Das Event das den Handkarten gegeben wird, wenn sie ausspielbar sein sollen.
@@ -210,7 +211,7 @@ public class GameViewPresenter extends AbstractPresenter {
         @Override
         public void handle(Event event) {
             ImageView card = (ImageView) event.getSource();
-            discardChoosenCard(lobbyID, loggedInUser, card.getImage().getUrl(), Short.valueOf(card.getId()), card, (MouseEvent) event);
+            discardChoosenCard(lobbyID, loggedInUser, card.getImage().getUrl(), card, (MouseEvent) event);
         }
     };
 
@@ -221,13 +222,13 @@ public class GameViewPresenter extends AbstractPresenter {
      * @since Sprint 8
      */
     @FXML
-    private final EventHandler<ActionEvent> sendChoosenCardResponse = new EventHandler() {
+    private final EventHandler sendChoosenCardResponse = new EventHandler() {
         @Override
         public void handle(Event event) {
             selectButton.setVisible(false);
             playAllMoneyCardsButton.setVisible(true);
-            for (ImageView card : choosenCards) {
-                choosenCardsId.add(Short.parseShort(card.getId()));
+            for (ImageView card : chosenCards) {
+                chosenCardsId.add(Short.parseShort(card.getId()));
             }
             gameService.chooseCardResponse(lobbyID, loggedInUser, choosenCardsId);
             handcards.getChildren().forEach((n) -> {
@@ -239,9 +240,7 @@ public class GameViewPresenter extends AbstractPresenter {
             });
             Platform.runLater(() -> {
                 skipPhaseButton.setDisable(false);
-                Platform.runLater(() -> {
-                    infoActualPhase.setText(currentInfoText);
-                });
+                Platform.runLater(() -> infoActualPhase.setText(currentInfoText));
             });
         }
     };
@@ -249,14 +248,14 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Instantiiert einen neuen GameView Presenter.
      *
-     * @param loggedInUser      der angemeldete Benutzer
-     * @param lobbyID           die Lobby ID
-     * @param chatService       der Chat Service
-     * @param chatViewPresenter der Chat View Presenter
-     * @param lobbyService      der Lobby Service
-     * @param userService       der User Service
-     * @param injector          der Injector
-     * @param gameManagement    das Game Management
+     * @param loggedInUser      Der angemeldete Benutzer
+     * @param lobbyID           Die LobbyID
+     * @param chatService       Der ChatService
+     * @param chatViewPresenter Der ChatViewPresenter
+     * @param lobbyService      Der LobbyService
+     * @param userService       Der UserService
+     * @param injector          Der Injector
+     * @param gameManagement    Das GameManagement
      */
     public GameViewPresenter(User loggedInUser, UUID lobbyID, ChatService chatService, ChatViewPresenter chatViewPresenter, LobbyService lobbyService, UserService userService, Injector injector, GameManagement gameManagement, GameService gameService) {
         this.loggedInUser = loggedInUser;
@@ -301,13 +300,12 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Show Alert für den Aufgeben Button
      *
-     * @param type    der Typ
      * @param message die Nachricht
      * @param title   der Titel
      * @author M.Haschem
      * @since Sprint 3
      */
-    public void showGiveUpAlert(Alert.AlertType type, String message, String title) {
+    public void showGiveUpAlert(String message, String title) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "");
         alert.setResizable(false);
         alert.initModality(Modality.APPLICATION_MODAL);
@@ -325,7 +323,7 @@ public class GameViewPresenter extends AbstractPresenter {
         alert.initModality(Modality.APPLICATION_MODAL);
         alert.getDialogPane().setContentText(message);
         alert.getDialogPane().setHeaderText(title);
-        Optional<ButtonType> result = alert.showAndWait();
+        alert.showAndWait();
     }
 
     /**
@@ -372,10 +370,10 @@ public class GameViewPresenter extends AbstractPresenter {
     private void initalizeCardFieldImages(ArrayList<Short> theList, Map<Short, Integer> valueCards) {
         ArrayList<ImageView> allImageViews = new ArrayList<>(Arrays.asList(cardPlaceholder1, cardPlaceholder2, cardPlaceholder3, cardPlaceholder4, cardPlaceholder5, cardPlaceholder6, cardPlaceholder7, cardPlaceholder8, cardPlaceholder9, cardPlaceholder10));
         int index = 0;
-        valuecardLabels.put((short) 4, countEstateCardLabel);
-        valuecardLabels.put((short) 5, countDuchiesCardLabel);
-        valuecardLabels.put((short) 6, countProvinceCardLabel);
-        valuecardLabels.put((short) 38, countCurseCardLabel);
+        valueCardLabels.put((short) 4, countEstateCardLabel);
+        valueCardLabels.put((short) 5, countDuchiesCardLabel);
+        valueCardLabels.put((short) 6, countProvinceCardLabel);
+        valueCardLabels.put((short) 38, countCurseCardLabel);
         //Initialisieren der Aktionskarten
         for (ImageView imageView : allImageViews) {
             String theIdInString = String.valueOf(theList.get(index));
@@ -387,8 +385,8 @@ public class GameViewPresenter extends AbstractPresenter {
         }
         //Initialiseren der Anzahl der Wertkarten
         Platform.runLater(() -> {
-            for (Short key : valuecardLabels.keySet()) {
-                Label l = valuecardLabels.get(key);
+            for (Short key : valueCardLabels.keySet()) {
+                Label l = valueCardLabels.get(key);
                 l.setText(String.valueOf(valueCards.get(key)));
             }
         });
@@ -403,7 +401,7 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @FXML
     public void onGiveUpButtonPressed(ActionEvent actionEvent) {
-        showGiveUpAlert(Alert.AlertType.CONFIRMATION, " ", "Möchtest du wirklich aufgeben?");
+        showGiveUpAlert(" ", "Möchtest du wirklich aufgeben?");
     }
 
     /**
@@ -548,9 +546,7 @@ public class GameViewPresenter extends AbstractPresenter {
         if (response.getLobbyID().equals(this.lobbyID)) {
             LOG.debug("Aktualisieren der Userliste mit " + response.getUsers());
 
-            response.getUsers().forEach(user -> {
-                LOG.debug("Füge den folgenden Nutzer der Liste hinzu: " + user.getUsername());
-            });
+            response.getUsers().forEach(user -> LOG.debug("Füge den folgenden Nutzer der Liste hinzu: " + user.getUsername()));
 
             updateUsersInGame(response.getUsers());
         } else {
@@ -571,8 +567,8 @@ public class GameViewPresenter extends AbstractPresenter {
     @Subscribe
     public void onBuyCardMessage(BuyCardMessage msg) {
         if (msg.getLobbyID().equals(lobbyID)) {
-            if (valuecardLabels.containsKey(msg.getCardID())) {
-                Platform.runLater(() -> valuecardLabels.get(msg.getCardID()).setText(String.valueOf(msg.getCounterCard())));
+            if (valueCardLabels.containsKey(msg.getCardID())) {
+                Platform.runLater(() -> valueCardLabels.get(msg.getCardID()).setText(String.valueOf(msg.getCounterCard())));
             }
             ImageView selectedCard = getCardFromCardfield(msg.getCardID());
             if (msg.getCounterCard() < 1) {
@@ -682,8 +678,8 @@ public class GameViewPresenter extends AbstractPresenter {
     @Subscribe
     public void onChooseCardRequest(ChooseCardRequest req) {
         if (req.getGameID().equals(lobbyID) && req.getPlayer().equals(loggedInUser)) {
-            choosenCardsId.clear();
-            choosenCards.clear();
+            chosenCardsId.clear();
+            chosenCards.clear();
             ImageView card = (ImageView) mouseEvent.getTarget();
             numberOfCardsToChoose = req.getCount();
             currentInfoText = infoActualPhase.getText();
@@ -694,16 +690,14 @@ public class GameViewPresenter extends AbstractPresenter {
                 }
                 selectButton.setVisible(true);
                 playAllMoneyCardsButton.setVisible(false);
-                Platform.runLater(() -> {
-                    handcards.getChildren().forEach((n) -> {
-                        if (!card.equals(n)) {
-                            n.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
-                            if (req.getCards().contains(Short.parseShort(n.getId()))) {
-                                n.addEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
-                            }
+                Platform.runLater(() -> handcards.getChildren().forEach((n) -> {
+                    if (!card.equals(n)) {
+                        n.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+                        if (req.getCards().contains(Short.parseShort(n.getId()))) {
+                            n.addEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
                         }
-                    });
-                });
+                    }
+                }));
                 Platform.runLater(() -> {
                     if (numberOfCardsToChoose != 255) {
                         infoActualPhase.setText(numberOfCardsToChoose + " Karte(n) entsorgen");
@@ -750,9 +744,9 @@ public class GameViewPresenter extends AbstractPresenter {
             });
         }
         if (msg.getGameID().equals(lobbyID) && !msg.getCurrentUser().equals(loggedInUser)) {
-            Task<Void> task = new Task<Void>() {
+            Task<Void> task = new Task<>() {
                 @Override
-                protected Void call() throws Exception {
+                protected Void call() {
                     // Wenn ein anderer Spieler eine ClearPhaseMessage erhählt wird dies den anderen Spielern
                     // angezeigt, indem deren Repräsentation des Spieler seine Handkarten und ausgespielten Karten auf den Ablagestapel legt.
                     Platform.runLater(() -> {
@@ -763,8 +757,8 @@ public class GameViewPresenter extends AbstractPresenter {
                                     .getChildren().add(new Card("card_back", 0, 0, 80));
                         }
                     });
-             return null;
-            }
+                    return null;
+                }
             };
             Thread th = new Thread(task);
             th.setDaemon(true);
@@ -809,7 +803,7 @@ public class GameViewPresenter extends AbstractPresenter {
         if (lobbyID.equals(message.getTheLobbyID())) {
             if ((message.getPlayer() == null || message.getPlayer().equals(loggedInUser))) {
                 cardsToMove.clear();
-                handCardIDs = message.getCardsOnHand();
+                ArrayList<Short> handCardIDs = message.getCardsOnHand();
                 handCardIDs.forEach((n) -> {
                     ImageView card = new Card(String.valueOf(n));
                     Platform.runLater(() -> {
@@ -832,9 +826,9 @@ public class GameViewPresenter extends AbstractPresenter {
                         card.setFitHeight(80);
                         card.setPreserveRatio(true);
                         card.setFitWidth(Math.round(card.getBoundsInLocal().getWidth()));
-                        Task<Void> task = new Task<Void>() {
+                        Task<Void> task = new Task<>() {
                             @Override
-                            protected Void call() throws Exception {
+                            protected Void call() {
                                 Platform.runLater(() -> {
                                     firstEnemyHand.getChildren().add(card);
                                     if (numberOfPlayersInGame >= 3) {
@@ -886,9 +880,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 Stage dialogStage = new Stage(StageStyle.UTILITY);
                 for (ButtonType buttonType : root.getButtonTypes()) {
                     ButtonBase button = (ButtonBase) root.lookupButton(buttonType);
-                    button.setOnAction(evt -> {
-                        dialogStage.close();
-                    });
+                    button.setOnAction(evt -> dialogStage.close());
                 }
                 root.getScene().setRoot(new Group());
                 root.setPadding(new Insets(10, 0, 10, 0));
@@ -912,9 +904,7 @@ public class GameViewPresenter extends AbstractPresenter {
     public void onCardsDeckSizeMessage(CardsDeckSizeMessage msg) {
         if (msg.getGameID().equals(lobbyID)) {
             if (msg.getPlayer().equals(loggedInUser)) {
-                Platform.runLater(() -> {
-                    countDeckLabel.setText(String.valueOf(msg.getCardsDeckSize()));
-                });
+                Platform.runLater(() -> countDeckLabel.setText(String.valueOf(msg.getCardsDeckSize())));
             }
             if (msg.getDiscardPileWasCleared()) {
                 Platform.runLater(() -> usersContainer.get(msg.getPlayer().getUsername()).get(ZoneType.DISCARD).getChildren().clear());
@@ -971,10 +961,10 @@ public class GameViewPresenter extends AbstractPresenter {
                 if (msg.getAvailableAction() != 1) {
                     numberOfAction.setText(msg.getAvailableAction() + " Aktionen");
                 }
-                if (msg.getSourceMessage() == Phase.Type.ActionPhase || msg.getSourceMessage() == Phase.Type.Clearphase) {
+                if (msg.getSourceMessage() == Phase.Type.ActionPhase || msg.getSourceMessage() == Phase.Type.ClearPhase) {
                     usableMoney = msg.getAdditionalMoney();
                 }
-                if (msg.getSourceMessage() == Phase.Type.Buyphase) {
+                if (msg.getSourceMessage() == Phase.Type.BuyPhase) {
                     if (playAllMoneyCardsButton.isDisable() && playAllMoneyCardsButton.isVisible()) {
                         usableMoney = msg.getAdditionalMoney() + msg.getMoneyOnHand();
                     }
@@ -1094,9 +1084,7 @@ public class GameViewPresenter extends AbstractPresenter {
         // Attention: This must be done on the FX Thread!
         int enemyCounter = 0;
         for (User u : usersList) {
-            if (loggedInUser != null && u.getUsername().equals(loggedInUser.getUsername())) {
-                //skip self
-            } else {
+            if (loggedInUser == null || !u.getUsername().equals(loggedInUser.getUsername())) {
                 enemyCounter++;
                 HashMap<ZoneType, GeneralLayoutContainer> enemyContainer = new HashMap<>();
                 if (enemyCounter == 1) {
@@ -1156,6 +1144,7 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Skipt die aktuelle Phase des Spielers zur nächsten.
      *
+     * @param actionEvent Das ActionEvent
      * @author Devin S.
      * @since Sprint 6
      */
@@ -1205,20 +1194,19 @@ public class GameViewPresenter extends AbstractPresenter {
      * @param gameID       Die ID des Spiels
      * @param loggedInUser der User der gerade eingelogt im Spiel ist und die Karte ausgewählt hat.
      * @param pfad         Der Pfad zum entsprechendem Vollbild
-     * @param id           Die ID der Karte
      * @param card         Die ImageView der ausgewählten Karte
      * @param e            Das MouseEvent, das zum anlicken der Karte zuständig ist.
      * @author Devin
      * @since Sprint 7
      */
-    private void discardChoosenCard(UUID gameID, User loggedInUser, String pfad, Short id, ImageView card, MouseEvent e) {
+    private void discardChoosenCard(UUID gameID, User loggedInUser, String pfad, ImageView card, MouseEvent e) {
         if (e.getButton() != MouseButton.PRIMARY) {
             bigCardImage.setImage(new Image(pfad));
             buyCardButton.setVisible(false);
             bigCardImageBox.setVisible(true);
         } else {
-            if (!choosenCards.contains(card)) {
-                choosenCards.add(card);
+            if (!chosenCards.contains(card)) {
+                chosenCards.add(card);
                 card.setEffect(makeImageDarker);
                 bigCardImageBox.setVisible(false);
                 if (numberOfCardsToChoose != 255) {
@@ -1226,7 +1214,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     Platform.runLater(() -> infoActualPhase.setText(numberOfCardsToChoose + " Karten entsorgen"));
                 }
             } else {
-                choosenCards.remove(card);
+                chosenCards.remove(card);
                 card.setEffect(null);
                 if (numberOfCardsToChoose != 255) {
                     numberOfCardsToChoose += 1;
@@ -1235,15 +1223,15 @@ public class GameViewPresenter extends AbstractPresenter {
             }
         }
         if (numberOfCardsToChoose == 0) {
-            for (ImageView card2 : choosenCards) {
-                choosenCardsId.add(Short.parseShort(card2.getId()));
+            for (ImageView card2 : chosenCards) {
+                chosenCardsId.add(Short.parseShort(card2.getId()));
             }
             handcards.getChildren().forEach((n) -> {
                 n.removeEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
                 n.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                 n.setEffect(null);
             });
-            gameService.chooseCardResponse(gameID, loggedInUser, choosenCardsId);
+            gameService.chooseCardResponse(gameID, loggedInUser, chosenCardsId);
             selectButton.setVisible(false);
             playAllMoneyCardsButton.setVisible(true);
             skipPhaseButton.setDisable(false);
@@ -1284,8 +1272,8 @@ public class GameViewPresenter extends AbstractPresenter {
         if (cardImage.getEffect() != null) {
             return;
         }
+        String cardID = cardImage.getId();
         if (mouseEvent.getButton() != MouseButton.PRIMARY) {
-            String cardID = cardImage.getId();
             String PathCardLargeView = "cards/images/" + cardID + ".png";
             bigCardImage.setImage(new Image(PathCardLargeView));
             // Aktion hinter dem Kauf-Button
@@ -1308,7 +1296,6 @@ public class GameViewPresenter extends AbstractPresenter {
             bigCardImageBox.setVisible(true);
             bigCardImageBox.toFront();
         } else {
-            String cardID = cardImage.getId();
             bigCardImageBox.setVisible(false);
             if (playAllMoneyCardsButton.isVisible() && playAllMoneyCardsButton.isDisable()) {
                 if (chooseCardBecauseOfActionCard) {
@@ -1554,14 +1541,14 @@ public class GameViewPresenter extends AbstractPresenter {
      * @since Sprint 9
      */
     public int getPlayerNumber(User user) {
-        if (player1_label.getText().equals(user.getUsername())) {
+        if (player1_label.getText().equals(user.getUsername()))
             return 1;
-        } else if (player2_label.getText().equals(user.getUsername())) {
+        else if (player2_label.getText().equals(user.getUsername()))
             return 2;
-        } else if (player3_label.getText().equals(user.getUsername())) {
+        else if (player3_label.getText().equals(user.getUsername()))
             return 3;
-        }
-        return 0;
+        else
+            return 0;
     }
 
     /**
@@ -1574,15 +1561,10 @@ public class GameViewPresenter extends AbstractPresenter {
     @Subscribe
     private void onUpdateCardCounterMessage(UpdateCardCounterMessage msg) {
         for (short id : msg.getCardCounts().keySet()) {
-            if (valuecardLabels.containsKey(id)) {
-                Platform.runLater(() -> {
-                    valuecardLabels.get(id).setText(String.valueOf(msg.getCardCounts().get(id)));
-                });
-            }
+            if (valueCardLabels.containsKey(id))
+                Platform.runLater(() -> valueCardLabels.get(id).setText(String.valueOf(msg.getCardCounts().get(id))));
             ImageView selectedCard = getCardFromCardfield(id);
-            if (msg.getCardCounts().get(id) < 1) {
-                selectedCard.setEffect(makeImageDarker);
-            }
+            if (msg.getCardCounts().get(id) < 1) selectedCard.setEffect(makeImageDarker);
         }
     }
 }

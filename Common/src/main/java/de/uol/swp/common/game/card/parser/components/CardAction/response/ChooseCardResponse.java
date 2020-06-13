@@ -17,11 +17,11 @@ public class ChooseCardResponse extends AbstractRequestMessage {
     /**
      * Die ausgewählten Karten
      */
-    private ArrayList<Short> cards;
+    private final ArrayList<Short> cards;
 
     private AbstractPlayground.ZoneType from;
-    private UUID gameID;
-    private User player;
+    private final UUID gameID;
+    private final User player;
 
     /**
      * Erstellt eine neue Antwortnachricht

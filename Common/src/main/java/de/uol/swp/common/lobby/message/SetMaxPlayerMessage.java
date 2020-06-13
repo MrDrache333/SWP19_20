@@ -20,10 +20,9 @@ public class SetMaxPlayerMessage extends AbstractLobbyMessage {
     private LobbyDTO lobby;
 
     /**
-     * Erstellt eine neue Set max player message.
+     * Konstruktor für Serialisierung
      */
     public SetMaxPlayerMessage() {
-        //Konstruktor für Serialisierung
     }
 
     /**

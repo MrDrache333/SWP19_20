@@ -23,15 +23,15 @@ public class ChooseCardRequest extends AbstractGameMessage {
     /**
      * Die Karten-ID's, die zur Auswahl stehen.
      */
-    private ArrayList<Short> cards;
+    private final ArrayList<Short> cards;
     /**
      * Die Kartenquelle
      */
-    private AbstractPlayground.ZoneType source;
+    private final AbstractPlayground.ZoneType source;
     /**
      * Die anzuzeigende Nachricht
      */
-    private String message;
+    private final String message;
     /**
      * Die Anzahl an wählbaren Karten
      */
