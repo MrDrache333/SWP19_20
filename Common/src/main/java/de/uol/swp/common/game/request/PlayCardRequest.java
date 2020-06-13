@@ -32,7 +32,6 @@ public class PlayCardRequest extends AbstractRequestMessage {
      * @since Sprint 5
      */
     public PlayCardRequest(UUID gameID, User currentUser, Short handCardID) {
-
         this.gameID = gameID;
         this.user = currentUser;
         this.id = handCardID;

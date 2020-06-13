@@ -14,7 +14,7 @@ public class GetCard extends ComplexCardAction {
     /**
      * Die Anzahl der Karten (default=1)
      */
-    private short count = 1;
+    private short count;
     /**
      * Die "geholten" Karten aus der angegebenen Quelle
      */

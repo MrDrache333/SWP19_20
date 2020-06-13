@@ -19,10 +19,10 @@ public interface Phase {
         /**
          * Die Kaufphase
          */
-        Buyphase,
+        BuyPhase,
         /**
          * Die Aufräumphase
          */
-        Clearphase
+        ClearPhase
     }
 }

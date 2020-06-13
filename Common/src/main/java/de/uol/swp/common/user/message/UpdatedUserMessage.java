@@ -9,8 +9,8 @@ import de.uol.swp.common.user.User;
 public class UpdatedUserMessage extends AbstractServerMessage {
 
     private static final long serialVersionUID = -1159862320730194506L;
-    private User user;
-    private User oldUser;
+    private final User user;
+    private final User oldUser;
 
     /**
      * Initialisiert eine neue UpdatedUserMessage

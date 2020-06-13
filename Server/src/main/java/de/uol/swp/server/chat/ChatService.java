@@ -6,11 +6,8 @@ import com.google.inject.Inject;
 import de.uol.swp.common.chat.exception.ChatException;
 import de.uol.swp.common.chat.message.ChatExceptionMessage;
 import de.uol.swp.common.chat.message.NewChatMessage;
-import de.uol.swp.common.chat.request.ChatHistoryRequest;
 import de.uol.swp.common.chat.request.NewChatMessageRequest;
-import de.uol.swp.common.chat.response.ChatResponseMessage;
 import de.uol.swp.common.message.AbstractResponseMessage;
-import de.uol.swp.common.message.ResponseMessage;
 import de.uol.swp.server.AbstractService;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import org.apache.logging.log4j.LogManager;
@@ -22,7 +19,7 @@ import org.apache.logging.log4j.Logger;
  * @author KenoO
  * @since Sprint 1
  */
-@SuppressWarnings("UnstableApiUsage")
+@SuppressWarnings("UnstableApiUsage, unused")
 public class ChatService extends AbstractService {
 
 
@@ -75,31 +72,5 @@ public class ChatService extends AbstractService {
         //Die neue Chatnachricht an alle Clients senden
         NewChatMessage message = new NewChatMessage(req.getChatid(), req.getMessage());
         authenticationService.sendToLoggedInPlayers(message);
-    }
-
-    /**
-     * Wenn eine Anfrage für die gesamte Historie eines Chats von einem Client an den Server gesendet wurde.
-     *
-     * @param req Der Request, der gesendet wurde.
-     */
-    @Subscribe
-    private void onChatHistoryRequest(ChatHistoryRequest req) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Neue ChatHistoryRequest von  " + req.getSender().getUsername() + " für Chat " + req.getChatId());
-        }
-        ResponseMessage returnMessage;
-        try {
-            //Versuchen, die Chathistorie für den angeforderten Chat abzurufen
-            returnMessage = new ChatResponseMessage(chatManagement.getChat(req.getChatId()).get(), req.getSender().getUsername());
-        } catch (ChatException e) {
-            //Bei fehlern eine Fehlernachricht an den Client zurück übermitteln
-            returnMessage = new ChatExceptionMessage(req.getSender(), e);
-            LOG.error(e);
-        }
-        returnMessage.initWithMessage(req);
-        //Wenn ein Kontext in dem Request übergeben wurde, dann übernehme diesen
-        if (req.getMessageContext().isPresent())
-            returnMessage.setMessageContext(req.getMessageContext().get());
-        post(returnMessage);
     }
 }

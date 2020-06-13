@@ -12,14 +12,14 @@ import java.util.UUID;
 public class SendChosenCardsRequest extends AbstractLobbyRequest {
 
     private static final long serialVersionUID = -7885275563836769973L;
-    private final ArrayList<Short> chosencards;
+    private final ArrayList<Short> chosenCards;
 
-    public SendChosenCardsRequest(UUID lobbyID, ArrayList<Short> chosencards) {
+    public SendChosenCardsRequest(UUID lobbyID, ArrayList<Short> chosenCards) {
         super(lobbyID);
-        this.chosencards = chosencards;
+        this.chosenCards = chosenCards;
     }
 
     public ArrayList<Short> getChosenCards() {
-        return chosencards;
+        return chosenCards;
     }
 }

@@ -38,6 +38,11 @@
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client-jre7</artifactId>
+            <version>1.6.1</version>
+        </dependency>
     </dependencies>
 
     <build>

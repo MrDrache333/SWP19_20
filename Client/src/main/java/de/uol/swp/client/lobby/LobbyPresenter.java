@@ -48,6 +48,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 
+@SuppressWarnings("UnstableApiUsage, unused")
 public class LobbyPresenter extends AbstractPresenter {
 
     public static final String fxml = "/fxml/LobbyViewWIP.fxml";
@@ -252,7 +253,7 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Wenn der BotButton gepresst wird.
      *
-     * @param actionEvent
+     * @param actionEvent Das ActionEvent
      */
     @FXML
     public void onCreateBotButtonPressed(ActionEvent actionEvent) {
@@ -326,7 +327,7 @@ public class LobbyPresenter extends AbstractPresenter {
     /**
      * Methode für den Klick des Buttons Auswahl-abschicken
      *
-     * @param event
+     * @param event Das ActionEvent
      * @author Anna
      * @since Sprint 8
      */
@@ -468,20 +469,6 @@ public class LobbyPresenter extends AbstractPresenter {
         LOG.debug("Spieler in der Lobby mit der ID" + message.getLobbyID() + " startet.");
         gameManagement.showGameView();
     }
-
-    /**
-     * Nachdem der Nutzer sich ausgeloggt hat, wird er auch aus der Lobbyliste gelöscht.
-     *
-     * @param message Die UserLoggedOutMessage
-     * @author Darian
-     * @since Sprint 3
-     */
-//    @Subscribe
-//    public void onUserLoggedOutMessage(UserLoggedOutMessage message) {
-//        userLeftLobby(message.getUsername(), false);
-//    }
-//
-//    Überflüssig, da man beim ausloggen inzwischen schon jede Lobby verlässt. (Siehe LeaveAllLobbiesOnLogoutRequest)
 
     /**
      * User wird aus der Liste entfernt, wenn er seinen Account gelöscht hat
@@ -668,7 +655,10 @@ public class LobbyPresenter extends AbstractPresenter {
         if (!box.getChildren().contains(crownView) && user.getUsername().equals(gameOwner.getUsername())) {
             crownView.setFitHeight(15);
             crownView.setFitWidth(15);
-            Platform.runLater(() -> box.getChildren().add(crownView));
+            Platform.runLater(() -> {
+                if (!box.getChildren().contains(crownView))
+                    box.getChildren().add(crownView);
+            });
         }
         return box;
     }

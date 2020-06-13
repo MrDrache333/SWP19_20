@@ -6,8 +6,8 @@ import de.uol.swp.common.user.UserDTO;
 /**
  * The type Lobby user.
  *
- * @author Keno Oelrichs Garcia
- * @Version 1.0
+ * @author Keno O.
+ * @version 1.0
  * @since Sprint 3
  */
 public class LobbyUser extends UserDTO {
@@ -19,7 +19,7 @@ public class LobbyUser extends UserDTO {
      * Ein neuer Lobby-User wird erstellt der den normalen User erweitert mit einem Bereit-Status.
      *
      * @param user Der Benutzer der erweitert werden soll
-     * @author Keno Oelrichs Garcia
+     * @author Keno O.
      * @since Sprint 3
      */
     public LobbyUser(User user) {

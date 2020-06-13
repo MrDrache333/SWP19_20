@@ -10,7 +10,7 @@ import java.util.UUID;
  */
 public class UpdatedInGameMessage extends AbstractLobbyMessage {
 
-    private UUID lobbyID;
+    private final UUID lobbyID;
 
     public UpdatedInGameMessage(UUID lobbyID) {
         this.lobbyID = lobbyID;

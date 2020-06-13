@@ -4,9 +4,9 @@ import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.user.User;
 
 public class OpenJoinLobbyRequest {
-    private User user;
+    private final User user;
 
-    private Lobby lobby;
+    private final Lobby lobby;
 
     /**
      * Der Konstruktor der OpenLobbyCreateRequest

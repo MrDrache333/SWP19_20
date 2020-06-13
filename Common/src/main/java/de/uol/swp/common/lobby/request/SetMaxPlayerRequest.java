@@ -5,14 +5,14 @@ import de.uol.swp.common.user.UserDTO;
 import java.util.UUID;
 
 /**
- * Request um die maixmale Spieleranzahl festzulegen
+ * Request um die maximale Spieleranzahl festzulegen
  *
  * @author Timo, Rike
  * @since Sprint 3
  */
 public class SetMaxPlayerRequest extends AbstractLobbyRequest {
     private static final long serialVersionUID = -8642526060768371983L;
-    private Integer maxPlayerValue;
+    private final Integer maxPlayerValue;
 
     /**
      * Initialisiert eine neue setMaxPlayerRequest

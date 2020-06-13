@@ -9,9 +9,9 @@ import java.util.UUID;
 public class GameOverMessage extends AbstractServerMessage {
 
     private static final long serialVersionUID = 8386864315993015152L;
-    private UUID gameID;
-    private List<String> winners;
-    private Map<String, Integer> results;
+    private final UUID gameID;
+    private final List<String> winners;
+    private final Map<String, Integer> results;
 
     /**
      * Instanziiert GameOverMessage

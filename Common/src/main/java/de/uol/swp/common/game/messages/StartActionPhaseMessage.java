@@ -15,9 +15,9 @@ import java.util.UUID;
 public class StartActionPhaseMessage extends AbstractServerMessage {
 
     private static final long serialVersionUID = -7186103893383553989L;
-    private User user;
-    private UUID gameID;
-    private Timestamp timestamp;
+    private final User user;
+    private final UUID gameID;
+    private final Timestamp timestamp;
 
     /**
      * Der Konstruktor der StartActionPhaseMessage
