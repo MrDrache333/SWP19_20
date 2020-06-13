@@ -452,6 +452,17 @@ public class Playground extends AbstractPlayground {
         this.actualPhase = actualPhase;
     }
 
+    /**
+     * Gibt den Spieler zurück der als letztes Aufgegeben hat.
+     *
+     * @return s.o
+     * @author Haschem, Ferit
+     * @since Sprint 5
+     */
+    public Player getLatestGavedUpPlayer() {
+        return latestGavedUpPlayer;
+    }
+
     public CardPack getCardsPackField() {
         return cardsPackField;
     }

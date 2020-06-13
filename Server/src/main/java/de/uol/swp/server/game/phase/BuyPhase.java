@@ -14,7 +14,7 @@ interface BuyPhase extends Phase {
      *
      * @param player Der Spieler
      * @param cardId Die Karten-ID
-     * @author KenoO
+     * @author Keno O.
      * @since Sprint 5
      */
     int executeBuyPhase(Player player, short cardId) throws IllegalArgumentException, NotEnoughMoneyException;
