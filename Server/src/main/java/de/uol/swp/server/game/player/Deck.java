@@ -11,6 +11,7 @@ import java.util.Collections;
 /**
  * Kartendeck eines Spielers
  */
+@SuppressWarnings("unused")
 public class Deck {
 
     /**
@@ -56,7 +57,7 @@ public class Deck {
                 tmp.add(cardsDeck.get(i));
             }
             hand.addAll(tmp);
-            tmp.forEach(card -> cardsDeck.remove(card));
+            tmp.forEach(cardsDeck::remove);
         } else {
             initialiseHand();
         }
@@ -95,10 +96,9 @@ public class Deck {
             Card tmpCard = cardsDeck.get(i);
             hand.add(tmpCard);
         }
-        hand.forEach(card -> cardsDeck.remove(card));
+        hand.forEach(cardsDeck::remove);
         return hand;
     }
-
 
     /**
      * Karte wird aus Arrays gelöscht
@@ -115,7 +115,7 @@ public class Deck {
     /**
      * Hilfsmethode um eine Karte zum Ablagestapel hinzuzufügen
      *
-     * @param card
+     * @param card Die Karte, die hinzugefügt wird
      * @author Paula
      * @since Sprint 6
      */
@@ -151,17 +151,14 @@ public class Deck {
 
     public void discardMoneyCardsForValue(int value) {
         int money = 0;
-        int sizeHand = hand.size();
         ArrayList<Card> removeCards = new ArrayList<>();
-        for (int i=0; i<sizeHand; i++){
-            if (hand.get(i) instanceof MoneyCard) {
-                money += ((MoneyCard) hand.get(i)).getValue();
-                discardPile.add(hand.get(i));
-                removeCards.add(hand.get(i));
-                if (money >= value) {
+        for (Card item : hand) {
+            if (item instanceof MoneyCard) {
+                money += ((MoneyCard) item).getValue();
+                discardPile.add(item);
+                removeCards.add(item);
+                if (money >= value)
                     break;
-                }
-
             }
         }
         for (Card card : removeCards) {
@@ -179,7 +176,6 @@ public class Deck {
     public boolean discardPileWasCleared() {
         return discardPile.size() == 0;
     }
-
 
     public ArrayList<Card> getHand() {
         return hand;

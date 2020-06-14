@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
  * @author Anna
  * @since Sprint 4
  */
-@SuppressWarnings("UnstableApiUsage")
+@SuppressWarnings("UnstableApiUsage, unused")
 public class DeleteAccountPresenter {
 
     /**

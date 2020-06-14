@@ -5,7 +5,7 @@ import de.uol.swp.common.user.UserDTO;
 import java.util.UUID;
 
 /**
- * Request um die maixmale Spieleranzahl festzulegen
+ * Request um die maximale Spieleranzahl festzulegen
  *
  * @author Timo, Rike
  * @since Sprint 3

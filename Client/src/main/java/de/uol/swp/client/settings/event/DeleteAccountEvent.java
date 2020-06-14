@@ -9,7 +9,7 @@ public class DeleteAccountEvent {
     /**
      * Konstruktor des DeleteAccountEvent
      *
-     * @param user
+     * @param user Der zu löschende Nutzer
      * @author Anna
      * @since Sprint 4
      */

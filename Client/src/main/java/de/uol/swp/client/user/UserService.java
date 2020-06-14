@@ -16,6 +16,7 @@ import java.util.List;
  * @author Marco Grawunder
  */
 
+@SuppressWarnings("UnstableApiUsage, unused")
 public class UserService implements de.uol.swp.common.user.UserService {
 
     private static final Logger LOG = LogManager.getLogger(UserService.class);

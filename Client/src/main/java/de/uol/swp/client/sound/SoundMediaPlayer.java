@@ -57,9 +57,9 @@ public class SoundMediaPlayer implements MediaPlayer {
     public static void setSound(boolean play) {
         soundEnabled = play;
         if (!play) {
-            playingSounds.forEach(e -> e.stop());
+            playingSounds.forEach(SoundMediaPlayer::stop);
             ArrayList<SoundMediaPlayer> temp = new ArrayList<>(playingSounds);
-            temp.stream().filter(e -> e.type.equals(Type.Sound)).forEach(e -> playingSounds.remove(e));
+            temp.stream().filter(e -> e.type.equals(Type.Sound)).forEach(playingSounds::remove);
         } else
             playingSounds.stream().filter(e -> e.type.equals(Type.Music)).forEach(SoundMediaPlayer::play);
     }

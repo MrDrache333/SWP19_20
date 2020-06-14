@@ -44,7 +44,7 @@ class GameViewPresenterTest {
     static final de.uol.swp.server.game.GameManagement gameManagement = new GameManagement(chatManagement, lobbyManagement);
     static final AuthenticationService authenticationService = new AuthenticationService(bus, new UserManagement(new MainMemoryBasedUserStore()), lobbyManagement);
     static final de.uol.swp.server.game.GameService gameService = new GameService(bus, gameManagement, authenticationService);
-    private static final ArrayList<Short> chosenCards = new ArrayList<Short>();
+    private static final ArrayList<Short> chosenCards = new ArrayList<>();
     static UUID gameID;
     private final CountDownLatch lock = new CountDownLatch(1);
     private Object event;

@@ -113,7 +113,7 @@ public class GameManagement {
      * @since Sprint 5
      */
     @Subscribe
-    private void userGivedUp(UserGaveUpMessage msg) {
+    private void userGaveUp(UserGaveUpMessage msg) {
         if (msg.getLobbyID().equals(id) && msg.getUserGivedUp() && msg.getTheUser().equals(loggedInUser)) {
             primaryPresenter.closeTab(msg.getLobbyID(), true);
             LOG.debug("Game mit folgender ID geschlossen: " + id);
@@ -130,14 +130,14 @@ public class GameManagement {
     }
 
     @Subscribe
-    private void userLeftAllLobbys(UserLeftAllLobbiesMessage msg) {
+    private void userLeftAllLobbies(UserLeftAllLobbiesMessage msg) {
         if (msg.getUser().getUsername().equals(loggedInUser.getUsername())) {
             primaryPresenter.closeAllTabs();
         }
     }
 
     @Subscribe
-    private void userDrppedAccount(UserDroppedMessage msg) {
+    private void userDroppedAccount(UserDroppedMessage msg) {
         if (msg.getUser().getUsername().equals(loggedInUser.getUsername())) {
             primaryPresenter.closeAllTabs();
         }

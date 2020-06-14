@@ -19,11 +19,11 @@ public class BuyCardMessage extends AbstractServerMessage {
     /**
      * Die Antwort auf die BuyCardRequest
      *
-     * @param lobbyID     die LobbyID
-     * @param currentUser der User der die Request gestellt hat
-     * @param cardID      die ID der Karte (String)
+     * @param lobbyID     Die LobbyID
+     * @param currentUser Der User der die Request gestellt hat
+     * @param cardID      Die ID der Karte (String)
      * @param counterCard Anzahl der Karten (die die selbe ID haben) die man noch kaufen kann
-     * @param costCard    die Kosten der zu kaufenden Karte
+     * @param costCard    Die Kosten der zu kaufenden Karte
      * @author Rike
      * @since Sprint 5
      */

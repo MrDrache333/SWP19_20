@@ -30,6 +30,7 @@ import java.util.stream.IntStream;
 /**
  * Playground stellt das eigentliche Spielfeld dar
  */
+@SuppressWarnings("UnstableApiUsage")
 public class Playground extends AbstractPlayground {
 
     private static final Logger LOG = LogManager.getLogger(Playground.class);
@@ -65,7 +66,7 @@ public class Playground extends AbstractPlayground {
     @Inject
     Playground(Lobby lobby, GameService gameService) {
         for (User user : lobby.getUsers()) {
-            if (user.getIsBot() == false) {
+            if (!user.getIsBot()) {
                 Player player = new Player(user.getUsername());
                 player.setTheUserInThePlayer(user);
                 player.setBot(false);
@@ -151,7 +152,7 @@ public class Playground extends AbstractPlayground {
             sendInitialHands();
         } else {
             //Spieler muss Clearphase durchlaufen haben
-            if (actualPhase != Phase.Type.Clearphase) return;
+            if (actualPhase != Phase.Type.ClearPhase) return;
             if (actualPlayer != latestGavedUpPlayer) {
                 sendPlayersHand();
                 sendCardsDeckSize();
@@ -210,12 +211,11 @@ public class Playground extends AbstractPlayground {
      * @since Sprint 5
      */
     public void nextPhase() {
-        ArrayList<Short> theIdsFromTheHand = new ArrayList<>(5);
-        if (actualPhase == Phase.Type.Clearphase) {
+        if (actualPhase == Phase.Type.ClearPhase) {
             throw new GamePhaseException("Du kannst die Clearphase nicht überspringen!");
         }
         if (actualPhase == Phase.Type.ActionPhase) {
-            actualPhase = Phase.Type.Buyphase;
+            actualPhase = Phase.Type.BuyPhase;
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartBuyPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
 
             ChatMessage infoMessage = new ChatMessage(infoUser, getActualPlayer().getTheUserInThePlayer().getUsername() + " ist am Zug!");
@@ -223,7 +223,7 @@ public class Playground extends AbstractPlayground {
 
             endTimer();
         } else {
-            actualPhase = Phase.Type.Clearphase;
+            actualPhase = Phase.Type.ClearPhase;
             Player currentPlayer = actualPlayer;
             players.forEach(n -> {
                 StartClearPhaseMessage msg = new StartClearPhaseMessage(currentPlayer.getTheUserInThePlayer(), theSpecificLobbyID, getIndexOfPlayer(n), getIndexOfPlayer(currentPlayer));
@@ -297,7 +297,7 @@ public class Playground extends AbstractPlayground {
                 }
             } else if (actualPlayer.equals(latestGavedUpPlayer) && !(onlyBotsLeft())) {
                 this.players.remove(thePositionInList);
-                actualPhase = Phase.Type.Clearphase;
+                actualPhase = Phase.Type.ClearPhase;
                 newTurn();
             } else if (nextPlayer.equals(latestGavedUpPlayer) && !(onlyBotsLeft())) {
                 if (thePositionInList < this.players.size() - 1) {
@@ -320,7 +320,7 @@ public class Playground extends AbstractPlayground {
     //Hilfsmethode zum Überprüfen
     public Boolean onlyBotsLeft() {
         for (Player player : players) {
-            if (player.isBot() == true) {
+            if (player.isBot()) {
                 return true;
             }
         }

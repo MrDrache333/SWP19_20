@@ -35,6 +35,7 @@ import java.util.*;
  * @author Marco Grawunder
  * @since Start
  */
+@SuppressWarnings("UnstableApiUsage, unused")
 public class AuthenticationService extends AbstractService {
     private static final Logger LOG = LogManager.getLogger(AuthenticationService.class);
 
@@ -120,7 +121,7 @@ public class AuthenticationService extends AbstractService {
             returnMessage.setSession(newSession);
         } catch (Exception e) {
             LOG.error(e);
-            returnMessage = new ServerExceptionMessage(new LoginException("Authentifizierung des Users " + req.getUsername() + " fehlgeschlagen!"));
+            returnMessage = new ServerExceptionMessage(new LoginException(e.getMessage()));
         }
         if (req.getMessageContext().isPresent()) {
             returnMessage.setMessageContext(req.getMessageContext().get());

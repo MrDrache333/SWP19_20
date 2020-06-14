@@ -170,7 +170,7 @@ public class LobbyManagement {
                 updatedLobbies.put(lobbyToUpdate.getLobbyID(), lobbyToUpdate);
             }
         }
-        updatedLobbies.entrySet().forEach(l -> lobbies.replace(l.getKey(), l.getValue()));
+        updatedLobbies.forEach(lobbies::replace);
     }
 
     /**

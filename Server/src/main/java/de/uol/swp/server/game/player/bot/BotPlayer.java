@@ -11,11 +11,11 @@ import de.uol.swp.server.game.player.Player;
 
 import java.util.UUID;
 
+@SuppressWarnings("UnstableApiUsage, unused")
 public class BotPlayer extends Player {
     protected EventBus eventBus;
 
     private final UUID gameId;
-    final private boolean isBot = true;
 
     /**
      * Erstellt einen neuen Bot.
@@ -35,7 +35,7 @@ public class BotPlayer extends Player {
     }
 
     public boolean isBot() {
-        return isBot;
+        return true;
     }
 
     /**

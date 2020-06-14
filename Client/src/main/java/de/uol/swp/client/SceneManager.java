@@ -56,6 +56,7 @@ import java.util.UUID;
  * @author Marco
  * @since Start
  */
+@SuppressWarnings("UnstableApiUsage, unused")
 public class SceneManager {
 
     static final Logger LOG = LogManager.getLogger(SceneManager.class);

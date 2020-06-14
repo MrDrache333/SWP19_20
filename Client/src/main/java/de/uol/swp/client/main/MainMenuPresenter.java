@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-
+@SuppressWarnings("UnstableApiUsage, unused")
 public class MainMenuPresenter extends AbstractPresenter {
 
     public static final String fxml = "/fxml/MainMenuView.fxml";
@@ -505,9 +505,7 @@ public class MainMenuPresenter extends AbstractPresenter {
                         } else {
                             setGraphic(joinLobbyButton);
                             Lobby lobby = getTableView().getItems().get(getIndex());
-                            Platform.runLater(() -> {
-                                joinLobbyButton.setDisable(lobby.getUsers().contains(loggedInUser) || lobby.getInGame() || lobby.getPlayers() == lobby.getMaxPlayer());
-                            });
+                            Platform.runLater(() -> joinLobbyButton.setDisable(lobby.getUsers().contains(loggedInUser) || lobby.getInGame() || lobby.getPlayers() == lobby.getMaxPlayer()));
                         }
                     }
                 };
