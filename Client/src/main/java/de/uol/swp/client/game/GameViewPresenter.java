@@ -124,6 +124,11 @@ public class GameViewPresenter extends AbstractPresenter {
     private ImageView bigCardImage;
     @FXML
     private Button buyCardButton;
+    private final Map<Short, Label> cardLabels = new HashMap<>();
+    @FXML
+    private Label countCopperLabel;
+    @FXML
+    private Label countSilverLabel;
     @FXML
     private Label countEstateCardLabel;
     @FXML
@@ -132,6 +137,28 @@ public class GameViewPresenter extends AbstractPresenter {
     private Label countProvinceCardLabel;
     @FXML
     private Label countCurseCardLabel;
+    @FXML
+    private Label countGoldLabel;
+    @FXML
+    private Label countPlaceholder1Label;
+    @FXML
+    private Label countPlaceholder2Label;
+    @FXML
+    private Label countPlaceholder3Label;
+    @FXML
+    private Label countPlaceholder4Label;
+    @FXML
+    private Label countPlaceholder5Label;
+    @FXML
+    private Label countPlaceholder6Label;
+    @FXML
+    private Label countPlaceholder7Label;
+    @FXML
+    private Label countPlaceholderLabel;
+    @FXML
+    private Label countPlaceholder8Label;
+    @FXML
+    private Label countPlaceholder9Label;
     @FXML
     private Label numberOfAction;
     @FXML
@@ -175,7 +202,8 @@ public class GameViewPresenter extends AbstractPresenter {
     private final ChatViewPresenter chatViewPresenter;
     private final Injector injector;
     private final GameManagement gameManagement;
-    private final Map<Short, Label> valueCardLabels = new HashMap<>();
+    @FXML
+    private Label countPlaceholder10Label;
     private final ColorAdjust makeImageDarker = new ColorAdjust();
     private boolean chooseCardBecauseOfActionCard = false;
     private final ColorAdjust notChosenCard = new ColorAdjust();
@@ -362,31 +390,37 @@ public class GameViewPresenter extends AbstractPresenter {
      * Die Anzahl der Wertkarten wird angezeigt.
      *
      * @param theList    die IDs der Aktionskarten
-     * @param valueCards Die Anzahl der Wertkarten, mit der ID der Karte als Schlüssel
-     * @author Ferit, Fenja, Anna
+     * @param cardsToBuy Die Anzahl der Karten, mit der ID der Karte als Schlüssel
+     * @author Ferit, Fenja, Anna, Rike
      * @since Sprint 7
      */
-    private void initalizeCardFieldImages(ArrayList<Short> theList, Map<Short, Integer> valueCards) {
+    private void initalizeCardFieldImages(ArrayList<Short> theList, Map<Short, Integer> cardsToBuy) {
         ArrayList<ImageView> allImageViews = new ArrayList<>(Arrays.asList(cardPlaceholder1, cardPlaceholder2, cardPlaceholder3, cardPlaceholder4, cardPlaceholder5, cardPlaceholder6, cardPlaceholder7, cardPlaceholder8, cardPlaceholder9, cardPlaceholder10));
+        ArrayList<Label> allLabels = new ArrayList<>(Arrays.asList(countPlaceholder1Label, countPlaceholder2Label, countPlaceholder3Label, countPlaceholder4Label, countPlaceholder5Label, countPlaceholder6Label, countPlaceholder7Label, countPlaceholder8Label, countPlaceholder9Label, countPlaceholder10Label));
         int index = 0;
-        valueCardLabels.put((short) 4, countEstateCardLabel);
-        valueCardLabels.put((short) 5, countDuchiesCardLabel);
-        valueCardLabels.put((short) 6, countProvinceCardLabel);
-        valueCardLabels.put((short) 38, countCurseCardLabel);
+        cardLabels.put((short) 1, countCopperLabel);
+        cardLabels.put((short) 2, countSilverLabel);
+        cardLabels.put((short) 3, countGoldLabel);
+        cardLabels.put((short) 4, countEstateCardLabel);
+        cardLabels.put((short) 5, countDuchiesCardLabel);
+        cardLabels.put((short) 6, countProvinceCardLabel);
+        cardLabels.put((short) 38, countCurseCardLabel);
         //Initialisieren der Aktionskarten
         for (ImageView imageView : allImageViews) {
-            String theIdInString = String.valueOf(theList.get(index));
-            String imageUrl = "cards/images/" + theIdInString + "_sm.png";
+            Short theID = theList.get(index);
+            String imageUrl = "cards/images/" + theID + "_sm.png";
             Image theImage = new Image(imageUrl);
             imageView.setImage(theImage);
-            imageView.setId(theIdInString);
+            imageView.setId(String.valueOf(theID));
+            Label l = allLabels.get(index);
+            cardLabels.put(theID, l);
             index++;
         }
-        //Initialiseren der Anzahl der Wertkarten
+        //Initialiseren der Anzahl der Karten
         Platform.runLater(() -> {
-            for (Short key : valueCardLabels.keySet()) {
-                Label l = valueCardLabels.get(key);
-                l.setText(String.valueOf(valueCards.get(key)));
+            for (Short key : cardLabels.keySet()) {
+                Label l = cardLabels.get(key);
+                l.setText(String.valueOf(cardsToBuy.get(key)));
             }
         });
     }
@@ -457,21 +491,20 @@ public class GameViewPresenter extends AbstractPresenter {
      * Die Anzahl der Wertkarten wird in einer Map gespeichert, mit der ID der jeweiligen Karte als Schlüssel.
      *
      * @param msg die Nachricht mit den IDs und der jeweiligen Azahl der Spielkarten
-     * @author Anna, Fenja
+     * @author Anna, Fenja, Rike
      * @since Sprint 7
      */
     @Subscribe
     public void onSendCardFieldMessage(SendCardFieldMessage msg) {
         ArrayList<Short> list = new ArrayList<>();
-        Map<Short, Integer> valuecards = new HashMap<>();
+        Map<Short, Integer> cardsToBuy = new HashMap<>();
         for (Short key : msg.getCardField().keySet()) {
             if (key > 6 && key != 38) { //Aktionskarten, ohne Fluchkarte
                 list.add(key);
-            } else if (key <= 6 && key > 3 || key == 38) { //Wertkarten und Fluchkarte
-                valuecards.put(key, msg.getCardField().get(key));
             }
+            cardsToBuy.put(key, msg.getCardField().get(key));
         }
-        initalizeCardFieldImages(list, valuecards);
+        initalizeCardFieldImages(list, cardsToBuy);
     }
 
     /**
@@ -566,8 +599,8 @@ public class GameViewPresenter extends AbstractPresenter {
     @Subscribe
     public void onBuyCardMessage(BuyCardMessage msg) {
         if (msg.getLobbyID().equals(lobbyID)) {
-            if (valueCardLabels.containsKey(msg.getCardID())) {
-                Platform.runLater(() -> valueCardLabels.get(msg.getCardID()).setText(String.valueOf(msg.getCounterCard())));
+            if (cardLabels.containsKey(msg.getCardID())) {
+                Platform.runLater(() -> cardLabels.get(msg.getCardID()).setText(String.valueOf(msg.getCounterCard())));
             }
             ImageView selectedCard = getCardFromCardfield(msg.getCardID());
             if (msg.getCounterCard() < 1) {
@@ -1552,13 +1585,13 @@ public class GameViewPresenter extends AbstractPresenter {
      *
      * @param msg die UpdateCounterMessage
      * @author Paula
-     * @since Sprint9
+     * @since Sprint 9
      */
     @Subscribe
     private void onUpdateCardCounterMessage(UpdateCardCounterMessage msg) {
         for (short id : msg.getCardCounts().keySet()) {
-            if (valueCardLabels.containsKey(id))
-                Platform.runLater(() -> valueCardLabels.get(id).setText(String.valueOf(msg.getCardCounts().get(id))));
+            if (cardLabels.containsKey(id))
+                Platform.runLater(() -> cardLabels.get(id).setText(String.valueOf(msg.getCardCounts().get(id))));
             ImageView selectedCard = getCardFromCardfield(id);
             if (msg.getCardCounts().get(id) < 1) selectedCard.setEffect(makeImageDarker);
         }
