@@ -668,14 +668,14 @@ public class GameViewPresenter extends AbstractPresenter {
                             AnimationManagement.deleteCard(card);
                         }
                     }
-                    if (msg.getHandCardID().equals("1") || msg.getHandCardID().equals("2") || msg.getHandCardID().equals("3")) {
-                        usableMoney += Integer.parseInt(msg.getHandCardID());
+                    if (msg.getHandCardIdAsString().equals("1") || msg.getHandCardIdAsString().equals("2") || msg.getHandCardIdAsString().equals("3")) {
+                        usableMoney += Integer.parseInt(msg.getHandCardIdAsString());
                         numberOfMoney.setText(usableMoney + " Geld");
                     }
                 });
             } else {
                 showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht spielen!", "Fehler");
-                LOG.debug("Das Spielen der Karte " + msg.getHandCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
+                LOG.debug("Das Spielen der Karte " + msg.getHandCardIdAsString() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
             }
         }
         // Falls die Message bei anderen Spielern ankommt, wird ihnen angezeigt, dass ihr Gegner eine Karte spiet.
@@ -688,7 +688,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 playerIndexNumbers.add((short) 3);
                 if (msg.getGameID().equals(lobbyID) && !msg.getCurrentUser().equals(loggedInUser)) {
                     playerIndexNumbers.remove(msg.getUserPlaceNumber());
-                    Card card = new Card(msg.getHandCardID(), firstEnemyPCLC.getLayoutX(), firstEnemyPCLC.getLayoutY(), firstEnemyPCLC.getHeight());
+                    Card card = new Card(msg.getHandCardIdAsString(), firstEnemyPCLC.getLayoutX(), firstEnemyPCLC.getLayoutY(), firstEnemyPCLC.getHeight());
                     if (playerIndexNumbers.get(0).equals(msg.getEnemyPlaceNumber())) {
                         Platform.runLater(() -> {
                             AnimationManagement.playCard((ImageView) firstEnemyHand.getChildren().get(0), firstEnemyPCLC.getChildren().size(), firstEnemyPCLC);
@@ -715,7 +715,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 //TODO: Wenn Aktionen implementiert sind, prüfen ob showAlert noch notwendig ist oder ob Serverseitig bereits bei Scheitern eine Message gesendet wird
             } else {
                 showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht spielen!", "Fehler");
-                LOG.debug("Das Spielen der Karte " + msg.getHandCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
+                LOG.debug("Das Spielen der Karte " + msg.getHandCardIdAsString() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
             }
         }
     }
