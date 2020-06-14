@@ -835,6 +835,7 @@
           {
             "GetCard": {
               "count": 1,
+              "executeType": "OTHERS",
               "allowedCardType": "CURSE",
               "cardSource": "BUY",
               "nextAction": {
