@@ -154,11 +154,11 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     private Label countPlaceholder7Label;
     @FXML
-    private Label countPlaceholderLabel;
-    @FXML
     private Label countPlaceholder8Label;
     @FXML
     private Label countPlaceholder9Label;
+    @FXML
+    private Label countPlaceholder10Label;
     @FXML
     private Label numberOfAction;
     @FXML
@@ -202,8 +202,6 @@ public class GameViewPresenter extends AbstractPresenter {
     private final ChatViewPresenter chatViewPresenter;
     private final Injector injector;
     private final GameManagement gameManagement;
-    @FXML
-    private Label countPlaceholder10Label;
     private final ColorAdjust makeImageDarker = new ColorAdjust();
     private boolean chooseCardBecauseOfActionCard = false;
     private final ColorAdjust notChosenCard = new ColorAdjust();
@@ -743,13 +741,13 @@ public class GameViewPresenter extends AbstractPresenter {
                 notChosenCard.setBrightness(-0.7);
                 for (int i = 0; i < 10; i++) {
                     ImageView iv = (ImageView) shopTeppich.getChildren().get(i);
-                    if (!req.getCards().contains(Short.valueOf(iv.getId()))) {
+                    if (!req.getCards().contains(Short.valueOf(iv.getId())) && iv.getEffect() == null) {
                         iv.setEffect(notChosenCard);
                     }
                 }
                 for (int i = 0; i < 7; i++) {
                     ImageView iv = (ImageView) valueCardsBox.getChildren().get(i);
-                    if (!req.getCards().contains(Short.valueOf(iv.getId()))) {
+                    if (!req.getCards().contains(Short.valueOf(iv.getId())) && iv.getEffect() == null) {
                         iv.setEffect(notChosenCard);
                     }
                 }
