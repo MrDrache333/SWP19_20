@@ -656,7 +656,7 @@ public class LobbyPresenter extends AbstractPresenter {
             crownView.setFitHeight(15);
             crownView.setFitWidth(15);
             Platform.runLater(() -> {
-                if(!box.getChildren().contains(crownView))
+                if (!box.getChildren().contains(crownView))
                     box.getChildren().add(crownView);
             });
         }
