@@ -7,6 +7,7 @@ import de.uol.swp.common.chat.ChatService;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
 
+@SuppressWarnings("UnstableApiUsage")
 public class AbstractPresenter {
     @Inject
     protected UserService userService;

@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("UnstableApiUsage")
+@SuppressWarnings("UnstableApiUsage, unused")
 public class PrimaryPresenter extends AbstractPresenter {
 
     /**
@@ -207,8 +207,7 @@ public class PrimaryPresenter extends AbstractPresenter {
      */
     @FXML
     public void onSettingsButtonPressed(ActionEvent actionEvent) {
-        OpenSettingsRequest request = new OpenSettingsRequest(loggedInUser);
-        eventBus.post(request);
+        eventBus.post(new OpenSettingsRequest(loggedInUser));
     }
 
     /**
@@ -343,7 +342,7 @@ public class PrimaryPresenter extends AbstractPresenter {
      * und dann die Tabs geschlossen, da man sonst, während man über die Spiele iteriert, Spiele beendet.
      *
      * @author Julia, Paula, Marvin
-     * @Version 1.0
+     * @version 1.0
      * @since Sprint3
      */
     public void closeAllTabs() {

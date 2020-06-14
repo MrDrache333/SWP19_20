@@ -13,7 +13,7 @@ import java.util.UUID;
 public class UpdatedLobbyReadyStatusMessage extends AbstractLobbyMessage {
 
     private static final long serialVersionUID = 4060747266476002643L;
-    private boolean Ready;
+    private final boolean Ready;
 
     /**
      * Konstruktor der Updated lobby ready status message.

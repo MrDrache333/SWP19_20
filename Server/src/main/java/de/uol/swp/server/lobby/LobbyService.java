@@ -38,6 +38,7 @@ import java.util.UUID;
  * @author KenoO
  * @since Sprint 2
  */
+@SuppressWarnings("UnstableApiUsage, unused")
 public class LobbyService extends AbstractService {
     private static final Logger LOG = LogManager.getLogger(LobbyService.class);
 
@@ -109,7 +110,7 @@ public class LobbyService extends AbstractService {
     public void onLobbyJoinUserRequest(LobbyJoinUserRequest req) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(req.getLobbyID());
         if (lobby.isPresent() && !lobby.get().getUsers().contains(req.getUser()) && lobby.get().getPlayers() < lobby.get().getMaxPlayer() && !lobby.get().getInGame()) {
-            LOG.info("User " + req.getUser().getUsername() + " is joining lobby " + lobby.get().getName());
+            LOG.info("User " + req.getUser().getUsername() + " tritt der Lobby " + lobby.get().getName() + " bei.");
             LobbyUser theLobbyUser = new LobbyUser(req.getUser());
             lobby.get().joinUser(theLobbyUser);
             ServerMessage returnMessage = new UserJoinedLobbyMessage(req.getLobbyID(), req.getUser(), (UserDTO) lobby.get().getOwner(), (LobbyDTO) lobby.get());
@@ -117,7 +118,7 @@ public class LobbyService extends AbstractService {
             if (req.getBot()) {
                 lobby.get().setReadyStatus(req.getUser(), true);
                 ServerMessage msg2 = new UpdatedLobbyReadyStatusMessage(lobby.get().getLobbyID(), req.getUser(), lobby.get().getReadyStatus(req.getUser()));
-                LOG.debug("Sending Updated Status of Bot: " + req.getUser().getUsername() + " to true in Lobby: " + lobby.get().getLobbyID());
+                LOG.debug("Ändere den Update-Status vom Bot " + req.getUser().getUsername() + " auf true in Lobby " + lobby.get().getName());
                 authenticationService.sendToLoggedInPlayers(msg2);
                 allPlayersReady(lobby.get());
             }
@@ -138,10 +139,9 @@ public class LobbyService extends AbstractService {
     @Subscribe
     public void onLobbyLeaveUserRequest(LobbyLeaveUserRequest msg) {
         try {
-            Optional<User> oldOwner = lobbyManagement.getLobbyOwner(msg.getLobbyID());
             //Falls der Besitzer der Lobby aus der Lobby geht wird dieser aktualisiert
-            boolean leavedLobbysuccesful = lobbyManagement.leaveLobby(msg.getLobbyID(), msg.getUser());
-            if (leavedLobbysuccesful && !(lobbyManagement.getLobby(msg.getLobbyID()).isEmpty()) && !(lobbyManagement.getLobby(msg.getLobbyID()).get().onlyBotsLeft(msg.getLobbyID()))) {
+            boolean leavedLobbySuccessful = lobbyManagement.leaveLobby(msg.getLobbyID(), msg.getUser());
+            if (leavedLobbySuccessful && lobbyManagement.getLobby(msg.getLobbyID()).isPresent() && !(lobbyManagement.getLobby(msg.getLobbyID()).get().onlyBotsLeft(msg.getLobbyID()))) {
                 Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getLobbyID());
                 LOG.info("User " + msg.getUser().getUsername() + " verlässt die Lobby " + msg.getLobbyID());
                 ServerMessage returnMessage;
@@ -151,7 +151,7 @@ public class LobbyService extends AbstractService {
                     returnMessage = new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), null, null);
                 }
                 authenticationService.sendToLoggedInPlayers(returnMessage);
-            } else if (leavedLobbysuccesful && !(lobbyManagement.getLobby(msg.getLobbyID()).isEmpty()) &&
+            } else if (leavedLobbySuccessful && lobbyManagement.getLobby(msg.getLobbyID()).isPresent() &&
                     (lobbyManagement.getLobby(msg.getLobbyID()).get().onlyBotsLeft(msg.getLobbyID()))) {
                 lobbyManagement.dropLobby(msg.getLobbyID());
                 ServerMessage returnMessage;

@@ -3,7 +3,7 @@ package de.uol.swp.common.message;
 /**
  * Ein Basis Interface für alle Nachrichten vom Client zum Server.
  *
- * @author: Marco
+ * @author Marco
  * @since Start
  */
 

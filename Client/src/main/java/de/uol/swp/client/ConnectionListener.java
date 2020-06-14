@@ -7,7 +7,7 @@ public interface ConnectionListener {
     /**
      * Wird aufgerufen, wenn die Verbindung zum Server hergestellt wurde
      *
-     * @param channel
+     * @param channel Der Channel der Verbindung
      * @author Marco
      * @since Start
      */
@@ -16,7 +16,7 @@ public interface ConnectionListener {
     /**
      * Wenn der Server eine Ausnahme sendet, wird diese Methode aufgerufen
      *
-     * @param cause
+     * @param cause Der Grund derException
      * @author Marco
      * @since Start
      */

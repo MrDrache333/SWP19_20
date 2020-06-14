@@ -24,7 +24,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
 
     private final Playground playground;
     private static final Logger LOG = LogManager.getLogger(CompositePhase.class);
-    private List<Short> implementedActionCards;
+    private final List<Short> implementedActionCards;
     private ActionCardExecution executeAction;
 
     /**
@@ -75,7 +75,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      * @param player       Der Spieler
      * @param newHandCards Liste neuer Handkarten
      * @param card         Gespielte Karte
-     * @author Julia, KenoO
+     * @author Julia, Keno O.
      * @since Sprint 7
      */
     public void finishedActionCardExecution(Player player, ArrayList<Short> newHandCards, Card card) {
@@ -191,8 +191,8 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
     /**
      * Hilfsmethode um an die Daten über die ID zu kommen
      *
-     * @param cardStack
-     * @param cardId
+     * @param cardStack Der Kartenstapel
+     * @param cardId Die KartenID
      * @return card Karte, zu der die ID gehört
      * @author Paula
      * @since Sprint 6

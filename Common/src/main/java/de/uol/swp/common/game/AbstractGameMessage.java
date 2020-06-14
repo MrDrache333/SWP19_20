@@ -14,11 +14,11 @@ abstract public class AbstractGameMessage extends AbstractServerMessage {
     /**
      * Der Spieler, für den die Nachricht ist
      */
-    private User player;
+    private final User player;
     /**
      * Die ID des Spiels
      */
-    private UUID gameID;
+    private final UUID gameID;
 
     /**
      * Instanziiert GameMessage
@@ -38,8 +38,8 @@ abstract public class AbstractGameMessage extends AbstractServerMessage {
      *
      * @return GameID game id
      * @author Paula
-     * @version 1  since Sprint5
-     * @since
+     * @version 1.0
+     * @since Sprint 5
      */
     public UUID getGameID() {
         return gameID;
@@ -50,8 +50,8 @@ abstract public class AbstractGameMessage extends AbstractServerMessage {
      *
      * @return Spieler, der die Karte ausgewählt hat
      * @author Paula
-     * @version 1  since Sprint5
-     * @since
+     * @version 1.0
+     * @since Sprint 5
      */
     public User getPlayer() {
         return player;

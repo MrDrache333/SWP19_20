@@ -6,7 +6,7 @@ import de.uol.swp.common.user.User;
 public class DropUserRequest extends AbstractRequestMessage {
 
     private static final long serialVersionUID = 5260937585947688764L;
-    private User user;
+    private final User user;
 
     /**
      * Instanziiert die Request

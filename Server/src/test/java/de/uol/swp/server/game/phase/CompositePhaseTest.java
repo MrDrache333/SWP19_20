@@ -21,6 +21,12 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Testklasse der CompositePhase
+ *
+ * @author Fenja
+ * @since Sprint 6
+ */
 @SuppressWarnings({"OptionalGetWithoutIsPresent", "UnstableApiUsage"})
 class CompositePhaseTest {
     private static final User defaultOwner = new UserDTO("test1", "test1", "test1@test.de");
@@ -33,10 +39,16 @@ class CompositePhaseTest {
     private static final AuthenticationService authenticationService = new AuthenticationService(bus, new UserManagement(new MainMemoryBasedUserStore()), lobbyManagement);
     @SuppressWarnings("unused")
     private static final GameService gameService = new GameService(bus, gameManagement, authenticationService);
-    private static ArrayList<Short> chosenCards = new ArrayList<>();
+    private static final ArrayList<Short> chosenCards = new ArrayList<>();
 
     private static UUID gameID;
 
+    /**
+     * Initialisiert alle benötigten Objekte/Parameter
+     *
+     * @author Fenja
+     * @since Sprint 6
+     */
     @BeforeAll
     static void init() {
         gameID = lobbyManagement.createLobby("Test", "", defaultOwner);
@@ -53,6 +65,12 @@ class CompositePhaseTest {
         bus.post(new StartGameInternalMessage(gameID));
     }
 
+    /**
+     * Prüft ob das Spiel beendet wurde
+     *
+     * @author Fenja
+     * @since Sprint 6
+     */
     @Test
     void checkIfGameIsFinished() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();

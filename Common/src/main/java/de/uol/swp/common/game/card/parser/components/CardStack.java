@@ -11,13 +11,13 @@ import java.util.ArrayList;
 public class CardStack {
 
     @SerializedName("MoneyCards")
-    private ArrayList<MoneyCard> moneyCards = new ArrayList<>();
+    private final ArrayList<MoneyCard> moneyCards = new ArrayList<>();
     @SerializedName("ValueCards")
-    private ArrayList<ValueCard> valueCards = new ArrayList<>();
+    private final ArrayList<ValueCard> valueCards = new ArrayList<>();
     @SerializedName("ActionCards")
-    private ArrayList<ActionCard> actionCards = new ArrayList<>();
+    private final ArrayList<ActionCard> actionCards = new ArrayList<>();
     @SerializedName("CurseCards")
-    private ArrayList<CurseCard> curseCards = new ArrayList<>();
+    private final ArrayList<CurseCard> curseCards = new ArrayList<>();
 
     /**
      * @return Objekt als String

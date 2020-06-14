@@ -9,6 +9,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Testklasse des UserService
+ *
+ * @author Marco
+ * @since Start
+ */
 class UserServiceTest {
 
     static final User userToRegister = new UserDTO("Marco", "Marco", "Marco@Grawunder.com");
@@ -54,9 +60,7 @@ class UserServiceTest {
 
         assertNotNull(loggedInUser);
         assertEquals(loggedInUser, userToRegister);
-
         assertNotEquals(loggedInUser.getEMail(), userWithSameName.getEMail());
-
     }
 
 }

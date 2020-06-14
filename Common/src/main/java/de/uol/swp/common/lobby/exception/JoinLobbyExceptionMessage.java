@@ -2,11 +2,9 @@ package de.uol.swp.common.lobby.exception;
 
 import de.uol.swp.common.message.AbstractServerMessage;
 
-import java.util.UUID;
-
 public class JoinLobbyExceptionMessage extends AbstractServerMessage {
     private static final long serialVersionUID = -7911144560778128510L;
-    private String message;
+    private final String message;
 
     /**
      * Konstruktor der JoinLobbyExceptionMessage

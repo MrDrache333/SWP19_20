@@ -14,7 +14,7 @@ public class MoveCardMessage extends AbstractGameMessage {
     /**
      * Die ausgeführte Kartenbewegung
      */
-    private Move move;
+    private final Move move;
 
     /**
      * Instanziiert eine MoveCardMessage
