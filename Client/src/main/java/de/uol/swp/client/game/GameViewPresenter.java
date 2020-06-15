@@ -32,9 +32,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
@@ -45,8 +43,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -863,17 +859,7 @@ public class GameViewPresenter extends AbstractPresenter {
     public void onGameExceptionMessage(GameExceptionMessage msg) {
         if (msg.getGameID().equals(lobbyID)) {
             Platform.runLater(() -> {
-                AlertBox alert = new AlertBox(Alert.AlertType.ERROR, msg.getMessage());
-                DialogPane root = alert.getDialogPane();
-                Stage dialogStage = new Stage(StageStyle.UTILITY);
-                for (ButtonType buttonType : root.getButtonTypes()) {
-                    ButtonBase button = (ButtonBase) root.lookupButton(buttonType);
-                    button.setOnAction(evt -> dialogStage.close());
-                }
-                root.getScene().setRoot(new Group());
-                Scene scene = new Scene(root);
-                dialogStage.setScene(scene);
-                dialogStage.showAndWait();
+                AlertBox alert = new AlertBox(Alert.AlertType.ERROR, msg.getMessage(), "Fehler");
             });
         }
     }

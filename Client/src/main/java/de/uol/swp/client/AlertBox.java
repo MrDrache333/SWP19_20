@@ -17,7 +17,7 @@ public class AlertBox extends Alert {
         super(alertType);
         init();
         this.getDialogPane().setHeaderText(Header);
-        this.getDialogPane().setHeaderText(Content);
+        this.getDialogPane().setContentText(Content);
         this.show();
     }
 

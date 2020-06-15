@@ -184,8 +184,6 @@ public class SceneManager {
                         case G:
                             LOG.debug("Give Up Hotkey pressed");
                             AlertBox alert = new AlertBox(Alert.AlertType.CONFIRMATION);
-                            alert.setResizable(false);
-                            alert.initModality(Modality.APPLICATION_MODAL);
                             alert.getDialogPane().setHeaderText("Möchtest du wirklich aufgeben?");
                             Optional<ButtonType> result = alert.showAndWait();
                             if (result.get() == ButtonType.OK) {
@@ -255,8 +253,7 @@ public class SceneManager {
 
     public void showError(String message, String e) {
         Platform.runLater(() -> {
-            AlertBox a = new AlertBox(Alert.AlertType.ERROR, message + e);
-            a.showAndWait();
+            AlertBox a = new AlertBox(Alert.AlertType.ERROR, e, message);
         });
     }
 
