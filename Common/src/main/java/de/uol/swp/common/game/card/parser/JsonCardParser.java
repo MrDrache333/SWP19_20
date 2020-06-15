@@ -14,7 +14,6 @@ import de.uol.swp.common.game.card.parser.components.deserializer.ValueCardDeSer
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -44,7 +43,7 @@ public class JsonCardParser {
         CardPack pack = null;
         FileReader fr;
         try {
-            fr = new FileReader(new File("/cards/packs/" + packname + "/" + packname + ".json").getPath());
+            fr = new FileReader(this.getClass().getResource("/cards/packs/" + packname + "/" + packname + ".json").toExternalForm().replace("file:", ""));
 
             try {
                 pack = gsonRealObj.fromJson(fr, CardPack.class);
@@ -52,7 +51,7 @@ public class JsonCardParser {
                 fr.close();
             }
         } catch (IOException e) {
-            LOG.error("Fehler beim Laden des Kartenpaketes!");
+            LOG.debug("Fehler beim Laden des Kartenpaketes!");
         }
         return pack;
     }
