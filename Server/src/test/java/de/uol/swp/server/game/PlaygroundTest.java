@@ -29,6 +29,12 @@ import java.util.concurrent.CountDownLatch;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Testklasse für den Playground
+ *
+ * @author Julia
+ * @since Sprint 5
+ */
 public class PlaygroundTest {
 
     static final User defaultOwner = new UserDTO("test1", "test1", "test1@test.de");
@@ -44,13 +50,17 @@ public class PlaygroundTest {
     static final GameService gameService = new GameService(bus, gameManagement, authService);
     static UUID id;
     private final CountDownLatch lock = new CountDownLatch(1);
-    private static ArrayList<Short> chosenCards = new ArrayList<Short>();
-
-
+    private static final ArrayList<Short> chosenCards = new ArrayList<Short>();
 
     static UUID gameID;
     private Object event;
 
+    /**
+     * Initialisiert die benötigten Objekte/Parameter
+     *
+     * @author Julia
+     * @since Sprint 5
+     */
     @BeforeAll
     static void init() {
         gameID = lobbyManagement.createLobby("Test", "", defaultOwner);
@@ -115,7 +125,7 @@ public class PlaygroundTest {
         assertEquals(1, next);
         assertEquals(1, playground.getPlayerTurns().get(playground.getActualPlayer()));
 
-        playground.setActualPhase(Phase.Type.Clearphase);
+        playground.setActualPhase(Phase.Type.ClearPhase);
         playground.newTurn();
         actual = playground.getPlayers().indexOf(playground.getActualPlayer());
         next = playground.getPlayers().indexOf(playground.getNextPlayer());
@@ -123,7 +133,7 @@ public class PlaygroundTest {
         assertEquals(2, next);
         assertEquals(1, playground.getPlayerTurns().get(playground.getActualPlayer()));
 
-        playground.setActualPhase(Phase.Type.Clearphase);
+        playground.setActualPhase(Phase.Type.ClearPhase);
         playground.newTurn();
         actual = playground.getPlayers().indexOf(playground.getActualPlayer());
         next = playground.getPlayers().indexOf(playground.getNextPlayer());
@@ -131,7 +141,7 @@ public class PlaygroundTest {
         assertEquals(0, next);
         assertEquals(1, playground.getPlayerTurns().get(playground.getActualPlayer()));
 
-        playground.setActualPhase(Phase.Type.Clearphase);
+        playground.setActualPhase(Phase.Type.ClearPhase);
         playground.newTurn();
         assertEquals(2, playground.getPlayerTurns().get(playground.getActualPlayer()));
     }
@@ -144,10 +154,12 @@ public class PlaygroundTest {
      */
     @Test
     void testCheckForActionCard() {
+        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         //Bei Spielbeginn hat der Spieler keine Aktionskarten auf der Hand
-        assertFalse(gameManagement.getGame(gameID).get().getPlayground().checkForActionCard());
-
-        //TODO: weitere Fälle testen, wenn weitere Funktion (Kauf von Aktionskarten) implementiert wurde
+        assertFalse(playground.checkForActionCard());
+        Card actionCard = playground.getCardsPackField().getCards().getActionCards().get(0);
+        playground.getActualPlayer().getPlayerDeck().getHand().add(actionCard);
+        assertTrue(playground.checkForActionCard());
     }
 
     /**
@@ -160,18 +172,16 @@ public class PlaygroundTest {
     void testNextPhase() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         playground.setActualPhase(Phase.Type.ActionPhase);
-
         playground.nextPhase();
-        assertEquals(Phase.Type.Buyphase, playground.getActualPhase());
-
+        assertEquals(Phase.Type.BuyPhase, playground.getActualPhase());
         playground.nextPhase();
         if (playground.checkForActionCard()) {
             assertEquals(Phase.Type.ActionPhase, playground.getActualPhase());
         } else {
-            assertEquals(Phase.Type.Buyphase, playground.getActualPhase());
+            assertEquals(Phase.Type.BuyPhase, playground.getActualPhase());
         }
 
-        playground.setActualPhase(Phase.Type.Clearphase);
+        playground.setActualPhase(Phase.Type.ClearPhase);
         assertThrows(GamePhaseException.class, () -> playground.nextPhase());
     }
 
@@ -231,8 +241,7 @@ public class PlaygroundTest {
         List<String> winners = playground.calculateWinners();
         assertEquals(2, winners.size());
         assertFalse(winners.contains(playground.getActualPlayer().getPlayerName()));
-
-        playground.setActualPhase(Phase.Type.Clearphase);
+        playground.setActualPhase(Phase.Type.ClearPhase);
         playground.newTurn();
         winners = playground.calculateWinners();
         assertEquals(1, winners.size());
@@ -257,5 +266,4 @@ public class PlaygroundTest {
         size = playground.sendCardsDeckSize();
         assertEquals(5, size);
     }
-
 }

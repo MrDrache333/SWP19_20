@@ -3,7 +3,7 @@ package de.uol.swp.server.lobby;
 import com.google.common.eventbus.DeadEvent;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import de.uol.swp.common.chat.request.NewChatMessageRequest;
+import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.message.CreateLobbyMessage;
 import de.uol.swp.common.lobby.message.UpdatedInGameMessage;
@@ -13,6 +13,7 @@ import de.uol.swp.common.lobby.request.*;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
+import de.uol.swp.common.user.request.LoginRequest;
 import de.uol.swp.server.chat.ChatManagement;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import de.uol.swp.server.usermanagement.UserManagement;
@@ -31,7 +32,10 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Der Test um den LobbyService zu testen.
+ * Testklasse des LobbyService
+ *
+ * @author Julia
+ * @since Sprint 3
  */
 class LobbyServiceTest {
 
@@ -42,10 +46,17 @@ class LobbyServiceTest {
     final EventBus bus = new EventBus();
     final UserManagement userManagement = new UserManagement(new MainMemoryBasedUserStore());
     final LobbyManagement lobbyManagement = new LobbyManagement();
-    final LobbyService lobbyService = new LobbyService(lobbyManagement, new AuthenticationService(bus, userManagement, lobbyManagement), new ChatManagement(), bus);
-    private CountDownLatch lock = new CountDownLatch(1);
+    final AuthenticationService authenticationService = new AuthenticationService(bus, userManagement, lobbyManagement);
+    final LobbyService lobbyService = new LobbyService(lobbyManagement, authenticationService, new ChatManagement(), bus);
+    private final CountDownLatch lock = new CountDownLatch(1);
     private Object event;
 
+    /**
+     * Regelt den Umgang mit DeadEvents
+     *
+     * @author Julia
+     * @since Sprint 3
+     */
     @Subscribe
     void handle(DeadEvent e) {
         this.event = e.getEvent();
@@ -53,20 +64,40 @@ class LobbyServiceTest {
         lock.countDown();
     }
 
+    /**
+     * Registriert den EventBus
+     *
+     * @author Julia
+     * @since Sprint 3
+     */
     @BeforeEach
     void registerBus() {
         event = null;
         bus.register(this);
     }
 
+    /**
+     * Deregistriert den EventBus
+     *
+     * @author Julia
+     * @since Sprint 3
+     */
     @AfterEach
     void deregisterBus() {
         bus.unregister(this);
     }
 
+    /**
+     * Prüft ob die Lobby angelegt wurde
+     *
+     * @author Julia
+     * @since Sprint 3
+     */
     @Test
     void onCreateLobbyRequestTest() throws InterruptedException {
-        lobbyService.onCreateLobbyRequest(new CreateLobbyRequest(defaultLobbyName, new UserDTO(lobbyOwner.getUsername(), lobbyOwner.getPassword(), lobbyOwner.getEMail()), ""));
+        loginUsers();
+
+        lobbyService.onCreateLobbyRequest(new CreateLobbyRequest(defaultLobbyName, (UserDTO) lobbyOwner, ""));
 
         lock.await(1000, TimeUnit.MILLISECONDS);
 
@@ -80,10 +111,18 @@ class LobbyServiceTest {
         assertEquals(lobbyOwner, lobbyManagement.getLobby(message.getLobby().getLobbyID()).get().getUsers().iterator().next());
     }
 
+    /**
+     * Prüft, ob der User erfolgreich der Lobby beigetreten ist
+     *
+     * @author Julia
+     * @since Sprint 3
+     */
     @Test
     void onLobbyJoinUserRequestTest() throws InterruptedException {
+        loginUsers();
+
         final UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
-        lobbyService.onLobbyJoinUserRequest(new LobbyJoinUserRequest(lobbyID, new UserDTO(lobbyUser.getUsername(), lobbyUser.getPassword(), lobbyUser.getEMail())));
+        lobbyService.onLobbyJoinUserRequest(new LobbyJoinUserRequest(lobbyID, new UserDTO(lobbyUser.getUsername(), lobbyUser.getPassword(), lobbyUser.getEMail()), false));
 
         lock.await(1000, TimeUnit.MILLISECONDS);
 
@@ -98,9 +137,17 @@ class LobbyServiceTest {
         assertEquals(2, lobbyManagement.getLobby(lobbyID).get().getUsers().size());
     }
 
+    /**
+     * Prüft ob der User die Lobby erfolgreich verlassen hat
+     *
+     * @author Julia
+     * @since Sprint 3
+     */
     @Test
     void onLobbyLeaveUserRequestTest() throws InterruptedException {
-        final UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
+        loginUsers();
+
+        UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
         lobbyManagement.getLobby(lobbyID).get().joinUser(lobbyUser);
         lobbyService.onLobbyLeaveUserRequest(new LobbyLeaveUserRequest(lobbyID, new UserDTO(lobbyOwner.getUsername(), lobbyOwner.getPassword(), lobbyOwner.getEMail())));
 
@@ -124,8 +171,16 @@ class LobbyServiceTest {
         assertTrue(lobby.isEmpty());
     }
 
+    /**
+     * Prüft ob der User alle Lobbys verlassen hat
+     *
+     * @author Julia
+     * @since Sprint 3
+     */
     @Test
     void onLeaveAllLobbiesOnLogoutRequestTest() {
+        loginUsers();
+
         UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
         UUID lobbyID2 = lobbyManagement.createLobby("Lobby2", "", lobbyOwner);
         lobbyManagement.getLobby(lobbyID).get().joinUser(lobbyUser);
@@ -139,8 +194,16 @@ class LobbyServiceTest {
         assertTrue(lobby2.isEmpty());
     }
 
+    /**
+     * Überprüft die Lobby-Liste
+     *
+     * @author Julia
+     * @since Sprint 3
+     */
     @Test
     void onRetrieveAllOnlineLobbiesRequestTest() throws InterruptedException {
+        loginUsers();
+
         lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
         lobbyManagement.createLobby("Lobby2", defaultLobbyPassword, lobbyOwner);
         lobbyService.onRetrieveAllOnlineLobbiesRequest(new RetrieveAllOnlineLobbiesRequest());
@@ -157,8 +220,16 @@ class LobbyServiceTest {
                 || (lobbies.get(1).getName().equals(defaultLobbyName) && lobbies.get(0).getName().equals("Lobby2")));
     }
 
+    /**
+     * Prüft ob sich die Lobby nach einem Spiel noch im Spiel befindet.
+     *
+     * @author Julia
+     * @since Sprint 6
+     */
     @Test
     void onGameEndTest() throws InterruptedException {
+        loginUsers();
+
         UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
         lobbyManagement.getLobby(lobbyID).get().setInGame(true);
         lobbyService.onGameEnd(new UpdateInGameRequest(lobbyID));
@@ -171,16 +242,69 @@ class LobbyServiceTest {
         assertFalse(lobbyManagement.getLobby(lobbyID).get().getInGame());
     }
 
+    /**
+     * Testet die Funktion onSendChoosenCards
+     *
+     * @author Anna
+     * @since Sprint 7
+     */
     @Test
     void onSendChosenCardsTest() throws InterruptedException {
+        loginUsers();
         UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
         ArrayList<Short> chosenCards = new ArrayList<>();
         chosenCards.add((short) 5);
         chosenCards.add((short) 7);
         lobbyService.onSendChosenCardsRequest(new SendChosenCardsRequest(lobbyID, chosenCards));
-
         lock.await(500, TimeUnit.MILLISECONDS);
+        assertTrue(event instanceof NewChatMessage);
+    }
 
-        assertTrue(event instanceof NewChatMessageRequest);
+    /**
+     * Testet ob das Password der Lobby erfolgreich gesetzt wurde
+     *
+     * @author Timo
+     * @since Sprint 9
+     */
+    @Test
+    void checkIfPasswordIsSet() {
+        UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
+
+        // Prüft ob die Lobby vorhanden ist.
+        assertTrue(lobbyManagement.getLobby(lobbyID).isPresent());
+
+        // Prüft ob ein Password gesetzt wurde
+        assertFalse(lobbyManagement.getLobby(lobbyID).get().getLobbyPassword().isEmpty());
+    }
+
+    /**
+     * Testet ob das Password der Lobby korrekt gesetzt wurde
+     *
+     * @author Timo
+     * @since Sprint 9
+     */
+    @Test
+    void checkIfPasswordIsSetCorrectly() {
+        UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
+
+        // Prüft ob die Lobby vorhanden ist.
+        assertTrue(lobbyManagement.getLobby(lobbyID).isPresent());
+
+        // Prüft ob das korrekte Password gesetzt wurde
+        assertEquals(lobbyManagement.getLobby(lobbyID).get().getLobbyPassword(), defaultLobbyPassword);
+    }
+
+    /**
+     * Hilfsmethode zum Einloggen der User
+     *
+     * @author Julia
+     * @since Sprint 3
+     */
+    void loginUsers() {
+        userManagement.createUser(lobbyUser);
+        userManagement.createUser(lobbyOwner);
+
+        authenticationService.onLoginRequest(new LoginRequest(lobbyOwner.getUsername(), lobbyOwner.getPassword()));
+        authenticationService.onLoginRequest(new LoginRequest(lobbyUser.getUsername(), lobbyUser.getPassword()));
     }
 }

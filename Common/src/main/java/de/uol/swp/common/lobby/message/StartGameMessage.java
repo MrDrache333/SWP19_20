@@ -5,7 +5,6 @@ import java.util.UUID;
 public class StartGameMessage extends AbstractLobbyMessage {
 
     private static final long serialVersionUID = 8407406031710024918L;
-    private UUID lobbyID;
 
     /**
      * Die Spielstartnachricht bekommt den Lobbynamen und die LobbyID übergeben

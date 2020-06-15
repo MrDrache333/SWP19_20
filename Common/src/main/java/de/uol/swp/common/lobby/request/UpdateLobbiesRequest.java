@@ -6,8 +6,8 @@ import de.uol.swp.common.user.UserDTO;
 public class UpdateLobbiesRequest extends AbstractLobbyRequest {
 
     private static final long serialVersionUID = -8860518480066825325L;
-    private UserDTO oldUser;
-    private UserDTO updatedUser;
+    private final UserDTO oldUser;
+    private final UserDTO updatedUser;
 
     /**
      * Konstruktor des Requests.

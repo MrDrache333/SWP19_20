@@ -9,29 +9,26 @@ import de.uol.swp.server.lobby.LobbyManagement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
-import java.util.UUID;
+import java.util.*;
 
 /**
- * Das Gamemanagement verwaltet die laufenden Spiele
+ * Das GameManagement verwaltet die laufenden Spiele
  *
- * @author kenoO
+ * @author Keno O.
  * @since Sprint 4
  */
 public class GameManagement {
     private static final Logger LOG = LogManager.getLogger(GameManagement.class);
-    private static Map<UUID, Game> games = new TreeMap<>();
+    private static final Map<UUID, Game> games = new TreeMap<>();
     private final LobbyManagement lobbyManagement;
     private final ChatManagement chatManagement;
     private GameService gameService;
 
     /**
-     * Erstellt ein neues gameManagement
+     * Erstellt ein neues GameManagement
      *
-     * @param chatManagement  Das Chat Management
-     * @param lobbyManagement Das Lobby Management
+     * @param chatManagement  Das ChatManagement
+     * @param lobbyManagement Das LobbyManagement
      */
     @Inject
     public GameManagement(ChatManagement chatManagement, LobbyManagement lobbyManagement) {
@@ -43,9 +40,9 @@ public class GameManagement {
     /**
      * Erstellt ein neues Spiel, übergibt die zugehörige Lobby und den Chat und fügt dies dann der Map hinzu
      *
-     * @param lobbyID Die Lobby-ID
-     * @author KenoO
-     * @since Sprint 5
+     * @param lobbyID Die LobbyID
+     * @author Keno O.
+     * @since Sprint5
      */
     void createGame(UUID lobbyID) {
         if (games.containsKey(lobbyID))
@@ -73,11 +70,15 @@ public class GameManagement {
      * Löscht ein Spiel aus der Liste
      *
      * @param id Die ID
-     * @author KenoO
-     * @since Sprint 5
+     * @author Keno O.
+     * @since Sprint5
      */
     public void deleteGame(UUID id) {
         games.remove(id);
+    }
+
+    public void deleteLobbyWithOnlyBots(UUID lobbyID) {
+        games.remove(lobbyID);
     }
 
     /**
@@ -85,8 +86,8 @@ public class GameManagement {
      *
      * @param id Die ID
      * @return Das Spiel
-     * @author KenoO
-     * @since Sprint 5
+     * @author Keno O.
+     * @since Sprint5
      */
     public Optional<Game> getGame(UUID id) {
         try {
@@ -99,5 +100,14 @@ public class GameManagement {
 
     public void setGameService(GameService gameService) {
         this.gameService = gameService;
+    }
+
+    //Hilfsmethode zum Überprüfen
+    public boolean lobbyIsNotPresent(UUID lobbyID) {
+        return lobbyManagement.getLobby(lobbyID).isEmpty();
+    }
+
+    public Collection<Lobby> getAllLobbies() {
+        return lobbyManagement.getLobbies();
     }
 }

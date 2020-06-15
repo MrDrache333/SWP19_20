@@ -2,11 +2,8 @@ package de.uol.swp.client.chat;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
-import de.uol.swp.common.chat.Chat;
 import de.uol.swp.common.chat.ChatMessage;
-import de.uol.swp.common.chat.request.ChatHistoryRequest;
 import de.uol.swp.common.chat.request.NewChatMessageRequest;
-import de.uol.swp.common.user.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -46,42 +43,13 @@ public class ChatService implements de.uol.swp.common.chat.ChatService {
      * Diese Methode bekommt eine ChatMessage und ChatID übergeben und erstellt eine NewChatMessageRequest mit der übergebenen ChatMessage und der ChatID.
      * Diese NewChatMessageRequest wird dann auf den EventBus gepackt.
      *
-     * @param ChatId  die ChatID der zugehörigen übergebenen Nachricht
+     * @param chatID  die ChatID der zugehörigen übergebenen Nachricht
      * @param message ChatMessage mit dem Nachrichten Inhalt.
      */
     @Override
-    public void sendMessage(String ChatId, ChatMessage message) {
-        NewChatMessageRequest request = new NewChatMessageRequest(ChatId, message);
+    public void sendMessage(String chatID, ChatMessage message) {
+        NewChatMessageRequest request = new NewChatMessageRequest(chatID, message);
         LOG.debug("NewChatMessageRequest an den Bus mit den Parametern ChatId, message gesendet");
         bus.post(request);
-    }
-
-    /**
-     * Diese Methode fordert eine Chat-History an für den übergebenen User.
-     *
-     * @param sender Der User, welcher die ChatHistory angefordert hat.
-     * @return null, da es nur die Anfrage ist.
-     */
-    @Override
-    public Chat getChatHistory(User sender) {
-        ChatHistoryRequest req = new ChatHistoryRequest(sender);
-        LOG.debug("ChatHistoryRequest an den Bus mit dem Parameter sender gesendet");
-        bus.post(req);
-        return null;
-    }
-
-    /**
-     * Diese Methode fordert eine Chat-History an für den übergebenen User und der zugehörigen LobbyID.
-     *
-     * @param sender Der User, welcher die ChatHistory angefordert hat.
-     * @param ChatId Die ChatID, für den spezifizierten Chat.
-     * @return null, da es nur die Anfrage ist.
-     */
-    @Override
-    public Chat getChatHistory(String ChatId, User sender) {
-        ChatHistoryRequest req = new ChatHistoryRequest(ChatId, sender);
-        LOG.debug("ChatHistoryRequest an den Bus mit dem Parameter ChatId, sender gesendet");
-        bus.post(req);
-        return null;
     }
 }

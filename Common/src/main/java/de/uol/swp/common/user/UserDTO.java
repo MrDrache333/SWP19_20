@@ -13,6 +13,7 @@ public class UserDTO implements User {
     private final String username;
     private final String password;
     private final String eMail;
+    private boolean isBot;
 
     /**
      * Initialisiert ein neues UserDTO.
@@ -27,6 +28,15 @@ public class UserDTO implements User {
         this.username = username;
         this.password = password;
         this.eMail = eMail;
+    }
+
+    public UserDTO(String username, String password, String eMail, boolean isBot) {
+        assert Objects.nonNull(username);
+        assert Objects.nonNull(password);
+        this.username = username;
+        this.password = password;
+        this.eMail = eMail;
+        this.isBot = isBot;
     }
 
     /**
@@ -62,7 +72,7 @@ public class UserDTO implements User {
     /**
      * Das Passwort des Benutzers wird zurückgeben
      *
-     * @retrun das Passwort des Benutzers
+     * @return das Passwort des Benutzers
      * @author Marco
      * @since Start
      */
@@ -74,7 +84,7 @@ public class UserDTO implements User {
     /**
      * Die Email des Benutzers wird zurückgeben
      *
-     * @retrun Die Email des Benutzers
+     * @return Die Email des Benutzers
      * @author Marco
      * @since Start
      */
@@ -86,7 +96,7 @@ public class UserDTO implements User {
     /**
      * Der Benutzers wird zurückgeben ohne Passwort
      *
-     * @retrun Der Benutzer ohne Passwort
+     * @return Der Benutzer ohne Passwort
      * @author Marco
      * @since Start
      */
@@ -111,7 +121,7 @@ public class UserDTO implements User {
     /**
      * Es wird überprüft ob die zwei Objekte gleich sind
      *
-     * @param o Das Objekt mit der verglichen werden soll
+     * @param obj Das Objekt mit der verglichen werden soll
      * @return True wenn die Objekte gleich sind
      * @author Marco
      * @since Start
@@ -134,5 +144,10 @@ public class UserDTO implements User {
     @Override
     public int hashCode() {
         return Objects.hashCode(username);
+    }
+
+
+    public boolean getIsBot() {
+        return this.isBot;
     }
 }

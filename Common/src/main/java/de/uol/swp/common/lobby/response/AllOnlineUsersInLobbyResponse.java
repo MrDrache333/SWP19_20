@@ -14,9 +14,9 @@ import java.util.*;
 public class AllOnlineUsersInLobbyResponse extends AbstractResponseMessage {
 
     private static final long serialVersionUID = -2995292304508692414L;
-    private Set<User> users = new TreeSet<>();
-    private TreeMap<String, Boolean> readyStatus = new TreeMap<>();
-    private UUID lobbyID;
+    private final Set<User> users = new TreeSet<>();
+    private final TreeMap<String, Boolean> readyStatus;
+    private final UUID lobbyID;
 
     /**
      * Konstruktor der All online users in lobby response.

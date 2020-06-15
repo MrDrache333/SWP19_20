@@ -31,7 +31,7 @@ class ServerApp {
      * Startet den Server in einem festgelegten Portbereich.
      * Bei Fehlern wird eine Exception geworfen.
      *
-     * @param args
+     * @param args Die übergebenen Startargumente
      * @throws Exception Die Exception
      * @author Marco Grawunder
      * @since Sprint 0
@@ -60,22 +60,23 @@ class ServerApp {
      * Erstellt einen neuen Service inkl. eines Usermanagements und eines Chatmanagements.
      *
      * @param injector Der Injector
-     * @throws Exception Die Exception
      * @author Marco Grawunder, Keno O
      * @since Sprint 0
      */
     private static void createServices(Injector injector) {
-        UserManagement userManagement = injector.getInstance(UserManagement.class);
-        ChatManagement chatManagement = injector.getInstance(ChatManagement.class);
-        GameManagement gameManagement = injector.getInstance(GameManagement.class);
-        
-        // TODO: Nach der Registrierung entfernen (Von Marco --> Nur übersetzt)
-        for (int i = 0; i < 100; i++) {
-            userManagement.createUser(new UserDTO("test" + i, "test" + i, "test" + i + "@test.de"));
-        }
 
+        boolean test = injector.getInstance(ServerModule.class).isDatabaseBasedUserStore();
+
+        UserManagement userManagement = injector.getInstance(UserManagement.class);
+
+        //Wenn der benutzte UserStore lokal ist, sollen Testnutzer erstellt werden
+        if (!test) {
+            // Testuser erstellen für den MainMemoryBasedUserStore
+            for (int i = 1; i <= 10; i++)
+                userManagement.createUser(new UserDTO("test" + i, "test" + i, "test" + i + "@test.de"));
+        }
         // Erstelle den globalen Chat
-        chatManagement.createChat("global");
+        injector.getInstance(ChatManagement.class).createChat("global");
 
         // Bemerkung: Da diese Dienste von keiner anderen Klasse referenziert werden,
         // müssen wir hier Instanzen erzeugen (und Abhängigkeiten injizieren).

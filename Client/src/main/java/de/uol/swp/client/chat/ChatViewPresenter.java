@@ -46,6 +46,7 @@ import java.util.UUID;
  * @author KenoO
  * @since Sprint 2
  */
+@SuppressWarnings("UnstableApiUsage, unused")
 public class ChatViewPresenter extends AbstractPresenter {
     /**
      * Pfad zu der verwendeten FXML.
@@ -90,13 +91,13 @@ public class ChatViewPresenter extends AbstractPresenter {
     private int maxChatMessageWidth;
 
     //Das Thema, das benutzt wird
-    private THEME CHATTHEME;
+    private final THEME CHATTHEME;
 
     //Die ChatID (zur Identifizierung der Chatnachricht)
-    private String chatId;
+    private String chatID;
 
     //Name des Chats (für das Label)
-    private String chatTitle;
+    private final String chatTitle;
 
     private GameManagement gameManagement;
 
@@ -130,14 +131,14 @@ public class ChatViewPresenter extends AbstractPresenter {
     @FXML
     private Button sendButton;
 
-    private ChatService chatService;
+    private final ChatService chatService;
 
     //Liste mit formatierten Chatnachrichten
     private ObservableList<VBox> chatMessages = FXCollections.observableArrayList();
-    private List<ChatMessage> chatMessageHistory = new ArrayList<>();
+    private final List<ChatMessage> chatMessageHistory = new ArrayList<>();
 
     //Wenn bei der Benutzung des TextFeldes eine Taste gedrueckt wird
-    private EventHandler<KeyEvent> onKeyPressedinchatTextFieldEvent = event -> {
+    private final EventHandler<KeyEvent> onKeyPressedinchatTextFieldEvent = event -> {
         //Abschicken der Nachricht, wenn die ENTER-Taste gedrueckt wurde
         if (event.getCode() == KeyCode.ENTER) {
             onSendChatButtonPressed();
@@ -153,11 +154,11 @@ public class ChatViewPresenter extends AbstractPresenter {
      * @author Keno
      * @since Sprint 3
      */
-    public ChatViewPresenter(String chatTitle, UUID chatId, User currentUser, THEME theme, ChatService chatService, Injector injector, GameManagement gameManagement) {
+    public ChatViewPresenter(String chatTitle, UUID chatID, User currentUser, THEME theme, ChatService chatService, Injector injector, GameManagement gameManagement) {
         this.chatTitle = chatTitle;
         this.CHATTHEME = theme;
         this.chatService = chatService;
-        this.chatId = chatId.toString();
+        this.chatID = chatID.toString();
         this.loggedInUser = currentUser;
         this.injector = injector;
         this.gameManagement = gameManagement;
@@ -177,7 +178,7 @@ public class ChatViewPresenter extends AbstractPresenter {
         this.chatTitle = chatTitle;
         this.CHATTHEME = theme;
         this.chatService = chatService;
-        this.chatId = chatId;
+        this.chatID = chatId;
         this.loggedInUser = currentUser;
         setTheme(CHATTHEME);
     }
@@ -237,7 +238,7 @@ public class ChatViewPresenter extends AbstractPresenter {
 
         //Verwende den richtigen Namen im Label
         titleLabel.setText(chatTitle.toUpperCase() + " CHAT");
-        if (!chatId.equals("global")) {
+        if (!chatID.equals("global")) {
             titleLabel.setStyle("-fx-text-fill: white;");
         }
 
@@ -267,14 +268,14 @@ public class ChatViewPresenter extends AbstractPresenter {
     @Subscribe
     private void onNewChatMessage(NewChatMessage msg) {
         if (loggedInUser == null) return;
-        if (!chatId.equals("") && msg.getChatId().equals(chatId) && (lastMessage == null || !(msg.getMessage().getSender().getUsername().equals("server") && lastMessage.getSender().getUsername().equals("server") && msg.getMessage().getMessage().equals(lastMessage.getMessage())))) {
+        if (!chatID.equals("") && msg.getChatId().equals(chatID) && (lastMessage == null || !(msg.getMessage().getSender().getUsername().equals("server") && lastMessage.getSender().getUsername().equals("server") && msg.getMessage().getMessage().equals(lastMessage.getMessage())))) {
             if (lastMessage != null && !loggedInUser.getUsername().equals(msg.getMessage().getSender().getUsername()) && ((gameManagement != null && !gameManagement.hasFocus()) || (gameManagement == null && !ClientApp.getSceneManager().hasFocus())))
                 try {
-                    new Notifyer().notify(Notifyer.MessageType.INFO, "Nachricht von " + msg.getMessage().getSender().getUsername() + " in " + (chatId.equals("global") ? "GLOBAL" : chatTitle), msg.getMessage().getMessage());
+                    new Notifyer().notify(Notifyer.MessageType.INFO, "Nachricht von " + msg.getMessage().getSender().getUsername() + " in " + (chatID.equals("global") ? "GLOBAL" : chatTitle), msg.getMessage().getMessage());
                 } catch (Exception e) {
                     LOG.debug("Nachricht konnte nicht angezeigt werden");
                 }
-            if (!loggedInUser.getUsername().equals(msg.getMessage().getSender().getUsername()) && msg.getMessage().getSender().equals("server"))
+            if (!loggedInUser.getUsername().equals(msg.getMessage().getSender().getUsername()) && msg.getMessage().getSender().getUsername().equals("server"))
                 new SoundMediaPlayer(SoundMediaPlayer.Sound.Message_Receive, SoundMediaPlayer.Type.Sound).play();
             Platform.runLater(() -> {
                 //Loesche alte Nachrichten bei Bedarf
@@ -299,7 +300,7 @@ public class ChatViewPresenter extends AbstractPresenter {
      */
     @Subscribe
     private void onChatResponseMessage(ChatResponseMessage msg) {
-        if (msg.getChat().getChatId().equals(chatId) && msg.getSender().equals(loggedInUser.getUsername())) {
+        if (msg.getChat().getChatId().equals(chatID) && msg.getSender().equals(loggedInUser.getUsername())) {
             updateChat(msg.getChat().getMessages());
         }
     }
@@ -307,7 +308,7 @@ public class ChatViewPresenter extends AbstractPresenter {
     /**
      * Aktualisiert den loggedInUser
      *
-     * @param message
+     * @param message Die UpdatedUserMessage
      * @author Julia
      * @since Sprint 4
      */
@@ -331,8 +332,8 @@ public class ChatViewPresenter extends AbstractPresenter {
      */
 
     public void userJoined(String username) {
-        if (!chatId.equals(""))
-            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(chatId.equals("global") ? serverUser : infoUser, username + " ist " + (chatId.equals("global") ? "dem Chat" : "der Lobby") + " beigereten")));
+        if (!chatID.equals(""))
+            onNewChatMessage(new NewChatMessage(chatID, new ChatMessage(chatID.equals("global") ? serverUser : infoUser, username + " ist " + (chatID.equals("global") ? "dem Chat" : "der Lobby") + " beigereten")));
     }
 
     /**
@@ -343,10 +344,9 @@ public class ChatViewPresenter extends AbstractPresenter {
      * @author KenoO, Fenja, Timo
      * @since Sprint 2
      */
-
     public void userLeft(String username) {
-        if (!chatId.equals(""))
-            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(chatId.equals("global") ? serverUser : infoUser, username + " hat " + (chatId.equals("global") ? "den Chat" : "die Lobby") + " verlassen!")));
+        if (!chatID.equals(""))
+            onNewChatMessage(new NewChatMessage(chatID, new ChatMessage(chatID.equals("global") ? serverUser : infoUser, username + " hat " + (chatID.equals("global") ? "den Chat" : "die Lobby") + " verlassen!")));
     }
 
     /**
@@ -357,8 +357,8 @@ public class ChatViewPresenter extends AbstractPresenter {
      * @since Sprint 4
      */
     public void userKicked(String username) {
-        if (!chatId.equals(""))
-            onNewChatMessage(new NewChatMessage(chatId, new ChatMessage(chatId.equals("global") ? serverUser : infoUser, username + " wurde aus der Lobby entfernt!")));
+        if (!chatID.equals(""))
+            onNewChatMessage(new NewChatMessage(chatID, new ChatMessage(chatID.equals("global") ? serverUser : infoUser, username + " wurde aus der Lobby entfernt!")));
     }
 
     /**
@@ -370,16 +370,16 @@ public class ChatViewPresenter extends AbstractPresenter {
     @FXML
     private void onSendChatButtonPressed() {
         new SoundMediaPlayer(SoundMediaPlayer.Sound.Message_Send, SoundMediaPlayer.Type.Sound).play();
-        if (chatId.equals("")) return;
+        if (chatID.equals("")) return;
         String message;
         message = chatTextField.getText();
         //Prüfe auf leere Nachricht
         if (!message.equals("")) {
-            LOG.debug("Sende neue Chatnachricht: User= " + loggedInUser.getUsername() + " Msg= " + message + " ChatID= " + chatId);
+            LOG.debug("Sende neue Chatnachricht: User= " + loggedInUser.getUsername() + " Msg= " + message + " ChatID= " + chatID);
             ChatMessage newChatMessage = new ChatMessage(loggedInUser, message);
             LOG.debug("Neue Nachricht zum Senden: " + message);
             chatTextField.clear();
-            this.chatService.sendMessage(chatId, newChatMessage);
+            this.chatService.sendMessage(chatID, newChatMessage);
         }
     }
 
@@ -528,12 +528,12 @@ public class ChatViewPresenter extends AbstractPresenter {
     /**
      * Setze Chat ID
      *
-     * @param chatId die chat id
+     * @param chatID die chat id
      * @author KenoO
      * @since Sprint 2
      */
-    public void setChatId(String chatId) {
-        this.chatId = chatId;
+    public void setChatId(String chatID) {
+        this.chatID = chatID;
     }
 
     /**

@@ -13,9 +13,9 @@ import java.util.UUID;
  */
 public class UserGaveUpMessage extends AbstractServerMessage {
     private static final long serialVersionUID = -6145124538556130864L;
-    private UUID lobbyID;
-    private UserDTO theUser;
-    private Boolean userGivedUp;
+    private final UUID lobbyID;
+    private final UserDTO theUser;
+    private final Boolean userGivedUp;
 
     /**
      * Der Konstruktor der UserGameUpMessage

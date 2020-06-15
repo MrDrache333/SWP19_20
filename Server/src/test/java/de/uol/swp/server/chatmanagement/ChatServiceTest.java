@@ -11,13 +11,17 @@ import de.uol.swp.server.lobby.LobbyManagement;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import de.uol.swp.server.usermanagement.UserManagement;
 import de.uol.swp.server.usermanagement.store.MainMemoryBasedUserStore;
-import de.uol.swp.server.usermanagement.store.UserStore;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+/**
+ * Testeklasse des ChatService
+ *
+ * @author Keno O.
+ * @since Sprint 1
+ */
 class ChatServiceTest {
 
     static final User chatMember = new UserDTO("Keno", "Keno", "Keno@OG.com");

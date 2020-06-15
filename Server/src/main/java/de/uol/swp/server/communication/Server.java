@@ -30,6 +30,7 @@ import java.net.InetSocketAddress;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+@SuppressWarnings("UnstableApiUsage, unused")
 public class Server implements ServerHandlerDelegate {
 
     private static final Logger LOG = LogManager.getLogger(Server.class);
@@ -61,7 +62,7 @@ public class Server implements ServerHandlerDelegate {
     /**
      * Starten einen neuen Server an einem gegebenen Port
      *
-     * @throws Exception
+     * @throws Exception Exception
      */
     public void start(int port) throws Exception {
         final ServerHandler serverHandler = new ServerHandler(this);
@@ -82,7 +83,6 @@ public class Server implements ServerHandlerDelegate {
                     // get encoded/decoded objects but ByteBuf
                     ch.pipeline().addLast(serverHandler);
                 }
-
             });
             // Just wait for server shutdown
             ChannelFuture f = b.bind().sync();
@@ -128,10 +128,10 @@ public class Server implements ServerHandlerDelegate {
         LOG.error("DeadEvent detected " + deadEvent);
     }
 
-
     // -------------------------------------------------------------------------------
     // Behandlung der verbundenen clients (von netty)
     // -------------------------------------------------------------------------------
+
     @Override
     public void newClientConnected(ChannelHandlerContext ctx) {
         LOG.debug("Neuer Client " + ctx + " verbunden");
@@ -208,15 +208,16 @@ public class Server implements ServerHandlerDelegate {
         sendMessage(msg);
     }
 
-
     // -------------------------------------------------------------------------------
     // Session Management (helper methods)
     // -------------------------------------------------------------------------------
 
     private void putSession(ChannelHandlerContext ctx, Session newSession) {
 
-        // TODO: check if session is already bound to connection
-        activeSessions.put(ctx, newSession);
+        // TODO: check better if session is already bound to connection
+        if (!activeSessions.containsKey(newSession)) {
+                activeSessions.put(ctx, newSession);
+        }
     }
 
     private void removeSession(ChannelHandlerContext ctx) {
@@ -228,12 +229,12 @@ public class Server implements ServerHandlerDelegate {
         return session != null ? Optional.of(session) : Optional.empty();
     }
 
-    private Optional<ChannelHandlerContext> getCtx(Message message) {
-        if (message.getMessageContext().isPresent() && message.getMessageContext().get() instanceof NettyMessageContext) {
-            return Optional.of(((NettyMessageContext) message.getMessageContext().get()).getCtx());
+    private Optional<ChannelHandlerContext> getCtx(Message msg) {
+        if (msg.getMessageContext().isPresent() && msg.getMessageContext().get() instanceof NettyMessageContext) {
+            return Optional.of(((NettyMessageContext) msg.getMessageContext().get()).getCtx());
         }
-        if (message.getSession().isPresent()) {
-            return getCtx(message.getSession().get());
+        if (msg.getSession().isPresent()) {
+            return getCtx(msg.getSession().get());
         }
         return Optional.empty();
     }
@@ -256,14 +257,13 @@ public class Server implements ServerHandlerDelegate {
         return ctxs;
     }
 
-
     // -------------------------------------------------------------------------------
     // Hilfsmethoden: Senden nur Objekte des Types Message
     // -------------------------------------------------------------------------------
 
-    private void sendToClient(ChannelHandlerContext ctx, ResponseMessage message) {
-        LOG.trace("Trying to sendMessage to client: " + ctx + " " + message);
-        ctx.writeAndFlush(message);
+    private void sendToClient(ChannelHandlerContext ctx, ResponseMessage msg) {
+        LOG.trace("Trying to sendMessage to client: " + ctx + " " + msg);
+        ctx.writeAndFlush(msg);
     }
 
     private void sendMessage(ServerMessage msg) {
@@ -284,6 +284,4 @@ public class Server implements ServerHandlerDelegate {
             }
         }
     }
-
-
 }

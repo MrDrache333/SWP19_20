@@ -8,10 +8,16 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Testklasse der UserMessage
+ *
+ * @author Keno S.
+ * @since Sprint 3
+ */
 class UserMessageSerializableTest {
 
     private static final int SIZE = 10;
-    private static List<String> users = new ArrayList<>();
+    private static final List<String> users = new ArrayList<>();
 
     /**
      *Zehn Nutzer werden der Liste hinzugefügt.

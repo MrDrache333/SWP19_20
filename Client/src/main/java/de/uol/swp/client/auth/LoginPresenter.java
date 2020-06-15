@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 
-
+@SuppressWarnings("UnstableApiUsage, unused")
 public class LoginPresenter extends AbstractPresenter {
 
     public static final String fxml = "/fxml/LoginView.fxml";
@@ -46,15 +46,9 @@ public class LoginPresenter extends AbstractPresenter {
      */
     @FXML
     private void initialize() {
-        LoginButton.setOnMouseEntered(event -> {
-            new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play();
-        });
-        registerButton.setOnMouseEntered(event -> {
-            new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play();
-        });
-        forgotPasswordButton.setOnMouseEntered(event -> {
-            new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play();
-        });
+        LoginButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
+        registerButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
+        forgotPasswordButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
         soundIcon.setOnMouseClicked(event -> {
             SoundMediaPlayer.setSound(!SoundMediaPlayer.isSoundEnabled());
             soundIcon.setImage(new Image(new File(getClass().getResource(SoundMediaPlayer.isSoundEnabled() ? "/images/sound_on_icon.png" : "/images/sound_off_icon.png").toExternalForm().replace("file:", "")).toURI().toString()));

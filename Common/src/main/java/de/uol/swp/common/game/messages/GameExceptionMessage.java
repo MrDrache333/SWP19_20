@@ -7,8 +7,8 @@ import java.util.UUID;
 public class GameExceptionMessage extends AbstractServerMessage {
 
     private static final long serialVersionUID = -8889082861061823738L;
-    private UUID gameID;
-    private String message;
+    private final UUID gameID;
+    private final String message;
 
     /**
      * Konstruktor der GameExceptionMessage

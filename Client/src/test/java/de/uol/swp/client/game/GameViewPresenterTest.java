@@ -26,6 +26,12 @@ import java.util.concurrent.CountDownLatch;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Klasse zum Testen des GameViewPresenters
+ *
+ * @author Devin
+ * @since Sprint 6
+ */
 class GameViewPresenterTest {
 
     static final User defaultOwner = new UserDTO("test1", "test1", "test1@test.de");
@@ -38,11 +44,17 @@ class GameViewPresenterTest {
     static final de.uol.swp.server.game.GameManagement gameManagement = new GameManagement(chatManagement, lobbyManagement);
     static final AuthenticationService authenticationService = new AuthenticationService(bus, new UserManagement(new MainMemoryBasedUserStore()), lobbyManagement);
     static final de.uol.swp.server.game.GameService gameService = new GameService(bus, gameManagement, authenticationService);
-    private static ArrayList<Short> chosenCards = new ArrayList<Short>();
+    private static final ArrayList<Short> chosenCards = new ArrayList<>();
     static UUID gameID;
     private final CountDownLatch lock = new CountDownLatch(1);
     private Object event;
 
+    /**
+     * Initialisiert ein neues Spiel
+     *
+     * @author Devin
+     * @since Sprint 6
+     */
     void init() {
         gameID = lobbyManagement.createLobby("Test", "", defaultOwner);
         chatManagement.createChat(gameID.toString());
@@ -53,6 +65,12 @@ class GameViewPresenterTest {
         bus.post(new StartGameInternalMessage(gameID));
     }
 
+    /**
+     * Löscht das Spiel, die Lobby und den Chat nach jeder Testausfürung
+     *
+     * @author Devin
+     * @since Sprint 6
+     */
     @AfterEach
     void afterEach() {
         gameManagement.deleteGame(gameID);
@@ -87,6 +105,12 @@ class GameViewPresenterTest {
         lock.countDown();
     }
 
+    /**
+     * Testet das Spielen von Karten
+     *
+     * @author Devin
+     * @since Sprint 6
+     */
     @Test
     void PlayCardTest() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();

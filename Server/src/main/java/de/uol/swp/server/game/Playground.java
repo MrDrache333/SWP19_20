@@ -24,32 +24,35 @@ import org.apache.logging.log4j.Logger;
 
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Playground stellt das eigentliche Spielfeld dar
  */
+@SuppressWarnings("UnstableApiUsage")
 public class Playground extends AbstractPlayground {
 
     private static final Logger LOG = LogManager.getLogger(Playground.class);
-    private Map<Short, Integer> cardField = new TreeMap<>();
+    private final Map<Short, Integer> cardField = new TreeMap<>();
     /**
      * Die Spieler
      */
-    private List<Player> players = new ArrayList<>();
-    private Map<String, Integer> resultsGame = new TreeMap<>();
-    private Map<Player, Integer> playerTurns = new HashMap<>();
+    private final List<Player> players = new ArrayList<>();
+    private final Map<String, Integer> resultsGame = new TreeMap<>();
+    private final Map<Player, Integer> playerTurns = new HashMap<>();
     private Player actualPlayer;
     private Player nextPlayer;
     private Player latestGavedUpPlayer;
     private Phase.Type actualPhase;
-    private GameService gameService;
-    private UUID theSpecificLobbyID;
-    private CompositePhase compositePhase;
-    private Timer timer = new Timer();
-    private short lobbySizeOnStart;
-    private CardPack cardsPackField;
-    private ArrayList<Short> chosenCards;
-    private ArrayList<Card> trash = new ArrayList<>();
+    private final GameService gameService;
+    private final UUID theSpecificLobbyID;
+    private final CompositePhase compositePhase;
+    private final Timer timer = new Timer();
+    private final short lobbySizeOnStart;
+    private final CardPack cardsPackField;
+    private final ArrayList<Short> chosenCards;
+    private final ArrayList<Card> trash = new ArrayList<>();
     private final UserDTO infoUser = new UserDTO("infoUser", "", "");
 
     /**
@@ -63,10 +66,19 @@ public class Playground extends AbstractPlayground {
     @Inject
     Playground(Lobby lobby, GameService gameService) {
         for (User user : lobby.getUsers()) {
-            Player player = new Player(user.getUsername());
-            player.setTheUserInThePlayer(user);
-            players.add(player);
-            playerTurns.put(player, 0);
+            if (!user.getIsBot()) {
+                Player player = new Player(user.getUsername());
+                player.setTheUserInThePlayer(user);
+                player.setBot(false);
+                players.add(player);
+                playerTurns.put(player, 0);
+            } else {
+                Player player = new Player(user.getUsername());
+                player.setTheUserInThePlayer(user);
+                player.setBot(true);
+                players.add(player);
+                playerTurns.put(player, 0);
+            }
         }
         Collections.shuffle(players);
         this.gameService = gameService;
@@ -119,7 +131,6 @@ public class Playground extends AbstractPlayground {
             if (i == 0) cardField.put(card.getId(), 60);
             else if (i == 1) cardField.put(card.getId(), 40);
             else if (i == 2) cardField.put(card.getId(), 30);
-            else LOG.debug("Komisch: @ initializeCardField- Else Methode in 104 ausgeschlagen.");
         }
     }
 
@@ -141,7 +152,7 @@ public class Playground extends AbstractPlayground {
             sendInitialHands();
         } else {
             //Spieler muss Clearphase durchlaufen haben
-            if (actualPhase != Phase.Type.Clearphase) return;
+            if (actualPhase != Phase.Type.ClearPhase) return;
             if (actualPlayer != latestGavedUpPlayer) {
                 sendPlayersHand();
                 sendCardsDeckSize();
@@ -174,6 +185,11 @@ public class Playground extends AbstractPlayground {
         gameService.dropFinishedGame(lobbyID);
     }
 
+    public void endGame(UUID lobbyID) {
+        gameService.dropFinishedGame(lobbyID);
+        gameService.getGameManagement().deleteLobbyWithOnlyBots(lobbyID);
+    }
+
     /**
      * Ein Timer skippt nach 35 Sekunden die aktuelle Phase, sofern der Timer vorher nicht gecancelt worden ist. Hilfmethode endTimer ganz unten in der Klasse. Timer wird im GameService gecancelt, wenn eine Karte innerhalb der Zeit ausgewählt worden ist.
      */
@@ -195,12 +211,11 @@ public class Playground extends AbstractPlayground {
      * @since Sprint 5
      */
     public void nextPhase() {
-        ArrayList<Short> theIdsFromTheHand = new ArrayList<>(5);
-        if (actualPhase == Phase.Type.Clearphase) {
+        if (actualPhase == Phase.Type.ClearPhase) {
             throw new GamePhaseException("Du kannst die Clearphase nicht überspringen!");
         }
         if (actualPhase == Phase.Type.ActionPhase) {
-            actualPhase = Phase.Type.Buyphase;
+            actualPhase = Phase.Type.BuyPhase;
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartBuyPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
 
             ChatMessage infoMessage = new ChatMessage(infoUser, getActualPlayer().getTheUserInThePlayer().getUsername() + " ist am Zug!");
@@ -208,7 +223,7 @@ public class Playground extends AbstractPlayground {
 
             endTimer();
         } else {
-            actualPhase = Phase.Type.Clearphase;
+            actualPhase = Phase.Type.ClearPhase;
             Player currentPlayer = actualPlayer;
             players.forEach(n -> {
                 StartClearPhaseMessage msg = new StartClearPhaseMessage(currentPlayer.getTheUserInThePlayer(), theSpecificLobbyID, getIndexOfPlayer(n), getIndexOfPlayer(currentPlayer));
@@ -226,10 +241,7 @@ public class Playground extends AbstractPlayground {
      * @since Sprint 5
      */
     public void sendPlayersHand() {
-        ArrayList<Short> theIdsFromTheHand = new ArrayList<>(5);
-        for (Card card : actualPlayer.getPlayerDeck().getHand()) {
-            theIdsFromTheHand.add(card.getId());
-        }
+        ArrayList<Short> theIdsFromTheHand = actualPlayer.getPlayerDeck().getHand().stream().map(Card::getId).collect(Collectors.toCollection(() -> new ArrayList<>(5)));
         DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID, (short) getPlayers().size(), false);
         gameService.sendToSpecificPlayer(actualPlayer, theHandMessage);
     }
@@ -242,7 +254,7 @@ public class Playground extends AbstractPlayground {
      */
     public int sendCardsDeckSize() {
         int size = actualPlayer.getPlayerDeck().getCardsDeck().size();
-        gameService.sendToSpecificPlayer(actualPlayer, new CardsDeckSizeMessage(theSpecificLobbyID, actualPlayer.getTheUserInThePlayer(), size, actualPlayer.getPlayerDeck().discardPileWasCleared()));
+        gameService.sendToAllPlayers(theSpecificLobbyID, new CardsDeckSizeMessage(theSpecificLobbyID, actualPlayer.getTheUserInThePlayer(), size, actualPlayer.getPlayerDeck().discardPileWasCleared()));
         return size;
     }
 
@@ -269,26 +281,25 @@ public class Playground extends AbstractPlayground {
      * @author Haschem, Ferit
      */
     public Boolean playerGaveUp(UUID lobbyID, UserDTO theGivingUpUser, Boolean wantsToGiveUp) {
-        int thePositionInList = -1;
-        for (int i = 0; i < players.size(); i++) {
-            if (players.get(i).getPlayerName().equals(theGivingUpUser.getUsername())) {
-                thePositionInList = i;
-                break;
-            }
-        }
+        int thePositionInList = IntStream.range(0, players.size()).filter(i -> players.get(i).getPlayerName().equals(theGivingUpUser.getUsername())).findFirst().orElse(-1);
         if (this.players.get(thePositionInList).getPlayerName().equals(theGivingUpUser.getUsername()) && wantsToGiveUp && lobbyID.equals(this.theSpecificLobbyID)) {
             latestGavedUpPlayer = this.players.get(thePositionInList);
             gameService.userGavesUpLeavesLobby(lobbyID, theGivingUpUser);
+
             if (this.players.size() == 2) {
                 this.players.remove(thePositionInList);
                 List<String> winners = calculateWinners();
                 GameOverMessage gameOverByGaveUp = new GameOverMessage(lobbyID, winners, resultsGame);
-                endGame(lobbyID, gameOverByGaveUp);
-            } else if (actualPlayer.equals(latestGavedUpPlayer)) {
+                if (!this.players.get(0).isBot()) {
+                    endGame(lobbyID, gameOverByGaveUp);
+                } else {
+                    endGame(lobbyID);
+                }
+            } else if (actualPlayer.equals(latestGavedUpPlayer) && !(onlyBotsLeft())) {
                 this.players.remove(thePositionInList);
-                actualPhase = Phase.Type.Clearphase;
+                actualPhase = Phase.Type.ClearPhase;
                 newTurn();
-            } else if (nextPlayer.equals(latestGavedUpPlayer)) {
+            } else if (nextPlayer.equals(latestGavedUpPlayer) && !(onlyBotsLeft())) {
                 if (thePositionInList < this.players.size() - 1) {
                     nextPlayer = this.players.get(++thePositionInList);
                     this.players.remove(--thePositionInList);
@@ -299,11 +310,21 @@ public class Playground extends AbstractPlayground {
             } else {
                 this.players.remove(thePositionInList);
             }
+
             return true;
-        } // TODO: Wenn Spielelogik weiter implementiert wird und ein Spieler aufgibt, Handling implementieren wie mit aufgegeben Spielern weiter umgegangen wird.
-        else {
+        } else {
             return false;
         }
+    }
+
+    //Hilfsmethode zum Überprüfen
+    public Boolean onlyBotsLeft() {
+        for (Player player : players) {
+            if (player.isBot()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -328,10 +349,7 @@ public class Playground extends AbstractPlayground {
      */
     public void sendInitialHands() {
         for (Player playerhand : players) {
-            ArrayList<Short> theIdsFromInitalPlayerDeck = new ArrayList<>(5);
-            for (Card card : playerhand.getPlayerDeck().getHand()) {
-                theIdsFromInitalPlayerDeck.add(card.getId());
-            }
+            ArrayList<Short> theIdsFromInitalPlayerDeck = playerhand.getPlayerDeck().getHand().stream().map(Card::getId).collect(Collectors.toCollection(() -> new ArrayList<>(5)));
             DrawHandMessage initialHandFromPlayer = new DrawHandMessage(theIdsFromInitalPlayerDeck, theSpecificLobbyID, (short) getPlayers().size(), true);
             gameService.sendToSpecificPlayer(playerhand, initialHandFromPlayer);
             int availableAction = playerhand.getAvailableActions();
@@ -352,12 +370,7 @@ public class Playground extends AbstractPlayground {
      * @since Sprint 5
      */
     public boolean checkForActionCard() {
-        for (Card card : actualPlayer.getPlayerDeck().getHand()) {
-            if (card instanceof ActionCard) {
-                return true;
-            }
-        }
-        return false;
+        return actualPlayer.getPlayerDeck().getHand().stream().anyMatch(card -> card instanceof ActionCard);
     }
 
     /**
@@ -370,18 +383,14 @@ public class Playground extends AbstractPlayground {
     public List<String> calculateWinners() {
         List<String> winners = new ArrayList<>();
         for (Player player : players) {
-            int victoryPoints = 0;
+            int victoryPoints;
             Deck deck = player.getPlayerDeck();
             deck.getCardsDeck().addAll(deck.getHand());
             deck.getCardsDeck().addAll(deck.getDiscardPile());
             deck.getHand().clear();
             deck.getDiscardPile().clear();
 
-            for (Card card : deck.getCardsDeck()) {
-                if (card instanceof ValueCard) {
-                    victoryPoints += ((ValueCard) card).getValue();
-                }
-            }
+            victoryPoints = deck.getCardsDeck().stream().filter(card -> card instanceof ValueCard).mapToInt(card -> ((ValueCard) card).getValue()).sum();
             resultsGame.put(player.getPlayerName(), victoryPoints);
         }
 

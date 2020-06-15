@@ -27,6 +27,7 @@ import java.util.UUID;
  * @author Marco
  * @since Start
  */
+@SuppressWarnings("UnstableApiUsage")
 public class LobbyService {
 
     private static final Logger LOG = LogManager.getLogger(LobbyService.class);
@@ -54,9 +55,10 @@ public class LobbyService {
      * @since Sprint 3
      */
 
-    public void joinLobby(UUID lobbyID, UserDTO user) {
-        LobbyJoinUserRequest request = new LobbyJoinUserRequest(lobbyID, user);
+    public void joinLobby(UUID lobbyID, UserDTO user, Boolean isBot) {
+        LobbyJoinUserRequest request = new LobbyJoinUserRequest(lobbyID, user, isBot);
         bus.post(request);
+        LOG.info("LobbyJoinUserRequest wurde gesendet.");
     }
 
     /**
@@ -138,12 +140,12 @@ public class LobbyService {
      * Erstellt einen SendChosenCardsRequest, um die ausgewählten Karten an den Server zu schicken.
      *
      * @param lobbyID     die ID der Lobby
-     * @param chosencards die gewählten Aktionskarten
+     * @param chosenCards die gewählten Aktionskarten
      * @author Anna, Fenja
      * @since Sprint 7
      */
-    public void sendChosenCards(UUID lobbyID, ArrayList<Short> chosencards) {
-        SendChosenCardsRequest requestMessage = new SendChosenCardsRequest(lobbyID, chosencards);
+    public void sendChosenCards(UUID lobbyID, ArrayList<Short> chosenCards) {
+        SendChosenCardsRequest requestMessage = new SendChosenCardsRequest(lobbyID, chosenCards);
         bus.post(requestMessage);
     }
 
