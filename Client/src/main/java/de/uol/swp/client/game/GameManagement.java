@@ -259,7 +259,8 @@ public class GameManagement {
     public void closeGameOverViewAndLeaveLobby() {
         Platform.runLater(gameOverStage::close);
         primaryPresenter.closeTab(id, true);
-        lobbyPresenter.getLobbyService().leaveLobby(id, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
+        if(lobbyPresenter.getLobbyService().retrieveAllLobbies().contains(lobbyName))
+            lobbyPresenter.getLobbyService().leaveLobby(id, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
     }
 
     /**
