@@ -11,9 +11,20 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+/**
+ * Klasse um den JsonCardParser zu testen
+ *
+ * @author Keno O.
+ * @since Sprint 6
+ */
 class JsonCardParserTest {
 
-
+    /**
+     * Versucht das Kartenpack zu laden
+     *
+     * @author Keno O.
+     * @since Sprint 6
+     */
     @Test
     void loadPack() {
 

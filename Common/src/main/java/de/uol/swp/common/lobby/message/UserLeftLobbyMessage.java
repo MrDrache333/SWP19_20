@@ -11,6 +11,9 @@ public class UserLeftLobbyMessage extends AbstractLobbyMessage {
     private UserDTO gameOwner;
     private LobbyDTO lobby;
 
+    /**
+     * Konstruktor für Serialisierung
+     */
     public UserLeftLobbyMessage() {
     }
 

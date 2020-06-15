@@ -16,7 +16,7 @@ public class If extends ComplexCardAction {
     /**
      * Gewünschtes Ergebnis der vorherigen Aktion
      */
-    private boolean expectedResult = true;
+    private boolean expectedResult;
     /**
      * Die Aktion, deren Ausführung von dem Ergebnis der vorhergegangen Aktion abhängt
      */

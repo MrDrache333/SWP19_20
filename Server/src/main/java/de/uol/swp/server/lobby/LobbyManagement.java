@@ -2,6 +2,9 @@ package de.uol.swp.server.lobby;
 
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
+import de.uol.swp.common.lobby.exception.KickPlayerException;
+import de.uol.swp.common.lobby.exception.LeaveLobbyException;
+import de.uol.swp.common.lobby.exception.SetMaxPlayerException;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import org.apache.logging.log4j.LogManager;
@@ -112,7 +115,7 @@ public class LobbyManagement {
      *
      * @param id   Die LobbyID
      * @param user Der User, welches die Lobby verlässt.
-     * @return Gibt wahr zurück, wenn der User aus der Lobby entfernt worden ist.
+     * @throws LeaveLobbyException Wenn die Lobby nicht existiert.
      * @author Marvin
      */
     public boolean leaveLobby(UUID id, User user) {
@@ -124,10 +127,13 @@ public class LobbyManagement {
             lobby.get().leaveUser(user);
             if (lobby.get().getPlayers() == 0) {
                 this.dropLobby(id);
+                return true;
             }
             return true;
+        } else {
+            throw new LeaveLobbyException("Die zu verlassende Lobby existiert nicht.");
         }
-        return false;
+
     }
 
     /**
@@ -162,7 +168,7 @@ public class LobbyManagement {
                 updatedLobbies.put(lobbyToUpdate.getLobbyID(), lobbyToUpdate);
             }
         }
-        updatedLobbies.entrySet().forEach(l -> lobbies.replace(l.getKey(), l.getValue()));
+        updatedLobbies.forEach(lobbies::replace);
     }
 
     /**
@@ -171,24 +177,27 @@ public class LobbyManagement {
      * @param id         Die LobbyID
      * @param userToKick Der zu entfernende Benutzer
      * @param owner      Der Lobbybesitzer
-     * @return Boolean   Ob der Kick gerechtfertigt ist
+     * @throws KickPlayerException Wenn der Spieler nicht aus der Lobby gekickt werden kann
      * @author Darian, Marvin
      * @since Sprint 4
      */
-    public boolean kickUser(UUID id, User userToKick, User owner) {
+    public void kickUser(UUID id, User userToKick, User owner) {
         Optional<Lobby> lobby = this.getLobby(id);
-        if (lobby.isPresent() && lobby.get().getOwner().getUsername().equals(owner.getUsername())) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("User " + userToKick.getUsername() + " ist von der Lobby gekickt worden " + getLobby(id).get());
+        if (lobby.isPresent()) {
+            if (lobby.get().getOwner().getUsername().equals(owner.getUsername())) {
+                lobby.get().leaveUser(userToKick);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("User " + userToKick.getUsername() + " ist von der Lobby gekickt worden " + getLobby(id));
+                }
+                if (lobby.get().getPlayers() == 0) {
+                    this.dropLobby(id);
+                }
+            } else {
+                throw new KickPlayerException("Benutzer kann nicht aus der Lobby gekickt werden, da " + owner + " nicht der Lobbybesitzer ist.");
             }
-            lobby.get().leaveUser(userToKick);
-            if (lobby.get().getPlayers() == 0) {
-                this.dropLobby(id);
-            }
-            return true;
+        } else {
+            throw new KickPlayerException("Die Lobby existiert nicht, in der der Benutzer gekickt werden soll.");
         }
-        return false;
-        // TODO: error handling not existing lobby
     }
 
     /**
@@ -231,16 +240,31 @@ public class LobbyManagement {
      * @param lobbyID        Die LobbyID, der Lobby wo die Max-Player geändert werden soll.
      * @param loggedInUser   Der User, welcher die setMaxPlayerRequest an den Server geschickt hat.
      * @param maxPlayerValue Der Wert, welcher verändert wird.
-     * @author Timo, Rike
+     * @throws SetMaxPlayerException wenn die maximale Spierleranzahl nicht geändert werden kann
+     * @author Timo, Rike, Darian
      * @since Sprint 3
      */
-    public boolean setMaxPlayer(UUID lobbyID, User loggedInUser, Integer maxPlayerValue) {
-
+    public void setMaxPlayer(UUID lobbyID, User loggedInUser, Integer maxPlayerValue) {
         if (lobbies.get(lobbyID).getOwner().equals(loggedInUser)) {
-            lobbies.get(lobbyID).setMaxPlayer(maxPlayerValue);
-            return true;
+            if (maxPlayerValue >= getLobby(lobbyID).get().getPlayers()) {
+                lobbies.get(lobbyID).setMaxPlayer(maxPlayerValue);
+            } else {
+                throw new SetMaxPlayerException("Es sind zu viele Benutzer in der Lobby, um die maximale Spierleranzahl ändern.");
+            }
         } else {
-            return false;
+            throw new SetMaxPlayerException(loggedInUser + " ist nicht der Lobbybesitzer und kann nicht die maximale Spierleranzahl ändern.");
         }
+    }
+
+    /**
+     * Überprüft, ob sich der User in einer Lobby befindet.
+     *
+     * @param user Der User
+     * @return true wenn ja, sonst false
+     * @author Julia
+     * @since Sprint 9
+     */
+    public boolean userInLobby(User user) {
+        return lobbies.values().stream().flatMap(l -> l.getUsers().stream()).anyMatch(u -> u.equals(user));
     }
 }

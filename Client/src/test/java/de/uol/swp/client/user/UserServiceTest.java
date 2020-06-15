@@ -56,6 +56,9 @@ class UserServiceTest {
 
     /**
      * Eventbus initialisieren.
+     *
+     * @author Marco
+     * @since Start
      */
     @BeforeEach
     void registerBus() {
@@ -65,12 +68,22 @@ class UserServiceTest {
 
     /**
      * Klasse vom Eventbus deregistrieren
+     *
+     * @author Marco
+     * @since Start
      */
     @AfterEach
     void deregisterBus() {
         bus.unregister(this);
     }
 
+    /**
+     * Loggt einen den User ein
+     *
+     * @throws InterruptedException Fehler, der auftreten könnte
+     * @author Maro
+     * @since Start
+     */
     private void loginUser() throws InterruptedException {
         UserService userService = new UserService(bus);
         userService.login(defaultUser.getUsername(), defaultUser.getPassword());
@@ -81,13 +94,13 @@ class UserServiceTest {
      * Überprüfen, ob ein User auf dem Server erfolgreich anmelden kann.
      *
      * @throws InterruptedException Fehler, der auftreten könnte
+     * @author Marco
+     * @since Start
      */
     @Test
     void loginTest() throws InterruptedException {
         loginUser();
-
         assertTrue(event instanceof LoginRequest);
-
         LoginRequest loginRequest = (LoginRequest) event;
         assertEquals(loginRequest.getUsername(), defaultUser.getUsername());
         assertEquals(loginRequest.getPassword(), defaultUser.getPassword());
@@ -95,6 +108,9 @@ class UserServiceTest {
 
     /**
      * Überprüfen, ob ein Benutzer auf dem Server bereits angemeldet ist.
+     *
+     * @author Marco
+     * @since Start
      */
     @Test
     void isLoggedInTest() {
@@ -106,21 +122,18 @@ class UserServiceTest {
      * Einen Benutzer versuchen vom Server abzumelden.
      *
      * @throws InterruptedException Die evtl. auftretene Fehlermeldung
+     * @author Marco
+     * @since Start
      */
     @Test
     void logoutTest() throws InterruptedException {
         loginUser();
         event = null;
-
         UserService userService = new UserService(bus);
         userService.logout(defaultUser);
-
         lock.await(1000, TimeUnit.MILLISECONDS);
-
         assertTrue(event instanceof LogoutRequest);
-
         LogoutRequest request = (LogoutRequest) event;
-
         assertTrue(request.authorizationNeeded());
     }
 
@@ -128,18 +141,16 @@ class UserServiceTest {
      * Einen Benutzer versuchen in dem Server-Speicher zu erstellen
      *
      * @throws InterruptedException Die evtl. auftretene Fehlermeldung
+     * @author Marco
+     * @since Start
      */
     @Test
     void createUserTest() throws InterruptedException {
         UserService userService = new UserService(bus);
         userService.createUser(defaultUser);
-
         lock.await(1000, TimeUnit.MILLISECONDS);
-
         assertTrue(event instanceof RegisterUserRequest);
-
         RegisterUserRequest request = (RegisterUserRequest) event;
-
         assertEquals(request.getUser().getUsername(), defaultUser.getUsername());
         assertEquals(request.getUser().getPassword(), defaultUser.getPassword());
         assertEquals(request.getUser().getEMail(), defaultUser.getEMail());
@@ -151,18 +162,16 @@ class UserServiceTest {
      * Einen Benutzer versuchen in dem Server-Speicher zu aktualisieren
      *
      * @throws InterruptedException Die evtl. auftretene Fehlermeldung
+     * @author Marco
+     * @since Start
      */
     @Test
     void updateUserTest() throws InterruptedException {
         UserService userService = new UserService(bus);
         userService.updateUser(defaultUser, defaultUser, "test");
-
         lock.await(1000, TimeUnit.MILLISECONDS);
-
         assertTrue(event instanceof UpdateUserRequest);
-
         UpdateUserRequest request = (UpdateUserRequest) event;
-
         assertEquals(request.getUser().getUsername(), defaultUser.getUsername());
         assertEquals(request.getUser().getPassword(), defaultUser.getPassword());
         assertEquals(request.getUser().getEMail(), defaultUser.getEMail());
@@ -174,6 +183,9 @@ class UserServiceTest {
 
     /**
      * Einen Benutzer versuchen aus dem Server-Speicher zu löschen
+     *
+     * @author Marco
+     * @since Start
      */
     @Test
     void dropUserTest() {
@@ -187,6 +199,8 @@ class UserServiceTest {
      * Versuchen alle angemeldeten Benutzer vom Server abzurufen.
      *
      * @throws InterruptedException Die evtl. auftretene Fehlermeldung
+     * @author Marco
+     * @since Start
      */
     @Test
     void retrieveAllUsersTest() throws InterruptedException {

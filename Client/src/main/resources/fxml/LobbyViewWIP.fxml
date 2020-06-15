@@ -9,7 +9,7 @@
 <?import javafx.scene.text.*?>
 <?import java.lang.Integer?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="lobbyViewWIP" prefHeight="750.0" prefWidth="1280.0"
-            xmlns="http://javafx.com/javafx/8.0.999-ea">
+            xmlns="http://javafx.com/javafx/11.0.1">
     <children>
         <ImageView fitHeight="750.0" fitWidth="1280.0" pickOnBounds="true">
             <image>
@@ -85,15 +85,15 @@
                                     </font>
                                 </Button>
                                 <Button fx:id="gamesettingsButton" alignment="CENTER" mnemonicParsing="false"
-                                        prefHeight="31.0" prefWidth="419.0" text="Spieleinstellungen"
-                                        onAction="#onGamesettingsButtonPressed" visible="false">
+                                        onAction="#onGamesettingsButtonPressed" prefHeight="31.0" prefWidth="419.0"
+                                        text="Spieleinstellungen" visible="false">
                                     <font>
                                         <Font size="15.0"/>
                                     </font>
                                 </Button>
                                 <Button fx:id="createBotButton" alignment="CENTER" mnemonicParsing="false"
-                                        prefHeight="31.0" prefWidth="419.0" text="Bot hinzufügen"
-                                        onAction="#onCreateBotButtonPressed" visible="false">
+                                        onAction="#onCreateBotButtonPressed" prefHeight="31.0" prefWidth="419.0"
+                                        text="Bot hinzufügen" visible="false">
                                     <font>
                                         <Font size="15.0"/>
                                     </font>
@@ -126,18 +126,39 @@
             </children>
         </VBox>
         <HBox fx:id="lobbyHBox" layoutX="300.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-              minWidth="-Infinity" prefHeight="750.0" prefWidth="980.0" spacing="20" nodeOrientation="RIGHT_TO_LEFT"
+              minWidth="-Infinity" nodeOrientation="RIGHT_TO_LEFT" prefHeight="750.0" prefWidth="980.0" spacing="20"
               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="0.0"
               AnchorPane.topAnchor="0.0">
             <children>
-
-                <Pane fx:id="chatView" maxHeight="630.0" maxWidth="450.0" minHeight="630.0" minWidth="400.0"
-                      nodeOrientation="LEFT_TO_RIGHT" prefHeight="630.0" prefWidth="450.0">
+                <Pane fx:id="chatView" minHeight="750.0" minWidth="434.0" nodeOrientation="LEFT_TO_RIGHT">
                     <VBox.margin>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="5.0"/>
                     </VBox.margin>
                 </Pane>
+                <VBox fx:id="gameSettingsVBox" prefHeight="630" prefWidth="450" spacing="20" visible="false">
+                    <children>
+                        <ScrollPane fx:id="scrollPane" maxWidth="620" nodeOrientation="LEFT_TO_RIGHT" opacity="0.73"
+                                    prefHeight="500" prefWidth="620" style="-fx-background-color: #3D3D3D">
+                            <TilePane fx:id="choosableCards" hgap="10" maxWidth="500" prefHeight="500" prefWidth="500"
+                                      style="-fx-background-color: #3D3D3D" vgap="10"/>
+                        </ScrollPane>
+                        <TilePane fx:id="chosenCards" nodeOrientation="LEFT_TO_RIGHT" opacity="0.5" prefHeight="160"
+                                  prefWidth="400" style="-fx-background-color: #3D3D3D">
+                            <children>
+                                <TextFlow fx:id="textFlow" prefHeight="50" prefWidth="200" textAlignment="CENTER">
+                                    <children>
+                                        <Text fill="white" style="-fx-font-size: 24" text="Wähle Karten aus..."/>
+                                    </children>
+                                </TextFlow>
+                            </children>
+                        </TilePane>
+                        <Button fx:id="sendCards" onAction="#sendChosenCards" prefHeight="31" prefWidth="450"
+                                text="Auswahl abschicken" visible="false"/>
+                    </children>
+                </VBox>
             </children>
         </HBox>
+        <ImageView fx:id="bigCardImage" fitWidth="250" layoutX="400" layoutY="100" preserveRatio="true"
+                   visible="false"/>
     </children>
 </AnchorPane>

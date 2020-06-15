@@ -7,11 +7,11 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 public class DrawHandMessage extends AbstractServerMessage {
-    private ArrayList<Short> cardsOnHand;
-    private UUID theLobbyID;
-    private Short numberOfPlayers;
-    private boolean initialHand;
-    private User user;
+    private final ArrayList<Short> cardsOnHand;
+    private final UUID theLobbyID;
+    private final Short numberOfPlayers;
+    private final boolean initialHand;
+    private final User player;
 
     /**
      * Konstruktor, welcher die ArrayList mit den IDs der Hand übergeben bekommt. Entweder die Standart-Hand mit Größe 5 oder wenn er Karten
@@ -21,12 +21,32 @@ public class DrawHandMessage extends AbstractServerMessage {
      * @author Ferit
      * @since Sprint 5
      */
-    public DrawHandMessage(ArrayList<Short> theIDsFromTheCards, UUID specificLobbyID, User user, Short numberOfPlayers, boolean initialHand) {
+    public DrawHandMessage(ArrayList<Short> theIDsFromTheCards, UUID specificLobbyID, Short numberOfPlayers, boolean initialHand) {
         this.cardsOnHand = theIDsFromTheCards;
         this.theLobbyID = specificLobbyID;
         this.numberOfPlayers = numberOfPlayers;
         this.initialHand = initialHand;
-        this.user = user;
+        this.player = null;
+    }
+
+    /**
+     * Konstruktor, welcher die ArrayList mit den IDs der Hand übergeben bekommt. Entweder die Standart-Hand mit Größe 5
+     * oder wenn er Karten aktiviert und somit mehr auf der Hand hat. Außerdem wird der Spieler, um dessen Hand es sich
+     * handelt, mit übergeben.
+     *
+     * @param theIDsFromTheCards theIDsFromTheCards die KartenIDs
+     * @param specificLobbyID    die LobbyID
+     * @param numberOfPlayers    Anzahl der Spieler
+     * @param player             der Spieler
+     * @author Anna
+     * @since Sprint 9
+     */
+    public DrawHandMessage(ArrayList<Short> theIDsFromTheCards, UUID specificLobbyID, Short numberOfPlayers, User player) {
+        this.cardsOnHand = theIDsFromTheCards;
+        this.theLobbyID = specificLobbyID;
+        this.numberOfPlayers = numberOfPlayers;
+        this.player = player;
+        this.initialHand = false;
     }
 
     /**
@@ -67,13 +87,13 @@ public class DrawHandMessage extends AbstractServerMessage {
     }
 
     /**
-     * Gibt den User zurück für wen die Nachricht ist.
+     * Gibt den Spieler zurück.
      *
-     * @return user Empfänger der Nachricht
-     * @author Darian
+     * @return der Spieler
+     * @author Anna
      * @since Sprint 9
      */
-    public User getUser() {
-        return user;
+    public User getPlayer() {
+        return player;
     }
 }

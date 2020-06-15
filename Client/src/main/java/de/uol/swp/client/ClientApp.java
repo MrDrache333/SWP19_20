@@ -10,7 +10,10 @@ import de.uol.swp.client.game.GameService;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.lobby.OpenJoinLobbyRequest;
 import de.uol.swp.client.sound.SoundMediaPlayer;
-import de.uol.swp.common.lobby.message.*;
+import de.uol.swp.common.lobby.message.CreateLobbyMessage;
+import de.uol.swp.common.lobby.message.KickUserMessage;
+import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
+import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.lobby.request.OpenLobbyCreateRequest;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
@@ -35,6 +38,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 import java.util.Optional;
 
+@SuppressWarnings("UnstableApiUsage, unused")
 public class ClientApp extends Application implements ConnectionListener {
 
     private static final Logger LOG = LogManager.getLogger(ClientApp.class);
@@ -392,23 +396,6 @@ public class ClientApp extends Application implements ConnectionListener {
     // -----------------------------------------------------
     // JavFX Help methods
     // -----------------------------------------------------
-
-    /**
-     * Aktualisiert die Max Player Anzahl der Lobbys wenn eine SetMaxPlayerMessage eingeht.
-     *
-     * @author Timo, Rike
-     * @since Sprint 3
-     */
-    @Subscribe
-    public void onSetMaxPlayerMessage(SetMaxPlayerMessage msg) {
-
-        if (msg.isSetMaxPlayerSet()) {
-            LOG.info("Max. Spieler der Lobby: " + msg.getLobby().getName() + " erfolgreich auf " + msg.getMaxPlayer() + " gesetzt.");
-        } else {
-            LOG.error("Max. Spieler der Lobby: " + msg.getLobby().getName() + " nicht gesetzt.");
-            SceneManager.showAlert(Alert.AlertType.INFORMATION, "Max. Spieler nicht geändert :(\nBitte einen User vorher kicken,\nda mehr Spieler in der Lobby sind\nals der Wert den du ausgewählt hast.", "Fehler 404 - Marco nicht gefunden!");
-        }
-    }
 
     /**
      * Nachdem der Account gelöscht wurde, werden alle Fenster geschlossen und der Login-Screen angezeigt

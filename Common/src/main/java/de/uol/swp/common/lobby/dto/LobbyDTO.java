@@ -15,16 +15,16 @@ import java.util.*;
 public class LobbyDTO implements Lobby, Serializable {
 
     private static final long serialVersionUID = 998701048176852816L;
+    private final TreeMap<String, Boolean> readyStatus = new TreeMap<>();
     private final String name;
-    private User owner;
-    private TreeMap<String, Boolean> readyStatus = new TreeMap<>();
-    private Set<User> users = new TreeSet<>();
+    private final String lobbyPassword;
+    private final UUID lobbyID;
     private int players;
-    private String lobbyPassword;
-    private UUID lobbyID;
-    private Integer maxPlayer;
+    private int maxPlayer;
     private boolean inGame;
+    private Set<User> users = new TreeSet<>();
     private ArrayList<Short> chosenCards;
+    private User owner;
 
     /**
      * Insatnziiert eine neue LobbyDTO.
@@ -62,7 +62,7 @@ public class LobbyDTO implements Lobby, Serializable {
      * @author Marco, Julia, Rike, Timo, Fenja, Anna
      * @since Start
      */
-    public LobbyDTO(String name, User creator, UUID lobbyID, String lobbyPassword, Set<User> users, int players, Integer maxPlayer, boolean inGame) {
+    public LobbyDTO(String name, User creator, UUID lobbyID, String lobbyPassword, Set<User> users, int players, int maxPlayer, boolean inGame) {
         this.name = name;
         this.owner = creator;
         this.readyStatus.put(creator.getUsername(), false);
@@ -116,19 +116,12 @@ public class LobbyDTO implements Lobby, Serializable {
 
     @Override
     public Set<User> getUsers() {
-        Set<User> Users = new TreeSet<>();
-        Users.addAll(users);
-        return Users;
+        return new TreeSet<>(users);
     }
 
     @Override
     public UUID getLobbyID() {
         return lobbyID;
-    }
-
-    @Override
-    public void setLobbyID(UUID lobbyID) {
-        this.lobbyID = lobbyID;
     }
 
     @Override
@@ -159,7 +152,7 @@ public class LobbyDTO implements Lobby, Serializable {
      *
      * @return der jeweilige readyStatus.
      * @author Marco
-     * @sind Start
+     * @since Start
      */
     public TreeMap<String, Boolean> getEveryReadyStatus() {
         return readyStatus;
@@ -205,7 +198,7 @@ public class LobbyDTO implements Lobby, Serializable {
     @Override
     public boolean onlyBotsLeft(UUID lobbyID) {
         for (User user : getUsers()) {
-            if (user.getIsBot() == false) {
+            if (!user.getIsBot()) {
                 return false;
             }
         }

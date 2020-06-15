@@ -7,6 +7,7 @@ import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.OpenJoinLobbyRequest;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
+import de.uol.swp.common.lobby.exception.JoinLobbyExceptionMessage;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.request.OpenLobbyCreateRequest;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
@@ -40,7 +41,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-
+@SuppressWarnings("UnstableApiUsage, unused")
 public class MainMenuPresenter extends AbstractPresenter {
 
     public static final String fxml = "/fxml/MainMenuView.fxml";
@@ -186,7 +187,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void userLoggedOut(UserLoggedOutMessage message) {
-        LOG.debug("User " + message.getUsername() + " logged out");
+        LOG.debug("User " + message.getUsername() + " ausgeloggt");
         userLeft(message.getUsername());
     }
 
@@ -295,12 +296,12 @@ public class MainMenuPresenter extends AbstractPresenter {
      * Aktualisiert die Lobbytabelle, nachdem die max. Spielerzahl einer Lobby gesetzt wurde
      *
      * @param message die SetMaxPlayerMessage
-     * @author Julia
+     * @author Julia, Darian
      * @since Sprint 4
      */
     @Subscribe
     public void maxPlayerSet(SetMaxPlayerMessage message) {
-        if (message.isSetMaxPlayerSet() && lobbies != null) {
+        if (lobbies != null) {
             Platform.runLater(() -> {
                 lobbies.removeIf(lobby -> lobby.getLobbyID().equals(message.getLobby().getLobbyID()));
                 lobbies.add(0, message.getLobby());
@@ -434,6 +435,17 @@ public class MainMenuPresenter extends AbstractPresenter {
         updateLobbiesTable(allLobbiesResponse.getLobbies());
     }
 
+    /**
+     * Hier wird die JoinLobbyExceptionMessage abgefangen und die Nachricht in einem neuem Fenster angezeigt
+     *
+     * @param msg die Nachricht
+     * @author Darian
+     * @since Sprint 8
+     */
+    @Subscribe
+    public void onJoinLobbyExceptionMessage(JoinLobbyExceptionMessage msg) {
+        SceneManager.showAlert(Alert.AlertType.ERROR, msg.getMessage(), "Lobby");
+    }
 
     //-----------------
     // PRIVATE METHODEN
@@ -493,13 +505,7 @@ public class MainMenuPresenter extends AbstractPresenter {
                         } else {
                             setGraphic(joinLobbyButton);
                             Lobby lobby = getTableView().getItems().get(getIndex());
-                            Platform.runLater(() -> {
-                                if (lobby.getUsers().contains(loggedInUser) || lobby.getInGame() || lobby.getPlayers() == lobby.getMaxPlayer()) {
-                                    joinLobbyButton.setDisable(true);
-                                } else {
-                                    joinLobbyButton.setDisable(false);
-                                }
-                            });
+                            Platform.runLater(() -> joinLobbyButton.setDisable(lobby.getUsers().contains(loggedInUser) || lobby.getInGame() || lobby.getPlayers() == lobby.getMaxPlayer()));
                         }
                     }
                 };

@@ -23,11 +23,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+@SuppressWarnings("UnstableApiUsage, unused")
 public class BotPlayer extends Player {
     protected EventBus eventBus;
 
-    private UUID gameId;
-    final private boolean isBot = true;
+    private final UUID gameId;
 
     static final Logger LOG = LogManager.getLogger(BotPlayer.class);
 
@@ -57,7 +57,7 @@ public class BotPlayer extends Player {
     }
 
     public boolean isBot() {
-        return isBot;
+        return true;
     }
 
     /**

@@ -17,7 +17,7 @@ public interface Message extends Serializable {
     /**
      * Ruft den aktuellen Nachrichtenkontext ab
      *
-     * @return
+     * @return Den aktuellen Nachrichtenkontext
      * @author Marco
      * @since Start
      */
@@ -35,7 +35,7 @@ public interface Message extends Serializable {
     /**
      * Aktuelle Sitzung abrufen
      *
-     * @return
+     * @return Die aktuelle Sitzung
      * @author Marco
      * @since Start
      */

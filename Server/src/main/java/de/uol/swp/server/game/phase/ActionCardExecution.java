@@ -20,21 +20,22 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
+@SuppressWarnings("UnstableApiUsage, unused")
 public class ActionCardExecution {
 
     private static final Logger LOG = LogManager.getLogger(ActionCardExecution.class);
 
-    private short cardID;
-    private Playground playground;
-    private Player player;
+    private final short cardID;
+    private final Playground playground;
+    private final Player player;
     private ActionCard theCard;
-    private UUID gameID;
-    private List<Player> players;
-    private List<User> chooseCardPlayers = new ArrayList<>();
+    private final UUID gameID;
+    private final List<Player> players;
+    private final List<User> chooseCardPlayers = new ArrayList<>();
     //Liste neuer Handkarten
-    private ArrayList<Short> newHandCards = new ArrayList<>();
+    private final ArrayList<Short> newHandCards = new ArrayList<>();
     //Liste aller Unteraktionen einer Aktion
-    private List<CardAction> nextActions = new ArrayList<>();
+    private final List<CardAction> nextActions = new ArrayList<>();
     private Card inputCard;
     private AbstractPlayground.ZoneType chooseCardSource;
     //
@@ -150,7 +151,7 @@ public class ActionCardExecution {
     /**
      * Führt beim Aufruf alle enthaltenen Aktionen der Aktionskarte aus
      *
-     * @return
+     * @return Boolean, ob die Aktionen ausgeführt worden sind
      * @author KenoO, Julia
      * @since Sprint 6
      */
@@ -280,8 +281,7 @@ public class ActionCardExecution {
                 ArrayList<Card> c = executeGetCard(getAction, player);
                 if (getAction.isDirectHand()) {
                     int size = c.size();
-                    for (int i = 0; i < size; i++) {
-                        Card card = c.get(i);
+                    for (Card card : c) {
                         player.getPlayerDeck().getHand().add(card);
                         newHandCards.add(card.getId());
                     }
@@ -417,8 +417,8 @@ public class ActionCardExecution {
     /**
      * Methode, um eine bestimmte Anzahl Karten aus einer Zone zu bekommen
      *
-     * @param action
-     * @param player
+     * @param action Die Aktion
+     * @param player Der Spieler
      * @return Liste der Karten
      * @author KenoO, Julia
      * @since Sprint 6
@@ -452,6 +452,7 @@ public class ActionCardExecution {
                         while (i < missingCards && i < size) {
                             Card card = discard.get(i);
                             action.getCards().add(card);
+                            player.getPlayerDeck().getCardsDeck().remove(card);
                             if (discard.size() != size) {
                                 discard.add(i, card);
                             }
@@ -485,7 +486,7 @@ public class ActionCardExecution {
      * Führt eine Reihe von Aktionen auf eine beliebige Anzahl an Karten aus
      *
      * @param action Die ForEach-Aktion
-     * @return
+     * @return Ob die Ausführung erfolgreich war
      * @author KenoO, Julia
      * @since Sprint 6
      */
@@ -538,7 +539,7 @@ public class ActionCardExecution {
      * Sendet eine Message mit der ID der Karte, die angezeigt werden soll und der Zone,
      * in der sie angezeigt werden soll an den aktuellen Spieler.
      *
-     * @param showCard
+     * @param showCard Die anzuzeigende Karte
      * @return true
      * @author Julia
      * @since Sprint 6
@@ -568,7 +569,7 @@ public class ActionCardExecution {
      *
      * @param action     Die Anzahl der Karten
      * @param thePlayers Die Player, die Karten auswählen dürfen.
-     * @return
+     * @return Ob die Methode erfolgreich war
      * @author Ferit, Julia
      * @since Sprint 7
      */
@@ -619,7 +620,7 @@ public class ActionCardExecution {
     /**
      * Sendet dem Spieler eine Nachricht mit den Aktionen, aus denen er eine auswählen kann
      *
-     * @param chooseNextAction
+     * @param chooseNextAction Die ChooseNextAction
      * @return true
      * @author Julia
      * @since Sprint 6

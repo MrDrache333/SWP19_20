@@ -16,15 +16,13 @@ public class SetMaxPlayerMessage extends AbstractLobbyMessage {
     private static final long serialVersionUID = 8520048304588405366L;
     private Integer maxPlayer;
     private UUID lobbyID;
-    private boolean setMaxPlayerSet;
     private User owner;
     private LobbyDTO lobby;
 
     /**
-     * Erstellt eine neue Set max player message.
+     * Konstruktor für Serialisierung
      */
     public SetMaxPlayerMessage() {
-        //Konstruktor für Serialisierung
     }
 
     /**
@@ -32,14 +30,12 @@ public class SetMaxPlayerMessage extends AbstractLobbyMessage {
      *
      * @param maxPlayer       Anzahl der maximalen Spieler in dieser Lobby
      * @param lobbyID         Die Lobby-ID
-     * @param setMaxPlayerSet Ob die maximalen Spieler erfolgreich gesetzt wurden
      * @param owner           Der Besitzer der Lobby
      * @param lobby           Die Lobby, deren max. Spielerzahl gesetzt wurde
      */
-    public SetMaxPlayerMessage(Integer maxPlayer, UUID lobbyID, boolean setMaxPlayerSet, User owner, LobbyDTO lobby) {
+    public SetMaxPlayerMessage(Integer maxPlayer, UUID lobbyID, User owner, LobbyDTO lobby) {
         this.maxPlayer = maxPlayer;
         this.lobbyID = lobbyID;
-        this.setMaxPlayerSet = setMaxPlayerSet;
         this.owner = owner;
         this.lobby = lobby;
     }
@@ -51,15 +47,6 @@ public class SetMaxPlayerMessage extends AbstractLobbyMessage {
      */
     public Integer getMaxPlayer() {
         return maxPlayer;
-    }
-
-    /**
-     * Gibt zurück, ob die maximale Anzahl an Benutzern inerhalb der Lobby übernommen wurde
-     *
-     * @return ob die maximale Anzahl an Benutzern inerhalb der Lobby übernommen wurde
-     */
-    public boolean isSetMaxPlayerSet() {
-        return setMaxPlayerSet;
     }
 
     /**

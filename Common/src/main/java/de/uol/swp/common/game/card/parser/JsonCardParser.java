@@ -33,13 +33,13 @@ public class JsonCardParser {
      * @since Sprint 5
      */
     public CardPack loadPack(String packname) {
-        GsonBuilder gsonobj = new GsonBuilder().
+        GsonBuilder gsonObj = new GsonBuilder().
                 registerTypeAdapter(ActionCard.class, new ActionCardDeSerializer()).
                 registerTypeAdapter(ValueCard.class, new ValueCardDeSerializer()).
                 registerTypeAdapter(MoneyCard.class, new MoneyCardDeSerializer()).
                 registerTypeAdapter(CurseCard.class, new CurseCardDeSerializer());
 
-        Gson gsonRealObj = gsonobj.create();
+        Gson gsonRealObj = gsonObj.create();
         CardPack pack = null;
         FileReader fr;
         try {

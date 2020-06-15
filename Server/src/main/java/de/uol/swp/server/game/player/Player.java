@@ -7,9 +7,9 @@ import de.uol.swp.common.user.User;
  */
 public class Player {
 
-    private String playerName;
+    private final String playerName;
     private User theUserInThePlayer;
-    private Deck playerDeck = new Deck();
+    private final Deck playerDeck = new Deck();
     private int availableActions;
     private int availableBuys;
     private int additionalMoney;

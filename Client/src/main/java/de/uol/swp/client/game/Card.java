@@ -29,9 +29,23 @@ public class Card extends ImageView {
      * @since Sprint 7
      */
     public Card(String id) {
-        this.setImage(new Image("file:Client/src/main/resources/cards/images/" + id + ".png"));
+        this.setImage(new Image("cards/images/" + id + ".png"));
         this.setPreserveRatio(true);
         this.setFitHeight(107);
+        this.setFitWidth(this.getBoundsInLocal().getWidth());
+        this.setId(id);
+    }
+
+    /**
+     * Instanziiert eine ImageView einer Karte.
+     *
+     * @author Anna
+     * @since Sprint 9
+     */
+    public Card(String id, int height) {
+        this.setImage(new Image("cards/images/" + id + ".png"));
+        this.setPreserveRatio(true);
+        this.setFitHeight(height);
         this.setFitWidth(this.getBoundsInLocal().getWidth());
         this.setId(id);
     }
@@ -48,7 +62,7 @@ public class Card extends ImageView {
      * @since Sprint 7
      */
     public Card(String id, double layout_x, double layout_y, double height) {
-        this.setImage(new Image("file:Client/src/main/resources/cards/images/" + id + ".png"));
+        this.setImage(new Image("cards/images/" + id + ".png"));
         this.setPreserveRatio(true);
         this.setLayoutX(layout_x);
         this.setLayoutY(layout_y);

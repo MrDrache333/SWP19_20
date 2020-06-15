@@ -13,8 +13,8 @@ import java.util.Objects;
 public class LoginRequest extends AbstractRequestMessage {
 
     private static final long serialVersionUID = 7793454958390539421L;
-    private String username;
-    private String password;
+    private final String username;
+    private final String password;
 
     /**
      * Eine Anfrage wird erstellt um den User einzuloggen.
