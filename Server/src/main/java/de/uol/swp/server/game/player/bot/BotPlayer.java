@@ -61,10 +61,14 @@ public class BotPlayer extends Player {
     }
 
     /**
-     * Skippt die BuyPhase, wenn der Bot dran ist.
+     * Der Bot entscheidet, welche Karte er kaufen möchte. Wenn der Bot genug Geld hat kauft er eine Provinz.
+     * Bei unter 20% von Aktionskarten wird eine neue Aktionskarte gekauft. Dabei wird geguckt, dass er die teuereste
+     * möglichste Karte kauft. Ansonsten wird geguckt wird geguckt ob der Bot genug Geld hat um Silber oder Gold zu
+     * kaufen.
      *
      * @param msg BuyPhase Mitteilung
      * @author Darian
+     * @since Sprint 9
      */
     @Subscribe
     public void onStartBuyPhaseMessage(StartBuyPhaseMessage msg) {
@@ -76,10 +80,11 @@ public class BotPlayer extends Player {
                     actionCardCounter++;
                 }
             }
-            float actionCardPercentage = actionCardCounter / cardsInPossessionIDs.size();
+            float actionCardPercentage = (float)actionCardCounter / (float)cardsInPossessionIDs.size();
+            LOG.debug("Der Bot hat "+actionCardPercentage+"% an Aktionskarten. " +cardsInPossessionIDs.size()+"  "+actionCardCounter);
             if (moneyOnTheHand >= 8)
                 buyCardID = 6;
-            else if (actionCardPercentage < 20 && moneyOnTheHand != 0) {
+            else if (actionCardPercentage < 0.2 && moneyOnTheHand != 0) {
                 short highestCost = 0;
                 ArrayList<Short> cardsToBuyIDs = new ArrayList<>();
                 for (short cardID : cardField.keySet()) {
@@ -104,11 +109,11 @@ public class BotPlayer extends Player {
 
                 }
                 moneyOnTheHand = moneyOnTheHand - getCardCosts(buyCardID);
-            } else if (moneyOnTheHand >= 6 && cardField.get(3) != 0) {
+            } else if (moneyOnTheHand >= 6 && cardField.get((short)3) != 0) {
                 buyCardID = 3;
                 moneyOnTheHand = moneyOnTheHand - 6;
             }
-            else if (moneyOnTheHand >= 3 && cardField.get(2) != 0){
+            else if (moneyOnTheHand >= 3 && cardField.get((short)2) != 0){
                 buyCardID = 2;
                 moneyOnTheHand = moneyOnTheHand - 3;
             }
@@ -119,7 +124,7 @@ public class BotPlayer extends Player {
     }
 
     /**
-     * Skippt die ActionPhase, wenn der Bot dran ist.
+     * Der Bot spielt die teuerste Aktionskarte in seiner Hand aus.
      *
      * @param msg Actionphase Mitteilung
      * @author Darian
@@ -128,16 +133,21 @@ public class BotPlayer extends Player {
     public void onStartActionPhaseMessage(StartActionPhaseMessage msg) {
         if (msg.getUser().getUsername().equals(getTheUserInThePlayer().getUsername()) && msg.getGameID().equals(gameId)) {
             PlayCardRequest req = null;
+            short maxCardValue = 0;
+            short playCardID = 0;
             for (short cardID : cardsOnHandIDs) {
                 if (cardID > 6 && cardID != 38) {
-                    req = new PlayCardRequest(gameId, this.getTheUserInThePlayer(), cardID);
-                    cardsOnHandIDs.remove((Short) cardID);
+                    if(getCardCosts(cardID) > maxCardValue)
+                    {
+                        maxCardValue = getCardCosts(cardID);
+                        playCardID = cardID;
+                    }
                     LOG.debug("Der Bot " + getTheUserInThePlayer().getUsername() + " will die Karte "+ getCardName(cardID) +" auspielen.");
-                    break;
                 }
             }
-            //PlayCardMessage req = new PlayCardRequest(this.getTheUserInThePlayer(), gameId, playCardID);
-            if (req != null) {
+            if (playCardID == 0) {
+                req = new PlayCardRequest(gameId, this.getTheUserInThePlayer(), playCardID);
+                cardsOnHandIDs.remove((Short) playCardID);
                 eventBus.post(req);
             }
             else{
@@ -161,6 +171,12 @@ public class BotPlayer extends Player {
 //nicht initialisiert noch drin lassen
     }
 
+    /**
+     * Der Bot fügt sobald er eine Karte gekauft hat diese zu seinem Array hinzu, von den Karten die er besitzt.
+     *
+     * @param msg BuyCardMessage
+     * @author Darian
+     */
     @Subscribe
     public void onBuyCardMessage(BuyCardMessage msg) {
         if (msg.getCurrentUser().getUsername().equals(getTheUserInThePlayer().getUsername()) && msg.getGameID().equals(gameId)) {
@@ -175,7 +191,7 @@ public class BotPlayer extends Player {
     }
 
     /**
-     * Übernimmt die Karten die auf der Hand sind
+     * Der Bot übernimmt die Karten die auf der Hand sind und errechnet sich das Geld dass er auf der Hand hat
      *
      * @param msg DrawHandMessage
      * @author Darian
@@ -206,10 +222,11 @@ public class BotPlayer extends Player {
     }
 
     /**
-     * Wenn es einen Fehler gibt wird die Phase geskipt
+     * Wenn es einen Fehler gibt wird die Phase geskipt.
      *
      * @param msg Fehlernachricht
      * @author Darian
+     * @since Sprint 9
      */
     @Subscribe
     public void onGameExceptionMessage(GameExceptionMessage msg) {
@@ -235,6 +252,13 @@ public class BotPlayer extends Player {
 
     }
 
+    /**
+     * Der Bot bekommt mit ob eine Karte auch ausgespielt wird.
+     *
+     * @param msg PlayCardMessage
+     * @author Darian
+     * @since Sprint 9
+     */
     @Subscribe
     public void onPlayCardMessage(PlayCardMessage msg) {
         if(msg.getCurrentUser().equals(getTheUserInThePlayer()) && msg.getGameID().equals(gameId) && msg.getIsPlayed()){
@@ -243,6 +267,13 @@ public class BotPlayer extends Player {
         }
     }
 
+    /**
+     * Der Bot übernimmt das Kartenfeld
+     *
+     * @param msg PlayCardMessage
+     * @author Darian
+     * @since Sprint 9
+     */
     @Subscribe
     public void onSendCardFieldMessage(SendCardFieldMessage msg) {
         if (msg.getGameID().equals(gameId)) {
@@ -271,7 +302,7 @@ public class BotPlayer extends Player {
     }
 
     /**
-     * Der Bot anwortet immer mit Ja bei einer OptionalActionRequest.
+     * Der Bot anwortet immer mit "Ja" bei einer OptionalActionRequest.
      *
      * @author Darian
      * @since Sprint 9
@@ -285,7 +316,7 @@ public class BotPlayer extends Player {
     }
 
     /**
-     * Der Bot anwortet immer mit Ja bei einer OptionalActionRequest.
+     *
      *
      * @author Darian
      * @since Sprint 9
@@ -293,8 +324,7 @@ public class BotPlayer extends Player {
     @Subscribe
     public void onChooseCardRequest(ChooseCardRequest msg) {
         if (msg.getPlayer().getUsername().equals(getTheUserInThePlayer().getUsername()) && msg.getGameID().equals(gameId)) {
-            msg.getCards();
-            short choosenCard = 1;
+
             ArrayList<Short> choosenCards = new ArrayList<>();
             ChooseCardResponse res = new ChooseCardResponse(gameId, this.getTheUserInThePlayer(), choosenCards, msg.getDirectHand());
             eventBus.post(res);
