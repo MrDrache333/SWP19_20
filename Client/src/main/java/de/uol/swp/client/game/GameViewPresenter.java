@@ -1229,7 +1229,9 @@ public class GameViewPresenter extends AbstractPresenter {
             handcards.getChildren().forEach((n) -> {
                 n.removeEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
                 n.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
-                n.setEffect(null);
+                if (Short.valueOf(n.getId()) < 4) {
+                    n.setEffect(makeImageDarker);
+                }
             });
             gameService.chooseCardResponse(gameID, loggedInUser, chosenCardsId);
             selectButton.setVisible(false);
