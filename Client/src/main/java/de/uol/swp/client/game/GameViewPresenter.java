@@ -3,6 +3,7 @@ package de.uol.swp.client.game;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.AlertBox;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.container.GeneralLayoutContainer;
@@ -31,7 +32,6 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -45,7 +45,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.apache.logging.log4j.LogManager;
@@ -305,24 +304,13 @@ public class GameViewPresenter extends AbstractPresenter {
      * @since Sprint 3
      */
     public void showGiveUpAlert(String message, String title) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "");
-        alert.setResizable(false);
-        alert.initModality(Modality.APPLICATION_MODAL);
+        AlertBox alert = new AlertBox(Alert.AlertType.CONFIRMATION);
         alert.getDialogPane().setContentText(message);
         alert.getDialogPane().setHeaderText(title);
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
             gameManagement.getGameService().giveUp(lobbyID, (UserDTO) loggedInUser);
         }
-    }
-
-    public void showAlert(Alert.AlertType type, String message, String title) {
-        Alert alert = new Alert(type, "");
-        alert.setResizable(false);
-        alert.initModality(Modality.APPLICATION_MODAL);
-        alert.getDialogPane().setContentText(message);
-        alert.getDialogPane().setHeaderText(title);
-        alert.showAndWait();
     }
 
     /**
@@ -651,7 +639,7 @@ public class GameViewPresenter extends AbstractPresenter {
                         }
                     });
                 } else {
-                    showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht spielen!", "Fehler");
+                    new AlertBox(Alert.AlertType.WARNING, "Du kannst die Karte nicht spielen!", "Fehler");
                     LOG.debug("Das Spielen der Karte " + msg.getHandCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
                 }
             }
@@ -875,7 +863,7 @@ public class GameViewPresenter extends AbstractPresenter {
     public void onGameExceptionMessage(GameExceptionMessage msg) {
         if (msg.getGameID().equals(lobbyID)) {
             Platform.runLater(() -> {
-                Alert alert = new Alert(Alert.AlertType.ERROR, msg.getMessage());
+                AlertBox alert = new AlertBox(Alert.AlertType.ERROR, msg.getMessage());
                 DialogPane root = alert.getDialogPane();
                 Stage dialogStage = new Stage(StageStyle.UTILITY);
                 for (ButtonType buttonType : root.getButtonTypes()) {
@@ -883,11 +871,8 @@ public class GameViewPresenter extends AbstractPresenter {
                     button.setOnAction(evt -> dialogStage.close());
                 }
                 root.getScene().setRoot(new Group());
-                root.setPadding(new Insets(10, 0, 10, 0));
                 Scene scene = new Scene(root);
                 dialogStage.setScene(scene);
-                dialogStage.initModality(Modality.APPLICATION_MODAL);
-                dialogStage.setResizable(false);
                 dialogStage.showAndWait();
             });
         }
@@ -1286,10 +1271,10 @@ public class GameViewPresenter extends AbstractPresenter {
                     this.mouseEvent = mouseEvent;
                 } else {
                     if (!playAllMoneyCardsButton.isVisible()) {
-                        showAlert(Alert.AlertType.INFORMATION, "Du bist nicht dran!", "Fehler");
+                        new AlertBox(Alert.AlertType.INFORMATION, "Du bist nicht dran!", "Fehler");
                     } else {
                         //TODO: ggf. anpassen, wenn man auch Karten kaufen kann ohne sein Geld vorher gespielt zu haben
-                        showAlert(Alert.AlertType.INFORMATION, "Du musst erst deine Geldkarten ausspielen!", "Fehler");
+                        new AlertBox(Alert.AlertType.INFORMATION, "Du musst erst deine Geldkarten ausspielen!", "Fehler");
                     }
                 }
             });
@@ -1325,9 +1310,9 @@ public class GameViewPresenter extends AbstractPresenter {
                 this.mouseEvent = mouseEvent;
             } else {
                 if (!playAllMoneyCardsButton.isVisible()) {
-                    showAlert(Alert.AlertType.INFORMATION, "Du bist nicht dran!", "Fehler");
+                    new AlertBox(Alert.AlertType.INFORMATION, "Du bist nicht dran!", "Fehler");
                 } else {
-                    showAlert(Alert.AlertType.INFORMATION, "Du musst erst deine Geldkarten ausspielen!", "Fehler");
+                    new AlertBox(Alert.AlertType.INFORMATION, "Du musst erst deine Geldkarten ausspielen!", "Fehler");
                 }
             }
         }

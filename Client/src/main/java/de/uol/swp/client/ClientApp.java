@@ -123,7 +123,7 @@ public class ClientApp extends Application implements ConnectionListener {
 
         //  close request calls method to close all windows
         primaryStage.setOnCloseRequest(event -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            AlertBox alert = new AlertBox(Alert.AlertType.CONFIRMATION);
             alert.setResizable(false);
             alert.initModality(Modality.APPLICATION_MODAL);
             alert.getDialogPane().setHeaderText("Möchtest du das Spiel wirklich beenden?");
@@ -241,7 +241,10 @@ public class ClientApp extends Application implements ConnectionListener {
                 sceneManager.closeCreateLobby();
                 LOG.debug("CreateLobbyMessage vom Server erfolgreich angekommen");
             } else {
-                SceneManager.showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden. Zudem darf er noch nicht vorhanden sein.", "Fehler");
+                AlertBox alertBox = new AlertBox(Alert.AlertType.WARNING, "Fehler");
+                alertBox.setContentText("Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden. Zudem darf er noch nicht vorhanden sein.");
+                alertBox.setHeaderText("Fehler");
+                alertBox.show();
             }
         }
     }
@@ -263,7 +266,10 @@ public class ClientApp extends Application implements ConnectionListener {
             }
             LOG.info("User " + message.getUser().getUsername() + " joined lobby successfully");
         } else if (message.getLobby().getLobbyPassword() == null) {
-            SceneManager.showAlert(Alert.AlertType.WARNING, "Das Passwort ist falsch!", "Fehler");
+            AlertBox alertBox = new AlertBox(Alert.AlertType.WARNING);
+            alertBox.setHeaderText("Fehler");
+            alertBox.setContentText("Das Passwort ist falsch!");
+            alertBox.show();
         }
     }
 

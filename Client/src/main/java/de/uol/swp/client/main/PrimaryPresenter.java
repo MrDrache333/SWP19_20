@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.AlertBox;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.client.game.GameService;
@@ -235,7 +236,7 @@ public class PrimaryPresenter extends AbstractPresenter {
 
             //Auf Schließung des Tabs reagieren
             gameManagement.getPrimaryTab().setOnCloseRequest(event -> {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                AlertBox alert = new AlertBox(Alert.AlertType.CONFIRMATION);
                 alert.setResizable(false);
                 alert.initModality(Modality.APPLICATION_MODAL);
                 alert.getDialogPane().setHeaderText("Möchtest du diesen Tab wirklich schließen?");
