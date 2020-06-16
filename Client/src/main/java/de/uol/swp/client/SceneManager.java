@@ -284,6 +284,7 @@ public class SceneManager {
         Platform.runLater(() -> {
             settingsPresenter = new SettingsPresenter(loggedInUser, lobbyService, userService, injector, eventBus);
             initSettingsView(settingsPresenter);
+            settingsPresenter.setSoundIcon();
             settingsStage = new Stage();
             settingsStage.setTitle("Einstellungen");
             settingsStage.setScene(settingsScene);
@@ -497,11 +498,9 @@ public class SceneManager {
     }
 
     private void initSettingsView(SettingsPresenter settingsPresenter) {
-        if (settingsScene == null) {
-            Parent rootPane = initSettingsPresenter(settingsPresenter);
-            settingsScene = new Scene(rootPane, 400, 420);
-            settingsScene.getStylesheets().add(SettingsPresenter.css);
-        }
+        Parent rootPane = initSettingsPresenter(settingsPresenter);
+        settingsScene = new Scene(rootPane, 400, 420);
+        settingsScene.getStylesheets().add(SettingsPresenter.css);
     }
 
     private void initDeleteAccountView() {

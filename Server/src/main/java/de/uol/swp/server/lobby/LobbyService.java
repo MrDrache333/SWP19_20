@@ -166,8 +166,6 @@ public class LobbyService extends AbstractService {
             authenticationService.sendToUser(new LobbyExceptionMessage(msg.getLobbyID(), e.getMessage()), msg.getUser());
             LOG.error(e.getMessage());
         }
-
-
     }
 
     /**
