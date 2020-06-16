@@ -198,7 +198,7 @@ public class BotPlayer extends Player {
      */
     @Subscribe
     public void onDrawHandMessage(DrawHandMessage msg) {
-        if (msg.getUser().getUsername().equals(getTheUserInThePlayer().getUsername()) && msg.getTheLobbyID().equals(gameId)) {
+        if (msg.getPlayer().getUsername().equals(getTheUserInThePlayer().getUsername()) && msg.getTheLobbyID().equals(gameId)) {
             round++;
             cardsOnHandIDs = msg.getCardsOnHand();
             if (round <= 2) {

@@ -242,7 +242,7 @@ public class Playground extends AbstractPlayground {
      */
     public void sendPlayersHand() {
         ArrayList<Short> theIdsFromTheHand = actualPlayer.getPlayerDeck().getHand().stream().map(Card::getId).collect(Collectors.toCollection(() -> new ArrayList<>(5)));
-        DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID, actualPlayer.getTheUserInThePlayer(), (short) getPlayers().size(), false);
+        DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID, (short) getPlayers().size(), false, actualPlayer.getTheUserInThePlayer());
         gameService.sendToSpecificPlayer(actualPlayer, theHandMessage);
     }
 
@@ -350,7 +350,7 @@ public class Playground extends AbstractPlayground {
     public void sendInitialHands() {
         for (Player player : players) {
             ArrayList<Short> theIdsFromInitalPlayerDeck = player.getPlayerDeck().getHand().stream().map(Card::getId).collect(Collectors.toCollection(() -> new ArrayList<>(5)));
-            DrawHandMessage initialHandFromPlayer = new DrawHandMessage(theIdsFromInitalPlayerDeck, theSpecificLobbyID, (short) getPlayers().size(), true);
+            DrawHandMessage initialHandFromPlayer = new DrawHandMessage(theIdsFromInitalPlayerDeck, theSpecificLobbyID, (short) getPlayers().size(), true, player.getTheUserInThePlayer());
             gameService.sendToSpecificPlayer(player, initialHandFromPlayer);
             int availableAction = player.getAvailableActions();
             int availableBuy = player.getAvailableBuys();

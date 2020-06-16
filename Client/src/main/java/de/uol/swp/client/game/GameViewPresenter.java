@@ -645,8 +645,8 @@ public class GameViewPresenter extends AbstractPresenter {
                                 AnimationManagement.deleteCard(card);
                             }
                         }
-                        if (msg.getHandCardID().equals("1") || msg.getHandCardID().equals("2") || msg.getHandCardID().equals("3")) {
-                            usableMoney += Integer.parseInt(msg.getHandCardID());
+                        if (msg.getHandCardID() <=3 ) {
+                            usableMoney += msg.getHandCardID();
                             numberOfMoney.setText(usableMoney + " Geld");
                         }
                     });
@@ -656,7 +656,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 }
             }
             else {
-                ImageView card = new Card(msg.getHandCardID());
+                ImageView card = new Card(String.valueOf(msg.getHandCardID()));
                 Platform.runLater(() -> {
                     usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.HAND).getChildren().remove(0);
                     usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.PLAY).getChildren().add(card);
