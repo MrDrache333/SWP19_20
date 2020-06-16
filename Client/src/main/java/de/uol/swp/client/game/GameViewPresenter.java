@@ -1117,8 +1117,10 @@ public class GameViewPresenter extends AbstractPresenter {
                 }
                 usersContainer.put(u.getUsername(), enemyContainer);
                 Platform.runLater(() -> {
-                    enemyContainer.values().forEach(gameViewWIP.getChildren()::add);
-                    enemyContainer.get(ZoneType.PLAY).toFront();
+                    if (!gameViewWIP.getChildren().contains(enemyContainer.get(ZoneType.HAND))) {
+                        enemyContainer.values().forEach(gameViewWIP.getChildren()::add);
+                        enemyContainer.get(ZoneType.PLAY).toFront();
+                    }
                 });
             }
         }
@@ -1172,6 +1174,7 @@ public class GameViewPresenter extends AbstractPresenter {
             bigCardImage.setImage(new Image(pfad));
             buyCardButton.setVisible(false);
             bigCardImageBox.setVisible(true);
+            bigCardImageBox.toFront();
         } else {
             if (id > 6 && id != 38 && card.getParent() == handcards) { //nur Aktionskarten, ohne Fluchkarte & nur Karten, welche noch in der Hand zone sind.
                 bigCardImageBox.setVisible(false);
@@ -1204,6 +1207,7 @@ public class GameViewPresenter extends AbstractPresenter {
             bigCardImage.setImage(new Image(pfad));
             buyCardButton.setVisible(false);
             bigCardImageBox.setVisible(true);
+            bigCardImageBox.toFront();
         } else {
             if (!chosenCards.contains(card)) {
                 chosenCards.add(card);
@@ -1276,6 +1280,7 @@ public class GameViewPresenter extends AbstractPresenter {
         if (mouseEvent.getButton() != MouseButton.PRIMARY) {
             String PathCardLargeView = "cards/images/" + cardID + ".png";
             bigCardImage.setImage(new Image(PathCardLargeView));
+            bigCardImageBox.toFront();
             // Aktion hinter dem Kauf-Button
             buyCardButton.setVisible(true);
             buyCardButton.setOnAction(event -> {
