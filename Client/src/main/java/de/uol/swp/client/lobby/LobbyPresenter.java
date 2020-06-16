@@ -559,7 +559,7 @@ public class LobbyPresenter extends AbstractPresenter {
                 chooseMaxPlayer.setValue(oldMaxPlayerValue);
             }
         });
-        AlertBox alertBox = new AlertBox(Alert.AlertType.ERROR, msg.getMessage(), "Lobby");
+        Platform.runlater(() -> new AlertBox(Alert.AlertType.ERROR, msg.getMessage(), "Lobby"));
     }
 
     //--------------------------------------
