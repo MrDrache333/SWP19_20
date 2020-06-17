@@ -125,7 +125,7 @@ public class ActionCardWithResponseTest {
     void testKeller() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(2));
+        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 10));
         int cardsToSelect = (int) (Math.random() * 4);
         ArrayList<Short> kartenAbwurf = new ArrayList<>();
         playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 10);
@@ -148,7 +148,7 @@ public class ActionCardWithResponseTest {
     void testMine() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(4));
+        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 13));
         int selectedCardvalue = -1;
         ArrayList<Short> kartenAbwurf = new ArrayList<>();
         playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 13);
@@ -181,7 +181,7 @@ public class ActionCardWithResponseTest {
     void testUmbau() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(6));
+        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 15));
         int cardsToSelect = (int) (Math.random() * 4);
         playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 15);
         ChooseCardResponse theResponse = new ChooseCardResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), playground.getActualPlayer().getPlayerDeck().getHand().get(cardsToSelect).getId());
@@ -201,7 +201,7 @@ public class ActionCardWithResponseTest {
     void testWerkstatt() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(7));
+        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 16));
         playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 16);
         ChooseCardResponse theResponse = new ChooseCardResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), (short) 15);
         bus.post(theResponse);
@@ -218,7 +218,7 @@ public class ActionCardWithResponseTest {
     void testFestmahl() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(8));
+        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 19));
         playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 19);
         ChooseCardResponse theResponse = new ChooseCardResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), (short) 15);
         bus.post(theResponse);
@@ -236,7 +236,7 @@ public class ActionCardWithResponseTest {
     void testKanzler() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(9));
+        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 21));
         playground.getActualPlayer().getPlayerDeck().getDiscardPile().add(playground.getCardsPackField().getCards().getActionCards().get(2));
         playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 21);
         OptionalActionResponse theResponse = new OptionalActionResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), true);
@@ -254,7 +254,7 @@ public class ActionCardWithResponseTest {
     void testKapelle() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(10));
+        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 22));
         ArrayList<Short> kartenAbwurf = new ArrayList<>();
         playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 22);
         for (int i = 0; i < 4; i++) {
