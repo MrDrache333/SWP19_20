@@ -19,9 +19,10 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * die Testklasse ChatManagementTest .
+ * Die Testklasse ChatManagementTest .
  *
  * @author Keno Oelrichs Garcia
+ * @since Sprint 5
  */
 class ChatManagementTest {
 
@@ -62,6 +63,9 @@ class ChatManagementTest {
 
     /**
      * Erstellt den Chat "global" und prüft daraufhin, das der Chat "global" nicht null ist.
+     *
+     * @author Keno O.
+     * @since Sprint 5
      */
     @Test
     void getChat() {
@@ -72,6 +76,9 @@ class ChatManagementTest {
 
     /**
      * Erstellt eine Variable, die den Wert eines neu generierten Chats annimmt und prüft, dass dieser nicht null ist.
+     *
+     * @author Keno O.
+     * @since Sprint 2
      */
     @Test
     void createChat() {
@@ -81,6 +88,9 @@ class ChatManagementTest {
 
     /**
      * Erstellt einen Chat und speichert dessen Wert in einer Variable und löscht diesen wieder. Pfüfung, ob der Chat Null ist.
+     *
+     * @author Keno O.
+     * @since Sprint 2
      */
     @Test
     void deleteChat() throws InterruptedException {
@@ -91,6 +101,9 @@ class ChatManagementTest {
 
     /**
      * Erstellt einen Chat und fügt diesem Chat eine Nachricht mit Nutzer hinzu. Prüfung, ob der Chat nun die zuvor gesendete Nachricht enthält.
+     *
+     * @author Keno O.
+     * @since Sprint 2
      */
     @Test
     void addMessage() {

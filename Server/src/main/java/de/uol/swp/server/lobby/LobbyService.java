@@ -38,6 +38,7 @@ import java.util.UUID;
  * @author KenoO
  * @since Sprint 2
  */
+@SuppressWarnings("UnstableApiUsage, unused")
 public class LobbyService extends AbstractService {
     private static final Logger LOG = LogManager.getLogger(LobbyService.class);
 
@@ -76,7 +77,6 @@ public class LobbyService extends AbstractService {
      *
      * @param req Enthält den Request vom Client mit den benötigten Daten, um die Lobby zu erstellen.
      * @author Haschem, Ferit, Rike, Marvin, Paula
-     * @version 0.2
      * @since Sprint 2
      */
     @Subscribe
@@ -109,7 +109,7 @@ public class LobbyService extends AbstractService {
     public void onLobbyJoinUserRequest(LobbyJoinUserRequest req) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(req.getLobbyID());
         if (lobby.isPresent() && !lobby.get().getUsers().contains(req.getUser()) && lobby.get().getPlayers() < lobby.get().getMaxPlayer() && !lobby.get().getInGame()) {
-            LOG.info("User " + req.getUser().getUsername() + " is joining lobby " + lobby.get().getName());
+            LOG.info("User " + req.getUser().getUsername() + " tritt der Lobby " + lobby.get().getName() + " bei.");
             LobbyUser theLobbyUser = new LobbyUser(req.getUser());
             lobby.get().joinUser(theLobbyUser);
             ServerMessage returnMessage = new UserJoinedLobbyMessage(req.getLobbyID(), req.getUser(), (UserDTO) lobby.get().getOwner(), (LobbyDTO) lobby.get());
@@ -117,7 +117,7 @@ public class LobbyService extends AbstractService {
             if (req.getBot()) {
                 lobby.get().setReadyStatus(req.getUser(), true);
                 ServerMessage msg2 = new UpdatedLobbyReadyStatusMessage(lobby.get().getLobbyID(), req.getUser(), lobby.get().getReadyStatus(req.getUser()));
-                LOG.debug("Sending Updated Status of Bot: " + req.getUser().getUsername() + " to true in Lobby: " + lobby.get().getLobbyID());
+                LOG.debug("Ändere den Update-Status vom Bot " + req.getUser().getUsername() + " auf true in Lobby " + lobby.get().getName());
                 authenticationService.sendToLoggedInPlayers(msg2);
                 allPlayersReady(lobby.get());
             }
@@ -131,27 +131,34 @@ public class LobbyService extends AbstractService {
      * LobbyManagement wird aufgerufen und übergibt Namen der Lobby und User.
      * UserLeftLobbyMessage wird an Client gesendet
      *
-     * @param req Der LobbyLeaveUserRequest
+     * @param msg Der LobbyLeaveUserRequest
      * @author Julia, Paula, Darian, Marvin
      * @since Sprint 3
      */
     @Subscribe
-    public void onLobbyLeaveUserRequest(LobbyLeaveUserRequest req) {
-        try{
-            lobbyManagement.leaveLobby(req.getLobbyID(), req.getUser());
-            Optional<Lobby> lobby = lobbyManagement.getLobby(req.getLobbyID());
-            ServerMessage returnMessage;
-            if(lobby.isPresent()) {
-                LOG.info("User " + req.getUser().getUsername() + " verlässt die Lobby " + req.getLobbyID());
-                returnMessage = new UserLeftLobbyMessage(req.getLobbyID(), req.getUser(), (UserDTO) lobby.get().getOwner(), (LobbyDTO) lobby.get());
+    public void onLobbyLeaveUserRequest(LobbyLeaveUserRequest msg) {
+        try {
+            //Falls der Besitzer der Lobby aus der Lobby geht wird dieser aktualisiert
+            boolean leavedLobbySuccessful = lobbyManagement.leaveLobby(msg.getLobbyID(), msg.getUser());
+            if (leavedLobbySuccessful && lobbyManagement.getLobby(msg.getLobbyID()).isPresent() && !(lobbyManagement.getLobby(msg.getLobbyID()).get().onlyBotsLeft(msg.getLobbyID()))) {
+                Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getLobbyID());
+                LOG.info("User " + msg.getUser().getUsername() + " verlässt die Lobby " + msg.getLobbyID());
+                ServerMessage returnMessage;
+                returnMessage = lobby.map(value -> new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), (UserDTO) value.getOwner(), (LobbyDTO) value)).orElseGet(() -> new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), null, null));
+                authenticationService.sendToLoggedInPlayers(returnMessage);
+            } else if (leavedLobbySuccessful && lobbyManagement.getLobby(msg.getLobbyID()).isPresent() &&
+                    (lobbyManagement.getLobby(msg.getLobbyID()).get().onlyBotsLeft(msg.getLobbyID()))) {
+                lobbyManagement.dropLobby(msg.getLobbyID());
+                ServerMessage returnMessage;
+                returnMessage = new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), null, null);
+                authenticationService.sendToLoggedInPlayers(returnMessage);
+            } else {
+                ServerMessage returnMessage;
+                returnMessage = new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), null, null);
+                authenticationService.sendToLoggedInPlayers(returnMessage);
             }
-            else{
-                returnMessage = new UserLeftLobbyMessage(req.getLobbyID(), req.getUser(), null, null);
-                LOG.info("User " + req.getUser().getUsername() + " verlässt die Lobby " + req.getLobbyID() + " und die Lobby wird geschlossen.");
-            }
-            authenticationService.sendToLoggedInPlayers(returnMessage);
-        } catch(LeaveLobbyException e) {
-            authenticationService.sendToUser(new LobbyExceptionMessage(req.getLobbyID(), e.getMessage()), req.getUser());
+        } catch (LeaveLobbyException e) {
+            authenticationService.sendToUser(new LobbyExceptionMessage(msg.getLobbyID(), e.getMessage()), msg.getUser());
             LOG.error(e.getMessage());
         }
     }
@@ -223,6 +230,7 @@ public class LobbyService extends AbstractService {
 
     /**
      * Hilfmethode, ob nur noch Bots in der Lobby sind.
+     *
      * @param lobbyID Die LobbyID
      * @return Wahrheitswert
      */
@@ -293,8 +301,7 @@ public class LobbyService extends AbstractService {
             LOG.info("User " + req.getUser().getUsername() + " wurde von der Lobby mit folgender ID " + req.getLobbyID() + " gekickt!");
             ServerMessage returnMessage = new KickUserMessage(req.getLobbyID(), req.getUserToKick(), (LobbyDTO) lobbyManagement.getLobby(req.getLobbyID()).get());
             authenticationService.sendToLoggedInPlayers(returnMessage);
-        }
-        catch (KickPlayerException e){
+        } catch (KickPlayerException e) {
             authenticationService.sendToUser(new LobbyExceptionMessage(req.getLobbyID(), e.getMessage()), req.getUser());
             LOG.error(e.getMessage());
         }
@@ -310,12 +317,11 @@ public class LobbyService extends AbstractService {
     @Subscribe
     public void onSetMaxPlayerRequest(SetMaxPlayerRequest req) {
         LobbyDTO lobby = (LobbyDTO) lobbyManagement.getLobby(req.getLobbyID()).get();
-         try{
+        try {
             lobbyManagement.setMaxPlayer(req.getLobbyID(), req.getUser(), req.getMaxPlayerValue());
             ServerMessage returnMessage = new SetMaxPlayerMessage(req.getMaxPlayerValue(), req.getLobbyID(), lobbyManagement.getLobbyOwner(req.getLobbyID()).get(), lobby);
             authenticationService.sendToLoggedInPlayers(returnMessage);
-        }
-        catch(SetMaxPlayerException e){
+        } catch (SetMaxPlayerException e) {
             ServerMessage returnMessage2 = new LobbyExceptionMessage(req.getLobbyID(), e.getMessage());
             authenticationService.sendToUser(returnMessage2, lobby.getOwner());
             LOG.debug(e.getMessage());
@@ -349,7 +355,7 @@ public class LobbyService extends AbstractService {
      * Hilfsmethode, die die Nachricht an alle Spieler in der Lobby sendet
      *
      * @param lobbyID Die LobbyID
-     * @param msg Die Nachricht
+     * @param msg     Die Nachricht
      * @author KenoO, Paula, Marvin
      * @since Sprint 2
      */
@@ -358,8 +364,7 @@ public class LobbyService extends AbstractService {
         if (lobby.isPresent()) {
             msg.setReceiver(authenticationService.getSessions(lobby.get().getUsers()));
             post(msg);
-        }
-        else {
+        } else {
             LOG.error("Die Lobby mit der LobbyID " + lobbyID + " konnte nicht gefunden werden!");
         }
     }

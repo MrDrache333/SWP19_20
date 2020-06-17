@@ -15,8 +15,8 @@ public class UpdateUserRequest extends AbstractRequestMessage {
 
     private static final long serialVersionUID = 1834977681414180873L;
     final private User toUpdate;
-    private User oldUser;
-    private String currentPassword;
+    private final User oldUser;
+    private final String currentPassword;
 
     /**
      * Benutzeranfrage aktualisieren
@@ -32,7 +32,7 @@ public class UpdateUserRequest extends AbstractRequestMessage {
     }
 
     /**
-     * Gibt den User
+     * Gibt den User zurück
      *
      * @return gibt den aktuellen User
      * @author Marco
@@ -54,7 +54,7 @@ public class UpdateUserRequest extends AbstractRequestMessage {
     }
 
     /**
-     * Gibt das aktuelle Passwort
+     * Gibt das aktuelle Passwort zurück
      *
      * @return Jetzige Passwort
      * @author Marco
@@ -67,16 +67,16 @@ public class UpdateUserRequest extends AbstractRequestMessage {
     /**
      * Überprüft ob das übergebene Objekt mit diesem (this) übereinstimmt
      *
-     * @param o
+     * @param obj Das Objekt, das vergleicht wird
      * @return true wenn die Objekte gleich sind, sonst false
      * @author Keno S.
      * @since Sprint 3
      */
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        UpdateUserRequest that = (UpdateUserRequest) o;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        UpdateUserRequest that = (UpdateUserRequest) obj;
         return Objects.equals(toUpdate, that.toUpdate);
     }
 

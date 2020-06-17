@@ -6,7 +6,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
-<AnchorPane fx:id="gameViewWIP" prefHeight="750.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="gameViewWIP" prefHeight="750.0" prefWidth="1280.0"
+            xmlns="http://javafx.com/javafx/11.0.1">
     <children>
         <ImageView fitHeight="750.0" fitWidth="1280.0" pickOnBounds="true">
             <image>
@@ -72,9 +73,6 @@
                         <Pane prefHeight="200.0" prefWidth="380.0">
                             <children>
                                 <ImageView fx:id="avatar_icon_top" fitHeight="73.0" fitWidth="128.0" layoutX="154.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" visible="false">
-                                    <image>
-                                        <Image url="@../cards/circle_profil.png" />
-                                    </image>
                                 </ImageView>
                         <Label fx:id="player1_label" alignment="CENTER" contentDisplay="TEXT_ONLY" layoutY="93.0" prefHeight="17.0" prefWidth="380.0" text="Spieler 1" textFill="WHITE" visible="false" />
                             </children>
@@ -89,9 +87,6 @@
                                 <Pane prefHeight="430.0" prefWidth="209.0">
                                     <children>
                                         <ImageView fx:id="avatar_icon_left" fitHeight="73.0" fitWidth="128.0" layoutX="7.5" layoutY="178.5" pickOnBounds="true" preserveRatio="true" visible="false">
-                                            <image>
-                                                <Image url="@../cards/circle_profil.png" />
-                                            </image>
                                         </ImageView>
                               <Label fx:id="player2_label" layoutX="6.0" layoutY="258.0" prefHeight="17.0" prefWidth="196.0" text="Spieler 2" textFill="WHITE" visible="false" />
                                     </children>
@@ -138,6 +133,96 @@
                                                 <Line endY="27.0" layoutX="214.0" layoutY="9.0" stroke="WHITE" />
                                             </children>
                                         </Pane>
+                                        <StackPane fx:id="countPlaceholder1" layoutX="102.0" layoutY="93.0"
+                                                   prefWidth="20">
+                                            <children>
+                                                <Circle fx:id="countPlaceholder1Circle" fill="darkred" radius="12"/>
+                                                <Label fx:id="countPlaceholder1Label"
+                                                       style="-fx-font-style: Bold; -fx-font-size: 14" text=""
+                                                       textFill="white"/>
+                                            </children>
+                                        </StackPane>
+                                        <StackPane fx:id="countPlaceholder2" layoutX="213.0" layoutY="93.0"
+                                                   prefWidth="20">
+                                            <children>
+                                                <Circle fx:id="countPlaceholder2Circle" fill="darkred" radius="12"/>
+                                                <Label fx:id="countPlaceholder2Label"
+                                                       style="-fx-font-style: Bold; -fx-font-size: 14" text=""
+                                                       textFill="white"/>
+                                            </children>
+                                        </StackPane>
+                                        <StackPane fx:id="countPlaceholder3" layoutX="323.0" layoutY="93.0"
+                                                   prefWidth="20">
+                                            <children>
+                                                <Circle fx:id="countPlaceholder3Circle" fill="darkred" radius="12"/>
+                                                <Label fx:id="countPlaceholder3Label"
+                                                       style="-fx-font-style: Bold; -fx-font-size: 14" text=""
+                                                       textFill="white"/>
+                                            </children>
+                                        </StackPane>
+                                        <StackPane fx:id="countPlaceholder4" layoutX="434.0" layoutY="93.0"
+                                                   prefWidth="20">
+                                            <children>
+                                                <Circle fx:id="countPlaceholder4Circle" fill="darkred" radius="12"/>
+                                                <Label fx:id="countPlaceholder4Label"
+                                                       style="-fx-font-style: Bold; -fx-font-size: 14" text=""
+                                                       textFill="white"/>
+                                            </children>
+                                        </StackPane>
+                                        <StackPane fx:id="countPlaceholder5" layoutX="544.0" layoutY="93.0"
+                                                   prefWidth="20">
+                                            <children>
+                                                <Circle fx:id="countPlaceholder5Circle" fill="darkred" radius="12"/>
+                                                <Label fx:id="countPlaceholder5Label"
+                                                       style="-fx-font-style: Bold; -fx-font-size: 14" text=""
+                                                       textFill="white"/>
+                                            </children>
+                                        </StackPane>
+                                        <StackPane fx:id="countPlaceholder6" layoutX="102.0" layoutY="212.0"
+                                                   prefWidth="20">
+                                            <children>
+                                                <Circle fx:id="countPlaceholder6Circle" fill="darkred" radius="12"/>
+                                                <Label fx:id="countPlaceholder6Label"
+                                                       style="-fx-font-style: Bold; -fx-font-size: 14" text=""
+                                                       textFill="white"/>
+                                            </children>
+                                        </StackPane>
+                                        <StackPane fx:id="countPlaceholder7" layoutX="213.0" layoutY="212.0"
+                                                   prefWidth="20">
+                                            <children>
+                                                <Circle fx:id="countPlaceholder7Circle" fill="darkred" radius="12"/>
+                                                <Label fx:id="countPlaceholder7Label"
+                                                       style="-fx-font-style: Bold; -fx-font-size: 14" text=""
+                                                       textFill="white"/>
+                                            </children>
+                                        </StackPane>
+                                        <StackPane fx:id="countPlaceholder8" layoutX="323.0" layoutY="212.0"
+                                                   prefWidth="20">
+                                            <children>
+                                                <Circle fx:id="countPlaceholder8Circle" fill="darkred" radius="12"/>
+                                                <Label fx:id="countPlaceholder8Label"
+                                                       style="-fx-font-style: Bold; -fx-font-size: 14" text=""
+                                                       textFill="white"/>
+                                            </children>
+                                        </StackPane>
+                                        <StackPane fx:id="countPlaceholder9" layoutX="434.0" layoutY="212.0"
+                                                   prefWidth="20">
+                                            <children>
+                                                <Circle fx:id="countPlaceholder9Circle" fill="darkred" radius="12"/>
+                                                <Label fx:id="countPlaceholder9Label"
+                                                       style="-fx-font-style: Bold; -fx-font-size: 14" text=""
+                                                       textFill="white"/>
+                                            </children>
+                                        </StackPane>
+                                        <StackPane fx:id="countPlaceholder10" layoutX="544.0" layoutY="212.0"
+                                                   prefWidth="20">
+                                            <children>
+                                                <Circle fx:id="countPlaceholder10Circle" fill="darkred" radius="12"/>
+                                                <Label fx:id="countPlaceholder10Label"
+                                                       style="-fx-font-style: Bold; -fx-font-size: 14" text=""
+                                                       textFill="white"/>
+                                            </children>
+                                        </StackPane>
                                     </children>
                                 </Pane>
                             </children>
@@ -147,9 +232,6 @@
                                 <Pane prefHeight="430.0" prefWidth="203.0">
                                     <children>
                                         <ImageView fx:id="avatar_icon_right" fitHeight="73.0" fitWidth="128.0" layoutX="122.5" layoutY="178.5" pickOnBounds="true" preserveRatio="true" visible="false">
-                                            <image>
-                                                <Image url="@../cards/circle_profil.png" />
-                                            </image>
                                         </ImageView>
                               <Label fx:id="player3_label" alignment="CENTER_RIGHT" contentDisplay="TEXT_ONLY" layoutX="3.0" layoutY="258.0" prefHeight="17.0" prefWidth="196.0" text="Spieler 3" textFill="WHITE" visible="false" />
                                     </children>
@@ -269,6 +351,21 @@
                 <StackPane fx:id="countCurseCard" layoutX="135" layoutY="155" prefWidth="20">
                     <Circle fx:id="countCurseCardCircle" fill="darkred" radius="12" />
                     <Label fx:id="countCurseCardLabel" style="-fx-font-style: Bold; -fx-font-size: 14" text="10" textFill="white" />
+                </StackPane>
+                <StackPane fx:id="countCopper" layoutX="55.0" layoutY="-12.0" prefWidth="20">
+                    <Circle fx:id="countCopperCircle" fill="darkred" radius="12"/>
+                    <Label fx:id="countCopperLabel" style="-fx-font-style: Bold; -fx-font-size: 14" text=""
+                           textFill="white"/>
+                </StackPane>
+                <StackPane fx:id="countSilver" layoutX="135.0" layoutY="-12.0" prefWidth="20">
+                    <Circle fx:id="countSilverCircle" fill="darkred" radius="12"/>
+                    <Label fx:id="countSilverLabel" style="-fx-font-style: Bold; -fx-font-size: 14" text=""
+                           textFill="white"/>
+                </StackPane>
+                <StackPane fx:id="countGold" layoutX="215.0" layoutY="-12.0" prefWidth="20">
+                    <Circle fx:id="countGoldCircle" fill="darkred" radius="12"/>
+                    <Label fx:id="countGoldLabel" style="-fx-font-style: Bold; -fx-font-size: 14" text=""
+                           textFill="white"/>
                 </StackPane>
             </children>
         </Pane>

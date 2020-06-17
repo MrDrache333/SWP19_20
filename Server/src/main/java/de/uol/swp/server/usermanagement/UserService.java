@@ -17,7 +17,7 @@ import org.apache.logging.log4j.Logger;
  * @author Marco Grawunder
  * @since Basissystem
  */
-@SuppressWarnings("UnstableApiUsage")
+@SuppressWarnings("UnstableApiUsage, unused")
 public class UserService extends AbstractService {
 
     private static final Logger LOG = LogManager.getLogger(UserService.class);

@@ -14,8 +14,8 @@ import java.util.UUID;
 public class SendCardFieldMessage extends AbstractServerMessage {
 
     private static final long serialVersionUID = 1906869054271279251L;
-    private UUID gameID;
-    private Map<Short, Integer> cardField;
+    private final UUID gameID;
+    private final Map<Short, Integer> cardField;
 
     /**
      * Der Konstruktor der SendCardFieldMessage
@@ -42,16 +42,6 @@ public class SendCardFieldMessage extends AbstractServerMessage {
     }
 
     /**
-     * Setzt das Kartenfeld neu
-     *
-     * @author Fenja, Anna
-     * @since Sprint 7
-     */
-    public void setCardField(Map<Short, Integer> cardField) {
-        this.cardField = cardField;
-    }
-
-    /**
      * Gibt die Game-ID zurück
      *
      * @return gameID die Game-ID
@@ -60,15 +50,5 @@ public class SendCardFieldMessage extends AbstractServerMessage {
      */
     public UUID getGameID() {
         return gameID;
-    }
-
-    /**
-     * Setzt die Game-ID neu
-     *
-     * @author Fenja, Anna
-     * @since Sprint 7
-     */
-    public void setGameID(UUID gameID) {
-        this.gameID = gameID;
     }
 }

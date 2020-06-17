@@ -10,11 +10,9 @@ import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.common.chat.ChatService;
 import de.uol.swp.common.game.card.parser.JsonCardParser;
 import de.uol.swp.common.game.card.parser.components.CardPack;
-import de.uol.swp.common.lobby.exception.JoinLobbyExceptionMessage;
 import de.uol.swp.common.lobby.exception.LobbyExceptionMessage;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.request.AddBotRequest;
-import de.uol.swp.common.lobby.request.SetMaxPlayerRequest;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
 import de.uol.swp.common.lobby.response.SetChosenCardsResponse;
 import de.uol.swp.common.user.User;
@@ -28,7 +26,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.NodeOrientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -41,8 +38,6 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -53,6 +48,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 
+@SuppressWarnings("UnstableApiUsage, unused")
 public class LobbyPresenter extends AbstractPresenter {
 
     public static final String fxml = "/fxml/LobbyViewWIP.fxml";
@@ -71,9 +67,9 @@ public class LobbyPresenter extends AbstractPresenter {
     private User loggedInUser;
     private UserDTO loggedInUserDTO;
     private UserDTO gameOwner;
-    private boolean gameSettingsOpen;
     private boolean ownReadyStatus = false;
-
+    private int maxPlayerValue = 4;
+    private int oldMaxPlayerValue;
     @FXML
     private ChoiceBox<Integer> chooseMaxPlayer;
     @FXML
@@ -108,12 +104,8 @@ public class LobbyPresenter extends AbstractPresenter {
     private TilePane choosableCards;
     @FXML
     private ImageView bigCardImage;
-    @FXML
-    private ImageView bigCard;
 
-    private ImageView crownView = new ImageView("images/crown.png");
-
-
+    private final ImageView crownView = new ImageView("images/crown.png");
 
     /**
      * Instanziiert einen neuen LobbyPresenter.
@@ -144,7 +136,6 @@ public class LobbyPresenter extends AbstractPresenter {
         this.eventBus = eventBus;
         this.loggedInUserDTO = new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail());
         this.cardpack = new JsonCardParser().loadPack("Basispack");
-        this.gameSettingsOpen = false;
     }
 
     //--------------------------------------
@@ -178,8 +169,8 @@ public class LobbyPresenter extends AbstractPresenter {
         loader.setLocation(getClass().getResource(ChatViewPresenter.fxml));
         loader.setController(chatViewPresenter);
         chatView.getChildren().add(loader.load());
-        ((Pane) chatView.getChildren().get(0)).setPrefHeight(chatView.getPrefHeight());
-        ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getPrefWidth());
+        ((Pane) chatView.getChildren().get(0)).setPrefHeight(chatView.getMinHeight());
+        ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getMinWidth());
         chatViewPresenter.userJoined(loggedInUser.getUsername());
 
         lobbyService.retrieveAllUsersInLobby(lobbyID);
@@ -189,9 +180,13 @@ public class LobbyPresenter extends AbstractPresenter {
         if (gameOwner.equals(loggedInUser)) {
             gamesettingsButton.setVisible(true);
             createBotButton.setVisible(true);
-
             chooseMaxPlayer.setDisable(false);
-            chooseMaxPlayer.setValue(4);
+            chooseMaxPlayer.setValue(maxPlayerValue);
+            lobbyViewWIP.setOnMouseClicked(mouseEvent -> {
+                if (bigCardImage.isVisible()) {
+                    bigCardImage.setVisible(false);
+                }
+            });
         } else {
             gamesettingsButton.setVisible(false);
             createBotButton.setVisible(false);
@@ -247,15 +242,17 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     @FXML
     public void onMaxPlayerSelected(ActionEvent actionEvent) {
-        if (gameOwner.equals(loggedInUser)) {
+        if (gameOwner.equals(loggedInUser) && chooseMaxPlayer.getValue() != maxPlayerValue) {
             lobbyService.setMaxPlayer(this.getLobbyID(), this.loggedInUser, chooseMaxPlayer.getValue());
+            oldMaxPlayerValue = maxPlayerValue;
+            maxPlayerValue = chooseMaxPlayer.getValue();
         }
     }
 
     /**
      * Wenn der BotButton gepresst wird.
      *
-     * @param actionEvent
+     * @param actionEvent Das ActionEvent
      */
     @FXML
     public void onCreateBotButtonPressed(ActionEvent actionEvent) {
@@ -272,68 +269,11 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     @FXML
     public void onGamesettingsButtonPressed(ActionEvent actionEvent) {
-        if (!gameSettingsOpen) {
+        if (!gameSettingsVBox.isVisible()) {
             gamesettingsButton.setText("Spieleinstellungen schließen");
-            gameSettingsOpen = true;
+            gameSettingsVBox.setVisible(true);
+            sendCards.setVisible(false);
             Platform.runLater(() -> {
-                String pfad1 = "file:Client/src/main/resources/cards/images/card_back.png";
-                Image picture1 = new Image(pfad1);
-                bigCard = new ImageView(picture1);
-                bigCard.setPreserveRatio(true);
-                bigCard.setFitWidth(250);
-                bigCard.setLayoutX(400);
-                bigCard.setLayoutY(100);
-                bigCard.setVisible(false);
-                lobbyViewWIP.setOnMouseClicked(mouseEvent -> {
-                    if (bigCard.isVisible()) {
-                        bigCard.setVisible(false);
-                    }
-                });
-                lobbyViewWIP.getChildren().add(bigCard);
-
-                VBox gameSettingsVBox = new VBox();
-                gameSettingsVBox.setSpacing(20);
-                gameSettingsVBox.setPrefSize(450, 630);
-                gameSettingsVBox.setId("gameSettingsVBox");
-
-                //Ausgewählte Karten anzeigen
-                TilePane chosenCards = new TilePane();
-                chosenCards.setPrefSize(400, 160);
-                chosenCards.setStyle("-fx-background-color: #3D3D3D");
-                chosenCards.setOpacity(0.5);
-                chosenCards.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
-                TextFlow textFlow = new TextFlow();
-                textFlow.setPrefSize(200, 50);
-                textFlow.setTextAlignment(TextAlignment.CENTER);
-                Text text = new Text("Wähle Karten aus...");
-                text.setFill(Paint.valueOf("white"));
-                text.setStyle("-fx-font-size: 24");
-                textFlow.getChildren().add(text);
-                chosenCards.getChildren().add(textFlow);
-
-                //Button zum Abschicken der Nachricht für die Karten
-                Button sendCards = new Button();
-                sendCards.setText("Auswahl abschicken");
-                sendCards.setPrefSize(450, 31);
-                sendCards.setVisible(false);
-                sendCards.setOnAction(e -> {
-                    if (chosenCards.getChildren().size() > 0) {
-                        ArrayList<Short> chosenCardIDs = new ArrayList<>();
-                        for (Node n : chosenCards.getChildren()) {
-                            chosenCardIDs.add(Short.valueOf(n.getId()));
-                        }
-                        lobbyService.sendChosenCards(lobbyID, chosenCardIDs);
-                    }
-                });
-
-                //auswählbare Karten initilaisieren
-                TilePane tilePane = new TilePane();
-                tilePane.setPrefHeight(500);
-                tilePane.setPrefWidth(500);
-                tilePane.setMaxWidth(500);
-                tilePane.setVgap(10);
-                tilePane.setHgap(10);
-                tilePane.setStyle("-fx-background-color: #3D3D3D");
                 for (int i = 0; i < cardpack.getCards().getActionCards().size(); i++) {
                     short cardID = cardpack.getCards().getActionCards().get(i).getId();
                     String pfad = "cards/images/" + cardID + "_sm.png";
@@ -375,14 +315,18 @@ public class LobbyPresenter extends AbstractPresenter {
             });
         } else {
             gameSettingsVBox.setVisible(false);
-            gamesettingsButton.setText("Spieleinstellungen");
+            Platform.runLater(() -> {
+                gamesettingsButton.setText("Spieleinstellungen");
+                choosableCards.getChildren().clear();
+                chosenCards.getChildren().clear();
+            });
         }
     }
 
     /**
      * Methode für den Klick des Buttons Auswahl-abschicken
      *
-     * @param event
+     * @param event Das ActionEvent
      * @author Anna
      * @since Sprint 8
      */
@@ -428,12 +372,11 @@ public class LobbyPresenter extends AbstractPresenter {
     public void onSendChosenCardsMessage(SetChosenCardsResponse message) {
         if (!message.getLobbyID().equals(lobbyID)) return;
         if (message.isSuccess()) {
-            lobbyHBox.getChildren().forEach(t -> {
-                if (t.getId().equals("gameSettingsVBox")) {
-                    Platform.runLater(() -> lobbyHBox.getChildren().remove(t));
-                    gameSettingsOpen = false;
-                    Platform.runLater(() -> gamesettingsButton.setText("Spieleinstellungen"));
-                }
+            gameSettingsVBox.setVisible(false);
+            Platform.runLater(() -> {
+                gamesettingsButton.setText("Spieleinstellungen");
+                choosableCards.getChildren().clear();
+                chosenCards.getChildren().clear();
             });
         }
     }
@@ -506,7 +449,6 @@ public class LobbyPresenter extends AbstractPresenter {
     public void onSetMaxPlayerMessage(SetMaxPlayerMessage msg) {
         Platform.runLater(() -> {
             if (msg.getOwner().equals(loggedInUser) && lobbyID == msg.getLobbyID()) {
-                chooseMaxPlayer.setDisable(false);
                 chooseMaxPlayer.setValue(msg.getMaxPlayer());
                 LOG.info("Max. Spieler der Lobby: " + msg.getLobby().getName() + " erfolgreich auf " + msg.getMaxPlayer() + " gesetzt.");
             }
@@ -526,20 +468,6 @@ public class LobbyPresenter extends AbstractPresenter {
         LOG.debug("Spieler in der Lobby mit der ID" + message.getLobbyID() + " startet.");
         gameManagement.showGameView();
     }
-
-    /**
-     * Nachdem der Nutzer sich ausgeloggt hat, wird er auch aus der Lobbyliste gelöscht.
-     *
-     * @param message Die UserLoggedOutMessage
-     * @author Darian
-     * @since Sprint 3
-     */
-//    @Subscribe
-//    public void onUserLoggedOutMessage(UserLoggedOutMessage message) {
-//        userLeftLobby(message.getUsername(), false);
-//    }
-//
-//    Überflüssig, da man beim ausloggen inzwischen schon jede Lobby verlässt. (Siehe LeaveAllLobbiesOnLogoutRequest)
 
     /**
      * User wird aus der Liste entfernt, wenn er seinen Account gelöscht hat
@@ -588,7 +516,15 @@ public class LobbyPresenter extends AbstractPresenter {
             gameOwner = message.getGameOwner();
             userLeftLobby(message.getUser().getUsername(), false);
             if (gameOwner.getUsername().equals(loggedInUser.getUsername())) {
-                gamesettingsButton.setVisible(true);
+                Platform.runLater(() -> {
+                    gamesettingsButton.setVisible(true);
+                    chooseMaxPlayer.setVisible(true);
+                    createBotButton.setVisible(true);
+                    maxSettingOwner.setVisible(true);
+                    settingOwner.setVisible(true);
+                    chooseMaxPlayer.setDisable(false);
+                    chooseMaxPlayer.setValue(message.getLobby().getMaxPlayer());
+                });
             }
         }
     }
@@ -617,6 +553,11 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void LobbyExceptionMessage(LobbyExceptionMessage msg) {
+        Platform.runLater(() -> {
+            if (msg.getMessage().contains("Es sind zu viele Benutzer in der Lobby, um die maximale")) {
+                chooseMaxPlayer.setValue(oldMaxPlayerValue);
+            }
+        });
         SceneManager.showAlert(Alert.AlertType.ERROR, msg.getMessage(), "Lobby");
     }
 
@@ -713,7 +654,10 @@ public class LobbyPresenter extends AbstractPresenter {
         if (!box.getChildren().contains(crownView) && user.getUsername().equals(gameOwner.getUsername())) {
             crownView.setFitHeight(15);
             crownView.setFitWidth(15);
-            Platform.runLater(() -> box.getChildren().add(crownView));
+            Platform.runLater(() -> {
+                if (!box.getChildren().contains(crownView))
+                    box.getChildren().add(crownView);
+            });
         }
         return box;
     }

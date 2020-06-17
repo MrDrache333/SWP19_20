@@ -17,8 +17,10 @@ import java.util.List;
 
 /**
  * Klasse zum Testen der Kartenanimationen.
+ *
+ * @author Anna
+ * @since Sprint 5
  */
-
 public class AnimationTest extends Application {
 
     public static void main(String[] args) {
@@ -160,16 +162,10 @@ public class AnimationTest extends Application {
         }
 
         for (int i = 0; i < cards.size(); i++) {
-            AnimationManagement.addToHand(cards.get(i), i);
+            AnimationManagement.addToHand(cards.get(i), handcards);
             deckPane.getChildren().remove(cards.get(i));
             handcards.getChildren().add(cards.get(i));
         }
-
-
-        //Wenn auf die Karte geklickt wird, spielt der Gegenspieler eine Karte aus
-        cardToPlayByOpponent.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            AnimationManagement.opponentPlaysCard(cardToPlayByOpponent, 0);
-        });
 
         //Wenn auf die Karte geklickt wird, spielt der Spieler sie aus
 
@@ -185,9 +181,7 @@ public class AnimationTest extends Application {
         });
 
         //Wenn auf die Karte geklickt wird, wird sie vom Spieler gekauft
-        cardToBuy.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            AnimationManagement.buyCard(cardToBuy);
-        });
+        cardToBuy.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> AnimationManagement.buyCard(cardToBuy, new GeneralLayoutContainer(300, 200, 100, 100, ""), 0));
 
         //Wenn auf die Karte geklickt wird, wird sie auf den Müll gelegt
         cardToDelete.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {

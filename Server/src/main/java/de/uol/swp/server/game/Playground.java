@@ -13,7 +13,6 @@ import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.lobby.Lobby;
-import de.uol.swp.common.lobby.LobbyUser;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
@@ -31,28 +30,29 @@ import java.util.stream.IntStream;
 /**
  * Playground stellt das eigentliche Spielfeld dar
  */
+@SuppressWarnings("UnstableApiUsage")
 public class Playground extends AbstractPlayground {
 
     private static final Logger LOG = LogManager.getLogger(Playground.class);
-    private Map<Short, Integer> cardField = new TreeMap<>();
+    private final Map<Short, Integer> cardField = new TreeMap<>();
     /**
      * Die Spieler
      */
-    private List<Player> players = new ArrayList<>();
-    private Map<String, Integer> resultsGame = new TreeMap<>();
-    private Map<Player, Integer> playerTurns = new HashMap<>();
+    private final List<Player> players = new ArrayList<>();
+    private final Map<String, Integer> resultsGame = new TreeMap<>();
+    private final Map<Player, Integer> playerTurns = new HashMap<>();
     private Player actualPlayer;
     private Player nextPlayer;
     private Player latestGavedUpPlayer;
     private Phase.Type actualPhase;
-    private GameService gameService;
-    private UUID theSpecificLobbyID;
-    private CompositePhase compositePhase;
-    private Timer timer = new Timer();
-    private short lobbySizeOnStart;
-    private CardPack cardsPackField;
-    private ArrayList<Short> chosenCards;
-    private ArrayList<Card> trash = new ArrayList<>();
+    private final GameService gameService;
+    private final UUID theSpecificLobbyID;
+    private final CompositePhase compositePhase;
+    private final Timer timer = new Timer();
+    private final short lobbySizeOnStart;
+    private final CardPack cardsPackField;
+    private final ArrayList<Short> chosenCards;
+    private final ArrayList<Card> trash = new ArrayList<>();
     private final UserDTO infoUser = new UserDTO("infoUser", "", "");
 
     /**
@@ -66,7 +66,7 @@ public class Playground extends AbstractPlayground {
     @Inject
     Playground(Lobby lobby, GameService gameService) {
         for (User user : lobby.getUsers()) {
-            if (user.getIsBot() == false) {
+            if (!user.getIsBot()) {
                 Player player = new Player(user.getUsername());
                 player.setTheUserInThePlayer(user);
                 player.setBot(false);
@@ -152,7 +152,7 @@ public class Playground extends AbstractPlayground {
             sendInitialHands();
         } else {
             //Spieler muss Clearphase durchlaufen haben
-            if (actualPhase != Phase.Type.Clearphase) return;
+            if (actualPhase != Phase.Type.ClearPhase) return;
             if (actualPlayer != latestGavedUpPlayer) {
                 sendPlayersHand();
                 sendCardsDeckSize();
@@ -187,7 +187,7 @@ public class Playground extends AbstractPlayground {
 
     public void endGame(UUID lobbyID) {
         gameService.dropFinishedGame(lobbyID);
-        // gameService.getGameManagement().deleteLobbyWithOnlyBots(lobbyID);
+        gameService.getGameManagement().deleteLobbyWithOnlyBots(lobbyID);
     }
 
     /**
@@ -211,12 +211,11 @@ public class Playground extends AbstractPlayground {
      * @since Sprint 5
      */
     public void nextPhase() {
-        ArrayList<Short> theIdsFromTheHand = new ArrayList<>(5);
-        if (actualPhase == Phase.Type.Clearphase) {
+        if (actualPhase == Phase.Type.ClearPhase) {
             throw new GamePhaseException("Du kannst die Clearphase nicht überspringen!");
         }
         if (actualPhase == Phase.Type.ActionPhase) {
-            actualPhase = Phase.Type.Buyphase;
+            actualPhase = Phase.Type.BuyPhase;
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartBuyPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
 
             ChatMessage infoMessage = new ChatMessage(infoUser, getActualPlayer().getTheUserInThePlayer().getUsername() + " ist am Zug!");
@@ -224,7 +223,7 @@ public class Playground extends AbstractPlayground {
 
             endTimer();
         } else {
-            actualPhase = Phase.Type.Clearphase;
+            actualPhase = Phase.Type.ClearPhase;
             Player currentPlayer = actualPlayer;
             players.forEach(n -> {
                 StartClearPhaseMessage msg = new StartClearPhaseMessage(currentPlayer.getTheUserInThePlayer(), theSpecificLobbyID, getIndexOfPlayer(n), getIndexOfPlayer(currentPlayer));
@@ -255,7 +254,7 @@ public class Playground extends AbstractPlayground {
      */
     public int sendCardsDeckSize() {
         int size = actualPlayer.getPlayerDeck().getCardsDeck().size();
-        gameService.sendToSpecificPlayer(actualPlayer, new CardsDeckSizeMessage(theSpecificLobbyID, actualPlayer.getTheUserInThePlayer(), size, actualPlayer.getPlayerDeck().discardPileWasCleared()));
+        gameService.sendToAllPlayers(theSpecificLobbyID, new CardsDeckSizeMessage(theSpecificLobbyID, actualPlayer.getTheUserInThePlayer(), size, actualPlayer.getPlayerDeck().discardPileWasCleared()));
         return size;
     }
 
@@ -291,14 +290,14 @@ public class Playground extends AbstractPlayground {
                 this.players.remove(thePositionInList);
                 List<String> winners = calculateWinners();
                 GameOverMessage gameOverByGaveUp = new GameOverMessage(lobbyID, winners, resultsGame);
-                if (this.players.get(0).isBot() == false) {
+                if (!this.players.get(0).isBot()) {
                     endGame(lobbyID, gameOverByGaveUp);
                 } else {
                     endGame(lobbyID);
                 }
             } else if (actualPlayer.equals(latestGavedUpPlayer) && !(onlyBotsLeft())) {
                 this.players.remove(thePositionInList);
-                actualPhase = Phase.Type.Clearphase;
+                actualPhase = Phase.Type.ClearPhase;
                 newTurn();
             } else if (nextPlayer.equals(latestGavedUpPlayer) && !(onlyBotsLeft())) {
                 if (thePositionInList < this.players.size() - 1) {
@@ -313,8 +312,7 @@ public class Playground extends AbstractPlayground {
             }
 
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -322,7 +320,7 @@ public class Playground extends AbstractPlayground {
     //Hilfsmethode zum Überprüfen
     public Boolean onlyBotsLeft() {
         for (Player player : players) {
-            if (player.isBot() == true) {
+            if (player.isBot()) {
                 return true;
             }
         }

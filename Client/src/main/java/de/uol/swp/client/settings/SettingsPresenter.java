@@ -10,9 +10,10 @@ import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.settings.event.CloseSettingsEvent;
 import de.uol.swp.client.settings.event.DeleteAccountEvent;
+import de.uol.swp.client.sound.SoundMediaPlayer;
+import de.uol.swp.client.user.UserService;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
-import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -22,6 +23,7 @@ import javafx.scene.image.ImageView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.util.regex.Pattern;
 
 
@@ -31,6 +33,7 @@ import java.util.regex.Pattern;
  * @author Anna
  * @since Sprint 4
  */
+@SuppressWarnings("UnstableApiUsage, unused")
 public class SettingsPresenter extends AbstractPresenter {
 
     /**
@@ -44,10 +47,10 @@ public class SettingsPresenter extends AbstractPresenter {
     private static final Logger LOG = LogManager.getLogger(SettingsPresenter.class);
 
     private User loggedInUser;
-    private LobbyService lobbyService;
-    private UserService userService;
-    private Injector injector;
-    private EventBus eventBus;
+    private final LobbyService lobbyService;
+    private final UserService userService;
+    private final Injector injector;
+    private final EventBus eventBus;
 
     @FXML
     private Button cancelButton;
@@ -65,15 +68,19 @@ public class SettingsPresenter extends AbstractPresenter {
     private ImageView chatMuteImage;
     @FXML
     private ToggleButton chatMuteToggleButton;
+    @FXML
+    private ImageView soundIcon;
+    @FXML
+    private ToggleButton soundIconToggleButton;
 
     /**
      * Konstruktor des SettingPresenters
      *
-     * @param loggedInUser
-     * @param lobbyService
-     * @param userService
-     * @param injector
-     * @param eventBus
+     * @param loggedInUser Der eingeloggte User
+     * @param lobbyService DerLobbyService
+     * @param userService Der UserService
+     * @param injector Der injector
+     * @param eventBus Der EventBus
      * @author Julia, Keno S.
      * @since Sprint 4
      */
@@ -89,7 +96,7 @@ public class SettingsPresenter extends AbstractPresenter {
      * Überprüft die Benutzereingaben. Falls alle gültig sind, wird im UserService die Methode updateUser aufgerufen,
      * ansonsten wird eine entsprechende Fehlermeldung angezeigt
      *
-     * @param event
+     * @param event Das ActionEvent
      * @author Julia
      * @since Sprint 4
      */
@@ -143,7 +150,7 @@ public class SettingsPresenter extends AbstractPresenter {
     /**
      * Postet auf den EventBus das Accountlöschung-Event
      *
-     * @param actionEvent
+     * @param actionEvent Das ActionEvent
      * @author Julia
      * @since Sprint 4
      */
@@ -155,7 +162,7 @@ public class SettingsPresenter extends AbstractPresenter {
     /**
      * Postet auf den EventBus das Schließe-Settings-Event
      *
-     * @param actionEvent
+     * @param actionEvent Das ActionEvent
      * @author Julia
      * @since Sprint 4
      */
@@ -168,7 +175,7 @@ public class SettingsPresenter extends AbstractPresenter {
     /**
      * Mutet alle Benachrichtigungen beim Aufruf
      *
-     * @param actionEvent
+     * @param actionEvent Das ActionEvent
      * @author Keno S.
      * @since Sprint 7
      */
@@ -182,9 +189,23 @@ public class SettingsPresenter extends AbstractPresenter {
     }
 
     /**
+     * Schaltet den Sound an bzw. aus
+     *
+     * @param actionEvent
+     * @author Rike
+     * @since Sprint 9
+     */
+    @FXML
+    public void onSoundIconToggleButtonPressed(ActionEvent actionEvent) {
+        Notifyer.setMuteState(soundIconToggleButton.isSelected());
+        SoundMediaPlayer.setSound(!SoundMediaPlayer.isSoundEnabled());
+        setSoundIcon();
+    }
+
+    /**
      * Aktualisiert den loggedInUser
      *
-     * @param message
+     * @param message Die UpdatedUserMessage
      * @author Julia
      * @since Sprint 4
      */
@@ -207,5 +228,15 @@ public class SettingsPresenter extends AbstractPresenter {
         passwordField.clear();
         password2Field.clear();
         currentPasswordField.clear();
+    }
+
+    /**
+     * Hilfsmethode die das SoundIcon setzt, falls es außerhalb der Einstellungen (bspw. im Login-Screen oder im Registration-Screen verändert wurde)
+     *
+     * @author Rike
+     * @since Sprint 9
+     */
+    public void setSoundIcon(){
+        soundIcon.setImage(new Image(new File(getClass().getResource(SoundMediaPlayer.isSoundEnabled() ? "/images/sound_on_icon.png" : "/images/sound_off_icon.png").toExternalForm().replace("file:", "")).toURI().toString()));
     }
 }

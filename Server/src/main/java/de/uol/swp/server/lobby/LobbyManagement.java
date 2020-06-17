@@ -10,7 +10,6 @@ import de.uol.swp.common.user.UserDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.security.KeyException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,7 +27,6 @@ public class LobbyManagement {
      * Erstellt eine Lobby mit den übergebenen Parametern. Überprüft, ob die Lobby mit dem Namen schon existiert.
      *
      * @author Paula, Haschem, Ferit, Rike
-     * @version 0.1
      * lobbyID hat folgende Form: 067e6162-3b6f-4ae2-a171-2470b63dff00  (Beispiel) / UUID Object
      */
 
@@ -116,7 +114,7 @@ public class LobbyManagement {
      * @throws LeaveLobbyException Wenn die Lobby nicht existiert.
      * @author Marvin
      */
-    public void leaveLobby(UUID id, User user) {
+    public boolean leaveLobby(UUID id, User user) {
         Optional<Lobby> lobby = this.getLobby(id);
         if (lobby.isPresent()) {
             if (LOG.isDebugEnabled()) {
@@ -125,10 +123,13 @@ public class LobbyManagement {
             lobby.get().leaveUser(user);
             if (lobby.get().getPlayers() == 0) {
                 this.dropLobby(id);
+                return true;
             }
+            return true;
         } else {
             throw new LeaveLobbyException("Die zu verlassende Lobby existiert nicht.");
         }
+
     }
 
     /**
@@ -163,7 +164,7 @@ public class LobbyManagement {
                 updatedLobbies.put(lobbyToUpdate.getLobbyID(), lobbyToUpdate);
             }
         }
-        updatedLobbies.entrySet().forEach(l -> lobbies.replace(l.getKey(), l.getValue()));
+        updatedLobbies.forEach(lobbies::replace);
     }
 
     /**
@@ -179,7 +180,6 @@ public class LobbyManagement {
     public void kickUser(UUID id, User userToKick, User owner) {
         Optional<Lobby> lobby = this.getLobby(id);
         if (lobby.isPresent()) {
-
             if (lobby.get().getOwner().getUsername().equals(owner.getUsername())) {
                 lobby.get().leaveUser(userToKick);
                 if (LOG.isDebugEnabled()) {
@@ -250,5 +250,17 @@ public class LobbyManagement {
         } else {
             throw new SetMaxPlayerException(loggedInUser + " ist nicht der Lobbybesitzer und kann nicht die maximale Spierleranzahl ändern.");
         }
+    }
+
+    /**
+     * Überprüft, ob sich der User in einer Lobby befindet.
+     *
+     * @param user Der User
+     * @return true wenn ja, sonst false
+     * @author Julia
+     * @since Sprint 9
+     */
+    public boolean userInLobby(User user) {
+        return lobbies.values().stream().flatMap(l -> l.getUsers().stream()).anyMatch(u -> u.equals(user));
     }
 }

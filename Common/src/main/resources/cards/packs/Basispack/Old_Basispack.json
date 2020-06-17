@@ -64,7 +64,12 @@
             "GetCard": {
               "count": 1,
               "cardSource": "DRAW",
-              "directHand": true
+              "nextAction": {
+                "Move": {
+                  "cardSource": "DRAW",
+                  "cardDestination": "HAND"
+                }
+              }
             }
           },
           {
@@ -124,8 +129,13 @@
                     {
                       "GetCard": {
                         "count": 1,
+                        "cardSource": "DRAW"
+                      }
+                    },
+                    {
+                      "Move": {
                         "cardSource": "DRAW",
-                        "directHand": true
+                        "cardDestination": "HAND"
                       }
                     }
                   ]
@@ -144,7 +154,12 @@
             "GetCard": {
               "count": 1,
               "cardSource": "DRAW",
-              "directHand": true
+              "nextAction": {
+                "Move": {
+                  "cardSource": "DRAW",
+                  "cardDestination": "HAND"
+                }
+              }
             }
           },
           {
@@ -242,7 +257,12 @@
                 "min": 0,
                 "max": 3
               },
-              "directHand": true
+              "nextAction": {
+                "Move": {
+                  "cardSource": "BUY",
+                  "cardDestination": "HAND"
+                }
+              }
             }
           }
         ]
@@ -256,7 +276,12 @@
             "GetCard": {
               "count": 3,
               "cardSource": "DRAW",
-              "directHand": true
+              "nextAction": {
+                "Move": {
+                  "cardSource": "DRAW",
+                  "cardDestination": "HAND"
+                }
+              }
             }
           }
         ]
@@ -574,7 +599,12 @@
             "GetCard": {
               "count": 2,
               "cardSource": "DRAW",
-              "directHand": true
+              "nextAction": {
+                "Move": {
+                  "cardSource": "DRAW",
+                  "cardDestination": "HAND"
+                }
+              }
             }
           },
           {
@@ -700,7 +730,12 @@
             "GetCard": {
               "count": 4,
               "cardSource": "DRAW",
-              "directHand": true
+              "nextAction": {
+                "Move": {
+                  "cardSource": "DRAW",
+                  "cardDestination": "HAND"
+                }
+              }
             }
           },
           {
@@ -714,7 +749,12 @@
               "count": 1,
               "executeType": "OTHERS",
               "cardSource": "DRAW",
-              "directHand": true
+              "nextAction": {
+                "Move": {
+                  "cardSource": "DRAW",
+                  "cardDestination": "HAND"
+                }
+              }
             }
           }
         ]
@@ -784,14 +824,26 @@
             "GetCard": {
               "count": 2,
               "cardSource": "DRAW",
-              "directHand": true
+              "nextAction": {
+                "Move": {
+                  "cardSource": "DRAW",
+                  "cardDestination": "HAND"
+                }
+              }
             }
           },
           {
             "GetCard": {
               "count": 1,
+              "executeType": "OTHERS",
               "allowedCardType": "CURSE",
-              "directHand": true
+              "cardSource": "BUY",
+              "nextAction": {
+                "Move": {
+                  "cardSource": "BUY",
+                  "cardDestination": "HAND"
+                }
+              }
             }
           }
         ]

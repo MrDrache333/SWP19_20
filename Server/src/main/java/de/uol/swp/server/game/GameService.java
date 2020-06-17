@@ -34,7 +34,7 @@ import java.util.*;
 /**
  * Der GameService. Verarbeitet alle Anfragen, die über den Bus gesendet werden.
  */
-@SuppressWarnings("UnstableApiUsage")
+@SuppressWarnings("UnstableApiUsage, unused")
 public class GameService extends AbstractService {
 
     private static final Logger LOG = LogManager.getLogger(GameService.class);
@@ -194,7 +194,7 @@ public class GameService extends AbstractService {
             sendToAllPlayers(req.getLobbyID(), new NewChatMessage(req.getLobbyID().toString(), new ChatMessage(infoUser, req.getGivingUpUser().getUsername() + " gab auf!")));
         } else {
             LOG.error("User " + req.getGivingUpUser().getUsername() + "konnte nicht aufgeben");
-            post(new AllOnlineLobbiesResponse(gameManagement.getAllLobies()));
+            post(new AllOnlineLobbiesResponse(gameManagement.getAllLobbies()));
             // TODO: Implementierung: Was passiert wenn der User nicht entfernt werden kann? Welche Fälle gibt es?
         }
     }
@@ -217,7 +217,7 @@ public class GameService extends AbstractService {
         Optional<Game> game = gameManagement.getGame(req.getLobbyID());
         if (game.isPresent()) {
             Playground playground = game.get().getPlayground();
-            if (req.getCurrentUser().equals(playground.getActualPlayer().getTheUserInThePlayer()) && playground.getActualPhase() == Phase.Type.Buyphase) {
+            if (req.getCurrentUser().equals(playground.getActualPlayer().getTheUserInThePlayer()) && playground.getActualPhase() == Phase.Type.BuyPhase) {
                 try {
                     Card card = playground.getCardsPackField().getCards().getCardForId(req.getCardID());
                     int moneyValuePlayer = playground.getActualPlayer().getPlayerDeck().actualMoneyFromPlayer();
@@ -264,8 +264,8 @@ public class GameService extends AbstractService {
                     playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), cardID);
                     //sendToSpecificPlayer(playground.getActualPlayer(), new PlayCardMessage(gameID, player, cardID, true));
                     playground.getPlayers().forEach(n -> {
-                        PlayCardMessage msg = new PlayCardMessage(gameID, playground.getActualPlayer().getTheUserInThePlayer(), cardID, true,
-                                playground.getIndexOfPlayer(n), playground.getIndexOfPlayer(playground.getActualPlayer()), playground.getCompositePhase().getExecuteAction().isRemoveCardAfter());
+                        PlayCardMessage msg = new PlayCardMessage(gameID, playground.getActualPlayer().getTheUserInThePlayer(),
+                                cardID, true, playground.getCompositePhase().getExecuteAction().isRemoveCardAfter());
                         sendToSpecificPlayer(n, msg);
                     });
                     Card card = playground.getCardsPackField().getCards().getCardForId(cardID);

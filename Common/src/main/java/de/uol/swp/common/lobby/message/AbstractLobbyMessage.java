@@ -32,7 +32,7 @@ public class AbstractLobbyMessage extends AbstractServerMessage {
     /**
      * Gibt den UserDTO der Lobby zurück
      *
-     * @return
+     * @return Der User
      * @author Marco
      * @since Start
      */
@@ -54,7 +54,7 @@ public class AbstractLobbyMessage extends AbstractServerMessage {
     /**
      * Vergleicht zwei AbstractLobbyMessages
      *
-     * @return boolean ob die beiden Messages gleich sind
+     * @return Boolean, ob die beiden Messages gleich sind
      * @author Keno S, Marvin
      * @since Sprint 3
      */
@@ -70,7 +70,7 @@ public class AbstractLobbyMessage extends AbstractServerMessage {
     /**
      * Generiert HashCode aus LobbyID und User
      *
-     * @return hash.Value
+     * @return Den Hash-Value
      * @author Keno S, Marvin
      * @since Sprint 4
      */

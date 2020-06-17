@@ -8,15 +8,14 @@ import de.uol.swp.common.game.request.SkipPhaseRequest;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.game.player.Player;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
+@SuppressWarnings("UnstableApiUsage, unused")
 public class BotPlayer extends Player {
     protected EventBus eventBus;
 
-    private UUID gameId;
-    final private boolean isBot = true;
+    private final UUID gameId;
 
     /**
      * Erstellt einen neuen Bot.
@@ -36,7 +35,7 @@ public class BotPlayer extends Player {
     }
 
     public boolean isBot() {
-        return isBot;
+        return true;
     }
 
     /**

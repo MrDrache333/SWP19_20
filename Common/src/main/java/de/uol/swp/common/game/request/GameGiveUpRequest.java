@@ -9,7 +9,6 @@ import java.util.UUID;
  * Erstellt einen GameGiveUpRequest, welche eine Anfrage vom Client an den Server schickt, dass ein bestimmter Spieler in dem spezifischen Game aufgeben möchte.
  *
  * @author Haschem, Ferit
- * @version 1
  * @since Sprint 6
  */
 public class GameGiveUpRequest extends AbstractLobbyRequest {

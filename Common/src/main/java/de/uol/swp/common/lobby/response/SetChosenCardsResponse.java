@@ -13,8 +13,8 @@ import java.util.UUID;
 public class SetChosenCardsResponse extends AbstractResponseMessage {
 
     private static final long serialVersionUID = -4238932243675136534L;
-    private boolean success;
-    private UUID lobbyID;
+    private final boolean success;
+    private final UUID lobbyID;
 
     public SetChosenCardsResponse(UUID lobbyID, boolean success) {
         this.lobbyID = lobbyID;

@@ -43,7 +43,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -57,6 +56,7 @@ import java.util.UUID;
  * @author Marco
  * @since Start
  */
+@SuppressWarnings("UnstableApiUsage, unused")
 public class SceneManager {
 
     static final Logger LOG = LogManager.getLogger(SceneManager.class);
@@ -259,7 +259,6 @@ public class SceneManager {
      * @param title   der übergebene Titel aus dem MainMenuPresenter
      * @param lobbyID die übergebene LobbyID aus der empfangenen Message in der ClientApp
      * @author Paula, Haschem, Ferit, Anna, Darian
-     * @version 0.2
      * @since Sprint3
      */
     public void showLobbyScreen(User currentUser, String title, UUID lobbyID, UserDTO gameOwner) {
@@ -284,8 +283,8 @@ public class SceneManager {
         Platform.runLater(() -> {
             settingsPresenter = new SettingsPresenter(loggedInUser, lobbyService, userService, injector, eventBus);
             initSettingsView(settingsPresenter);
+            settingsPresenter.setSoundIcon();
             settingsStage = new Stage();
-            settingsStage.initStyle(StageStyle.UNDECORATED);
             settingsStage.setTitle("Einstellungen");
             settingsStage.setScene(settingsScene);
             settingsStage.setResizable(false);
@@ -498,17 +497,15 @@ public class SceneManager {
     }
 
     private void initSettingsView(SettingsPresenter settingsPresenter) {
-        if (settingsScene == null) {
-            Parent rootPane = initSettingsPresenter(settingsPresenter);
-            settingsScene = new Scene(rootPane, 400, 420);
-            settingsScene.getStylesheets().add(SettingsPresenter.css);
-        }
+        Parent rootPane = initSettingsPresenter(settingsPresenter);
+        settingsScene = new Scene(rootPane, 400, 420);
+        settingsScene.getStylesheets().add(SettingsPresenter.css);
     }
 
     private void initDeleteAccountView() {
         if (deleteAccountScene == null) {
             Parent rootPane = initDeleteAccountPresenter(new DeleteAccountPresenter(currentUser, lobbyService, userService, eventBus));
-            deleteAccountScene = new Scene(rootPane, 250, 100);
+            deleteAccountScene = new Scene(rootPane, 450, 250);
             deleteAccountScene.getStylesheets().add(SettingsPresenter.css);
 
         }
@@ -543,7 +540,7 @@ public class SceneManager {
      * @since Sprint7
      */
 
-    private EventHandler<KeyEvent> hotkeyEventHandler = new EventHandler<>() {
+    private final EventHandler<KeyEvent> hotkeyEventHandler = new EventHandler<>() {
         @Override
         public void handle(KeyEvent event) {
             if (event.isControlDown()) {

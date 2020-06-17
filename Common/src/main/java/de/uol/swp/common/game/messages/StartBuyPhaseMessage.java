@@ -14,8 +14,8 @@ import java.util.UUID;
 public class StartBuyPhaseMessage extends AbstractServerMessage {
 
     private static final long serialVersionUID = 7590065068489875942L;
-    private User user;
-    private UUID gameID;
+    private final User user;
+    private final UUID gameID;
 
     /**
      * Konstruktor der StartBuyPhaseMessage

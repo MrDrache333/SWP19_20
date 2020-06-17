@@ -21,6 +21,13 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Testklasse der DrawHandMessage
+ *
+ * @author Ferit
+ * @since Sprint 6
+ */
+@SuppressWarnings("UnstableApiUsage")
 public class DrawHandMessageTest {
     static final User defaultOwner = new UserDTO("test1", "test1", "test1@test.de");
     static final User secondPlayer = new UserDTO("test2", "test2", "test2@test2.de");
@@ -37,6 +44,12 @@ public class DrawHandMessageTest {
     static UUID id;
     private Object event;
 
+    /**
+     * Legt eine Lobby an und joint den User
+     *
+     * @author Ferit
+     * @since Sprint 6
+     */
     @BeforeAll
     static void init() {
         id = lobbyManagement.createLobby(lobbyName, lobbyPassword, defaultOwner);
@@ -55,6 +68,12 @@ public class DrawHandMessageTest {
         bus.register(this);
     }
 
+    /**
+     * Erstellt vor jedem Test ein Spiel
+     *
+     * @author Ferit
+     * @since Sprint 6
+     */
     @BeforeEach
     void setUp() {
         gameManagement.createGame(id);
@@ -71,6 +90,12 @@ public class DrawHandMessageTest {
         bus.unregister(this);
     }
 
+    /**
+     * Löscht nach jedem Spiel das Game und den dazugehörigen Chat
+     *
+     * @author Ferit
+     * @since Sprint 6
+     */
     @AfterEach
     void afterEach() {
         gameManagement.deleteGame(id);
@@ -98,7 +123,6 @@ public class DrawHandMessageTest {
         assertEquals(sessions.size(), 2);
         assertTrue(sessions.contains(session1.get()));
         assertTrue(sessions.contains(session2.get()));
-
         //TODO: Implementierung des weiteren Tests
     }
 
@@ -113,7 +137,6 @@ public class DrawHandMessageTest {
         userManagement.createUser(userToLogin);
         final LoginRequest loginRequest = new LoginRequest(userToLogin.getUsername(), userToLogin.getPassword());
         bus.post(loginRequest);
-
         assertTrue(userManagement.isLoggedIn(userToLogin));
         userManagement.dropUser(userToLogin);
     }

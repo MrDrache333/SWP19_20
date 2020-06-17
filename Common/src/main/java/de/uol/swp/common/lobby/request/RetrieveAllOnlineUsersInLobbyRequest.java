@@ -11,7 +11,6 @@ import java.util.UUID;
 public class RetrieveAllOnlineUsersInLobbyRequest extends AbstractLobbyRequest {
 
     private static final long serialVersionUID = 1185727535831267049L;
-    private UUID lobbyId;
 
     /**
      * Instanziiert ein neues Abrufen aller Online-Benutzer in der Lobby-Anfrage.
@@ -23,5 +22,4 @@ public class RetrieveAllOnlineUsersInLobbyRequest extends AbstractLobbyRequest {
     public RetrieveAllOnlineUsersInLobbyRequest(UUID lobbyID) {
         super(lobbyID, null);
     }
-
 }

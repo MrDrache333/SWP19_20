@@ -25,6 +25,7 @@ import java.util.Map;
  * @author Anna
  * @since Sprint 6
  */
+@SuppressWarnings("unused")
 public class GameOverViewPresenter extends AbstractPresenter {
 
     public static final String fxml = "/fxml/GameOverView.fxml";
@@ -47,11 +48,11 @@ public class GameOverViewPresenter extends AbstractPresenter {
     @FXML
     Text bannerText;
 
-    private GameManagement gameManagement;
+    private final GameManagement gameManagement;
 
-    private User loggedInUser;
-    private List<String> winners;
-    private Map<String, Integer> results;
+    private final User loggedInUser;
+    private final List<String> winners;
+    private final Map<String, Integer> results;
 
     /**
      * Initialisiert einen neuen GameOverViewPresenter.
@@ -116,9 +117,9 @@ public class GameOverViewPresenter extends AbstractPresenter {
             } else {
                 StringBuilder tmp = new StringBuilder();
                 for (int i = 0; i < winners.size() - 1; i++) {
-                    tmp.append(winners.get(i) + " & ");
+                    tmp.append(winners.get(i)).append(" & ");
                 }
-                tmp.append(winners.get(winners.size() - 1) + " haben gewonnen!");
+                tmp.append(winners.get(winners.size() - 1)).append(" haben gewonnen!");
                 bannerText.setText(tmp.toString());
             }
             bannerText.setLayoutX(62);
