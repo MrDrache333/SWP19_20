@@ -272,13 +272,20 @@ public class PlaygroundTest {
         assertEquals(5, size);
     }
 
-    // <----GameService Test ------->
+    // <----Nachfolgend wird der GameService getestet. / Keine Extra Testklasse.---->
+
+    /**
+     * Testet, ob ein beendetes Spiel gelöscht wird.
+     */
     @Test
     void dropFinishedGameTest() {
         gameService.dropFinishedGame(gameID);
         assertFalse(gameManagement.getGame(gameID).isPresent());
     }
 
+    /**
+     * SkipPhaseRequestTest
+     */
     @Test
     void onSkipPhaseRequestTest() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
@@ -287,11 +294,12 @@ public class PlaygroundTest {
         assertTrue(!(playground.getActualPlayer().equals(oldActualPlayer)));
     }
 
-    //TODO: funzt noch net
+    /**
+     * OnBuyCardRequestTest
+     */
     @Test
     void onBuyCardRequestTest() {
         gameManagement.getGame(gameID).get().getPlayground().playerGaveUp(gameID, (UserDTO) thirdPlayer, true);
-
         if (gameManagement.getGame(gameID).get().getPlayground().getActualPlayer().getPlayerDeck().actualMoneyFromPlayer() >= 1) {
             if (gameManagement.getGame(gameID).get().getPlayground().getActualPlayer().getAvailableActions() >= 1) {
                 gameManagement.getGame(gameID).get().getPlayground().nextPhase();
@@ -302,6 +310,9 @@ public class PlaygroundTest {
         assertTrue(gameManagement.getGame(gameID).get().getPlayground().getNextPlayer().getPlayerDeck().getDiscardPile().get(0).getId() == 1);
     }
 
+    /**
+     * OnPlayCardTest
+     */
     @Test
     void onPlayCardTest() {
         // UUID gameID, User currentUser, Short handCardID

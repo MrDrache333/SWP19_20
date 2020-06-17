@@ -339,6 +339,11 @@ class LobbyServiceTest {
         assertTrue(event instanceof AllOnlineUsersInLobbyResponse);
     }
 
+    /**
+     * Es wird getestet, ob ein Player gekickt werden kann.
+     *
+     * @throws InterruptedException
+     */
     @Test
     void kickPlayerTest() throws InterruptedException {
         UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
@@ -348,6 +353,9 @@ class LobbyServiceTest {
         assertTrue(lobbyManagement.getLobby(lobbyID).get().getPlayers() == 1);
     }
 
+    /**
+     * Es wird getestet, ob gültige/ungültige Anfragen beim SetMaxPlayer richtig gehandelt werden.
+     */
     @Test
     void onSetMaxPlayerReqTest() {
         UUID lobbyID = lobbyManagement.createLobby(defaultLobbyName, defaultLobbyPassword, lobbyOwner);
@@ -358,6 +366,7 @@ class LobbyServiceTest {
 
     }
 
+    //Hilfsmethode
     void loginUsers() {
         userManagement.createUser(lobbyUser);
         userManagement.createUser(lobbyOwner);
