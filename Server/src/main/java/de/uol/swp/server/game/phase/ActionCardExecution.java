@@ -751,7 +751,6 @@ public class ActionCardExecution {
                     Future<Boolean> future = ex.submit(callable);
                     boolean reactionCardOnHand = future.get();
                     if (reactionCardOnHand) {
-                        players.remove(p);
                         toRemove.add(p);
                     }
                 }
