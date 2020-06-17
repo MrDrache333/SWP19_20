@@ -727,6 +727,26 @@ public class ActionCardExecution {
     }
 
     /**
+     * Prüft, ob ein Spieler eine Reaktionskarte auf der Hand hat und spielt diese dann aus
+     *
+     * @param player Der Spieler, dessen Hand überprüft werden soll
+     * @return true, wenn er eine Reaktionskarte auf der Hand hat, sonst false
+     * @author Julia
+     * @since Sprint 7
+     */
+    public boolean checkForReactionCard(Player player) {
+        for (Card card : player.getPlayerDeck().getHand()) {
+            if (card instanceof ActionCard && ((ActionCard) card).getType() == ActionCard.ActionType.Reaction) {
+                playground.getGameService().sendToAllPlayers(gameID, new PlayedReactionCardMessage(card.getId(), player.getTheUserInThePlayer(), gameID));
+                ActionCardExecution execution = new ActionCardExecution(card.getId(), playground, true, player);
+                execution.execute();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Entfernt Spieler, die eine Reaktionskarte auf der Hand haben, aus affectedPlayers
      *
      * @author Julia
@@ -739,48 +759,16 @@ public class ActionCardExecution {
             this.affectedPlayers = affectedPlayers;
         }
 
-        public List<Player> call() throws ExecutionException, InterruptedException {
+        @Override
+        public List<Player> call() {
             List<Player> toRemove = new ArrayList<>();
-            ExecutorService ex = Executors.newFixedThreadPool(1);
             for (Player p : affectedPlayers) {
-                if (!p.equals(player)) {
-                    Callable<Boolean> callable = new ReactionCardCheck(p);
-                    Future<Boolean> future = ex.submit(callable);
-                    boolean reactionCardOnHand = future.get();
-                    if (reactionCardOnHand) {
-                        toRemove.add(p);
-                    }
+                if (!p.equals(player) && checkForReactionCard(p)) {
+                    toRemove.add(p);
                 }
             }
             toRemove.forEach(affectedPlayers::remove);
             return affectedPlayers;
-        }
-    }
-
-    /**
-     * Prüft, ob ein Spieler eine Reaktionskarte auf der Hand hat und spielt diese dann aus
-     *
-     * @author Julia
-     * @since Sprint 10
-     */
-    class ReactionCardCheck implements Callable<Boolean> {
-
-        private Player p;
-
-        public ReactionCardCheck(Player p) {
-            this.p = p;
-        }
-
-        public Boolean call() {
-            for (Card card : p.getPlayerDeck().getHand()) {
-                if (card instanceof ActionCard && ((ActionCard) card).getType() == ActionCard.ActionType.Reaction) {
-                    playground.getGameService().sendToAllPlayers(gameID, new PlayedReactionCardMessage(card.getId(), p.getTheUserInThePlayer(), gameID));
-                    ActionCardExecution execution = new ActionCardExecution(card.getId(), playground, true, p);
-                    execution.execute();
-                    return true;
-                }
-            }
-            return false;
         }
     }
 
