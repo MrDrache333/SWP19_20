@@ -205,7 +205,6 @@ public class GameViewPresenter extends AbstractPresenter {
     private final ColorAdjust makeImageDarker = new ColorAdjust();
     private boolean chooseCardBecauseOfActionCard = false;
     private final ColorAdjust notChosenCard = new ColorAdjust();
-    private boolean directHand;
     private final ArrayList<Short> chosenCardsId = new ArrayList<>();
     private final ArrayList<ImageView> chosenCards = new ArrayList<>();
     private int numberOfCardsToChoose;
@@ -257,11 +256,13 @@ public class GameViewPresenter extends AbstractPresenter {
             for (ImageView card : chosenCards) {
                 chosenCardsId.add(Short.parseShort(card.getId()));
             }
-            gameService.chooseCardResponse(lobbyID, loggedInUser, chosenCardsId, directHand);
+            gameService.chooseCardResponse(lobbyID, loggedInUser, chosenCardsId);
             handcards.getChildren().forEach((n) -> {
                 n.removeEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
                 n.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
-                n.setEffect(null);
+                if (Short.valueOf(n.getId()) < 4) {
+                    n.setEffect(makeImageDarker);
+                }
             });
             Platform.runLater(() -> {
                 skipPhaseButton.setDisable(false);
@@ -712,7 +713,6 @@ public class GameViewPresenter extends AbstractPresenter {
             chosenCards.clear();
             ImageView card = (ImageView) mouseEvent.getTarget();
             numberOfCardsToChoose = req.getCount();
-            directHand = req.getDirectHand();
             currentInfoText = infoActualPhase.getText();
             skipPhaseButton.setDisable(true);
             if (req.getSource() == ZoneType.HAND) {
@@ -1260,9 +1260,11 @@ public class GameViewPresenter extends AbstractPresenter {
             handcards.getChildren().forEach((n) -> {
                 n.removeEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
                 n.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
-                n.setEffect(null);
+                if (Short.valueOf(n.getId()) < 4) {
+                    n.setEffect(makeImageDarker);
+                }
             });
-            gameService.chooseCardResponse(gameID, loggedInUser, chosenCardsId, directHand);
+            gameService.chooseCardResponse(gameID, loggedInUser, chosenCardsId);
             selectButton.setVisible(false);
             playAllMoneyCardsButton.setVisible(true);
             skipPhaseButton.setDisable(false);
@@ -1330,7 +1332,7 @@ public class GameViewPresenter extends AbstractPresenter {
             bigCardImageBox.setVisible(false);
             if (playAllMoneyCardsButton.isVisible() && playAllMoneyCardsButton.isDisable()) {
                 if (chooseCardBecauseOfActionCard) {
-                    gameService.chooseCardResponse(lobbyID, loggedInUser, new ArrayList<>(Collections.singletonList(Short.valueOf(cardID))), directHand);
+                    gameService.chooseCardResponse(lobbyID, loggedInUser, new ArrayList<>(Collections.singletonList(Short.valueOf(cardID))));
                     for (int i = 0; i < 10; i++) {
                         ImageView iv = (ImageView) shopTeppich.getChildren().get(i);
                         if (iv.getEffect() == notChosenCard) {
@@ -1489,10 +1491,15 @@ public class GameViewPresenter extends AbstractPresenter {
                 AnimationManagement.deleteCard(card);
                 return;
             case HAND:
+                if (user.equals(loggedInUser)) {
+                    if (Short.valueOf(card.getId()) < 4) card.setEffect(makeImageDarker);
+                    card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+                }
                 AnimationManagement.addToHand(card, usersContainer.get(user.getUsername()).get(destination));
                 break;
             case DISCARD:
                 AnimationManagement.buyCard(card, usersContainer.get(user.getUsername()).get(destination), getPlayerNumber(user));
+                card.setEffect(null);
                 break;
             default:
                 LOG.debug("Die Bewegung zur Zone " + destination + " wurde noch nicht implementiert");

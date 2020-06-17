@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Julia
  * @since Sprint 8
  */
+@SuppressWarnings("UnstableApiUsage")
 public class ActionCardTest {
 
     static final User defaultOwner = new UserDTO("test1", "test1", "test1@test.de");
@@ -44,7 +45,6 @@ public class ActionCardTest {
     static final UserManagement userManagement = new UserManagement(userStore);
     static final AuthenticationService authService = new AuthenticationService(bus, userManagement, lobbyManagement);
     static final GameService gameService = new GameService(bus, gameManagement, authService);
-    static UUID id;
     static UUID gameID;
     private final CountDownLatch lock = new CountDownLatch(1);
     private Object event;

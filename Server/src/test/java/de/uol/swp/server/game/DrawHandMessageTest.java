@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Ferit
  * @since Sprint 6
  */
+@SuppressWarnings("UnstableApiUsage")
 public class DrawHandMessageTest {
     static final User defaultOwner = new UserDTO("test1", "test1", "test1@test.de");
     static final User secondPlayer = new UserDTO("test2", "test2", "test2@test2.de");

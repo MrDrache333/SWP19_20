@@ -230,7 +230,6 @@ public class ClientApp extends Application implements ConnectionListener {
      *
      * @param message CreateLobbyMessage vom Server, dass die Lobby erstellt worden ist.
      * @author Paula, Haschem, Ferit, Anna, Darian
-     * @version 0.2
      * @since Sprint 3
      */
     @Subscribe

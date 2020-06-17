@@ -7,7 +7,6 @@ import de.uol.swp.common.user.UserDTO;
  * The type Lobby user.
  *
  * @author Keno O.
- * @version 1.0
  * @since Sprint 3
  */
 public class LobbyUser extends UserDTO {

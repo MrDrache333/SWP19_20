@@ -38,7 +38,6 @@ abstract public class AbstractGameMessage extends AbstractServerMessage {
      *
      * @return GameID game id
      * @author Paula
-     * @version 1.0
      * @since Sprint 5
      */
     public UUID getGameID() {
@@ -50,7 +49,6 @@ abstract public class AbstractGameMessage extends AbstractServerMessage {
      *
      * @return Spieler, der die Karte ausgewählt hat
      * @author Paula
-     * @version 1.0
      * @since Sprint 5
      */
     public User getPlayer() {

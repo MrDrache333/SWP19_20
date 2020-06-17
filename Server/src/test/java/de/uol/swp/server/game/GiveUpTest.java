@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author Ferit
  * @since Sprint 6
  */
+@SuppressWarnings("UnstableApiUsage")
 public class GiveUpTest {
     static final User defaultOwner = new UserDTO("test1", "test1", "test1@test.de");
     static final User secondPlayer = new UserDTO("test2", "test2", "test2@test2.de");
@@ -33,7 +34,7 @@ public class GiveUpTest {
     static final GameManagement gameManagement = new GameManagement(chatManagement, lobbyManagement);
     static final AuthenticationService authenticationService = new AuthenticationService(bus, new UserManagement(new MainMemoryBasedUserStore()), lobbyManagement);
     static final GameService gameService = new GameService(bus, gameManagement, authenticationService);
-    private static final ArrayList<Short> chosenCards = new ArrayList<Short>();
+    private static final ArrayList<Short> chosenCards = new ArrayList<>();
     static UUID gameID;
 
     /**

@@ -6,7 +6,6 @@ import de.uol.swp.common.user.UserDTO;
  * Request um eine neue Lobby zu erstellen. Wird vom Client zum Server geschickt.
  *
  * @author Paula, Haschem, Ferit, Rike
- * @version 0.1
  * @since Sprint 2
  */
 public class CreateLobbyRequest extends AbstractLobbyRequest {
