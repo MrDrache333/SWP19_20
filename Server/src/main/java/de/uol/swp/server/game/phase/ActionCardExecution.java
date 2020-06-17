@@ -10,10 +10,7 @@ import de.uol.swp.common.game.card.parser.components.CardAction.request.Optional
 import de.uol.swp.common.game.card.parser.components.CardAction.response.ChooseCardResponse;
 import de.uol.swp.common.game.card.parser.components.CardAction.response.OptionalActionResponse;
 import de.uol.swp.common.game.card.parser.components.CardAction.types.*;
-import de.uol.swp.common.game.messages.ChooseNextActionMessage;
-import de.uol.swp.common.game.messages.MoveCardMessage;
-import de.uol.swp.common.game.messages.ShowCardMessage;
-import de.uol.swp.common.game.messages.UpdateCardCounterMessage;
+import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.user.User;
 import de.uol.swp.server.game.Playground;
 import de.uol.swp.server.game.player.Player;
@@ -777,7 +774,7 @@ public class ActionCardExecution {
         public Boolean call() {
             for (Card card : p.getPlayerDeck().getHand()) {
                 if (card instanceof ActionCard && ((ActionCard) card).getType() == ActionCard.ActionType.Reaction) {
-                    //TODO: Message
+                    playground.getGameService().sendToAllPlayers(gameID, new PlayedReactionCardMessage(card.getId(), p.getTheUserInThePlayer(), gameID));
                     ActionCardExecution execution = new ActionCardExecution(card.getId(), playground, true, p);
                     execution.execute();
                     return true;
