@@ -18,7 +18,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.*;
-import java.util.concurrent.*;
 
 @SuppressWarnings("UnstableApiUsage, unused")
 public class ActionCardExecution {
@@ -57,14 +56,12 @@ public class ActionCardExecution {
     //Ob die Ausfühung einer Karte schon fertig ist
     private boolean finishedExecution;
 
-    private boolean innerAction;
-
-    public ActionCardExecution(short cardID, Playground playground, boolean innerAction, Player player) {
+    public ActionCardExecution(short cardID, Playground playground) {
         this.waitedForPlayerInput = false;
         this.actualStateIndex = 0;
         this.playground = playground;
         this.cardID = cardID;
-        this.player = player;
+        this.player = playground.getActualPlayer();
         getCardFromHand(cardID);
         this.gameID = playground.getID();
         this.players = playground.getPlayers();
@@ -72,7 +69,6 @@ public class ActionCardExecution {
         this.finishedNextActions = true;
         this.executeOptionalAction = false;
         this.startedNextActions = false;
-        this.innerAction = innerAction;
     }
 
     /**
@@ -146,12 +142,7 @@ public class ActionCardExecution {
                 if (!(action instanceof ChooseNextAction) && !(action instanceof ChooseCard)) {
                     actualStateIndex++;
                 }
-                List<Player> playerList = null;
-                try {
-                    playerList = getAffectedPlayers(action);
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
+                List<Player> playerList = getAffectedPlayers(action);
                 if (!(action instanceof GetCard) && !(action instanceof Move)) {
                     if (!executeCardAction(action, playerList)) return false;
                 } else {
@@ -340,7 +331,7 @@ public class ActionCardExecution {
             LOG.debug("No CardId specified! Using current Card(" + cardID + ")");
             action.setCardId(cardID);
         }
-        ActionCardExecution execution = new ActionCardExecution(action.getCardId(), playground, true, playground.getActualPlayer());
+        ActionCardExecution execution = new ActionCardExecution(action.getCardId(), playground);
 
         for (int i = 0; i < action.getCount(); i++) {
             if (!execution.execute()) return false;
@@ -692,7 +683,7 @@ public class ActionCardExecution {
      * @author Julia
      * @since Sprint 7
      */
-    private List<Player> getAffectedPlayers(CardAction action) throws ExecutionException, InterruptedException {
+    private List<Player> getAffectedPlayers(CardAction action) {
         List<Player> affectedPlayers = new ArrayList<>();
         if (!(action instanceof ComplexCardAction)) {
             affectedPlayers.add(player);
@@ -718,10 +709,13 @@ public class ActionCardExecution {
 
         //Prüfe ob einer der betroffenen Spieler eine Reaktionskarte auf der Hand hat
         if (theCard.getType() == ActionCard.ActionType.Attack) {
-            ExecutorService executor = Executors.newFixedThreadPool(1);
-            Callable<List<Player>> callable = new RemoveReactionCardPlayers(affectedPlayers);
-            Future<List<Player>> future = executor.submit(callable);
-            affectedPlayers = future.get();
+            List<Player> toRemove = new ArrayList<>();
+            for (Player p : affectedPlayers) {
+                if (!p.equals(player) && checkForReactionCard(p)) {
+                    toRemove.add(p);
+                }
+            }
+            toRemove.forEach(affectedPlayers::remove);
         }
         return affectedPlayers;
     }
@@ -738,38 +732,10 @@ public class ActionCardExecution {
         for (Card card : player.getPlayerDeck().getHand()) {
             if (card instanceof ActionCard && ((ActionCard) card).getType() == ActionCard.ActionType.Reaction) {
                 playground.getGameService().sendToAllPlayers(gameID, new PlayedReactionCardMessage(card.getId(), player.getTheUserInThePlayer(), gameID));
-                ActionCardExecution execution = new ActionCardExecution(card.getId(), playground, true, player);
-                execution.execute();
                 return true;
             }
         }
         return false;
-    }
-
-    /**
-     * Entfernt Spieler, die eine Reaktionskarte auf der Hand haben, aus affectedPlayers
-     *
-     * @author Julia
-     * @since Sprint 10
-     */
-    class RemoveReactionCardPlayers implements Callable<List<Player>> {
-        private List<Player> affectedPlayers;
-
-        public RemoveReactionCardPlayers(List<Player> affectedPlayers) {
-            this.affectedPlayers = affectedPlayers;
-        }
-
-        @Override
-        public List<Player> call() {
-            List<Player> toRemove = new ArrayList<>();
-            for (Player p : affectedPlayers) {
-                if (!p.equals(player) && checkForReactionCard(p)) {
-                    toRemove.add(p);
-                }
-            }
-            toRemove.forEach(affectedPlayers::remove);
-            return affectedPlayers;
-        }
     }
 
     /**
@@ -782,9 +748,7 @@ public class ActionCardExecution {
         if (actualStateIndex == theCard.getActions().size() && !waitedForPlayerInput && finishedNextActions) {
             if(!finishedExecution) {
                 finishedExecution = true;
-                if (!innerAction) {
-                    playground.getCompositePhase().finishedActionCardExecution(player, theCard);
-                }
+                playground.getCompositePhase().finishedActionCardExecution(player, theCard);
             }
             return true;
         }

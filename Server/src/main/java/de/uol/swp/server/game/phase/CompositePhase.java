@@ -16,6 +16,7 @@ import java.util.List;
 /**
  * Die Funktionsklasse aller Phasen
  */
+@SuppressWarnings("UnstableApiUsage")
 public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
 
     private final Playground playground;
@@ -31,7 +32,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      */
     public CompositePhase(Playground playground) {
         this.playground = playground;
-        Short[] actioncards = {(short) 22, (short) 8, (short) 9, (short) 21, (short) 14, (short) 23, (short) 11, (short) 27, (short) 10, (short) 16, (short) 19, (short) 15, (short) 13, (short) 28, (short) 31};
+        Short[] actioncards = {(short) 22, (short) 8, (short) 9, (short) 21, (short) 14, (short) 23, (short) 11, (short) 27, (short) 10, (short) 16, (short) 19, (short) 15, (short) 13, (short) 28, (short) 31, (short) 7};
         implementedActionCards = Arrays.asList(actioncards);
     }
 
@@ -55,7 +56,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         3. Führe die auf der Karte befindlichen Aktionen aus
         3.1 Die Karte wird auf den ActionPile gelegt und aus der Hand entfernt.
          */
-        executeAction = new ActionCardExecution(cardId, playground, false, playground.getActualPlayer());
+        executeAction = new ActionCardExecution(cardId, playground);
         playground.getGameService().getBus().register(executeAction);
         player.getPlayerDeck().getHand().remove(currentCard);
         executeAction.execute();
