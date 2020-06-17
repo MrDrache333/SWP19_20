@@ -235,7 +235,6 @@ public class ChatViewPresenter extends AbstractPresenter {
 
         //Automatisches Scrollen zur neuesten Nachricht
         chatMessages.addListener((ListChangeListener<VBox>) change -> Platform.runLater(() -> messageView.scrollTo(messageView.getItems().size() - 1)));
-
         //Verwende den richtigen Namen im Label
         titleLabel.setText(chatTitle.toUpperCase() + " CHAT");
         if (!chatID.equals("global")) {

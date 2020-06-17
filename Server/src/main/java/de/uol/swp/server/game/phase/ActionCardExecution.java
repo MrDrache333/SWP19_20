@@ -34,29 +34,15 @@ public class ActionCardExecution {
     private final UUID gameID;
     private final List<Player> players;
     private final List<User> chooseCardPlayers = new ArrayList<>();
-    //Liste aller Unteraktionen einer Aktion
     private final List<CardAction> nextActions = new ArrayList<>();
     private Card inputCard;
-
-    //Ob auf eine Auswahl oder Reaktion des Spielers gewartet werden muss
     private boolean waitedForPlayerInput;
-
-    //Index der aktuell auszuführenden Aktion
     private int actualStateIndex;
-
     private boolean startedNextActions;
-    //Ob alle Unteraktionen einer Aktion ausgeführt wurden
     private boolean finishedNextActions;
-
-    //Index der aktuell auszuführenden Unteraktion
     private int nextActionIndex;
-    //Ob eine optionale Aktion ausgeführt werden soll
     private boolean executeOptionalAction;
-
-    //Ob die Aktionskarte entsorgt werden soll
     private boolean removeCardAfter;
-
-    //Ob die Ausfühung einer Karte schon fertig ist
     private boolean finishedExecution;
 
     public ActionCardExecution(short cardID, Playground playground) {
@@ -190,8 +176,6 @@ public class ActionCardExecution {
                 executeCardAction(action, null, playerList, false);
             }
         }
-
-        //Alle Unteraktionen wurden vollständig ausgeführt
         if (nextActionIndex == nextActions.size() && !waitedForPlayerInput) {
             finishedNextActions = true;
             nextActions.clear();
@@ -200,7 +184,6 @@ public class ActionCardExecution {
                 execute();
             }
         }
-
         return true;
     }
 
@@ -288,7 +271,6 @@ public class ActionCardExecution {
         } else if (allowedType == Card.Type.CURSECARD) {
             cards.removeIf(c -> c == null || c.getCardType() != Card.Type.CURSECARD);
         }
-
         if (action.getHasCost() != null) {
             cards.removeIf(c -> c == null || c.getCosts() < action.getHasCost().getMin() || c.getCosts() > action.getHasCost().getMax());
         }
@@ -310,10 +292,8 @@ public class ActionCardExecution {
                     }
                 }
             });
-
             cards.removeAll(tmp);
         }
-
         return cards;
     }
 
@@ -323,7 +303,6 @@ public class ActionCardExecution {
             action.setCardId(cardID);
         }
         ActionCardExecution execution = new ActionCardExecution(action.getCardId(), playground);
-
         for (int i = 0; i < action.getCount(); i++) {
             if (!execution.execute()) return false;
         }
@@ -393,7 +372,6 @@ public class ActionCardExecution {
                 }
                 action.setCards(tmp);
             } else action.setCards(cards);
-
         }
         return action.getCards();
     }
@@ -636,7 +614,6 @@ public class ActionCardExecution {
         MoveCardMessage msg = new MoveCardMessage(gameID, player.getTheUserInThePlayer(), new Move(action.getCardsToMove(), action.getCardSource(), action.getCardDestination()));
         //TODO Evtl. Daten, die andere Spieler nicht erhalten dürfen irgendwie unkenntlich machen? (Karten anderer Spieler)
         playground.getGameService().sendToAllPlayers(gameID, msg);
-
         return true;
     }
 
