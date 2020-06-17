@@ -310,6 +310,6 @@ public class PlaygroundTest {
         gameService.onPlayCardRequest(new PlayCardRequest(gameID, gameManagement.getGame(gameID).get().getPlayground().getActualPlayer().getTheUserInThePlayer(), (short) 9));
         assertEquals(2, gameManagement.getGame(gameID).get().getPlayground().getActualPlayer().getAvailableBuys());
         assertEquals(2, gameManagement.getGame(gameID).get().getPlayground().getActualPlayer().getAdditionalMoney());
-        assertEquals(Phase.Type.Buyphase, gameManagement.getGame(gameID).get().getPlayground().getActualPhase());
+        assertEquals(Phase.Type.BuyPhase, gameManagement.getGame(gameID).get().getPlayground().getActualPhase());
     }
 }

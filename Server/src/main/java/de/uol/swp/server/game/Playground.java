@@ -191,19 +191,6 @@ public class Playground extends AbstractPlayground {
     }
 
     /**
-     * Ein Timer skippt nach 35 Sekunden die aktuelle Phase, sofern der Timer vorher nicht gecancelt worden ist. Hilfmethode endTimer ganz unten in der Klasse. Timer wird im GameService gecancelt, wenn eine Karte innerhalb der Zeit ausgewählt worden ist.
-     */
-    public void phaseTimer() {
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                nextPhase();
-                timer.cancel();
-            }
-        }, 35000);
-    }
-
-    /**
      * Startet innerhalb eines Spielzugs die nächste Phase.
      * Befindet sich der Spieler in der Clearphase, wird eine GamePhaseException geworfen.
      *

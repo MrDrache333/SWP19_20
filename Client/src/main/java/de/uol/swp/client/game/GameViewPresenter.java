@@ -777,7 +777,7 @@ public class GameViewPresenter extends AbstractPresenter {
         if (msg.getGameID().equals(lobbyID) && !msg.getCurrentUser().equals(loggedInUser)) {
             Task<Void> task = new Task<>() {
                 @Override
-                protected Void call() {
+                protected Void call(){
                     // Wenn ein anderer Spieler eine ClearPhaseMessage erhählt wird dies den anderen Spielern
                     // angezeigt, indem deren Repräsentation des Spieler seine Handkarten und ausgespielten Karten auf den Ablagestapel legt.
                     Platform.runLater(() -> {
