@@ -44,6 +44,26 @@
     ],
     "ActionCards": [
       {
+        "id": 7,
+        "name": "Burggraben",
+        "cost": 2,
+        "type": "Reaction",
+        "actions": [
+          {
+            "GetCard": {
+              "count": 2,
+              "cardSource": "DRAW",
+              "nextAction": {
+                "Move": {
+                  "cardSource": "DRAW",
+                  "cardDestination": "HAND"
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
         "id": 8,
         "name": "Dorf",
         "cost": 3,
@@ -415,6 +435,78 @@
             "AddCapablePlayerActivity": {
               "count": 2,
               "activity": "MONEY"
+            }
+          }
+        ]
+      },
+      {
+        "id": 28,
+        "name": "Ratsversammlung",
+        "cost": 5,
+        "actions": [
+          {
+            "GetCard": {
+              "count": 4,
+              "cardSource": "DRAW",
+              "nextAction": {
+                "Move": {
+                  "cardSource": "DRAW",
+                  "cardDestination": "HAND"
+                }
+              }
+            }
+          },
+          {
+            "AddCapablePlayerActivity": {
+              "count": 1,
+              "activity": "BUY"
+            }
+          },
+          {
+            "GetCard": {
+              "count": 1,
+              "executeType": "OTHERS",
+              "cardSource": "DRAW",
+              "nextAction": {
+                "Move": {
+                  "cardSource": "DRAW",
+                  "cardDestination": "HAND"
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": 31,
+        "name": "Hexe",
+        "cost": 5,
+        "type": "Attack",
+        "actions": [
+          {
+            "GetCard": {
+              "count": 2,
+              "cardSource": "DRAW",
+              "nextAction": {
+                "Move": {
+                  "cardSource": "DRAW",
+                  "cardDestination": "HAND"
+                }
+              }
+            }
+          },
+          {
+            "GetCard": {
+              "count": 1,
+              "executeType": "OTHERS",
+              "allowedCardType": "CURSECARD",
+              "cardSource": "BUY",
+              "nextAction": {
+                "Move": {
+                  "cardSource": "BUY",
+                  "cardDestination": "HAND"
+                }
+              }
             }
           }
         ]

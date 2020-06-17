@@ -157,7 +157,7 @@ public class PlaygroundTest {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         //Bei Spielbeginn hat der Spieler keine Aktionskarten auf der Hand
         assertFalse(playground.checkForActionCard());
-        Card actionCard = playground.getCardsPackField().getCards().getActionCards().get(0);
+        Card actionCard = playground.getCardsPackField().getCards().getActionCards().get(2);
         playground.getActualPlayer().getPlayerDeck().getHand().add(actionCard);
         assertTrue(playground.checkForActionCard());
     }

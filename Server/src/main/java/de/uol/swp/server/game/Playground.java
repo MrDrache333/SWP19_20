@@ -370,7 +370,7 @@ public class Playground extends AbstractPlayground {
      * @since Sprint 5
      */
     public boolean checkForActionCard() {
-        return actualPlayer.getPlayerDeck().getHand().stream().anyMatch(card -> card instanceof ActionCard);
+        return actualPlayer.getPlayerDeck().getHand().stream().anyMatch(card -> card instanceof ActionCard && ((ActionCard) card).getType() != ActionCard.ActionType.Reaction);
     }
 
     /**

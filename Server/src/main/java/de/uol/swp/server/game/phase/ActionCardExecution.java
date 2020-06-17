@@ -21,6 +21,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 @SuppressWarnings("UnstableApiUsage, unused")
 public class ActionCardExecution {
@@ -59,12 +60,14 @@ public class ActionCardExecution {
     //Ob die Ausfühung einer Karte schon fertig ist
     private boolean finishedExecution;
 
-    public ActionCardExecution(short cardID, Playground playground) {
+    private boolean innerAction;
+
+    public ActionCardExecution(short cardID, Playground playground, boolean innerAction, Player player) {
         this.waitedForPlayerInput = false;
         this.actualStateIndex = 0;
         this.playground = playground;
         this.cardID = cardID;
-        this.player = playground.getActualPlayer();
+        this.player = player;
         getCardFromHand(cardID);
         this.gameID = playground.getID();
         this.players = playground.getPlayers();
@@ -72,6 +75,7 @@ public class ActionCardExecution {
         this.finishedNextActions = true;
         this.executeOptionalAction = false;
         this.startedNextActions = false;
+        this.innerAction = innerAction;
     }
 
     /**
@@ -118,6 +122,8 @@ public class ActionCardExecution {
                 ((Move) nextActions.get(nextActionIndex)).setCardsToMove(cards);
             } else if (nextActions.get(nextActionIndex) instanceof ForEach) {
                 ((ForEach) nextActions.get(nextActionIndex)).setCards(cards);
+            } else if (nextActions.get(nextActionIndex) instanceof UseCard) {
+                ((UseCard) nextActions.get(nextActionIndex)).setCardId(response.getCards().get(0));
             }
 
             executeNextActions(p);
@@ -143,7 +149,12 @@ public class ActionCardExecution {
                 if (!(action instanceof ChooseNextAction) && !(action instanceof ChooseCard)) {
                     actualStateIndex++;
                 }
-                List<Player> playerList = getAffectedPlayers(action);
+                List<Player> playerList = null;
+                try {
+                    playerList = getAffectedPlayers(action);
+                } catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
+                }
                 if (!(action instanceof GetCard) && !(action instanceof Move)) {
                     if (!executeCardAction(action, playerList)) return false;
                 } else {
@@ -332,7 +343,7 @@ public class ActionCardExecution {
             LOG.debug("No CardId specified! Using current Card(" + cardID + ")");
             action.setCardId(cardID);
         }
-        ActionCardExecution execution = new ActionCardExecution(action.getCardId(), playground);
+        ActionCardExecution execution = new ActionCardExecution(action.getCardId(), playground, true, playground.getActualPlayer());
 
         for (int i = 0; i < action.getCount(); i++) {
             if (!execution.execute()) return false;
@@ -367,6 +378,10 @@ public class ActionCardExecution {
                     playground.getCardsPackField().getCards().getAllCards().forEach(card -> {
                         if (playground.getCardField().containsKey(card.getId())) {
                             if (playground.getCardField().get(card.getId()) > 0) {
+                                if (action.getCards() == null) {
+                                    ArrayList<Card> list = new ArrayList<>();
+                                    action.setCards(list);
+                                }
                                 action.getCards().add(card);
                             }
                         }
@@ -680,7 +695,7 @@ public class ActionCardExecution {
      * @author Julia
      * @since Sprint 7
      */
-    private List<Player> getAffectedPlayers(CardAction action) {
+    private List<Player> getAffectedPlayers(CardAction action) throws ExecutionException, InterruptedException {
         List<Player> affectedPlayers = new ArrayList<>();
         if (!(action instanceof ComplexCardAction)) {
             affectedPlayers.add(player);
@@ -706,35 +721,71 @@ public class ActionCardExecution {
 
         //Prüfe ob einer der betroffenen Spieler eine Reaktionskarte auf der Hand hat
         if (theCard.getType() == ActionCard.ActionType.Attack) {
-            for (Player p : affectedPlayers) {
-                if (!p.equals(this.player) && checkForReactionCard(p)) {
-                    players.remove(p);
-                    affectedPlayers.remove(p);
-                }
-            }
-
+            ExecutorService executor = Executors.newFixedThreadPool(1);
+            Callable<List<Player>> callable = new RemoveReactionCardPlayers(affectedPlayers);
+            Future<List<Player>> future = executor.submit(callable);
+            affectedPlayers = future.get();
         }
         return affectedPlayers;
     }
 
     /**
+     * Entfernt Spieler, die eine Reaktionskarte auf der Hand haben, aus affectedPlayers
+     *
+     * @author Julia
+     * @since Sprint 10
+     */
+    class RemoveReactionCardPlayers implements Callable<List<Player>> {
+        private List<Player> affectedPlayers;
+
+        public RemoveReactionCardPlayers(List<Player> affectedPlayers) {
+            this.affectedPlayers = affectedPlayers;
+        }
+
+        public List<Player> call() throws ExecutionException, InterruptedException {
+            List<Player> toRemove = new ArrayList<>();
+            ExecutorService ex = Executors.newFixedThreadPool(1);
+            for (Player p : affectedPlayers) {
+                if (!p.equals(player)) {
+                    Callable<Boolean> callable = new ReactionCardCheck(p);
+                    Future<Boolean> future = ex.submit(callable);
+                    boolean reactionCardOnHand = future.get();
+                    if (reactionCardOnHand) {
+                        players.remove(p);
+                        toRemove.add(p);
+                    }
+                }
+            }
+            toRemove.forEach(affectedPlayers::remove);
+            return affectedPlayers;
+        }
+    }
+
+    /**
      * Prüft, ob ein Spieler eine Reaktionskarte auf der Hand hat und spielt diese dann aus
      *
-     * @param player Der Spieler, dessen Hand überprüft werden soll
-     * @return true, wenn er eine Reaktionskarte auf der Hand hat, sonst false
      * @author Julia
-     * @since Sprint 7
+     * @since Sprint 10
      */
-    private boolean checkForReactionCard(Player player) {
-        for (Card card : player.getPlayerDeck().getHand()) {
-            if (card instanceof ActionCard && ((ActionCard) card).getType() == ActionCard.ActionType.Reaction) {
-                player.getPlayerDeck().getHand().remove(card);
-                player.getPlayerDeck().getActionPile().add(card);
-                //TODO: Message an Client
-                return true;
-            }
+    class ReactionCardCheck implements Callable<Boolean> {
+
+        private Player p;
+
+        public ReactionCardCheck(Player p) {
+            this.p = p;
         }
-        return false;
+
+        public Boolean call() {
+            for (Card card : p.getPlayerDeck().getHand()) {
+                if (card instanceof ActionCard && ((ActionCard) card).getType() == ActionCard.ActionType.Reaction) {
+                    //TODO: Message
+                    ActionCardExecution execution = new ActionCardExecution(card.getId(), playground, true, p);
+                    execution.execute();
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
     /**
@@ -747,7 +798,9 @@ public class ActionCardExecution {
         if (actualStateIndex == theCard.getActions().size() && !waitedForPlayerInput && finishedNextActions) {
             if(!finishedExecution) {
                 finishedExecution = true;
-                playground.getCompositePhase().finishedActionCardExecution(player, theCard);
+                if (!innerAction) {
+                    playground.getCompositePhase().finishedActionCardExecution(player, theCard);
+                }
             }
             return true;
         }

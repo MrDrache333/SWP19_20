@@ -53,7 +53,21 @@
         "id": 7,
         "name": "Burggraben",
         "cost": 2,
-        "type": "Reaction"
+        "type": "Reaction",
+        "actions": [
+          {
+            "GetCard": {
+              "count": 2,
+              "cardSource": "DRAW",
+              "nextAction": {
+                "Move": {
+                  "cardSource": "DRAW",
+                  "cardDestination": "HAND"
+                }
+              }
+            }
+          }
+        ]
       },
       {
         "id": 8,
