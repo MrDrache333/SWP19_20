@@ -242,7 +242,6 @@ public class AuthenticationService extends AbstractService {
                 }
                 userSessions.remove(req.getSession().get());
                 userManagement.dropUser(userToDrop);
-
                 sendToLoggedInPlayers(new UserDroppedMessage(userToDrop));
             } else {
                 UpdateUserFailedMessage returnMessage = new UpdateUserFailedMessage(userToDrop, "Der Account befindet sich in einem laufenden Spiel. Du kannst deinen Account nicht löschen!");
