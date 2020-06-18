@@ -36,9 +36,8 @@ public class ChooseCardRequest extends AbstractGameMessage {
      * Die Anzahl an wählbaren Karten
      */
     private Value countV;
-
     private int count;
-
+    private final int actionExecutionID;
     /**
      * Erstellt einen neuen Request
      *
@@ -46,19 +45,19 @@ public class ChooseCardRequest extends AbstractGameMessage {
      * @param player       Der Spieler, der die Auswahl treffen soll
      * @param cards        Die Karten, die zur Auswahl stehen
      * @param countV       Die Anzahl an wählbaren Karten
-     * @param sourcePlayer Der Spieler, von dem die Karten ausgewählt werden
      * @param source       Die Zone, von welcher die Karten stammen
      * @param message      Die Nachricht, die dem Spieler gezeigt werden soll
      * @author KenoO
      * @since Sprint 7
      */
-    public ChooseCardRequest(UUID id, User player, ArrayList<Short> cards, Value countV, User sourcePlayer, AbstractPlayground.ZoneType source, String message) {
+    public ChooseCardRequest(UUID id, User player, ArrayList<Short> cards, Value countV, AbstractPlayground.ZoneType source, String message, int actionExecutionID) {
         super(id, player);
         this.cards = cards;
         this.countV = countV;
         this.source = source;
         if (message.equals("")) message = DEFAULT_MESSAGE;
         this.message = message;
+        this.actionExecutionID = actionExecutionID;
     }
 
     /**
@@ -67,19 +66,19 @@ public class ChooseCardRequest extends AbstractGameMessage {
      * @param id           Die ID des Spiels
      * @param player       Der Spieler, der die Auswahl treffen soll
      * @param cards        Die Karten, die zur Auswahl stehen
-     * @param sourcePlayer Der Spieler, von dem die Karten ausgewählt werden
      * @param source       Die Zone, von welcher die Karten stammen
      * @param message      Die Nachricht, die dem Spieler gezeigt werden soll
      * @author KenoO
      * @since Sprint 7
      */
-    public ChooseCardRequest(UUID id, User player, ArrayList<Short> cards, int count, User sourcePlayer, AbstractPlayground.ZoneType source, String message) {
+    public ChooseCardRequest(UUID id, User player, ArrayList<Short> cards, int count, AbstractPlayground.ZoneType source, String message, int actionExecutionID) {
         super(id, player);
         this.cards = cards;
         this.count = count;
         this.source = source;
         if (message.equals("")) message = DEFAULT_MESSAGE;
         this.message = message;
+        this.actionExecutionID = actionExecutionID;
     }
 
     //***********************
@@ -132,5 +131,9 @@ public class ChooseCardRequest extends AbstractGameMessage {
 
     public Value getCountV() {
         return countV;
+    }
+
+    public int getActionExecutionID() {
+        return actionExecutionID;
     }
 }

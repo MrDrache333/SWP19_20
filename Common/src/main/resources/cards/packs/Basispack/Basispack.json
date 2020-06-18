@@ -205,26 +205,26 @@
               "nextAction": {
                 "Move": {
                   "cardSource": "HAND",
-                  "cardDestination": "TRASH"
-                }
-              }
-            }
-          },
-          {
-            "ChooseCard": {
-              "count": {
-                "min": 1
-              },
-              "allowedCardType": "MONEYCARD",
-              "cardSource": "BUY",
-              "hasMoreCostThanInput": {
-                "min": 0,
-                "max": 3
-              },
-              "nextAction": {
-                "Move": {
-                  "cardSource": "BUY",
-                  "cardDestination": "HAND"
+                  "cardDestination": "TRASH",
+                  "nextAction": {
+                    "ChooseCard": {
+                      "count": {
+                        "min": 1
+                      },
+                      "allowedCardType": "MONEYCARD",
+                      "cardSource": "BUY",
+                      "hasMoreCostThanInput": {
+                        "min": 0,
+                        "max": 3
+                      },
+                      "nextAction": {
+                        "Move": {
+                          "cardSource": "BUY",
+                          "cardDestination": "HAND"
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -264,25 +264,25 @@
               "nextAction": {
                 "Move": {
                   "cardSource": "HAND",
-                  "cardDestination": "TRASH"
-                }
-              }
-            }
-          },
-          {
-            "ChooseCard": {
-              "count": {
-                "min": 1
-              },
-              "cardSource": "BUY",
-              "hasMoreCostThanInput": {
-                "min": 0,
-                "max": 2
-              },
-              "nextAction": {
-                "Move": {
-                  "cardSource": "BUY",
-                  "cardDestination": "DISCARD"
+                  "cardDestination": "TRASH",
+                  "nextAction": {
+                    "ChooseCard": {
+                      "count": {
+                        "min": 1
+                      },
+                      "cardSource": "BUY",
+                      "hasMoreCostThanInput": {
+                        "min": 0,
+                        "max": 2
+                      },
+                      "nextAction": {
+                        "Move": {
+                          "cardSource": "BUY",
+                          "cardDestination": "DISCARD"
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -410,6 +410,27 @@
             "AddCapablePlayerActivity": {
               "count": 1,
               "activity": "ACTION"
+            }
+          }
+        ]
+      },
+      {
+        "id": 24,
+        "name": "Thronsaal",
+        "cost": 4,
+        "actions": [
+          {
+            "ChooseCard": {
+              "count": {
+                "min": 1
+              },
+              "cardSource": "HAND",
+              "allowedCardType": "ACTIONCARD",
+              "nextAction": {
+                "UseCard": {
+                  "count": 2
+                }
+              }
             }
           }
         ]

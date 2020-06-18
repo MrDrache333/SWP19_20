@@ -212,6 +212,7 @@ public class GameViewPresenter extends AbstractPresenter {
     private final HashMap<String, HashMap<ZoneType, GeneralLayoutContainer>> usersContainer = new HashMap<>();
     private volatile boolean deleteHandCardsFromOpponent = false;
     private final ArrayList<ImageView> cardsToMove = new ArrayList<>();
+    private int actionExecutionID;
 
     /**
      * Das Event das den Handkarten gegeben wird, wenn sie ausspielbar sein sollen.
@@ -256,7 +257,7 @@ public class GameViewPresenter extends AbstractPresenter {
             for (ImageView card : chosenCards) {
                 chosenCardsId.add(Short.parseShort(card.getId()));
             }
-            gameService.chooseCardResponse(lobbyID, loggedInUser, chosenCardsId);
+            gameService.chooseCardResponse(lobbyID, loggedInUser, chosenCardsId, actionExecutionID);
             handcards.getChildren().forEach((n) -> {
                 n.removeEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
                 n.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
@@ -639,6 +640,7 @@ public class GameViewPresenter extends AbstractPresenter {
     @Subscribe
     public void onOptionalActionRequest(OptionalActionRequest msg) {
         if (msg.getGameID().equals(lobbyID) && msg.getPlayer().equals(loggedInUser)) {
+            actionExecutionID = msg.getActionExecutionID();
             Platform.runLater(() -> {
                 yesButton.setVisible(true);
                 noButton.setVisible(true);
@@ -663,8 +665,9 @@ public class GameViewPresenter extends AbstractPresenter {
     public void onPlayCardMessage(PlayCardMessage msg) {
         // Falls diese Message an den currentPlayer geschickt wird, wird das ausspielen der Karte angezeigt.
         if (msg.getGameID().equals(lobbyID)) {
-            if (msg.getCurrentUser().equals(loggedInUser)) {
-                ImageView card = (ImageView) mouseEvent.getTarget();
+            if (msg.getCurrentUser().getUsername().equals(loggedInUser.getUsername())) {
+                Optional<Node> optionalCard = handcards.getChildren().stream().filter(c -> c.getId().equals(msg.getHandCardID())).findFirst();
+                ImageView card = optionalCard.isPresent() ? (ImageView) optionalCard.get() : null;
                 if (msg.getIsPlayed()) {
                     Platform.runLater(() -> {
                         if (handcards.getChildren().contains(card)) {
@@ -709,6 +712,7 @@ public class GameViewPresenter extends AbstractPresenter {
     @Subscribe
     public void onChooseCardRequest(ChooseCardRequest req) {
         if (req.getGameID().equals(lobbyID) && req.getPlayer().equals(loggedInUser)) {
+            actionExecutionID = req.getActionExecutionID();
             chosenCardsId.clear();
             chosenCards.clear();
             ImageView card = (ImageView) mouseEvent.getTarget();
@@ -722,11 +726,9 @@ public class GameViewPresenter extends AbstractPresenter {
                 selectButton.setVisible(true);
                 playAllMoneyCardsButton.setVisible(false);
                 Platform.runLater(() -> handcards.getChildren().forEach((n) -> {
-                    if (!card.equals(n)) {
-                        n.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
-                        if (req.getCards().contains(Short.parseShort(n.getId()))) {
-                            n.addEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
-                        }
+                    n.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+                    if (req.getCards().contains(Short.parseShort(n.getId()))) {
+                        n.addEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
                     }
                 }));
                 Platform.runLater(() -> {
@@ -1264,7 +1266,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     n.setEffect(makeImageDarker);
                 }
             });
-            gameService.chooseCardResponse(gameID, loggedInUser, chosenCardsId);
+            gameService.chooseCardResponse(gameID, loggedInUser, chosenCardsId, actionExecutionID);
             selectButton.setVisible(false);
             playAllMoneyCardsButton.setVisible(true);
             skipPhaseButton.setDisable(false);
@@ -1332,7 +1334,7 @@ public class GameViewPresenter extends AbstractPresenter {
             bigCardImageBox.setVisible(false);
             if (playAllMoneyCardsButton.isVisible() && playAllMoneyCardsButton.isDisable()) {
                 if (chooseCardBecauseOfActionCard) {
-                    gameService.chooseCardResponse(lobbyID, loggedInUser, new ArrayList<>(Collections.singletonList(Short.valueOf(cardID))));
+                    gameService.chooseCardResponse(lobbyID, loggedInUser, new ArrayList<>(Collections.singletonList(Short.valueOf(cardID))), actionExecutionID);
                     for (int i = 0; i < 10; i++) {
                         ImageView iv = (ImageView) shopTeppich.getChildren().get(i);
                         if (iv.getEffect() == notChosenCard) {
@@ -1543,7 +1545,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * @since Sprint 8
      */
     private void optionalAction(boolean answer) {
-        gameManagement.getGameService().optionalAction(loggedInUser, lobbyID, answer);
+        gameManagement.getGameService().optionalAction(loggedInUser, lobbyID, answer, actionExecutionID);
         Platform.runLater(() -> {
             yesButton.setVisible(false);
             noButton.setVisible(false);
