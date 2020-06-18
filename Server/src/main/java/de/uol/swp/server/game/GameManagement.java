@@ -61,7 +61,6 @@ public class GameManagement {
                 }
             } else
                 throw new GameManagementException("Chat oder Lobby nicht gefunden!");
-
         } else
             throw new GameManagementException("Lobby-ID nicht gefunden!");
     }
