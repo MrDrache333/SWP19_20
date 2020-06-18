@@ -560,7 +560,6 @@ public class GameViewPresenter extends AbstractPresenter {
         }
     }
 
-
     /**
      * Wird bei Erstellung in GameManagement aufgerufen und startet eine Abfrage an den Server für alle User in der Lobby.
      *
@@ -692,7 +691,8 @@ public class GameViewPresenter extends AbstractPresenter {
                     showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht spielen!", "Fehler");
                     LOG.debug("Das Spielen der Karte " + msg.getHandCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
                 }
-            } else {
+            }
+            else {
                 ImageView card = new Card(msg.getHandCardID());
                 Platform.runLater(() -> {
                     usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.HAND).getChildren().remove(0);
@@ -816,7 +816,8 @@ public class GameViewPresenter extends AbstractPresenter {
                 if (msg.getUser().equals(this.loggedInUser)) {
                     ImageView card = new Card(String.valueOf(msg.getCardID()));
                     myDPLC.getChildren().add(card);
-                } else {
+                }
+                else {
                     ImageView card = new Card(String.valueOf(msg.getCardID()), 0, 0, 80);
                     usersContainer.get(msg.getUser().getUsername()).get(ZoneType.DISCARD).getChildren().add(card);
                 }
@@ -1127,12 +1128,9 @@ public class GameViewPresenter extends AbstractPresenter {
 
 
         for (User u : usersList) {
-
             if (loggedInUser == null || !u.getUsername().equals(loggedInUser.getUsername())) {
                 enemyCounter++;
                 HashMap<ZoneType, GeneralLayoutContainer> enemyContainer = new HashMap<>();
-
-
                 if (enemyCounter == 1) {
                     Platform.runLater(() -> player1_label.setText(u.getUsername()));
                     player1_label.setVisible(true);
@@ -1143,7 +1141,6 @@ public class GameViewPresenter extends AbstractPresenter {
                     enemyContainer.put(ZoneType.PLAY, firstEnemyPCLC);
                     enemyContainer.put(ZoneType.DISCARD, firstEnemyDPLC);
                     enemyContainer.put(ZoneType.DRAW, firstEnemyDLC);
-
                 } else if (enemyCounter == 2) {
                     Platform.runLater(() -> player2_label.setText(u.getUsername()));
                     player2_label.setVisible(true);
@@ -1223,6 +1220,7 @@ public class GameViewPresenter extends AbstractPresenter {
             bigCardImage.setImage(new Image(pfad));
             buyCardButton.setVisible(false);
             bigCardImageBox.setVisible(true);
+            bigCardImageBox.toFront();
         } else {
             if (id > 6 && id != 38 && card.getParent() == handcards) { //nur Aktionskarten, ohne Fluchkarte & nur Karten, welche noch in der Hand zone sind.
                 bigCardImageBox.setVisible(false);
@@ -1255,6 +1253,7 @@ public class GameViewPresenter extends AbstractPresenter {
             bigCardImage.setImage(new Image(pfad));
             buyCardButton.setVisible(false);
             bigCardImageBox.setVisible(true);
+            bigCardImageBox.toFront();
         } else {
             if (!chosenCards.contains(card)) {
                 chosenCards.add(card);
@@ -1329,6 +1328,7 @@ public class GameViewPresenter extends AbstractPresenter {
         if (mouseEvent.getButton() != MouseButton.PRIMARY) {
             String PathCardLargeView = "cards/images/" + cardID + ".png";
             bigCardImage.setImage(new Image(PathCardLargeView));
+            bigCardImageBox.toFront();
             // Aktion hinter dem Kauf-Button
             buyCardButton.setVisible(true);
             buyCardButton.setOnAction(event -> {
