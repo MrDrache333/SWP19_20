@@ -9,10 +9,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 
 import java.io.File;
 
@@ -32,8 +31,6 @@ public class LoginPresenter extends AbstractPresenter {
     private Button LoginButton;
     @FXML
     private Hyperlink registerButton, forgotPasswordButton;
-    @FXML
-    private ImageView soundIcon;
 
     public LoginPresenter() {
     }
@@ -49,10 +46,6 @@ public class LoginPresenter extends AbstractPresenter {
         LoginButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
         registerButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
         forgotPasswordButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
-        soundIcon.setOnMouseClicked(event -> {
-            SoundMediaPlayer.setSound(!SoundMediaPlayer.isSoundEnabled());
-            soundIcon.setImage(new Image(new File(getClass().getResource(SoundMediaPlayer.isSoundEnabled() ? "/images/sound_on_icon.png" : "/images/sound_off_icon.png").toExternalForm().replace("file:", "")).toURI().toString()));
-        });
     }
 
     /**

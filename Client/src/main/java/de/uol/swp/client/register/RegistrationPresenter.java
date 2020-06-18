@@ -14,10 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
-import java.io.File;
 import java.util.regex.Pattern;
 
 /**
@@ -47,8 +44,6 @@ public class RegistrationPresenter extends AbstractPresenter {
 
     @FXML
     private TextField mailField;
-    @FXML
-    private ImageView soundIcon;
 
     public RegistrationPresenter() {
     }
@@ -68,11 +63,6 @@ public class RegistrationPresenter extends AbstractPresenter {
         registerButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
         cancelButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
         SoundMediaPlayer.setSound(true);
-        soundIcon.setImage(new Image(new File(getClass().getResource(SoundMediaPlayer.isSoundEnabled() ? "/images/sound_on_icon.png" : "/images/sound_off_icon.png").toExternalForm().replace("file:", "")).toURI().toString()));
-        soundIcon.setOnMouseClicked(event -> {
-            SoundMediaPlayer.setSound(!SoundMediaPlayer.isSoundEnabled());
-            soundIcon.setImage(new Image(new File(getClass().getResource(SoundMediaPlayer.isSoundEnabled() ? "/images/sound_on_icon.png" : "/images/sound_off_icon.png").toExternalForm().replace("file:", "")).toURI().toString()));
-        });
     }
 
     //--------------------------------------

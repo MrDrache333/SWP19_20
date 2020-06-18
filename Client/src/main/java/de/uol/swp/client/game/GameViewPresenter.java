@@ -124,6 +124,11 @@ public class GameViewPresenter extends AbstractPresenter {
     private ImageView bigCardImage;
     @FXML
     private Button buyCardButton;
+    private final Map<Short, Label> cardLabels = new HashMap<>();
+    @FXML
+    private Label countCopperLabel;
+    @FXML
+    private Label countSilverLabel;
     @FXML
     private Label countEstateCardLabel;
     @FXML
@@ -132,6 +137,28 @@ public class GameViewPresenter extends AbstractPresenter {
     private Label countProvinceCardLabel;
     @FXML
     private Label countCurseCardLabel;
+    @FXML
+    private Label countGoldLabel;
+    @FXML
+    private Label countPlaceholder1Label;
+    @FXML
+    private Label countPlaceholder2Label;
+    @FXML
+    private Label countPlaceholder3Label;
+    @FXML
+    private Label countPlaceholder4Label;
+    @FXML
+    private Label countPlaceholder5Label;
+    @FXML
+    private Label countPlaceholder6Label;
+    @FXML
+    private Label countPlaceholder7Label;
+    @FXML
+    private Label countPlaceholder8Label;
+    @FXML
+    private Label countPlaceholder9Label;
+    @FXML
+    private Label countPlaceholder10Label;
     @FXML
     private Label numberOfAction;
     @FXML
@@ -566,8 +593,8 @@ public class GameViewPresenter extends AbstractPresenter {
     @Subscribe
     public void onBuyCardMessage(BuyCardMessage msg) {
         if (msg.getGameID().equals(lobbyID)) {
-            if (valueCardLabels.containsKey(msg.getCardID())) {
-                Platform.runLater(() -> valueCardLabels.get(msg.getCardID()).setText(String.valueOf(msg.getCounterCard())));
+            if (cardLabels.containsKey(msg.getCardID())) {
+                Platform.runLater(() -> cardLabels.get(msg.getCardID()).setText(String.valueOf(msg.getCounterCard())));
             }
             ImageView selectedCard = getCardFromCardfield(msg.getCardID());
             if (msg.getCounterCard() < 1) {
@@ -645,8 +672,8 @@ public class GameViewPresenter extends AbstractPresenter {
                                 AnimationManagement.deleteCard(card);
                             }
                         }
-                        if (msg.getHandCardID() <=3 ) {
-                            usableMoney += msg.getHandCardID();
+                        if (msg.getHandCardID().equals("1") || msg.getHandCardID().equals("2") || msg.getHandCardID().equals("3")) {
+                            usableMoney += Integer.parseInt(msg.getHandCardID());
                             numberOfMoney.setText(usableMoney + " Geld");
                         }
                     });
@@ -656,7 +683,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 }
             }
             else {
-                ImageView card = new Card(String.valueOf(msg.getHandCardID()));
+                ImageView card = new Card(msg.getHandCardID());
                 Platform.runLater(() -> {
                     usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.HAND).getChildren().remove(0);
                     usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.PLAY).getChildren().add(card);

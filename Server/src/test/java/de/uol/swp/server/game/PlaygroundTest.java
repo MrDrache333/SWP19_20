@@ -35,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Julia
  * @since Sprint 5
  */
+@SuppressWarnings("UnstableApiUsage")
 public class PlaygroundTest {
 
     static final User defaultOwner = new UserDTO("test1", "test1", "test1@test.de");
@@ -48,9 +49,8 @@ public class PlaygroundTest {
     static final UserManagement userManagement = new UserManagement(userStore);
     static final AuthenticationService authService = new AuthenticationService(bus, userManagement, lobbyManagement);
     static final GameService gameService = new GameService(bus, gameManagement, authService);
-    static UUID id;
     private final CountDownLatch lock = new CountDownLatch(1);
-    private static final ArrayList<Short> chosenCards = new ArrayList<Short>();
+    private static final ArrayList<Short> chosenCards = new ArrayList<>();
 
     static UUID gameID;
     private Object event;
@@ -182,7 +182,7 @@ public class PlaygroundTest {
         }
 
         playground.setActualPhase(Phase.Type.ClearPhase);
-        assertThrows(GamePhaseException.class, () -> playground.nextPhase());
+        assertThrows(GamePhaseException.class, playground::nextPhase);
     }
 
     /**
@@ -209,7 +209,7 @@ public class PlaygroundTest {
     void specificPlayerGaveUpTest() {
         GameGiveUpRequest testRequest = new GameGiveUpRequest((UserDTO) secondPlayer, gameID);
         bus.post(testRequest);
-        assertTrue(!gameManagement.getGame(gameID).get().getPlayground().getPlayers().contains(secondPlayer.getUsername()));
+        assertFalse(gameManagement.getGame(gameID).get().getPlayground().getPlayers().contains(secondPlayer.getUsername()));
     }
 
     /**

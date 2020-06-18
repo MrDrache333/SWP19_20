@@ -11,7 +11,6 @@ import java.util.Collections;
 /**
  * Kartendeck eines Spielers
  */
-@SuppressWarnings("unused")
 public class Deck {
 
     /**
@@ -66,11 +65,10 @@ public class Deck {
     /**
      * Startdeck wird initialisiert (7x Money, 3x Anwesen)
      *
-     * @return Kartendeck
      * @author Paula
      * @since Sprint 5
      */
-    private ArrayList<Card> initialiseStartDeck() {
+    private void initialiseStartDeck() {
         CardPack cardsPack = new JsonCardParser().loadPack("Basispack");
         for (int i = 0; i < 3; i++) {
             Card card = cardsPack.getCards().getValueCards().get(0);
@@ -80,48 +78,21 @@ public class Deck {
             Card card = cardsPack.getCards().getMoneyCards().get(0);
             cardsDeck.add(card);
         }
-        return cardsDeck;
     }
 
     /**
      * Hand wird initialisiert; 5 Karten aus Startdeck
      *
-     * @return Hand
      * @author Paula
      * @since Sprint 5
      */
-    private ArrayList<Card> initialiseHand() {
+    private void initialiseHand() {
         Collections.shuffle(cardsDeck);
         for (int i = 0; i < 5; i++) {
             Card tmpCard = cardsDeck.get(i);
             hand.add(tmpCard);
         }
         hand.forEach(cardsDeck::remove);
-        return hand;
-    }
-
-    /**
-     * Karte wird aus Arrays gelöscht
-     *
-     * @author Pauia
-     * @since Sprint 5
-     */
-    private void deleteCard(Card card) {
-        cardsDeck.remove(card);
-        hand.remove(card);
-        discardPile.remove(card);
-    }
-
-    /**
-     * Hilfsmethode um eine Karte zum Ablagestapel hinzuzufügen
-     *
-     * @param card Die Karte, die hinzugefügt wird
-     * @author Paula
-     * @since Sprint 6
-     */
-    public void addCardToDiscardPile(Card card) {
-        discardPile.add(card);
-
     }
 
     /**

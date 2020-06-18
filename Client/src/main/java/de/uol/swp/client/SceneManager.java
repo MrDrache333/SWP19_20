@@ -259,7 +259,6 @@ public class SceneManager {
      * @param title   der übergebene Titel aus dem MainMenuPresenter
      * @param lobbyID die übergebene LobbyID aus der empfangenen Message in der ClientApp
      * @author Paula, Haschem, Ferit, Anna, Darian
-     * @version 0.2
      * @since Sprint3
      */
     public void showLobbyScreen(User currentUser, String title, UUID lobbyID, UserDTO gameOwner) {
@@ -284,6 +283,7 @@ public class SceneManager {
         Platform.runLater(() -> {
             settingsPresenter = new SettingsPresenter(loggedInUser, lobbyService, userService, injector, eventBus);
             initSettingsView(settingsPresenter);
+            settingsPresenter.setSoundIcon();
             settingsStage = new Stage();
             settingsStage.setTitle("Einstellungen");
             settingsStage.setScene(settingsScene);
@@ -497,11 +497,9 @@ public class SceneManager {
     }
 
     private void initSettingsView(SettingsPresenter settingsPresenter) {
-        if (settingsScene == null) {
-            Parent rootPane = initSettingsPresenter(settingsPresenter);
-            settingsScene = new Scene(rootPane, 400, 420);
-            settingsScene.getStylesheets().add(SettingsPresenter.css);
-        }
+        Parent rootPane = initSettingsPresenter(settingsPresenter);
+        settingsScene = new Scene(rootPane, 400, 420);
+        settingsScene.getStylesheets().add(SettingsPresenter.css);
     }
 
     private void initDeleteAccountView() {
