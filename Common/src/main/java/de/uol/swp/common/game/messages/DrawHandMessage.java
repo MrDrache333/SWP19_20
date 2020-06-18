@@ -26,7 +26,7 @@ public class DrawHandMessage extends AbstractServerMessage {
         this.theLobbyID = specificLobbyID;
         this.numberOfPlayers = numberOfPlayers;
         this.initialHand = initialHand;
-        this.player = null;
+        this.player = player;
     }
 
     /**
