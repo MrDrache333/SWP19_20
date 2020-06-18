@@ -111,6 +111,8 @@ public class ActionCardExecution {
             if (nextActions.get(nextActionIndex) instanceof ChooseCard) nextActionIndex++;
             if (response.getCards().isEmpty()) {
                 finishedNextActions = true;
+                nextActionIndex = 0;
+                nextActions.clear();
                 execute();
                 return;
             }
