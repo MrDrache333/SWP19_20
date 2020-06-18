@@ -550,7 +550,7 @@ public class GameViewPresenter extends AbstractPresenter {
     @Subscribe
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
         if (message.getLobbyID().equals(this.lobbyID)) {
-            if (message.getLobby().getInGame() == true) {
+            if (message.getLobby().getInGame()) {
                 Platform.runLater(() -> {
                     updateEnemiesOnBoard(message.getLobby().getUsers());
                 });
