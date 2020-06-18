@@ -408,7 +408,7 @@ public class BotPlayer extends Player {
      * Wenn etwas mit dem Geld auf der Hand gekauft wurde wird das Geld auf der Hand aktualisiert.
      *
      * @author Darian
-     * @param cardID
+     * @param cardID Karten-ID von der gekauften Karte
      * @since Sprint10
      */
     private void calculateNewMoneyOnTheHand(short cardID) {
@@ -464,7 +464,7 @@ public class BotPlayer extends Player {
     }
 
     /**
-     * Das Geld auf der Hand wird zurückgegeben.
+     * Die ID der Karte die gespielt wird, wird zurückgegeben.
      *
      * @author Darian
      * @since Sprint10
@@ -475,7 +475,7 @@ public class BotPlayer extends Player {
     }
 
     /**
-     * Das Geld auf der Hand wird zurückgegeben.
+     * Der Wert mit der eine kostenlose Karte auf dem Deck geholt werden darf wird wiedergegeben.
      *
      * @author Darian
      * @since Sprint10
