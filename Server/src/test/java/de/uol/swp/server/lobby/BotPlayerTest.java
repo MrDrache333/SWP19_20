@@ -171,7 +171,6 @@ class BotPlayerTest {
             for(Short cardID : hand){
                 assertTrue(createdBot.getCardsOnHandIDs().contains((Short) cardID));
             }
-            assertTrue(createdBot.getMoneyOnTheHand() == 2);
 
             ArrayList<Short> cardsToChoose = new ArrayList<Short>();
             cardsToChoose.add((short)1);cardsToChoose.add((short)6);cardsToChoose.add((short)1);cardsToChoose.add((short)4);
@@ -188,7 +187,7 @@ class BotPlayerTest {
             assertTrue(createdBot.getPlayCardID() != 0);
             assertTrue(!createdBot.getCardsOnHandIDs().contains((short) 13));
 
-            bus.post(new ChooseCardRequest(lobbyID, createdBot.getTheUserInThePlayer(), cardsToChoose, new Value((short) 4), createdBot.getTheUserInThePlayer(), AbstractPlayground.ZoneType.NONE, "", true));
+            bus.post(new ChooseCardRequest(lobbyID, createdBot.getTheUserInThePlayer(), cardsToChoose, new Value((short) 4), createdBot.getTheUserInThePlayer(), AbstractPlayground.ZoneType.NONE, ""));
             assertTrue(Collections.frequency(createdBot.getCardsOnHandIDs(), (short)1)==1);
             assertTrue(createdBot.getTakeCardWithSpecificValue() == 3);
 
@@ -199,7 +198,6 @@ class BotPlayerTest {
             bus.post(new StartBuyPhaseMessage(createdBot.getTheUserInThePlayer(), lobbyID));
             bus.post(new BuyCardMessage(lobbyID, createdBot.getTheUserInThePlayer(), (short)1, 9, (short) 3));
             assertTrue(Collections.frequency(createdBot.getCardsInPossessionIDs(), (short)1)==2);
-
         }
     }
 }

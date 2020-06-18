@@ -359,11 +359,11 @@ public class BotPlayer extends Player {
                 }
             }
             playCardID = 0;
-            ChooseCardResponse res = new ChooseCardResponse(gameId, this.getTheUserInThePlayer(), choosenCards, msg.getDirectHand());
+            ChooseCardResponse res;
             if(choosenCard == 0){
-                res = new ChooseCardResponse(gameId, this.getTheUserInThePlayer(), choosenCards, msg.getDirectHand());
+                res = new ChooseCardResponse(gameId, this.getTheUserInThePlayer(), choosenCards);
             }else{
-                res = new ChooseCardResponse(gameId, this.getTheUserInThePlayer(), choosenCard, msg.getDirectHand());
+                res = new ChooseCardResponse(gameId, this.getTheUserInThePlayer(), choosenCard);
             }
             eventBus.post(res);
         }

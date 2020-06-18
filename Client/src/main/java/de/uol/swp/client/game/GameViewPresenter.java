@@ -258,7 +258,7 @@ public class GameViewPresenter extends AbstractPresenter {
             for (ImageView card : chosenCards) {
                 chosenCardsId.add(Short.parseShort(card.getId()));
             }
-            gameService.chooseCardResponse(lobbyID, loggedInUser, chosenCardsId, directHand);
+            gameService.chooseCardResponse(lobbyID, loggedInUser, chosenCardsId);
             handcards.getChildren().forEach((n) -> {
                 n.removeEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
                 n.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
@@ -672,8 +672,8 @@ public class GameViewPresenter extends AbstractPresenter {
                                 AnimationManagement.deleteCard(card);
                             }
                         }
-                        if (msg.getHandCardID().equals("1") || msg.getHandCardID().equals("2") || msg.getHandCardID().equals("3")) {
-                            usableMoney += Integer.parseInt(msg.getHandCardID());
+                        if (msg.getHandCardID()<=3 && msg.getHandCardID() >= 1) {
+                            usableMoney += (int) msg.getHandCardID();
                             numberOfMoney.setText(usableMoney + " Geld");
                         }
                     });
@@ -683,7 +683,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 }
             }
             else {
-                ImageView card = new Card(msg.getHandCardID());
+                ImageView card = new Card(String.valueOf(msg.getHandCardID()));
                 Platform.runLater(() -> {
                     usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.HAND).getChildren().remove(0);
                     usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.PLAY).getChildren().add(card);
@@ -708,7 +708,6 @@ public class GameViewPresenter extends AbstractPresenter {
             chosenCards.clear();
             ImageView card = (ImageView) mouseEvent.getTarget();
             numberOfCardsToChoose = req.getCount();
-            directHand = req.getDirectHand();
             currentInfoText = infoActualPhase.getText();
             skipPhaseButton.setDisable(true);
             if (req.getSource() == ZoneType.HAND) {
@@ -1258,7 +1257,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 n.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                 n.setEffect(null);
             });
-            gameService.chooseCardResponse(gameID, loggedInUser, chosenCardsId, directHand);
+            gameService.chooseCardResponse(gameID, loggedInUser, chosenCardsId);
             selectButton.setVisible(false);
             playAllMoneyCardsButton.setVisible(true);
             skipPhaseButton.setDisable(false);
@@ -1326,7 +1325,7 @@ public class GameViewPresenter extends AbstractPresenter {
             bigCardImageBox.setVisible(false);
             if (playAllMoneyCardsButton.isVisible() && playAllMoneyCardsButton.isDisable()) {
                 if (chooseCardBecauseOfActionCard) {
-                    gameService.chooseCardResponse(lobbyID, loggedInUser, new ArrayList<>(Collections.singletonList(Short.valueOf(cardID))), directHand);
+                    gameService.chooseCardResponse(lobbyID, loggedInUser, new ArrayList<>(Collections.singletonList(Short.valueOf(cardID))));
                     for (int i = 0; i < 10; i++) {
                         ImageView iv = (ImageView) shopTeppich.getChildren().get(i);
                         if (iv.getEffect() == notChosenCard) {
