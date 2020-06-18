@@ -550,10 +550,17 @@ public class GameViewPresenter extends AbstractPresenter {
     @Subscribe
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
         if (message.getLobbyID().equals(this.lobbyID)) {
+            if (message.getLobby().getInGame() == true) {
+                Platform.runLater(() -> {
+                    updateEnemiesOnBoard(message.getLobby().getUsers());
+                });
+            }
             getInGameUserList(this.lobbyID);
             LOG.debug("A User left the Lobby. Updating Users now.");
         }
+
     }
+
 
     /**
      * Wird bei Erstellung in GameManagement aufgerufen und startet eine Abfrage an den Server für alle User in der Lobby.
@@ -1114,24 +1121,41 @@ public class GameViewPresenter extends AbstractPresenter {
     private void updateEnemiesOnBoard(Set<User> usersList) {
         // Attention: This must be done on the FX Thread!
         int enemyCounter = 0;
+        avatar_icon_left.setVisible(false);
+        avatar_icon_right.setVisible(false);
+        avatar_icon_top.setVisible(false);
+        player1_label.setVisible(false);
+        player2_label.setVisible(false);
+        player3_label.setVisible(false);
+        firstEnemyHand.setVisible(false);
+        secondEnemyHand.setVisible(false);
+        thirdEnemyHand.setVisible(false);
+
+
         for (User u : usersList) {
+
             if (loggedInUser == null || !u.getUsername().equals(loggedInUser.getUsername())) {
                 enemyCounter++;
                 HashMap<ZoneType, GeneralLayoutContainer> enemyContainer = new HashMap<>();
+
+
                 if (enemyCounter == 1) {
                     Platform.runLater(() -> player1_label.setText(u.getUsername()));
                     player1_label.setVisible(true);
                     avatar_icon_top.setImage(new Image("images/user/128x128/128_16.png"));
                     avatar_icon_top.setVisible(true);
+                    firstEnemyHand.setVisible(true);
                     enemyContainer.put(ZoneType.HAND, firstEnemyHand);
                     enemyContainer.put(ZoneType.PLAY, firstEnemyPCLC);
                     enemyContainer.put(ZoneType.DISCARD, firstEnemyDPLC);
                     enemyContainer.put(ZoneType.DRAW, firstEnemyDLC);
+
                 } else if (enemyCounter == 2) {
                     Platform.runLater(() -> player2_label.setText(u.getUsername()));
                     player2_label.setVisible(true);
                     avatar_icon_left.setImage(new Image("images/user/128x128/128_14.png"));
                     avatar_icon_left.setVisible(true);
+                    secondEnemyHand.setVisible(true);
                     enemyContainer.put(ZoneType.HAND, secondEnemyHand);
                     enemyContainer.put(ZoneType.PLAY, secondEnemyPCLC);
                     enemyContainer.put(ZoneType.DISCARD, secondEnemyDPLC);
@@ -1141,6 +1165,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     player3_label.setVisible(true);
                     avatar_icon_right.setImage(new Image("images/user/128x128/128_2.png"));
                     avatar_icon_right.setVisible(true);
+                    thirdEnemyHand.setVisible(true);
                     enemyContainer.put(ZoneType.HAND, thirdEnemyHand);
                     enemyContainer.put(ZoneType.PLAY, thirdEnemyPCLC);
                     enemyContainer.put(ZoneType.DISCARD, thirdEnemyDPLC);
@@ -1148,6 +1173,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 }
                 usersContainer.put(u.getUsername(), enemyContainer);
                 Platform.runLater(() -> {
+                    enemyContainer.values().forEach(gameViewWIP.getChildren()::remove);
                     enemyContainer.values().forEach(gameViewWIP.getChildren()::add);
                     enemyContainer.get(ZoneType.PLAY).toFront();
                 });
