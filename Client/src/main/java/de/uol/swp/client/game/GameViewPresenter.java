@@ -544,7 +544,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * Aktualisiert den loggedInUser sowie die Liste, wenn ein Spieler die Lobby (also das Spiel) verlässt.
      *
      * @param message die Nachricht
-     * @author Alex
+     * @author Alex, Paula, Fenja
      * @since Sprint 7
      */
     @Subscribe
@@ -558,7 +558,6 @@ public class GameViewPresenter extends AbstractPresenter {
             getInGameUserList(this.lobbyID);
             LOG.debug("A User left the Lobby. Updating Users now.");
         }
-
     }
 
 
@@ -693,8 +692,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht spielen!", "Fehler");
                     LOG.debug("Das Spielen der Karte " + msg.getHandCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
                 }
-            }
-            else {
+            } else {
                 ImageView card = new Card(msg.getHandCardID());
                 Platform.runLater(() -> {
                     usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.HAND).getChildren().remove(0);
@@ -818,8 +816,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 if (msg.getUser().equals(this.loggedInUser)) {
                     ImageView card = new Card(String.valueOf(msg.getCardID()));
                     myDPLC.getChildren().add(card);
-                }
-                else {
+                } else {
                     ImageView card = new Card(String.valueOf(msg.getCardID()), 0, 0, 80);
                     usersContainer.get(msg.getUser().getUsername()).get(ZoneType.DISCARD).getChildren().add(card);
                 }
@@ -892,8 +889,7 @@ public class GameViewPresenter extends AbstractPresenter {
                         th.start();
                     }
                 }
-            }
-            else if (message.getPlayer() != null && !message.getPlayer().equals(loggedInUser)) {
+            } else if (message.getPlayer() != null && !message.getPlayer().equals(loggedInUser)) {
                 for (int i = 0; i < message.getCardsOnHand().size(); i++) {
                     ImageView card = new Card("card_back", 80);
                     Platform.runLater(() -> usersContainer.get(message.getPlayer().getUsername()).get(ZoneType.HAND).getChildren().add(card));
@@ -1043,8 +1039,7 @@ public class GameViewPresenter extends AbstractPresenter {
                             }
                             cardsToMove.add(iv);
                             card = iv;
-                        }
-                        else {
+                        } else {
                             if (destination != ZoneType.TRASH) {
                                 while (deleteHandCardsFromOpponent) {
                                     Thread.onSpinWait();
@@ -1076,8 +1071,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 if (card != null) {
                     ImageView finalCard = card;
                     Platform.runLater(() -> playAnimation(destination, finalCard, source, user));
-                }
-                else {
+                } else {
                     LOG.debug("MoveCard-Aktion konnte nicht durchgeführt werden.");
                 }
             }
@@ -1115,7 +1109,7 @@ public class GameViewPresenter extends AbstractPresenter {
      * Die Methode versteckt auch Spielerplätze wieder, falls ein Spieler das Spiel verlässt.
      *
      * @param usersList Die Liste der Spieler im Spiel bzw. in der Lobby.
-     * @author Alex, Anna
+     * @author Alex, Anna, Fenja, Paula
      * @since Sprint 7
      */
     private void updateEnemiesOnBoard(Set<User> usersList) {
@@ -1301,7 +1295,7 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Die Karten werden zum Ablagestapel bewegt
      *
-     * @param children    Das children von dem Karten Stapel
+     * @param children Das children von dem Karten Stapel
      * @author Darian, Anna
      * @since Sprint 7
      */
