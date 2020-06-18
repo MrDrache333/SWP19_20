@@ -4,7 +4,6 @@ import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.common.user.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -88,11 +87,9 @@ public class GameOverViewPresenter extends AbstractPresenter {
             flow.getChildren().add(player);
         }
         if (winners.contains(loggedInUser.getUsername())) {
-            background.setImage(new Image("images/burgHohenzollern.jpg"));
+            background.setImage(new Image("/images/burgHohenzollern.jpg"));
             bannerText.setText("Du hast gewonnen!");
-            bannerTextBox.setAlignment(Pos.CENTER_LEFT);
-            bannerTextBox.setLayoutX(80);
-            ImageView confettiShot = new ImageView(new Image("images/confettiShot.gif"));
+            ImageView confettiShot = new ImageView(new Image("/images/confettiShot.gif"));
             confettiShot.setLayoutX(30);
             confettiShot.setLayoutY(5);
             confettiShot.setPreserveRatio(true);
@@ -105,13 +102,13 @@ public class GameOverViewPresenter extends AbstractPresenter {
             bannerTextSmall.toFront();
             trophy.setVisible(true);
             trophy.toFront();
-            ImageView confettiGoldSlow = new ImageView(new Image("images/confettiGoldSlow.gif"));
+            ImageView confettiGoldSlow = new ImageView(new Image("/images/confettiGoldSlow.gif"));
             confettiGoldSlow.setPreserveRatio(true);
             confettiGoldSlow.setFitWidth(420);
             anchorPane.getChildren().add(confettiGoldSlow);
         } else {
             trophy.setVisible(false);
-            background.setImage(new Image("images/burgHohenzollernDarker.jpg"));
+            background.setImage(new Image("/images/burgHohenzollernDarker.jpg"));
             if (winners.size() == 1) {
                 bannerText.setText(winners.get(0) + " hat gewonnen!");
             } else {
@@ -122,10 +119,7 @@ public class GameOverViewPresenter extends AbstractPresenter {
                 tmp.append(winners.get(winners.size() - 1)).append(" haben gewonnen!");
                 bannerText.setText(tmp.toString());
             }
-            bannerText.setLayoutX(62);
-            bannerText.setTextAlignment(TextAlignment.CENTER);
             double scale = 160 / bannerText.getBoundsInLocal().getWidth();
-            LOG.debug(bannerText.getBoundsInLocal().getWidth());
             if (scale < 1) {
                 double fontSize = 18 * scale;
                 if (fontSize < 12) {
@@ -141,11 +135,10 @@ public class GameOverViewPresenter extends AbstractPresenter {
                 }
             }
             bannerTextSmall.setText("Vielleicht klappt's beim nächsten Mal.");
-            bannerTextSmall.setLayoutX(80);
-            ImageView rain = new ImageView(new Image("images/rain.gif"));
+            ImageView rain = new ImageView(new Image("/images/rain.gif"));
             rain.setPreserveRatio(true);
             rain.setFitWidth(420);
-            ImageView uTried = new ImageView(new Image("images/uTried.gif"));
+            ImageView uTried = new ImageView(new Image("/images/uTried.gif"));
             uTried.setLayoutX(65);
             uTried.setLayoutY(45);
             uTried.setPreserveRatio(true);

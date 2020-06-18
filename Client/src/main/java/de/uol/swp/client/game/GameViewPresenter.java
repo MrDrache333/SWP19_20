@@ -407,7 +407,7 @@ public class GameViewPresenter extends AbstractPresenter {
         //Initialisieren der Aktionskarten
         for (ImageView imageView : allImageViews) {
             Short theID = theList.get(index);
-            String imageUrl = "cards/images/" + theID + "_sm.png";
+            String imageUrl = "/cards/images/" + theID + "_sm.png";
             Image theImage = new Image(imageUrl);
             imageView.setImage(theImage);
             imageView.setId(String.valueOf(theID));
@@ -551,7 +551,7 @@ public class GameViewPresenter extends AbstractPresenter {
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
         if (message.getLobbyID().equals(this.lobbyID)) {
             getInGameUserList(this.lobbyID);
-            LOG.debug("A User left the Lobby. Updating Users now.");
+            LOG.debug("Ein User hat die Lobby verlassen. User werden aktualisiert.");
         }
     }
 
@@ -850,7 +850,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     });
                 });
                 if (message.isInitialHand()) {
-                    String pfad = "cards/images/card_back.png";
+                    String pfad = "/cards/images/card_back.png";
                     Image picture = new Image(pfad);
                     for (int i = 0; i < 5; i++) {
                         ImageView card = new ImageView(picture);
@@ -1046,7 +1046,7 @@ public class GameViewPresenter extends AbstractPresenter {
                             }
                             card = (ImageView) usersContainer.get(user.getUsername()).get(ZoneType.HAND).getChildren().get(j);
                             card.setId(String.valueOf(c.getId()));
-                            card.setImage(new Image("cards/images/" + c.getId() + ".png"));
+                            card.setImage(new Image("/cards/images/" + c.getId() + ".png"));
                             j++;
                         }
                         break;
@@ -1121,7 +1121,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 if (enemyCounter == 1) {
                     Platform.runLater(() -> player1_label.setText(u.getUsername()));
                     player1_label.setVisible(true);
-                    avatar_icon_top.setImage(new Image("images/user/128x128/128_16.png"));
+                    avatar_icon_top.setImage(new Image("/images/user/128x128/128_16.png"));
                     avatar_icon_top.setVisible(true);
                     enemyContainer.put(ZoneType.HAND, firstEnemyHand);
                     enemyContainer.put(ZoneType.PLAY, firstEnemyPCLC);
@@ -1130,7 +1130,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 } else if (enemyCounter == 2) {
                     Platform.runLater(() -> player2_label.setText(u.getUsername()));
                     player2_label.setVisible(true);
-                    avatar_icon_left.setImage(new Image("images/user/128x128/128_14.png"));
+                    avatar_icon_left.setImage(new Image("/images/user/128x128/128_14.png"));
                     avatar_icon_left.setVisible(true);
                     enemyContainer.put(ZoneType.HAND, secondEnemyHand);
                     enemyContainer.put(ZoneType.PLAY, secondEnemyPCLC);
@@ -1139,7 +1139,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 } else if (enemyCounter == 3) {
                     Platform.runLater(() -> player3_label.setText(u.getUsername()));
                     player3_label.setVisible(true);
-                    avatar_icon_right.setImage(new Image("images/user/128x128/128_2.png"));
+                    avatar_icon_right.setImage(new Image("/images/user/128x128/128_2.png"));
                     avatar_icon_right.setVisible(true);
                     enemyContainer.put(ZoneType.HAND, thirdEnemyHand);
                     enemyContainer.put(ZoneType.PLAY, thirdEnemyPCLC);
@@ -1307,7 +1307,7 @@ public class GameViewPresenter extends AbstractPresenter {
         }
         String cardID = cardImage.getId();
         if (mouseEvent.getButton() != MouseButton.PRIMARY) {
-            String PathCardLargeView = "cards/images/" + cardID + ".png";
+            String PathCardLargeView = "/cards/images/" + cardID + ".png";
             bigCardImage.setImage(new Image(PathCardLargeView));
             // Aktion hinter dem Kauf-Button
             buyCardButton.setVisible(true);

@@ -105,7 +105,7 @@ public class LobbyPresenter extends AbstractPresenter {
     @FXML
     private ImageView bigCardImage;
 
-    private final ImageView crownView = new ImageView("images/crown.png");
+    private final ImageView crownView = new ImageView("/images/crown.png");
 
     /**
      * Instanziiert einen neuen LobbyPresenter.
@@ -276,7 +276,7 @@ public class LobbyPresenter extends AbstractPresenter {
             Platform.runLater(() -> {
                 for (int i = 0; i < cardpack.getCards().getActionCards().size(); i++) {
                     short cardID = cardpack.getCards().getActionCards().get(i).getId();
-                    String pfad = "cards/images/" + cardID + "_sm.png";
+                    String pfad = "/cards/images/" + cardID + "_sm.png";
                     Image picture = new Image(pfad);
                     ImageView card = new ImageView(picture);
                     card.setPreserveRatio(true);
@@ -350,7 +350,7 @@ public class LobbyPresenter extends AbstractPresenter {
      */
     public void showBigCardImage(short cardID) {
         Platform.runLater(() -> {
-            String pfad = "cards/images/" + cardID + ".png";
+            String pfad = "/cards/images/" + cardID + ".png";
             Image picture = new Image(pfad);
             bigCardImage.setImage(picture);
             bigCardImage.setVisible(true);
