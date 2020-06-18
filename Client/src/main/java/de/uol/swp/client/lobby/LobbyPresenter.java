@@ -19,7 +19,6 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
-import de.uol.swp.common.user.message.UserDroppedMessage;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -468,18 +467,6 @@ public class LobbyPresenter extends AbstractPresenter {
         if (!message.getLobbyID().equals(lobbyID)) return;
         LOG.debug("Spieler in der Lobby mit der ID" + message.getLobbyID() + " startet.");
         gameManagement.showGameView();
-    }
-
-    /**
-     * User wird aus der Liste entfernt, wenn er seinen Account gelöscht hat
-     *
-     * @param message Die UserDroppedMessage
-     * @author Julia
-     * @since Sprint 4
-     */
-    @Subscribe
-    public void onUserDroppedMessage(UserDroppedMessage message) {
-        userLeftLobby(message.getUser().getUsername(), false);
     }
 
     /**

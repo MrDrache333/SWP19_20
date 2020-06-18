@@ -61,13 +61,9 @@ public class DeleteAccountPresenter {
      */
     @FXML
     public void onYesButtonPressed(ActionEvent actionEvent) {
-        if (loggedInUser.equals(this.loggedInUser)) {
+        if (loggedInUser != null) {
             DropUserRequest request = new DropUserRequest(loggedInUser);
             eventBus.post(request);
-
-            //userService.hardLogout(loggedInUser);
-            //LOG.debug("Der Benutzer " + req.getUser().getUsername() + " wurde ausgeloggt!");
-            //LOG.debug("Der Benutzer " + req.getUser().getUsername() + " hat seinen Account gelöscht!");
         }
     }
 
