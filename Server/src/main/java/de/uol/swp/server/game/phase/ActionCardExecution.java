@@ -108,6 +108,13 @@ public class ActionCardExecution {
         if (response.getGameID().equals(gameID) && waitedForPlayerInput && chooseCardPlayers.contains(response.getPlayer())) {
             waitedForPlayerInput = false;
             if (!startedNextActions) actualStateIndex++;
+            if (nextActions.get(nextActionIndex) instanceof ChooseCard) nextActionIndex++;
+            if (response.getCards().isEmpty()) {
+                finishedNextActions = true;
+                execute();
+                return;
+            }
+
             if (response.getCards().size() == 1) {
                 inputCard = helpMethod2GetTheCard(response.getCards().get(0));
             }
