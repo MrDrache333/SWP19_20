@@ -227,7 +227,7 @@ public class AuthenticationService extends AbstractService {
     /**
      * Der Nutzer wird gelöscht und eine entprechende Message zurückgesendet
      *
-     * @author Anna, Julia, Darian
+     * @author Anna, Julia, Darian, Timo
      * @since Sprint 4
      */
     @Subscribe
@@ -240,10 +240,9 @@ public class AuthenticationService extends AbstractService {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Lösche User " + userToDrop.getUsername());
                 }
-                userSessions.remove(req.getSession().get());
-                userManagement.dropUser(userToDrop);
-
                 sendToLoggedInPlayers(new UserDroppedMessage(userToDrop));
+                userManagement.dropUser(userToDrop);
+                userSessions.remove(req.getSession().get());
             } else {
                 UpdateUserFailedMessage returnMessage = new UpdateUserFailedMessage(userToDrop, "Der Account befindet sich in einem laufenden Spiel. Du kannst deinen Account nicht löschen!");
                 sendToLoggedInPlayers(returnMessage);
@@ -258,7 +257,6 @@ public class AuthenticationService extends AbstractService {
      * @author Keno S.
      * @since Sprint 7
      */
-
     public void sendToLoggedInPlayers(ServerMessage msg) {
         if(!userSessions.isEmpty()) {
             msg.setReceiver(getSessions(new TreeSet<>(userSessions.values())));

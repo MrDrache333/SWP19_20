@@ -128,7 +128,7 @@ public class ClientApp extends Application implements ConnectionListener {
             alert.initModality(Modality.APPLICATION_MODAL);
             alert.getDialogPane().setHeaderText("Möchtest du das Spiel wirklich beenden?");
             Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK) {
+            if (result.isPresent() && result.get() == ButtonType.OK) {
                 userService.hardLogout(user);
                 closeAllWindows();
             } else {
@@ -218,6 +218,11 @@ public class ClientApp extends Application implements ConnectionListener {
         sceneManager.showLoginScreen();
     }
 
+    /**
+     * Methode zum Umgang mit DeadEvents
+     *
+     * @param deadEvent das DeadEvent
+     */
     @Subscribe
     private void handleEventBusError(DeadEvent deadEvent) {
         LOG.error("DeadEvent detected " + deadEvent);
@@ -266,7 +271,6 @@ public class ClientApp extends Application implements ConnectionListener {
         }
     }
 
-
     /**
      * Empfängt vom Server die Message, dass User Lobby verlassen hat.
      * Lobby wird geschlossen. User wird aus Lobby gelöscht.
@@ -305,13 +309,10 @@ public class ClientApp extends Application implements ConnectionListener {
      * @author Paula
      * @since Sprint 4
      */
-
     @Subscribe
     public void onOpenCreateLobby(OpenLobbyCreateRequest req) {
         if (req.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showCreateLobbyScreen(req.getUser());
-
-
         }
     }
 
@@ -319,8 +320,6 @@ public class ClientApp extends Application implements ConnectionListener {
     public void onOpenJoinLobby(OpenJoinLobbyRequest req) {
         if (req.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showJoinLobbyScreen(req.getUser(), req.getLobby());
-
-
         }
     }
 
@@ -391,23 +390,25 @@ public class ClientApp extends Application implements ConnectionListener {
         }
     }
 
-
     // -----------------------------------------------------
     // JavFX Help methods
     // -----------------------------------------------------
 
     /**
-     * Nachdem der Account gelöscht wurde, werden alle Fenster geschlossen und der Login-Screen angezeigt
+     * Nachdem der Account gelöscht wurde, wird der User hart ausgeloggt, alle Fenster geschlossen und der Login-Screen angezeigt
      *
-     * @author Anna
+     * @author Anna, Timo
      * @since Sprint 4
      */
     @Subscribe
     public void onUserDroppedMessage(UserDroppedMessage message) {
-        LOG.info("Löschung des Accounts und Verlassen aller Lobbys erfolgreich.");
         if (user != null && message.getUser().getUsername().equals(user.getUsername())) {
+            userService.hardLogout(message.getUser());
             sceneManager.closeAllStages();
             sceneManager.showLoginScreen();
+            LOG.info("Löschung des Accounts und Verlassen aller Lobbys erfolgreich.");
+        } else {
+            LOG.info("Löschung des Accounts und Verlassen aller Lobbys nicht erfolgreich.");
         }
     }
 
