@@ -162,6 +162,8 @@ public class Playground extends AbstractPlayground {
             nextPlayer = players.get(++index % players.size());
         }
 
+        ChatMessage infoMessage = new ChatMessage(infoUser, getActualPlayer().getTheUserInThePlayer().getUsername() + " ist am Zug!");
+        gameService.getBus().post(new NewChatMessageRequest(theSpecificLobbyID.toString(), infoMessage));
         int turns = playerTurns.get(actualPlayer);
         playerTurns.replace(actualPlayer, ++turns);
         actualPhase = Phase.Type.ActionPhase;
@@ -217,9 +219,6 @@ public class Playground extends AbstractPlayground {
         if (actualPhase == Phase.Type.ActionPhase) {
             actualPhase = Phase.Type.BuyPhase;
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartBuyPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
-
-            ChatMessage infoMessage = new ChatMessage(infoUser, getActualPlayer().getTheUserInThePlayer().getUsername() + " ist am Zug!");
-            gameService.getBus().post(new NewChatMessageRequest(theSpecificLobbyID.toString(), infoMessage));
 
             endTimer();
         } else {

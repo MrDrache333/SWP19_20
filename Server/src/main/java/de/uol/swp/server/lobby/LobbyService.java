@@ -77,7 +77,6 @@ public class LobbyService extends AbstractService {
      *
      * @param req Enthält den Request vom Client mit den benötigten Daten, um die Lobby zu erstellen.
      * @author Haschem, Ferit, Rike, Marvin, Paula
-     * @version 0.2
      * @since Sprint 2
      */
     @Subscribe
@@ -145,11 +144,7 @@ public class LobbyService extends AbstractService {
                 Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getLobbyID());
                 LOG.info("User " + msg.getUser().getUsername() + " verlässt die Lobby " + msg.getLobbyID());
                 ServerMessage returnMessage;
-                if (lobby.isPresent()) {
-                    returnMessage = new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), (UserDTO) lobby.get().getOwner(), (LobbyDTO) lobby.get());
-                } else {
-                    returnMessage = new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), null, null);
-                }
+                returnMessage = lobby.map(value -> new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), (UserDTO) value.getOwner(), (LobbyDTO) value)).orElseGet(() -> new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), null, null));
                 authenticationService.sendToLoggedInPlayers(returnMessage);
             } else if (leavedLobbySuccessful && lobbyManagement.getLobby(msg.getLobbyID()).isPresent() &&
                     (lobbyManagement.getLobby(msg.getLobbyID()).get().onlyBotsLeft(msg.getLobbyID()))) {
@@ -166,8 +161,6 @@ public class LobbyService extends AbstractService {
             authenticationService.sendToUser(new LobbyExceptionMessage(msg.getLobbyID(), e.getMessage()), msg.getUser());
             LOG.error(e.getMessage());
         }
-
-
     }
 
     /**
@@ -418,7 +411,7 @@ public class LobbyService extends AbstractService {
     @Subscribe
     public void createBotRequest(AddBotRequest request) {
         Lobby thisLobby = lobbyManagement.getLobby(request.getLobbyID()).get();
-        String[] collectionBotName = {"King Arthur", "Merlin", "Die Queen", "Prinzessin Diana", "Donald Trump"};
+        String[] collectionBotName = {"King Arthur", "Merlin", "Die Queen", "Prinzessin Diana"};
         if (thisLobby.getUsers().size() < thisLobby.getMaxPlayer()) {
             String theRandomBotName = collectionBotName[(int) (Math.random() * collectionBotName.length)] + (int) (Math.random() * 999);
             BotPlayer createdBot = new BotPlayer(theRandomBotName, eventBus, request.getLobbyID());

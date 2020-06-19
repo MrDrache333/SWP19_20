@@ -13,7 +13,6 @@ interface ClearPhase extends Phase {
      *
      * @param player Der Spieler
      * @author Keno O.
-     * @version 1.0
      * @since Sprint 5
      */
     void executeClearPhase(Player player);

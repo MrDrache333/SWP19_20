@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Paula
  * @since Sprint 6
  */
+@SuppressWarnings("UnstableApiUsage")
 public class BuyCardTest {
     static final User defaultOwner = new UserDTO("test1", "test1", "test1@test.de");
     static final User secondPlayer = new UserDTO("test2", "test2", "test2@test2.de");
@@ -41,8 +42,7 @@ public class BuyCardTest {
     static final GameManagement gameManagement = new GameManagement(chatManagement, lobbyManagement);
     static final AuthenticationService authenticationService = new AuthenticationService(bus, new UserManagement(new MainMemoryBasedUserStore()), lobbyManagement);
     static final GameService gameService = new GameService(bus, gameManagement, authenticationService);
-    private final ArrayList<Short> chosenCards = new ArrayList<Short>();
-
+    private final ArrayList<Short> chosenCards = new ArrayList<>();
 
     static UUID gameID;
     private final CountDownLatch lock = new CountDownLatch(1);
@@ -74,8 +74,6 @@ public class BuyCardTest {
         gameManagement.deleteGame(gameID);
         lobbyManagement.dropLobby(gameID);
         chatManagement.deleteChat(gameID.toString());
-
-
     }
 
     /**
@@ -124,10 +122,8 @@ public class BuyCardTest {
     void testIfCardIsAddedToDiscardPile() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         playground.getActualPlayer().setAvailableBuys(2);
-        int CardsOnDiscardPile = playground.getActualPlayer().getPlayerDeck().getDiscardPile().size();
-        int BuyingCard = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), (short) 10);
+        playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), (short) 10);
         assertEquals(3, playground.getActualPlayer().getPlayerDeck().getDiscardPile().size());
-
     }
 
     /**
@@ -139,7 +135,7 @@ public class BuyCardTest {
     @Test
     void testIfCardOnPlayGroundIsActualAfterBuyingACard() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
-        int cardsOnPlaygoundAfterBuying = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), (short) 10);
+        playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), (short) 10);
         assertTrue(playground.getCardField().get(card.getId()).equals(9));
     }
 }
