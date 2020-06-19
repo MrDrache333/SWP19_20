@@ -406,6 +406,18 @@ public class GameViewPresenter extends AbstractPresenter {
                 l.setText(String.valueOf(cardsToBuy.get(key)));
             }
         });
+        ArrayList<GeneralLayoutContainer> allContainer = new ArrayList<>(Arrays.asList(handcards, firstEnemyHand,
+                secondEnemyHand, thirdEnemyHand, myPCLC, firstEnemyPCLC, secondEnemyPCLC, thirdEnemyPCLC, myDPLC,
+                firstEnemyDPLC, secondEnemyDPLC, thirdEnemyDPLC, myDLC, firstEnemyDLC, secondEnemyDLC, thirdEnemyDLC));
+        Platform.runLater(() -> {
+            for (GeneralLayoutContainer theContainer : allContainer) {
+                int sizeChildren = theContainer.getChildren().size() - 1;
+                while (sizeChildren >= 0) {
+                    theContainer.getChildren().remove(sizeChildren);
+                    sizeChildren--;
+                }
+            }
+        });
     }
 
     /**
