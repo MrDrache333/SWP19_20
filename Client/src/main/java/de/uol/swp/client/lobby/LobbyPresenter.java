@@ -4,7 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
-import de.uol.swp.client.SceneManager;
+import de.uol.swp.client.AlertBox;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.common.chat.ChatService;
@@ -545,7 +545,7 @@ public class LobbyPresenter extends AbstractPresenter {
                 chooseMaxPlayer.setValue(oldMaxPlayerValue);
             }
         });
-        SceneManager.showAlert(Alert.AlertType.ERROR, msg.getMessage(), "Lobby");
+        Platform.runLater(() -> new AlertBox(Alert.AlertType.ERROR, msg.getMessage(), "Lobby"));
     }
 
     //--------------------------------------

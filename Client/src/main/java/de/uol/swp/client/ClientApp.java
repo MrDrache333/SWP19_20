@@ -30,7 +30,6 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -123,9 +122,7 @@ public class ClientApp extends Application implements ConnectionListener {
 
         //  close request calls method to close all windows
         primaryStage.setOnCloseRequest(event -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setResizable(false);
-            alert.initModality(Modality.APPLICATION_MODAL);
+            AlertBox alert = new AlertBox(Alert.AlertType.CONFIRMATION);
             alert.getDialogPane().setHeaderText("Möchtest du das Spiel wirklich beenden?");
             Optional<ButtonType> result = alert.showAndWait();
             if (result.isPresent() && result.get() == ButtonType.OK) {
@@ -245,7 +242,9 @@ public class ClientApp extends Application implements ConnectionListener {
                 sceneManager.closeCreateLobby();
                 LOG.debug("CreateLobbyMessage vom Server erfolgreich angekommen");
             } else {
-                SceneManager.showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden. Zudem darf er noch nicht vorhanden sein.", "Fehler");
+                Platform.runLater(() -> {
+                    AlertBox alertBox = new AlertBox(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden. Zudem darf er noch nicht vorhanden sein.", "Fehler");
+                });
             }
         }
     }
@@ -267,7 +266,9 @@ public class ClientApp extends Application implements ConnectionListener {
             }
             LOG.info("User " + message.getUser().getUsername() + " joined lobby successfully");
         } else if (message.getLobby().getLobbyPassword() == null) {
-            SceneManager.showAlert(Alert.AlertType.WARNING, "Das Passwort ist falsch!", "Fehler");
+            Platform.runLater(() -> {
+                AlertBox alertBox = new AlertBox(Alert.AlertType.WARNING, "Das Passwort ist falsch", "Fehler");
+            });
         }
     }
 
