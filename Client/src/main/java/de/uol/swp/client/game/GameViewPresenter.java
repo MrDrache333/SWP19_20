@@ -732,8 +732,10 @@ public class GameViewPresenter extends AbstractPresenter {
                     }
                 }));
                 Platform.runLater(() -> {
-                    if (numberOfCardsToChoose != 255) {
+                    if (numberOfCardsToChoose != 255 && !req.isUseCard()) {
                         infoActualPhase.setText(numberOfCardsToChoose + " Karte(n) entsorgen");
+                    } else if (numberOfCardsToChoose != 255) {
+                        infoActualPhase.setText(numberOfCardsToChoose + " Karte(n) ausspielen");
                     } else {
                         infoActualPhase.setText("Lege beliebig viele Karten ab");
                     }

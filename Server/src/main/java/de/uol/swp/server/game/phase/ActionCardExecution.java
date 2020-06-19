@@ -365,10 +365,10 @@ public class ActionCardExecution {
                 execution.setParent(this);
                 player.getPlayerDeck().getHand().remove(card);
             }
-            PlayCardMessage msg = new PlayCardMessage(gameID, player.getTheUserInThePlayer(), action.getCardId(), true, execution.isRemoveCardAfter());
-            playground.getGameService().sendToAllPlayers(gameID, msg);
             execution.reset();
             execution.execute();
+            PlayCardMessage msg = new PlayCardMessage(gameID, player.getTheUserInThePlayer(), action.getCardId(), true, execution.isRemoveCardAfter());
+            playground.getGameService().sendToAllPlayers(gameID, msg);
         } else {
             playground.getGameService().getBus().unregister(execution);
             waitedForPlayerInput = false;
@@ -580,6 +580,9 @@ public class ActionCardExecution {
             ChooseCardRequest request;
             if (action.getCount().getMin() == action.getCount().getMax()) {
                 request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount().getMin(), action.getCardSource(), "Bitte die Anzahl der Karten auswählen von dem Bereich der dir angezeigt wird!", actionExecutionID);
+                if (nextActions.get(0) instanceof UseCard) {
+                    request.setUseCard(true);
+                }
             } else if (action.getCount().getMin() == 0) {
                 request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount().getMax(), action.getCardSource(), "Bitte die Anzahl der Karten auswählen von dem Bereich der dir angezeigt wird!", actionExecutionID);
             } else {

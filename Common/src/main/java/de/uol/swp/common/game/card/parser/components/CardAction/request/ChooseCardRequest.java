@@ -38,6 +38,7 @@ public class ChooseCardRequest extends AbstractGameMessage {
     private Value countV;
     private int count;
     private final int actionExecutionID;
+    private boolean useCard;
     /**
      * Erstellt einen neuen Request
      *
@@ -135,5 +136,13 @@ public class ChooseCardRequest extends AbstractGameMessage {
 
     public int getActionExecutionID() {
         return actionExecutionID;
+    }
+
+    public boolean isUseCard() {
+        return useCard;
+    }
+
+    public void setUseCard(boolean useCard) {
+        this.useCard = useCard;
     }
 }
