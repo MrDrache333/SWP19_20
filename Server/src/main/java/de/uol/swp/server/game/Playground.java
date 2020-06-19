@@ -384,24 +384,22 @@ public class Playground extends AbstractPlayground {
     public List<String> calculateWinners() {
         List<String> winners = new ArrayList<>();
         for (Player player : players) {
-            int victoryPoints;
             Deck deck = player.getPlayerDeck();
             deck.getCardsDeck().addAll(deck.getHand());
             deck.getCardsDeck().addAll(deck.getDiscardPile());
             deck.getHand().clear();
             deck.getDiscardPile().clear();
 
-            int sum = 0;
+            int victoryPoints = 0;
             for (Card card : deck.getCardsDeck()) {
                 if (card instanceof ValueCard) {
                     int value = ((ValueCard) card).getValue();
-                    sum += value;
+                    victoryPoints += value;
                 } else if (card instanceof CurseCard) {
                     int value = ((CurseCard) card).getValue();
-                    sum -= value;
+                    victoryPoints -= value;
                 }
             }
-            victoryPoints = sum;
             resultsGame.put(player.getPlayerName(), victoryPoints);
         }
 
