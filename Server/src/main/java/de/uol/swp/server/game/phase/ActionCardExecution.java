@@ -581,7 +581,7 @@ public class ActionCardExecution {
             ChooseCardRequest request;
             if (action.getCount().getMin() == action.getCount().getMax()) {
                 request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount().getMin(), action.getCardSource(), "Bitte die Anzahl der Karten auswählen von dem Bereich der dir angezeigt wird!", actionExecutionID);
-                if (nextActions.get(0) instanceof UseCard) {
+                if (nextActionIndex < nextActions.size() && nextActions.get(nextActionIndex) instanceof UseCard) {
                     request.setUseCard(true);
                 }
             } else if (action.getCount().getMin() == 0) {
