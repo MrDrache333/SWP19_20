@@ -42,10 +42,6 @@ public class Playground extends AbstractPlayground {
     private final List<Player> players = new ArrayList<>();
     private final Map<String, Integer> resultsGame = new TreeMap<>();
     private final Map<Player, Integer> playerTurns = new HashMap<>();
-    private Player actualPlayer;
-    private Player nextPlayer;
-    private Player latestGavedUpPlayer;
-    private Phase.Type actualPhase;
     private final GameService gameService;
     private final UUID theSpecificLobbyID;
     private final CompositePhase compositePhase;
@@ -55,6 +51,10 @@ public class Playground extends AbstractPlayground {
     private final ArrayList<Short> chosenCards;
     private final ArrayList<Card> trash = new ArrayList<>();
     private final UserDTO infoUser = new UserDTO("infoUser", "", "");
+    private Player actualPlayer;
+    private Player nextPlayer;
+    private Player latestGavedUpPlayer;
+    private Phase.Type actualPhase;
 
     /**
      * Erstellt ein neues Spielfeld und übergibt die Spieler. Die Reihenfolge der Spieler wird zufällig zusammengestellt.
@@ -67,19 +67,11 @@ public class Playground extends AbstractPlayground {
     @Inject
     Playground(Lobby lobby, GameService gameService) {
         for (User user : lobby.getUsers()) {
-            if (!user.getIsBot()) {
-                Player player = new Player(user.getUsername());
-                player.setTheUserInThePlayer(user);
-                player.setBot(false);
-                players.add(player);
-                playerTurns.put(player, 0);
-            } else {
-                Player player = new Player(user.getUsername());
-                player.setTheUserInThePlayer(user);
-                player.setBot(true);
-                players.add(player);
-                playerTurns.put(player, 0);
-            }
+            Player player = new Player(user.getUsername());
+            player.setTheUserInThePlayer(user);
+            player.setBot(user.getIsBot());
+            players.add(player);
+            playerTurns.put(player, 0);
         }
         Collections.shuffle(players);
         this.gameService = gameService;

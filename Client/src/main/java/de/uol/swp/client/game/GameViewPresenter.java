@@ -61,7 +61,7 @@ import java.util.*;
  * @since Sprint 3
  */
 
-@SuppressWarnings({"UnstableApiUsage", "unused"})
+@SuppressWarnings({"UnstableApiUsage", "unused", "rawtypes"})
 public class GameViewPresenter extends AbstractPresenter {
 
     /**
@@ -667,7 +667,7 @@ public class GameViewPresenter extends AbstractPresenter {
         if (msg.getGameID().equals(lobbyID)) {
             if (msg.getCurrentUser().getUsername().equals(loggedInUser.getUsername())) {
                 Optional<Node> optionalCard = handcards.getChildren().stream().filter(c -> c.getId().equals(msg.getHandCardID())).findFirst();
-                ImageView card = optionalCard.isPresent() ? (ImageView) optionalCard.get() : null;
+                ImageView card = (ImageView) optionalCard.orElse(null);
                 if (msg.getIsPlayed()) {
                     Platform.runLater(() -> {
                         if (handcards.getChildren().contains(card)) {
@@ -689,14 +689,28 @@ public class GameViewPresenter extends AbstractPresenter {
                     showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht spielen!", "Fehler");
                     LOG.debug("Das Spielen der Karte " + msg.getHandCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
                 }
-            }
-            else {
+            } else {
                 ImageView card = new Card(msg.getHandCardID());
                 Platform.runLater(() -> {
                     usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.HAND).getChildren().remove(0);
                     usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.PLAY).getChildren().add(card);
                 });
             }
+        }
+    }
+
+    /**
+     * Zeigt anderen Spielern das Aufdecken einer Reaktionskarte an
+     *
+     * @param msg Die PlayedCardMessage
+     * @author Julia
+     * @since Sprint 10
+     */
+    @Subscribe
+    public void onPlayedReactionCardMessage(PlayedReactionCardMessage msg) {
+        if (msg.getGameID().equals(lobbyID) && !msg.getPlayer().equals(loggedInUser)) {
+            ImageView card = new Card(String.valueOf(msg.getCardID()));
+            Platform.runLater(() -> usersContainer.get(msg.getPlayer().getUsername()).get(ZoneType.PLAY).getChildren().add(card));
         }
     }
 
@@ -771,33 +785,52 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void onStartClearPhaseMessageOwnHand(StartClearPhaseMessage msg) {
-        if (msg.getGameID().equals(lobbyID) && msg.getCurrentUser().equals(loggedInUser)) {
-            onStartPhase(msg.getGameID(), msg.getCurrentUser(), msg);
-            Platform.runLater(() -> {
-                moveCardsToDiscardPile(handcards.getChildren());
-                moveCardsToDiscardPile(myPCLC.getChildren());
-            });
-        }
-        if (msg.getGameID().equals(lobbyID) && !msg.getCurrentUser().equals(loggedInUser)) {
-            Task<Void> task = new Task<>() {
+        if (msg.getGameID().equals(lobbyID)) {
+            Task<Void> removeReactionCards = new Task<>() {
                 @Override
                 protected Void call() {
-                    // Wenn ein anderer Spieler eine ClearPhaseMessage erhählt wird dies den anderen Spielern
-                    // angezeigt, indem deren Repräsentation des Spieler seine Handkarten und ausgespielten Karten auf den Ablagestapel legt.
                     Platform.runLater(() -> {
-                        usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.HAND).getChildren().clear();
-                        usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.PLAY).getChildren().clear();
-                        for (int i = 0; i < 5; i++) {
-                            usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.HAND)
-                                    .getChildren().add(new Card("card_back", 0, 0, 80));
+                        for (String user : users) {
+                            if (!user.equals(loggedInUser.getUsername())) {
+                                usersContainer.get(user).get(ZoneType.PLAY).getChildren().clear();
+                            }
                         }
                     });
                     return null;
                 }
             };
-            Thread th = new Thread(task);
-            th.setDaemon(true);
-            th.start();
+
+            Thread thread = new Thread(removeReactionCards);
+            thread.setDaemon(true);
+            thread.start();
+
+            if (msg.getCurrentUser().equals(loggedInUser)) {
+                onStartPhase(msg.getGameID(), msg.getCurrentUser(), msg);
+                Platform.runLater(() -> {
+                    moveCardsToDiscardPile(handcards.getChildren());
+                    moveCardsToDiscardPile(myPCLC.getChildren());
+                });
+            } else {
+                Task<Void> task = new Task<>() {
+                    @Override
+                    protected Void call() {
+                        // Wenn ein anderer Spieler eine ClearPhaseMessage erhählt wird dies den anderen Spielern
+                        // angezeigt, indem deren Repräsentation des Spieler seine Handkarten und ausgespielten Karten auf den Ablagestapel legt.
+                        Platform.runLater(() -> {
+                            usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.HAND).getChildren().clear();
+                            usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.PLAY).getChildren().clear();
+                            for (int i = 0; i < 5; i++) {
+                                usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.HAND)
+                                        .getChildren().add(new Card("card_back", 0, 0, 80));
+                            }
+                        });
+                        return null;
+                    }
+                };
+                Thread th = new Thread(task);
+                th.setDaemon(true);
+                th.start();
+            }
         }
     }
 
