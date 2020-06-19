@@ -284,4 +284,23 @@ public class ActionCardWithResponseTest {
         assertEquals(3, playground.getActualPlayer().getAvailableBuys());
         assertEquals(4, playground.getActualPlayer().getAdditionalMoney());
     }
+
+    /**
+     * Testet die Karte Geldverleiher
+     *
+     * @author Julia
+     * @since Sprint 10
+     */
+    @Test
+    void testGeldverleiher() {
+        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
+        playground.setActualPhase(Phase.Type.ActionPhase);
+        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 20));
+        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 1));
+        playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 20);
+        OptionalActionResponse theResponse = new OptionalActionResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), true, 0);
+        bus.post(theResponse);
+        assertEquals(5, playground.getActualPlayer().getPlayerDeck().getHand().size());
+        assertEquals(3, playground.getActualPlayer().getAdditionalMoney());
+    }
 }

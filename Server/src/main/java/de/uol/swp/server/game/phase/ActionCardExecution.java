@@ -296,26 +296,27 @@ public class ActionCardExecution {
      * @since Sprint 6
      */
     private ArrayList<Card> filterCards(ComplexCardAction action, ArrayList<Card> cards) {
+        ArrayList<Card> result = new ArrayList<>(cards);
         Card.Type allowedType = action.getAllowedCardType();
         if (allowedType == Card.Type.ACTIONCARD) {
-            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.ACTIONCARD);
+            result.removeIf(c -> c == null || c.getCardType() != Card.Type.ACTIONCARD);
         } else if (allowedType == Card.Type.REACTIONCARD) {
-            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.REACTIONCARD);
+            result.removeIf(c -> c == null || c.getCardType() != Card.Type.REACTIONCARD);
         } else if (allowedType == Card.Type.MONEYCARD) {
-            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.MONEYCARD);
+            result.removeIf(c -> c == null || c.getCardType() != Card.Type.MONEYCARD);
         } else if (allowedType == Card.Type.VALUECARD) {
-            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.VALUECARD);
+            result.removeIf(c -> c == null || c.getCardType() != Card.Type.VALUECARD);
         } else if (allowedType == Card.Type.CURSECARD) {
-            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.CURSECARD);
+            result.removeIf(c -> c == null || c.getCardType() != Card.Type.CURSECARD);
         }
 
         if (action.getHasCost() != null) {
-            cards.removeIf(c -> c == null || c.getCosts() < action.getHasCost().getMin() || c.getCosts() > action.getHasCost().getMax());
+            result.removeIf(c -> c == null || c.getCosts() < action.getHasCost().getMin() || c.getCosts() > action.getHasCost().getMax());
         }
         if (action.getHasWorth() != null) {
-            cards.removeIf(c -> c.getCardType() == Card.Type.ACTIONCARD || c.getCardType() == Card.Type.REACTIONCARD);
+            result.removeIf(c -> c.getCardType() == Card.Type.ACTIONCARD || c.getCardType() == Card.Type.REACTIONCARD);
             List<Card> tmp = new ArrayList<>();
-            cards.forEach(card -> {
+            result.forEach(card -> {
                 if (card.getCardType() == Card.Type.VALUECARD) {
                     if (((ValueCard) card).getValue() < action.getHasWorth().getMin() || ((ValueCard) card).getValue() > action.getHasWorth().getMax()) {
                         tmp.add(card);
@@ -331,10 +332,10 @@ public class ActionCardExecution {
                 }
             });
 
-            cards.removeAll(tmp);
+            result.removeAll(tmp);
         }
 
-        return cards;
+        return result;
     }
 
     private boolean executeWhile(While action, List<Player> thePlayers) {

@@ -32,7 +32,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      */
     public CompositePhase(Playground playground) {
         this.playground = playground;
-        Short[] actioncards = {(short) 22, (short) 8, (short) 9, (short) 21, (short) 14, (short) 23, (short) 11, (short) 27, (short) 10, (short) 16, (short) 19, (short) 15, (short) 13, (short) 28, (short) 31, (short) 7, (short) 24};
+        Short[] actioncards = {(short) 22, (short) 8, (short) 9, (short) 21, (short) 14, (short) 23, (short) 11, (short) 27, (short) 10, (short) 16, (short) 19, (short) 15, (short) 13, (short) 28, (short) 31, (short) 7, (short) 24, (short) 20};
         implementedActionCards = Arrays.asList(actioncards);
     }
 
