@@ -544,12 +544,17 @@ public class GameViewPresenter extends AbstractPresenter {
      * Aktualisiert den loggedInUser sowie die Liste, wenn ein Spieler die Lobby (also das Spiel) verlässt.
      *
      * @param message die Nachricht
-     * @author Alex
+     * @author Alex, Paula, Fenja
      * @since Sprint 7
      */
     @Subscribe
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
         if (message.getLobbyID().equals(this.lobbyID)) {
+            if (message.getLobby().getInGame()) {
+                Platform.runLater(() -> {
+                    updateEnemiesOnBoard(message.getLobby().getUsers());
+                });
+            }
             getInGameUserList(this.lobbyID);
             LOG.debug("A User left the Lobby. Updating Users now.");
         }
@@ -885,8 +890,7 @@ public class GameViewPresenter extends AbstractPresenter {
                         th.start();
                     }
                 }
-            }
-            else if (message.getPlayer() != null && !message.getPlayer().equals(loggedInUser)) {
+            } else if (message.getPlayer() != null && !message.getPlayer().equals(loggedInUser)) {
                 for (int i = 0; i < message.getCardsOnHand().size(); i++) {
                     ImageView card = new Card("card_back", 80);
                     Platform.runLater(() -> usersContainer.get(message.getPlayer().getUsername()).get(ZoneType.HAND).getChildren().add(card));
@@ -1036,8 +1040,7 @@ public class GameViewPresenter extends AbstractPresenter {
                             }
                             cardsToMove.add(iv);
                             card = iv;
-                        }
-                        else {
+                        } else {
                             if (destination != ZoneType.TRASH) {
                                 while (deleteHandCardsFromOpponent) {
                                     Thread.onSpinWait();
@@ -1069,8 +1072,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 if (card != null) {
                     ImageView finalCard = card;
                     Platform.runLater(() -> playAnimation(destination, finalCard, source, user));
-                }
-                else {
+                } else {
                     LOG.debug("MoveCard-Aktion konnte nicht durchgeführt werden.");
                 }
             }
@@ -1108,12 +1110,23 @@ public class GameViewPresenter extends AbstractPresenter {
      * Die Methode versteckt auch Spielerplätze wieder, falls ein Spieler das Spiel verlässt.
      *
      * @param usersList Die Liste der Spieler im Spiel bzw. in der Lobby.
-     * @author Alex, Anna
+     * @author Alex, Anna, Fenja, Paula
      * @since Sprint 7
      */
     private void updateEnemiesOnBoard(Set<User> usersList) {
         // Attention: This must be done on the FX Thread!
         int enemyCounter = 0;
+        avatar_icon_left.setVisible(false);
+        avatar_icon_right.setVisible(false);
+        avatar_icon_top.setVisible(false);
+        player1_label.setVisible(false);
+        player2_label.setVisible(false);
+        player3_label.setVisible(false);
+        firstEnemyHand.setVisible(false);
+        secondEnemyHand.setVisible(false);
+        thirdEnemyHand.setVisible(false);
+
+
         for (User u : usersList) {
             if (loggedInUser == null || !u.getUsername().equals(loggedInUser.getUsername())) {
                 enemyCounter++;
@@ -1123,6 +1136,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     player1_label.setVisible(true);
                     avatar_icon_top.setImage(new Image("images/user/128x128/128_16.png"));
                     avatar_icon_top.setVisible(true);
+                    firstEnemyHand.setVisible(true);
                     enemyContainer.put(ZoneType.HAND, firstEnemyHand);
                     enemyContainer.put(ZoneType.PLAY, firstEnemyPCLC);
                     enemyContainer.put(ZoneType.DISCARD, firstEnemyDPLC);
@@ -1132,6 +1146,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     player2_label.setVisible(true);
                     avatar_icon_left.setImage(new Image("images/user/128x128/128_14.png"));
                     avatar_icon_left.setVisible(true);
+                    secondEnemyHand.setVisible(true);
                     enemyContainer.put(ZoneType.HAND, secondEnemyHand);
                     enemyContainer.put(ZoneType.PLAY, secondEnemyPCLC);
                     enemyContainer.put(ZoneType.DISCARD, secondEnemyDPLC);
@@ -1141,6 +1156,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     player3_label.setVisible(true);
                     avatar_icon_right.setImage(new Image("images/user/128x128/128_2.png"));
                     avatar_icon_right.setVisible(true);
+                    thirdEnemyHand.setVisible(true);
                     enemyContainer.put(ZoneType.HAND, thirdEnemyHand);
                     enemyContainer.put(ZoneType.PLAY, thirdEnemyPCLC);
                     enemyContainer.put(ZoneType.DISCARD, thirdEnemyDPLC);
@@ -1148,10 +1164,9 @@ public class GameViewPresenter extends AbstractPresenter {
                 }
                 usersContainer.put(u.getUsername(), enemyContainer);
                 Platform.runLater(() -> {
-                    if (!gameViewWIP.getChildren().contains(enemyContainer.get(ZoneType.HAND))) {
-                        enemyContainer.values().forEach(gameViewWIP.getChildren()::add);
-                        enemyContainer.get(ZoneType.PLAY).toFront();
-                    }
+                    enemyContainer.values().forEach(gameViewWIP.getChildren()::remove);
+                    enemyContainer.values().forEach(gameViewWIP.getChildren()::add);
+                    enemyContainer.get(ZoneType.PLAY).toFront();
                 });
             }
         }
@@ -1279,7 +1294,7 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Die Karten werden zum Ablagestapel bewegt
      *
-     * @param children    Das children von dem Karten Stapel
+     * @param children Das children von dem Karten Stapel
      * @author Darian, Anna
      * @since Sprint 7
      */
