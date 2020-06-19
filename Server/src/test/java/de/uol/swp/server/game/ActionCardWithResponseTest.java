@@ -139,6 +139,24 @@ public class ActionCardWithResponseTest {
     }
 
     /**
+     * Testet die Karte Keller, wobei keine Karten von der Hand ausgewählt werden.
+     *
+     * @author Julia
+     * @since Sprint 10
+     */
+    @Test
+    void testKellerKeineAuswahl() {
+        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
+        playground.setActualPhase(Phase.Type.ActionPhase);
+        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(2));
+        int deckSize = playground.getActualPlayer().getPlayerDeck().getCardsDeck().size();
+        playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 10);
+        ChooseCardResponse theResponse = new ChooseCardResponse(playground.getID(), playground.getActualPlayer().getTheUserInThePlayer(), new ArrayList<>());
+        bus.post(theResponse);
+        assertEquals(deckSize, playground.getActualPlayer().getPlayerDeck().getCardsDeck().size());
+    }
+
+    /**
      * Testet die Karte Mine
      *
      * @author Ferit
@@ -172,6 +190,23 @@ public class ActionCardWithResponseTest {
     }
 
     /**
+     * Testet die Karte Mine, wobei keine Karte von der Hand ausgewählt wird.
+     *
+     * @author Julia
+     * @since Sprint 10
+     */
+    @Test
+    void testMineKeineAuswahl() {
+        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
+        playground.setActualPhase(Phase.Type.ActionPhase);
+        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(4));
+        playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 13);
+        ChooseCardResponse theResponse = new ChooseCardResponse(playground.getID(), playground.getActualPlayer().getTheUserInThePlayer(), new ArrayList<>());
+        bus.post(theResponse);
+        assertEquals(5, playground.getActualPlayer().getPlayerDeck().getHand().size());
+    }
+
+    /**
      * Testet die Karte Umbau
      *
      * @author Ferit
@@ -189,6 +224,25 @@ public class ActionCardWithResponseTest {
         ChooseCardResponse theResponse2 = new ChooseCardResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), playground.getCardsPackField().getCards().getActionCards().get(3).getId());
         bus.post(theResponse2);
         assertTrue(playground.getActualPlayer().getPlayerDeck().getDiscardPile().get(0).getCosts() >= playground.getActualPlayer().getPlayerDeck().getHand().get(cardsToSelect).getCosts());
+    }
+
+    /**
+     * Testet die Karte Umbau, wobei keine Karte von der Hand ausgewählt wird.
+     *
+     * @author Julia
+     * @since Sprint 10
+     */
+    @Test
+    void testUmbauKeineAuswahl() {
+        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
+        playground.setActualPhase(Phase.Type.ActionPhase);
+        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(6));
+        int discardSize = playground.getActualPlayer().getPlayerDeck().getDiscardPile().size();
+        playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 15);
+        ChooseCardResponse theResponse = new ChooseCardResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), new ArrayList<Short>());
+        bus.post(theResponse);
+        assertEquals(discardSize, playground.getActualPlayer().getPlayerDeck().getDiscardPile().size());
+        assertEquals(5, playground.getActualPlayer().getPlayerDeck().getHand().size());
     }
 
     /**

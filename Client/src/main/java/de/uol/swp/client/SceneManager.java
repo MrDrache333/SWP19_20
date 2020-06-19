@@ -33,14 +33,12 @@ import de.uol.swp.common.user.UserDTO;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
@@ -116,30 +114,6 @@ public class SceneManager {
         initViews();
     }
 
-    /**
-     * Alert wird erstellt
-     *
-     * @param type    der Alert-Typ
-     * @param message die Message
-     * @param title   der Titel des Alerts
-     * @author Paula, Haschem, Ferit
-     * @since Sprint1
-     */
-    public static void showAlert(Alert.AlertType type, String message, String title) {
-        Platform.runLater(() -> {
-            Alert alert = new Alert(type, "");
-            alert.setResizable(false);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            Text text = new Text(message);
-            text.setWrappingWidth(390);
-            alert.getDialogPane().setMaxWidth(400);
-            alert.getDialogPane().setContent(text);
-            alert.getDialogPane().setPadding(new Insets(10, 10, 10, 10));
-            alert.getDialogPane().setHeaderText(title);
-            alert.show();
-        });
-    }
-
     @Subscribe
     public void onShowRegistrationViewEvent(ShowRegistrationViewEvent event) {
         showRegistrationScreen();
@@ -181,6 +155,55 @@ public class SceneManager {
     }
 
     /**
+     * EventHandler für Hotkeys während eines Spiels.
+     * Bestätigungsfenster (Derzeit nur bei GiveUp) kann bei Bedarf auch auf weitere Hotkeys leicht erweitert werden.
+     * <p>
+     * Momentane Hotkeys:
+     * Strg + S: SkipPhase
+     * Strg + G: GiveUp
+     * Strg + L: CreateLobby
+     *
+     * @author Marvin
+     * @since Sprint7
+     */
+
+    private final EventHandler<KeyEvent> hotkeyEventHandler = new EventHandler<>() {
+        @Override
+        public void handle(KeyEvent event) {
+            if (event.isControlDown()) {
+                String focusedTab = primaryPresenter.getFocusedTab();
+                if (focusedTab.matches("^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")) {
+                    GameManagement gameManagement = primaryPresenter.getGameManagement(UUID.fromString(focusedTab));
+                    User user = gameManagement.getLoggedInUser();
+                    UUID lobbyID = gameManagement.getID();
+                    switch (event.getCode()) {
+                        case S:
+                            LOG.debug("Skip Phase Hotkey pressed");
+                            gameService.skipPhase(user, lobbyID);
+                            break;
+                        case G:
+                            LOG.debug("Give Up Hotkey pressed");
+                            AlertBox alert = new AlertBox(Alert.AlertType.CONFIRMATION);
+                            alert.getDialogPane().setHeaderText("Möchtest du wirklich aufgeben?");
+                            Optional<ButtonType> result = alert.showAndWait();
+                            if (result.get() == ButtonType.OK) {
+                                gameService.giveUp(lobbyID, (UserDTO) user);
+                            }
+                            break;
+                    }
+                    event.consume();
+                } else if (focusedTab.equals("Menu")) {
+                    if (event.getCode() == KeyCode.L) {
+                        LOG.debug("Create Lobby Hotkey pressed");
+                        showCreateLobbyScreen(primaryPresenter.getUser());
+                    }
+                    event.consume();
+                }
+            }
+        }
+    };
+
+    /**
      * Wenn in den Einstellungen auf den Button "Account löschen" geklickt wird, wird ein neues Fenster geöffnet,
      * in dem nachgefragt wird, ob man seinen Account wirklich löschen will.
      *
@@ -197,14 +220,9 @@ public class SceneManager {
             deleteAccountStage.setTitle("Account löschen");
             deleteAccountStage.setScene(deleteAccountScene);
             deleteAccountStage.setResizable(false);
+            deleteAccountStage.setX(primaryStage.getX() + primaryStage.getWidth() / 2 - deleteAccountStage.getScene().getWidth() / 2);
+            deleteAccountStage.setY(primaryStage.getY() + primaryStage.getHeight() / 2 - deleteAccountStage.getScene().getHeight() / 2);
             deleteAccountStage.show();
-        });
-    }
-
-    public void showError(String message, String e) {
-        Platform.runLater(() -> {
-            Alert a = new Alert(Alert.AlertType.ERROR, message + e);
-            a.showAndWait();
         });
     }
 
@@ -233,11 +251,9 @@ public class SceneManager {
         });
     }
 
-    public void showLoginErrorScreen() {
+    public void showError(String message, String e) {
         Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Fehler beim Einloggen auf den Server!");
-            alert.showAndWait();
-            showLoginScreen();
+            AlertBox a = new AlertBox(Alert.AlertType.ERROR, e, message);
         });
     }
 
@@ -272,6 +288,14 @@ public class SceneManager {
         return primaryStage.isFocused();
     }
 
+    public void showLoginErrorScreen() {
+        Platform.runLater(() -> {
+            AlertBox alert = new AlertBox(Alert.AlertType.ERROR, "Fehler beim Einloggen auf den Server!");
+            alert.showAndWait();
+            showLoginScreen();
+        });
+    }
+
     /**
      * Öffnet das Einstellungsfenster, indem eine neue Stage mit der settingsScene erstellt wird.
      *
@@ -289,6 +313,8 @@ public class SceneManager {
             settingsStage.setScene(settingsScene);
             settingsStage.setResizable(false);
             settingsStage.initModality(Modality.APPLICATION_MODAL);
+            settingsStage.setX(primaryStage.getX() + primaryStage.getWidth() / 2 - settingsStage.getScene().getWidth() / 2);
+            settingsStage.setY(primaryStage.getY() + primaryStage.getHeight() / 2 - settingsStage.getScene().getHeight() / 2);
             settingsStage.show();
             eventBus.register(settingsPresenter);
         });
@@ -310,29 +336,10 @@ public class SceneManager {
             createLobbyStage.setScene(createLobbyScene);
             createLobbyStage.setResizable(false);
             createLobbyStage.initModality(Modality.APPLICATION_MODAL);
+            createLobbyStage.setX(primaryStage.getX() + primaryStage.getWidth() / 2 - createLobbyStage.getScene().getWidth() / 2);
+            createLobbyStage.setY(primaryStage.getY() + primaryStage.getHeight() / 2 - createLobbyStage.getScene().getHeight() / 2);
             createLobbyStage.show();
             eventBus.register(createLobbyPresenter);
-        });
-    }
-
-    /**
-     * Öffnet das Lobby beitreten Fenster,falls man aufgefordert wird sein Passwort anzugeben
-     *
-     * @param loggedInUser Der angemeldete Nutzer
-     * @author Paula
-     * @since Sprint7
-     */
-    public void showJoinLobbyScreen(User loggedInUser, Lobby lobby) {
-        Platform.runLater(() -> {
-            joinLobbyPresenter = new JoinLobbyPresenter(loggedInUser, lobbyService, userService, eventBus, lobby);
-            initJoinLobbyView(joinLobbyPresenter);
-            joinLobbyStage = new Stage();
-            joinLobbyStage.setTitle("Lobby: " + lobby.getName()+ " beitreten ");
-            joinLobbyStage.setScene(joinLobbyScene);
-            joinLobbyStage.setResizable(false);
-            joinLobbyStage.initModality(Modality.APPLICATION_MODAL);
-            joinLobbyStage.show();
-            eventBus.register(joinLobbyPresenter);
         });
     }
 
@@ -526,55 +533,30 @@ public class SceneManager {
 
     }
 
-
     /**
-     * EventHandler für Hotkeys während eines Spiels.
-     * Bestätigungsfenster (Derzeit nur bei GiveUp) kann bei Bedarf auch auf weitere Hotkeys leicht erweitert werden.
+     * Öffnet das Lobby beitreten Fenster,falls man aufgefordert wird sein Passwort anzugeben
      *
-     * Momentane Hotkeys:
-     * Strg + S: SkipPhase
-     * Strg + G: GiveUp
-     * Strg + L: CreateLobby
-     *
-     * @author Marvin
+     * @param loggedInUser Der angemeldete Nutzer
+     * @author Paula
      * @since Sprint7
      */
+    public void showJoinLobbyScreen(User loggedInUser, Lobby lobby) {
+        Platform.runLater(() -> {
+            joinLobbyPresenter = new JoinLobbyPresenter(loggedInUser, lobbyService, userService, eventBus, lobby);
+            initJoinLobbyView(joinLobbyPresenter);
+            joinLobbyStage = new Stage();
+            joinLobbyStage.setTitle("Lobby: " + lobby.getName() + " beitreten ");
+            joinLobbyStage.setScene(joinLobbyScene);
+            joinLobbyStage.setResizable(false);
+            joinLobbyStage.initModality(Modality.APPLICATION_MODAL);
+            joinLobbyStage.setX(primaryStage.getX() + primaryStage.getWidth() / 2 - joinLobbyStage.getScene().getWidth() / 2);
+            joinLobbyStage.setY(primaryStage.getY() + primaryStage.getHeight() / 2 - joinLobbyStage.getScene().getHeight() / 2);
+            joinLobbyStage.show();
+            eventBus.register(joinLobbyPresenter);
+        });
+    }
 
-    private final EventHandler<KeyEvent> hotkeyEventHandler = new EventHandler<>() {
-        @Override
-        public void handle(KeyEvent event) {
-            if (event.isControlDown()) {
-                String focusedTab = primaryPresenter.getFocusedTab();
-                if (focusedTab.matches("^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")) {
-                    GameManagement gameManagement = primaryPresenter.getGameManagement(UUID.fromString(focusedTab));
-                    User user = gameManagement.getLoggedInUser();
-                    UUID lobbyID = gameManagement.getID();
-                    switch (event.getCode()) {
-                        case S:
-                            LOG.debug("Skip Phase Hotkey pressed");
-                            gameService.skipPhase(user, lobbyID);
-                            break;
-                        case G:
-                            LOG.debug("Give Up Hotkey pressed");
-                            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                            alert.setResizable(false);
-                            alert.initModality(Modality.APPLICATION_MODAL);
-                            alert.getDialogPane().setHeaderText("Möchtest du wirklich aufgeben?");
-                            Optional<ButtonType> result = alert.showAndWait();
-                            if (result.get() == ButtonType.OK) {
-                                gameService.giveUp(lobbyID, (UserDTO) user);
-                            }
-                            break;
-                    }
-                    event.consume();
-                } else if (focusedTab.equals("Menu")) {
-                    if (event.getCode() == KeyCode.L) {
-                        LOG.debug("Create Lobby Hotkey pressed");
-                        showCreateLobbyScreen(primaryPresenter.getUser());
-                    }
-                    event.consume();
-                }
-            }
-        }
-    };
+    public Stage getPrimaryStage() {
+        return primaryStage;
+    }
 }

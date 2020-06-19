@@ -3,7 +3,7 @@ package de.uol.swp.client.lobby;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
-import de.uol.swp.client.SceneManager;
+import de.uol.swp.client.AlertBox;
 import de.uol.swp.client.lobby.event.CloseCreateLobbyEvent;
 import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.lobby.request.CreateLobbyRequest;
@@ -79,7 +79,7 @@ public class CreateLobbyPresenter extends AbstractPresenter {
             eventBus.post(msg);
             LOG.info("CreateLobbyRequest wurde gesendet.");
         } else {
-            SceneManager.showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden.", "Fehler");
+            new AlertBox(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden.", "Fehler");
         }
         lobbynameField.clear();
         passwordField.clear();
