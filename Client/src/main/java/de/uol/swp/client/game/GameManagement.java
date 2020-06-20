@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.ClientApp;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.LobbyPresenter;
@@ -233,6 +234,9 @@ public class GameManagement {
                 gameOverStage.setScene(gameOverScene);
                 gameOverStage.setTitle("Spielergebnis");
                 gameOverStage.setResizable(false);
+                Stage primaryStage = ClientApp.getSceneManager().getPrimaryStage();
+                gameOverStage.setX(primaryStage.getX() + primaryStage.getWidth() / 2 - gameOverStage.getScene().getWidth() / 2);
+                gameOverStage.setY(primaryStage.getY() + primaryStage.getHeight() / 2 - gameOverStage.getScene().getHeight() / 2);
                 gameOverStage.show();
                 gameOverStage.toFront();
                 gameOverStage.setOnCloseRequest(windowEvent -> closeGameOverViewAndLeaveLobby());
@@ -259,9 +263,7 @@ public class GameManagement {
     public void closeGameOverViewAndLeaveLobby() {
         Platform.runLater(gameOverStage::close);
         primaryPresenter.closeTab(id, true);
-        if(lobbyPresenter.getLobbyService().retrieveAllLobbies().contains(lobbyName))
-            lobbyPresenter.getLobbyService().leaveLobby(id, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
-    }
+        }
 
     /**
      * Initialisieren der GameView

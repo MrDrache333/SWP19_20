@@ -5,6 +5,7 @@ import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.settings.event.CloseDeleteAccountEvent;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
+import de.uol.swp.common.user.request.DropUserRequest;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import org.apache.logging.log4j.LogManager;
@@ -60,10 +61,10 @@ public class DeleteAccountPresenter {
      */
     @FXML
     public void onYesButtonPressed(ActionEvent actionEvent) {
-        userService.hardLogout(loggedInUser);
-        LOG.debug("Der Benutzer " + loggedInUser.getUsername() + " wurde ausgeloggt!");
-        userService.dropUser(loggedInUser);
-        LOG.debug("Der Benutzer " + loggedInUser.getUsername() + " hat seinen Account gelöscht!");
+        if (loggedInUser != null) {
+            DropUserRequest request = new DropUserRequest(loggedInUser);
+            eventBus.post(request);
+        }
     }
 
     /**

@@ -2,6 +2,7 @@ package de.uol.swp.client.lobby;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
+import de.uol.swp.client.ClientApp;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.LobbyUser;
 import de.uol.swp.common.lobby.request.*;
@@ -170,6 +171,9 @@ public class LobbyService {
 
         primaryStage.setTitle("Dominion - Spieleanleitung");
         primaryStage.setScene(scene);
+        Stage mainStage = ClientApp.getSceneManager().getPrimaryStage();
+        primaryStage.setX(mainStage.getX() + mainStage.getWidth() / 2 - primaryStage.getScene().getWidth() / 2);
+        primaryStage.setY(mainStage.getY() + mainStage.getHeight() / 2 - primaryStage.getScene().getHeight() / 2);
         primaryStage.show();
     }
 }

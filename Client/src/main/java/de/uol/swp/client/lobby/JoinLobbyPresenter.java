@@ -2,7 +2,7 @@ package de.uol.swp.client.lobby;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import de.uol.swp.client.SceneManager;
+import de.uol.swp.client.AlertBox;
 import de.uol.swp.client.lobby.event.CloseJoinLobbyEvent;
 import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.common.lobby.Lobby;
@@ -77,7 +77,7 @@ public class JoinLobbyPresenter {
         }
         //Passwörter stimmen nicht überein
         else {
-            SceneManager.showAlert(Alert.AlertType.ERROR, "Das eingegebene Passwort ist falsch.", "Fehler");
+            new AlertBox(Alert.AlertType.ERROR, "Das eingegebene Passwort ist falsch.", "Fehler");
         }
         passwordField.clear();
         passwordField.requestFocus();
