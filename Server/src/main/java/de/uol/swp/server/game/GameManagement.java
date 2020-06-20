@@ -118,4 +118,11 @@ public class GameManagement {
     public void setGameService(GameService gameService) {
         this.gameService = gameService;
     }
+
+    public int getUsersInGame(UUID gameID) {
+        if (lobbyManagement.getLobby(gameID).isPresent())
+            return lobbyManagement.getLobby(gameID).get().getPlayers();
+        else
+            return 0;
+    }
 }

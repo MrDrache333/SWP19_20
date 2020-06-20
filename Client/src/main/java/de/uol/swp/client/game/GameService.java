@@ -4,10 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import de.uol.swp.common.game.card.parser.components.CardAction.response.ChooseCardResponse;
 import de.uol.swp.common.game.card.parser.components.CardAction.response.OptionalActionResponse;
-import de.uol.swp.common.game.request.BuyCardRequest;
-import de.uol.swp.common.game.request.GameGiveUpRequest;
-import de.uol.swp.common.game.request.PlayCardRequest;
-import de.uol.swp.common.game.request.SkipPhaseRequest;
+import de.uol.swp.common.game.request.*;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import org.apache.logging.log4j.LogManager;
@@ -102,5 +99,21 @@ public class GameService {
     public void chooseCardResponse(UUID gameID, User loggedInUser, ArrayList<Short> chosenCards) {
         ChooseCardResponse response = new ChooseCardResponse(gameID, loggedInUser, chosenCards);
         bus.post(response);
+    }
+
+    /**
+     * Erstellt eine PoopBreakRequest und postet diese auf den Eventbus.
+     *
+     */
+    public void requestPoopBreak(User user, UUID gameID) {
+        bus.post(new PoopBreakRequest(user, gameID));
+    }
+
+    public void answerPoopBreak(User user, UUID gameID, boolean vote) {
+        bus.post(new PoopBreakRequest(user, gameID, vote));
+    }
+
+    public void cancelPoopBreak(User user, UUID gameID) {
+        bus.post(new CancelPoopBreakRequest(user, gameID));
     }
 }

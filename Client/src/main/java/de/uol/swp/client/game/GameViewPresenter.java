@@ -23,6 +23,7 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -32,9 +33,12 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.effect.BoxBlur;
 import javafx.scene.effect.ColorAdjust;
+import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -174,6 +178,32 @@ public class GameViewPresenter extends AbstractPresenter {
     private Button noButton;
     @FXML
     private Button selectButton;
+    @FXML
+    private Pane poopView;
+    @FXML
+    private ImageView poopButtonImage;
+    @FXML
+    private Button poopButton;
+    @FXML
+    private Label chatHeader;
+    @FXML
+    private Label poopMessage;
+    @FXML
+    private Button acceptButton;
+    @FXML
+    private Button declineButton;
+    @FXML
+    private Button cancelPoopTimer;
+    @FXML
+    private Pane countdownPane;
+    @FXML
+    private Label countdownLabel;
+    @FXML
+    private Label countdownInformation;
+    @FXML
+    private Pane cardPane;
+    @FXML
+    private VBox playgroundBox;
 
     private final GeneralLayoutContainer handcards;
     private final GeneralLayoutContainer firstEnemyHand;
@@ -207,6 +237,10 @@ public class GameViewPresenter extends AbstractPresenter {
     private final HashMap<String, HashMap<ZoneType, GeneralLayoutContainer>> usersContainer = new HashMap<>();
     private volatile boolean deleteHandCardsFromOpponent = false;
     private final ArrayList<ImageView> cardsToMove = new ArrayList<>();
+    private static final double BLUR_AMOUNT = 60;
+    private static final Effect frostEffect = new BoxBlur(BLUR_AMOUNT, BLUR_AMOUNT, 3);
+    private Timeline animation;
+    private int countdown;
 
     /**
      * Das Event das den Handkarten gegeben wird, wenn sie ausspielbar sein sollen.
@@ -482,6 +516,133 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
+     * Poop Button gedrückt Ereignis.
+     *
+     * @param actionEvent das Ereignis der Aktion.
+     * @author Haschem
+     * @since Sprint 3
+     */
+    @FXML
+    public void onPoopButtonPressed(ActionEvent actionEvent) {
+        gameManagement.getGameService().requestPoopBreak(loggedInUser, lobbyID);
+    }
+    @FXML
+    public void onDeclineButtonPressed(ActionEvent actionEvent) {
+        gameManagement.getGameService().answerPoopBreak(loggedInUser, lobbyID, false);
+    }
+    @FXML
+    public void onAcceptButtonPressed(ActionEvent actionEvent) {
+        gameManagement.getGameService().answerPoopBreak(loggedInUser, lobbyID, true);
+    }
+    @FXML
+    public void onCancelTimerPressed(ActionEvent actionEvent) {
+        gameManagement.getGameService().cancelPoopBreak(loggedInUser, lobbyID);
+    }
+
+    @Subscribe
+    public void onPoopBreakMessage(PoopBreakMessage msg) {
+        if (poopButtonImage.isVisible() && chatHeader.isVisible()) {
+            Platform.runLater(() -> {
+                poopMessage.setText(msg.getPoopInitiator().getUsername() + " muss auf Klo!");
+                poopMessage.setAlignment(Pos.TOP_CENTER);
+            });
+            showPoopVote(true);
+        }
+        if (msg.getDecisions().size() >= 1) {
+            if (msg.getDecisions() != null)
+                Platform.runLater(() -> acceptButton.setText("Okay (" + msg.getAcceptedVotes() + ")"));
+            if (msg.getDecisions() != null)
+                Platform.runLater(() -> declineButton.setText("Nope (" + msg.getDeclinedVotes() + ")"));
+        }
+        if (msg.getDeclinedVotes() >= (users.size() == 2 ? 1 : 2)) {
+            showPoopVote(false);
+            LOG.debug("Akzeptierte Votes: " + msg.getAcceptedVotes() + ", abgelehnte Votes: " + msg.getDeclinedVotes() + "\nVoting abgebrochen.");
+        }
+        else if (msg.getAcceptedVotes() >= (users.size() == 2 ? 2 : users.size() - 1)) {
+            showPoopVote(false);
+            LOG.debug("Akzeptierte Votes: " + msg.getAcceptedVotes() + ", abgelehnte Votes: " + msg.getDeclinedVotes() + "\nVoting erfolgreich.");
+            showPoopBreakView(true);
+            Platform.runLater(() -> {
+                countdownLabel.setText("60");
+                countdownInformation.setText(msg.getPoopInitiator().equals(loggedInUser) ? "Du bist auf dem Klo!" : msg.getPoopInitiator().getUsername() + " ist auf Klo!");
+                countdownInformation.setLayoutX(countdownPane.getWidth() / 2 - countdownInformation.getWidth() / 2);
+                cancelPoopTimer.setVisible(msg.getPoopInitiator().equals(loggedInUser));
+            });
+        }
+    }
+
+    @Subscribe
+    public void onCancelPoopBreakMessage(CancelPoopBreakMessage msg) {
+        showPoopBreakView(false);
+    }
+
+    @Subscribe
+    public void onCountdownRefreshMessage(CountdownRefreshMessage msg) {
+        if (msg.getGameID().equals(lobbyID))
+            countdown = msg.getCountdown();
+        else
+            countdown = 0;
+
+        Platform.runLater(() -> {
+            countdownLabel.setText(countdown < 10 ? "0" + countdown : String.valueOf(countdown));
+            countdownLabel.setAlignment(Pos.CENTER);
+            countdownLabel.setTranslateY(countdownInformation.getTranslateY() + 30);
+        });
+
+        if (countdown <= 0) {
+            showPoopBreakView(false);
+        }
+    }
+
+    private void showPoopBreakView (boolean enabled) {
+        if (enabled) {
+            Platform.runLater(() -> {
+                poopButton.setDisable(true);
+                skipPhaseButton.setVisible(false);
+                countdownPane.setVisible(true);
+                countdownPane.setDisable(false);
+                countdownPane.toFront();
+                playgroundBox.setVisible(false);
+                countdownLabel.setTranslateX(countdownPane.getTranslateX() / 2);
+                countdownLabel.setTranslateY(countdownPane.getTranslateY() * 3 / 2);
+            });
+        }
+        else {
+            Platform.runLater(() -> {
+                poopButton.setDisable(false);
+                skipPhaseButton.setVisible(true);
+                countdownPane.setVisible(false);
+                countdownPane.setDisable(true);
+                playgroundBox.setVisible(true);
+            });
+        }
+    }
+
+    private void showPoopVote(boolean enabled) {
+        if (enabled) {
+            Platform.runLater(() -> {
+                poopButtonImage.setVisible(false);
+                chatHeader.setVisible(false);
+                poopMessage.setVisible(true);
+                acceptButton.setVisible(true);
+                acceptButton.setDisable(false);
+                declineButton.setVisible(true);
+                declineButton.setDisable(false);
+            });
+        }
+        else {
+            Platform.runLater(() -> {
+                poopButtonImage.setVisible(true);
+                chatHeader.setVisible(true);
+                poopMessage.setVisible(false);
+                acceptButton.setVisible(false);
+                acceptButton.setDisable(true);
+                declineButton.setVisible(false);
+                declineButton.setDisable(true);
+            });
+        }
+    }
+    /**
      * Die IDs der gesendeten Aktionskarten werden initilaisiert.
      * Die Anzahl der Wertkarten wird in einer Map gespeichert, mit der ID der jeweiligen Karte als Schlüssel.
      *
@@ -547,9 +708,7 @@ public class GameViewPresenter extends AbstractPresenter {
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
         if (message.getLobbyID().equals(this.lobbyID)) {
             if (message.getLobby().getInGame()) {
-                Platform.runLater(() -> {
-                    updateEnemiesOnBoard(message.getLobby().getUsers());
-                });
+                Platform.runLater(() -> updateEnemiesOnBoard(message.getLobby().getUsers()));
             }
             getInGameUserList(this.lobbyID);
             LOG.debug("A User left the Lobby. Updating Users now.");
@@ -1262,7 +1421,7 @@ public class GameViewPresenter extends AbstractPresenter {
             handcards.getChildren().forEach((n) -> {
                 n.removeEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
                 n.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
-                if (Short.valueOf(n.getId()) < 4) {
+                if (Short.parseShort(n.getId()) < 4) {
                     n.setEffect(makeImageDarker);
                 }
             });
@@ -1495,7 +1654,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 return;
             case HAND:
                 if (user.equals(loggedInUser)) {
-                    if (Short.valueOf(card.getId()) < 4) card.setEffect(makeImageDarker);
+                    if (Short.parseShort(card.getId()) < 4) card.setEffect(makeImageDarker);
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                 }
                 AnimationManagement.addToHand(card, usersContainer.get(user.getUsername()).get(destination));

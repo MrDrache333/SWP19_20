@@ -146,7 +146,7 @@ public class GameManagement {
 /*
     @Subscribe
     private void lobbyCreated(CreateLobbyMessage msg) {
-        if (msg.getUser().getUsername().equals(loggedInUser.getUsername())) {
+        if (msg.getPoopInitiator().getUsername().equals(loggedInUser.getUsername())) {
             primaryPresenter.showTab(msg.getChatID());
         }
     }

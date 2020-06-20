@@ -191,7 +191,7 @@ public class SettingsPresenter extends AbstractPresenter {
     /**
      * Schaltet den Sound an bzw. aus
      *
-     * @param actionEvent
+     * @param actionEvent Das ActionEvent
      * @author Rike
      * @since Sprint 9
      */

@@ -12,10 +12,7 @@ import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.exception.NotEnoughMoneyException;
 import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.phase.Phase;
-import de.uol.swp.common.game.request.BuyCardRequest;
-import de.uol.swp.common.game.request.GameGiveUpRequest;
-import de.uol.swp.common.game.request.PlayCardRequest;
-import de.uol.swp.common.game.request.SkipPhaseRequest;
+import de.uol.swp.common.game.request.*;
 import de.uol.swp.common.lobby.request.LobbyLeaveUserRequest;
 import de.uol.swp.common.lobby.request.UpdateInGameRequest;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
@@ -41,6 +38,14 @@ public class GameService extends AbstractService {
     private final GameManagement gameManagement;
     private final AuthenticationService authenticationService;
     private final UserDTO infoUser = new UserDTO("infoUser", "", "");
+    private final Timer poopTimer = new Timer();
+    private final Map<User, Boolean> poopMap = new HashMap<>();
+    List<Player> players = new ArrayList<>();
+    private User poopInitiator = null;
+    private Timer timer;
+    private int interval;
+    private static final int DELAY = 1000;
+    private static final int PERIOD = 1000;
 
     /**
      * Erstellt einen neuen GameService
@@ -278,6 +283,53 @@ public class GameService extends AbstractService {
         } else {
             LOG.error("Irgendwas ist bei der onSelectCardRequest im GameService falsch gelaufen. Folgende ID: " + gameID);
         }
+    }
+
+    @Subscribe
+    public void onPoopBreakRequest(PoopBreakRequest req) {
+        Optional<Game> game = gameManagement.getGame(req.getGameID());
+        if (game.isPresent()) {
+            players = game.get().getPlayground().getPlayers();
+
+            if (poopInitiator == null && req.getPoopInitiator() != null)
+                poopInitiator = req.getPoopInitiator();
+
+            if (!poopMap.containsKey(req.getUser())) {
+                poopMap.put(req.getUser(), req.getPoopDecision());
+                sendToAllPlayers(req.getGameID(), new PoopBreakMessage(poopInitiator, req.getGameID(), new ArrayList<>(poopMap.values())));
+            }
+            if  (poopMap.values().stream().filter(d -> d).count() >= (players.size() == 2 ? 2 : players.size() - 1)) {
+                poopMap.clear();
+                clock(req.getGameID());
+            }
+        }
+    }
+
+    @Subscribe
+    public void onCancelPoopBreakRequest(CancelPoopBreakRequest req) {
+        Optional<Game> game = gameManagement.getGame(req.getGameID());
+        if (game.isPresent() && req.getUser().equals(poopInitiator)) {
+            poopInitiator = null;
+            timer.cancel();
+            interval = 0;
+            sendToAllPlayers(req.getGameID(), new CancelPoopBreakMessage(req.getGameID(), req.getUser()));
+        }
+    }
+    private void clock(UUID gameID) {
+        timer = new Timer();
+        interval = 60;
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                sendToAllPlayers(gameID, new CountdownRefreshMessage(gameID, countdownTimer()));
+            }
+        }, DELAY, PERIOD);
+    }
+
+    private int countdownTimer() {
+        if (interval <= 0)
+            timer.cancel();
+        return --interval;
     }
 
     public GameManagement getGameManagement() {
