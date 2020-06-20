@@ -669,7 +669,7 @@ public class GameViewPresenter extends AbstractPresenter {
             if (msg.getCurrentUser().getUsername().equals(loggedInUser.getUsername())) {
                 Optional<Node> optionalCard = handcards.getChildren().stream().filter(c -> c.getId().equals(msg.getHandCardID())).findFirst();
                 ImageView card = (ImageView) optionalCard.orElse(null);
-                if (msg.getIsPlayed()) {
+                if (msg.getIsPlayed() && card != null) {
                     Platform.runLater(() -> {
                         if (handcards.getChildren().contains(card)) {
                             card.setEffect(null);

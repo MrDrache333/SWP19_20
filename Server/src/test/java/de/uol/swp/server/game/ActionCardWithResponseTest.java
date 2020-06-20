@@ -148,10 +148,10 @@ public class ActionCardWithResponseTest {
     void testKellerKeineAuswahl() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(2));
+        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 10));
         int deckSize = playground.getActualPlayer().getPlayerDeck().getCardsDeck().size();
         playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 10);
-        ChooseCardResponse theResponse = new ChooseCardResponse(playground.getID(), playground.getActualPlayer().getTheUserInThePlayer(), new ArrayList<>());
+        ChooseCardResponse theResponse = new ChooseCardResponse(playground.getID(), playground.getActualPlayer().getTheUserInThePlayer(), new ArrayList<>(), 0);
         bus.post(theResponse);
         assertEquals(deckSize, playground.getActualPlayer().getPlayerDeck().getCardsDeck().size());
     }
@@ -199,9 +199,9 @@ public class ActionCardWithResponseTest {
     void testMineKeineAuswahl() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(4));
+        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 13));
         playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 13);
-        ChooseCardResponse theResponse = new ChooseCardResponse(playground.getID(), playground.getActualPlayer().getTheUserInThePlayer(), new ArrayList<>());
+        ChooseCardResponse theResponse = new ChooseCardResponse(playground.getID(), playground.getActualPlayer().getTheUserInThePlayer(), new ArrayList<>(), 0);
         bus.post(theResponse);
         assertEquals(5, playground.getActualPlayer().getPlayerDeck().getHand().size());
     }
@@ -236,10 +236,10 @@ public class ActionCardWithResponseTest {
     void testUmbauKeineAuswahl() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(6));
+        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 15));
         int discardSize = playground.getActualPlayer().getPlayerDeck().getDiscardPile().size();
         playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 15);
-        ChooseCardResponse theResponse = new ChooseCardResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), new ArrayList<Short>());
+        ChooseCardResponse theResponse = new ChooseCardResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), new ArrayList<Short>(), 0);
         bus.post(theResponse);
         assertEquals(discardSize, playground.getActualPlayer().getPlayerDeck().getDiscardPile().size());
         assertEquals(5, playground.getActualPlayer().getPlayerDeck().getHand().size());
