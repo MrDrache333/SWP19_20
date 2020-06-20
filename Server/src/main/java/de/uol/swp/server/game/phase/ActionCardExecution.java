@@ -527,19 +527,6 @@ public class ActionCardExecution {
     }
 
     /**
-     * Zählt ein übergebenes KartenArray und übergibt die Größe.
-     *
-     * @return 0 = Übergebenes Array ist leer. | sonst die größe des KartenArrays
-     */
-
-    private int executeCount(Count action) {
-        if (!action.getCards().isEmpty()) {
-            return action.getCards().size();
-        }
-        return 0;
-    }
-
-    /**
      * Schickt den ausgewählten Spielern eine Nachricht, dass sie eine Anzahl an Karten auswählen können.
      *
      * @param action     Die Anzahl der Karten
@@ -773,7 +760,7 @@ public class ActionCardExecution {
      * @author Julia
      * @since Sprint 7
      */
-    public boolean checkForReactionCard(Player player) {
+    private boolean checkForReactionCard(Player player) {
         for (Card card : player.getPlayerDeck().getHand()) {
             if (card instanceof ActionCard && ((ActionCard) card).getType() == ActionCard.ActionType.Reaction) {
                 playground.getGameService().sendToAllPlayers(gameID, new PlayedReactionCardMessage(card.getId(), player.getTheUserInThePlayer(), gameID));
