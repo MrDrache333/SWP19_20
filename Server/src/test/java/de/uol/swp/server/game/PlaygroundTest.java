@@ -271,20 +271,20 @@ public class PlaygroundTest {
         size = playground.sendCardsDeckSize();
         assertEquals(5, size);
     }
-
-    // <----Nachfolgend wird der GameService getestet. / Keine Extra Testklasse.---->
-
     /**
      * Testet, ob ein beendetes Spiel gelöscht wird.
+     * @author Ferit
+     * @since Sprint 11
      */
     @Test
     void dropFinishedGameTest() {
         gameService.dropFinishedGame(gameID);
         assertFalse(gameManagement.getGame(gameID).isPresent());
     }
-
     /**
      * SkipPhaseRequestTest
+     * @author Ferit
+     * @since Sprint 11
      */
     @Test
     void onSkipPhaseRequestTest() {
@@ -296,6 +296,8 @@ public class PlaygroundTest {
 
     /**
      * OnBuyCardRequestTest
+     * @author Ferit
+     * @since Sprint 11
      */
     @Test
     void onBuyCardRequestTest() {
@@ -312,10 +314,11 @@ public class PlaygroundTest {
 
     /**
      * OnPlayCardTest
+     * @author Ferit
+     * @since Sprint 11
      */
     @Test
     void onPlayCardTest() {
-        // UUID gameID, User currentUser, Short handCardID
         gameManagement.getGame(gameID).get().getPlayground().setActualPhase(Phase.Type.ActionPhase);
         gameManagement.getGame(gameID).get().getPlayground().getActualPlayer().getPlayerDeck().getHand().add(gameManagement.getGame(gameID).get().getPlayground().getCardsPackField().getCards().getCardForId((short) 9));
         gameService.onPlayCardRequest(new PlayCardRequest(gameID, gameManagement.getGame(gameID).get().getPlayground().getActualPlayer().getTheUserInThePlayer(), (short) 9));

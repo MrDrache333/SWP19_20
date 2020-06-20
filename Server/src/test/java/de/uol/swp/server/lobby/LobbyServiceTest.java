@@ -341,7 +341,8 @@ class LobbyServiceTest {
 
     /**
      * Es wird getestet, ob ein Player gekickt werden kann.
-     *
+     * @author Ferit
+     * @since Sprint 11
      * @throws InterruptedException
      */
     @Test
@@ -355,6 +356,8 @@ class LobbyServiceTest {
 
     /**
      * Es wird getestet, ob gültige/ungültige Anfragen beim SetMaxPlayer richtig gehandelt werden.
+     * @author Ferit
+     * @since Sprint 11
      */
     @Test
     void onSetMaxPlayerReqTest() {

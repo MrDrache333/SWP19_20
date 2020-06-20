@@ -304,12 +304,7 @@ public class Playground extends AbstractPlayground {
     }
 
     public Boolean onlyBotsLeft() {
-        for (Player player : players) {
-            if (player.isBot()) {
-                return true;
-            }
-        }
-        return false;
+        return players.stream().allMatch(Player::isBot);
     }
 
     /**

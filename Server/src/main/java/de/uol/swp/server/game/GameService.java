@@ -68,7 +68,7 @@ public class GameService extends AbstractService {
      * Bisherige Verwendung um einem Spieler die aktuelle Hand zu schicken.
      *
      * @param thePlayer Der Spieler, welcher die spezifizierte Nachricht bekommen soll.
-     * @param msg   Momentan wird hierrüber die DrawHandMessage verschickt.
+     * @param msg       Momentan wird hierrüber die DrawHandMessage verschickt.
      * @author Ferit
      * @since Sprint 5
      */
@@ -99,8 +99,8 @@ public class GameService extends AbstractService {
     /**
      * Sendet eine Nachricht an alle Player eines Games
      *
-     * @param gameID  die ID des Games
-     * @param msg die Nachricht
+     * @param gameID die ID des Games
+     * @param msg    die Nachricht
      * @author Julia
      * @since Sprint5
      */
@@ -259,14 +259,10 @@ public class GameService extends AbstractService {
             Playground playground = game.get().getPlayground();
             if (playground.getActualPlayer().getTheUserInThePlayer().getUsername().equals(player.getUsername()) && playground.getActualPhase() == Phase.Type.ActionPhase) {
                 try {
-                    // Karte wird an die ActionPhase zum Handling übergeben.
                     playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), cardID);
-                    //sendToSpecificPlayer(playground.getActualPlayer(), new PlayCardMessage(gameID, player, cardID, true));
-                    playground.getPlayers().forEach(n -> {
-                        PlayCardMessage msg = new PlayCardMessage(gameID, playground.getActualPlayer().getTheUserInThePlayer(),
-                                cardID, true, playground.getCompositePhase().getExecuteAction().isRemoveCardAfter());
-                        sendToSpecificPlayer(n, msg);
-                    });
+                    PlayCardMessage msg = new PlayCardMessage(gameID, playground.getActualPlayer().getTheUserInThePlayer(),
+                            cardID, true, playground.getCompositePhase().getExecuteAction().isRemoveCardAfter());
+                    sendToAllPlayers(req.getGameID(), msg);
                     Card card = playground.getCardsPackField().getCards().getCardForId(cardID);
                     ChatMessage infoMessage = new ChatMessage(infoUser, playground.getActualPlayer().getTheUserInThePlayer().getUsername() + " spielt Karte " + (card != null ? card.getName() : "Undefiniert") + "!");
                     post(new NewChatMessageRequest(gameID.toString(), infoMessage));
