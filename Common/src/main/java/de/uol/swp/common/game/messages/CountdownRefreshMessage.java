@@ -4,9 +4,6 @@ import de.uol.swp.common.message.AbstractServerMessage;
 
 import java.util.UUID;
 
-/**
- * The type Countdown refresh message.
- */
 public class CountdownRefreshMessage extends AbstractServerMessage {
 
     private final UUID gameID;
