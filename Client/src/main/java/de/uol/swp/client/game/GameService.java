@@ -102,17 +102,30 @@ public class GameService {
     }
 
     /**
-     * Erstellt eine PoopBreakRequest und postet diese auf den Eventbus.
-     *
+     * Erstellt eine PoopBreakRequest und postet diese (zum Erstellen).
+     * @param user Der User
+     * @param gameID Die GameID
      */
     public void requestPoopBreak(User user, UUID gameID) {
         bus.post(new PoopBreakRequest(user, gameID));
     }
 
+    /**
+     * Erstellt eine PoopBreakRequest und postet diese (zum Voten).
+     *
+     * @param user Der User
+     * @param gameID Die GameID
+     * @param vote Der individuelle Vote
+     */
     public void answerPoopBreak(User user, UUID gameID, boolean vote) {
         bus.post(new PoopBreakRequest(user, gameID, vote));
     }
 
+    /**
+     * Erstellt eine CancelPoopBreakRequest und postet diese.
+     * @param user Der User
+     * @param gameID Die GameID
+     */
     public void cancelPoopBreak(User user, UUID gameID) {
         bus.post(new CancelPoopBreakRequest(user, gameID));
     }

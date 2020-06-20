@@ -516,29 +516,60 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Poop Button gedrückt Ereignis.
+     * Wenn der PoopButton gedrückt wird, soll requestPoopBreak() aufgerufen werden.
      *
-     * @param actionEvent das Ereignis der Aktion.
-     * @author Haschem
-     * @since Sprint 3
+     * @param actionEvent Das ActionEvent.
+     * @author Keno S.
+     * @since Sprint 10
      */
     @FXML
     public void onPoopButtonPressed(ActionEvent actionEvent) {
         gameManagement.getGameService().requestPoopBreak(loggedInUser, lobbyID);
     }
+
+    /**
+     * Wenn der DeclineButton gedrückt wird, soll answerPoopBreak() aufgerufen werden.
+     *
+     * @param actionEvent Das ActionEvent.
+     * @author Keno S.
+     * @since Sprint 10
+     */
     @FXML
     public void onDeclineButtonPressed(ActionEvent actionEvent) {
         gameManagement.getGameService().answerPoopBreak(loggedInUser, lobbyID, false);
     }
+
+    /**
+     * Wenn der AcceptButton gedrückt wird, soll answerPoopBreak() aufgerufen werden.
+     *
+     * @param actionEvent Das ActionEvent.
+     * @author Keno S.
+     * @since Sprint 10
+     */
     @FXML
     public void onAcceptButtonPressed(ActionEvent actionEvent) {
         gameManagement.getGameService().answerPoopBreak(loggedInUser, lobbyID, true);
     }
+
+    /**
+     * Wenn der CancelTimerButton gedrückt wird, soll cancelPoopBreak() aufgerufen werden.
+     *
+     * @param actionEvent Das ActionEvent.
+     * @author Keno S.
+     * @since Sprint 10
+     */
     @FXML
     public void onCancelTimerPressed(ActionEvent actionEvent) {
         gameManagement.getGameService().cancelPoopBreak(loggedInUser, lobbyID);
     }
 
+    /**
+     * Bei Empfang einer PoopBreakMessage soll entweder eine Votingphase iniziiert oder der Pausebildschirm aufgerufen werden.
+     *
+     * @param msg Die PoopBreakMessage
+     * @author Keno S.
+     * @since Sprint 10
+     */
     @Subscribe
     public void onPoopBreakMessage(PoopBreakMessage msg) {
         if (poopButtonImage.isVisible() && chatHeader.isVisible()) {
@@ -571,11 +602,25 @@ public class GameViewPresenter extends AbstractPresenter {
         }
     }
 
+    /**
+     * Bei Empfang einer CancelPoopBreakMessage der Pausebildschirm unsichtbar gemacht werden.
+     *
+     * @param msg Die PoopBreakMessage
+     * @author Keno S.
+     * @since Sprint 10
+     */
     @Subscribe
     public void onCancelPoopBreakMessage(CancelPoopBreakMessage msg) {
         showPoopBreakView(false);
     }
 
+    /**
+     * Bei Empfang einer CountdownRefreshMessage der CountdownTimer aktualisiert werden.
+     *
+     * @param msg Die CountdownRefreshMessage
+     * @author Keno S.
+     * @since Sprint 10
+     */
     @Subscribe
     public void onCountdownRefreshMessage(CountdownRefreshMessage msg) {
         if (msg.getGameID().equals(lobbyID))
@@ -594,6 +639,13 @@ public class GameViewPresenter extends AbstractPresenter {
         }
     }
 
+    /**
+     * Diese Hilfsmethode zeigt oder versteckt die PoopBreakView.
+     *
+     * @param enabled Entscheidet ob sie versteckt oder angezeigt werden soll.
+     * @author Keno S.
+     * @since Sprint 10
+     */
     private void showPoopBreakView (boolean enabled) {
         if (enabled) {
             Platform.runLater(() -> {
@@ -618,6 +670,13 @@ public class GameViewPresenter extends AbstractPresenter {
         }
     }
 
+    /**
+     * Diese Hilfsmethode zeigt oder versteckt die PoopVoteView.
+     *
+     * @param enabled Entscheidet ob sie versteckt oder angezeigt werden soll.
+     * @author Keno S.
+     * @since Sprint 10
+     */
     private void showPoopVote(boolean enabled) {
         if (enabled) {
             Platform.runLater(() -> {
@@ -642,6 +701,7 @@ public class GameViewPresenter extends AbstractPresenter {
             });
         }
     }
+
     /**
      * Die IDs der gesendeten Aktionskarten werden initilaisiert.
      * Die Anzahl der Wertkarten wird in einer Map gespeichert, mit der ID der jeweiligen Karte als Schlüssel.

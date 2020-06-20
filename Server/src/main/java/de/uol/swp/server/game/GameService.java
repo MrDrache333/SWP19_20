@@ -285,6 +285,13 @@ public class GameService extends AbstractService {
         }
     }
 
+    /**
+     * Startet eine Klopause, wenn schon nicht eine läuft.
+     *
+     * @param req Der PoopBreakRequest
+     * @author Keno S.
+     * @since Sprint 10
+     */
     @Subscribe
     public void onPoopBreakRequest(PoopBreakRequest req) {
         Optional<Game> game = gameManagement.getGame(req.getGameID());
@@ -305,16 +312,31 @@ public class GameService extends AbstractService {
         }
     }
 
+    /**
+     * Beendet eine Klopause.
+     *
+     * @param req Der PoopBreakRequest
+     * @author Keno S.
+     * @since Sprint 10
+     */
     @Subscribe
     public void onCancelPoopBreakRequest(CancelPoopBreakRequest req) {
         Optional<Game> game = gameManagement.getGame(req.getGameID());
-        if (game.isPresent() && req.getUser().equals(poopInitiator)) {
+        if (game.isPresent() && req.getUser().equals(poopInitiator) && !poopMap.isEmpty()) {
             poopInitiator = null;
             timer.cancel();
             interval = 0;
             sendToAllPlayers(req.getGameID(), new CancelPoopBreakMessage(req.getGameID(), req.getUser()));
         }
     }
+
+    /**
+     * Hilfsmethode, die eine Clock erzeugt, damit der Countdown bei allen Clients sychron ist.
+     *
+     * @param gameID Die GameID
+     * @author Keno S.
+     * @since Sprint 10
+     */
     private void clock(UUID gameID) {
         timer = new Timer();
         interval = 60;
@@ -326,6 +348,11 @@ public class GameService extends AbstractService {
         }, DELAY, PERIOD);
     }
 
+    /**
+     * Hilfsmethode, um den Countdown herunterzuzählen.
+     *
+     * @return Den Countdown - 1
+     */
     private int countdownTimer() {
         if (interval <= 0)
             timer.cancel();
