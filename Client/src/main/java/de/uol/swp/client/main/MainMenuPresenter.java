@@ -2,7 +2,7 @@ package de.uol.swp.client.main;
 
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
-import de.uol.swp.client.SceneManager;
+import de.uol.swp.client.AlertBox;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.OpenJoinLobbyRequest;
 import de.uol.swp.common.lobby.Lobby;
@@ -444,7 +444,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void onJoinLobbyExceptionMessage(JoinLobbyExceptionMessage msg) {
-        SceneManager.showAlert(Alert.AlertType.ERROR, msg.getMessage(), "Lobby");
+        new AlertBox(Alert.AlertType.ERROR, msg.getMessage(), "Lobby");
     }
 
     //-----------------

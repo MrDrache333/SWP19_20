@@ -87,13 +87,22 @@ public class ActionCardExecution {
      */
     @Subscribe
     public void onChooseCardResponse(ChooseCardResponse response) {
-        LOG.debug("ChooseCardResponse von " + response.getPlayer().getUsername() + " erhalten");
-        List<Player> p = new ArrayList<>();
-        Player helpPlayer = helpMethodToGetThePlayerFromUser(response.getPlayer());
-        p.add(helpPlayer);
         if (response.getGameID().equals(gameID) && waitedForPlayerInput && chooseCardPlayers.contains(response.getPlayer())) {
+            LOG.debug("ChooseCardResponse von " + response.getPlayer().getUsername() + " erhalten");
+            List<Player> p = new ArrayList<>();
+            Player helpPlayer = helpMethodToGetThePlayerFromUser(response.getPlayer());
+            p.add(helpPlayer);
             waitedForPlayerInput = false;
             if (!startedNextActions) actualStateIndex++;
+            if (nextActions.get(nextActionIndex) instanceof ChooseCard) nextActionIndex++;
+            if (response.getCards().isEmpty()) {
+                finishedNextActions = true;
+                nextActionIndex = 0;
+                nextActions.clear();
+                execute();
+                return;
+            }
+
             if (response.getCards().size() == 1) {
                 inputCard = helpMethod2GetTheCard(response.getCards().get(0));
             }
