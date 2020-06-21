@@ -150,16 +150,19 @@ public class Playground extends AbstractPlayground {
             nextPlayer = players.get(1);
             sendInitialCardsDeckSize();
             sendInitialHands();
+            actualPoint();
         } else {
             //Spieler muss Clearphase durchlaufen haben
             if (actualPhase != Phase.Type.ClearPhase) return;
             if (actualPlayer != latestGavedUpPlayer) {
                 sendPlayersHand();
                 sendCardsDeckSize();
+                actualPoint();
             }
             int index = players.indexOf(nextPlayer);
             actualPlayer = nextPlayer;
             nextPlayer = players.get(++index % players.size());
+            actualPoint();
         }
 
         ChatMessage infoMessage = new ChatMessage(infoUser, getActualPlayer().getTheUserInThePlayer().getUsername() + " ist am Zug!");
@@ -170,9 +173,11 @@ public class Playground extends AbstractPlayground {
         if (checkForActionCard()) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartActionPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID, timestamp));
+            actualPoint();
             //phaseTimer();
         } else {
             nextPhase();
+            actualPoint();
         }
     }
 
@@ -252,6 +257,9 @@ public class Playground extends AbstractPlayground {
         for (Player player : players) {
             int size = player.getPlayerDeck().getCardsDeck().size();
             gameService.sendToSpecificPlayer(player, new CardsDeckSizeMessage(theSpecificLobbyID, player.getTheUserInThePlayer(), size));
+            actualPlayer.getPlayerDeck().countSiegpunkte();
+            ActualPointMessage actualPointMessage = new ActualPointMessage(theSpecificLobbyID, actualPlayer.getPlayerDeck().getSiegpunkte());
+            gameService.sendToSpecificPlayer(player, actualPointMessage);
         }
     }
 
@@ -349,6 +357,12 @@ public class Playground extends AbstractPlayground {
      */
     public boolean checkForActionCard() {
         return actualPlayer.getPlayerDeck().getHand().stream().anyMatch(card -> card instanceof ActionCard);
+    }
+
+    public void actualPoint() {
+        actualPlayer.getPlayerDeck().countSiegpunkte();
+        ActualPointMessage actualPointMessage = new ActualPointMessage(theSpecificLobbyID, actualPlayer.getPlayerDeck().getSiegpunkte());
+        gameService.sendToSpecificPlayer(actualPlayer, actualPointMessage);
     }
 
     /**

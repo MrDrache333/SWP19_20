@@ -6,6 +6,7 @@ import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.AlertBox;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
+import de.uol.swp.common.game.messages.ActualPointMessage;
 import de.uol.swp.client.game.container.GeneralLayoutContainer;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
@@ -69,6 +70,8 @@ public class GameViewPresenter extends AbstractPresenter {
     private Short numberOfPlayersInGame;
     private int usableMoney;
 
+    @FXML
+    Label actualPoints;
     @FXML
     private Pane gameViewWIP;
     @FXML
@@ -1449,6 +1452,17 @@ public class GameViewPresenter extends AbstractPresenter {
             });
         }
     }
+
+
+    @Subscribe
+    public void actualPointMassage(ActualPointMessage msg) {
+        if (msg.getLobbyID().equals(lobbyID)) {
+            Platform.runLater(() -> {
+                actualPoints.setText(msg.getPoints().toString());
+            });
+        }
+    }
+
 
     /**
      * Die Region, die zu der übergebenen Zone gehört, wird zurückgegeben.

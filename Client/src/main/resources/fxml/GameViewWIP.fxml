@@ -47,6 +47,16 @@
                                 <Insets right="3.0" />
                             </HBox.margin>
                         </ListView>
+
+                <Label fx:id="actualPoints" layoutX="921.0" layoutY="54.0" prefHeight="17.0" prefWidth="79.0" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold Italic" size="22.0" />
+                    </font>
+                    <HBox.margin>
+                        <Insets right="15.0" />
+                    </HBox.margin>
+                </Label>
+
                     </children>
                 </HBox>
                 <HBox opacity="0.73" prefHeight="115.0" prefWidth="300.0" style="-fx-background-color: #3D3D3D;">
