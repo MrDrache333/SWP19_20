@@ -235,7 +235,6 @@ public class ChatViewPresenter extends AbstractPresenter {
 
         //Automatisches Scrollen zur neuesten Nachricht
         chatMessages.addListener((ListChangeListener<VBox>) change -> Platform.runLater(() -> messageView.scrollTo(messageView.getItems().size() - 1)));
-
         //Verwende den richtigen Namen im Label
         titleLabel.setText(chatTitle.toUpperCase() + " CHAT");
         if (!chatID.equals("global")) {
@@ -275,7 +274,7 @@ public class ChatViewPresenter extends AbstractPresenter {
                 } catch (Exception e) {
                     LOG.debug("Nachricht konnte nicht angezeigt werden");
                 }
-            if (!loggedInUser.getUsername().equals(msg.getMessage().getSender().getUsername()) && msg.getMessage().getSender().getUsername().equals("server"))
+            if (!loggedInUser.getUsername().equals(msg.getMessage().getSender().getUsername()))
                 new SoundMediaPlayer(SoundMediaPlayer.Sound.Message_Receive, SoundMediaPlayer.Type.Sound).play();
             Platform.runLater(() -> {
                 //Loesche alte Nachrichten bei Bedarf
