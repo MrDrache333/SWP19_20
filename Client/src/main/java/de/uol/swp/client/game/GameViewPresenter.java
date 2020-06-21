@@ -612,15 +612,15 @@ public class GameViewPresenter extends AbstractPresenter {
     @Subscribe
     public void onStartPoopBreakMessage(StartPoopBreakMessage msg) {
         if (msg.getGameID().equals(lobbyID)) {
+            Platform.runLater(() -> {
+                countdownLabel.setText("60");
+                countdownInformation.setText(msg.getPoopInitiator().equals(loggedInUser) ? "Du bist auf dem Klo!" : msg.getPoopInitiator().getUsername() + " ist auf Klo!");
+                countdownInformation.setLayoutX(countdownPane.getLayoutX());
+                cancelPoopTimer.setVisible(msg.getPoopInitiator().equals(loggedInUser));
+            });
             showPoopVote(false, msg.getPoopInitiator());
             showPoopBreakView(true);
         }
-        Platform.runLater(() -> {
-            countdownLabel.setText("60");
-            countdownInformation.setText(msg.getPoopInitiator().equals(loggedInUser) ? "Du bist auf dem Klo!" : msg.getPoopInitiator().getUsername() + " ist auf Klo!");
-            countdownInformation.setLayoutX(countdownPane.getWidth() / 2 - countdownInformation.getWidth() / 2);
-            cancelPoopTimer.setVisible(msg.getPoopInitiator().equals(loggedInUser));
-        });
     }
 
     /**
@@ -637,7 +637,6 @@ public class GameViewPresenter extends AbstractPresenter {
             Platform.runLater(() -> {
                 countdownLabel.setText(countdown < 10 ? "0" + countdown : String.valueOf(countdown));
                 countdownLabel.setAlignment(Pos.CENTER);
-                countdownLabel.setTranslateY(countdownInformation.getTranslateY() + 30);
             });
             if (countdown <= 0) {
                 showPoopBreakView(false);
@@ -772,7 +771,7 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
-        if (message.getLobbyID().equals(this.lobbyID)) {
+        if (message.getLobbyID().equals(this.lobbyID) && !message.getUser().equals(loggedInUser)) {
             if (message.getLobby().getInGame()) {
                 Platform.runLater(() -> updateEnemiesOnBoard(message.getLobby().getUsers()));
             }

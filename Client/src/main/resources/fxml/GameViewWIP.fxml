@@ -356,12 +356,12 @@
         </Pane>
       <Pane fx:id="countdownPane" disable="true" layoutX="300.0" prefHeight="750.0" prefWidth="980.0" style="-fx-background-color: black;" visible="false">
          <children>
-            <Label fx:id="countdownLabel" layoutX="403.0" layoutY="313.0" text="60">
+            <Label fx:id="countdownLabel" alignment="CENTER" focusTraversable="false" layoutX="403.0" layoutY="313.0" text="60">
                <font>
                   <Font name="System Bold" size="150.0" />
                </font>
             </Label>
-            <Label fx:id="countdownInformation" layoutX="266.0" layoutY="225.0" text="User ist auf Klo!">
+            <Label fx:id="countdownInformation" alignment="CENTER" focusTraversable="false" layoutX="266.0" layoutY="225.0" text="User ist auf Klo!">
                <font>
                   <Font name="System Bold" size="60.0" />
                </font>

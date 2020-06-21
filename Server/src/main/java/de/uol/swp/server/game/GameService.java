@@ -314,12 +314,12 @@ public class GameService extends AbstractService {
                 poopMap.put(req.getUser(), req.getPoopDecision());
                 sendToAllPlayers(req.getGameID(), new PoopBreakMessage(poopInitiator, req.getUser(), req.getGameID(), poopMap));
             }
-            if  (poopMap.values().stream().filter(d -> d).count() >= (actualPlayers.size() == 4 ? 3 : 2)) {
+            if  (actualPlayers.size() < 2 || poopMap.values().stream().filter(d -> d).count() >= (actualPlayers.size() == 4 ? 3 : 2)) {
                 sendToAllPlayers(req.getGameID(), new StartPoopBreakMessage(poopInitiator, req.getGameID()));
                 poopMap.clear();
                 clock(req.getGameID());
             }
-            if (poopMap.values().stream().filter(d -> !d).count() >= (actualPlayers.size() > 2 ? 2 : 1)) {
+            else if (poopMap.values().stream().filter(d -> !d).count() >= (actualPlayers.size() > 2 ? 2 : 1)) {
                 sendToAllPlayers(req.getGameID(), new CancelPoopBreakMessage(poopInitiator, req.getGameID(), new ArrayList<>(poopMap.values())));
                 poopMap.clear();
                 poopInitiator = null;
