@@ -70,6 +70,7 @@ public class GameViewPresenter extends AbstractPresenter {
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
     private final UUID lobbyID;
     private User loggedInUser;
+    private User poopInitiator;
     private Short numberOfPlayersInGame;
     private int usableMoney;
 
@@ -123,7 +124,6 @@ public class GameViewPresenter extends AbstractPresenter {
     private ImageView bigCardImage;
     @FXML
     private Button buyCardButton;
-    private final Map<Short, Label> cardLabels = new HashMap<>();
     @FXML
     private Label countCopperLabel;
     @FXML
@@ -232,11 +232,12 @@ public class GameViewPresenter extends AbstractPresenter {
     private final ColorAdjust notChosenCard = new ColorAdjust();
     private final ArrayList<Short> chosenCardsId = new ArrayList<>();
     private final ArrayList<ImageView> chosenCards = new ArrayList<>();
+    private final ArrayList<ImageView> cardsToMove = new ArrayList<>();
+    private final Map<Short, Label> cardLabels = new HashMap<>();
     private int numberOfCardsToChoose;
     private String currentInfoText;
     private final HashMap<String, HashMap<ZoneType, GeneralLayoutContainer>> usersContainer = new HashMap<>();
     private volatile boolean deleteHandCardsFromOpponent = false;
-    private final ArrayList<ImageView> cardsToMove = new ArrayList<>();
     private static final double BLUR_AMOUNT = 60;
     private static final Effect frostEffect = new BoxBlur(BLUR_AMOUNT, BLUR_AMOUNT, 3);
     private Timeline animation;
@@ -322,6 +323,7 @@ public class GameViewPresenter extends AbstractPresenter {
         this.injector = injector;
         this.gameManagement = gameManagement;
         this.gameService = gameService;
+        this.poopInitiator = null;
         makeImageDarker.setBrightness(-0.7);
         // Die Hände für jeden Spieler
         handcards = new GeneralLayoutContainer(575, 630, 110, 420, "My.HCLC");
@@ -366,6 +368,8 @@ public class GameViewPresenter extends AbstractPresenter {
         alert.getDialogPane().setHeaderText(title);
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
+            if (loggedInUser.equals(poopInitiator))
+                gameManagement.getGameService().cancelPoopBreak(loggedInUser, lobbyID);
             gameManagement.getGameService().giveUp(lobbyID, (UserDTO) loggedInUser);
         }
     }
@@ -573,6 +577,8 @@ public class GameViewPresenter extends AbstractPresenter {
     @Subscribe
     public void onPoopBreakMessage(PoopBreakMessage msg) {
         if (poopButtonImage.isVisible() && chatHeader.isVisible()) {
+            if(msg.getPoopInitiator() != null)
+                poopInitiator = msg.getPoopInitiator();
             Platform.runLater(() -> {
                 poopMessage.setText(msg.getPoopInitiator().equals(loggedInUser) ? "Du musst auf Klo!" : msg.getPoopInitiator().getUsername() + " muss auf Klo!");
                 poopMessage.setAlignment(Pos.TOP_CENTER);
@@ -598,10 +604,9 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void onCancelPoopBreakMessage(CancelPoopBreakMessage msg) {
-        if (msg.getVotes() == null)
-            showPoopBreakView(false);
-        else
-            showPoopVote(false);
+        showPoopBreakView(false);
+        showPoopVote(false);
+        poopInitiator = null;
     }
 
     /**

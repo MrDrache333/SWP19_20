@@ -45,6 +45,7 @@ public class GameService extends AbstractService {
     private User poopInitiator = null;
     private Timer timer;
     private int interval;
+    private boolean timerStarted;
     private static final int DELAY = 1000;
     private static final int PERIOD = 1000;
 
@@ -63,6 +64,7 @@ public class GameService extends AbstractService {
         this.gameManagement = gameManagement;
         this.authenticationService = authenticationService;
         gameManagement.setGameService(this);
+        timerStarted = false;
     }
 
     //--------------------------------------
@@ -337,8 +339,9 @@ public class GameService extends AbstractService {
     @Subscribe
     public void onCancelPoopBreakRequest(CancelPoopBreakRequest req) {
         Optional<Game> game = gameManagement.getGame(req.getGameID());
-        if (game.isPresent() && req.getUser().equals(poopInitiator)) {
+        if (timerStarted && game.isPresent() && req.getUser().equals(poopInitiator)) {
             timer.cancel();
+            timerStarted = false;
             interval = 0;
             sendToAllPlayers(req.getGameID(), new CancelPoopBreakMessage(poopInitiator, req.getGameID()));
             poopInitiator = null;
@@ -358,6 +361,8 @@ public class GameService extends AbstractService {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
+                if (!timerStarted)
+                    timerStarted = true;
                 sendToAllPlayers(gameID, new CountdownRefreshMessage(gameID, countdownTimer()));
             }
         }, DELAY, PERIOD);
@@ -369,8 +374,10 @@ public class GameService extends AbstractService {
      * @return Den Countdown - 1
      */
     private int countdownTimer() {
-        if (interval <= 0)
+        if (interval <= 0) {
             timer.cancel();
+            timerStarted = false;
+        }
         return --interval;
     }
 
