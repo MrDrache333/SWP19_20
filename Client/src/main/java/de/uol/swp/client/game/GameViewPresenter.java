@@ -71,6 +71,8 @@ public class GameViewPresenter extends AbstractPresenter {
     private int usableMoney;
 
     @FXML
+    Label actualPoints;
+    @FXML
     private Pane gameViewWIP;
     @FXML
     private Pane chatView;
@@ -1451,9 +1453,6 @@ public class GameViewPresenter extends AbstractPresenter {
         }
     }
 
-
-    @FXML
-    Label actualPoints;
 
     @Subscribe
     public void actualPointMassage(ActualPointMessage msg) {

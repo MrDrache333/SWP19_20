@@ -258,7 +258,7 @@ public class Playground extends AbstractPlayground {
             int size = player.getPlayerDeck().getCardsDeck().size();
             gameService.sendToSpecificPlayer(player, new CardsDeckSizeMessage(theSpecificLobbyID, player.getTheUserInThePlayer(), size));
             actualPlayer.getPlayerDeck().countSiegpunkte();
-            ActualPointMessage actualPointMessage = new ActualPointMessage(theSpecificLobbyID, (UserDTO) actualPlayer.getTheUserInThePlayer(), actualPlayer.getPlayerDeck().getSiegpunkte());
+            ActualPointMessage actualPointMessage = new ActualPointMessage(theSpecificLobbyID, actualPlayer.getPlayerDeck().getSiegpunkte());
             gameService.sendToSpecificPlayer(player, actualPointMessage);
         }
     }
@@ -361,7 +361,7 @@ public class Playground extends AbstractPlayground {
 
     public void actualPoint() {
         actualPlayer.getPlayerDeck().countSiegpunkte();
-        ActualPointMessage actualPointMessage = new ActualPointMessage(theSpecificLobbyID, (UserDTO) actualPlayer.getTheUserInThePlayer(), actualPlayer.getPlayerDeck().getSiegpunkte());
+        ActualPointMessage actualPointMessage = new ActualPointMessage(theSpecificLobbyID, actualPlayer.getPlayerDeck().getSiegpunkte());
         gameService.sendToSpecificPlayer(actualPlayer, actualPointMessage);
     }
 

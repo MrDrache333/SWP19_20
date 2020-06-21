@@ -42,18 +42,19 @@ public class Deck {
      * Zählt die Siegpunkte und fügt sie dem Attribut hinzu.
      */
     public void countSiegpunkte() {
-        if (siegpunkte != 0) {
+
             siegpunkte = 0;
-            for (Card card : cardsDeck) {
+            ArrayList<Card> allCards = new ArrayList<>();
+            allCards.addAll(cardsDeck);
+            allCards.addAll(discardPile);
+            allCards.addAll(hand);
+            allCards.addAll(temp);
+            for (Card card : allCards) {
                 if (card.getCardType().equals(Card.Type.VALUECARD)) {
                     ValueCard theValueCard = (ValueCard) card;
                     siegpunkte += (int) theValueCard.getValue();
                 }
             }
-        } else {
-            // TODO: Code Refactoring durchführen...
-            siegpunkte = 0;
-        }
     }
 
 
