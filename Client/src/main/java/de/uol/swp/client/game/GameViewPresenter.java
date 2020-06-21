@@ -564,7 +564,7 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Bei Empfang einer PoopBreakMessage soll entweder eine Votingphase iniziiert oder der Pausebildschirm aufgerufen werden.
+     * Bei Empfang einer PoopBreakMessage soll eine Votingphase iniziiert werden.
      *
      * @param msg Die PoopBreakMessage
      * @author Keno S.
@@ -577,41 +577,50 @@ public class GameViewPresenter extends AbstractPresenter {
                 poopMessage.setText(msg.getPoopInitiator().getUsername() + " muss auf Klo!");
                 poopMessage.setAlignment(Pos.TOP_CENTER);
             });
-            showPoopVote(true);
+            showPoopVote(true, msg.getPoopInitiator());
         }
-        if (msg.getDecisions().size() >= 1) {
-            if (msg.getDecisions() != null)
-                Platform.runLater(() -> acceptButton.setText("Okay (" + msg.getAcceptedVotes() + ")"));
-            if (msg.getDecisions() != null)
-                Platform.runLater(() -> declineButton.setText("Nope (" + msg.getDeclinedVotes() + ")"));
-        }
-        if (msg.getDeclinedVotes() >= (users.size() == 2 ? 1 : 2)) {
-            showPoopVote(false);
-            LOG.debug("Akzeptierte Votes: " + msg.getAcceptedVotes() + ", abgelehnte Votes: " + msg.getDeclinedVotes() + "\nVoting abgebrochen.");
-        }
-        else if (msg.getAcceptedVotes() >= (users.size() == 2 ? 2 : users.size() - 1)) {
-            showPoopVote(false);
-            LOG.debug("Akzeptierte Votes: " + msg.getAcceptedVotes() + ", abgelehnte Votes: " + msg.getDeclinedVotes() + "\nVoting erfolgreich.");
-            showPoopBreakView(true);
+        if (!msg.getDecisions().isEmpty()) {
             Platform.runLater(() -> {
-                countdownLabel.setText("60");
-                countdownInformation.setText(msg.getPoopInitiator().equals(loggedInUser) ? "Du bist auf dem Klo!" : msg.getPoopInitiator().getUsername() + " ist auf Klo!");
-                countdownInformation.setLayoutX(countdownPane.getWidth() / 2 - countdownInformation.getWidth() / 2);
-                cancelPoopTimer.setVisible(msg.getPoopInitiator().equals(loggedInUser));
+                acceptButton.setText("Okay (" + msg.getAcceptedVotes() + ")");
+                declineButton.setText("Nope (" + msg.getDeclinedVotes() + ")");
             });
         }
     }
 
     /**
-     * Bei Empfang einer CancelPoopBreakMessage der Pausebildschirm unsichtbar gemacht werden.
+     * Bei Empfang einer CancelPoopBreakMessage wird der Pausebildschirm unsichtbar gemacht.
      *
-     * @param msg Die PoopBreakMessage
+     * @param msg Die CancelPoopBreakMessage
      * @author Keno S.
      * @since Sprint 10
      */
     @Subscribe
     public void onCancelPoopBreakMessage(CancelPoopBreakMessage msg) {
-        showPoopBreakView(false);
+        if (msg.getVotes() == null)
+            showPoopBreakView(false);
+        else
+            showPoopVote(false, msg.getPoopInitiator());
+    }
+
+    /**
+     * Bei Empfang einer StartPoopBreakMessage wird der Pausebilschirm angezeigt.
+     *
+     * @param msg StartPoopBreakMessage
+     * @author Keno S.
+     * @since Sprint 10
+     */
+    @Subscribe
+    public void onStartPoopBreakMessage(StartPoopBreakMessage msg) {
+        if (msg.getGameID().equals(lobbyID)) {
+            showPoopVote(false, msg.getPoopInitiator());
+            showPoopBreakView(true);
+        }
+        Platform.runLater(() -> {
+            countdownLabel.setText("60");
+            countdownInformation.setText(msg.getPoopInitiator().equals(loggedInUser) ? "Du bist auf dem Klo!" : msg.getPoopInitiator().getUsername() + " ist auf Klo!");
+            countdownInformation.setLayoutX(countdownPane.getWidth() / 2 - countdownInformation.getWidth() / 2);
+            cancelPoopTimer.setVisible(msg.getPoopInitiator().equals(loggedInUser));
+        });
     }
 
     /**
@@ -623,19 +632,16 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void onCountdownRefreshMessage(CountdownRefreshMessage msg) {
-        if (msg.getGameID().equals(lobbyID))
+        if (msg.getGameID().equals(lobbyID)) {
             countdown = msg.getCountdown();
-        else
-            countdown = 0;
-
-        Platform.runLater(() -> {
-            countdownLabel.setText(countdown < 10 ? "0" + countdown : String.valueOf(countdown));
-            countdownLabel.setAlignment(Pos.CENTER);
-            countdownLabel.setTranslateY(countdownInformation.getTranslateY() + 30);
-        });
-
-        if (countdown <= 0) {
-            showPoopBreakView(false);
+            Platform.runLater(() -> {
+                countdownLabel.setText(countdown < 10 ? "0" + countdown : String.valueOf(countdown));
+                countdownLabel.setAlignment(Pos.CENTER);
+                countdownLabel.setTranslateY(countdownInformation.getTranslateY() + 30);
+            });
+            if (countdown <= 0) {
+                showPoopBreakView(false);
+            }
         }
     }
 
@@ -677,16 +683,16 @@ public class GameViewPresenter extends AbstractPresenter {
      * @author Keno S.
      * @since Sprint 10
      */
-    private void showPoopVote(boolean enabled) {
+    private void showPoopVote(boolean enabled, User poopInitiator) {
         if (enabled) {
             Platform.runLater(() -> {
                 poopButtonImage.setVisible(false);
                 chatHeader.setVisible(false);
                 poopMessage.setVisible(true);
                 acceptButton.setVisible(true);
-                acceptButton.setDisable(false);
+                acceptButton.setDisable(loggedInUser.equals(poopInitiator));
                 declineButton.setVisible(true);
-                declineButton.setDisable(false);
+                declineButton.setDisable(loggedInUser.equals(poopInitiator));
             });
         }
         else {

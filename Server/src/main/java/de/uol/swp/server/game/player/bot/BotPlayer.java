@@ -15,7 +15,7 @@ import java.util.UUID;
 public class BotPlayer extends Player {
     protected EventBus eventBus;
 
-    private final UUID gameId;
+    private final UUID gameID;
 
     /**
      * Erstellt einen neuen Bot.
@@ -29,7 +29,7 @@ public class BotPlayer extends Player {
         super(playerName);
         this.eventBus = bus;
         eventBus.register(this);
-        this.gameId = gameID;
+        this.gameID = gameID;
         User botFakeUser = new UserDTO(playerName, gameID.toString(), "", true);
         this.setTheUserInThePlayer(botFakeUser);
     }
@@ -46,7 +46,7 @@ public class BotPlayer extends Player {
     @Subscribe
     public void onStartBuyPhaseMessage(StartBuyPhaseMessage msg) {
         if (msg.getUser().getUsername().equals(getTheUserInThePlayer().getUsername())) {
-            SkipPhaseRequest req = new SkipPhaseRequest(this.getTheUserInThePlayer(), gameId);
+            SkipPhaseRequest req = new SkipPhaseRequest(this.getTheUserInThePlayer(), gameID);
             eventBus.post(req);
         }
     }
@@ -59,11 +59,10 @@ public class BotPlayer extends Player {
     @Subscribe
     public void onStartActionPhaseMessage(StartActionPhaseMessage msg) {
         if (msg.getUser().getUsername().equals(getTheUserInThePlayer().getUsername())) {
-            SkipPhaseRequest req = new SkipPhaseRequest(this.getTheUserInThePlayer(), gameId);
+            SkipPhaseRequest req = new SkipPhaseRequest(this.getTheUserInThePlayer(), gameID);
             eventBus.post(req);
         }
     }
-
 
     /**
      * Es wird der gesetzte Eventbus gelöscht

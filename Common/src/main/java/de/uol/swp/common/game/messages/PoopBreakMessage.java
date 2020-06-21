@@ -3,14 +3,15 @@ package de.uol.swp.common.game.messages;
 import de.uol.swp.common.message.AbstractServerMessage;
 import de.uol.swp.common.user.User;
 
-import java.util.ArrayList;
+import java.util.Map;
 import java.util.UUID;
 
 public class PoopBreakMessage extends AbstractServerMessage {
 
     private final User poopInitiator;
+    private final User reqUser;
     private final UUID gameID;
-    private final ArrayList<Boolean> decisions;
+    private final Map<User, Boolean> decisions;
 
     /**
      * Der Konstruktor der PoopBreakMessage.
@@ -21,8 +22,9 @@ public class PoopBreakMessage extends AbstractServerMessage {
      * @author Keno S.
      * @since Sprint 10
      */
-    public PoopBreakMessage(User poopInitiator, UUID gameID, ArrayList<Boolean> decisions) {
+    public PoopBreakMessage(User poopInitiator, User reqUser, UUID gameID, Map<User, Boolean> decisions) {
         this.poopInitiator = poopInitiator;
+        this.reqUser = reqUser;
         this.gameID = gameID;
         this.decisions = decisions;
     }
@@ -50,7 +52,7 @@ public class PoopBreakMessage extends AbstractServerMessage {
      *
      * @return Die Entscheidungen
      */
-    public ArrayList<Boolean> getDecisions() {
+    public Map<User, Boolean> getDecisions() {
         return decisions;
     }
 
@@ -60,7 +62,7 @@ public class PoopBreakMessage extends AbstractServerMessage {
      * @return Die zugestimmten Votes
      */
     public int getAcceptedVotes() {
-        return (int) decisions.stream().filter(d -> d).count();
+        return (int) decisions.values().stream().filter(d -> d).count();
     }
 
     /**
@@ -69,6 +71,15 @@ public class PoopBreakMessage extends AbstractServerMessage {
      * @return Die abgelehnten Votes
      */
     public int getDeclinedVotes() {
-        return (int) decisions.stream().filter(d -> !d).count();
+        return (int) decisions.values().stream().filter(d -> !d).count();
+    }
+
+    /**
+     * Gibt den User zurück, der den Request gesendet hat.
+     *
+     * @return Der reqUser
+     */
+    public User getReqUser() {
+        return reqUser;
     }
 }

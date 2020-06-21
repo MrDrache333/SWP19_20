@@ -13,6 +13,7 @@ import de.uol.swp.common.game.exception.NotEnoughMoneyException;
 import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.game.request.*;
+import de.uol.swp.common.lobby.exception.LobbyExceptionMessage;
 import de.uol.swp.common.lobby.request.LobbyLeaveUserRequest;
 import de.uol.swp.common.lobby.request.UpdateInGameRequest;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
@@ -40,7 +41,7 @@ public class GameService extends AbstractService {
     private final UserDTO infoUser = new UserDTO("infoUser", "", "");
     private final Timer poopTimer = new Timer();
     private final Map<User, Boolean> poopMap = new HashMap<>();
-    List<Player> players = new ArrayList<>();
+    List<Player> actualPlayers = new ArrayList<>();
     private User poopInitiator = null;
     private Timer timer;
     private int interval;
@@ -151,8 +152,10 @@ public class GameService extends AbstractService {
     void startGame(StartGameInternalMessage msg) {
         try {
             gameManagement.createGame(msg.getLobbyID());
-            Game game = gameManagement.getGame(msg.getLobbyID()).get();
-            game.getPlayground().newTurn();
+            if (gameManagement.getGame(msg.getLobbyID()).isPresent()) {
+                Game game = gameManagement.getGame(msg.getLobbyID()).get();
+                game.getPlayground().newTurn();
+            }
         } catch (GameManagementException e) {
             LOG.error("Es wurde eine GameManagementException geworfen: " + e.getMessage());
             // TODO: In späteren Sprints hier ggf. weiteres Handling?
@@ -193,15 +196,19 @@ public class GameService extends AbstractService {
      */
     @Subscribe
     void userGivesUp(GameGiveUpRequest req) {
-        Boolean userRemovedSuccessfully = gameManagement.getGame(req.getLobbyID()).get().getPlayground().playerGaveUp(req.getLobbyID(), req.getGivingUpUser(), req.getGivingUp());
-        if (userRemovedSuccessfully && !(gameManagement.lobbyIsNotPresent(req.getLobbyID()))) {
-            sendToAllPlayers(req.getLobbyID(), new UserGaveUpMessage(req.getLobbyID(), req.getGivingUpUser(), true));
-            sendToAllPlayers(req.getLobbyID(), new NewChatMessage(req.getLobbyID().toString(), new ChatMessage(infoUser, req.getGivingUpUser().getUsername() + " gab auf!")));
-        } else {
-            LOG.error("User " + req.getGivingUpUser().getUsername() + "konnte nicht aufgeben");
-            post(new AllOnlineLobbiesResponse(gameManagement.getAllLobbies()));
-            // TODO: Implementierung: Was passiert wenn der User nicht entfernt werden kann? Welche Fälle gibt es?
+        if (gameManagement.getGame(req.getLobbyID()).isPresent()) {
+            Boolean userRemovedSuccessfully = gameManagement.getGame(req.getLobbyID()).get().getPlayground().playerGaveUp(req.getLobbyID(), req.getGivingUpUser(), req.getGivingUp());
+            if (userRemovedSuccessfully && !(gameManagement.lobbyIsNotPresent(req.getLobbyID()))) {
+                sendToAllPlayers(req.getLobbyID(), new UserGaveUpMessage(req.getLobbyID(), req.getGivingUpUser(), true));
+                sendToAllPlayers(req.getLobbyID(), new NewChatMessage(req.getLobbyID().toString(), new ChatMessage(infoUser, req.getGivingUpUser().getUsername() + " gab auf!")));
+            } else {
+                LOG.error("User " + req.getGivingUpUser().getUsername() + "konnte nicht aufgeben");
+                post(new AllOnlineLobbiesResponse(gameManagement.getAllLobbies()));
+                // TODO: Implementierung: Was passiert wenn der User nicht entfernt werden kann? Welche Fälle gibt es?
+            }
         }
+        else
+            sendToAllPlayers(req.getLobbyID(), new LobbyExceptionMessage(req.getLobbyID(), "Der User konnte nicht entfernt werden!"));
     }
 
     public void userGavesUpLeavesLobby(UUID gameID, UserDTO user) {
@@ -296,18 +303,26 @@ public class GameService extends AbstractService {
     public void onPoopBreakRequest(PoopBreakRequest req) {
         Optional<Game> game = gameManagement.getGame(req.getGameID());
         if (game.isPresent()) {
-            players = game.get().getPlayground().getPlayers();
-
+            actualPlayers.clear();
+            game.get().getPlayground().getPlayers().forEach(player -> {
+                if (!player.isBot() && !actualPlayers.contains(player))
+                    actualPlayers.add(player);
+            });
             if (poopInitiator == null && req.getPoopInitiator() != null)
                 poopInitiator = req.getPoopInitiator();
-
             if (!poopMap.containsKey(req.getUser())) {
                 poopMap.put(req.getUser(), req.getPoopDecision());
-                sendToAllPlayers(req.getGameID(), new PoopBreakMessage(poopInitiator, req.getGameID(), new ArrayList<>(poopMap.values())));
+                sendToAllPlayers(req.getGameID(), new PoopBreakMessage(poopInitiator, req.getUser(), req.getGameID(), poopMap));
             }
-            if  (poopMap.values().stream().filter(d -> d).count() >= (players.size() == 2 ? 2 : players.size() - 1)) {
+            if  (poopMap.values().stream().filter(d -> d).count() >= (actualPlayers.size() == 4 ? 3 : 2)) {
+                sendToAllPlayers(req.getGameID(), new StartPoopBreakMessage(poopInitiator, req.getGameID()));
                 poopMap.clear();
                 clock(req.getGameID());
+            }
+            if (poopMap.values().stream().filter(d -> !d).count() >= (actualPlayers.size() > 2 ? 2 : 1)) {
+                sendToAllPlayers(req.getGameID(), new CancelPoopBreakMessage(poopInitiator, req.getGameID(), new ArrayList<>(poopMap.values())));
+                poopMap.clear();
+                poopInitiator = null;
             }
         }
     }
@@ -322,11 +337,11 @@ public class GameService extends AbstractService {
     @Subscribe
     public void onCancelPoopBreakRequest(CancelPoopBreakRequest req) {
         Optional<Game> game = gameManagement.getGame(req.getGameID());
-        if (game.isPresent() && req.getUser().equals(poopInitiator) && !poopMap.isEmpty()) {
-            poopInitiator = null;
+        if (game.isPresent() && req.getUser().equals(poopInitiator)) {
             timer.cancel();
             interval = 0;
-            sendToAllPlayers(req.getGameID(), new CancelPoopBreakMessage(req.getGameID(), req.getUser()));
+            sendToAllPlayers(req.getGameID(), new CancelPoopBreakMessage(poopInitiator, req.getGameID()));
+            poopInitiator = null;
         }
     }
 
