@@ -3,6 +3,7 @@ package de.uol.swp.client.game;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.AlertBox;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.container.GeneralLayoutContainer;
@@ -31,10 +32,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
@@ -45,9 +43,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -332,24 +327,13 @@ public class GameViewPresenter extends AbstractPresenter {
      * @since Sprint 3
      */
     public void showGiveUpAlert(String message, String title) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "");
-        alert.setResizable(false);
-        alert.initModality(Modality.APPLICATION_MODAL);
+        AlertBox alert = new AlertBox(Alert.AlertType.CONFIRMATION);
         alert.getDialogPane().setContentText(message);
         alert.getDialogPane().setHeaderText(title);
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
             gameManagement.getGameService().giveUp(lobbyID, (UserDTO) loggedInUser);
         }
-    }
-
-    public void showAlert(Alert.AlertType type, String message, String title) {
-        Alert alert = new Alert(type, "");
-        alert.setResizable(false);
-        alert.initModality(Modality.APPLICATION_MODAL);
-        alert.getDialogPane().setContentText(message);
-        alert.getDialogPane().setHeaderText(title);
-        alert.showAndWait();
     }
 
     /**
@@ -420,6 +404,18 @@ public class GameViewPresenter extends AbstractPresenter {
             for (Short key : cardLabels.keySet()) {
                 Label l = cardLabels.get(key);
                 l.setText(String.valueOf(cardsToBuy.get(key)));
+            }
+        });
+        ArrayList<GeneralLayoutContainer> allContainer = new ArrayList<>(Arrays.asList(handcards, firstEnemyHand,
+                secondEnemyHand, thirdEnemyHand, myPCLC, firstEnemyPCLC, secondEnemyPCLC, thirdEnemyPCLC, myDPLC,
+                firstEnemyDPLC, secondEnemyDPLC, thirdEnemyDPLC, myDLC, firstEnemyDLC, secondEnemyDLC, thirdEnemyDLC));
+        Platform.runLater(() -> {
+            for (GeneralLayoutContainer theContainer : allContainer) {
+                int sizeChildren = theContainer.getChildren().size() - 1;
+                while (sizeChildren >= 0) {
+                    theContainer.getChildren().remove(sizeChildren);
+                    sizeChildren--;
+                }
             }
         });
     }
@@ -544,12 +540,17 @@ public class GameViewPresenter extends AbstractPresenter {
      * Aktualisiert den loggedInUser sowie die Liste, wenn ein Spieler die Lobby (also das Spiel) verlässt.
      *
      * @param message die Nachricht
-     * @author Alex
+     * @author Alex, Paula, Fenja
      * @since Sprint 7
      */
     @Subscribe
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
         if (message.getLobbyID().equals(this.lobbyID)) {
+            if (message.getLobby().getInGame()) {
+                Platform.runLater(() -> {
+                    updateEnemiesOnBoard(message.getLobby().getUsers());
+                });
+            }
             getInGameUserList(this.lobbyID);
             LOG.debug("Ein User hat die Lobby verlassen. User werden aktualisiert.");
         }
@@ -683,7 +684,7 @@ public class GameViewPresenter extends AbstractPresenter {
                         }
                     });
                 } else {
-                    showAlert(Alert.AlertType.WARNING, "Du kannst die Karte nicht spielen!", "Fehler");
+                    new AlertBox(Alert.AlertType.WARNING, "Du kannst die Karte nicht spielen!", "Fehler");
                     LOG.debug("Das Spielen der Karte " + msg.getHandCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
                 }
             }
@@ -777,7 +778,7 @@ public class GameViewPresenter extends AbstractPresenter {
         if (msg.getGameID().equals(lobbyID) && !msg.getCurrentUser().equals(loggedInUser)) {
             Task<Void> task = new Task<>() {
                 @Override
-                protected Void call() {
+                protected Void call(){
                     // Wenn ein anderer Spieler eine ClearPhaseMessage erhählt wird dies den anderen Spielern
                     // angezeigt, indem deren Repräsentation des Spieler seine Handkarten und ausgespielten Karten auf den Ablagestapel legt.
                     Platform.runLater(() -> {
@@ -885,8 +886,7 @@ public class GameViewPresenter extends AbstractPresenter {
                         th.start();
                     }
                 }
-            }
-            else if (message.getPlayer() != null && !message.getPlayer().equals(loggedInUser)) {
+            } else if (message.getPlayer() != null && !message.getPlayer().equals(loggedInUser)) {
                 for (int i = 0; i < message.getCardsOnHand().size(); i++) {
                     ImageView card = new Card("card_back", 80);
                     Platform.runLater(() -> usersContainer.get(message.getPlayer().getUsername()).get(ZoneType.HAND).getChildren().add(card));
@@ -906,20 +906,7 @@ public class GameViewPresenter extends AbstractPresenter {
     public void onGameExceptionMessage(GameExceptionMessage msg) {
         if (msg.getGameID().equals(lobbyID)) {
             Platform.runLater(() -> {
-                Alert alert = new Alert(Alert.AlertType.ERROR, msg.getMessage());
-                DialogPane root = alert.getDialogPane();
-                Stage dialogStage = new Stage(StageStyle.UTILITY);
-                for (ButtonType buttonType : root.getButtonTypes()) {
-                    ButtonBase button = (ButtonBase) root.lookupButton(buttonType);
-                    button.setOnAction(evt -> dialogStage.close());
-                }
-                root.getScene().setRoot(new Group());
-                root.setPadding(new Insets(10, 0, 10, 0));
-                Scene scene = new Scene(root);
-                dialogStage.setScene(scene);
-                dialogStage.initModality(Modality.APPLICATION_MODAL);
-                dialogStage.setResizable(false);
-                dialogStage.showAndWait();
+                AlertBox alert = new AlertBox(Alert.AlertType.ERROR, msg.getMessage(), "Fehler");
             });
         }
     }
@@ -1036,8 +1023,7 @@ public class GameViewPresenter extends AbstractPresenter {
                             }
                             cardsToMove.add(iv);
                             card = iv;
-                        }
-                        else {
+                        } else {
                             if (destination != ZoneType.TRASH) {
                                 while (deleteHandCardsFromOpponent) {
                                     Thread.onSpinWait();
@@ -1069,8 +1055,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 if (card != null) {
                     ImageView finalCard = card;
                     Platform.runLater(() -> playAnimation(destination, finalCard, source, user));
-                }
-                else {
+                } else {
                     LOG.debug("MoveCard-Aktion konnte nicht durchgeführt werden.");
                 }
             }
@@ -1108,12 +1093,23 @@ public class GameViewPresenter extends AbstractPresenter {
      * Die Methode versteckt auch Spielerplätze wieder, falls ein Spieler das Spiel verlässt.
      *
      * @param usersList Die Liste der Spieler im Spiel bzw. in der Lobby.
-     * @author Alex, Anna
+     * @author Alex, Anna, Fenja, Paula
      * @since Sprint 7
      */
     private void updateEnemiesOnBoard(Set<User> usersList) {
         // Attention: This must be done on the FX Thread!
         int enemyCounter = 0;
+        avatar_icon_left.setVisible(false);
+        avatar_icon_right.setVisible(false);
+        avatar_icon_top.setVisible(false);
+        player1_label.setVisible(false);
+        player2_label.setVisible(false);
+        player3_label.setVisible(false);
+        firstEnemyHand.setVisible(false);
+        secondEnemyHand.setVisible(false);
+        thirdEnemyHand.setVisible(false);
+
+
         for (User u : usersList) {
             if (loggedInUser == null || !u.getUsername().equals(loggedInUser.getUsername())) {
                 enemyCounter++;
@@ -1123,6 +1119,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     player1_label.setVisible(true);
                     avatar_icon_top.setImage(new Image("/images/user/128x128/128_16.png"));
                     avatar_icon_top.setVisible(true);
+                    firstEnemyHand.setVisible(true);
                     enemyContainer.put(ZoneType.HAND, firstEnemyHand);
                     enemyContainer.put(ZoneType.PLAY, firstEnemyPCLC);
                     enemyContainer.put(ZoneType.DISCARD, firstEnemyDPLC);
@@ -1132,6 +1129,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     player2_label.setVisible(true);
                     avatar_icon_left.setImage(new Image("/images/user/128x128/128_14.png"));
                     avatar_icon_left.setVisible(true);
+                    secondEnemyHand.setVisible(true);
                     enemyContainer.put(ZoneType.HAND, secondEnemyHand);
                     enemyContainer.put(ZoneType.PLAY, secondEnemyPCLC);
                     enemyContainer.put(ZoneType.DISCARD, secondEnemyDPLC);
@@ -1141,6 +1139,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     player3_label.setVisible(true);
                     avatar_icon_right.setImage(new Image("/images/user/128x128/128_2.png"));
                     avatar_icon_right.setVisible(true);
+                    thirdEnemyHand.setVisible(true);
                     enemyContainer.put(ZoneType.HAND, thirdEnemyHand);
                     enemyContainer.put(ZoneType.PLAY, thirdEnemyPCLC);
                     enemyContainer.put(ZoneType.DISCARD, thirdEnemyDPLC);
@@ -1148,6 +1147,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 }
                 usersContainer.put(u.getUsername(), enemyContainer);
                 Platform.runLater(() -> {
+                    enemyContainer.values().forEach(gameViewWIP.getChildren()::remove);
                     enemyContainer.values().forEach(gameViewWIP.getChildren()::add);
                     enemyContainer.get(ZoneType.PLAY).toFront();
                 });
@@ -1203,6 +1203,7 @@ public class GameViewPresenter extends AbstractPresenter {
             bigCardImage.setImage(new Image(pfad));
             buyCardButton.setVisible(false);
             bigCardImageBox.setVisible(true);
+            bigCardImageBox.toFront();
         } else {
             if (id > 6 && id != 38 && card.getParent() == handcards) { //nur Aktionskarten, ohne Fluchkarte & nur Karten, welche noch in der Hand zone sind.
                 bigCardImageBox.setVisible(false);
@@ -1235,6 +1236,7 @@ public class GameViewPresenter extends AbstractPresenter {
             bigCardImage.setImage(new Image(pfad));
             buyCardButton.setVisible(false);
             bigCardImageBox.setVisible(true);
+            bigCardImageBox.toFront();
         } else {
             if (!chosenCards.contains(card)) {
                 chosenCards.add(card);
@@ -1275,7 +1277,7 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Die Karten werden zum Ablagestapel bewegt
      *
-     * @param children    Das children von dem Karten Stapel
+     * @param children Das children von dem Karten Stapel
      * @author Darian, Anna
      * @since Sprint 7
      */
@@ -1309,6 +1311,7 @@ public class GameViewPresenter extends AbstractPresenter {
         if (mouseEvent.getButton() != MouseButton.PRIMARY) {
             String PathCardLargeView = "/cards/images/" + cardID + ".png";
             bigCardImage.setImage(new Image(PathCardLargeView));
+            bigCardImageBox.toFront();
             // Aktion hinter dem Kauf-Button
             buyCardButton.setVisible(true);
             buyCardButton.setOnAction(event -> {
@@ -1319,10 +1322,10 @@ public class GameViewPresenter extends AbstractPresenter {
                     this.mouseEvent = mouseEvent;
                 } else {
                     if (!playAllMoneyCardsButton.isVisible()) {
-                        showAlert(Alert.AlertType.INFORMATION, "Du bist nicht dran!", "Fehler");
+                        new AlertBox(Alert.AlertType.INFORMATION, "Du bist nicht dran!", "Fehler");
                     } else {
                         //TODO: ggf. anpassen, wenn man auch Karten kaufen kann ohne sein Geld vorher gespielt zu haben
-                        showAlert(Alert.AlertType.INFORMATION, "Du musst erst deine Geldkarten ausspielen!", "Fehler");
+                        new AlertBox(Alert.AlertType.INFORMATION, "Du musst erst deine Geldkarten ausspielen!", "Fehler");
                     }
                 }
             });
@@ -1358,9 +1361,9 @@ public class GameViewPresenter extends AbstractPresenter {
                 this.mouseEvent = mouseEvent;
             } else {
                 if (!playAllMoneyCardsButton.isVisible()) {
-                    showAlert(Alert.AlertType.INFORMATION, "Du bist nicht dran!", "Fehler");
+                    new AlertBox(Alert.AlertType.INFORMATION, "Du bist nicht dran!", "Fehler");
                 } else {
-                    showAlert(Alert.AlertType.INFORMATION, "Du musst erst deine Geldkarten ausspielen!", "Fehler");
+                    new AlertBox(Alert.AlertType.INFORMATION, "Du musst erst deine Geldkarten ausspielen!", "Fehler");
                 }
             }
         }

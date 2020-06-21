@@ -5,8 +5,8 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.AlertBox;
 import de.uol.swp.client.Notifyer;
-import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.settings.event.CloseSettingsEvent;
 import de.uol.swp.client.settings.event.DeleteAccountEvent;
@@ -114,21 +114,21 @@ public class SettingsPresenter extends AbstractPresenter {
             eventBus.post(new CloseSettingsEvent());
             clearAll();
         } else if (!password.equals(password2)) {
-            SceneManager.showAlert(Alert.AlertType.ERROR, "Die Passwörter stimmen nicht überein", "Fehler");
+            new AlertBox(Alert.AlertType.ERROR, "Die Passwörter stimmen nicht überein", "Fehler");
             passwordField.clear();
             password2Field.clear();
             passwordField.requestFocus();
         } else if (!Strings.isNullOrEmpty(password) && password.contains(" ")) {
-            SceneManager.showAlert(Alert.AlertType.ERROR, "Das Passwort darf keine Leerzeichen enthalten", "Fehler");
+            new AlertBox(Alert.AlertType.ERROR, "Das Passwort darf keine Leerzeichen enthalten", "Fehler");
             passwordField.clear();
             password2Field.clear();
             passwordField.requestFocus();
         } else if (!Strings.isNullOrEmpty(email) && !Pattern.matches("(?:[a-z0-9!#$%&'+/=?^_`{|}~-]+(?:.[a-z0-9!#$%&'+/=?^_`{|}~-]+)|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])\")@(?:(?:[a-z0-9](?:[a-z0-9-][a-z0-9])?.)+[a-z0-9](?:[a-z0-9-][a-z0-9])?|[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+", email)) {
-            SceneManager.showAlert(Alert.AlertType.ERROR, email + " ist keine gültige E-Mail-Adresse", "Fehler");
+            new AlertBox(Alert.AlertType.ERROR, email + " ist keine gültige E-Mail-Adresse", "Fehler");
             emailField.clear();
             emailField.requestFocus();
         } else if (Strings.isNullOrEmpty(currentPassword)) {
-            SceneManager.showAlert(Alert.AlertType.ERROR, "Gib dein aktuelles Passwort ein", "Fehler");
+            new AlertBox(Alert.AlertType.ERROR, "Gib dein aktuelles Passwort ein", "Fehler");
             currentPasswordField.clear();
             currentPasswordField.requestFocus();
         } else {

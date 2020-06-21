@@ -123,7 +123,6 @@ public class DrawHandMessageTest {
         assertEquals(sessions.size(), 2);
         assertTrue(sessions.contains(session1.get()));
         assertTrue(sessions.contains(session2.get()));
-        //TODO: Implementierung des weiteren Tests
     }
 
     /**

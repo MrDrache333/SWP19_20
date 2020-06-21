@@ -31,11 +31,11 @@ public class LobbyManagement {
      */
 
     public UUID createLobby(String name, String lobbyPassword, User owner) {
-        // Erstellen der UUID für die Lobbys.
         UUID lobbyID = UUID.randomUUID();
         LOG.info("Die Lobby " + name + " hat folgende UUID erstellt bekommen: " + lobbyID);
         lobbies.put(lobbyID, new LobbyDTO(name, owner, lobbyID, lobbyPassword));
         return lobbyID;
+
     }
 
     /**

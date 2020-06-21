@@ -46,6 +46,8 @@ public class GameOverViewPresenter extends AbstractPresenter {
     Text bannerTextSmall;
     @FXML
     Text bannerText;
+    @FXML
+    HBox bannerTextSmallBox;
 
     private final GameManagement gameManagement;
 
@@ -98,8 +100,7 @@ public class GameOverViewPresenter extends AbstractPresenter {
             bannerDrawing.toFront();
             bannerTextBox.toFront();
             bannerTextSmall.setText("Herzlichen Glückwunsch!");
-            bannerTextSmall.setLayoutX(89);
-            bannerTextSmall.toFront();
+            bannerTextSmallBox.toFront();
             trophy.setVisible(true);
             trophy.toFront();
             ImageView confettiGoldSlow = new ImageView(new Image("/images/confettiGoldSlow.gif"));

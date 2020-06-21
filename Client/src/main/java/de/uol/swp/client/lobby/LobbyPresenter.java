@@ -4,7 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
-import de.uol.swp.client.SceneManager;
+import de.uol.swp.client.AlertBox;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.common.chat.ChatService;
@@ -19,7 +19,6 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
-import de.uol.swp.common.user.message.UserDroppedMessage;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -470,18 +469,6 @@ public class LobbyPresenter extends AbstractPresenter {
     }
 
     /**
-     * User wird aus der Liste entfernt, wenn er seinen Account gelöscht hat
-     *
-     * @param message Die UserDroppedMessage
-     * @author Julia
-     * @since Sprint 4
-     */
-    @Subscribe
-    public void onUserDroppedMessage(UserDroppedMessage message) {
-        userLeftLobby(message.getUser().getUsername(), false);
-    }
-
-    /**
      * Ein neuer Nutzer tritt der Lobby bei, die Userliste der Lobby wird aktualisiert und eine Nachricht im Chat angezeigt.
      *
      * @param message Die UserJoinedLobbyMessage
@@ -558,7 +545,7 @@ public class LobbyPresenter extends AbstractPresenter {
                 chooseMaxPlayer.setValue(oldMaxPlayerValue);
             }
         });
-        SceneManager.showAlert(Alert.AlertType.ERROR, msg.getMessage(), "Lobby");
+        Platform.runLater(() -> new AlertBox(Alert.AlertType.ERROR, msg.getMessage(), "Lobby"));
     }
 
     //--------------------------------------
