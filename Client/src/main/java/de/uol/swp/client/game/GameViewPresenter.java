@@ -574,13 +574,15 @@ public class GameViewPresenter extends AbstractPresenter {
     public void onPoopBreakMessage(PoopBreakMessage msg) {
         if (poopButtonImage.isVisible() && chatHeader.isVisible()) {
             Platform.runLater(() -> {
-                poopMessage.setText(msg.getPoopInitiator().getUsername() + " muss auf Klo!");
+                poopMessage.setText(msg.getPoopInitiator().equals(loggedInUser) ? "Du musst auf Klo!" : msg.getPoopInitiator().getUsername() + " muss auf Klo!");
                 poopMessage.setAlignment(Pos.TOP_CENTER);
             });
-            showPoopVote(true, msg.getPoopInitiator());
+            showPoopVote(true);
         }
         if (!msg.getDecisions().isEmpty()) {
             Platform.runLater(() -> {
+                acceptButton.setDisable(msg.getDecisions().containsKey(loggedInUser));
+                declineButton.setDisable(msg.getDecisions().containsKey(loggedInUser));
                 acceptButton.setText("Okay (" + msg.getAcceptedVotes() + ")");
                 declineButton.setText("Nope (" + msg.getDeclinedVotes() + ")");
             });
@@ -599,7 +601,7 @@ public class GameViewPresenter extends AbstractPresenter {
         if (msg.getVotes() == null)
             showPoopBreakView(false);
         else
-            showPoopVote(false, msg.getPoopInitiator());
+            showPoopVote(false);
     }
 
     /**
@@ -614,11 +616,11 @@ public class GameViewPresenter extends AbstractPresenter {
         if (msg.getGameID().equals(lobbyID)) {
             Platform.runLater(() -> {
                 countdownLabel.setText("60");
-                countdownInformation.setText(msg.getPoopInitiator().equals(loggedInUser) ? "Du bist auf dem Klo!" : msg.getPoopInitiator().getUsername() + " ist auf Klo!");
-                countdownInformation.setLayoutX(countdownPane.getLayoutX());
+                countdownInformation.setText(msg.getPoopInitiator().equals(loggedInUser) ? "Du bist auf Klo!" : msg.getPoopInitiator().getUsername() + " ist auf Klo!");
+                countdownInformation.setLayoutX(countdownPane.getWidth() / 2 - countdownInformation.getWidth() / 2);
                 cancelPoopTimer.setVisible(msg.getPoopInitiator().equals(loggedInUser));
             });
-            showPoopVote(false, msg.getPoopInitiator());
+            showPoopVote(false);
             showPoopBreakView(true);
         }
     }
@@ -636,7 +638,7 @@ public class GameViewPresenter extends AbstractPresenter {
             countdown = msg.getCountdown();
             Platform.runLater(() -> {
                 countdownLabel.setText(countdown < 10 ? "0" + countdown : String.valueOf(countdown));
-                countdownLabel.setAlignment(Pos.CENTER);
+                countdownLabel.setLayoutX(countdownPane.getWidth() / 2 - countdownLabel.getWidth() / 2);
             });
             if (countdown <= 0) {
                 showPoopBreakView(false);
@@ -647,71 +649,44 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Diese Hilfsmethode zeigt oder versteckt die PoopBreakView.
      *
-     * @param enabled Entscheidet ob sie versteckt oder angezeigt werden soll.
+     * @param enabled Entscheidet ob der Node versteckt oder angezeigt werden soll.
      * @author Keno S.
      * @since Sprint 10
      */
     private void showPoopBreakView (boolean enabled) {
-        if (enabled) {
-            Platform.runLater(() -> {
-                poopButton.setDisable(true);
-                skipPhaseButton.setVisible(false);
-                countdownPane.setVisible(true);
-                countdownPane.setDisable(false);
+        Platform.runLater(() -> {
+            countdownPane.setVisible(enabled);
+            poopButtonImage.setVisible(!enabled);
+            skipPhaseButton.setVisible(!enabled);
+            poopButton.setVisible(!enabled);
+            if (enabled)
                 countdownPane.toFront();
-                playgroundBox.setVisible(false);
-                countdownLabel.setTranslateX(countdownPane.getTranslateX() / 2);
-                countdownLabel.setTranslateY(countdownPane.getTranslateY() * 3 / 2);
-            });
-        }
-        else {
-            Platform.runLater(() -> {
-                poopButton.setDisable(false);
-                skipPhaseButton.setVisible(true);
-                countdownPane.setVisible(false);
-                countdownPane.setDisable(true);
-                playgroundBox.setVisible(true);
-            });
-        }
+        });
     }
 
     /**
      * Diese Hilfsmethode zeigt oder versteckt die PoopVoteView.
      *
-     * @param enabled Entscheidet ob sie versteckt oder angezeigt werden soll.
+     * @param enabled Entscheidet ob der Node versteckt oder angezeigt werden soll.
      * @author Keno S.
      * @since Sprint 10
      */
-    private void showPoopVote(boolean enabled, User poopInitiator) {
-        if (enabled) {
-            Platform.runLater(() -> {
-                poopButtonImage.setVisible(false);
-                chatHeader.setVisible(false);
-                poopMessage.setVisible(true);
-                acceptButton.setVisible(true);
-                acceptButton.setDisable(loggedInUser.equals(poopInitiator));
-                declineButton.setVisible(true);
-                declineButton.setDisable(loggedInUser.equals(poopInitiator));
-            });
-        }
-        else {
-            Platform.runLater(() -> {
-                poopButtonImage.setVisible(true);
-                chatHeader.setVisible(true);
-                poopMessage.setVisible(false);
-                acceptButton.setVisible(false);
-                acceptButton.setDisable(true);
-                declineButton.setVisible(false);
-                declineButton.setDisable(true);
-            });
-        }
+    private void showPoopVote(boolean enabled) {
+        Platform.runLater(() -> {
+            poopButtonImage.setVisible(!enabled);
+            poopButton.setVisible(!enabled);
+            chatHeader.setVisible(!enabled);
+            poopMessage.setVisible(enabled);
+            acceptButton.setVisible(enabled);
+            declineButton.setVisible(enabled);
+        });
     }
 
     /**
      * Die IDs der gesendeten Aktionskarten werden initilaisiert.
      * Die Anzahl der Wertkarten wird in einer Map gespeichert, mit der ID der jeweiligen Karte als Schlüssel.
      *
-     * @param msg die Nachricht mit den IDs und der jeweiligen Azahl der Spielkarten
+     * @param msg die Nachricht mit den IDs und der jeweiligen Anzahl der Spielkarten
      * @author Anna, Fenja, Rike
      * @since Sprint 7
      */
