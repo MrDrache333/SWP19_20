@@ -12,6 +12,12 @@ import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
+/**
+ * Testklasse der LobbyMessage
+ *
+ * @author Keno S.
+ * @since Sprint 4
+ */
 public class LobbyMessageSerializableTest {
 
     private static final UserDTO defaultUser = new UserDTO("marco", "marco", "marco@grawunder.de");
@@ -19,14 +25,16 @@ public class LobbyMessageSerializableTest {
     private final LobbyDTO defaultLobby = new LobbyDTO("test", defaultUser, testUUID, "test");
 
     /**
-     * Test um die Lobby zu testen.
+     * Testet die Message
+     *
+     * @author Keno S.
+     * @since Sprint 4
      */
-
     @Test
     void testLobbyMessagesSerializable() {
         SerializationTestHelper.checkSerializableAndDeserializable(new CreateLobbyRequest("test", defaultUser, ""),
                 CreateLobbyRequest.class);
-        SerializationTestHelper.checkSerializableAndDeserializable(new LobbyJoinUserRequest(testUUID, defaultUser),
+        SerializationTestHelper.checkSerializableAndDeserializable(new LobbyJoinUserRequest(testUUID, defaultUser, false),
                 LobbyJoinUserRequest.class);
         SerializationTestHelper.checkSerializableAndDeserializable(new LobbyLeaveUserRequest(testUUID, defaultUser),
                 LobbyLeaveUserRequest.class);

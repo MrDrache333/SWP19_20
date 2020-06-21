@@ -44,6 +44,14 @@ public interface Lobby {
     void joinUser(User user);
 
     /**
+     * Prüft ob nur noch Bots in der Lobby sind
+     *
+     * @param lobbyID die Lobby ID
+     * @return s.o
+     */
+    boolean onlyBotsLeft(UUID lobbyID);
+
+    /**
      * Entfernt einen Nutzer aus der Lobby.
      *
      * @param user Der Nutzer
@@ -63,13 +71,6 @@ public interface Lobby {
      * @return Die Lobby ID
      */
     UUID getLobbyID();
-
-    /**
-     * Setzt die Lobby ID für die Lobby.
-     *
-     * @param lobbyID Die Lobby ID
-     */
-    void setLobbyID(UUID lobbyID);
 
     /**
      * Gibt die Anzahl der Spieler zurück.
@@ -145,7 +146,7 @@ public interface Lobby {
     /**
      * Setzt die ausgewählten Karten in der Lobby
      *
-     * @param chosenCards
+     * @param chosenCards Die gewählten Karten
      */
     void setChosenCards(ArrayList<Short> chosenCards);
 }

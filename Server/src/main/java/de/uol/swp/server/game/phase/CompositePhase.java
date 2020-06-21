@@ -3,8 +3,6 @@ package de.uol.swp.server.game.phase;
 import de.uol.swp.common.game.card.Card;
 import de.uol.swp.common.game.card.parser.components.CardPack;
 import de.uol.swp.common.game.card.parser.components.CardStack;
-import de.uol.swp.common.game.exception.NotEnoughMoneyException;
-import de.uol.swp.common.game.messages.DrawHandMessage;
 import de.uol.swp.common.game.messages.GameOverMessage;
 import de.uol.swp.common.game.messages.InfoPlayDisplayMessage;
 import de.uol.swp.common.game.phase.Phase;
@@ -12,11 +10,10 @@ import de.uol.swp.server.game.Playground;
 import de.uol.swp.server.game.player.Deck;
 import de.uol.swp.server.game.player.Player;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Die Funktionsklasse aller Phasen
@@ -24,8 +21,7 @@ import java.util.List;
 public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
 
     private final Playground playground;
-    private static final Logger LOG = LogManager.getLogger(CompositePhase.class);
-    private List<Short> implementedActionCards;
+    private final List<Short> implementedActionCards;
     private ActionCardExecution executeAction;
 
     /**
@@ -69,28 +65,26 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
 
     /**
      * Wenn eine Aktionskarte vollständig ausgeführt wurde, wird sie in die Aktionszone des Spielers oder den Müll gelegt.
-     * Ggf. neue Handkarten, die letzte Karte auf dem Ablagestapel und Müll, Anzahl der Karten auf dem Nachziehstapel
+     * Die letzte Karte auf dem Ablagestapel und Müll, Anzahl der Karten auf dem Nachziehstapel
      * werden gesendet.
      * Der Aktionencounter wird um 1 verringert, dem Spieler wird eine InfoPlayDisplayMessage gesendet und die Phase
      * wird gewechselt, falls der Spieler keine Aktionen oder Aktionskarten mehr hat.
      *
-     * @param player       Der Spieler
-     * @param newHandCards Liste neuer Handkarten
-     * @param card         Gespielte Karte
+     * @param player Der Spieler
+     * @param card   Gespielte Karte
      * @author Julia, KenoO
      * @since Sprint 7
      */
-    public void finishedActionCardExecution(Player player, ArrayList<Short> newHandCards, Card card) {
+    public void finishedActionCardExecution(Player player, Card card) {
         if (!executeAction.isRemoveCardAfter()) {
             player.getPlayerDeck().getActionPile().add(card);
         } else {
             playground.getTrash().add(card);
         }
-        if (!newHandCards.isEmpty()) {
-            playground.getGameService().sendToSpecificPlayer(player, new DrawHandMessage(newHandCards, playground.getID(), (short) playground.getPlayers().size(), false));
-        }
         playground.sendCardsDeckSize();
-        player.setAvailableActions(player.getAvailableActions() - 1);
+        if (player.getAvailableActions() > 0) {
+            player.setAvailableActions(player.getAvailableActions() - 1);
+        }
         //Sende alle neuen Informationen bezüglich seiner möglichen Aktioen des Spielers an den Spieler zurück
         playground.getGameService().sendToSpecificPlayer(player,
                 new InfoPlayDisplayMessage(
@@ -132,10 +126,6 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
             */
             int moneyValuePlayer = player.getPlayerDeck().actualMoneyFromPlayer();
             int additionalMoney = player.getAdditionalMoney();
-            if (moneyValuePlayer + additionalMoney < currentCard.getCosts()) {
-                LOG.error("Nicht genug Geld");
-                throw new NotEnoughMoneyException("Nicht genug Geld vorhanden");
-            }
             if (moneyValuePlayer < currentCard.getCosts()) {
                 int diff = currentCard.getCosts() - moneyValuePlayer;
                 player.setAdditionalMoney(additionalMoney - diff);
@@ -194,8 +184,8 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
     /**
      * Hilfsmethode um an die Daten über die ID zu kommen
      *
-     * @param cardStack
-     * @param cardId
+     * @param cardStack Der Kartenstapel
+     * @param cardId Die KartenID
      * @return card Karte, zu der die ID gehört
      * @author Paula
      * @since Sprint 6

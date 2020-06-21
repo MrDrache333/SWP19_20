@@ -2,11 +2,10 @@ package de.uol.swp.client.lobby;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import de.uol.swp.client.SceneManager;
+import de.uol.swp.client.AlertBox;
 import de.uol.swp.client.lobby.event.CloseJoinLobbyEvent;
 import de.uol.swp.client.main.MainMenuPresenter;
 import de.uol.swp.common.lobby.Lobby;
-import de.uol.swp.common.lobby.request.LobbyJoinUserRequest;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
@@ -18,6 +17,7 @@ import javafx.scene.control.PasswordField;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+@SuppressWarnings("UnstableApiUsage, unused")
 public class JoinLobbyPresenter {
 
     /**
@@ -28,11 +28,11 @@ public class JoinLobbyPresenter {
     private static final Logger LOG = LogManager.getLogger(JoinLobbyPresenter.class);
 
     private User loggedInUser;
-    private LobbyService lobbyService;
+    private final LobbyService lobbyService;
     private MainMenuPresenter mainMenuPresenter;
-    private UserService userService;
-    private EventBus eventBus;
-    private Lobby lobby;
+    private final UserService userService;
+    private final EventBus eventBus;
+    private final Lobby lobby;
 
     @FXML
     private Button cancelButton;
@@ -44,11 +44,11 @@ public class JoinLobbyPresenter {
     /**
      * Konstruktor des JoinLobbyPresenters
      *
-     * @param loggedInUser
-     * @param lobbyService
-     * @param userService
-     * @param eventBus
-     * @param lobby
+     * @param loggedInUser Der eingeloggte User
+     * @param lobbyService Der LobbyService
+     * @param userService Der UserService
+     * @param eventBus Der EventBus
+     * @param lobby Die Lobby
      * @author Paula
      * @since Sprint 7
      */
@@ -64,23 +64,20 @@ public class JoinLobbyPresenter {
      * Nach Eingabe des Passworts der Lobby wird hier das Passwort überprüft, ist es
      * gleich, wird die lobbyJoinUserRequest verschickt.
      * Ist es falsch, wird man zur erneuten Eingabe aufgefordert.
-     * @param actionEvent
+     *
+     * @param actionEvent Das ActionEvent
      * @author Paula
      * @since Sprint 7
      */
     @FXML
     public void onJoinButtonPressed(javafx.event.ActionEvent actionEvent) {
         // Passwörter stimmen überein
-        if (lobby.getLobbyPassword().equals(String.valueOf(passwordField.getText())) || lobby.getLobbyPassword()== null && passwordField.getText().equals(null)) {
-            lobbyService.joinLobby(lobby.getLobbyID(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
-            LobbyJoinUserRequest msg = new LobbyJoinUserRequest(lobby.getLobbyID(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
-            eventBus.post(msg);
-            LOG.info("LobbyJoinUserRequest wurde gesendet.");
-
+        if (lobby.getLobbyPassword().equals(String.valueOf(passwordField.getText())) || lobby.getLobbyPassword() == null) {
+            lobbyService.joinLobby(lobby.getLobbyID(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), false);
         }
         //Passwörter stimmen nicht überein
         else {
-            SceneManager.showAlert(Alert.AlertType.ERROR, "Das eingegebene Passwort ist falsch.", "Fehler");
+            new AlertBox(Alert.AlertType.ERROR, "Das eingegebene Passwort ist falsch.", "Fehler");
         }
         passwordField.clear();
         passwordField.requestFocus();
@@ -91,7 +88,7 @@ public class JoinLobbyPresenter {
     /**
      * Beim Drücken auf den Abbrechen Button schließt sich das Fenster.
      *
-     * @param actionEvent
+     * @param actionEvent Das ActionEvent
      * @since Sprint 7
      * @author Paula
      */
@@ -100,9 +97,10 @@ public class JoinLobbyPresenter {
         eventBus.post(new CloseJoinLobbyEvent());
         passwordField.clear();
     }
+
     @Subscribe
     public void updatedUser(UpdatedUserMessage message) {
-        if(loggedInUser != null && loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
+        if (loggedInUser != null && loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
             loggedInUser = message.getUser();
         }
     }

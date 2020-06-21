@@ -1,6 +1,5 @@
 package de.uol.swp.server.usermanagement;
 
-import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import de.uol.swp.common.user.User;
 import de.uol.swp.server.usermanagement.store.UserStore;
@@ -30,18 +29,25 @@ public class UserManagement extends AbstractUserManagement {
      * @param username Der Benutzername des Users
      * @param password Das Passwort des Users
      * @return den Benutzer
-     * @throws SecurityException
+     * @throws SecurityException Eine SecurityException
      * @author Marco, Keno S
      * @since Basisprojekt
      */
     @Override
     public User login(String username, String password) {
+        if (username.isEmpty() || password.isEmpty()) {
+            throw new SecurityException("Usernamen und Passwort eingeben!");
+        }
         Optional<User> user = userStore.findUser(username, password);
         if (user.isPresent() && !loggedInUsers.containsKey(username)) {
             this.loggedInUsers.put(username, user.get());
             return user.get();
+        } else if (user.isPresent() && loggedInUsers.containsKey(username)) {
+            throw new SecurityException("User ist bereits angemeldet!");
+        } else if (user.isEmpty()) {
+            throw new SecurityException("Username oder Passwort falsch eingegeben!");
         } else {
-            throw new SecurityException("Authentifizierung des Users " + username + " fehlgeschlagen!");
+            throw new SecurityException("Authentifizierung fehlgeschlagen, versuche es erneut!");
         }
     }
 
@@ -110,8 +116,8 @@ public class UserManagement extends AbstractUserManagement {
     /**
      * Löscht einen Nutzer.
      *
-     * @param userToDrop der zu löschende Benutzer
-     * @throws UserManagementException wenn der Benutzer nicht bekannt ist.
+     * @param userToDrop Der zu löschende Benutzer
+     * @throws UserManagementException Wenn der Benutzer nicht bekannt ist.
      * @author Marco, Julia
      * @since Basisprojekt
      */
@@ -125,14 +131,10 @@ public class UserManagement extends AbstractUserManagement {
         userStore.removeUser(userToDrop.getUsername());
     }
 
-    private String firstNotNull(String firstValue, String secondValue) {
-        return Strings.isNullOrEmpty(firstValue) ? secondValue : firstValue;
-    }
-
     /**
      * Meldet einen Benutzer ab.
      *
-     * @param user der User
+     * @param user Der User
      * @author Marco
      * @since Basisprojekt
      */
@@ -149,7 +151,7 @@ public class UserManagement extends AbstractUserManagement {
     /**
      * Gibt die Liste der User zurück.
      *
-     * @return User-Liste
+     * @return Userliste
      * @author Marco
      * @since Basisprojekt
      */

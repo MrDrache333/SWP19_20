@@ -9,10 +9,6 @@ import de.uol.swp.common.game.card.Card;
 public abstract class ComplexCardAction extends CardAction {
 
     /**
-     * Gibt an, ob eine durch eine Aktionskarte gezogene Karte direkt auf die Hand genommen werden muss
-     */
-    private boolean directHand = false;
-    /**
      * Gibt an, welcher Kartentyp bei der Aktion verwendet werden darf(z.B. beim Ablegen/ Ziehen einer Karte)
      */
     private Card.Type allowedCardType = Card.Type.NONE;
@@ -187,28 +183,6 @@ public abstract class ComplexCardAction extends CardAction {
      */
     public void setRemoveCardAfter(boolean removeCardAfter) {
         this.removeCardAfter = removeCardAfter;
-    }
-
-    /**
-     * Gets directHand.
-     *
-     * @return Value of directHand.
-     * @author KenoO
-     * @since Sprint 6
-     */
-    public boolean isDirectHand() {
-        return directHand;
-    }
-
-    /**
-     * Sets new directHand.
-     *
-     * @param directHand New value of directHand.
-     * @author KenoO
-     * @since Sprint 6
-     */
-    public void setDirectHand(boolean directHand) {
-        this.directHand = directHand;
     }
 
     /**

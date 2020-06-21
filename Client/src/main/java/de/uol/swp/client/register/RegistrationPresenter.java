@@ -8,22 +8,19 @@ import de.uol.swp.client.register.event.RegistrationCanceledEvent;
 import de.uol.swp.client.register.event.RegistrationErrorEvent;
 import de.uol.swp.client.sound.SoundMediaPlayer;
 import de.uol.swp.common.user.UserDTO;
-import de.uol.swp.common.user.UserService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
-import java.io.File;
 import java.util.regex.Pattern;
 
 /**
  * Die Presenter-Klasse des Registrierungsfensters.
  */
+@SuppressWarnings("UnstableApiUsage")
 public class RegistrationPresenter extends AbstractPresenter {
 
     public static final String fxml = "/fxml/RegistrationView.fxml";
@@ -47,14 +44,12 @@ public class RegistrationPresenter extends AbstractPresenter {
 
     @FXML
     private TextField mailField;
-    @FXML
-    private ImageView soundIcon;
 
     public RegistrationPresenter() {
     }
 
     @Inject
-    public RegistrationPresenter(EventBus eventBus, UserService userService) {
+    public RegistrationPresenter(EventBus eventBus) {
         setEventBus(eventBus);
     }
 
@@ -65,18 +60,9 @@ public class RegistrationPresenter extends AbstractPresenter {
      */
     @FXML
     private void initialize() {
-        registerButton.setOnMouseEntered(event -> {
-            new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play();
-        });
-        cancelButton.setOnMouseEntered(event -> {
-            new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play();
-        });
+        registerButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
+        cancelButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
         SoundMediaPlayer.setSound(true);
-        soundIcon.setImage(new Image(new File(getClass().getResource(SoundMediaPlayer.isSoundEnabled() ? "/images/sound_on_icon.png" : "/images/sound_off_icon.png").toExternalForm().replace("file:", "")).toURI().toString()));
-        soundIcon.setOnMouseClicked(event -> {
-            SoundMediaPlayer.setSound(!SoundMediaPlayer.isSoundEnabled());
-            soundIcon.setImage(new Image(new File(getClass().getResource(SoundMediaPlayer.isSoundEnabled() ? "/images/sound_on_icon.png" : "/images/sound_off_icon.png").toExternalForm().replace("file:", "")).toURI().toString()));
-        });
     }
 
     //--------------------------------------

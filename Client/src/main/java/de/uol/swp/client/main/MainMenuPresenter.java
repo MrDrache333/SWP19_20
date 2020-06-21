@@ -2,11 +2,12 @@ package de.uol.swp.client.main;
 
 import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.AbstractPresenter;
-import de.uol.swp.client.SceneManager;
+import de.uol.swp.client.AlertBox;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.OpenJoinLobbyRequest;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.dto.LobbyDTO;
+import de.uol.swp.common.lobby.exception.JoinLobbyExceptionMessage;
 import de.uol.swp.common.lobby.message.*;
 import de.uol.swp.common.lobby.request.OpenLobbyCreateRequest;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
@@ -40,7 +41,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-
+@SuppressWarnings("UnstableApiUsage, unused")
 public class MainMenuPresenter extends AbstractPresenter {
 
     public static final String fxml = "/fxml/MainMenuView.fxml";
@@ -57,15 +58,15 @@ public class MainMenuPresenter extends AbstractPresenter {
     @FXML
     private TableView<Lobby> lobbiesView;
     @FXML
-    private TableColumn<Lobby, String> name = new TableColumn<>("Name");
+    private final TableColumn<Lobby, String> name = new TableColumn<>("Name");
     @FXML
-    private TableColumn<Lobby, String> host = new TableColumn<>("Host");
+    private final TableColumn<Lobby, String> host = new TableColumn<>("Host");
     @FXML
-    private TableColumn<Lobby, String> players = new TableColumn<>("Spieler");
+    private final TableColumn<Lobby, String> players = new TableColumn<>("Spieler");
     @FXML
-    private TableColumn<Lobby, Circle> inGame = new TableColumn<>("im Spiel");
+    private final TableColumn<Lobby, Circle> inGame = new TableColumn<>("im Spiel");
     @FXML
-    private TableColumn<Lobby, Void> joinLobby = new TableColumn<>();
+    private final TableColumn<Lobby, Void> joinLobby = new TableColumn<>();
     @FXML
     private Pane chatView;
     @FXML
@@ -127,7 +128,9 @@ public class MainMenuPresenter extends AbstractPresenter {
     /**
      * Request für Lobby erstellen Fenster
      *
-     * @param actionEvent
+     * @param actionEvent Das ActionEvent
+     * @author Julia
+     * @since ?
      */
     @FXML
     public void onOpenCreateLobbyView(ActionEvent actionEvent) {
@@ -151,7 +154,6 @@ public class MainMenuPresenter extends AbstractPresenter {
         loggedInUser = message.getUser();
         chatViewPresenter.setloggedInUser(loggedInUser);
         chatViewPresenter.userJoined(loggedInUser.getUsername());
-        LOG.debug("Angemeldeter User: " + loggedInUser.getUsername());
         userService.retrieveAllUsers();
         lobbyService.retrieveAllLobbies();
     }
@@ -185,7 +187,7 @@ public class MainMenuPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void userLoggedOut(UserLoggedOutMessage message) {
-        LOG.debug("User " + message.getUsername() + " logged out");
+        LOG.debug("User " + message.getUsername() + " ausgeloggt");
         userLeft(message.getUsername());
     }
 
@@ -213,9 +215,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     public void newLobbyCreated(CreateLobbyMessage message) {
         LOG.debug("Neue Lobby " + message.getLobbyName() + " erstellt");
         if (message.getLobbyName() != null && lobbies != null) {
-            Platform.runLater(() -> {
-                lobbies.add(0, message.getLobby());
-            });
+            Platform.runLater(() -> lobbies.add(0, message.getLobby()));
         }
     }
 
@@ -247,7 +247,7 @@ public class MainMenuPresenter extends AbstractPresenter {
     public void userLeftLobby(UserLeftLobbyMessage message) {
         if (lobbies != null) {
             if (message.getLobby() != null) {
-                LOG.debug("User " + message.getUser().getUsername() + " verließ Lobby  " + message.getLobby().getName());
+                LOG.debug("User " + message.getUser().getUsername() + " verließ Lobby " + message.getLobby().getName());
                 Platform.runLater(() -> {
                     lobbies.removeIf(lobby -> lobby.getLobbyID().equals(message.getLobbyID()));
                     lobbies.add(0, message.getLobby());
@@ -296,12 +296,12 @@ public class MainMenuPresenter extends AbstractPresenter {
      * Aktualisiert die Lobbytabelle, nachdem die max. Spielerzahl einer Lobby gesetzt wurde
      *
      * @param message die SetMaxPlayerMessage
-     * @author Julia
+     * @author Julia, Darian
      * @since Sprint 4
      */
     @Subscribe
     public void maxPlayerSet(SetMaxPlayerMessage message) {
-        if (message.isSetMaxPlayerSet() && lobbies != null) {
+        if (lobbies != null) {
             Platform.runLater(() -> {
                 lobbies.removeIf(lobby -> lobby.getLobbyID().equals(message.getLobby().getLobbyID()));
                 lobbies.add(0, message.getLobby());
@@ -354,8 +354,10 @@ public class MainMenuPresenter extends AbstractPresenter {
                     }
                 }
                 lobbies.remove(updatedLobby);
-                updatedLobby.setInGame(false);
-                lobbies.add(0, updatedLobby);
+                if (updatedLobby != null) {
+                    updatedLobby.setInGame(false);
+                    lobbies.add(0, updatedLobby);
+                }
                 lobbiesView.refresh();
             });
     }
@@ -433,6 +435,17 @@ public class MainMenuPresenter extends AbstractPresenter {
         updateLobbiesTable(allLobbiesResponse.getLobbies());
     }
 
+    /**
+     * Hier wird die JoinLobbyExceptionMessage abgefangen und die Nachricht in einem neuem Fenster angezeigt
+     *
+     * @param msg die Nachricht
+     * @author Darian
+     * @since Sprint 8
+     */
+    @Subscribe
+    public void onJoinLobbyExceptionMessage(JoinLobbyExceptionMessage msg) {
+        new AlertBox(Alert.AlertType.ERROR, msg.getMessage(), "Lobby");
+    }
 
     //-----------------
     // PRIVATE METHODEN
@@ -471,11 +484,12 @@ public class MainMenuPresenter extends AbstractPresenter {
             public TableCell<Lobby, Void> call(final TableColumn<Lobby, Void> param) {
                 return new TableCell<>() {
                     final Button joinLobbyButton = new Button("Beitreten");
+
                     {
                         joinLobbyButton.setOnAction((ActionEvent event) -> {
                             Lobby lobby = getTableView().getItems().get(getIndex());
                             if (lobby.getLobbyPassword().isEmpty()) {
-                                lobbyService.joinLobby(lobby.getLobbyID(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
+                                lobbyService.joinLobby(lobby.getLobbyID(), new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), false);
                             } else if (!lobby.getLobbyPassword().isEmpty()) {
                                 OpenJoinLobbyRequest request = new OpenJoinLobbyRequest(loggedInUser, lobby);
                                 eventBus.post(request);
@@ -491,14 +505,7 @@ public class MainMenuPresenter extends AbstractPresenter {
                         } else {
                             setGraphic(joinLobbyButton);
                             Lobby lobby = getTableView().getItems().get(getIndex());
-                            Platform.runLater(() -> {
-                                if (lobby.getUsers().contains(loggedInUser) || lobby.getInGame() || lobby.getPlayers() == lobby.getMaxPlayer()){
-                                    joinLobbyButton.setDisable(true);
-                                }
-                                else{
-                                    joinLobbyButton.setDisable(false);
-                                }
-                            });
+                            Platform.runLater(() -> joinLobbyButton.setDisable(lobby.getUsers().contains(loggedInUser) || lobby.getInGame() || lobby.getPlayers() == lobby.getMaxPlayer()));
                         }
                     }
                 };
@@ -506,7 +513,6 @@ public class MainMenuPresenter extends AbstractPresenter {
         };
         joinLobby.setCellFactory(cellFactory);
     }
-
 
 
     /**

@@ -6,11 +6,16 @@ import com.google.common.eventbus.Subscribe;
 import de.uol.swp.common.game.card.Card;
 import de.uol.swp.common.game.card.parser.components.CardPack;
 import de.uol.swp.common.game.exception.GamePhaseException;
+import de.uol.swp.common.game.messages.GameExceptionMessage;
 import de.uol.swp.common.game.phase.Phase;
+import de.uol.swp.common.game.request.BuyCardRequest;
 import de.uol.swp.common.game.request.GameGiveUpRequest;
+import de.uol.swp.common.game.request.PlayCardRequest;
+import de.uol.swp.common.game.request.SkipPhaseRequest;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.chat.ChatManagement;
+import de.uol.swp.server.game.player.Player;
 import de.uol.swp.server.lobby.LobbyManagement;
 import de.uol.swp.server.message.StartGameInternalMessage;
 import de.uol.swp.server.usermanagement.AuthenticationService;
@@ -29,6 +34,13 @@ import java.util.concurrent.CountDownLatch;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Testklasse für den Playground
+ *
+ * @author Julia
+ * @since Sprint 5
+ */
+@SuppressWarnings("UnstableApiUsage")
 public class PlaygroundTest {
 
     static final User defaultOwner = new UserDTO("test1", "test1", "test1@test.de");
@@ -42,15 +54,18 @@ public class PlaygroundTest {
     static final UserManagement userManagement = new UserManagement(userStore);
     static final AuthenticationService authService = new AuthenticationService(bus, userManagement, lobbyManagement);
     static final GameService gameService = new GameService(bus, gameManagement, authService);
-    static UUID id;
     private final CountDownLatch lock = new CountDownLatch(1);
-    private static ArrayList<Short> chosenCards = new ArrayList<Short>();
-
-
+    private static final ArrayList<Short> chosenCards = new ArrayList<>();
 
     static UUID gameID;
     private Object event;
 
+    /**
+     * Initialisiert die benötigten Objekte/Parameter
+     *
+     * @author Julia
+     * @since Sprint 5
+     */
     @BeforeAll
     static void init() {
         gameID = lobbyManagement.createLobby("Test", "", defaultOwner);
@@ -115,7 +130,7 @@ public class PlaygroundTest {
         assertEquals(1, next);
         assertEquals(1, playground.getPlayerTurns().get(playground.getActualPlayer()));
 
-        playground.setActualPhase(Phase.Type.Clearphase);
+        playground.setActualPhase(Phase.Type.ClearPhase);
         playground.newTurn();
         actual = playground.getPlayers().indexOf(playground.getActualPlayer());
         next = playground.getPlayers().indexOf(playground.getNextPlayer());
@@ -123,7 +138,7 @@ public class PlaygroundTest {
         assertEquals(2, next);
         assertEquals(1, playground.getPlayerTurns().get(playground.getActualPlayer()));
 
-        playground.setActualPhase(Phase.Type.Clearphase);
+        playground.setActualPhase(Phase.Type.ClearPhase);
         playground.newTurn();
         actual = playground.getPlayers().indexOf(playground.getActualPlayer());
         next = playground.getPlayers().indexOf(playground.getNextPlayer());
@@ -131,7 +146,7 @@ public class PlaygroundTest {
         assertEquals(0, next);
         assertEquals(1, playground.getPlayerTurns().get(playground.getActualPlayer()));
 
-        playground.setActualPhase(Phase.Type.Clearphase);
+        playground.setActualPhase(Phase.Type.ClearPhase);
         playground.newTurn();
         assertEquals(2, playground.getPlayerTurns().get(playground.getActualPlayer()));
     }
@@ -144,10 +159,12 @@ public class PlaygroundTest {
      */
     @Test
     void testCheckForActionCard() {
+        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         //Bei Spielbeginn hat der Spieler keine Aktionskarten auf der Hand
-        assertFalse(gameManagement.getGame(gameID).get().getPlayground().checkForActionCard());
-
-        //TODO: weitere Fälle testen, wenn weitere Funktion (Kauf von Aktionskarten) implementiert wurde
+        assertFalse(playground.checkForActionCard());
+        Card actionCard = playground.getCardsPackField().getCards().getActionCards().get(0);
+        playground.getActualPlayer().getPlayerDeck().getHand().add(actionCard);
+        assertTrue(playground.checkForActionCard());
     }
 
     /**
@@ -160,19 +177,17 @@ public class PlaygroundTest {
     void testNextPhase() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         playground.setActualPhase(Phase.Type.ActionPhase);
-
         playground.nextPhase();
-        assertEquals(Phase.Type.Buyphase, playground.getActualPhase());
-
+        assertEquals(Phase.Type.BuyPhase, playground.getActualPhase());
         playground.nextPhase();
         if (playground.checkForActionCard()) {
             assertEquals(Phase.Type.ActionPhase, playground.getActualPhase());
         } else {
-            assertEquals(Phase.Type.Buyphase, playground.getActualPhase());
+            assertEquals(Phase.Type.BuyPhase, playground.getActualPhase());
         }
 
-        playground.setActualPhase(Phase.Type.Clearphase);
-        assertThrows(GamePhaseException.class, () -> playground.nextPhase());
+        playground.setActualPhase(Phase.Type.ClearPhase);
+        assertThrows(GamePhaseException.class, playground::nextPhase);
     }
 
     /**
@@ -199,7 +214,7 @@ public class PlaygroundTest {
     void specificPlayerGaveUpTest() {
         GameGiveUpRequest testRequest = new GameGiveUpRequest((UserDTO) secondPlayer, gameID);
         bus.post(testRequest);
-        assertTrue(!gameManagement.getGame(gameID).get().getPlayground().getPlayers().contains(secondPlayer.getUsername()));
+        assertFalse(gameManagement.getGame(gameID).get().getPlayground().getPlayers().contains(secondPlayer.getUsername()));
     }
 
     /**
@@ -231,8 +246,7 @@ public class PlaygroundTest {
         List<String> winners = playground.calculateWinners();
         assertEquals(2, winners.size());
         assertFalse(winners.contains(playground.getActualPlayer().getPlayerName()));
-
-        playground.setActualPhase(Phase.Type.Clearphase);
+        playground.setActualPhase(Phase.Type.ClearPhase);
         playground.newTurn();
         winners = playground.calculateWinners();
         assertEquals(1, winners.size());
@@ -257,5 +271,59 @@ public class PlaygroundTest {
         size = playground.sendCardsDeckSize();
         assertEquals(5, size);
     }
+    /**
+     * Testet, ob ein beendetes Spiel gelöscht wird.
+     * @author Ferit
+     * @since Sprint 11
+     */
+    @Test
+    void dropFinishedGameTest() {
+        gameService.dropFinishedGame(gameID);
+        assertFalse(gameManagement.getGame(gameID).isPresent());
+    }
+    /**
+     * SkipPhaseRequestTest
+     * @author Ferit
+     * @since Sprint 11
+     */
+    @Test
+    void onSkipPhaseRequestTest() {
+        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
+        Player oldActualPlayer = playground.getActualPlayer();
+        gameService.onSkipPhaseRequest(new SkipPhaseRequest(playground.getActualPlayer().getTheUserInThePlayer(), gameID));
+        assertTrue(!(playground.getActualPlayer().equals(oldActualPlayer)));
+    }
 
+    /**
+     * OnBuyCardRequestTest
+     * @author Ferit
+     * @since Sprint 11
+     */
+    @Test
+    void onBuyCardRequestTest() {
+        gameManagement.getGame(gameID).get().getPlayground().playerGaveUp(gameID, (UserDTO) thirdPlayer, true);
+        if (gameManagement.getGame(gameID).get().getPlayground().getActualPlayer().getPlayerDeck().actualMoneyFromPlayer() >= 1) {
+            if (gameManagement.getGame(gameID).get().getPlayground().getActualPlayer().getAvailableActions() >= 1) {
+                gameManagement.getGame(gameID).get().getPlayground().nextPhase();
+            }
+            gameService.onBuyCardRequest(new BuyCardRequest(gameID, gameManagement.getGame(gameID).get().getPlayground().getActualPlayer().getTheUserInThePlayer(), (short) 1));
+
+        }
+        assertTrue(gameManagement.getGame(gameID).get().getPlayground().getNextPlayer().getPlayerDeck().getDiscardPile().get(0).getId() == 1);
+    }
+
+    /**
+     * OnPlayCardTest
+     * @author Ferit
+     * @since Sprint 11
+     */
+    @Test
+    void onPlayCardTest() {
+        gameManagement.getGame(gameID).get().getPlayground().setActualPhase(Phase.Type.ActionPhase);
+        gameManagement.getGame(gameID).get().getPlayground().getActualPlayer().getPlayerDeck().getHand().add(gameManagement.getGame(gameID).get().getPlayground().getCardsPackField().getCards().getCardForId((short) 9));
+        gameService.onPlayCardRequest(new PlayCardRequest(gameID, gameManagement.getGame(gameID).get().getPlayground().getActualPlayer().getTheUserInThePlayer(), (short) 9));
+        assertEquals(2, gameManagement.getGame(gameID).get().getPlayground().getActualPlayer().getAvailableBuys());
+        assertEquals(2, gameManagement.getGame(gameID).get().getPlayground().getActualPlayer().getAdditionalMoney());
+        assertEquals(Phase.Type.BuyPhase, gameManagement.getGame(gameID).get().getPlayground().getActualPhase());
+    }
 }

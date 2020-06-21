@@ -31,6 +31,10 @@ public abstract class AbstractPlayground {
          */
         DISCARD,
         /**
+         * Aktionszone
+         */
+        PLAY,
+        /**
          * Zwischenspeicher
          */
         TEMP,

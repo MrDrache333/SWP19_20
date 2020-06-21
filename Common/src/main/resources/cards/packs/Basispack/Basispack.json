@@ -52,7 +52,12 @@
             "GetCard": {
               "count": 1,
               "cardSource": "DRAW",
-              "directHand": true
+              "nextAction": {
+                "Move": {
+                  "cardSource": "DRAW",
+                  "cardDestination": "HAND"
+                }
+              }
             }
           },
           {
@@ -66,7 +71,7 @@
       {
         "id": 9,
         "name": "Holzfäller",
-        "cost": 2,
+        "cost": 3,
         "actions": [
           {
             "AddCapablePlayerActivity": {
@@ -112,8 +117,13 @@
                     {
                       "GetCard": {
                         "count": 1,
+                        "cardSource": "DRAW"
+                      }
+                    },
+                    {
+                      "Move": {
                         "cardSource": "DRAW",
-                        "directHand": true
+                        "cardDestination": "HAND"
                       }
                     }
                   ]
@@ -132,7 +142,12 @@
             "GetCard": {
               "count": 1,
               "cardSource": "DRAW",
-              "directHand": true
+              "nextAction": {
+                "Move": {
+                  "cardSource": "DRAW",
+                  "cardDestination": "HAND"
+                }
+              }
             }
           },
           {
@@ -170,23 +185,28 @@
               "nextAction": {
                 "Move": {
                   "cardSource": "HAND",
-                  "cardDestination": "TRASH"
+                  "cardDestination": "TRASH",
+                  "nextAction": {
+                    "ChooseCard": {
+                      "count": {
+                        "min": 1
+                      },
+                      "allowedCardType": "MONEYCARD",
+                      "cardSource": "BUY",
+                      "hasMoreCostThanInput": {
+                        "min": 0,
+                        "max": 3
+                      },
+                      "nextAction": {
+                        "Move": {
+                          "cardSource": "BUY",
+                          "cardDestination": "HAND"
+                        }
+                      }
+                    }
+                  }
                 }
               }
-            }
-          },
-          {
-            "ChooseCard": {
-              "count": {
-                "min": 1
-              },
-              "allowedCardType": "MONEYCARD",
-              "cardSource": "BUY",
-              "hasMoreCostThanInput": {
-                "min": 0,
-                "max": 3
-              },
-              "directHand": true
             }
           }
         ]
@@ -200,7 +220,12 @@
             "GetCard": {
               "count": 3,
               "cardSource": "DRAW",
-              "directHand": true
+              "nextAction": {
+                "Move": {
+                  "cardSource": "DRAW",
+                  "cardDestination": "HAND"
+                }
+              }
             }
           }
         ]
@@ -219,25 +244,25 @@
               "nextAction": {
                 "Move": {
                   "cardSource": "HAND",
-                  "cardDestination": "TRASH"
-                }
-              }
-            }
-          },
-          {
-            "ChooseCard": {
-              "count": {
-                "min": 1
-              },
-              "cardSource": "BUY",
-              "hasMoreCostThanInput": {
-                "min": 0,
-                "max": 2
-              },
-              "nextAction": {
-                "Move": {
-                  "cardSource": "BUY",
-                  "cardDestination": "DISCARD"
+                  "cardDestination": "TRASH",
+                  "nextAction": {
+                    "ChooseCard": {
+                      "count": {
+                        "min": 1
+                      },
+                      "cardSource": "BUY",
+                      "hasMoreCostThanInput": {
+                        "min": 0,
+                        "max": 2
+                      },
+                      "nextAction": {
+                        "Move": {
+                          "cardSource": "BUY",
+                          "cardDestination": "DISCARD"
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -353,7 +378,12 @@
             "GetCard": {
               "count": 2,
               "cardSource": "DRAW",
-              "directHand": true
+              "nextAction": {
+                "Move": {
+                  "cardSource": "DRAW",
+                  "cardDestination": "HAND"
+                }
+              }
             }
           },
           {

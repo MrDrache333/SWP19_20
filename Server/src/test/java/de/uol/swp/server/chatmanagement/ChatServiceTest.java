@@ -1,8 +1,12 @@
 package de.uol.swp.server.chatmanagement;
 
+import com.google.common.eventbus.DeadEvent;
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import de.uol.swp.common.chat.ChatMessage;
+import de.uol.swp.common.chat.exception.ChatException;
 import de.uol.swp.common.chat.request.NewChatMessageRequest;
+import de.uol.swp.common.lobby.message.CreateLobbyMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.chat.ChatManagement;
@@ -11,13 +15,19 @@ import de.uol.swp.server.lobby.LobbyManagement;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import de.uol.swp.server.usermanagement.UserManagement;
 import de.uol.swp.server.usermanagement.store.MainMemoryBasedUserStore;
-import de.uol.swp.server.usermanagement.store.UserStore;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * Testeklasse des ChatService
+ *
+ * @author Keno O.
+ * @since Sprint 1
+ */
 class ChatServiceTest {
 
     static final User chatMember = new UserDTO("Keno", "Keno", "Keno@OG.com");
@@ -29,6 +39,15 @@ class ChatServiceTest {
 
     final AuthenticationService authenticationService = new AuthenticationService(bus, userManagement, lobbyManagement);
     final ChatService userService = new ChatService(bus, chatManagement, authenticationService);
+    private final CountDownLatch lock = new CountDownLatch(1);
+    private Object event;
+
+    @Subscribe
+    void handle(DeadEvent e) {
+        this.event = e.getEvent();
+        System.out.print(e.getEvent());
+        lock.countDown();
+    }
 
 
     /**
@@ -57,4 +76,5 @@ class ChatServiceTest {
         bus.post(request);
         assertEquals("Test", chatManagement.getChat(newChatId).get().getMessages().get(0).getMessage());
     }
+
 }

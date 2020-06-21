@@ -7,33 +7,33 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 /**
- * The interface GameService.
+ * Das Interface GameService.
  */
 public interface GameService {
 
     /**
-     * Send play card request.
+     * Sende eine SendPlayCardRequest
      *
-     * @param lobbyID      the lobby id
-     * @param loggedInUser the logged in user
-     * @param aShort       the a short
-     * @param card         the card
-     * @param handCards    the hand cards
-     * @param b            the b
-     * @author
-     * @since
+     * @param lobbyID      Die LobbyID
+     * @param loggedInUser Der eingeloggte Nutzer
+     * @param aShort       Der aShort
+     * @param cardImage    Das Bild der Karte
+     * @param handCards    Die Handkarten
+     * @param b            Der B
+     * @author Micheal Wendler
+     * @since seiner Geburt
      */
-    void sendPlayCardRequest(UUID lobbyID, User loggedInUser, Short aShort, ImageView card, ArrayList<ImageView> handCards, boolean b);
+    void sendPlayCardRequest(UUID lobbyID, User loggedInUser, Short aShort, ImageView cardImage, ArrayList<ImageView> handCards, boolean b);
 
     /**
      * Send buy card request.
      *
-     * @param lobbyID      the lobby id
-     * @param loggedInUser the logged in user
-     * @param valueOf      the value of
-     * @param cardImage    the card image
+     * @param lobbyID      Die LobbyID
+     * @param loggedInUser Der eingeloggte Nutzer
+     * @param valueOf      Das Value-of
+     * @param cardImage    Das Bild der Karte
      * @author KenoO
-     * @since
+     * @since Sprint 4
      */
     void sendBuyCardRequest(UUID lobbyID, User loggedInUser, Short valueOf, ImageView cardImage);
 }

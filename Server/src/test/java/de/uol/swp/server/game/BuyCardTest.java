@@ -24,6 +24,13 @@ import java.util.concurrent.CountDownLatch;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Testklasse der BuyCard
+ *
+ * @author Paula
+ * @since Sprint 6
+ */
+@SuppressWarnings("UnstableApiUsage")
 public class BuyCardTest {
     static final User defaultOwner = new UserDTO("test1", "test1", "test1@test.de");
     static final User secondPlayer = new UserDTO("test2", "test2", "test2@test2.de");
@@ -35,12 +42,17 @@ public class BuyCardTest {
     static final GameManagement gameManagement = new GameManagement(chatManagement, lobbyManagement);
     static final AuthenticationService authenticationService = new AuthenticationService(bus, new UserManagement(new MainMemoryBasedUserStore()), lobbyManagement);
     static final GameService gameService = new GameService(bus, gameManagement, authenticationService);
-    private ArrayList<Short> chosenCards = new ArrayList<Short>();
-
+    private final ArrayList<Short> chosenCards = new ArrayList<>();
 
     static UUID gameID;
     private final CountDownLatch lock = new CountDownLatch(1);
 
+    /**
+     * Initialisiert die benötigten Objekte/Parameter
+     *
+     * @author Paula
+     * @since Sprint 6
+     */
     void init() {
         gameID = lobbyManagement.createLobby("Test", "", defaultOwner);
         chatManagement.createChat(gameID.toString());
@@ -51,13 +63,17 @@ public class BuyCardTest {
         bus.post(new StartGameInternalMessage(gameID));
     }
 
+    /**
+     * Löscht das Spiel, die Lobby und den Chat nach jedem Testdurchlauf
+     *
+     * @author Paula
+     * @since Sprint 6
+     */
     @AfterEach
     void afterEach() {
         gameManagement.deleteGame(gameID);
         lobbyManagement.dropLobby(gameID);
         chatManagement.deleteChat(gameID.toString());
-
-
     }
 
     /**
@@ -83,7 +99,6 @@ public class BuyCardTest {
         bus.unregister(this);
     }
 
-
     /**
      * Bei Auftreten eines DeadEvents wird dieses ausgegeben und der CountDownLatch wird um eins verringert
      *
@@ -107,12 +122,9 @@ public class BuyCardTest {
     void testIfCardIsAddedToDiscardPile() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
         playground.getActualPlayer().setAvailableBuys(2);
-        int CardsOnDiscardPile = playground.getActualPlayer().getPlayerDeck().getDiscardPile().size();
-        int BuyingCard = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), (short) 10);
+        playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), (short) 10);
         assertEquals(3, playground.getActualPlayer().getPlayerDeck().getDiscardPile().size());
-
     }
-
 
     /**
      * Testet, ob sich die Anzahl der Karten auf dem Playground nach dem Kauf aktualisiert.
@@ -123,12 +135,7 @@ public class BuyCardTest {
     @Test
     void testIfCardOnPlayGroundIsActualAfterBuyingACard() {
         Playground playground = gameManagement.getGame(gameID).get().getPlayground();
-        int cardsOnPlaygoundAfterBuying = playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), (short) 10);
+        playground.getCompositePhase().executeBuyPhase(playground.getActualPlayer(), (short) 10);
         assertTrue(playground.getCardField().get(card.getId()).equals(9));
     }
-
-
-
-
-
 }

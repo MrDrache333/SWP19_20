@@ -1,7 +1,6 @@
 package de.uol.swp.client.game;
 
-import de.uol.swp.client.game.container.HandcardsLayoutContainer;
-import de.uol.swp.client.game.container.PlayedCardLayoutContainer;
+import de.uol.swp.client.game.container.GeneralLayoutContainer;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -18,8 +17,10 @@ import java.util.List;
 
 /**
  * Klasse zum Testen der Kartenanimationen.
+ *
+ * @author Anna
+ * @since Sprint 5
  */
-
 public class AnimationTest extends Application {
 
     public static void main(String[] args) {
@@ -138,7 +139,7 @@ public class AnimationTest extends Application {
         primaryStage.setScene(new Scene(bg, 1280, 750));
         primaryStage.show();
 
-        HandcardsLayoutContainer handcards = new HandcardsLayoutContainer();
+        GeneralLayoutContainer handcards = new GeneralLayoutContainer();
         handcards.setLayoutX(284);
         handcards.setLayoutY(598);
         handcards.setPrefHeight(130);
@@ -161,20 +162,14 @@ public class AnimationTest extends Application {
         }
 
         for (int i = 0; i < cards.size(); i++) {
-            AnimationManagement.addToHand(cards.get(i), i);
+            AnimationManagement.addToHand(cards.get(i), handcards);
             deckPane.getChildren().remove(cards.get(i));
             handcards.getChildren().add(cards.get(i));
         }
 
-
-        //Wenn auf die Karte geklickt wird, spielt der Gegenspieler eine Karte aus
-        cardToPlayByOpponent.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            AnimationManagement.opponentPlaysCard(cardToPlayByOpponent, 0);
-        });
-
         //Wenn auf die Karte geklickt wird, spielt der Spieler sie aus
 
-        PlayedCardLayoutContainer pclc = new PlayedCardLayoutContainer(700, 500, 100, 200, "My.PCLC");
+        GeneralLayoutContainer pclc = new GeneralLayoutContainer(700, 500, 100, 200, "My.PCLC");
 
         cardToPlay.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             AnimationManagement.playCard(cardToPlay, 0, pclc );
@@ -186,9 +181,7 @@ public class AnimationTest extends Application {
         });
 
         //Wenn auf die Karte geklickt wird, wird sie vom Spieler gekauft
-        cardToBuy.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            AnimationManagement.buyCard(cardToBuy);
-        });
+        cardToBuy.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> AnimationManagement.buyCard(cardToBuy, new GeneralLayoutContainer(300, 200, 100, 100, ""), 0));
 
         //Wenn auf die Karte geklickt wird, wird sie auf den Müll gelegt
         cardToDelete.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
