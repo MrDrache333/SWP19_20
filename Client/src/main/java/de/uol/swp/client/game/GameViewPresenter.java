@@ -368,9 +368,8 @@ public class GameViewPresenter extends AbstractPresenter {
         alert.getDialogPane().setHeaderText(title);
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
-            if (loggedInUser.equals(poopInitiator))
-                gameManagement.getGameService().cancelPoopBreak(loggedInUser, lobbyID);
             gameManagement.getGameService().giveUp(lobbyID, (UserDTO) loggedInUser);
+            gameManagement.getGameService().cancelPoopBreak(loggedInUser, lobbyID);
         }
     }
 
@@ -607,6 +606,7 @@ public class GameViewPresenter extends AbstractPresenter {
         showPoopBreakView(false);
         showPoopVote(false);
         poopInitiator = null;
+        countdown = 0;
     }
 
     /**
@@ -645,9 +645,8 @@ public class GameViewPresenter extends AbstractPresenter {
                 countdownLabel.setText(countdown < 10 ? "0" + countdown : String.valueOf(countdown));
                 countdownLabel.setLayoutX(countdownPane.getWidth() / 2 - countdownLabel.getWidth() / 2);
             });
-            if (countdown <= 0) {
+            if (countdown <= 0)
                 showPoopBreakView(false);
-            }
         }
     }
 
@@ -1357,6 +1356,9 @@ public class GameViewPresenter extends AbstractPresenter {
                 });
             }
         }
+        Platform.runLater(() -> {
+            if (countdown > 0) countdownPane.toFront();
+        });
     }
 
     /**

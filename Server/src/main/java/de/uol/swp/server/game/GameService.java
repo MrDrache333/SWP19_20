@@ -339,12 +339,23 @@ public class GameService extends AbstractService {
     @Subscribe
     public void onCancelPoopBreakRequest(CancelPoopBreakRequest req) {
         Optional<Game> game = gameManagement.getGame(req.getGameID());
-        if (timerStarted && game.isPresent() && req.getUser().equals(poopInitiator)) {
-            timer.cancel();
-            timerStarted = false;
-            interval = 0;
-            sendToAllPlayers(req.getGameID(), new CancelPoopBreakMessage(poopInitiator, req.getGameID()));
-            poopInitiator = null;
+        if (game.isPresent()) {
+            if (!req.getUser().equals(poopInitiator) && interval > 0) {
+                game.get().getPlayground().getPlayers().forEach(player -> {
+                    if (player.getTheUserInThePlayer().equals(req.getUser()))
+                        sendToSpecificPlayer(player, new CancelPoopBreakMessage(poopInitiator, req.getGameID()));
+                });
+            }
+            else {
+                if (timerStarted) {
+                    timer.cancel();
+                    timerStarted = false;
+                }
+                sendToAllPlayers(req.getGameID(), new CancelPoopBreakMessage(poopInitiator, req.getGameID()));
+                interval = 0;
+                poopInitiator = null;
+                poopMap.clear();
+            }
         }
     }
 
@@ -379,6 +390,13 @@ public class GameService extends AbstractService {
             timerStarted = false;
         }
         return --interval;
+    }
+    public boolean isTimerStarted() {
+        return timerStarted;
+    }
+
+    public void killTimer() {
+        interval = 0;
     }
 
     public GameManagement getGameManagement() {
