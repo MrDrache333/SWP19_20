@@ -38,10 +38,13 @@ public class BotPlayer extends Player {
     private int round = 0;
     private Map<Short, Integer> cardField;
     private final CardPack cardpack;
-    private short playCardID = 0;
     private int takeCardWithSpecificValue = 0;
     private boolean isBot = true;
     private boolean buyOnlyMoneyCard =false;
+    private int actionCount=0;
+    private int buyCount=0;
+    private Phase gamePhase = Phase.NONE;
+
     /**
      * Erstellt einen neuen Bot.
      *
@@ -49,7 +52,6 @@ public class BotPlayer extends Player {
      * @author Fenja, Ferit
      * @since Sprint7
      */
-
     public BotPlayer(String playerName, EventBus bus, UUID gameID) {
         super(playerName);
         this.eventBus = bus;
@@ -65,77 +67,18 @@ public class BotPlayer extends Player {
     }
 
     /**
-     * Der Bot entscheidet, welche Karte er kaufen möchte. Wenn der Bot genug Geld hat kauft er eine Provinz.
-     * Bei unter 20% von Aktionskarten wird eine neue Aktionskarte gekauft. Dabei wird geguckt, dass er die teuereste
-     * möglichste Karte kauft. Ansonsten wird geguckt wird geguckt ob der Bot genug Geld hat um Silber oder Gold zu
-     * kaufen.
+     * Wenn die BuyPhase gestartet wird, kauft der Bot eine Karte.
      *
      * @param msg BuyPhase Mitteilung
      * @author Darian
      * @since Sprint 9
      */
     @Subscribe
-    public void onStartBuyPhaseMessage(StartBuyPhaseMessage msg) {
+    public void onStartBuyPhaseMessage(StartBuyPhaseMessage msg) throws InterruptedException {
         if (msg.getUser().getUsername().equals(getTheUserInThePlayer().getUsername()) && msg.getGameID().equals(gameId)) {
-            calculateMoneyOnTheHand();
-            short buyCardID = 1;
-            int actionCardCounter = 0;
-            int usingMoney = 0;
-            if(takeCardWithSpecificValue != 0){
-                usingMoney = takeCardWithSpecificValue;
-            }else{
-                usingMoney = moneyOnTheHand;
-            }
-            for (short cardID : cardsInPossessionIDs) {
-                if (cardID > 6) {
-                    actionCardCounter++;
-                }
-            }
-            float actionCardPercentage = (float) actionCardCounter / (float) cardsInPossessionIDs.size();
-            LOG.debug("Der Bot hat "+(actionCardPercentage*100)+"% an Aktionskarten. ");
-
-            if (usingMoney >= 8 && !buyOnlyMoneyCard){
-                buyCardID = 6;
-            }
-            else if(usingMoney >= 5 && round >= 15 && !buyOnlyMoneyCard){
-                buyCardID = 5;
-            }
-            else if (actionCardPercentage < 0.2 && usingMoney != 0 && !buyOnlyMoneyCard) {
-                short highestCost = 0;
-                ArrayList<Short> cardsToBuyIDs = new ArrayList<>();
-                for (short cardID : cardField.keySet()) {
-                    if (cardID > 6 && cardID != 38 && getCardCosts(cardID) <= usingMoney) {
-                        if (highestCost < getCardCosts(cardID)) {
-                            highestCost = getCardCosts(cardID);
-                            cardsToBuyIDs.clear();
-                            cardsToBuyIDs.add(cardID);
-                        } else if (highestCost == getCardCosts(cardID)) {
-                            cardsToBuyIDs.add(cardID);
-                        }
-                    }
-                }
-                int lowestNumberOfActionCard = 10;
-                for (short cardID : cardsToBuyIDs) {
-                    if (lowestNumberOfActionCard > Collections.frequency(cardsInPossessionIDs, cardID)) {
-                        lowestNumberOfActionCard = Collections.frequency(cardsInPossessionIDs, cardID);
-                        buyCardID = cardID;
-                    }
-                }
-                if (cardField.get(buyCardID) == 0) {
-                    buyCardID = 0;
-                }
-            } else if (usingMoney >= 6 && cardField.get((short)3) != 0) {
-                buyCardID = 3;
-            }
-            else if (usingMoney >= 3 && cardField.get((short)2) != 0 ){
-                buyCardID = 2;
-            }
-            buyOnlyMoneyCard = false;
-            calculateNewMoneyOnTheHand(buyCardID);
-            takeCardWithSpecificValue = 0;
-            BuyCardRequest req = new BuyCardRequest(gameId, this.getTheUserInThePlayer(), buyCardID);
-            LOG.debug("Der Bot " + getTheUserInThePlayer().getUsername() + " will die Karte "+ getCardName(buyCardID) +" kaufen.");
-            eventBus.post(req);
+            gamePhase = Phase.BUY;
+            Thread.sleep(1000);
+            buyCard();
         }
     }
 
@@ -146,25 +89,37 @@ public class BotPlayer extends Player {
      * @author Darian
      */
     @Subscribe
-    public void onStartActionPhaseMessage(StartActionPhaseMessage msg) {
+    public void onStartActionPhaseMessage(StartActionPhaseMessage msg) throws InterruptedException {
         if (msg.getUser().getUsername().equals(getTheUserInThePlayer().getUsername()) && msg.getGameID().equals(gameId)) {
-            short maxCardValue = 0;
-            for (short cardID : cardsOnHandIDs) {
-                if (cardID > 6 && cardID != 38) {
-                    if(getCardCosts(cardID) > maxCardValue)
-                    {
-                        maxCardValue = getCardCosts(cardID);
-                        playCardID = cardID;
+            gamePhase = Phase.PLAY;
+            Thread.sleep(1500);
+            actionCount++;
+            while (actionCount > 0) {
+                short maxCardValue = 0;
+                short playCardID = 0;
+                for (short cardID : cardsOnHandIDs) {
+                    if (cardID > 6 && cardID != 38) {
+                        if (getCardCosts(cardID) > maxCardValue) {
+                            maxCardValue = getCardCosts(cardID);
+                            playCardID = cardID;
+                        }
                     }
                 }
-            }
-            if (playCardID != 0) {
-                PlayCardRequest req = new PlayCardRequest(gameId, this.getTheUserInThePlayer(), playCardID);
-                LOG.debug("Der Bot " + getTheUserInThePlayer().getUsername() + " will die Karte "+ getCardName(playCardID) +" auspielen.");
-                eventBus.post(req);
-            }
-            else{
-                eventBus.post(new SkipPhaseRequest(this.getTheUserInThePlayer(),gameId));
+                if (playCardID != 0) {
+                    cardsOnHandIDs.remove((Short)playCardID);
+                    PlayCardRequest req = new PlayCardRequest(gameId, this.getTheUserInThePlayer(), playCardID);
+                    LOG.debug("Der Bot " + getTheUserInThePlayer().getUsername() + " will die Karte " + getCardName(playCardID) + " auspielen.");
+                    Thread.sleep(1000);
+                    eventBus.post(req);
+                    if(playCardID == 8 || playCardID == 27){
+                        actionCount += 2;
+                    } else if(playCardID == 11 || playCardID == 23|| playCardID == 29){
+                        actionCount += 1;
+                    }
+                } else {
+                    eventBus.post(new SkipPhaseRequest(this.getTheUserInThePlayer(), gameId));
+                }
+                actionCount--;
             }
         }
     }
@@ -188,6 +143,7 @@ public class BotPlayer extends Player {
      *
      * @param msg DrawHandMessage
      * @author Darian
+     * @since Sprint 9
      */
     @Subscribe
     public void onDrawHandMessage(DrawHandMessage msg) {
@@ -197,7 +153,6 @@ public class BotPlayer extends Player {
             if (round <= 2) {
                 cardsInPossessionIDs.addAll(cardsOnHandIDs);
             }
-
         }
     }
 
@@ -225,25 +180,25 @@ public class BotPlayer extends Player {
      * @since Sprint 9
      */
     @Subscribe
-    public void onPlayCardMessage(PlayCardMessage msg) {
+    public void onPlayCardMessage(PlayCardMessage msg) throws InterruptedException {
         if(msg.getCurrentUser().equals(getTheUserInThePlayer()) && msg.getGameID().equals(gameId) && msg.getIsPlayed()){
-            LOG.debug("Der Bot " + getTheUserInThePlayer().getUsername() + " hat die Karte " + getCardName(msg.getHandCardID()) + " ausgespielt.");
             if(!msg.getIsPlayed()){
                 LOG.debug("Der Bot " + getTheUserInThePlayer().getUsername() + " konnte die Karte " + getCardName(msg.getHandCardID()) + " nicht ausgespielt.");
-                playCardID = 0;
                 return;
             }
             LOG.debug("Der Bot " + getTheUserInThePlayer().getUsername() + " hat die Karte " + getCardName(msg.getHandCardID()) + " ausgespielt.");
-            cardsOnHandIDs.remove((Short) playCardID);
             switch (msg.getHandCardID()){
                 case 9:
+                    moneyOnTheHand += 2;
+                    buyCard();
+                    break;
                 case 21:
-                case 27:
                 case 12:
                     moneyOnTheHand += 2;
                     break;
                 case 11:
                     moneyOnTheHand += 1;
+                    buyCard();
                     break;
                 case 16:
                     takeCardWithSpecificValue = 4;
@@ -255,6 +210,13 @@ public class BotPlayer extends Player {
                     cardsInPossessionIDs.remove((Short) (short) 1);
                     cardsOnHandIDs.remove((Short) (short) 1);
                     moneyOnTheHand += 2;
+                    break;
+                case 27:
+                    moneyOnTheHand += 2;
+                    buyCard();
+                    break;
+                case 28:
+                    buyCard();
                     break;
             }
         }
@@ -271,6 +233,13 @@ public class BotPlayer extends Player {
     public void onSendCardFieldMessage(SendCardFieldMessage msg) {
         if (msg.getGameID().equals(gameId)) {
             cardField = msg.getCardField();
+        }
+    }
+
+    @Subscribe
+    public void onSendCardFieldMessage(StartClearPhaseMessage msg) {
+        if (msg.getGameID().equals(gameId)) {
+            gamePhase = Phase.NONE;
         }
     }
 
@@ -304,10 +273,10 @@ public class BotPlayer extends Player {
         if (msg.getPlayer().getUsername().equals(getTheUserInThePlayer().getUsername()) && msg.getGameID().equals(gameId)) {
             ArrayList<Short> choosenCards = new ArrayList<>();
             short choosenCard = 0;
-            if(playCardID <= 6 || playCardID == 38){
+            if(msg.getCardID() <= 6 || msg.getCardID() == 38){
                 LOG.debug("Es wurde eine Karte ausgespielt die keine Aktions Karte ist.");
             }else {
-                switch (playCardID){
+                switch (msg.getCardID()){
                     case 10:
                         for(short cardID : msg.getCards()) {
                             if((cardID == 0 || (cardID >= 4 && cardID <= 6))) {
@@ -358,7 +327,6 @@ public class BotPlayer extends Player {
                         break;
                 }
             }
-            playCardID = 0;
             ChooseCardResponse res;
             if(choosenCard == 0){
                 res = new ChooseCardResponse(gameId, this.getTheUserInThePlayer(), choosenCards);
@@ -440,6 +408,76 @@ public class BotPlayer extends Player {
         }
     }
 
+    /**
+     * Der Bot entscheidet, welche Karte er kaufen möchte. Wenn der Bot genug Geld hat kauft er eine Provinz.
+     * Bei unter 20% von Aktionskarten wird eine neue Aktionskarte gekauft. Dabei wird geguckt, dass er die teuereste
+     * möglichste Karte kauft. Ansonsten wird geguckt wird geguckt ob der Bot genug Geld hat um Silber oder Gold zu
+     * kaufen.
+     *
+     * @author Darian
+     * @since Sprint10
+     */
+    private void buyCard() throws InterruptedException {
+        calculateMoneyOnTheHand();
+        short buyCardID = 1;
+        int actionCardCounter = 0;
+        int usingMoney = 0;
+        if (takeCardWithSpecificValue != 0) {
+            usingMoney = takeCardWithSpecificValue;
+        } else {
+            usingMoney = moneyOnTheHand;
+        }
+        for (short cardID : cardsInPossessionIDs) {
+            if (cardID > 6) {
+                actionCardCounter++;
+            }
+        }
+        float actionCardPercentage = (float) actionCardCounter / (float) cardsInPossessionIDs.size();
+        LOG.debug("Der Bot hat " + (actionCardPercentage * 100) + "% an Aktionskarten und " + usingMoney + " Geld.");
+
+        if (usingMoney >= 8 && !buyOnlyMoneyCard) {
+            buyCardID = 6;
+        } else if (usingMoney >= 5 && round >= 15 && !buyOnlyMoneyCard) {
+            buyCardID = 5;
+        } else if (actionCardPercentage < 0.2 && usingMoney != 0 && !buyOnlyMoneyCard) {
+            short highestCost = 0;
+            ArrayList<Short> cardsToBuyIDs = new ArrayList<>();
+            for (short cardID : cardField.keySet()) {
+                if (cardID > 6 && cardID != 38 && getCardCosts(cardID) <= usingMoney) {
+                    if (highestCost < getCardCosts(cardID)) {
+                        highestCost = getCardCosts(cardID);
+                        cardsToBuyIDs.clear();
+                        cardsToBuyIDs.add(cardID);
+                    } else if (highestCost == getCardCosts(cardID)) {
+                        cardsToBuyIDs.add(cardID);
+                    }
+                }
+            }
+            int lowestNumberOfActionCard = 10;
+            for (short cardID : cardsToBuyIDs) {
+                if (lowestNumberOfActionCard > Collections.frequency(cardsInPossessionIDs, cardID)) {
+                    lowestNumberOfActionCard = Collections.frequency(cardsInPossessionIDs, cardID);
+                    buyCardID = cardID;
+                }
+            }
+            if (cardField.get(buyCardID) == 0) {
+                buyCardID = 0;
+            }
+        } else if (usingMoney >= 6 && cardField.get((short) 3) != 0) {
+            buyCardID = 3;
+        } else if (usingMoney >= 3 && cardField.get((short) 2) != 0) {
+            buyCardID = 2;
+        } else if (usingMoney == 0) {
+            buyCardID = 1;
+        }
+        buyOnlyMoneyCard = false;
+        calculateNewMoneyOnTheHand(buyCardID);
+        takeCardWithSpecificValue = 0;
+        BuyCardRequest req = new BuyCardRequest(gameId, this.getTheUserInThePlayer(), buyCardID);
+        LOG.debug("Der Bot " + getTheUserInThePlayer().getUsername() + " will die Karte " + getCardName(buyCardID) + " kaufen.");
+        Thread.sleep(500);
+        eventBus.post(req);
+    }
 
     /**
      * Die Karten auf der Hand werden zurückgegeben.
@@ -464,17 +502,6 @@ public class BotPlayer extends Player {
     }
 
     /**
-     * Die ID der Karte die gespielt wird, wird zurückgegeben.
-     *
-     * @author Darian
-     * @since Sprint10
-     * @return Karte die gespielt wird
-     */
-    public short getPlayCardID(){
-        return playCardID;
-    }
-
-    /**
      * Der Wert mit der eine kostenlose Karte auf dem Deck geholt werden darf wird wiedergegeben.
      *
      * @author Darian
@@ -494,5 +521,10 @@ public class BotPlayer extends Player {
      */
     public ArrayList<Short> getCardsInPossessionIDs(){
         return cardsInPossessionIDs;
+    }
+
+    public enum Phase
+    {
+        PLAY,BUY,NONE
     }
 }

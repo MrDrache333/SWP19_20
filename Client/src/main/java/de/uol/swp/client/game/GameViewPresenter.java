@@ -373,31 +373,37 @@ public class GameViewPresenter extends AbstractPresenter {
      * Die Anzahl der Wertkarten wird angezeigt.
      *
      * @param theList    die IDs der Aktionskarten
-     * @param valueCards Die Anzahl der Wertkarten, mit der ID der Karte als Schlüssel
+     * @param cardsToBuy Die Anzahl der Wertkarten, mit der ID der Karte als Schlüssel
      * @author Ferit, Fenja, Anna
      * @since Sprint 7
      */
-    private void initalizeCardFieldImages(ArrayList<Short> theList, Map<Short, Integer> valueCards) {
+    private void initalizeCardFieldImages(ArrayList<Short> theList, Map<Short, Integer> cardsToBuy) {
         ArrayList<ImageView> allImageViews = new ArrayList<>(Arrays.asList(cardPlaceholder1, cardPlaceholder2, cardPlaceholder3, cardPlaceholder4, cardPlaceholder5, cardPlaceholder6, cardPlaceholder7, cardPlaceholder8, cardPlaceholder9, cardPlaceholder10));
+        ArrayList<Label> allLabels = new ArrayList<>(Arrays.asList(countPlaceholder1Label, countPlaceholder2Label, countPlaceholder3Label, countPlaceholder4Label, countPlaceholder5Label, countPlaceholder6Label, countPlaceholder7Label, countPlaceholder8Label, countPlaceholder9Label, countPlaceholder10Label));
         int index = 0;
-        valueCardLabels.put((short) 4, countEstateCardLabel);
-        valueCardLabels.put((short) 5, countDuchiesCardLabel);
-        valueCardLabels.put((short) 6, countProvinceCardLabel);
-        valueCardLabels.put((short) 38, countCurseCardLabel);
+        cardLabels.put((short) 1, countCopperLabel);
+        cardLabels.put((short) 2, countSilverLabel);
+        cardLabels.put((short) 3, countGoldLabel);
+        cardLabels.put((short) 4, countEstateCardLabel);
+        cardLabels.put((short) 5, countDuchiesCardLabel);
+        cardLabels.put((short) 6, countProvinceCardLabel);
+        cardLabels.put((short) 38, countCurseCardLabel);
         //Initialisieren der Aktionskarten
         for (ImageView imageView : allImageViews) {
-            String theIdInString = String.valueOf(theList.get(index));
-            String imageUrl = "cards/images/" + theIdInString + "_sm.png";
+            Short theID = theList.get(index);
+            String imageUrl = "cards/images/" + theID + "_sm.png";
             Image theImage = new Image(imageUrl);
             imageView.setImage(theImage);
-            imageView.setId(theIdInString);
+            imageView.setId(String.valueOf(theID));
+            Label l = allLabels.get(index);
+            cardLabels.put(theID, l);
             index++;
         }
-        //Initialiseren der Anzahl der Wertkarten
+        //Initialiseren der Anzahl der Karten
         Platform.runLater(() -> {
-            for (Short key : valueCardLabels.keySet()) {
-                Label l = valueCardLabels.get(key);
-                l.setText(String.valueOf(valueCards.get(key)));
+            for (Short key : cardLabels.keySet()) {
+                Label l = cardLabels.get(key);
+                l.setText(String.valueOf(cardsToBuy.get(key)));
             }
         });
         ArrayList<GeneralLayoutContainer> allContainer = new ArrayList<>(Arrays.asList(handcards, firstEnemyHand,
@@ -486,15 +492,14 @@ public class GameViewPresenter extends AbstractPresenter {
     @Subscribe
     public void onSendCardFieldMessage(SendCardFieldMessage msg) {
         ArrayList<Short> list = new ArrayList<>();
-        Map<Short, Integer> valuecards = new HashMap<>();
+        Map<Short, Integer> cardsToBuy = new HashMap<>();
         for (Short key : msg.getCardField().keySet()) {
             if (key > 6 && key != 38) { //Aktionskarten, ohne Fluchkarte
                 list.add(key);
-            } else if (key <= 6 && key > 3 || key == 38) { //Wertkarten und Fluchkarte
-                valuecards.put(key, msg.getCardField().get(key));
             }
+            cardsToBuy.put(key, msg.getCardField().get(key));
         }
-        initalizeCardFieldImages(list, valuecards);
+        initalizeCardFieldImages(list, cardsToBuy);
     }
 
     /**
@@ -673,8 +678,8 @@ public class GameViewPresenter extends AbstractPresenter {
                                 AnimationManagement.deleteCard(card);
                             }
                         }
-                        if (msg.getHandCardID()<=3 && msg.getHandCardID() >= 1) {
-                            usableMoney += (int) msg.getHandCardID();
+                        if (msg.getHandCardIdAsString().equals("1") || msg.getHandCardIdAsString().equals("2") || msg.getHandCardIdAsString().equals("3")) {
+                            usableMoney += Integer.parseInt(msg.getHandCardIdAsString());
                             numberOfMoney.setText(usableMoney + " Geld");
                         }
                     });
@@ -684,7 +689,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 }
             }
             else {
-                ImageView card = new Card(String.valueOf(msg.getHandCardID()));
+                ImageView card = new Card(msg.getHandCardIdAsString());
                 Platform.runLater(() -> {
                     usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.HAND).getChildren().remove(0);
                     usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.PLAY).getChildren().add(card);
@@ -1592,4 +1597,5 @@ public class GameViewPresenter extends AbstractPresenter {
             if (msg.getCardCounts().get(id) < 1) selectedCard.setEffect(makeImageDarker);
         }
     }
+
 }

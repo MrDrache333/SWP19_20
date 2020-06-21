@@ -37,6 +37,8 @@ public class ChooseCardRequest extends AbstractGameMessage {
      */
     private Value countV;
 
+    private short cardID;
+
     private int count;
 
     /**
@@ -52,7 +54,7 @@ public class ChooseCardRequest extends AbstractGameMessage {
      * @author KenoO
      * @since Sprint 7
      */
-    public ChooseCardRequest(UUID id, User player, ArrayList<Short> cards, Value countV, User sourcePlayer, AbstractPlayground.ZoneType source, String message) {
+    public ChooseCardRequest(UUID id, User player, ArrayList<Short> cards, Value countV, User sourcePlayer, AbstractPlayground.ZoneType source, String message, short cardID) {
         super(id, player);
         this.cards = cards;
         this.countV = countV;
@@ -73,8 +75,9 @@ public class ChooseCardRequest extends AbstractGameMessage {
      * @author KenoO
      * @since Sprint 7
      */
-    public ChooseCardRequest(UUID id, User player, ArrayList<Short> cards, int count, User sourcePlayer, AbstractPlayground.ZoneType source, String message) {
+    public ChooseCardRequest(UUID id, User player, ArrayList<Short> cards, int count, User sourcePlayer, AbstractPlayground.ZoneType source, String message, short cardID) {
         super(id, player);
+        this.cardID = cardID;
         this.cards = cards;
         this.count = count;
         this.source = source;
@@ -128,6 +131,17 @@ public class ChooseCardRequest extends AbstractGameMessage {
      */
     public int getCount() {
         return count;
+    }
+
+    /**
+     * Gibt die Karten-ID zurück
+     *
+     * @return die Karten-ID
+     * @author Darian
+     * @since Sprint 10
+     */
+    public int getCardID() {
+        return cardID;
     }
 
     public Value getCountV() {
