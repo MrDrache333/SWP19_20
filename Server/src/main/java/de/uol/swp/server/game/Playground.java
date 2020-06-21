@@ -388,7 +388,7 @@ public class Playground extends AbstractPlayground {
                     victoryPoints += value;
                 } else if (card instanceof CurseCard) {
                     int value = ((CurseCard) card).getValue();
-                    victoryPoints -= value;
+                    victoryPoints += value;
                 }
             }
             resultsGame.put(player.getPlayerName(), victoryPoints);
