@@ -3,17 +3,16 @@ package de.uol.swp.server.lobby;
 import com.google.common.eventbus.DeadEvent;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import com.google.inject.internal.cglib.proxy.$UndeclaredThrowableException;
 import de.uol.swp.common.chat.message.NewChatMessage;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.exception.JoinLobbyExceptionMessage;
-import de.uol.swp.common.lobby.exception.KickPlayerException;
-import de.uol.swp.common.lobby.exception.SetMaxPlayerException;
-import de.uol.swp.common.lobby.message.*;
+import de.uol.swp.common.lobby.message.CreateLobbyMessage;
+import de.uol.swp.common.lobby.message.UpdatedInGameMessage;
+import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
+import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.lobby.request.*;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
 import de.uol.swp.common.lobby.response.AllOnlineUsersInLobbyResponse;
-import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.request.LoginRequest;
@@ -40,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Julia
  * @since Sprint 3
  */
+@SuppressWarnings("UnstableApiUsage")
 class LobbyServiceTest {
 
     static final User lobbyOwner = new UserDTO("Marco", "Marco", "Marco@Grawunder.com");

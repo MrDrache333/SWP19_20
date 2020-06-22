@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Marco
  * @since Start
  */
+@SuppressWarnings("UnstableApiUsage")
 class UserServiceTest {
 
     static final User userToRegister = new UserDTO("Marco", "Marco", "Marco@Grawunder.com");

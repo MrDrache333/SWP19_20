@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Julia
  * @since Sprint 3
  */
+@SuppressWarnings("UnstableApiUsage")
 class LobbyManagementTest {
     static final User defaultLobbyOwner = new UserDTO("Owner", "Test", "123@test.de");
     static final User secondUser = new UserDTO("Test", "Test", "1234@test.de");

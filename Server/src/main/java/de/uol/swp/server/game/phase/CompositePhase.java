@@ -9,11 +9,9 @@ import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.server.game.Playground;
 import de.uol.swp.server.game.player.Deck;
 import de.uol.swp.server.game.player.Player;
-import org.apache.logging.log4j.LogManager;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * Die Funktionsklasse aller Phasen
@@ -37,6 +35,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         implementedActionCards = Arrays.asList(actioncards);
     }
 
+    @SuppressWarnings("UnstableApiUsage")
     @Override
     public void executeActionPhase(Player player, short cardId) {
         CardPack cardsPackField = playground.getCardsPackField();

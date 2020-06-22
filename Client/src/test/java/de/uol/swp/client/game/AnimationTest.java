@@ -161,10 +161,10 @@ public class AnimationTest extends Application {
             deckPane.getChildren().add(card);
         }
 
-        for (int i = 0; i < cards.size(); i++) {
-            AnimationManagement.addToHand(cards.get(i), handcards);
-            deckPane.getChildren().remove(cards.get(i));
-            handcards.getChildren().add(cards.get(i));
+        for (ImageView card : cards) {
+            AnimationManagement.addToHand(card, handcards);
+            deckPane.getChildren().remove(card);
+            handcards.getChildren().add(card);
         }
 
         //Wenn auf die Karte geklickt wird, spielt der Spieler sie aus
@@ -172,7 +172,7 @@ public class AnimationTest extends Application {
         GeneralLayoutContainer pclc = new GeneralLayoutContainer(700, 500, 100, 200, "My.PCLC");
 
         cardToPlay.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            AnimationManagement.playCard(cardToPlay, 0, pclc );
+            AnimationManagement.playCard(cardToPlay, 0, pclc);
             if (cards.contains(cardToPlay)) {
                 cards.remove(cardToPlay);
                 handcards.getChildren().remove(cardToPlay);
