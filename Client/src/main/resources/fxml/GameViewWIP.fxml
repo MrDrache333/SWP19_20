@@ -6,8 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="gameViewWIP" prefHeight="750.0" prefWidth="1280.0"
-            xmlns="http://javafx.com/javafx/11.0.1">
+<AnchorPane fx:id="gameViewWIP" prefHeight="750.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <ImageView fitHeight="750.0" fitWidth="1280.0" pickOnBounds="true">
             <image>
@@ -21,19 +20,38 @@
             <children>
                 <VBox maxHeight="453.0" maxWidth="300.0" minHeight="453.0" minWidth="300.0" opacity="0.73" prefHeight="453.0" prefWidth="300.0" style="-fx-background-color: #3D3D3D;">
                     <children>
-                        <Label text="CHAT" textFill="WHITE">
-                            <HBox.margin>
-                                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-                            </HBox.margin>
-                            <VBox.margin>
-                                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-                            </VBox.margin>
-                            <font>
-                                <Font name="System Bold" size="18.0" />
-                            </font>
+                  <Pane fx:id="poopView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="120.0" prefWidth="300.0">
+                     <children>
+                              <Label fx:id="chatHeader" layoutX="14.0" layoutY="14.0" text="CHAT" textFill="WHITE">
+                                  <font>
+                                      <Font name="System Bold" size="18.0" />
+                                  </font>
+                              </Label>
+                        <ImageView fx:id="poopButtonImage" fitHeight="41.0" fitWidth="50.0" layoutX="250.0" layoutY="9.0" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/toilettenknopf.png" />
+                           </image>
+                        </ImageView>
+                        <Button fx:id="poopButton" layoutX="245.0" layoutY="4.0" mnemonicParsing="false" onAction="#onPoopButtonPressed" prefHeight="50.0" prefWidth="50.0" style="-fx-border-color: transparent; -fx-border-width: 0; -fx-background-radius: 0; -fx-background-color: transparent; -fx-font-family: &quot;Segoe UI&quot;, Helvetica, Arial, sans-serif; -fx-font-size: 1em; -fx-text-fill: #828282;" />
+                        <Label fx:id="poopMessage" layoutX="74.0" layoutY="28.0" text="User muss auf Klo" textFill="WHITE" visible="false">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
                         </Label>
+                        <Button fx:id="declineButton" disable="true" layoutX="154.0" layoutY="62.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onDeclineButtonPressed" prefHeight="40.0" prefWidth="100.0" style="-fx-background-color: red;" text="Nope" textFill="WHITE" visible="false">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="acceptButton" disable="true" layoutX="46.0" layoutY="62.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onAcceptButtonPressed" prefHeight="40.0" prefWidth="100.0" style="-fx-background-color: green;" text="Okay" textFill="WHITE" visible="false">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </Pane>
 
-                        <Pane fx:id="chatView" maxHeight="368.0" maxWidth="270.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="368.0" prefWidth="270.0">
+                        <Pane fx:id="chatView" maxHeight="368.0" maxWidth="270.0" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="300.0" prefWidth="270.0">
                             <VBox.margin>
                                 <Insets bottom="15.0" left="15.0" right="15.0" top="5.0" />
                             </VBox.margin>
@@ -75,7 +93,7 @@
                 </HBox>
             </children>
         </VBox>
-        <VBox layoutX="300.0" prefHeight="750.0" prefWidth="980.0">
+        <VBox fx:id="playgroundBox" layoutX="300.0" prefHeight="750.0" prefWidth="980.0">
             <children>
                 <HBox prefHeight="150.0" prefWidth="980.0">
                     <children>
@@ -143,94 +161,64 @@
                                                 <Line endY="27.0" layoutX="214.0" layoutY="9.0" stroke="WHITE" />
                                             </children>
                                         </Pane>
-                                        <StackPane fx:id="countPlaceholder1" layoutX="102.0" layoutY="93.0"
-                                                   prefWidth="20">
+                                        <StackPane fx:id="countPlaceholder1" layoutX="102.0" layoutY="93.0" prefWidth="20">
                                             <children>
-                                                <Circle fx:id="countPlaceholder1Circle" fill="darkred" radius="12"/>
-                                                <Label fx:id="countPlaceholder1Label"
-                                                       style="-fx-font-style: Bold; -fx-font-size: 14" text=""
-                                                       textFill="white"/>
+                                                <Circle fx:id="countPlaceholder1Circle" fill="darkred" radius="12" />
+                                                <Label fx:id="countPlaceholder1Label" style="-fx-font-style: Bold; -fx-font-size: 14" text="" textFill="white" />
                                             </children>
                                         </StackPane>
-                                        <StackPane fx:id="countPlaceholder2" layoutX="213.0" layoutY="93.0"
-                                                   prefWidth="20">
+                                        <StackPane fx:id="countPlaceholder2" layoutX="213.0" layoutY="93.0" prefWidth="20">
                                             <children>
-                                                <Circle fx:id="countPlaceholder2Circle" fill="darkred" radius="12"/>
-                                                <Label fx:id="countPlaceholder2Label"
-                                                       style="-fx-font-style: Bold; -fx-font-size: 14" text=""
-                                                       textFill="white"/>
+                                                <Circle fx:id="countPlaceholder2Circle" fill="darkred" radius="12" />
+                                                <Label fx:id="countPlaceholder2Label" style="-fx-font-style: Bold; -fx-font-size: 14" text="" textFill="white" />
                                             </children>
                                         </StackPane>
-                                        <StackPane fx:id="countPlaceholder3" layoutX="323.0" layoutY="93.0"
-                                                   prefWidth="20">
+                                        <StackPane fx:id="countPlaceholder3" layoutX="323.0" layoutY="93.0" prefWidth="20">
                                             <children>
-                                                <Circle fx:id="countPlaceholder3Circle" fill="darkred" radius="12"/>
-                                                <Label fx:id="countPlaceholder3Label"
-                                                       style="-fx-font-style: Bold; -fx-font-size: 14" text=""
-                                                       textFill="white"/>
+                                                <Circle fx:id="countPlaceholder3Circle" fill="darkred" radius="12" />
+                                                <Label fx:id="countPlaceholder3Label" style="-fx-font-style: Bold; -fx-font-size: 14" text="" textFill="white" />
                                             </children>
                                         </StackPane>
-                                        <StackPane fx:id="countPlaceholder4" layoutX="434.0" layoutY="93.0"
-                                                   prefWidth="20">
+                                        <StackPane fx:id="countPlaceholder4" layoutX="434.0" layoutY="93.0" prefWidth="20">
                                             <children>
-                                                <Circle fx:id="countPlaceholder4Circle" fill="darkred" radius="12"/>
-                                                <Label fx:id="countPlaceholder4Label"
-                                                       style="-fx-font-style: Bold; -fx-font-size: 14" text=""
-                                                       textFill="white"/>
+                                                <Circle fx:id="countPlaceholder4Circle" fill="darkred" radius="12" />
+                                                <Label fx:id="countPlaceholder4Label" style="-fx-font-style: Bold; -fx-font-size: 14" text="" textFill="white" />
                                             </children>
                                         </StackPane>
-                                        <StackPane fx:id="countPlaceholder5" layoutX="544.0" layoutY="93.0"
-                                                   prefWidth="20">
+                                        <StackPane fx:id="countPlaceholder5" layoutX="544.0" layoutY="93.0" prefWidth="20">
                                             <children>
-                                                <Circle fx:id="countPlaceholder5Circle" fill="darkred" radius="12"/>
-                                                <Label fx:id="countPlaceholder5Label"
-                                                       style="-fx-font-style: Bold; -fx-font-size: 14" text=""
-                                                       textFill="white"/>
+                                                <Circle fx:id="countPlaceholder5Circle" fill="darkred" radius="12" />
+                                                <Label fx:id="countPlaceholder5Label" style="-fx-font-style: Bold; -fx-font-size: 14" text="" textFill="white" />
                                             </children>
                                         </StackPane>
-                                        <StackPane fx:id="countPlaceholder6" layoutX="102.0" layoutY="212.0"
-                                                   prefWidth="20">
+                                        <StackPane fx:id="countPlaceholder6" layoutX="102.0" layoutY="212.0" prefWidth="20">
                                             <children>
-                                                <Circle fx:id="countPlaceholder6Circle" fill="darkred" radius="12"/>
-                                                <Label fx:id="countPlaceholder6Label"
-                                                       style="-fx-font-style: Bold; -fx-font-size: 14" text=""
-                                                       textFill="white"/>
+                                                <Circle fx:id="countPlaceholder6Circle" fill="darkred" radius="12" />
+                                                <Label fx:id="countPlaceholder6Label" style="-fx-font-style: Bold; -fx-font-size: 14" text="" textFill="white" />
                                             </children>
                                         </StackPane>
-                                        <StackPane fx:id="countPlaceholder7" layoutX="213.0" layoutY="212.0"
-                                                   prefWidth="20">
+                                        <StackPane fx:id="countPlaceholder7" layoutX="213.0" layoutY="212.0" prefWidth="20">
                                             <children>
-                                                <Circle fx:id="countPlaceholder7Circle" fill="darkred" radius="12"/>
-                                                <Label fx:id="countPlaceholder7Label"
-                                                       style="-fx-font-style: Bold; -fx-font-size: 14" text=""
-                                                       textFill="white"/>
+                                                <Circle fx:id="countPlaceholder7Circle" fill="darkred" radius="12" />
+                                                <Label fx:id="countPlaceholder7Label" style="-fx-font-style: Bold; -fx-font-size: 14" text="" textFill="white" />
                                             </children>
                                         </StackPane>
-                                        <StackPane fx:id="countPlaceholder8" layoutX="323.0" layoutY="212.0"
-                                                   prefWidth="20">
+                                        <StackPane fx:id="countPlaceholder8" layoutX="323.0" layoutY="212.0" prefWidth="20">
                                             <children>
-                                                <Circle fx:id="countPlaceholder8Circle" fill="darkred" radius="12"/>
-                                                <Label fx:id="countPlaceholder8Label"
-                                                       style="-fx-font-style: Bold; -fx-font-size: 14" text=""
-                                                       textFill="white"/>
+                                                <Circle fx:id="countPlaceholder8Circle" fill="darkred" radius="12" />
+                                                <Label fx:id="countPlaceholder8Label" style="-fx-font-style: Bold; -fx-font-size: 14" text="" textFill="white" />
                                             </children>
                                         </StackPane>
-                                        <StackPane fx:id="countPlaceholder9" layoutX="434.0" layoutY="212.0"
-                                                   prefWidth="20">
+                                        <StackPane fx:id="countPlaceholder9" layoutX="434.0" layoutY="212.0" prefWidth="20">
                                             <children>
-                                                <Circle fx:id="countPlaceholder9Circle" fill="darkred" radius="12"/>
-                                                <Label fx:id="countPlaceholder9Label"
-                                                       style="-fx-font-style: Bold; -fx-font-size: 14" text=""
-                                                       textFill="white"/>
+                                                <Circle fx:id="countPlaceholder9Circle" fill="darkred" radius="12" />
+                                                <Label fx:id="countPlaceholder9Label" style="-fx-font-style: Bold; -fx-font-size: 14" text="" textFill="white" />
                                             </children>
                                         </StackPane>
-                                        <StackPane fx:id="countPlaceholder10" layoutX="544.0" layoutY="212.0"
-                                                   prefWidth="20">
+                                        <StackPane fx:id="countPlaceholder10" layoutX="544.0" layoutY="212.0" prefWidth="20">
                                             <children>
-                                                <Circle fx:id="countPlaceholder10Circle" fill="darkred" radius="12"/>
-                                                <Label fx:id="countPlaceholder10Label"
-                                                       style="-fx-font-style: Bold; -fx-font-size: 14" text=""
-                                                       textFill="white"/>
+                                                <Circle fx:id="countPlaceholder10Circle" fill="darkred" radius="12" />
+                                                <Label fx:id="countPlaceholder10Label" style="-fx-font-style: Bold; -fx-font-size: 14" text="" textFill="white" />
                                             </children>
                                         </StackPane>
                                     </children>
@@ -363,21 +351,36 @@
                     <Label fx:id="countCurseCardLabel" style="-fx-font-style: Bold; -fx-font-size: 14" text="10" textFill="white" />
                 </StackPane>
                 <StackPane fx:id="countCopper" layoutX="55.0" layoutY="-12.0" prefWidth="20">
-                    <Circle fx:id="countCopperCircle" fill="darkred" radius="12"/>
-                    <Label fx:id="countCopperLabel" style="-fx-font-style: Bold; -fx-font-size: 14" text=""
-                           textFill="white"/>
+                    <Circle fx:id="countCopperCircle" fill="darkred" radius="12" />
+                    <Label fx:id="countCopperLabel" style="-fx-font-style: Bold; -fx-font-size: 14" text="" textFill="white" />
                 </StackPane>
                 <StackPane fx:id="countSilver" layoutX="135.0" layoutY="-12.0" prefWidth="20">
-                    <Circle fx:id="countSilverCircle" fill="darkred" radius="12"/>
-                    <Label fx:id="countSilverLabel" style="-fx-font-style: Bold; -fx-font-size: 14" text=""
-                           textFill="white"/>
+                    <Circle fx:id="countSilverCircle" fill="darkred" radius="12" />
+                    <Label fx:id="countSilverLabel" style="-fx-font-style: Bold; -fx-font-size: 14" text="" textFill="white" />
                 </StackPane>
                 <StackPane fx:id="countGold" layoutX="215.0" layoutY="-12.0" prefWidth="20">
-                    <Circle fx:id="countGoldCircle" fill="darkred" radius="12"/>
-                    <Label fx:id="countGoldLabel" style="-fx-font-style: Bold; -fx-font-size: 14" text=""
-                           textFill="white"/>
+                    <Circle fx:id="countGoldCircle" fill="darkred" radius="12" />
+                    <Label fx:id="countGoldLabel" style="-fx-font-style: Bold; -fx-font-size: 14" text="" textFill="white" />
                 </StackPane>
             </children>
         </Pane>
+      <Pane fx:id="countdownPane" layoutX="300.0" prefHeight="750.0" prefWidth="980.0" style="-fx-background-color: black;" visible="false">
+         <children>
+            <Label fx:id="countdownLabel" alignment="CENTER" focusTraversable="false" layoutX="403.0" layoutY="313.0" text="60">
+               <font>
+                  <Font name="System Bold" size="150.0" />
+               </font>
+            </Label>
+            <Label fx:id="countdownInformation" alignment="CENTER" focusTraversable="false" layoutX="266.0" layoutY="225.0" text="User ist auf Klo!">
+               <font>
+                  <Font name="System Bold" size="60.0" />
+               </font>
+            </Label>
+            <Button fx:id="cancelPoopTimer" layoutX="392.0" layoutY="591.0" mnemonicParsing="false" onAction="#onCancelTimerPressed" style="-fx-background-color: red;" text="Abbrechen" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="30.0" />
+               </font>
+            </Button>
+         </children></Pane>
     </children>
 </AnchorPane>

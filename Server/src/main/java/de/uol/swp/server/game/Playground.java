@@ -12,6 +12,7 @@ import de.uol.swp.common.game.card.parser.components.CardPack;
 import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.phase.Phase;
+import de.uol.swp.common.game.request.CancelPoopBreakRequest;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
@@ -283,6 +284,8 @@ public class Playground extends AbstractPlayground {
                 List<String> winners = calculateWinners();
                 GameOverMessage gameOverByGaveUp = new GameOverMessage(lobbyID, winners, resultsGame);
                 if (!this.players.get(0).isBot()) {
+                    if(gameService.isTimerStarted())
+                        gameService.onCancelPoopBreakRequest(new CancelPoopBreakRequest(this.players.get(0).getTheUserInThePlayer(), lobbyID));
                     endGame(lobbyID, gameOverByGaveUp);
                 } else {
                     endGame(lobbyID);

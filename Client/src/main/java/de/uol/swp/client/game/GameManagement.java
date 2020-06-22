@@ -41,7 +41,7 @@ import java.util.UUID;
  * @author Keno O.
  * @since Sprint 3
  */
-@SuppressWarnings("UnstableApiUsage")
+@SuppressWarnings("UnstableApiUsage, unused")
 public class GameManagement {
 
     static final Logger LOG = LogManager.getLogger(GameManagement.class);
@@ -146,7 +146,7 @@ public class GameManagement {
 /*
     @Subscribe
     private void lobbyCreated(CreateLobbyMessage msg) {
-        if (msg.getUser().getUsername().equals(loggedInUser.getUsername())) {
+        if (msg.getUser.getUsername().equals(loggedInUser.getUsername())) {
             primaryPresenter.showTab(msg.getChatID());
         }
     }
@@ -263,7 +263,7 @@ public class GameManagement {
     public void closeGameOverViewAndLeaveLobby() {
         Platform.runLater(gameOverStage::close);
         primaryPresenter.closeTab(id, true);
-        }
+    }
 
     /**
      * Initialisieren der GameView
