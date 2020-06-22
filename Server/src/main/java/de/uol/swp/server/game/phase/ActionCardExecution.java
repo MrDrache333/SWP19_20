@@ -111,6 +111,12 @@ public class ActionCardExecution {
             List<Player> p = new ArrayList<>();
             Player helpPlayer = helpMethodToGetThePlayerFromUser(response.getPlayer());
             p.add(helpPlayer);
+            if (cardID == 24 && response.getCards().size() == 1 && response.getCards().get(0) == 24) {
+                playground.getGameService().sendToSpecificPlayer(helpPlayer, new GameExceptionMessage(response.getGameID(), "Wähle eine andere Aktionskarte!"));
+                reset();
+                execute();
+                return;
+            }
             waitedForPlayerInput = false;
             if (!startedNextActions) actualStateIndex++;
             if (nextActions.get(nextActionIndex) instanceof ChooseCard) nextActionIndex++;
@@ -365,11 +371,11 @@ public class ActionCardExecution {
                 playground.getGameService().getBus().register(execution);
                 execution.setParent(this);
                 player.getPlayerDeck().getHand().remove(card);
+                PlayCardMessage msg = new PlayCardMessage(gameID, player.getTheUserInThePlayer(), action.getCardId(), true, execution.isRemoveCardAfter());
+                playground.getGameService().sendToAllPlayers(gameID, msg);
             }
             execution.reset();
             execution.execute();
-            PlayCardMessage msg = new PlayCardMessage(gameID, player.getTheUserInThePlayer(), action.getCardId(), true, execution.isRemoveCardAfter());
-            playground.getGameService().sendToAllPlayers(gameID, msg);
         } else {
             playground.getGameService().getBus().unregister(execution);
             waitedForPlayerInput = false;
@@ -849,6 +855,8 @@ public class ActionCardExecution {
         startedNextActions = false;
         finishedExecution = false;
         removeCardAfter = false;
+        waitedForPlayerInput = false;
+        nextActions.clear();
     }
 
     public boolean isRemoveCardAfter() {
