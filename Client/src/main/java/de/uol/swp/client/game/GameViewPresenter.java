@@ -6,7 +6,6 @@ import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.AlertBox;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
-import de.uol.swp.common.game.messages.ActualPointMessage;
 import de.uol.swp.client.game.container.GeneralLayoutContainer;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
@@ -699,15 +698,17 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void onSendCardFieldMessage(SendCardFieldMessage msg) {
-        ArrayList<Short> list = new ArrayList<>();
-        Map<Short, Integer> cardsToBuy = new HashMap<>();
-        for (Short key : msg.getCardField().keySet()) {
-            if (key > 6 && key != 38) { //Aktionskarten, ohne Fluchkarte
-                list.add(key);
+        if (msg.getGameID().equals(lobbyID)) {
+            ArrayList<Short> list = new ArrayList<>();
+            Map<Short, Integer> cardsToBuy = new HashMap<>();
+            for (Short key : msg.getCardField().keySet()) {
+                if (key > 6 && key != 38) { //Aktionskarten, ohne Fluchkarte
+                    list.add(key);
+                }
+                cardsToBuy.put(key, msg.getCardField().get(key));
             }
-            cardsToBuy.put(key, msg.getCardField().get(key));
+            initalizeCardFieldImages(list, cardsToBuy);
         }
-        initalizeCardFieldImages(list, cardsToBuy);
     }
 
     /**
@@ -1817,11 +1818,13 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @Subscribe
     private void onUpdateCardCounterMessage(UpdateCardCounterMessage msg) {
-        for (short id : msg.getCardCounts().keySet()) {
-            if (cardLabels.containsKey(id))
-                Platform.runLater(() -> cardLabels.get(id).setText(String.valueOf(msg.getCardCounts().get(id))));
-            ImageView selectedCard = getCardFromCardfield(id);
-            if (msg.getCardCounts().get(id) < 1) selectedCard.setEffect(makeImageDarker);
+        if (msg.getGameID().equals(lobbyID)) {
+            for (short id : msg.getCardCounts().keySet()) {
+                if (cardLabels.containsKey(id))
+                    Platform.runLater(() -> cardLabels.get(id).setText(String.valueOf(msg.getCardCounts().get(id))));
+                ImageView selectedCard = getCardFromCardfield(id);
+                if (msg.getCardCounts().get(id) < 1) selectedCard.setEffect(makeImageDarker);
+            }
         }
     }
 }
