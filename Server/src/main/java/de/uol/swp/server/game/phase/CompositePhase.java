@@ -9,11 +9,9 @@ import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.server.game.Playground;
 import de.uol.swp.server.game.player.Deck;
 import de.uol.swp.server.game.player.Player;
-import org.apache.logging.log4j.LogManager;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * Die Funktionsklasse aller Phasen
@@ -222,8 +220,8 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         if (playground.getCardField().get((short) 6) == 0) {
             return true;
         }
-        //Prüfen ob min. 3 Aktionskartenstapel leer sind
-        return playground.getCardsPackField().getCards().getActionCards().stream().filter(c -> playground.getCardField().containsKey(c.getId()) && playground.getCardField().get(c.getId()) == 0).count() >= 3;
+        //Prüfen ob min. 3 andere Stapel leer sind
+        return playground.getCardsPackField().getCards().getAllCards().stream().filter(c -> playground.getCardField().containsKey(c.getId()) && playground.getCardField().get(c.getId()) == 0).count() >= 3;
     }
 
     public ActionCardExecution getExecuteAction() {
