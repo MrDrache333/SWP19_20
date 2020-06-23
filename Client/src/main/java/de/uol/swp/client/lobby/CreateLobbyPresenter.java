@@ -73,13 +73,16 @@ public class CreateLobbyPresenter extends AbstractPresenter {
     public void onCreateLobbyButtonPressed(ActionEvent actionEvent) {
         String lobbyName = lobbynameField.getText();
         String lobbyPassword = passwordField.getText();
-       createButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
-        if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName)) {
+        createButton.setOnMouseEntered(event -> new SoundMediaPlayer(SoundMediaPlayer.Sound.Button_Hover, SoundMediaPlayer.Type.Sound).play());
+        if (Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+){1,30}", lobbyName)) {
             CreateLobbyRequest msg = new CreateLobbyRequest(lobbyName, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()), lobbyPassword);
             eventBus.post(msg);
             LOG.info("CreateLobbyRequest wurde gesendet.");
+        } else if (!(Pattern.matches("([a-zA-Z]|[0-9])+(([a-zA-Z]|[0-9])+([a-zA-Z]|[0-9]| )*([a-zA-Z]|[0-9])+)*", lobbyName)) && lobbyName.length() <= 30) {
+            new AlertBox(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein! \n\n Dieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen,\naber nicht mit einem Leerzeichen beginnen oder enden.", "Fehler");
         } else {
-            new AlertBox(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden.", "Fehler");
+            new AlertBox(Alert.AlertType.WARNING, "Bitte einen Lobbynamen mit Maximal 30 Zeichen!", "Fehler");
+
         }
         lobbynameField.clear();
         passwordField.clear();
@@ -87,7 +90,6 @@ public class CreateLobbyPresenter extends AbstractPresenter {
     }
 
     /**
-     *
      * Beim Drücken auf den Abbrechen Button schließt sich das Fenster.
      *
      * @param actionEvent Das ActionEvent
@@ -102,7 +104,6 @@ public class CreateLobbyPresenter extends AbstractPresenter {
     }
 
     /**
-     *
      * Benutzer wird geupdated.
      *
      * @param message Die UpdatedUserMessage
@@ -111,7 +112,7 @@ public class CreateLobbyPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void updatedUser(UpdatedUserMessage message) {
-        if(loggedInUser != null && loggedInUser.getUsername().equals(message.getOldUser().getUsername()))
+        if (loggedInUser != null && loggedInUser.getUsername().equals(message.getOldUser().getUsername()))
             loggedInUser = message.getUser();
     }
 }
