@@ -12,6 +12,7 @@ import de.uol.swp.server.game.player.Player;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Die Funktionsklasse aller Phasen
@@ -177,30 +178,14 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      * Hilfsmethode um an die Daten über die ID zu kommen
      *
      * @param cardStack Der Kartenstapel
-     * @param cardId Die KartenID
+     * @param cardId    Die KartenID
      * @return card Karte, zu der die ID gehört
      * @author Paula
      * @since Sprint 6
      */
 
     public Card getCardFromId(CardStack cardStack, short cardId) {
-        for (Card card : cardStack.getActionCards()) {
-            if (card.getId() == cardId) {
-                return card;
-            }
-        }
-        for (Card card : cardStack.getMoneyCards()) {
-            if (card.getId() == cardId) {
-                return card;
-            }
-        }
-
-        for (Card card : cardStack.getValueCards()) {
-            if (card.getId() == cardId) {
-                return card;
-            }
-        }
-        return null;
+          return cardStack.getAllCards().stream().filter(c -> c.getId() == cardId).findFirst().orElse(null);
     }
 
     /**
