@@ -72,7 +72,7 @@ public class LobbyPresenter extends AbstractPresenter {
     @FXML
     private ChoiceBox<Integer> chooseMaxPlayer;
     @FXML
-    private Pane lobbyViewWIP;
+    private Pane lobbyView;
     @FXML
     private ListView<HBox> usersView;
     @FXML
@@ -181,7 +181,7 @@ public class LobbyPresenter extends AbstractPresenter {
             createBotButton.setVisible(true);
             chooseMaxPlayer.setDisable(false);
             chooseMaxPlayer.setValue(maxPlayerValue);
-            lobbyViewWIP.setOnMouseClicked(mouseEvent -> {
+            lobbyView.setOnMouseClicked(mouseEvent -> {
                 if (bigCardImage.isVisible()) {
                     bigCardImage.setVisible(false);
                 }

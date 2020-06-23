@@ -77,7 +77,7 @@ public class GameViewPresenter extends AbstractPresenter {
     @FXML
     Label actualPoints;
     @FXML
-    private Pane gameViewWIP;
+    private Pane gameView;
     @FXML
     private Pane chatView;
     @FXML
@@ -394,13 +394,13 @@ public class GameViewPresenter extends AbstractPresenter {
         ((Pane) chatView.getChildren().get(0)).setPrefHeight(chatView.getPrefHeight());
         ((Pane) chatView.getChildren().get(0)).setPrefWidth(chatView.getPrefWidth());
         // Die Bestandteile des Spiels wie Hände, Aktionzonen usw. werden dem GameViewWIP hinzugefügt
-        gameViewWIP.getChildren().add(handcards);
-        gameViewWIP.getChildren().add(myPCLC);
-        gameViewWIP.getChildren().add(myDPLC);
-        gameViewWIP.getChildren().add(myDLC);
+        gameView.getChildren().add(handcards);
+        gameView.getChildren().add(myPCLC);
+        gameView.getChildren().add(myDPLC);
+        gameView.getChildren().add(myDLC);
         selectButton.setVisible(false);
         selectButton.setOnAction(sendChoosenCardResponse);
-        gameViewWIP.setOnMouseClicked(event -> {
+        gameView.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
                 bigCardImageBox.setVisible(false);
             }
@@ -1259,7 +1259,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     case TRASH:
                         card = new Card(String.valueOf(c.getId()), 300, 0, isOpponent ? 80 : 107);
                         ImageView finalCard1 = card;
-                        Platform.runLater(() -> gameViewWIP.getChildren().add(finalCard1));
+                        Platform.runLater(() -> gameView.getChildren().add(finalCard1));
                 }
                 if (card != null) {
                     playAnimation(destination, card, source, user);
@@ -1285,6 +1285,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 if (users == null) {
                     users = FXCollections.observableArrayList();
                     usersView.setItems(users);
+                    usersView.setOpacity(0.73);
                 } else {
                     LOG.debug("Keine User in der Lobby.");
                 }
@@ -1355,8 +1356,8 @@ public class GameViewPresenter extends AbstractPresenter {
                 }
                 usersContainer.put(u.getUsername(), enemyContainer);
                 Platform.runLater(() -> {
-                    enemyContainer.values().forEach(gameViewWIP.getChildren()::remove);
-                    enemyContainer.values().forEach(gameViewWIP.getChildren()::add);
+                    enemyContainer.values().forEach(gameView.getChildren()::remove);
+                    enemyContainer.values().forEach(gameView.getChildren()::add);
                     enemyContainer.get(ZoneType.PLAY).toFront();
                 });
             }
@@ -1735,7 +1736,7 @@ public class GameViewPresenter extends AbstractPresenter {
             usersContainer.get(user.getUsername()).get(destination).getChildren().add(card);
             switch (source) {
                 case TRASH:
-                    gameViewWIP.getChildren().remove(card);
+                    gameView.getChildren().remove(card);
                 case BUY:
                     ((Pane) getRegionFromZoneType(ZoneType.BUY, Short.parseShort(card.getId()), user)).getChildren().remove(card);
                     break;
