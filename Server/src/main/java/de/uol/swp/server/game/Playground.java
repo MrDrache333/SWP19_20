@@ -13,6 +13,7 @@ import de.uol.swp.common.game.card.parser.components.CardPack;
 import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.phase.Phase;
+import de.uol.swp.common.game.request.CancelPoopBreakRequest;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
@@ -143,16 +144,19 @@ public class Playground extends AbstractPlayground {
             nextPlayer = players.get(1);
             sendInitialCardsDeckSize();
             sendInitialHands();
+            actualPoint();
         } else {
             //Spieler muss Clearphase durchlaufen haben
             if (actualPhase != Phase.Type.ClearPhase) return;
             if (actualPlayer != latestGavedUpPlayer) {
                 sendPlayersHand();
                 sendCardsDeckSize();
+                actualPoint();
             }
             int index = players.indexOf(nextPlayer);
             actualPlayer = nextPlayer;
             nextPlayer = players.get(++index % players.size());
+            actualPoint();
         }
 
         ChatMessage infoMessage = new ChatMessage(infoUser, getActualPlayer().getTheUserInThePlayer().getUsername() + " ist am Zug!");
@@ -163,9 +167,11 @@ public class Playground extends AbstractPlayground {
         if (checkForActionCard()) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartActionPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID, timestamp));
+            actualPoint();
             //phaseTimer();
         } else {
             nextPhase();
+            actualPoint();
         }
     }
 
@@ -186,19 +192,6 @@ public class Playground extends AbstractPlayground {
     }
 
     /**
-     * Ein Timer skippt nach 35 Sekunden die aktuelle Phase, sofern der Timer vorher nicht gecancelt worden ist. Hilfmethode endTimer ganz unten in der Klasse. Timer wird im GameService gecancelt, wenn eine Karte innerhalb der Zeit ausgewählt worden ist.
-     */
-    public void phaseTimer() {
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                nextPhase();
-                timer.cancel();
-            }
-        }, 35000);
-    }
-
-    /**
      * Startet innerhalb eines Spielzugs die nächste Phase.
      * Befindet sich der Spieler in der Clearphase, wird eine GamePhaseException geworfen.
      *
@@ -212,8 +205,6 @@ public class Playground extends AbstractPlayground {
         if (actualPhase == Phase.Type.ActionPhase) {
             actualPhase = Phase.Type.BuyPhase;
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartBuyPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID));
-
-            endTimer();
         } else {
             actualPhase = Phase.Type.ClearPhase;
             Player currentPlayer = actualPlayer;
@@ -260,6 +251,9 @@ public class Playground extends AbstractPlayground {
         for (Player player : players) {
             int size = player.getPlayerDeck().getCardsDeck().size();
             gameService.sendToSpecificPlayer(player, new CardsDeckSizeMessage(theSpecificLobbyID, player.getTheUserInThePlayer(), size));
+            actualPlayer.getPlayerDeck().countSiegpunkte();
+            ActualPointMessage actualPointMessage = new ActualPointMessage(theSpecificLobbyID, actualPlayer.getPlayerDeck().getSiegpunkte());
+            gameService.sendToSpecificPlayer(player, actualPointMessage);
         }
     }
 
@@ -283,6 +277,8 @@ public class Playground extends AbstractPlayground {
                 List<String> winners = calculateWinners();
                 GameOverMessage gameOverByGaveUp = new GameOverMessage(lobbyID, winners, resultsGame);
                 if (!this.players.get(0).isBot()) {
+                    if(gameService.isTimerStarted())
+                        gameService.onCancelPoopBreakRequest(new CancelPoopBreakRequest(this.players.get(0).getTheUserInThePlayer(), lobbyID));
                     endGame(lobbyID, gameOverByGaveUp);
                 } else {
                     endGame(lobbyID);
@@ -309,14 +305,8 @@ public class Playground extends AbstractPlayground {
         }
     }
 
-    //Hilfsmethode zum Überprüfen
     public Boolean onlyBotsLeft() {
-        for (Player player : players) {
-            if (player.isBot()) {
-                return true;
-            }
-        }
-        return false;
+        return players.stream().allMatch(Player::isBot);
     }
 
     /**
@@ -363,6 +353,12 @@ public class Playground extends AbstractPlayground {
      */
     public boolean checkForActionCard() {
         return actualPlayer.getPlayerDeck().getHand().stream().anyMatch(card -> card instanceof ActionCard);
+    }
+
+    public void actualPoint() {
+        actualPlayer.getPlayerDeck().countSiegpunkte();
+        ActualPointMessage actualPointMessage = new ActualPointMessage(theSpecificLobbyID, actualPlayer.getPlayerDeck().getSiegpunkte());
+        gameService.sendToSpecificPlayer(actualPlayer, actualPointMessage);
     }
 
     /**

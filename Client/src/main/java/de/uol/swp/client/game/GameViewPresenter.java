@@ -6,6 +6,7 @@ import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.AlertBox;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
+import de.uol.swp.common.game.messages.ActualPointMessage;
 import de.uol.swp.client.game.container.GeneralLayoutContainer;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
@@ -23,6 +24,7 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -32,9 +34,12 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.effect.BoxBlur;
 import javafx.scene.effect.ColorAdjust;
+import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -66,9 +71,12 @@ public class GameViewPresenter extends AbstractPresenter {
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
     private final UUID lobbyID;
     private User loggedInUser;
+    private User poopInitiator;
     private Short numberOfPlayersInGame;
     private int usableMoney;
 
+    @FXML
+    Label actualPoints;
     @FXML
     private Pane gameViewWIP;
     @FXML
@@ -119,7 +127,6 @@ public class GameViewPresenter extends AbstractPresenter {
     private ImageView bigCardImage;
     @FXML
     private Button buyCardButton;
-    private final Map<Short, Label> cardLabels = new HashMap<>();
     @FXML
     private Label countCopperLabel;
     @FXML
@@ -174,6 +181,32 @@ public class GameViewPresenter extends AbstractPresenter {
     private Button noButton;
     @FXML
     private Button selectButton;
+    @FXML
+    private Pane poopView;
+    @FXML
+    private ImageView poopButtonImage;
+    @FXML
+    private Button poopButton;
+    @FXML
+    private Label chatHeader;
+    @FXML
+    private Label poopMessage;
+    @FXML
+    private Button acceptButton;
+    @FXML
+    private Button declineButton;
+    @FXML
+    private Button cancelPoopTimer;
+    @FXML
+    private Pane countdownPane;
+    @FXML
+    private Label countdownLabel;
+    @FXML
+    private Label countdownInformation;
+    @FXML
+    private Pane cardPane;
+    @FXML
+    private VBox playgroundBox;
 
     private final GeneralLayoutContainer handcards;
     private final GeneralLayoutContainer firstEnemyHand;
@@ -202,11 +235,16 @@ public class GameViewPresenter extends AbstractPresenter {
     private final ColorAdjust notChosenCard = new ColorAdjust();
     private final ArrayList<Short> chosenCardsId = new ArrayList<>();
     private final ArrayList<ImageView> chosenCards = new ArrayList<>();
+    private final ArrayList<ImageView> cardsToMove = new ArrayList<>();
+    private final Map<Short, Label> cardLabels = new HashMap<>();
     private int numberOfCardsToChoose;
     private String currentInfoText;
     private final HashMap<String, HashMap<ZoneType, GeneralLayoutContainer>> usersContainer = new HashMap<>();
     private volatile boolean deleteHandCardsFromOpponent = false;
-    private final ArrayList<ImageView> cardsToMove = new ArrayList<>();
+    private static final double BLUR_AMOUNT = 60;
+    private static final Effect frostEffect = new BoxBlur(BLUR_AMOUNT, BLUR_AMOUNT, 3);
+    private Timeline animation;
+    private int countdown;
     private int actionExecutionID;
 
     /**
@@ -289,6 +327,7 @@ public class GameViewPresenter extends AbstractPresenter {
         this.injector = injector;
         this.gameManagement = gameManagement;
         this.gameService = gameService;
+        this.poopInitiator = null;
         makeImageDarker.setBrightness(-0.7);
         // Die Hände für jeden Spieler
         handcards = new GeneralLayoutContainer(575, 630, 110, 420, "My.HCLC");
@@ -334,6 +373,7 @@ public class GameViewPresenter extends AbstractPresenter {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
             gameManagement.getGameService().giveUp(lobbyID, (UserDTO) loggedInUser);
+            gameManagement.getGameService().cancelPoopBreak(loggedInUser, lobbyID);
         }
     }
 
@@ -392,7 +432,7 @@ public class GameViewPresenter extends AbstractPresenter {
         //Initialisieren der Aktionskarten
         for (ImageView imageView : allImageViews) {
             Short theID = theList.get(index);
-            String imageUrl = "cards/images/" + theID + "_sm.png";
+            String imageUrl = "/cards/images/" + theID + "_sm.png";
             Image theImage = new Image(imageUrl);
             imageView.setImage(theImage);
             imageView.setId(String.valueOf(theID));
@@ -483,10 +523,178 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
+     * Wenn der PoopButton gedrückt wird, soll requestPoopBreak() aufgerufen werden.
+     *
+     * @param actionEvent Das ActionEvent.
+     * @author Keno S.
+     * @since Sprint 10
+     */
+    @FXML
+    public void onPoopButtonPressed(ActionEvent actionEvent) {
+        gameManagement.getGameService().requestPoopBreak(loggedInUser, lobbyID);
+    }
+
+    /**
+     * Wenn der DeclineButton gedrückt wird, soll answerPoopBreak() aufgerufen werden.
+     *
+     * @param actionEvent Das ActionEvent.
+     * @author Keno S.
+     * @since Sprint 10
+     */
+    @FXML
+    public void onDeclineButtonPressed(ActionEvent actionEvent) {
+        gameManagement.getGameService().answerPoopBreak(loggedInUser, lobbyID, false);
+    }
+
+    /**
+     * Wenn der AcceptButton gedrückt wird, soll answerPoopBreak() aufgerufen werden.
+     *
+     * @param actionEvent Das ActionEvent.
+     * @author Keno S.
+     * @since Sprint 10
+     */
+    @FXML
+    public void onAcceptButtonPressed(ActionEvent actionEvent) {
+        gameManagement.getGameService().answerPoopBreak(loggedInUser, lobbyID, true);
+    }
+
+    /**
+     * Wenn der CancelTimerButton gedrückt wird, soll cancelPoopBreak() aufgerufen werden.
+     *
+     * @param actionEvent Das ActionEvent.
+     * @author Keno S.
+     * @since Sprint 10
+     */
+    @FXML
+    public void onCancelTimerPressed(ActionEvent actionEvent) {
+        gameManagement.getGameService().cancelPoopBreak(loggedInUser, lobbyID);
+    }
+
+    /**
+     * Bei Empfang einer PoopBreakMessage soll eine Votingphase iniziiert werden.
+     *
+     * @param msg Die PoopBreakMessage
+     * @author Keno S.
+     * @since Sprint 10
+     */
+    @Subscribe
+    public void onPoopBreakMessage(PoopBreakMessage msg) {
+        if (poopButtonImage.isVisible() && chatHeader.isVisible()) {
+            if(msg.getPoopInitiator() != null)
+                poopInitiator = msg.getPoopInitiator();
+            Platform.runLater(() -> {
+                poopMessage.setText(msg.getPoopInitiator().equals(loggedInUser) ? "Du musst auf Klo!" : msg.getPoopInitiator().getUsername() + " muss auf Klo!");
+                poopMessage.setAlignment(Pos.TOP_CENTER);
+            });
+            showPoopVote(true);
+        }
+        if (!msg.getDecisions().isEmpty()) {
+            Platform.runLater(() -> {
+                acceptButton.setDisable(msg.getDecisions().containsKey(loggedInUser));
+                declineButton.setDisable(msg.getDecisions().containsKey(loggedInUser));
+                acceptButton.setText("Okay (" + msg.getAcceptedVotes() + ")");
+                declineButton.setText("Nope (" + msg.getDeclinedVotes() + ")");
+            });
+        }
+    }
+
+    /**
+     * Bei Empfang einer CancelPoopBreakMessage wird der Pausebildschirm unsichtbar gemacht.
+     *
+     * @param msg Die CancelPoopBreakMessage
+     * @author Keno S.
+     * @since Sprint 10
+     */
+    @Subscribe
+    public void onCancelPoopBreakMessage(CancelPoopBreakMessage msg) {
+        showPoopBreakView(false);
+        showPoopVote(false);
+        poopInitiator = null;
+        countdown = 0;
+    }
+
+    /**
+     * Bei Empfang einer StartPoopBreakMessage wird der Pausebilschirm angezeigt.
+     *
+     * @param msg StartPoopBreakMessage
+     * @author Keno S.
+     * @since Sprint 10
+     */
+    @Subscribe
+    public void onStartPoopBreakMessage(StartPoopBreakMessage msg) {
+        if (msg.getGameID().equals(lobbyID)) {
+            Platform.runLater(() -> {
+                countdownLabel.setText("60");
+                countdownInformation.setText(msg.getPoopInitiator().equals(loggedInUser) ? "Du bist auf Klo!" : msg.getPoopInitiator().getUsername() + " ist auf Klo!");
+                countdownInformation.setLayoutX(countdownPane.getWidth() / 2 - countdownInformation.getWidth() / 2);
+                cancelPoopTimer.setVisible(msg.getPoopInitiator().equals(loggedInUser));
+            });
+            showPoopVote(false);
+            showPoopBreakView(true);
+        }
+    }
+
+    /**
+     * Bei Empfang einer CountdownRefreshMessage der CountdownTimer aktualisiert werden.
+     *
+     * @param msg Die CountdownRefreshMessage
+     * @author Keno S.
+     * @since Sprint 10
+     */
+    @Subscribe
+    public void onCountdownRefreshMessage(CountdownRefreshMessage msg) {
+        if (msg.getGameID().equals(lobbyID)) {
+            countdown = msg.getCountdown();
+            Platform.runLater(() -> {
+                countdownLabel.setText(countdown < 10 ? "0" + countdown : String.valueOf(countdown));
+                countdownLabel.setLayoutX(countdownPane.getWidth() / 2 - countdownLabel.getWidth() / 2);
+            });
+            if (countdown <= 0)
+                showPoopBreakView(false);
+        }
+    }
+
+    /**
+     * Diese Hilfsmethode zeigt oder versteckt die PoopBreakView.
+     *
+     * @param enabled Entscheidet ob der Node versteckt oder angezeigt werden soll.
+     * @author Keno S.
+     * @since Sprint 10
+     */
+    private void showPoopBreakView (boolean enabled) {
+        Platform.runLater(() -> {
+            countdownPane.setVisible(enabled);
+            poopButtonImage.setVisible(!enabled);
+            skipPhaseButton.setVisible(!enabled);
+            poopButton.setVisible(!enabled);
+            if (enabled)
+                countdownPane.toFront();
+        });
+    }
+
+    /**
+     * Diese Hilfsmethode zeigt oder versteckt die PoopVoteView.
+     *
+     * @param enabled Entscheidet ob der Node versteckt oder angezeigt werden soll.
+     * @author Keno S.
+     * @since Sprint 10
+     */
+    private void showPoopVote(boolean enabled) {
+        Platform.runLater(() -> {
+            poopButtonImage.setVisible(!enabled);
+            poopButton.setVisible(!enabled);
+            chatHeader.setVisible(!enabled);
+            poopMessage.setVisible(enabled);
+            acceptButton.setVisible(enabled);
+            declineButton.setVisible(enabled);
+        });
+    }
+
+    /**
      * Die IDs der gesendeten Aktionskarten werden initilaisiert.
      * Die Anzahl der Wertkarten wird in einer Map gespeichert, mit der ID der jeweiligen Karte als Schlüssel.
      *
-     * @param msg die Nachricht mit den IDs und der jeweiligen Azahl der Spielkarten
+     * @param msg die Nachricht mit den IDs und der jeweiligen Anzahl der Spielkarten
      * @author Anna, Fenja, Rike
      * @since Sprint 7
      */
@@ -546,14 +754,12 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
-        if (message.getLobbyID().equals(this.lobbyID)) {
+        if (message.getLobbyID().equals(this.lobbyID) && !message.getUser().equals(loggedInUser)) {
             if (message.getLobby().getInGame()) {
-                Platform.runLater(() -> {
-                    updateEnemiesOnBoard(message.getLobby().getUsers());
-                });
+                Platform.runLater(() -> updateEnemiesOnBoard(message.getLobby().getUsers()));
             }
             getInGameUserList(this.lobbyID);
-            LOG.debug("A User left the Lobby. Updating Users now.");
+            LOG.debug("Ein User hat die Lobby verlassen. User werden aktualisiert.");
         }
     }
 
@@ -890,7 +1096,7 @@ public class GameViewPresenter extends AbstractPresenter {
                     });
                 });
                 if (message.isInitialHand()) {
-                    String pfad = "cards/images/card_back.png";
+                    String pfad = "/cards/images/card_back.png";
                     Image picture = new Image(pfad);
                     for (int i = 0; i < 5; i++) {
                         ImageView card = new ImageView(picture);
@@ -1071,7 +1277,7 @@ public class GameViewPresenter extends AbstractPresenter {
                             }
                             card = (ImageView) usersContainer.get(user.getUsername()).get(ZoneType.HAND).getChildren().get(j);
                             card.setId(String.valueOf(c.getId()));
-                            card.setImage(new Image("cards/images/" + c.getId() + ".png"));
+                            card.setImage(new Image("/cards/images/" + c.getId() + ".png"));
                             j++;
                         }
                         break;
@@ -1156,7 +1362,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 if (enemyCounter == 1) {
                     Platform.runLater(() -> player1_label.setText(u.getUsername()));
                     player1_label.setVisible(true);
-                    avatar_icon_top.setImage(new Image("images/user/128x128/128_16.png"));
+                    avatar_icon_top.setImage(new Image("/images/user/128x128/128_16.png"));
                     avatar_icon_top.setVisible(true);
                     firstEnemyHand.setVisible(true);
                     enemyContainer.put(ZoneType.HAND, firstEnemyHand);
@@ -1166,7 +1372,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 } else if (enemyCounter == 2) {
                     Platform.runLater(() -> player2_label.setText(u.getUsername()));
                     player2_label.setVisible(true);
-                    avatar_icon_left.setImage(new Image("images/user/128x128/128_14.png"));
+                    avatar_icon_left.setImage(new Image("/images/user/128x128/128_14.png"));
                     avatar_icon_left.setVisible(true);
                     secondEnemyHand.setVisible(true);
                     enemyContainer.put(ZoneType.HAND, secondEnemyHand);
@@ -1176,7 +1382,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 } else if (enemyCounter == 3) {
                     Platform.runLater(() -> player3_label.setText(u.getUsername()));
                     player3_label.setVisible(true);
-                    avatar_icon_right.setImage(new Image("images/user/128x128/128_2.png"));
+                    avatar_icon_right.setImage(new Image("/images/user/128x128/128_2.png"));
                     avatar_icon_right.setVisible(true);
                     thirdEnemyHand.setVisible(true);
                     enemyContainer.put(ZoneType.HAND, thirdEnemyHand);
@@ -1192,6 +1398,9 @@ public class GameViewPresenter extends AbstractPresenter {
                 });
             }
         }
+        Platform.runLater(() -> {
+            if (countdown > 0) countdownPane.toFront();
+        });
     }
 
     /**
@@ -1301,7 +1510,7 @@ public class GameViewPresenter extends AbstractPresenter {
             handcards.getChildren().forEach((n) -> {
                 n.removeEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
                 n.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
-                if (Short.valueOf(n.getId()) < 4) {
+                if (Short.parseShort(n.getId()) < 4) {
                     n.setEffect(makeImageDarker);
                 }
             });
@@ -1348,7 +1557,7 @@ public class GameViewPresenter extends AbstractPresenter {
         }
         String cardID = cardImage.getId();
         if (mouseEvent.getButton() != MouseButton.PRIMARY) {
-            String PathCardLargeView = "cards/images/" + cardID + ".png";
+            String PathCardLargeView = "/cards/images/" + cardID + ".png";
             bigCardImage.setImage(new Image(PathCardLargeView));
             bigCardImageBox.toFront();
             // Aktion hinter dem Kauf-Button
@@ -1489,6 +1698,17 @@ public class GameViewPresenter extends AbstractPresenter {
         }
     }
 
+
+    @Subscribe
+    public void actualPointMassage(ActualPointMessage msg) {
+        if (msg.getLobbyID().equals(lobbyID)) {
+            Platform.runLater(() -> {
+                actualPoints.setText(msg.getPoints().toString());
+            });
+        }
+    }
+
+
     /**
      * Die Region, die zu der übergebenen Zone gehört, wird zurückgegeben.
      *
@@ -1534,7 +1754,7 @@ public class GameViewPresenter extends AbstractPresenter {
                 return;
             case HAND:
                 if (user.equals(loggedInUser)) {
-                    if (Short.valueOf(card.getId()) < 4) card.setEffect(makeImageDarker);
+                    if (Short.parseShort(card.getId()) < 4) card.setEffect(makeImageDarker);
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
                 }
                 AnimationManagement.addToHand(card, usersContainer.get(user.getUsername()).get(destination));

@@ -184,8 +184,6 @@ public class ActionCardWithResponseTest {
         bus.post(theResponse2);
         if (kartenAbwurf.size() >= 1) {
             assertTrue(playground.getActualPlayer().getPlayerDeck().getHand().get(4).getCosts() >= selectedCardvalue);
-        } else {
-            // TODO ?
         }
     }
 
