@@ -447,7 +447,7 @@ public class LobbyPresenter extends AbstractPresenter {
     @Subscribe
     public void onSetMaxPlayerMessage(SetMaxPlayerMessage msg) {
         Platform.runLater(() -> {
-            if (msg.getOwner().equals(loggedInUser) && lobbyID == msg.getLobbyID()) {
+            if (msg.getOwner().equals(loggedInUser) && lobbyID.equals(lobbyID)) {
                 chooseMaxPlayer.setValue(msg.getMaxPlayer());
                 LOG.info("Max. Spieler der Lobby: " + msg.getLobby().getName() + " erfolgreich auf " + msg.getMaxPlayer() + " gesetzt.");
             }

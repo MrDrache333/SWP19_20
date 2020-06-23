@@ -140,8 +140,12 @@ public class Playground extends AbstractPlayground {
     public void newTurn() {
         if (actualPlayer == null && nextPlayer == null) {
             gameService.sendCardField(theSpecificLobbyID, cardField);
-            actualPlayer = players.get(0);
-            nextPlayer = players.get(1);
+            int i = 0;
+            actualPlayer = players.get(i);
+            while (actualPlayer.isBot()) {
+                actualPlayer = players.get(++i);
+            }
+            nextPlayer = players.get(++i % players.size());
             sendInitialCardsDeckSize();
             sendInitialHands();
             actualPoint();
@@ -168,7 +172,6 @@ public class Playground extends AbstractPlayground {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartActionPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID, timestamp));
             actualPoint();
-            //phaseTimer();
         } else {
             nextPhase();
             actualPoint();
@@ -268,16 +271,15 @@ public class Playground extends AbstractPlayground {
      */
     public Boolean playerGaveUp(UUID lobbyID, UserDTO theGivingUpUser, Boolean wantsToGiveUp) {
         int thePositionInList = IntStream.range(0, players.size()).filter(i -> players.get(i).getPlayerName().equals(theGivingUpUser.getUsername())).findFirst().orElse(-1);
+        latestGavedUpPlayer = this.players.get(thePositionInList);
+        gameService.userGavesUpLeavesLobby(lobbyID, theGivingUpUser);
         if (this.players.get(thePositionInList).getPlayerName().equals(theGivingUpUser.getUsername()) && wantsToGiveUp && lobbyID.equals(this.theSpecificLobbyID)) {
-            latestGavedUpPlayer = this.players.get(thePositionInList);
-            gameService.userGavesUpLeavesLobby(lobbyID, theGivingUpUser);
-
             if (this.players.size() == 2) {
                 this.players.remove(thePositionInList);
                 List<String> winners = calculateWinners();
                 GameOverMessage gameOverByGaveUp = new GameOverMessage(lobbyID, winners, resultsGame);
                 if (!this.players.get(0).isBot()) {
-                    if(gameService.isTimerStarted())
+                    if (gameService.isTimerStarted())
                         gameService.onCancelPoopBreakRequest(new CancelPoopBreakRequest(this.players.get(0).getTheUserInThePlayer(), lobbyID));
                     endGame(lobbyID, gameOverByGaveUp);
                 } else {
@@ -295,10 +297,12 @@ public class Playground extends AbstractPlayground {
                     this.players.remove(thePositionInList);
                     nextPlayer = this.players.get(0);
                 }
-            } else {
+            } else if (!onlyBotsLeft()) {
                 this.players.remove(thePositionInList);
             }
-
+            if (onlyBotsLeft()) {
+                endGame(lobbyID);
+            }
             return true;
         } else {
             return false;

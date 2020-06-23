@@ -216,7 +216,6 @@ public class GameService extends AbstractService {
     public void userGavesUpLeavesLobby(UUID gameID, UserDTO user) {
         LobbyLeaveUserRequest leaveUserRequest = new LobbyLeaveUserRequest(gameID, user);
         post(leaveUserRequest);
-
     }
 
     /**
