@@ -15,13 +15,19 @@ public class OptionalActionRequest extends AbstractGameMessage {
 
     private static final long serialVersionUID = -2721566171106710582L;
     private final String textMessage;
+    private final int actionExecutionID;
 
-    public OptionalActionRequest(UUID gameID, User player, String message) {
+    public OptionalActionRequest(UUID gameID, User player, String message, int actionExecutionID) {
         super(gameID, player);
         this.textMessage = message;
+        this.actionExecutionID = actionExecutionID;
     }
 
     public String getTextMessage() {
         return textMessage;
+    }
+
+    public int getActionExecutionID() {
+        return actionExecutionID;
     }
 }
