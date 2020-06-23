@@ -741,9 +741,11 @@ public class GameViewPresenter extends AbstractPresenter {
                 selectButton.setVisible(true);
                 playAllMoneyCardsButton.setVisible(false);
                 Platform.runLater(() -> handcards.getChildren().forEach((n) -> {
-                    n.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
-                    if (req.getCards().contains(Short.parseShort(n.getId()))) {
-                        n.addEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
+                    if (!card.equals(n)) {
+                        n.removeEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+                        if (req.getCards().contains(Short.parseShort(n.getId()))) {
+                            n.addEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
+                        }
                     }
                 }));
                 Platform.runLater(() -> {
