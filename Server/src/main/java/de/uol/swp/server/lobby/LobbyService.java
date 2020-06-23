@@ -411,7 +411,7 @@ public class LobbyService extends AbstractService {
     @Subscribe
     public void createBotRequest(AddBotRequest request) {
         Lobby thisLobby = lobbyManagement.getLobby(request.getLobbyID()).get();
-        String[] collectionBotName = {"Arthur", "Merlin", "Queen", "Diana", "Lanzelot"};
+        String[] collectionBotName = {"Arthur", "Merlin", "Queen", "Diana"};
         if (thisLobby.getUsers().size() < thisLobby.getMaxPlayer()) {
             String theRandomBotName = collectionBotName[(int) (Math.random() * collectionBotName.length)] + (int) (Math.random() * 999);
             BotPlayer createdBot = new BotPlayer(theRandomBotName, eventBus, request.getLobbyID());
