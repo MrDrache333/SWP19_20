@@ -2,18 +2,17 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.effect.Blend?>
+<?import javafx.scene.effect.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
-<AnchorPane maxHeight="750.0" maxWidth="1280.0" prefHeight="750.0" prefWidth="1280.0" stylesheets="@../css/MainMenuPresenter.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.uol.swp.client.main.MainMenuPresenter">
+<?import javafx.scene.text.*?>
+
+<AnchorPane cache="true" cacheHint="SPEED" maxHeight="750.0" maxWidth="1280.0" prefHeight="750.0" prefWidth="1280.0" stylesheets="@../css/MainMenuPresenter.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.uol.swp.client.main.MainMenuPresenter">
     <GridPane hgap="10.0" maxHeight="750.0" maxWidth="1280.0" prefHeight="750.0" prefWidth="1280.0">
         <children>
             <VBox prefHeight="200.0" prefWidth="100.0">
                 <children>
                     <Label text="Online Lobbys">
-                        <Button fx:id="createLobbyButton" maxWidth="160.0" minWidth="160.0" mnemonicParsing="false"
-                                onAction="#onOpenCreateLobbyView" prefHeight="27.0" prefWidth="160.0"
-                                text="Lobby erstellen" textAlignment="CENTER"/>
+                        <Button fx:id="createLobbyButton" maxWidth="160.0" minWidth="160.0" mnemonicParsing="false" onAction="#onOpenCreateLobbyView" prefHeight="27.0" prefWidth="160.0" text="Lobby erstellen" textAlignment="CENTER" />
                         <font>
                             <Font name="Trattatello" size="26.0" />
                         </font>
@@ -40,11 +39,9 @@
                     </VBox>
                 </children>
             </VBox>
-            <Pane fx:id="chatView" minHeight="701.0" minWidth="434.0"
-                  style="-fx-border-color: black; -fx-border-width: 2;" GridPane.columnIndex="1"
-                  GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+            <Pane fx:id="chatView" minHeight="701.0" minWidth="434.0" style="-fx-border-color: black; -fx-border-width: 2;" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
                 <GridPane.margin>
-                    <Insets top="49.0"/>
+                    <Insets top="49.0" />
                 </GridPane.margin>
             </Pane>
             <VBox prefHeight="200.0" prefWidth="226.0" GridPane.columnIndex="2">

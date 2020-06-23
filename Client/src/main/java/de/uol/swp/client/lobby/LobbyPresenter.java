@@ -50,7 +50,7 @@ import java.util.UUID;
 @SuppressWarnings("UnstableApiUsage, unused")
 public class LobbyPresenter extends AbstractPresenter {
 
-    public static final String fxml = "/fxml/LobbyViewWIP.fxml";
+    public static final String fxml = "/fxml/LobbyView.fxml";
     private static final Logger LOG = LogManager.getLogger(ChatViewPresenter.class);
 
     private final ChatViewPresenter chatViewPresenter;
