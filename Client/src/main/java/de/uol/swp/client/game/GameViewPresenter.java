@@ -6,7 +6,6 @@ import de.uol.swp.client.AbstractPresenter;
 import de.uol.swp.client.AlertBox;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
-import de.uol.swp.common.game.messages.ActualPointMessage;
 import de.uol.swp.client.game.container.GeneralLayoutContainer;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.main.MainMenuPresenter;
@@ -820,19 +819,18 @@ public class GameViewPresenter extends AbstractPresenter {
                 Platform.runLater(() -> {
                     int money = 0;
                     int GeneralLayoutContainerSize = myPCLC.getChildren().size() - 1;
-                    ObservableList<Node> removeMoneyCardList = FXCollections.observableArrayList();
                     for (int i = GeneralLayoutContainerSize; i >= 0; i--) {
-                        Node removeCards = myPCLC.getChildren().get(i);
+                        ImageView removeCards = (ImageView) myPCLC.getChildren().get(i);
                         if (removeCards.getId().equals("1") || removeCards.getId().equals("2") || removeCards.getId().equals("3")) {
                             money += Integer.parseInt(removeCards.getId());
-                            removeMoneyCardList.add(removeCards);
-                            myPCLC.getChildren().remove(i);
+                            AnimationManagement.clearCards(removeCards, myDPLC);
+                            myDPLC.getChildren().add(removeCards);
+                            myPCLC.getChildren().remove(removeCards);
                             if (money >= msg.getCostCard()) {
                                 break;
                             }
                         }
                     }
-                    moveCardsToDiscardPile(removeMoneyCardList);
                 });
             }
             Platform.runLater(() -> {
@@ -990,11 +988,12 @@ public class GameViewPresenter extends AbstractPresenter {
                     Platform.runLater(() -> {
                         usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.HAND).getChildren().clear();
                         usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.PLAY).getChildren().clear();
-                        for (int i = 0; i < 5; i++) {
-                            usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.HAND)
-                                    .getChildren().add(new Card("card_back", 0, 0, 80));
-                        }
                     });
+                        for (int i = 0; i < 5; i++) {
+                            ImageView card = new Card("card_back", 0, 0, 80);
+                            Platform.runLater(() -> usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.HAND)
+                                    .getChildren().add(card));
+                        }
                     return null;
                 }
             };
@@ -1249,7 +1248,11 @@ public class GameViewPresenter extends AbstractPresenter {
                         Platform.runLater(() -> ((Pane) getRegionFromZoneType(ZoneType.BUY, c.getId(), user)).getChildren().add(finalCard2));
                         break;
                     case DRAW:
-                        card = new Card(String.valueOf(c.getId()), isOpponent ? 80 : 107);
+                        if (isOpponent && destination == ZoneType.HAND) {
+                            card = new Card("card_back", 80);
+                        } else {
+                            card = new Card(String.valueOf(c.getId()), isOpponent ? 80 : 107);
+                        }
                         ImageView finalCard3 = card;
                         Platform.runLater(() -> usersContainer.get(user.getUsername()).get(source).getChildren().add(finalCard3));
                         break;
@@ -1593,8 +1596,8 @@ public class GameViewPresenter extends AbstractPresenter {
                     usableMoney += Integer.parseInt(card.getId());
                     Platform.runLater(() -> {
                         AnimationManagement.playCard(card, myPCLC.getChildren().size(), myPCLC);
+                        myPCLC.getChildren().add(c);
                         handcards.getChildren().remove(c);
-                        myPCLC.getChildren().add(card);
                     });
                 }
             }

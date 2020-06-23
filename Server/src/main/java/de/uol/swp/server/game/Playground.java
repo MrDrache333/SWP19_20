@@ -147,8 +147,12 @@ public class Playground extends AbstractPlayground {
     public void newTurn() {
         if (actualPlayer == null && nextPlayer == null) {
             gameService.sendCardField(theSpecificLobbyID, cardField);
-            actualPlayer = players.get(0);
-            nextPlayer = players.get(1);
+            int i = 0;
+            actualPlayer = players.get(i);
+            while (actualPlayer.isBot()) {
+                actualPlayer = players.get(++i);
+            }
+            nextPlayer = players.get(++i % players.size());
             sendInitialCardsDeckSize();
             sendInitialHands();
             actualPoint();
