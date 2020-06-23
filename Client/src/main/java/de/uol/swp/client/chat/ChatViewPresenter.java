@@ -228,7 +228,7 @@ public class ChatViewPresenter extends AbstractPresenter {
         messageView.addEventFilter(MouseEvent.MOUSE_PRESSED, Event::consume);
 
         //Berechnet die maximale Nachrichtenbreite
-        maxChatMessageWidth = (int) chatViewAnchorPane.getPrefWidth() - 70;
+        maxChatMessageWidth = (int) chatViewAnchorPane.getPrefWidth();
 
         //Nachrichten mit der ENTER-Taste abschicken
         chatTextField.setOnKeyPressed(onKeyPressedinchatTextFieldEvent);
