@@ -179,7 +179,6 @@ public class Playground extends AbstractPlayground {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartActionPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID, timestamp));
             actualPoint();
-            //phaseTimer();
         } else {
             nextPhase();
             actualPoint();
@@ -279,10 +278,9 @@ public class Playground extends AbstractPlayground {
      */
     public Boolean playerGaveUp(UUID lobbyID, UserDTO theGivingUpUser, Boolean wantsToGiveUp) {
         int thePositionInList = IntStream.range(0, players.size()).filter(i -> players.get(i).getPlayerName().equals(theGivingUpUser.getUsername())).findFirst().orElse(-1);
+        latestGavedUpPlayer = this.players.get(thePositionInList);
+        gameService.userGavesUpLeavesLobby(lobbyID, theGivingUpUser);
         if (this.players.get(thePositionInList).getPlayerName().equals(theGivingUpUser.getUsername()) && wantsToGiveUp && lobbyID.equals(this.theSpecificLobbyID)) {
-            latestGavedUpPlayer = this.players.get(thePositionInList);
-            gameService.userGavesUpLeavesLobby(lobbyID, theGivingUpUser);
-            this.players.remove(thePositionInList);
             if (this.players.size() == 2) {
                 this.players.remove(thePositionInList);
                 List<String> winners = calculateWinners();
