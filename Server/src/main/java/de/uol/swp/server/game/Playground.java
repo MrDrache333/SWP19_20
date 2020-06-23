@@ -282,13 +282,13 @@ public class Playground extends AbstractPlayground {
         if (this.players.get(thePositionInList).getPlayerName().equals(theGivingUpUser.getUsername()) && wantsToGiveUp && lobbyID.equals(this.theSpecificLobbyID)) {
             latestGavedUpPlayer = this.players.get(thePositionInList);
             gameService.userGavesUpLeavesLobby(lobbyID, theGivingUpUser);
-
+            this.players.remove(thePositionInList);
             if (this.players.size() == 2) {
                 this.players.remove(thePositionInList);
                 List<String> winners = calculateWinners();
                 GameOverMessage gameOverByGaveUp = new GameOverMessage(lobbyID, winners, resultsGame);
                 if (!this.players.get(0).isBot()) {
-                    if(gameService.isTimerStarted())
+                    if (gameService.isTimerStarted())
                         gameService.onCancelPoopBreakRequest(new CancelPoopBreakRequest(this.players.get(0).getTheUserInThePlayer(), lobbyID));
                     endGame(lobbyID, gameOverByGaveUp);
                 } else {
@@ -306,8 +306,10 @@ public class Playground extends AbstractPlayground {
                     this.players.remove(thePositionInList);
                     nextPlayer = this.players.get(0);
                 }
-            } else {
+            } else if (!onlyBotsLeft()) {
                 this.players.remove(thePositionInList);
+            } else if (onlyBotsLeft()) {
+                endGame(lobbyID);
             }
 
             return true;
