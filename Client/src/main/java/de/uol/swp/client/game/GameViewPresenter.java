@@ -66,7 +66,7 @@ public class GameViewPresenter extends AbstractPresenter {
     /**
      * Die Konstante fxml.
      */
-    public static final String fxml = "/fxml/GameViewWIP.fxml";
+    public static final String fxml = "/fxml/GameView.fxml";
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
     private final UUID lobbyID;
     private User loggedInUser;
