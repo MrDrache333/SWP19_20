@@ -8,6 +8,7 @@ import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.chat.ChatManagement;
+import de.uol.swp.server.game.player.Player;
 import de.uol.swp.server.lobby.LobbyManagement;
 import de.uol.swp.server.message.StartGameInternalMessage;
 import de.uol.swp.server.usermanagement.AuthenticationService;
@@ -233,6 +234,84 @@ public class ActionCardTest {
         assertEquals(2, playground.getActualPlayer().getAvailableBuys());
         assertEquals(1, playground.getActualPlayer().getAdditionalMoney());
         assertTrue(playground.getActualPlayer().getPlayerDeck().getHand().contains(card1));
+        if (playground.checkForActionCard()) {
+            assertEquals(Phase.Type.ActionPhase, playground.getActualPhase());
+        } else {
+            assertEquals(Phase.Type.BuyPhase, playground.getActualPhase());
+        }
+    }
+
+    /**
+     * Testet die Karte Burggraben
+     *
+     * @author Julia
+     * @since Sprint 10
+     */
+    @Test
+    void testBurggraben() {
+        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
+        playground.setActualPhase(Phase.Type.ActionPhase);
+        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 7));
+        int handSize = playground.getActualPlayer().getPlayerDeck().getHand().size();
+        playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 7);
+        assertEquals(handSize + 1, playground.getActualPlayer().getPlayerDeck().getHand().size());
+        if (playground.checkForActionCard()) {
+            assertEquals(Phase.Type.ActionPhase, playground.getActualPhase());
+        } else {
+            assertEquals(Phase.Type.BuyPhase, playground.getActualPhase());
+        }
+    }
+
+    /**
+     * Testet die Karte Hexe
+     *
+     * @author Julia
+     * @since Sprint 10
+     */
+    @Test
+    void testHexe() {
+        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
+        playground.setActualPhase(Phase.Type.ActionPhase);
+        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 31));
+        int handSize = playground.getActualPlayer().getPlayerDeck().getHand().size();
+        Card reactionCard = playground.getCardsPackField().getCards().getCardForId((short) 7);
+        playground.getNextPlayer().getPlayerDeck().getHand().add(reactionCard);
+        int handSizeNextPlayer = playground.getNextPlayer().getPlayerDeck().getHand().size();
+        playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 31);
+        assertEquals(handSize + 1, playground.getActualPlayer().getPlayerDeck().getHand().size());
+        assertEquals(handSizeNextPlayer, playground.getNextPlayer().getPlayerDeck().getHand().size());
+        for (Player p : playground.getPlayers()) {
+            if (!p.equals(playground.getActualPlayer()) && !p.equals(playground.getNextPlayer())) {
+                assertEquals(38, p.getPlayerDeck().getHand().get(p.getPlayerDeck().getHand().size() - 1).getId());
+            }
+        }
+        if (playground.checkForActionCard()) {
+            assertEquals(Phase.Type.ActionPhase, playground.getActualPhase());
+        } else {
+            assertEquals(Phase.Type.BuyPhase, playground.getActualPhase());
+        }
+    }
+
+    /**
+     * Testet die Karte Ratsversammlung
+     *
+     * @author Julia
+     * @since Sprint 10
+     */
+    @Test
+    void testRatsversammlung() {
+        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
+        playground.setActualPhase(Phase.Type.ActionPhase);
+        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 28));
+        int handSize = playground.getActualPlayer().getPlayerDeck().getHand().size();
+        playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 28);
+        assertEquals(handSize + 3, playground.getActualPlayer().getPlayerDeck().getHand().size());
+        assertEquals(2, playground.getActualPlayer().getAvailableBuys());
+        for (Player p : playground.getPlayers()) {
+            if (!p.equals(playground.getActualPlayer())) {
+                assertEquals(6, p.getPlayerDeck().getHand().size());
+            }
+        }
         if (playground.checkForActionCard()) {
             assertEquals(Phase.Type.ActionPhase, playground.getActualPhase());
         } else {
