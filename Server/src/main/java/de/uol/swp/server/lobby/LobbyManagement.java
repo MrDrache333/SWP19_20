@@ -117,8 +117,12 @@ public class LobbyManagement {
     public boolean leaveLobby(UUID id, User user) {
         Optional<Lobby> lobby = this.getLobby(id);
         if (lobby.isPresent()) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("User " + user.getUsername() + " verlässt die Lobby " + getLobby(id).orElseThrow(() -> new NoSuchElementException("Lobby nicht existent")));
+            try {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("User " + user.getUsername() + " verlässt die Lobby " + getLobby(id).orElseThrow(() -> new NoSuchElementException("Lobby nicht existent")));
+                }
+            } catch (NoSuchElementException exception) {
+                LOG.error(exception.getMessage());
             }
             lobby.get().leaveUser(user);
             if (lobby.get().getPlayers() == 0) {
