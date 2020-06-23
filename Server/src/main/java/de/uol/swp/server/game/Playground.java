@@ -306,10 +306,10 @@ public class Playground extends AbstractPlayground {
                 }
             } else if (!onlyBotsLeft()) {
                 this.players.remove(thePositionInList);
-            } else if (onlyBotsLeft()) {
+            }
+            if (onlyBotsLeft()) {
                 endGame(lobbyID);
             }
-
             return true;
         } else {
             return false;

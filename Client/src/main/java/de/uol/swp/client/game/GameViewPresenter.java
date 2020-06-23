@@ -753,8 +753,10 @@ public class GameViewPresenter extends AbstractPresenter {
     @Subscribe
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
         if (message.getLobbyID().equals(this.lobbyID) && !message.getUser().equals(loggedInUser)) {
-            if (message.getLobby().getInGame()) {
-                Platform.runLater(() -> updateEnemiesOnBoard(message.getLobby().getUsers()));
+            if (message.getLobby() != null) {
+                if (message.getLobby().getInGame()) {
+                    Platform.runLater(() -> updateEnemiesOnBoard(message.getLobby().getUsers()));
+                }
             }
             getInGameUserList(this.lobbyID);
             LOG.debug("Ein User hat die Lobby verlassen. User werden aktualisiert.");
