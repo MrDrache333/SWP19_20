@@ -374,16 +374,16 @@ public class ChatViewPresenter extends AbstractPresenter {
         String message;
         message = chatTextField.getText();
         //Prüfe auf leere Nachricht
-        if (!message.equals("") && message.length() <= 160) {
+        if (!message.equals("") && message.length() <= 1000) {
             LOG.debug("Sende neue Chatnachricht: User= " + loggedInUser.getUsername() + " Msg= " + message + " ChatID= " + chatID);
             ChatMessage newChatMessage = new ChatMessage(loggedInUser, message);
             LOG.debug("Neue Nachricht zum Senden: " + message);
             chatTextField.clear();
             this.chatService.sendMessage(chatID, newChatMessage);
         }
-        else if (!message.equals("") && message.length() > 160) {
+        else if (!message.equals("") && message.length() > 1000) {
             Platform.runLater(() -> {
-                AlertBox alertBox = new AlertBox(Alert.AlertType.WARNING, "Bitte weniger als 160 Zeichen eingeben!", "Fehler");
+                AlertBox alertBox = new AlertBox(Alert.AlertType.WARNING, "Bitte weniger als 1000 Zeichen eingeben!", "Fehler");
             });
         }
     }
