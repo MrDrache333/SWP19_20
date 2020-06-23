@@ -50,7 +50,7 @@ import java.util.UUID;
 @SuppressWarnings("UnstableApiUsage, unused")
 public class LobbyPresenter extends AbstractPresenter {
 
-    public static final String fxml = "/fxml/LobbyViewWIP.fxml";
+    public static final String fxml = "/fxml/LobbyView.fxml";
     private static final Logger LOG = LogManager.getLogger(ChatViewPresenter.class);
 
     private final ChatViewPresenter chatViewPresenter;
@@ -72,7 +72,7 @@ public class LobbyPresenter extends AbstractPresenter {
     @FXML
     private ChoiceBox<Integer> chooseMaxPlayer;
     @FXML
-    private Pane lobbyViewWIP;
+    private Pane lobbyView;
     @FXML
     private ListView<HBox> usersView;
     @FXML
@@ -181,7 +181,7 @@ public class LobbyPresenter extends AbstractPresenter {
             createBotButton.setVisible(true);
             chooseMaxPlayer.setDisable(false);
             chooseMaxPlayer.setValue(maxPlayerValue);
-            lobbyViewWIP.setOnMouseClicked(mouseEvent -> {
+            lobbyView.setOnMouseClicked(mouseEvent -> {
                 if (bigCardImage.isVisible()) {
                     bigCardImage.setVisible(false);
                 }
