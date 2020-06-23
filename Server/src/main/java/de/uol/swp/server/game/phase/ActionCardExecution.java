@@ -97,7 +97,7 @@ public class ActionCardExecution {
             List<Player> p = new ArrayList<>();
             Player helpPlayer = helpMethodToGetThePlayerFromUser(response.getPlayer());
             p.add(helpPlayer);
-            if (cardID == 24 && response.getCards().size() == 1 && response.getCards().get(0) == 24) {
+            if (cardID == 24 && response.getCards().size() == 1 && (response.getCards().get(0) == 24 || response.getCards().get(0) == 31)) {
                 playground.getGameService().sendToSpecificPlayer(helpPlayer, new GameExceptionMessage(response.getGameID(), "Wähle eine andere Aktionskarte!"));
                 reset();
                 execute();
