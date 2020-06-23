@@ -42,7 +42,6 @@ public class Deck {
      * Zählt die Siegpunkte und fügt sie dem Attribut hinzu.
      */
     public void countSiegpunkte() {
-
             siegpunkte = 0;
             ArrayList<Card> allCards = new ArrayList<>();
             allCards.addAll(cardsDeck);
