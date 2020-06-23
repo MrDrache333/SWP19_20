@@ -1248,11 +1248,7 @@ public class GameViewPresenter extends AbstractPresenter {
                         Platform.runLater(() -> ((Pane) getRegionFromZoneType(ZoneType.BUY, c.getId(), user)).getChildren().add(finalCard2));
                         break;
                     case DRAW:
-                        if (isOpponent && destination == ZoneType.HAND) {
-                            card = new Card("card_back", 80);
-                        } else {
-                            card = new Card(String.valueOf(c.getId()), isOpponent ? 80 : 107);
-                        }
+                        card = new Card(String.valueOf(c.getId()), isOpponent ? 80 : 107);
                         ImageView finalCard3 = card;
                         Platform.runLater(() -> usersContainer.get(user.getUsername()).get(source).getChildren().add(finalCard3));
                         break;
@@ -1262,8 +1258,7 @@ public class GameViewPresenter extends AbstractPresenter {
                         Platform.runLater(() -> gameViewWIP.getChildren().add(finalCard1));
                 }
                 if (card != null) {
-                    ImageView finalCard = card;
-                    Platform.runLater(() -> playAnimation(destination, finalCard, source, user));
+                    playAnimation(destination, card, source, user);
                 } else {
                     LOG.debug("MoveCard-Aktion konnte nicht durchgeführt werden.");
                 }
@@ -1714,38 +1709,42 @@ public class GameViewPresenter extends AbstractPresenter {
     public void playAnimation(ZoneType destination, ImageView card, ZoneType source, User user) {
         switch (destination) {
             case TRASH:
-                AnimationManagement.deleteCard(card);
+                Platform.runLater(() -> AnimationManagement.deleteCard(card));
                 return;
             case HAND:
                 if (user.equals(loggedInUser)) {
                     if (Short.parseShort(card.getId()) < 4) card.setEffect(makeImageDarker);
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+                } else {
+                    card.setImage(new Image("/cards/images/card_back.png"));
                 }
-                AnimationManagement.addToHand(card, usersContainer.get(user.getUsername()).get(destination));
+                Platform.runLater(() -> AnimationManagement.addToHand(card, usersContainer.get(user.getUsername()).get(destination)));
                 break;
             case DISCARD:
-                AnimationManagement.buyCard(card, usersContainer.get(user.getUsername()).get(destination), getPlayerNumber(user));
+                Platform.runLater(() -> AnimationManagement.buyCard(card, usersContainer.get(user.getUsername()).get(destination), getPlayerNumber(user)));
                 card.setEffect(null);
                 break;
             default:
                 LOG.debug("Die Bewegung zur Zone " + destination + " wurde noch nicht implementiert");
         }
-        usersContainer.get(user.getUsername()).get(destination).getChildren().add(card);
-        switch (source) {
-            case TRASH:
-                gameViewWIP.getChildren().remove(card);
-            case BUY:
-                ((Pane) getRegionFromZoneType(ZoneType.BUY, Short.parseShort(card.getId()), user)).getChildren().remove(card);
-                break;
-            case DRAW:
-            case DISCARD:
-                usersContainer.get(user.getUsername()).get(source).getChildren().remove(card);
-                break;
-            case HAND:
-                usersContainer.get(user.getUsername()).get(source).getChildren().remove(card);
-                deleteHandCardsFromOpponent = false;
-                break;
-        }
+        Platform.runLater(() -> {
+            usersContainer.get(user.getUsername()).get(destination).getChildren().add(card);
+            switch (source) {
+                case TRASH:
+                    gameViewWIP.getChildren().remove(card);
+                case BUY:
+                    ((Pane) getRegionFromZoneType(ZoneType.BUY, Short.parseShort(card.getId()), user)).getChildren().remove(card);
+                    break;
+                case DRAW:
+                case DISCARD:
+                    usersContainer.get(user.getUsername()).get(source).getChildren().remove(card);
+                    break;
+                case HAND:
+                    usersContainer.get(user.getUsername()).get(source).getChildren().remove(card);
+                    deleteHandCardsFromOpponent = false;
+                    break;
+            }
+        });
     }
 
     /**
