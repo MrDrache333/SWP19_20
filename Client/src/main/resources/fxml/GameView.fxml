@@ -66,18 +66,32 @@
                             <HBox.margin>
                                 <Insets />
                             </HBox.margin>
+                     <effect>
+                        <Blend />
+                     </effect>
                         </ListView>
-                  <StackPane prefHeight="150.0" prefWidth="200.0">
+                  <StackPane opacity="0.73" prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: #3D3D3D;">
                      <children>
-                        <ImageView fitHeight="181.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="178.0" fitWidth="150.0" pickOnBounds="true" style="bac: #3D3D3D;">
                             <image>
-                                <Image url="@../images/paper.jpg" />
+                                <Image url="@../images/Scroll_opened.png" />
                             </image>
                            <effect>
                               <InnerShadow choke="0.13" radius="11.7875" width="28.15" />
                            </effect>
                         </ImageView>
-                        <Label fx:id="actualPoints" prefHeight="22.0" prefWidth="28.0" text="Label" />
+                        <Label fx:id="actualPoints" alignment="CENTER" prefHeight="35.0" prefWidth="36.0" text="3" textAlignment="CENTER" textFill="#55774e">
+                           <font>
+                              <Font name="System Bold Italic" size="24.0" />
+                           </font></Label>
+                        <Label alignment="TOP_LEFT" blendMode="SRC_ATOP" centerShape="false" contentDisplay="TOP" layoutX="68.0" layoutY="83.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="35.0" prefWidth="89.0" text="Punkte:" textAlignment="CENTER" textFill="#55774e" StackPane.alignment="TOP_CENTER">
+                           <font>
+                              <Font name="System Bold Italic" size="24.0" />
+                           </font>
+                           <StackPane.margin>
+                              <Insets top="30.0" />
+                           </StackPane.margin>
+                        </Label>
                      </children>
                   </StackPane>
 
