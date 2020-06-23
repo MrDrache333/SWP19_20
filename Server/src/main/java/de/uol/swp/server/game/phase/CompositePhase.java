@@ -191,7 +191,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      */
 
     public Card getCardFromId(CardStack cardStack, short cardId) {
-        return cardStack.getAllCards().stream().filter(c -> c.getId() == cardId).collect(Collectors.toList()).get(0);
+          return cardStack.getAllCards().stream().filter(c -> c.getId() == cardId).findFirst().orElse(null);
     }
 
     /**
