@@ -28,7 +28,7 @@ import java.util.*;
 public class BotPlayer extends Player {
     protected EventBus eventBus;
 
-    private final UUID gameId;
+    private final UUID gameID;
 
     static final Logger LOG = LogManager.getLogger(BotPlayer.class);
 
@@ -56,7 +56,7 @@ public class BotPlayer extends Player {
         super(playerName);
         this.eventBus = bus;
         eventBus.register(this);
-        this.gameId = gameID;
+        this.gameID = gameID;
         User botFakeUser = new UserDTO(playerName, gameID.toString(), "", true);
         this.setTheUserInThePlayer(botFakeUser);
         this.cardpack = new JsonCardParser().loadPack("Basispack");

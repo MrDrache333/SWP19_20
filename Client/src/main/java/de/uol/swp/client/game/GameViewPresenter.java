@@ -23,6 +23,7 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -32,9 +33,12 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.effect.BoxBlur;
 import javafx.scene.effect.ColorAdjust;
+import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -66,9 +70,12 @@ public class GameViewPresenter extends AbstractPresenter {
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
     private final UUID lobbyID;
     private User loggedInUser;
+    private User poopInitiator;
     private Short numberOfPlayersInGame;
     private int usableMoney;
 
+    @FXML
+    Label actualPoints;
     @FXML
     private Pane gameViewWIP;
     @FXML
@@ -119,7 +126,6 @@ public class GameViewPresenter extends AbstractPresenter {
     private ImageView bigCardImage;
     @FXML
     private Button buyCardButton;
-    private final Map<Short, Label> cardLabels = new HashMap<>();
     @FXML
     private Label countCopperLabel;
     @FXML
@@ -174,6 +180,32 @@ public class GameViewPresenter extends AbstractPresenter {
     private Button noButton;
     @FXML
     private Button selectButton;
+    @FXML
+    private Pane poopView;
+    @FXML
+    private ImageView poopButtonImage;
+    @FXML
+    private Button poopButton;
+    @FXML
+    private Label chatHeader;
+    @FXML
+    private Label poopMessage;
+    @FXML
+    private Button acceptButton;
+    @FXML
+    private Button declineButton;
+    @FXML
+    private Button cancelPoopTimer;
+    @FXML
+    private Pane countdownPane;
+    @FXML
+    private Label countdownLabel;
+    @FXML
+    private Label countdownInformation;
+    @FXML
+    private Pane cardPane;
+    @FXML
+    private VBox playgroundBox;
 
     private final GeneralLayoutContainer handcards;
     private final GeneralLayoutContainer firstEnemyHand;
@@ -204,11 +236,16 @@ public class GameViewPresenter extends AbstractPresenter {
     private boolean directHand;
     private final ArrayList<Short> chosenCardsId = new ArrayList<>();
     private final ArrayList<ImageView> chosenCards = new ArrayList<>();
+    private final ArrayList<ImageView> cardsToMove = new ArrayList<>();
+    private final Map<Short, Label> cardLabels = new HashMap<>();
     private int numberOfCardsToChoose;
     private String currentInfoText;
     private final HashMap<String, HashMap<ZoneType, GeneralLayoutContainer>> usersContainer = new HashMap<>();
     private volatile boolean deleteHandCardsFromOpponent = false;
-    private final ArrayList<ImageView> cardsToMove = new ArrayList<>();
+    private static final double BLUR_AMOUNT = 60;
+    private static final Effect frostEffect = new BoxBlur(BLUR_AMOUNT, BLUR_AMOUNT, 3);
+    private Timeline animation;
+    private int countdown;
 
     /**
      * Das Event das den Handkarten gegeben wird, wenn sie ausspielbar sein sollen.
@@ -288,6 +325,7 @@ public class GameViewPresenter extends AbstractPresenter {
         this.injector = injector;
         this.gameManagement = gameManagement;
         this.gameService = gameService;
+        this.poopInitiator = null;
         makeImageDarker.setBrightness(-0.7);
         // Die Hände für jeden Spieler
         handcards = new GeneralLayoutContainer(575, 630, 110, 420, "My.HCLC");
@@ -333,6 +371,7 @@ public class GameViewPresenter extends AbstractPresenter {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
             gameManagement.getGameService().giveUp(lobbyID, (UserDTO) loggedInUser);
+            gameManagement.getGameService().cancelPoopBreak(loggedInUser, lobbyID);
         }
     }
 
@@ -482,24 +521,194 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
+     * Wenn der PoopButton gedrückt wird, soll requestPoopBreak() aufgerufen werden.
+     *
+     * @param actionEvent Das ActionEvent.
+     * @author Keno S.
+     * @since Sprint 10
+     */
+    @FXML
+    public void onPoopButtonPressed(ActionEvent actionEvent) {
+        gameManagement.getGameService().requestPoopBreak(loggedInUser, lobbyID);
+    }
+
+    /**
+     * Wenn der DeclineButton gedrückt wird, soll answerPoopBreak() aufgerufen werden.
+     *
+     * @param actionEvent Das ActionEvent.
+     * @author Keno S.
+     * @since Sprint 10
+     */
+    @FXML
+    public void onDeclineButtonPressed(ActionEvent actionEvent) {
+        gameManagement.getGameService().answerPoopBreak(loggedInUser, lobbyID, false);
+    }
+
+    /**
+     * Wenn der AcceptButton gedrückt wird, soll answerPoopBreak() aufgerufen werden.
+     *
+     * @param actionEvent Das ActionEvent.
+     * @author Keno S.
+     * @since Sprint 10
+     */
+    @FXML
+    public void onAcceptButtonPressed(ActionEvent actionEvent) {
+        gameManagement.getGameService().answerPoopBreak(loggedInUser, lobbyID, true);
+    }
+
+    /**
+     * Wenn der CancelTimerButton gedrückt wird, soll cancelPoopBreak() aufgerufen werden.
+     *
+     * @param actionEvent Das ActionEvent.
+     * @author Keno S.
+     * @since Sprint 10
+     */
+    @FXML
+    public void onCancelTimerPressed(ActionEvent actionEvent) {
+        gameManagement.getGameService().cancelPoopBreak(loggedInUser, lobbyID);
+    }
+
+    /**
+     * Bei Empfang einer PoopBreakMessage soll eine Votingphase iniziiert werden.
+     *
+     * @param msg Die PoopBreakMessage
+     * @author Keno S.
+     * @since Sprint 10
+     */
+    @Subscribe
+    public void onPoopBreakMessage(PoopBreakMessage msg) {
+        if (poopButtonImage.isVisible() && chatHeader.isVisible()) {
+            if(msg.getPoopInitiator() != null)
+                poopInitiator = msg.getPoopInitiator();
+            Platform.runLater(() -> {
+                poopMessage.setText(msg.getPoopInitiator().equals(loggedInUser) ? "Du musst auf Klo!" : msg.getPoopInitiator().getUsername() + " muss auf Klo!");
+                poopMessage.setAlignment(Pos.TOP_CENTER);
+            });
+            showPoopVote(true);
+        }
+        if (!msg.getDecisions().isEmpty()) {
+            Platform.runLater(() -> {
+                acceptButton.setDisable(msg.getDecisions().containsKey(loggedInUser));
+                declineButton.setDisable(msg.getDecisions().containsKey(loggedInUser));
+                acceptButton.setText("Okay (" + msg.getAcceptedVotes() + ")");
+                declineButton.setText("Nope (" + msg.getDeclinedVotes() + ")");
+            });
+        }
+    }
+
+    /**
+     * Bei Empfang einer CancelPoopBreakMessage wird der Pausebildschirm unsichtbar gemacht.
+     *
+     * @param msg Die CancelPoopBreakMessage
+     * @author Keno S.
+     * @since Sprint 10
+     */
+    @Subscribe
+    public void onCancelPoopBreakMessage(CancelPoopBreakMessage msg) {
+        showPoopBreakView(false);
+        showPoopVote(false);
+        poopInitiator = null;
+        countdown = 0;
+    }
+
+    /**
+     * Bei Empfang einer StartPoopBreakMessage wird der Pausebilschirm angezeigt.
+     *
+     * @param msg StartPoopBreakMessage
+     * @author Keno S.
+     * @since Sprint 10
+     */
+    @Subscribe
+    public void onStartPoopBreakMessage(StartPoopBreakMessage msg) {
+        if (msg.getGameID().equals(lobbyID)) {
+            Platform.runLater(() -> {
+                countdownLabel.setText("60");
+                countdownInformation.setText(msg.getPoopInitiator().equals(loggedInUser) ? "Du bist auf Klo!" : msg.getPoopInitiator().getUsername() + " ist auf Klo!");
+                countdownInformation.setLayoutX(countdownPane.getWidth() / 2 - countdownInformation.getWidth() / 2);
+                cancelPoopTimer.setVisible(msg.getPoopInitiator().equals(loggedInUser));
+            });
+            showPoopVote(false);
+            showPoopBreakView(true);
+        }
+    }
+
+    /**
+     * Bei Empfang einer CountdownRefreshMessage der CountdownTimer aktualisiert werden.
+     *
+     * @param msg Die CountdownRefreshMessage
+     * @author Keno S.
+     * @since Sprint 10
+     */
+    @Subscribe
+    public void onCountdownRefreshMessage(CountdownRefreshMessage msg) {
+        if (msg.getGameID().equals(lobbyID)) {
+            countdown = msg.getCountdown();
+            Platform.runLater(() -> {
+                countdownLabel.setText(countdown < 10 ? "0" + countdown : String.valueOf(countdown));
+                countdownLabel.setLayoutX(countdownPane.getWidth() / 2 - countdownLabel.getWidth() / 2);
+            });
+            if (countdown <= 0)
+                showPoopBreakView(false);
+        }
+    }
+
+    /**
+     * Diese Hilfsmethode zeigt oder versteckt die PoopBreakView.
+     *
+     * @param enabled Entscheidet ob der Node versteckt oder angezeigt werden soll.
+     * @author Keno S.
+     * @since Sprint 10
+     */
+    private void showPoopBreakView (boolean enabled) {
+        Platform.runLater(() -> {
+            countdownPane.setVisible(enabled);
+            poopButtonImage.setVisible(!enabled);
+            skipPhaseButton.setVisible(!enabled);
+            poopButton.setVisible(!enabled);
+            if (enabled)
+                countdownPane.toFront();
+        });
+    }
+
+    /**
+     * Diese Hilfsmethode zeigt oder versteckt die PoopVoteView.
+     *
+     * @param enabled Entscheidet ob der Node versteckt oder angezeigt werden soll.
+     * @author Keno S.
+     * @since Sprint 10
+     */
+    private void showPoopVote(boolean enabled) {
+        Platform.runLater(() -> {
+            poopButtonImage.setVisible(!enabled);
+            poopButton.setVisible(!enabled);
+            chatHeader.setVisible(!enabled);
+            poopMessage.setVisible(enabled);
+            acceptButton.setVisible(enabled);
+            declineButton.setVisible(enabled);
+        });
+    }
+
+    /**
      * Die IDs der gesendeten Aktionskarten werden initilaisiert.
      * Die Anzahl der Wertkarten wird in einer Map gespeichert, mit der ID der jeweiligen Karte als Schlüssel.
      *
-     * @param msg die Nachricht mit den IDs und der jeweiligen Azahl der Spielkarten
-     * @author Anna, Fenja
+     * @param msg die Nachricht mit den IDs und der jeweiligen Anzahl der Spielkarten
+     * @author Anna, Fenja, Rike
      * @since Sprint 7
      */
     @Subscribe
     public void onSendCardFieldMessage(SendCardFieldMessage msg) {
-        ArrayList<Short> list = new ArrayList<>();
-        Map<Short, Integer> cardsToBuy = new HashMap<>();
-        for (Short key : msg.getCardField().keySet()) {
-            if (key > 6 && key != 38) { //Aktionskarten, ohne Fluchkarte
-                list.add(key);
+        if (msg.getGameID().equals(lobbyID)) {
+            ArrayList<Short> list = new ArrayList<>();
+            Map<Short, Integer> cardsToBuy = new HashMap<>();
+            for (Short key : msg.getCardField().keySet()) {
+                if (key > 6 && key != 38) { //Aktionskarten, ohne Fluchkarte
+                    list.add(key);
+                }
+                cardsToBuy.put(key, msg.getCardField().get(key));
             }
-            cardsToBuy.put(key, msg.getCardField().get(key));
+            initalizeCardFieldImages(list, cardsToBuy);
         }
-        initalizeCardFieldImages(list, cardsToBuy);
     }
 
     /**
@@ -545,11 +754,11 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
-        if (message.getLobbyID().equals(this.lobbyID)) {
-            if (message.getLobby().getInGame()) {
-                Platform.runLater(() -> {
-                    updateEnemiesOnBoard(message.getLobby().getUsers());
-                });
+        if (message.getLobbyID().equals(this.lobbyID) && !message.getUser().equals(loggedInUser)) {
+            if (message.getLobby() != null) {
+                if (message.getLobby().getInGame()) {
+                    Platform.runLater(() -> updateEnemiesOnBoard(message.getLobby().getUsers()));
+                }
             }
             getInGameUserList(this.lobbyID);
             LOG.debug("Ein User hat die Lobby verlassen. User werden aktualisiert.");
@@ -614,19 +823,18 @@ public class GameViewPresenter extends AbstractPresenter {
                 Platform.runLater(() -> {
                     int money = 0;
                     int GeneralLayoutContainerSize = myPCLC.getChildren().size() - 1;
-                    ObservableList<Node> removeMoneyCardList = FXCollections.observableArrayList();
                     for (int i = GeneralLayoutContainerSize; i >= 0; i--) {
-                        Node removeCards = myPCLC.getChildren().get(i);
+                        ImageView removeCards = (ImageView) myPCLC.getChildren().get(i);
                         if (removeCards.getId().equals("1") || removeCards.getId().equals("2") || removeCards.getId().equals("3")) {
                             money += Integer.parseInt(removeCards.getId());
-                            removeMoneyCardList.add(removeCards);
-                            myPCLC.getChildren().remove(i);
+                            AnimationManagement.clearCards(removeCards, myDPLC);
+                            myDPLC.getChildren().add(removeCards);
+                            myPCLC.getChildren().remove(removeCards);
                             if (money >= msg.getCostCard()) {
                                 break;
                             }
                         }
                     }
-                    moveCardsToDiscardPile(removeMoneyCardList);
                 });
             }
             Platform.runLater(() -> {
@@ -784,11 +992,12 @@ public class GameViewPresenter extends AbstractPresenter {
                     Platform.runLater(() -> {
                         usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.HAND).getChildren().clear();
                         usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.PLAY).getChildren().clear();
-                        for (int i = 0; i < 5; i++) {
-                            usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.HAND)
-                                    .getChildren().add(new Card("card_back", 0, 0, 80));
-                        }
                     });
+                        for (int i = 0; i < 5; i++) {
+                            ImageView card = new Card("card_back", 0, 0, 80);
+                            Platform.runLater(() -> usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.HAND)
+                                    .getChildren().add(card));
+                        }
                     return null;
                 }
             };
@@ -1053,8 +1262,7 @@ public class GameViewPresenter extends AbstractPresenter {
                         Platform.runLater(() -> gameViewWIP.getChildren().add(finalCard1));
                 }
                 if (card != null) {
-                    ImageView finalCard = card;
-                    Platform.runLater(() -> playAnimation(destination, finalCard, source, user));
+                    playAnimation(destination, card, source, user);
                 } else {
                     LOG.debug("MoveCard-Aktion konnte nicht durchgeführt werden.");
                 }
@@ -1153,6 +1361,9 @@ public class GameViewPresenter extends AbstractPresenter {
                 });
             }
         }
+        Platform.runLater(() -> {
+            if (countdown > 0) countdownPane.toFront();
+        });
     }
 
     /**
@@ -1262,7 +1473,9 @@ public class GameViewPresenter extends AbstractPresenter {
             handcards.getChildren().forEach((n) -> {
                 n.removeEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
                 n.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
-                n.setEffect(null);
+                if (Short.parseShort(n.getId()) < 4) {
+                    n.setEffect(makeImageDarker);
+                }
             });
             gameService.chooseCardResponse(gameID, loggedInUser, chosenCardsId);
             selectButton.setVisible(false);
@@ -1382,8 +1595,8 @@ public class GameViewPresenter extends AbstractPresenter {
                     usableMoney += Integer.parseInt(card.getId());
                     Platform.runLater(() -> {
                         AnimationManagement.playCard(card, myPCLC.getChildren().size(), myPCLC);
+                        myPCLC.getChildren().add(c);
                         handcards.getChildren().remove(c);
-                        myPCLC.getChildren().add(card);
                     });
                 }
             }
@@ -1448,6 +1661,17 @@ public class GameViewPresenter extends AbstractPresenter {
         }
     }
 
+
+    @Subscribe
+    public void actualPointMassage(ActualPointMessage msg) {
+        if (msg.getLobbyID().equals(lobbyID)) {
+            Platform.runLater(() -> {
+                actualPoints.setText(msg.getPoints().toString());
+            });
+        }
+    }
+
+
     /**
      * Die Region, die zu der übergebenen Zone gehört, wird zurückgegeben.
      *
@@ -1489,33 +1713,42 @@ public class GameViewPresenter extends AbstractPresenter {
     public void playAnimation(ZoneType destination, ImageView card, ZoneType source, User user) {
         switch (destination) {
             case TRASH:
-                AnimationManagement.deleteCard(card);
+                Platform.runLater(() -> AnimationManagement.deleteCard(card));
                 return;
             case HAND:
-                AnimationManagement.addToHand(card, usersContainer.get(user.getUsername()).get(destination));
+                if (user.equals(loggedInUser)) {
+                    if (Short.parseShort(card.getId()) < 4) card.setEffect(makeImageDarker);
+                    card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+                } else {
+                    card.setImage(new Image("/cards/images/card_back.png"));
+                }
+                Platform.runLater(() -> AnimationManagement.addToHand(card, usersContainer.get(user.getUsername()).get(destination)));
                 break;
             case DISCARD:
-                AnimationManagement.buyCard(card, usersContainer.get(user.getUsername()).get(destination), getPlayerNumber(user));
+                Platform.runLater(() -> AnimationManagement.buyCard(card, usersContainer.get(user.getUsername()).get(destination), getPlayerNumber(user)));
+                card.setEffect(null);
                 break;
             default:
                 LOG.debug("Die Bewegung zur Zone " + destination + " wurde noch nicht implementiert");
         }
-        usersContainer.get(user.getUsername()).get(destination).getChildren().add(card);
-        switch (source) {
-            case TRASH:
-                gameViewWIP.getChildren().remove(card);
-            case BUY:
-                ((Pane) getRegionFromZoneType(ZoneType.BUY, Short.parseShort(card.getId()), user)).getChildren().remove(card);
-                break;
-            case DRAW:
-            case DISCARD:
-                usersContainer.get(user.getUsername()).get(source).getChildren().remove(card);
-                break;
-            case HAND:
-                usersContainer.get(user.getUsername()).get(source).getChildren().remove(card);
-                deleteHandCardsFromOpponent = false;
-                break;
-        }
+        Platform.runLater(() -> {
+            usersContainer.get(user.getUsername()).get(destination).getChildren().add(card);
+            switch (source) {
+                case TRASH:
+                    gameViewWIP.getChildren().remove(card);
+                case BUY:
+                    ((Pane) getRegionFromZoneType(ZoneType.BUY, Short.parseShort(card.getId()), user)).getChildren().remove(card);
+                    break;
+                case DRAW:
+                case DISCARD:
+                    usersContainer.get(user.getUsername()).get(source).getChildren().remove(card);
+                    break;
+                case HAND:
+                    usersContainer.get(user.getUsername()).get(source).getChildren().remove(card);
+                    deleteHandCardsFromOpponent = false;
+                    break;
+            }
+        });
     }
 
     /**
@@ -1590,11 +1823,13 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @Subscribe
     private void onUpdateCardCounterMessage(UpdateCardCounterMessage msg) {
-        for (short id : msg.getCardCounts().keySet()) {
-            if (valueCardLabels.containsKey(id))
-                Platform.runLater(() -> valueCardLabels.get(id).setText(String.valueOf(msg.getCardCounts().get(id))));
-            ImageView selectedCard = getCardFromCardfield(id);
-            if (msg.getCardCounts().get(id) < 1) selectedCard.setEffect(makeImageDarker);
+        if (msg.getGameID().equals(lobbyID)) {
+            for (short id : msg.getCardCounts().keySet()) {
+                if (cardLabels.containsKey(id))
+                    Platform.runLater(() -> cardLabels.get(id).setText(String.valueOf(msg.getCardCounts().get(id))));
+                ImageView selectedCard = getCardFromCardfield(id);
+                if (msg.getCardCounts().get(id) < 1) selectedCard.setEffect(makeImageDarker);
+            }
         }
     }
 

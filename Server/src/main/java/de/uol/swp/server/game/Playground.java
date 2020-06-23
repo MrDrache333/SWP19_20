@@ -12,6 +12,7 @@ import de.uol.swp.common.game.card.parser.components.CardPack;
 import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.phase.Phase;
+import de.uol.swp.common.game.request.CancelPoopBreakRequest;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.message.ServerMessage;
 import de.uol.swp.common.user.User;
@@ -146,20 +147,27 @@ public class Playground extends AbstractPlayground {
     public void newTurn() {
         if (actualPlayer == null && nextPlayer == null) {
             gameService.sendCardField(theSpecificLobbyID, cardField);
-            actualPlayer = players.get(0);
-            nextPlayer = players.get(1);
+            int i = 0;
+            actualPlayer = players.get(i);
+            while (actualPlayer.isBot()) {
+                actualPlayer = players.get(++i);
+            }
+            nextPlayer = players.get(++i % players.size());
             sendInitialCardsDeckSize();
             sendInitialHands();
+            actualPoint();
         } else {
             //Spieler muss Clearphase durchlaufen haben
             if (actualPhase != Phase.Type.ClearPhase) return;
             if (actualPlayer != latestGavedUpPlayer) {
                 sendPlayersHand();
                 sendCardsDeckSize();
+                actualPoint();
             }
             int index = players.indexOf(nextPlayer);
             actualPlayer = nextPlayer;
             nextPlayer = players.get(++index % players.size());
+            actualPoint();
         }
 
         ChatMessage infoMessage = new ChatMessage(infoUser, getActualPlayer().getTheUserInThePlayer().getUsername() + " ist am Zug!");
@@ -170,9 +178,10 @@ public class Playground extends AbstractPlayground {
         if (checkForActionCard()) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             gameService.sendToAllPlayers(theSpecificLobbyID, new StartActionPhaseMessage(actualPlayer.getTheUserInThePlayer(), theSpecificLobbyID, timestamp));
-            //phaseTimer();
+            actualPoint();
         } else {
             nextPhase();
+            actualPoint();
         }
     }
 
@@ -252,6 +261,9 @@ public class Playground extends AbstractPlayground {
         for (Player player : players) {
             int size = player.getPlayerDeck().getCardsDeck().size();
             gameService.sendToSpecificPlayer(player, new CardsDeckSizeMessage(theSpecificLobbyID, player.getTheUserInThePlayer(), size));
+            actualPlayer.getPlayerDeck().countSiegpunkte();
+            ActualPointMessage actualPointMessage = new ActualPointMessage(theSpecificLobbyID, actualPlayer.getPlayerDeck().getSiegpunkte());
+            gameService.sendToSpecificPlayer(player, actualPointMessage);
         }
     }
 
@@ -266,15 +278,16 @@ public class Playground extends AbstractPlayground {
      */
     public Boolean playerGaveUp(UUID lobbyID, UserDTO theGivingUpUser, Boolean wantsToGiveUp) {
         int thePositionInList = IntStream.range(0, players.size()).filter(i -> players.get(i).getPlayerName().equals(theGivingUpUser.getUsername())).findFirst().orElse(-1);
+        latestGavedUpPlayer = this.players.get(thePositionInList);
+        gameService.userGavesUpLeavesLobby(lobbyID, theGivingUpUser);
         if (this.players.get(thePositionInList).getPlayerName().equals(theGivingUpUser.getUsername()) && wantsToGiveUp && lobbyID.equals(this.theSpecificLobbyID)) {
-            latestGavedUpPlayer = this.players.get(thePositionInList);
-            gameService.userGavesUpLeavesLobby(lobbyID, theGivingUpUser);
-
             if (this.players.size() == 2) {
                 this.players.remove(thePositionInList);
                 List<String> winners = calculateWinners();
                 GameOverMessage gameOverByGaveUp = new GameOverMessage(lobbyID, winners, resultsGame);
                 if (!this.players.get(0).isBot()) {
+                    if (gameService.isTimerStarted())
+                        gameService.onCancelPoopBreakRequest(new CancelPoopBreakRequest(this.players.get(0).getTheUserInThePlayer(), lobbyID));
                     endGame(lobbyID, gameOverByGaveUp);
                 } else {
                     endGame(lobbyID);
@@ -291,10 +304,12 @@ public class Playground extends AbstractPlayground {
                     this.players.remove(thePositionInList);
                     nextPlayer = this.players.get(0);
                 }
-            } else {
+            } else if (!onlyBotsLeft()) {
                 this.players.remove(thePositionInList);
             }
-
+            if (onlyBotsLeft()) {
+                endGame(lobbyID);
+            }
             return true;
         } else {
             return false;
@@ -349,6 +364,12 @@ public class Playground extends AbstractPlayground {
      */
     public boolean checkForActionCard() {
         return actualPlayer.getPlayerDeck().getHand().stream().anyMatch(card -> card instanceof ActionCard);
+    }
+
+    public void actualPoint() {
+        actualPlayer.getPlayerDeck().countSiegpunkte();
+        ActualPointMessage actualPointMessage = new ActualPointMessage(theSpecificLobbyID, actualPlayer.getPlayerDeck().getSiegpunkte());
+        gameService.sendToSpecificPlayer(actualPlayer, actualPointMessage);
     }
 
     /**

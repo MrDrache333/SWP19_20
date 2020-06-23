@@ -12,10 +12,8 @@ import de.uol.swp.common.game.exception.GamePhaseException;
 import de.uol.swp.common.game.exception.NotEnoughMoneyException;
 import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.game.phase.Phase;
-import de.uol.swp.common.game.request.BuyCardRequest;
-import de.uol.swp.common.game.request.GameGiveUpRequest;
-import de.uol.swp.common.game.request.PlayCardRequest;
-import de.uol.swp.common.game.request.SkipPhaseRequest;
+import de.uol.swp.common.game.request.*;
+import de.uol.swp.common.lobby.exception.LobbyExceptionMessage;
 import de.uol.swp.common.lobby.request.LobbyLeaveUserRequest;
 import de.uol.swp.common.lobby.request.UpdateInGameRequest;
 import de.uol.swp.common.lobby.response.AllOnlineLobbiesResponse;
@@ -41,6 +39,15 @@ public class GameService extends AbstractService {
     private final GameManagement gameManagement;
     private final AuthenticationService authenticationService;
     private final UserDTO infoUser = new UserDTO("infoUser", "", "");
+    private final Timer poopTimer = new Timer();
+    private final Map<User, Boolean> poopMap = new HashMap<>();
+    List<Player> actualPlayers = new ArrayList<>();
+    private User poopInitiator = null;
+    private Timer timer;
+    private int interval;
+    private boolean timerStarted;
+    private static final int DELAY = 1000;
+    private static final int PERIOD = 1000;
 
     /**
      * Erstellt einen neuen GameService
@@ -57,6 +64,7 @@ public class GameService extends AbstractService {
         this.gameManagement = gameManagement;
         this.authenticationService = authenticationService;
         gameManagement.setGameService(this);
+        timerStarted = false;
     }
 
     //--------------------------------------
@@ -146,8 +154,10 @@ public class GameService extends AbstractService {
     void startGame(StartGameInternalMessage msg) {
         try {
             gameManagement.createGame(msg.getLobbyID());
-            Game game = gameManagement.getGame(msg.getLobbyID()).get();
-            game.getPlayground().newTurn();
+            if (gameManagement.getGame(msg.getLobbyID()).isPresent()) {
+                Game game = gameManagement.getGame(msg.getLobbyID()).get();
+                game.getPlayground().newTurn();
+            }
         } catch (GameManagementException e) {
             LOG.error("Es wurde eine GameManagementException geworfen: " + e.getMessage());
             // TODO: In späteren Sprints hier ggf. weiteres Handling?
@@ -188,21 +198,24 @@ public class GameService extends AbstractService {
      */
     @Subscribe
     void userGivesUp(GameGiveUpRequest req) {
-        Boolean userRemovedSuccessfully = gameManagement.getGame(req.getLobbyID()).get().getPlayground().playerGaveUp(req.getLobbyID(), req.getGivingUpUser(), req.getGivingUp());
-        if (userRemovedSuccessfully && !(gameManagement.lobbyIsNotPresent(req.getLobbyID()))) {
-            sendToAllPlayers(req.getLobbyID(), new UserGaveUpMessage(req.getLobbyID(), req.getGivingUpUser(), true));
-            sendToAllPlayers(req.getLobbyID(), new NewChatMessage(req.getLobbyID().toString(), new ChatMessage(infoUser, req.getGivingUpUser().getUsername() + " gab auf!")));
-        } else {
-            LOG.error("User " + req.getGivingUpUser().getUsername() + "konnte nicht aufgeben");
-            post(new AllOnlineLobbiesResponse(gameManagement.getAllLobbies()));
-            // TODO: Implementierung: Was passiert wenn der User nicht entfernt werden kann? Welche Fälle gibt es?
+        if (gameManagement.getGame(req.getLobbyID()).isPresent()) {
+            Boolean userRemovedSuccessfully = gameManagement.getGame(req.getLobbyID()).get().getPlayground().playerGaveUp(req.getLobbyID(), req.getGivingUpUser(), req.getGivingUp());
+            if (userRemovedSuccessfully && !(gameManagement.lobbyIsNotPresent(req.getLobbyID()))) {
+                sendToAllPlayers(req.getLobbyID(), new UserGaveUpMessage(req.getLobbyID(), req.getGivingUpUser(), true));
+                sendToAllPlayers(req.getLobbyID(), new NewChatMessage(req.getLobbyID().toString(), new ChatMessage(infoUser, req.getGivingUpUser().getUsername() + " gab auf!")));
+            } else {
+                LOG.error("User " + req.getGivingUpUser().getUsername() + "konnte nicht aufgeben");
+                post(new AllOnlineLobbiesResponse(gameManagement.getAllLobbies()));
+                // TODO: Implementierung: Was passiert wenn der User nicht entfernt werden kann? Welche Fälle gibt es?
+            }
         }
+        else
+            sendToAllPlayers(req.getLobbyID(), new LobbyExceptionMessage(req.getLobbyID(), "Der User konnte nicht entfernt werden!"));
     }
 
     public void userGavesUpLeavesLobby(UUID gameID, UserDTO user) {
         LobbyLeaveUserRequest leaveUserRequest = new LobbyLeaveUserRequest(gameID, user);
         post(leaveUserRequest);
-
     }
 
     /**
@@ -273,6 +286,111 @@ public class GameService extends AbstractService {
         } else {
             LOG.error("Irgendwas ist bei der onSelectCardRequest im GameService falsch gelaufen. Folgende ID: " + gameID);
         }
+    }
+
+    /**
+     * Startet eine Klopause, wenn schon nicht eine läuft.
+     *
+     * @param req Der PoopBreakRequest
+     * @author Keno S.
+     * @since Sprint 10
+     */
+    @Subscribe
+    public void onPoopBreakRequest(PoopBreakRequest req) {
+        Optional<Game> game = gameManagement.getGame(req.getGameID());
+        if (game.isPresent()) {
+            actualPlayers.clear();
+            game.get().getPlayground().getPlayers().forEach(player -> {
+                if (!player.isBot() && !actualPlayers.contains(player))
+                    actualPlayers.add(player);
+            });
+            if (poopInitiator == null && req.getPoopInitiator() != null)
+                poopInitiator = req.getPoopInitiator();
+            if (!poopMap.containsKey(req.getUser())) {
+                poopMap.put(req.getUser(), req.getPoopDecision());
+                sendToAllPlayers(req.getGameID(), new PoopBreakMessage(poopInitiator, req.getUser(), req.getGameID(), poopMap));
+            }
+            if  (actualPlayers.size() < 2 || poopMap.values().stream().filter(d -> d).count() >= (actualPlayers.size() == 4 ? 3 : 2)) {
+                sendToAllPlayers(req.getGameID(), new StartPoopBreakMessage(poopInitiator, req.getGameID()));
+                poopMap.clear();
+                clock(req.getGameID());
+            }
+            else if (poopMap.values().stream().filter(d -> !d).count() >= (actualPlayers.size() > 2 ? 2 : 1)) {
+                sendToAllPlayers(req.getGameID(), new CancelPoopBreakMessage(poopInitiator, req.getGameID(), new ArrayList<>(poopMap.values())));
+                poopMap.clear();
+                poopInitiator = null;
+            }
+        }
+    }
+
+    /**
+     * Beendet eine Klopause.
+     *
+     * @param req Der PoopBreakRequest
+     * @author Keno S.
+     * @since Sprint 10
+     */
+    @Subscribe
+    public void onCancelPoopBreakRequest(CancelPoopBreakRequest req) {
+        Optional<Game> game = gameManagement.getGame(req.getGameID());
+        if (game.isPresent()) {
+            if (!req.getUser().equals(poopInitiator) && interval > 0) {
+                game.get().getPlayground().getPlayers().forEach(player -> {
+                    if (player.getTheUserInThePlayer().equals(req.getUser()))
+                        sendToSpecificPlayer(player, new CancelPoopBreakMessage(poopInitiator, req.getGameID()));
+                });
+            }
+            else {
+                if (timerStarted) {
+                    timer.cancel();
+                    timerStarted = false;
+                }
+                sendToAllPlayers(req.getGameID(), new CancelPoopBreakMessage(poopInitiator, req.getGameID()));
+                interval = 0;
+                poopInitiator = null;
+                poopMap.clear();
+            }
+        }
+    }
+
+    /**
+     * Hilfsmethode, die eine Clock erzeugt, damit der Countdown bei allen Clients sychron ist.
+     *
+     * @param gameID Die GameID
+     * @author Keno S.
+     * @since Sprint 10
+     */
+    private void clock(UUID gameID) {
+        timer = new Timer();
+        interval = 60;
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (!timerStarted)
+                    timerStarted = true;
+                sendToAllPlayers(gameID, new CountdownRefreshMessage(gameID, countdownTimer()));
+            }
+        }, DELAY, PERIOD);
+    }
+
+    /**
+     * Hilfsmethode, um den Countdown herunterzuzählen.
+     *
+     * @return Den Countdown - 1
+     */
+    private int countdownTimer() {
+        if (interval <= 0) {
+            timer.cancel();
+            timerStarted = false;
+        }
+        return --interval;
+    }
+    public boolean isTimerStarted() {
+        return timerStarted;
+    }
+
+    public void killTimer() {
+        interval = 0;
     }
 
     public GameManagement getGameManagement() {
