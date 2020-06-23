@@ -13,8 +13,10 @@ import de.uol.swp.server.lobby.LobbyManagement;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import de.uol.swp.server.usermanagement.UserManagement;
 import de.uol.swp.server.usermanagement.store.MainMemoryBasedUserStore;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.NoSuchElementException;
 import java.util.concurrent.CountDownLatch;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -48,7 +50,6 @@ class ChatServiceTest {
         lock.countDown();
     }
 
-
     /**
      * 1:
      * Erstellt GlobalChat; überprüft Erstellung
@@ -62,18 +63,22 @@ class ChatServiceTest {
      */
     @Test
     void onNewChatMessageRequest() {
-        //1:
-        if (chatManagement.getChat("global").isEmpty()) chatManagement.createChat("global");
-        assertNotNull(chatManagement.getChat("global"));
-        //2:
-        NewChatMessageRequest request = new NewChatMessageRequest(new ChatMessage(chatMember, "Test"));
-        bus.post(request);
-        assertEquals("Test", chatManagement.getChat("global").get().getMessages().get(0).getMessage());
-        //3:
-        String newChatId = chatManagement.createChat();
-        request = new NewChatMessageRequest(newChatId, new ChatMessage(chatMember, "Test"));
-        bus.post(request);
-        assertEquals("Test", chatManagement.getChat(newChatId).get().getMessages().get(0).getMessage());
+        try {
+            //1:
+            if (chatManagement.getChat("global").isEmpty()) chatManagement.createChat("global");
+            assertNotNull(chatManagement.getChat("global"));
+            //2:
+            NewChatMessageRequest request = new NewChatMessageRequest(new ChatMessage(chatMember, "Test"));
+            bus.post(request);
+            assertEquals("Test", chatManagement.getChat("global").get().getMessages().get(0).getMessage());
+            //3:
+            String newChatId = chatManagement.createChat();
+            request = new NewChatMessageRequest(newChatId, new ChatMessage(chatMember, "Test"));
+            bus.post(request);
+            assertEquals("Test", chatManagement.getChat(newChatId).orElseThrow(() -> new NoSuchElementException("Chat nicht vorhanden")).getMessages().get(0).getMessage());
+        } catch (NoSuchElementException exception) {
+            Assertions.fail(exception.getMessage());
+        }
     }
 
 }

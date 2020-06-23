@@ -365,13 +365,17 @@ public class GameViewPresenter extends AbstractPresenter {
      * @since Sprint 3
      */
     public void showGiveUpAlert(String message, String title) {
-        AlertBox alert = new AlertBox(Alert.AlertType.CONFIRMATION);
-        alert.getDialogPane().setContentText(message);
-        alert.getDialogPane().setHeaderText(title);
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            gameManagement.getGameService().giveUp(lobbyID, (UserDTO) loggedInUser);
-            gameManagement.getGameService().cancelPoopBreak(loggedInUser, lobbyID);
+        try {
+            AlertBox alert = new AlertBox(Alert.AlertType.CONFIRMATION);
+            alert.getDialogPane().setContentText(message);
+            alert.getDialogPane().setHeaderText(title);
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.orElseThrow(() -> new NoSuchElementException("Ergebnisobjekt nicht vorhanden")) == ButtonType.OK) {
+                gameManagement.getGameService().giveUp(lobbyID, (UserDTO) loggedInUser);
+                gameManagement.getGameService().cancelPoopBreak(loggedInUser, lobbyID);
+            }
+        } catch (NoSuchElementException exception) {
+            LOG.error(exception.getMessage());
         }
     }
 
@@ -1658,14 +1662,12 @@ public class GameViewPresenter extends AbstractPresenter {
         }
     }
 
-
     @Subscribe
     public void actualPointMassage(ActualPointMessage msg) {
         if (msg.getLobbyID().equals(lobbyID)) {
             Platform.runLater(() -> actualPoints.setText(msg.getPoints().toString()));
         }
     }
-
 
     /**
      * Die Region, die zu der übergebenen Zone gehört, wird zurückgegeben.
@@ -1781,10 +1783,15 @@ public class GameViewPresenter extends AbstractPresenter {
      * @since Sprint 8
      */
     public ImageView getCardFromCardfield(short cardID) {
-        if (cardID > 6 && cardID != 38) {
-            return (ImageView) shopTeppich.getChildren().stream().filter(c -> Short.parseShort(c.getId()) == cardID).findFirst().get();
+        try {
+            if (cardID > 6 && cardID != 38) {
+                return (ImageView) shopTeppich.getChildren().stream().filter(c -> Short.parseShort(c.getId()) == cardID).findFirst().orElseThrow(() -> new NoSuchElementException("Objekt nicht existent"));
+            }
+            return (ImageView) valueCardsBox.getChildren().stream().filter(c -> Short.parseShort(c.getId()) == cardID).findFirst().orElseThrow(() -> new NoSuchElementException("Objekt nicht existent"));
+        } catch (NoSuchElementException exception) {
+            LOG.error(exception.getMessage());
         }
-        return (ImageView) valueCardsBox.getChildren().stream().filter(c -> Short.parseShort(c.getId()) == cardID).findFirst().get();
+        return null;
     }
 
     /**

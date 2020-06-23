@@ -218,36 +218,39 @@ public class PrimaryPresenter extends AbstractPresenter {
      * @since Sprint3
      */
     public void createLobby(User currentUser, String title, UUID lobbyID, UserDTO gameOwner) {
-        Platform.runLater(() -> {
-            //LobbyPresenter neue Instanz mit (name, id) wird erstellt
-            GameManagement gameManagement = new GameManagement(eventBus, lobbyID, title, currentUser, chatService, lobbyService, userService, injector, gameOwner, gameService, this);
+        try {
+            Platform.runLater(() -> {
+                //LobbyPresenter neue Instanz mit (name, id) wird erstellt
+                GameManagement gameManagement = new GameManagement(eventBus, lobbyID, title, currentUser, chatService, lobbyService, userService, injector, gameOwner, gameService, this);
 
-            eventBus.register(gameManagement);
+                eventBus.register(gameManagement);
 
-            //LobbyPresenter und lobbyStage in die jeweilige Map packen, mit lobbyID als Schlüssel
-            games.put(lobbyID, gameManagement);
-            gameManagement.showLobbyView();
+                //LobbyPresenter und lobbyStage in die jeweilige Map packen, mit lobbyID als Schlüssel
+                games.put(lobbyID, gameManagement);
+                gameManagement.showLobbyView();
 
-            //Neuen Tab initialisieren, Pane vom GameManagement übernehmen und der TabView hinzufügen
+                //Neuen Tab initialisieren, Pane vom GameManagement übernehmen und der TabView hinzufügen
 
-            //Auf Schließung des Tabs reagieren
-            gameManagement.getPrimaryTab().setOnCloseRequest(event -> {
-                AlertBox alert = new AlertBox(Alert.AlertType.CONFIRMATION);
-                alert.setResizable(false);
-                alert.initModality(Modality.APPLICATION_MODAL);
-                alert.getDialogPane().setHeaderText("Möchtest du diesen Tab wirklich schließen?");
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == ButtonType.OK) {
-                    gameManagement.getGameService().giveUp(lobbyID, (UserDTO) loggedInUser);
-                    closeTab(lobbyID, true);
-                } else {
-                    event.consume();
-                }
+                //Auf Schließung des Tabs reagieren
+                gameManagement.getPrimaryTab().setOnCloseRequest(event -> {
+                    AlertBox alert = new AlertBox(Alert.AlertType.CONFIRMATION);
+                    alert.setResizable(false);
+                    alert.initModality(Modality.APPLICATION_MODAL);
+                    alert.getDialogPane().setHeaderText("Möchtest du diesen Tab wirklich schließen?");
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.orElseThrow(() -> new NoSuchElementException("Objekt nicht vorhanden")) == ButtonType.OK) {
+                        gameManagement.getGameService().giveUp(lobbyID, (UserDTO) loggedInUser);
+                        closeTab(lobbyID, true);
+                    } else {
+                        event.consume();
+                    }
+                });
+                TabView.getTabs().add(gameManagement.getPrimaryTab());
+                TabView.getSelectionModel().select(gameManagement.getPrimaryTab());
             });
-            TabView.getTabs().add(gameManagement.getPrimaryTab());
-            TabView.getSelectionModel().select(gameManagement.getPrimaryTab());
-        });
-
+        } catch (NoSuchElementException exception) {
+            LOG.error(exception.getMessage());
+        }
     }
 
     /**

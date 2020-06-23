@@ -118,7 +118,7 @@ public class LobbyManagement {
         Optional<Lobby> lobby = this.getLobby(id);
         if (lobby.isPresent()) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("User " + user.getUsername() + " verlässt die Lobby " + getLobby(id).get());
+                LOG.debug("User " + user.getUsername() + " verlässt die Lobby " + getLobby(id).orElseThrow(() -> new NoSuchElementException("Lobby nicht existent")));
             }
             lobby.get().leaveUser(user);
             if (lobby.get().getPlayers() == 0) {
@@ -242,10 +242,14 @@ public class LobbyManagement {
      */
     public void setMaxPlayer(UUID lobbyID, User loggedInUser, Integer maxPlayerValue) {
         if (lobbies.get(lobbyID).getOwner().equals(loggedInUser)) {
-            if (maxPlayerValue >= getLobby(lobbyID).get().getPlayers()) {
-                lobbies.get(lobbyID).setMaxPlayer(maxPlayerValue);
-            } else {
-                throw new SetMaxPlayerException("Es sind zu viele Benutzer in der Lobby, um die maximale Spierleranzahl ändern.");
+            try {
+                if (maxPlayerValue >= getLobby(lobbyID).orElseThrow(() -> new NoSuchElementException("Lobby nicht existent")).getPlayers()) {
+                    lobbies.get(lobbyID).setMaxPlayer(maxPlayerValue);
+                } else {
+                    throw new SetMaxPlayerException("Es sind zu viele Benutzer in der Lobby, um die maximale Spierleranzahl ändern.");
+                }
+            } catch (NoSuchElementException exception) {
+                LOG.error(exception.getMessage());
             }
         } else {
             throw new SetMaxPlayerException(loggedInUser + " ist nicht der Lobbybesitzer und kann nicht die maximale Spierleranzahl ändern.");

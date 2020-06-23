@@ -9,10 +9,12 @@ import de.uol.swp.server.message.StartGameInternalMessage;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import de.uol.swp.server.usermanagement.UserManagement;
 import de.uol.swp.server.usermanagement.store.MainMemoryBasedUserStore;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,12 +47,16 @@ public class GiveUpTest {
      */
     @BeforeAll
     static void init() {
-        gameID = lobbyManagement.createLobby("Test", "", defaultOwner);
-        chatManagement.createChat(gameID.toString());
-        lobbyManagement.getLobby(gameID).get().joinUser(secondPlayer);
-        lobbyManagement.getLobby(gameID).get().joinUser(thirdPlayer);
-        lobbyManagement.getLobby(gameID).get().setChosenCards(chosenCards);
-        bus.post(new StartGameInternalMessage(gameID));
+        try {
+            gameID = lobbyManagement.createLobby("Test", "", defaultOwner);
+            chatManagement.createChat(gameID.toString());
+            lobbyManagement.getLobby(gameID).orElseThrow(() -> new NoSuchElementException("Lobby nicht existent")).joinUser(secondPlayer);
+            lobbyManagement.getLobby(gameID).orElseThrow(() -> new NoSuchElementException("Lobby nicht existent")).joinUser(thirdPlayer);
+            lobbyManagement.getLobby(gameID).orElseThrow(() -> new NoSuchElementException("Lobby nicht existent")).setChosenCards(chosenCards);
+            bus.post(new StartGameInternalMessage(gameID));
+        } catch (NoSuchElementException exception) {
+            Assertions.fail(exception.getMessage());
+        }
     }
 
     /**
@@ -61,8 +67,12 @@ public class GiveUpTest {
      */
     @Test
     void testGiveUp() {
-        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
-        Boolean successTest = playground.playerGaveUp(gameID, (UserDTO) secondPlayer, true);
-        assertEquals(true, successTest);
+        try {
+            Playground playground = gameManagement.getGame(gameID).orElseThrow(() -> new NoSuchElementException("Spiel nicht existent")).getPlayground();
+            Boolean successTest = playground.playerGaveUp(gameID, (UserDTO) secondPlayer, true);
+            assertEquals(true, successTest);
+        } catch (NoSuchElementException exception) {
+            Assertions.fail(exception.getMessage());
+        }
     }
 }

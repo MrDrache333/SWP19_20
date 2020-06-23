@@ -8,9 +8,11 @@ import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.chat.ChatManagement;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.NoSuchElementException;
 import java.util.concurrent.CountDownLatch;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -105,9 +107,13 @@ class ChatManagementTest {
      */
     @Test
     void addMessage() {
-        //Create a global Chat
-        chatManagement.createChat("global");
-        chatManagement.addMessage("global", new ChatMessage(chatMember, "Test"));
-        assertEquals("Test", chatManagement.getChat("global").get().getMessages().get(0).getMessage());
+        try {
+            //Create a global Chat
+            chatManagement.createChat("global");
+            chatManagement.addMessage("global", new ChatMessage(chatMember, "Test"));
+            assertEquals("Test", chatManagement.getChat("global").orElseThrow(() -> new NoSuchElementException("Chat nicht vorhanden")).getMessages().get(0).getMessage());
+        } catch (NoSuchElementException exception) {
+            Assertions.fail(exception.getMessage());
+        }
     }
 }
