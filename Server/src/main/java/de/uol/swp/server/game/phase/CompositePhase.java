@@ -206,6 +206,11 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
                 return card;
             }
         }
+        for (Card card : cardStack.getCurseCards()) {
+            if (card.getId() == cardId) {
+                return card;
+            }
+        }
         return null;
     }
 
