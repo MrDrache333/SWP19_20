@@ -358,29 +358,6 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Show Alert für den Aufgeben Button
-     *
-     * @param message die Nachricht
-     * @param title   der Titel
-     * @author M.Haschem
-     * @since Sprint 3
-     */
-    public void showGiveUpAlert(String message, String title) {
-        try {
-            AlertBox alert = new AlertBox(Alert.AlertType.CONFIRMATION);
-            alert.getDialogPane().setContentText(message);
-            alert.getDialogPane().setHeaderText(title);
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.orElseThrow(() -> new NoSuchElementException("Ergebnisobjekt nicht vorhanden")) == ButtonType.OK) {
-                gameManagement.getGameService().giveUp(lobbyID, (UserDTO) loggedInUser);
-                gameManagement.getGameService().cancelPoopBreak(loggedInUser, lobbyID);
-            }
-        } catch (NoSuchElementException exception) {
-            LOG.error(exception.getMessage());
-        }
-    }
-
-    /**
      * Initialisieren.
      *
      * @throws IOException die io Ausnahme
@@ -465,15 +442,26 @@ public class GameViewPresenter extends AbstractPresenter {
     }
 
     /**
-     * Aufgeben Button gedrückt Ereignis.
+     * Wenn der Aufgeben Button gedrückt wird, wird eine Abfrage geöffnet, ob der User wirklich aufgeben möchte
      *
      * @param actionEvent das Ereignis der Aktion.
-     * @author Haschem
+     * @author Haschem, Timo
      * @since Sprint 3
      */
     @FXML
     public void onGiveUpButtonPressed(ActionEvent actionEvent) {
-        showGiveUpAlert(" ", "Möchtest du wirklich aufgeben?");
+        try {
+            AlertBox alert = new AlertBox(Alert.AlertType.CONFIRMATION);
+            alert.getDialogPane().setContentText("Möchtest du wirklich aufgeben?");
+            alert.getDialogPane().setHeaderText("Aufgeben?");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.orElseThrow(() -> new NoSuchElementException("Ergebnisobjekt nicht vorhanden")) == ButtonType.OK) {
+                gameManagement.getGameService().giveUp(lobbyID, (UserDTO) loggedInUser);
+                gameManagement.getGameService().cancelPoopBreak(loggedInUser, lobbyID);
+            }
+        } catch (NoSuchElementException exception) {
+            LOG.error(exception.getMessage());
+        }
     }
 
     /**
