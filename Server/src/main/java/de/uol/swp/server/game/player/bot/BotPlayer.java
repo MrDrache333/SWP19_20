@@ -87,6 +87,7 @@ public class BotPlayer extends Player {
     @Subscribe
     public void onStartActionPhaseMessage(StartActionPhaseMessage msg) throws InterruptedException {
         if (msg.getUser().getUsername().equals(getTheUserInThePlayer().getUsername()) && msg.getGameID().equals(gameID)) {
+            Thread.sleep(1000);
             gamePhase = Phase.PLAY;
             Thread.sleep(1500);
             actionCount++;
@@ -105,7 +106,6 @@ public class BotPlayer extends Player {
                     cardsOnHandIDs.remove((Short)playCardID);
                     PlayCardRequest req = new PlayCardRequest(gameID, this.getTheUserInThePlayer(), playCardID);
                     LOG.debug("Der Bot " + getTheUserInThePlayer().getUsername() + " will die Karte " + getCardName(playCardID) + " auspielen.");
-                    Thread.sleep(1000);
                     eventBus.post(req);
                     if(playCardID == 8 || playCardID == 27){
                         actionCount += 2;
@@ -178,6 +178,7 @@ public class BotPlayer extends Player {
     @Subscribe
     public void onPlayCardMessage(PlayCardMessage msg) throws InterruptedException {
         if(msg.getCurrentUser().equals(getTheUserInThePlayer()) && msg.getGameID().equals(gameID) && msg.getIsPlayed()){
+            Thread.sleep(1000);
             if(!msg.getIsPlayed()){
                 LOG.debug("Der Bot " + getTheUserInThePlayer().getUsername() + " konnte die Karte " + getCardName(msg.getHandCardID()) + " nicht ausgespielt.");
                 return;
@@ -246,9 +247,10 @@ public class BotPlayer extends Player {
      * @since Sprint 9
      */
     @Subscribe
-    public void onOptionalActionRequest(OptionalActionRequest msg) {
+    public void onOptionalActionRequest(OptionalActionRequest msg) throws InterruptedException {
         if (msg.getPlayer().getUsername().equals(getTheUserInThePlayer().getUsername()) && msg.getGameID().equals(gameID)) {
-            OptionalActionResponse res = new OptionalActionResponse(gameID, this.getTheUserInThePlayer(), true);
+            Thread.sleep(1000);
+            OptionalActionResponse res = new OptionalActionResponse(gameID, this.getTheUserInThePlayer(), true, msg.getActionExecutionID());
             eventBus.post(res);
         }
     }
@@ -265,14 +267,15 @@ public class BotPlayer extends Player {
      * @since Sprint 9
      */
     @Subscribe
-    public void onChooseCardRequest(ChooseCardRequest msg) {
+    public void onChooseCardRequest(ChooseCardRequest msg) throws InterruptedException {
         if (msg.getPlayer().getUsername().equals(getTheUserInThePlayer().getUsername()) && msg.getGameID().equals(gameID)) {
+            Thread.sleep(1000);
             ArrayList<Short> choosenCards = new ArrayList<>();
             short choosenCard = 0;
-            if(msg.getCardID() <= 6 || msg.getCardID() == 38){
+            if(msg.getActionExecutionID() <= 6 || msg.getActionExecutionID() == 38){
                 LOG.debug("Es wurde eine Karte ausgespielt die keine Aktions Karte ist.");
             }else {
-                switch (msg.getCardID()){
+                switch (msg.getActionExecutionID()){
                     case 10:
                         for(short cardID : msg.getCards()) {
                             if((cardID == 0 || (cardID >= 4 && cardID <= 6))) {
@@ -325,9 +328,9 @@ public class BotPlayer extends Player {
             }
             ChooseCardResponse res;
             if(choosenCard == 0){
-                res = new ChooseCardResponse(gameID, this.getTheUserInThePlayer(), choosenCards);
+                res = new ChooseCardResponse(gameID, this.getTheUserInThePlayer(), choosenCards, msg.getActionExecutionID());
             }else{
-                res = new ChooseCardResponse(gameID, this.getTheUserInThePlayer(), choosenCard);
+                res = new ChooseCardResponse(gameID, this.getTheUserInThePlayer(), choosenCard, msg.getActionExecutionID());
             }
             eventBus.post(res);
         }
