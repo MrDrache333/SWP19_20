@@ -221,8 +221,8 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         if (playground.getCardField().get((short) 6) == 0) {
             return true;
         }
-        //Prüfen ob min. 3 Aktionskartenstapel leer sind
-        return playground.getCardsPackField().getCards().getActionCards().stream().filter(c -> playground.getCardField().containsKey(c.getId()) && playground.getCardField().get(c.getId()) == 0).count() >= 3;
+        //Prüfen ob min. 3 andere Stapel leer sind
+        return playground.getCardsPackField().getCards().getAllCards().stream().filter(c -> playground.getCardField().containsKey(c.getId()) && playground.getCardField().get(c.getId()) == 0).count() >= 3;
     }
 
     public ActionCardExecution getExecuteAction() {

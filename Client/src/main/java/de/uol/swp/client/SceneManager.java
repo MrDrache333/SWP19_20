@@ -519,7 +519,6 @@ public class SceneManager {
             Parent rootPane = initDeleteAccountPresenter(new DeleteAccountPresenter(currentUser, lobbyService, userService, eventBus));
             deleteAccountScene = new Scene(rootPane, 450, 250);
             deleteAccountScene.getStylesheets().add(SettingsPresenter.css);
-
         }
     }
 

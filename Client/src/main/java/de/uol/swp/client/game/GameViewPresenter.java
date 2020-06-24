@@ -702,15 +702,17 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void onSendCardFieldMessage(SendCardFieldMessage msg) {
-        ArrayList<Short> list = new ArrayList<>();
-        Map<Short, Integer> cardsToBuy = new HashMap<>();
-        for (Short key : msg.getCardField().keySet()) {
-            if (key > 6 && key != 38) { //Aktionskarten, ohne Fluchkarte
-                list.add(key);
+        if (msg.getGameID().equals(lobbyID)) {
+            ArrayList<Short> list = new ArrayList<>();
+            Map<Short, Integer> cardsToBuy = new HashMap<>();
+            for (Short key : msg.getCardField().keySet()) {
+                if (key > 6 && key != 38) { //Aktionskarten, ohne Fluchkarte
+                    list.add(key);
+                }
+                cardsToBuy.put(key, msg.getCardField().get(key));
             }
-            cardsToBuy.put(key, msg.getCardField().get(key));
+            initalizeCardFieldImages(list, cardsToBuy);
         }
-        initalizeCardFieldImages(list, cardsToBuy);
     }
 
     /**
@@ -757,8 +759,10 @@ public class GameViewPresenter extends AbstractPresenter {
     @Subscribe
     public void onUserLeftLobbyMessage(UserLeftLobbyMessage message) {
         if (message.getLobbyID().equals(this.lobbyID) && !message.getUser().equals(loggedInUser)) {
-            if (message.getLobby().getInGame()) {
-                Platform.runLater(() -> updateEnemiesOnBoard(message.getLobby().getUsers()));
+            if (message.getLobby() != null) {
+                if (message.getLobby().getInGame()) {
+                    Platform.runLater(() -> updateEnemiesOnBoard(message.getLobby().getUsers()));
+                }
             }
             getInGameUserList(this.lobbyID);
             LOG.debug("Ein User hat die Lobby verlassen. User werden aktualisiert.");
@@ -823,19 +827,18 @@ public class GameViewPresenter extends AbstractPresenter {
                 Platform.runLater(() -> {
                     int money = 0;
                     int GeneralLayoutContainerSize = myPCLC.getChildren().size() - 1;
-                    ObservableList<Node> removeMoneyCardList = FXCollections.observableArrayList();
                     for (int i = GeneralLayoutContainerSize; i >= 0; i--) {
-                        Node removeCards = myPCLC.getChildren().get(i);
+                        ImageView removeCards = (ImageView) myPCLC.getChildren().get(i);
                         if (removeCards.getId().equals("1") || removeCards.getId().equals("2") || removeCards.getId().equals("3")) {
                             money += Integer.parseInt(removeCards.getId());
-                            removeMoneyCardList.add(removeCards);
-                            myPCLC.getChildren().remove(i);
+                            AnimationManagement.clearCards(removeCards, myDPLC);
+                            myDPLC.getChildren().add(removeCards);
+                            myPCLC.getChildren().remove(removeCards);
                             if (money >= msg.getCostCard()) {
                                 break;
                             }
                         }
                     }
-                    moveCardsToDiscardPile(removeMoneyCardList);
                 });
             }
             Platform.runLater(() -> {
@@ -993,11 +996,12 @@ public class GameViewPresenter extends AbstractPresenter {
                     Platform.runLater(() -> {
                         usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.HAND).getChildren().clear();
                         usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.PLAY).getChildren().clear();
-                        for (int i = 0; i < 5; i++) {
-                            usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.HAND)
-                                    .getChildren().add(new Card("card_back", 0, 0, 80));
-                        }
                     });
+                        for (int i = 0; i < 5; i++) {
+                            ImageView card = new Card("card_back", 0, 0, 80);
+                            Platform.runLater(() -> usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.HAND)
+                                    .getChildren().add(card));
+                        }
                     return null;
                 }
             };
@@ -1262,8 +1266,7 @@ public class GameViewPresenter extends AbstractPresenter {
                         Platform.runLater(() -> gameViewWIP.getChildren().add(finalCard1));
                 }
                 if (card != null) {
-                    ImageView finalCard = card;
-                    Platform.runLater(() -> playAnimation(destination, finalCard, source, user));
+                    playAnimation(destination, card, source, user);
                 } else {
                     LOG.debug("MoveCard-Aktion konnte nicht durchgeführt werden.");
                 }
@@ -1596,8 +1599,8 @@ public class GameViewPresenter extends AbstractPresenter {
                     usableMoney += Integer.parseInt(card.getId());
                     Platform.runLater(() -> {
                         AnimationManagement.playCard(card, myPCLC.getChildren().size(), myPCLC);
+                        myPCLC.getChildren().add(c);
                         handcards.getChildren().remove(c);
-                        myPCLC.getChildren().add(card);
                     });
                 }
             }
@@ -1710,38 +1713,42 @@ public class GameViewPresenter extends AbstractPresenter {
     public void playAnimation(ZoneType destination, ImageView card, ZoneType source, User user) {
         switch (destination) {
             case TRASH:
-                AnimationManagement.deleteCard(card);
+                Platform.runLater(() -> AnimationManagement.deleteCard(card));
                 return;
             case HAND:
                 if (user.equals(loggedInUser)) {
                     if (Short.parseShort(card.getId()) < 4) card.setEffect(makeImageDarker);
                     card.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
+                } else {
+                    card.setImage(new Image("/cards/images/card_back.png"));
                 }
-                AnimationManagement.addToHand(card, usersContainer.get(user.getUsername()).get(destination));
+                Platform.runLater(() -> AnimationManagement.addToHand(card, usersContainer.get(user.getUsername()).get(destination)));
                 break;
             case DISCARD:
-                AnimationManagement.buyCard(card, usersContainer.get(user.getUsername()).get(destination), getPlayerNumber(user));
+                Platform.runLater(() -> AnimationManagement.buyCard(card, usersContainer.get(user.getUsername()).get(destination), getPlayerNumber(user)));
                 card.setEffect(null);
                 break;
             default:
                 LOG.debug("Die Bewegung zur Zone " + destination + " wurde noch nicht implementiert");
         }
-        usersContainer.get(user.getUsername()).get(destination).getChildren().add(card);
-        switch (source) {
-            case TRASH:
-                gameViewWIP.getChildren().remove(card);
-            case BUY:
-                ((Pane) getRegionFromZoneType(ZoneType.BUY, Short.parseShort(card.getId()), user)).getChildren().remove(card);
-                break;
-            case DRAW:
-            case DISCARD:
-                usersContainer.get(user.getUsername()).get(source).getChildren().remove(card);
-                break;
-            case HAND:
-                usersContainer.get(user.getUsername()).get(source).getChildren().remove(card);
-                deleteHandCardsFromOpponent = false;
-                break;
-        }
+        Platform.runLater(() -> {
+            usersContainer.get(user.getUsername()).get(destination).getChildren().add(card);
+            switch (source) {
+                case TRASH:
+                    gameViewWIP.getChildren().remove(card);
+                case BUY:
+                    ((Pane) getRegionFromZoneType(ZoneType.BUY, Short.parseShort(card.getId()), user)).getChildren().remove(card);
+                    break;
+                case DRAW:
+                case DISCARD:
+                    usersContainer.get(user.getUsername()).get(source).getChildren().remove(card);
+                    break;
+                case HAND:
+                    usersContainer.get(user.getUsername()).get(source).getChildren().remove(card);
+                    deleteHandCardsFromOpponent = false;
+                    break;
+            }
+        });
     }
 
     /**
@@ -1821,11 +1828,13 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @Subscribe
     private void onUpdateCardCounterMessage(UpdateCardCounterMessage msg) {
-        for (short id : msg.getCardCounts().keySet()) {
-            if (cardLabels.containsKey(id))
-                Platform.runLater(() -> cardLabels.get(id).setText(String.valueOf(msg.getCardCounts().get(id))));
-            ImageView selectedCard = getCardFromCardfield(id);
-            if (msg.getCardCounts().get(id) < 1) selectedCard.setEffect(makeImageDarker);
+        if (msg.getGameID().equals(lobbyID)) {
+            for (short id : msg.getCardCounts().keySet()) {
+                if (cardLabels.containsKey(id))
+                    Platform.runLater(() -> cardLabels.get(id).setText(String.valueOf(msg.getCardCounts().get(id))));
+                ImageView selectedCard = getCardFromCardfield(id);
+                if (msg.getCardCounts().get(id) < 1) selectedCard.setEffect(makeImageDarker);
+            }
         }
     }
 }
