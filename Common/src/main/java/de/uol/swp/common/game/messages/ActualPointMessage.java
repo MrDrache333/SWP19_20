@@ -1,9 +1,6 @@
 package de.uol.swp.common.game.messages;
 
-import de.uol.swp.common.message.AbstractMessage;
 import de.uol.swp.common.message.AbstractServerMessage;
-import de.uol.swp.common.user.UserDTO;
-
 
 import java.util.UUID;
 
@@ -25,6 +22,4 @@ public class ActualPointMessage extends AbstractServerMessage {
     public Integer getPoints() {
         return points;
     }
-
-
 }

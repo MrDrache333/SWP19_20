@@ -45,6 +45,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -170,35 +171,39 @@ public class SceneManager {
     private final EventHandler<KeyEvent> hotkeyEventHandler = new EventHandler<>() {
         @Override
         public void handle(KeyEvent event) {
-            if (event.isControlDown()) {
-                String focusedTab = primaryPresenter.getFocusedTab();
-                if (focusedTab.matches("^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")) {
-                    GameManagement gameManagement = primaryPresenter.getGameManagement(UUID.fromString(focusedTab));
-                    User user = gameManagement.getLoggedInUser();
-                    UUID lobbyID = gameManagement.getID();
-                    switch (event.getCode()) {
-                        case S:
-                            LOG.debug("Skip Phase Hotkey pressed");
-                            gameService.skipPhase(user, lobbyID);
-                            break;
-                        case G:
-                            LOG.debug("Give Up Hotkey pressed");
-                            AlertBox alert = new AlertBox(Alert.AlertType.CONFIRMATION);
-                            alert.getDialogPane().setHeaderText("Möchtest du wirklich aufgeben?");
-                            Optional<ButtonType> result = alert.showAndWait();
-                            if (result.get() == ButtonType.OK) {
-                                gameService.giveUp(lobbyID, (UserDTO) user);
-                            }
-                            break;
+            try {
+                if (event.isControlDown()) {
+                    String focusedTab = primaryPresenter.getFocusedTab();
+                    if (focusedTab.matches("^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")) {
+                        GameManagement gameManagement = primaryPresenter.getGameManagement(UUID.fromString(focusedTab));
+                        User user = gameManagement.getLoggedInUser();
+                        UUID lobbyID = gameManagement.getID();
+                        switch (event.getCode()) {
+                            case S:
+                                LOG.debug("Skip Phase Hotkey pressed");
+                                gameService.skipPhase(user, lobbyID);
+                                break;
+                            case G:
+                                LOG.debug("Give Up Hotkey pressed");
+                                AlertBox alert = new AlertBox(Alert.AlertType.CONFIRMATION);
+                                alert.getDialogPane().setHeaderText("Möchtest du wirklich aufgeben?");
+                                Optional<ButtonType> result = alert.showAndWait();
+                                if (result.orElseThrow(() -> new NoSuchElementException("Objekt nicht existent")) == ButtonType.OK) {
+                                    gameService.giveUp(lobbyID, (UserDTO) user);
+                                }
+                                break;
+                        }
+                        event.consume();
+                    } else if (focusedTab.equals("Menu")) {
+                        if (event.getCode() == KeyCode.L) {
+                            LOG.debug("Create Lobby Hotkey pressed");
+                            showCreateLobbyScreen(primaryPresenter.getUser());
+                        }
+                        event.consume();
                     }
-                    event.consume();
-                } else if (focusedTab.equals("Menu")) {
-                    if (event.getCode() == KeyCode.L) {
-                        LOG.debug("Create Lobby Hotkey pressed");
-                        showCreateLobbyScreen(primaryPresenter.getUser());
-                    }
-                    event.consume();
                 }
+            } catch (NoSuchElementException exception) {
+                LOG.error(exception.getMessage());
             }
         }
     };
@@ -555,6 +560,13 @@ public class SceneManager {
         });
     }
 
+    /**
+     * Gibt die PrimaryStage zurück
+     *
+     * @return primaryStage die Stage
+     * @author Keno O.
+     * @since Sprint 10
+     */
     public Stage getPrimaryStage() {
         return primaryStage;
     }

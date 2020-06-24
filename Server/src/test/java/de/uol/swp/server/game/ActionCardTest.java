@@ -15,11 +15,9 @@ import de.uol.swp.server.usermanagement.AuthenticationService;
 import de.uol.swp.server.usermanagement.UserManagement;
 import de.uol.swp.server.usermanagement.store.MainMemoryBasedUserStore;
 import de.uol.swp.server.usermanagement.store.UserStore;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
+import java.util.NoSuchElementException;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
@@ -58,11 +56,15 @@ public class ActionCardTest {
      */
     @BeforeAll
     static void init() {
-        gameID = lobbyManagement.createLobby("Test", "", defaultOwner);
-        chatManagement.createChat(gameID.toString());
-        lobbyManagement.getLobby(gameID).get().joinUser(secondPlayer);
-        lobbyManagement.getLobby(gameID).get().joinUser(thirdPlayer);
-        bus.post(new StartGameInternalMessage(gameID));
+        try {
+            gameID = lobbyManagement.createLobby("Test", "", defaultOwner);
+            chatManagement.createChat(gameID.toString());
+            lobbyManagement.getLobby(gameID).orElseThrow(() -> new NoSuchElementException("Lobby nicht gefunden")).joinUser(secondPlayer);
+            lobbyManagement.getLobby(gameID).orElseThrow(() -> new NoSuchElementException("Lobby nicht gefunden")).joinUser(thirdPlayer);
+            bus.post(new StartGameInternalMessage(gameID));
+        } catch (NoSuchElementException exception) {
+            Assertions.fail(exception.getMessage());
+        }
     }
 
     /**
@@ -110,14 +112,18 @@ public class ActionCardTest {
      * @since Sprint 8
      */
     @Test
-    void testHolzfäller() {
-        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
-        playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 9));
-        playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 9);
-        assertEquals(2, playground.getActualPlayer().getAvailableBuys());
-        assertEquals(2, playground.getActualPlayer().getAdditionalMoney());
-        assertEquals(Phase.Type.BuyPhase, playground.getActualPhase());
+    void testHolzfaeller() {
+        try {
+            Playground playground = gameManagement.getGame(gameID).orElseThrow(() -> new NoSuchElementException("Spiel nicht gefunden")).getPlayground();
+            playground.setActualPhase(Phase.Type.ActionPhase);
+            playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 9));
+            playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 9);
+            assertEquals(2, playground.getActualPlayer().getAvailableBuys());
+            assertEquals(2, playground.getActualPlayer().getAdditionalMoney());
+            assertEquals(Phase.Type.BuyPhase, playground.getActualPhase());
+        } catch (NoSuchElementException exception) {
+            Assertions.fail(exception.getMessage());
+        }
     }
 
     /**
@@ -128,17 +134,21 @@ public class ActionCardTest {
      */
     @Test
     void testJahrmarkt() {
-        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
-        playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 27));
-        playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 27);
-        assertEquals(2, playground.getActualPlayer().getAvailableBuys());
-        assertEquals(2, playground.getActualPlayer().getAvailableActions());
-        assertEquals(2, playground.getActualPlayer().getAdditionalMoney());
-        if (playground.checkForActionCard()) {
-            assertEquals(Phase.Type.ActionPhase, playground.getActualPhase());
-        } else {
-            assertEquals(Phase.Type.BuyPhase, playground.getActualPhase());
+        try {
+            Playground playground = gameManagement.getGame(gameID).orElseThrow(() -> new NoSuchElementException("Spiel nicht gefunden")).getPlayground();
+            playground.setActualPhase(Phase.Type.ActionPhase);
+            playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 27));
+            playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 27);
+            assertEquals(2, playground.getActualPlayer().getAvailableBuys());
+            assertEquals(2, playground.getActualPlayer().getAvailableActions());
+            assertEquals(2, playground.getActualPlayer().getAdditionalMoney());
+            if (playground.checkForActionCard()) {
+                assertEquals(Phase.Type.ActionPhase, playground.getActualPhase());
+            } else {
+                assertEquals(Phase.Type.BuyPhase, playground.getActualPhase());
+            }
+        } catch (NoSuchElementException exception) {
+            Assertions.fail(exception.getMessage());
         }
     }
 
@@ -150,19 +160,23 @@ public class ActionCardTest {
      */
     @Test
     void testDorf() {
-        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
-        playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 8));
-        int handSize = playground.getActualPlayer().getPlayerDeck().getHand().size();
-        Card card = playground.getActualPlayer().getPlayerDeck().getCardsDeck().get(0);
-        playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 8);
-        assertEquals(2, playground.getActualPlayer().getAvailableActions());
-        assertEquals(handSize, playground.getActualPlayer().getPlayerDeck().getHand().size());
-        assertTrue(playground.getActualPlayer().getPlayerDeck().getHand().contains(card));
-        if (playground.checkForActionCard()) {
-            assertEquals(Phase.Type.ActionPhase, playground.getActualPhase());
-        } else {
-            assertEquals(Phase.Type.BuyPhase, playground.getActualPhase());
+        try {
+            Playground playground = gameManagement.getGame(gameID).orElseThrow(() -> new NoSuchElementException("Spiel nicht gefunden")).getPlayground();
+            playground.setActualPhase(Phase.Type.ActionPhase);
+            playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 8));
+            int handSize = playground.getActualPlayer().getPlayerDeck().getHand().size();
+            Card card = playground.getActualPlayer().getPlayerDeck().getCardsDeck().get(0);
+            playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 8);
+            assertEquals(2, playground.getActualPlayer().getAvailableActions());
+            assertEquals(handSize, playground.getActualPlayer().getPlayerDeck().getHand().size());
+            assertTrue(playground.getActualPlayer().getPlayerDeck().getHand().contains(card));
+            if (playground.checkForActionCard()) {
+                assertEquals(Phase.Type.ActionPhase, playground.getActualPhase());
+            } else {
+                assertEquals(Phase.Type.BuyPhase, playground.getActualPhase());
+            }
+        } catch (NoSuchElementException exception) {
+            Assertions.fail(exception.getMessage());
         }
     }
 
@@ -174,19 +188,23 @@ public class ActionCardTest {
      */
     @Test
     void testSchmiede() {
-        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
-        playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 14));
-        int handSize = playground.getActualPlayer().getPlayerDeck().getHand().size();
-        Card card1 = playground.getActualPlayer().getPlayerDeck().getCardsDeck().get(0);
-        Card card2 = playground.getActualPlayer().getPlayerDeck().getCardsDeck().get(1);
-        Card card3 = playground.getActualPlayer().getPlayerDeck().getCardsDeck().get(2);
-        playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 14);
-        assertEquals(handSize + 2, playground.getActualPlayer().getPlayerDeck().getHand().size());
-        assertTrue(playground.getActualPlayer().getPlayerDeck().getHand().contains(card1));
-        assertTrue(playground.getActualPlayer().getPlayerDeck().getHand().contains(card2));
-        assertTrue(playground.getActualPlayer().getPlayerDeck().getHand().contains(card3));
-        assertEquals(Phase.Type.BuyPhase, playground.getActualPhase());
+        try {
+            Playground playground = gameManagement.getGame(gameID).orElseThrow(() -> new NoSuchElementException("Spiel nicht gefunden")).getPlayground();
+            playground.setActualPhase(Phase.Type.ActionPhase);
+            playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 14));
+            int handSize = playground.getActualPlayer().getPlayerDeck().getHand().size();
+            Card card1 = playground.getActualPlayer().getPlayerDeck().getCardsDeck().get(0);
+            Card card2 = playground.getActualPlayer().getPlayerDeck().getCardsDeck().get(1);
+            Card card3 = playground.getActualPlayer().getPlayerDeck().getCardsDeck().get(2);
+            playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 14);
+            assertEquals(handSize + 2, playground.getActualPlayer().getPlayerDeck().getHand().size());
+            assertTrue(playground.getActualPlayer().getPlayerDeck().getHand().contains(card1));
+            assertTrue(playground.getActualPlayer().getPlayerDeck().getHand().contains(card2));
+            assertTrue(playground.getActualPlayer().getPlayerDeck().getHand().contains(card3));
+            assertEquals(Phase.Type.BuyPhase, playground.getActualPhase());
+        } catch (NoSuchElementException exception) {
+            Assertions.fail(exception.getMessage());
+        }
     }
 
     /**
@@ -197,21 +215,25 @@ public class ActionCardTest {
      */
     @Test
     void testLaboratorium() {
-        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
-        playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 23));
-        int handSize = playground.getActualPlayer().getPlayerDeck().getHand().size();
-        Card card1 = playground.getActualPlayer().getPlayerDeck().getCardsDeck().get(0);
-        Card card2 = playground.getActualPlayer().getPlayerDeck().getCardsDeck().get(1);
-        playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 23);
-        assertEquals(handSize + 1, playground.getActualPlayer().getPlayerDeck().getHand().size());
-        assertEquals(1, playground.getActualPlayer().getAvailableActions());
-        assertTrue(playground.getActualPlayer().getPlayerDeck().getHand().contains(card1));
-        assertTrue(playground.getActualPlayer().getPlayerDeck().getHand().contains(card2));
-        if (playground.checkForActionCard()) {
-            assertEquals(Phase.Type.ActionPhase, playground.getActualPhase());
-        } else {
-            assertEquals(Phase.Type.BuyPhase, playground.getActualPhase());
+        try {
+            Playground playground = gameManagement.getGame(gameID).orElseThrow(() -> new NoSuchElementException("Spiel nicht gefunden")).getPlayground();
+            playground.setActualPhase(Phase.Type.ActionPhase);
+            playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 23));
+            int handSize = playground.getActualPlayer().getPlayerDeck().getHand().size();
+            Card card1 = playground.getActualPlayer().getPlayerDeck().getCardsDeck().get(0);
+            Card card2 = playground.getActualPlayer().getPlayerDeck().getCardsDeck().get(1);
+            playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 23);
+            assertEquals(handSize + 1, playground.getActualPlayer().getPlayerDeck().getHand().size());
+            assertEquals(1, playground.getActualPlayer().getAvailableActions());
+            assertTrue(playground.getActualPlayer().getPlayerDeck().getHand().contains(card1));
+            assertTrue(playground.getActualPlayer().getPlayerDeck().getHand().contains(card2));
+            if (playground.checkForActionCard()) {
+                assertEquals(Phase.Type.ActionPhase, playground.getActualPhase());
+            } else {
+                assertEquals(Phase.Type.BuyPhase, playground.getActualPhase());
+            }
+        } catch (NoSuchElementException exception) {
+            Assertions.fail(exception.getMessage());
         }
     }
 
@@ -223,21 +245,25 @@ public class ActionCardTest {
      */
     @Test
     void testMarkt() {
-        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
-        playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 11));
-        int handSize = playground.getActualPlayer().getPlayerDeck().getHand().size();
-        Card card1 = playground.getActualPlayer().getPlayerDeck().getCardsDeck().get(0);
-        playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 11);
-        assertEquals(handSize, playground.getActualPlayer().getPlayerDeck().getHand().size());
-        assertEquals(1, playground.getActualPlayer().getAvailableActions());
-        assertEquals(2, playground.getActualPlayer().getAvailableBuys());
-        assertEquals(1, playground.getActualPlayer().getAdditionalMoney());
-        assertTrue(playground.getActualPlayer().getPlayerDeck().getHand().contains(card1));
-        if (playground.checkForActionCard()) {
-            assertEquals(Phase.Type.ActionPhase, playground.getActualPhase());
-        } else {
-            assertEquals(Phase.Type.BuyPhase, playground.getActualPhase());
+        try {
+            Playground playground = gameManagement.getGame(gameID).orElseThrow(() -> new NoSuchElementException("Spiel nicht gefunden")).getPlayground();
+            playground.setActualPhase(Phase.Type.ActionPhase);
+            playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 11));
+            int handSize = playground.getActualPlayer().getPlayerDeck().getHand().size();
+            Card card1 = playground.getActualPlayer().getPlayerDeck().getCardsDeck().get(0);
+            playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 11);
+            assertEquals(handSize, playground.getActualPlayer().getPlayerDeck().getHand().size());
+            assertEquals(1, playground.getActualPlayer().getAvailableActions());
+            assertEquals(2, playground.getActualPlayer().getAvailableBuys());
+            assertEquals(1, playground.getActualPlayer().getAdditionalMoney());
+            assertTrue(playground.getActualPlayer().getPlayerDeck().getHand().contains(card1));
+            if (playground.checkForActionCard()) {
+                assertEquals(Phase.Type.ActionPhase, playground.getActualPhase());
+            } else {
+                assertEquals(Phase.Type.BuyPhase, playground.getActualPhase());
+            }
+        } catch (NoSuchElementException exception) {
+            Assertions.fail(exception.getMessage());
         }
     }
 

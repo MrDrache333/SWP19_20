@@ -12,9 +12,6 @@ import javafx.scene.control.TextField;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
-import java.io.File;
-
 @SuppressWarnings("UnstableApiUsage, unused")
 public class LoginPresenter extends AbstractPresenter {
 
