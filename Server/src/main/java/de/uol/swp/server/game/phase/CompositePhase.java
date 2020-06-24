@@ -16,6 +16,7 @@ import java.util.List;
 /**
  * Die Funktionsklasse aller Phasen
  */
+@SuppressWarnings("UnstableApiUsage")
 public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
 
     private final Playground playground;
@@ -31,10 +32,11 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      */
     public CompositePhase(Playground playground) {
         this.playground = playground;
-        Short[] actioncards = {(short) 22, (short) 8, (short) 9, (short) 21, (short) 14, (short) 23, (short) 11, (short) 27, (short) 10, (short) 16, (short) 19, (short) 15, (short) 13};
+        Short[] actioncards = {(short) 22, (short) 8, (short) 9, (short) 21, (short) 14, (short) 23, (short) 11, (short) 27, (short) 10, (short) 16, (short) 19, (short) 15, (short) 13, (short) 28, (short) 31, (short) 7, (short) 24, (short) 20};
         implementedActionCards = Arrays.asList(actioncards);
     }
 
+    @SuppressWarnings("UnstableApiUsage")
     @Override
     public void executeActionPhase(Player player, short cardId) {
         CardPack cardsPackField = playground.getCardsPackField();
@@ -55,7 +57,7 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
         3. Führe die auf der Karte befindlichen Aktionen aus
         3.1 Die Karte wird auf den ActionPile gelegt und aus der Hand entfernt.
          */
-        executeAction = new ActionCardExecution(cardId, playground);
+        executeAction = new ActionCardExecution(cardId, playground, false, 0);
         playground.getGameService().getBus().register(executeAction);
         player.getPlayerDeck().getHand().remove(currentCard);
         executeAction.execute();
@@ -69,17 +71,10 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      * wird gewechselt, falls der Spieler keine Aktionen oder Aktionskarten mehr hat.
      *
      * @param player Der Spieler
-     * @param card   Gespielte Karte
      * @author Julia, KenoO
      * @since Sprint 7
      */
-    public void finishedActionCardExecution(Player player, Card card) {
-        if (!executeAction.isRemoveCardAfter()) {
-            player.getPlayerDeck().getActionPile().add(card);
-        } else {
-            playground.getTrash().add(card);
-        }
-        playground.sendCardsDeckSize();
+    public void finishedActionCardExecution(Player player) {
         if (player.getAvailableActions() > 0) {
             player.setAvailableActions(player.getAvailableActions() - 1);
         }
@@ -183,35 +178,14 @@ public class CompositePhase implements ActionPhase, BuyPhase, ClearPhase {
      * Hilfsmethode um an die Daten über die ID zu kommen
      *
      * @param cardStack Der Kartenstapel
-     * @param cardId Die KartenID
+     * @param cardId    Die KartenID
      * @return card Karte, zu der die ID gehört
      * @author Paula
      * @since Sprint 6
      */
 
     public Card getCardFromId(CardStack cardStack, short cardId) {
-        for (Card card : cardStack.getActionCards()) {
-            if (card.getId() == cardId) {
-                return card;
-            }
-        }
-        for (Card card : cardStack.getMoneyCards()) {
-            if (card.getId() == cardId) {
-                return card;
-            }
-        }
-
-        for (Card card : cardStack.getValueCards()) {
-            if (card.getId() == cardId) {
-                return card;
-            }
-        }
-        for (Card card : cardStack.getCurseCards()) {
-            if (card.getId() == cardId) {
-                return card;
-            }
-        }
-        return null;
+          return cardStack.getAllCards().stream().filter(c -> c.getId() == cardId).findFirst().orElse(null);
     }
 
     /**

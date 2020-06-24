@@ -11,10 +11,7 @@ import de.uol.swp.server.usermanagement.AuthenticationService;
 import de.uol.swp.server.usermanagement.UserManagement;
 import de.uol.swp.server.usermanagement.store.MainMemoryBasedUserStore;
 import de.uol.swp.server.usermanagement.store.UserStore;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.*;
 
@@ -52,8 +49,12 @@ public class DrawHandMessageTest {
      */
     @BeforeAll
     static void init() {
-        id = lobbyManagement.createLobby(lobbyName, lobbyPassword, defaultOwner);
-        lobbyManagement.getLobby(id).get().joinUser(secondPlayer);
+        try {
+            id = lobbyManagement.createLobby(lobbyName, lobbyPassword, defaultOwner);
+            lobbyManagement.getLobby(id).orElseThrow(() -> new NoSuchElementException("Lobby nicht existent")).joinUser(secondPlayer);
+        } catch (NoSuchElementException exception) {
+            Assertions.fail(exception.getMessage());
+        }
     }
 
     /**

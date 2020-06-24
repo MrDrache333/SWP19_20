@@ -76,28 +76,30 @@ public class GameService {
     /**
      * Erstellt OptionalActionResponse und postet diese auf den EventBus.
      *
-     * @param gameID die LobbyID der zugehörigen Lobby
-     * @param user   der User der die Entscheidung getroffen hat
-     * @param answer die Antwort von dem User auf die Frage von der Request
+     * @param gameID            die LobbyID der zugehörigen Lobby
+     * @param user              der User der die Entscheidung getroffen hat
+     * @param answer            die Antwort von dem User auf die Frage von der Request
+     * @param actionExecutionID Die ID der ActionCardExecution
      * @author Darian
      * @since Sprint8
      */
-    public void optionalAction(User user, UUID gameID, boolean answer) {
-        OptionalActionResponse msg = new OptionalActionResponse(gameID, user, answer);
+    public void optionalAction(User user, UUID gameID, boolean answer, int actionExecutionID) {
+        OptionalActionResponse msg = new OptionalActionResponse(gameID, user, answer, actionExecutionID);
         bus.post(msg);
     }
 
     /**
      * Erstellt eine ChooseCardResponse und postet diese auf den EventBus.
      *
-     * @param gameID       die LobbyID der zugehörigen Lobby
-     * @param loggedInUser der User, der Karten auswählen durfte
-     * @param chosenCards  die ausgewählten Karten
+     * @param gameID            die LobbyID der zugehörigen Lobby
+     * @param loggedInUser      der User, der Karten auswählen durfte
+     * @param chosenCards       die ausgewählten Karten
+     * @param actionExecutionID Die ID der ActionCardExecution
      * @author Anna, Fenja, Devin
      * @since Sprint 5
      */
-    public void chooseCardResponse(UUID gameID, User loggedInUser, ArrayList<Short> chosenCards) {
-        ChooseCardResponse response = new ChooseCardResponse(gameID, loggedInUser, chosenCards);
+    public void chooseCardResponse(UUID gameID, User loggedInUser, ArrayList<Short> chosenCards, int actionExecutionID) {
+        ChooseCardResponse response = new ChooseCardResponse(gameID, loggedInUser, chosenCards, actionExecutionID);
         bus.post(response);
     }
 

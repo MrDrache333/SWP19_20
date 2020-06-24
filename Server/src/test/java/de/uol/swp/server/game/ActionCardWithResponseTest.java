@@ -17,10 +17,12 @@ import de.uol.swp.server.usermanagement.UserManagement;
 import de.uol.swp.server.usermanagement.store.MainMemoryBasedUserStore;
 import de.uol.swp.server.usermanagement.store.UserStore;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
@@ -59,21 +61,25 @@ public class ActionCardWithResponseTest {
      * @since Sprint 8
      */
     static void init() {
-        gameID = lobbyManagement.createLobby("Test", "", defaultOwner);
-        chatManagement.createChat(gameID.toString());
-        lobbyManagement.getLobby(gameID).get().joinUser(secondPlayer);
-        lobbyManagement.getLobby(gameID).get().joinUser(thirdPlayer);
-        ArrayList<Short> theChoosenCards = new ArrayList<>();
-        theChoosenCards.add((short) 10);
-        theChoosenCards.add((short) 11);
-        theChoosenCards.add((short) 13);
-        theChoosenCards.add((short) 15);
-        theChoosenCards.add((short) 16);
-        theChoosenCards.add((short) 19);
-        theChoosenCards.add((short) 21);
-        theChoosenCards.add((short) 22);
-        lobbyManagement.getLobby(gameID).get().setChosenCards(theChoosenCards);
-        bus.post(new StartGameInternalMessage(gameID));
+        try {
+            gameID = lobbyManagement.createLobby("Test", "", defaultOwner);
+            chatManagement.createChat(gameID.toString());
+            lobbyManagement.getLobby(gameID).orElseThrow(() -> new NoSuchElementException("Lobby nicht existent")).joinUser(secondPlayer);
+            lobbyManagement.getLobby(gameID).orElseThrow(() -> new NoSuchElementException("Lobby nicht existent")).joinUser(thirdPlayer);
+            ArrayList<Short> theChoosenCards = new ArrayList<>();
+            theChoosenCards.add((short) 10);
+            theChoosenCards.add((short) 11);
+            theChoosenCards.add((short) 13);
+            theChoosenCards.add((short) 15);
+            theChoosenCards.add((short) 16);
+            theChoosenCards.add((short) 19);
+            theChoosenCards.add((short) 21);
+            theChoosenCards.add((short) 22);
+            lobbyManagement.getLobby(gameID).orElseThrow(() -> new NoSuchElementException("Lobby nicht existent")).setChosenCards(theChoosenCards);
+            bus.post(new StartGameInternalMessage(gameID));
+        } catch (NoSuchElementException exception) {
+            Assertions.fail(exception.getMessage());
+        }
     }
 
     /**
@@ -123,9 +129,10 @@ public class ActionCardWithResponseTest {
      */
     @Test
     void testKeller() {
-        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
+        try{
+        Playground playground = gameManagement.getGame(gameID).orElseThrow(() -> new NoSuchElementException("Spiel nicht existent")).getPlayground();
         playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(2));
+        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 10));
         int cardsToSelect = (int) (Math.random() * 4);
         ArrayList<Short> kartenAbwurf = new ArrayList<>();
         playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 10);
@@ -133,9 +140,12 @@ public class ActionCardWithResponseTest {
         for (int i = 0; i < cardsToSelect; i++) {
             kartenAbwurf.add(playground.getActualPlayer().getPlayerDeck().getHand().get(i).getId());
         }
-        ChooseCardResponse theResponse = new ChooseCardResponse(playground.getID(), playground.getActualPlayer().getTheUserInThePlayer(), kartenAbwurf);
+        ChooseCardResponse theResponse = new ChooseCardResponse(playground.getID(), playground.getActualPlayer().getTheUserInThePlayer(), kartenAbwurf, 0);
         bus.post(theResponse);
         assertEquals(5, playground.getActualPlayer().getPlayerDeck().getHand().size());
+    } catch (NoSuchElementException exception) {
+            Assertions.fail(exception.getMessage());
+        }
     }
 
     /**
@@ -146,15 +156,18 @@ public class ActionCardWithResponseTest {
      */
     @Test
     void testKellerKeineAuswahl() {
-        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
+        try{
+        Playground playground = gameManagement.getGame(gameID).orElseThrow(() -> new NoSuchElementException("Spiel nicht existent")).getPlayground();
         playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(2));
+        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 10));
         int deckSize = playground.getActualPlayer().getPlayerDeck().getCardsDeck().size();
         playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 10);
-        ChooseCardResponse theResponse = new ChooseCardResponse(playground.getID(), playground.getActualPlayer().getTheUserInThePlayer(), new ArrayList<>());
+        ChooseCardResponse theResponse = new ChooseCardResponse(playground.getID(), playground.getActualPlayer().getTheUserInThePlayer(), new ArrayList<>(), 0);
         bus.post(theResponse);
         assertEquals(deckSize, playground.getActualPlayer().getPlayerDeck().getCardsDeck().size());
-    }
+    } catch (NoSuchElementException exception) {
+        Assertions.fail(exception.getMessage());
+    }}
 
     /**
      * Testet die Karte Mine
@@ -164,26 +177,30 @@ public class ActionCardWithResponseTest {
      */
     @Test
     void testMine() {
-        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
-        playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(4));
-        int selectedCardvalue = -1;
-        ArrayList<Short> kartenAbwurf = new ArrayList<>();
-        playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 13);
-        int handSize = playground.getActualPlayer().getPlayerDeck().getHand().size();
-        for (int i = 0; i < handSize; i++) {
-            if (playground.getActualPlayer().getPlayerDeck().getHand().get(i) instanceof MoneyCard) {
-                kartenAbwurf.add(((MoneyCard) playground.getActualPlayer().getPlayerDeck().getHand().get(i)).getValue());
-                selectedCardvalue = playground.getActualPlayer().getPlayerDeck().getHand().get(i).getCosts();
-                break;
+        try {
+            Playground playground = gameManagement.getGame(gameID).orElseThrow(() -> new NoSuchElementException("Spiel nicht existent")).getPlayground();
+            playground.setActualPhase(Phase.Type.ActionPhase);
+            playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 13));
+            int selectedCardvalue = -1;
+            ArrayList<Short> kartenAbwurf = new ArrayList<>();
+            playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 13);
+            int handSize = playground.getActualPlayer().getPlayerDeck().getHand().size();
+            for (int i = 0; i < handSize; i++) {
+                if (playground.getActualPlayer().getPlayerDeck().getHand().get(i) instanceof MoneyCard) {
+                    kartenAbwurf.add(((MoneyCard) playground.getActualPlayer().getPlayerDeck().getHand().get(i)).getValue());
+                    selectedCardvalue = playground.getActualPlayer().getPlayerDeck().getHand().get(i).getCosts();
+                    break;
+                }
             }
-        }
-        ChooseCardResponse theResponse = new ChooseCardResponse(playground.getID(), playground.getActualPlayer().getTheUserInThePlayer(), kartenAbwurf);
-        bus.post(theResponse);
-        ChooseCardResponse theResponse2 = new ChooseCardResponse(playground.getID(), playground.getActualPlayer().getTheUserInThePlayer(), playground.getCardsPackField().getCards().getMoneyCards().get(1).getId());
-        bus.post(theResponse2);
-        if (kartenAbwurf.size() >= 1) {
-            assertTrue(playground.getActualPlayer().getPlayerDeck().getHand().get(4).getCosts() >= selectedCardvalue);
+            ChooseCardResponse theResponse = new ChooseCardResponse(playground.getID(), playground.getActualPlayer().getTheUserInThePlayer(), kartenAbwurf, 0);
+            bus.post(theResponse);
+            ChooseCardResponse theResponse2 = new ChooseCardResponse(playground.getID(), playground.getActualPlayer().getTheUserInThePlayer(), playground.getCardsPackField().getCards().getMoneyCards().get(1).getId(), 0);
+            bus.post(theResponse2);
+            if (kartenAbwurf.size() >= 1) {
+                assertTrue(playground.getActualPlayer().getPlayerDeck().getHand().get(4).getCosts() >= selectedCardvalue);
+            }
+        } catch (NoSuchElementException exception) {
+            Assertions.fail(exception.getMessage());
         }
     }
 
@@ -195,13 +212,17 @@ public class ActionCardWithResponseTest {
      */
     @Test
     void testMineKeineAuswahl() {
-        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
-        playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(4));
-        playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 13);
-        ChooseCardResponse theResponse = new ChooseCardResponse(playground.getID(), playground.getActualPlayer().getTheUserInThePlayer(), new ArrayList<>());
-        bus.post(theResponse);
-        assertEquals(5, playground.getActualPlayer().getPlayerDeck().getHand().size());
+        try {
+            Playground playground = gameManagement.getGame(gameID).orElseThrow(() -> new NoSuchElementException("Spiel nicht existent")).getPlayground();
+            playground.setActualPhase(Phase.Type.ActionPhase);
+            playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 13));
+            playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 13);
+            ChooseCardResponse theResponse = new ChooseCardResponse(playground.getID(), playground.getActualPlayer().getTheUserInThePlayer(), new ArrayList<>(), 0);
+            bus.post(theResponse);
+            assertEquals(5, playground.getActualPlayer().getPlayerDeck().getHand().size());
+        } catch (NoSuchElementException exception) {
+        Assertions.fail(exception.getMessage());
+    }
     }
 
     /**
@@ -212,16 +233,20 @@ public class ActionCardWithResponseTest {
      */
     @Test
     void testUmbau() {
-        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
-        playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(6));
-        int cardsToSelect = (int) (Math.random() * 4);
-        playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 15);
-        ChooseCardResponse theResponse = new ChooseCardResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), playground.getActualPlayer().getPlayerDeck().getHand().get(cardsToSelect).getId());
-        bus.post(theResponse);
-        ChooseCardResponse theResponse2 = new ChooseCardResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), playground.getCardsPackField().getCards().getActionCards().get(3).getId());
-        bus.post(theResponse2);
-        assertTrue(playground.getActualPlayer().getPlayerDeck().getDiscardPile().get(0).getCosts() >= playground.getActualPlayer().getPlayerDeck().getHand().get(cardsToSelect).getCosts());
+        try {
+            Playground playground = gameManagement.getGame(gameID).orElseThrow(() -> new NoSuchElementException("Spiel nicht existent")).getPlayground();
+            playground.setActualPhase(Phase.Type.ActionPhase);
+            playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 15));
+            int cardsToSelect = (int) (Math.random() * 4);
+            playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 15);
+            ChooseCardResponse theResponse = new ChooseCardResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), playground.getActualPlayer().getPlayerDeck().getHand().get(cardsToSelect).getId(), 0);
+            bus.post(theResponse);
+            ChooseCardResponse theResponse2 = new ChooseCardResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), playground.getCardsPackField().getCards().getActionCards().get(3).getId(), 0);
+            bus.post(theResponse2);
+            assertTrue(playground.getActualPlayer().getPlayerDeck().getDiscardPile().get(0).getCosts() >= playground.getActualPlayer().getPlayerDeck().getHand().get(cardsToSelect).getCosts());
+        } catch (NoSuchElementException exception) {
+            Assertions.fail(exception.getMessage());
+        }
     }
 
     /**
@@ -232,16 +257,21 @@ public class ActionCardWithResponseTest {
      */
     @Test
     void testUmbauKeineAuswahl() {
-        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
+        try{
+        Playground playground = gameManagement.getGame(gameID).orElseThrow(() -> new NoSuchElementException("Spiel nicht existent")).getPlayground();
         playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(6));
+        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 15));
         int discardSize = playground.getActualPlayer().getPlayerDeck().getDiscardPile().size();
         playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 15);
-        ChooseCardResponse theResponse = new ChooseCardResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), new ArrayList<Short>());
+        ChooseCardResponse theResponse = new ChooseCardResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), new ArrayList<Short>(), 0);
         bus.post(theResponse);
         assertEquals(discardSize, playground.getActualPlayer().getPlayerDeck().getDiscardPile().size());
         assertEquals(5, playground.getActualPlayer().getPlayerDeck().getHand().size());
+    } catch (NoSuchElementException exception) {
+            Assertions.fail(exception.getMessage());
+        }
     }
+
 
     /**
      * Testet die Karte Werkstatt
@@ -251,13 +281,17 @@ public class ActionCardWithResponseTest {
      */
     @Test
     void testWerkstatt() {
-        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
-        playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(7));
-        playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 16);
-        ChooseCardResponse theResponse = new ChooseCardResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), (short) 15);
-        bus.post(theResponse);
-        assertTrue(playground.getActualPlayer().getPlayerDeck().getDiscardPile().get(0).equals(playground.getCardsPackField().getCards().getCardForId((short) 15)));
+        try {
+            Playground playground = gameManagement.getGame(gameID).orElseThrow(() -> new NoSuchElementException("Spiel nicht existent")).getPlayground();
+            playground.setActualPhase(Phase.Type.ActionPhase);
+            playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 16));
+            playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 16);
+            ChooseCardResponse theResponse = new ChooseCardResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), (short) 15, 0);
+            bus.post(theResponse);
+            assertTrue(playground.getActualPlayer().getPlayerDeck().getDiscardPile().get(0).equals(playground.getCardsPackField().getCards().getCardForId((short) 15)));
+        } catch (NoSuchElementException exception) {
+            Assertions.fail(exception.getMessage());
+        }
     }
 
     /**
@@ -268,14 +302,17 @@ public class ActionCardWithResponseTest {
      */
     @Test
     void testFestmahl() {
-        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
+        try{
+        Playground playground = gameManagement.getGame(gameID).orElseThrow(() -> new NoSuchElementException("Spiel nicht existent")).getPlayground();
         playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(8));
+        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 19));
         playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 19);
-        ChooseCardResponse theResponse = new ChooseCardResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), (short) 15);
+        ChooseCardResponse theResponse = new ChooseCardResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), (short) 15, 0);
         bus.post(theResponse);
         assertTrue(playground.getActualPlayer().getPlayerDeck().getDiscardPile().contains(playground.getCardsPackField().getCards().getCardForId((short) 15)));
-
+    } catch (NoSuchElementException exception) {
+            Assertions.fail(exception.getMessage());
+        }
     }
 
     /**
@@ -286,14 +323,18 @@ public class ActionCardWithResponseTest {
      */
     @Test
     void testKanzler() {
-        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
-        playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(9));
-        playground.getActualPlayer().getPlayerDeck().getDiscardPile().add(playground.getCardsPackField().getCards().getActionCards().get(2));
-        playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 21);
-        OptionalActionResponse theResponse = new OptionalActionResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), true);
-        bus.post(theResponse);
-        assertTrue(playground.getActualPlayer().getPlayerDeck().getCardsDeck().size() == 0);
+        try {
+            Playground playground = gameManagement.getGame(gameID).orElseThrow(() -> new NoSuchElementException("Spiel nicht existent")).getPlayground();
+            playground.setActualPhase(Phase.Type.ActionPhase);
+            playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 21));
+            playground.getActualPlayer().getPlayerDeck().getDiscardPile().add(playground.getCardsPackField().getCards().getActionCards().get(2));
+            playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 21);
+            OptionalActionResponse theResponse = new OptionalActionResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), true, 0);
+            bus.post(theResponse);
+            assertTrue(playground.getActualPlayer().getPlayerDeck().getCardsDeck().size() == 0);
+        } catch (NoSuchElementException exception) {
+            Assertions.fail(exception.getMessage());
+        }
     }
 
     /**
@@ -304,16 +345,67 @@ public class ActionCardWithResponseTest {
      */
     @Test
     void testKapelle() {
-        Playground playground = gameManagement.getGame(gameID).get().getPlayground();
-        playground.setActualPhase(Phase.Type.ActionPhase);
-        playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getActionCards().get(10));
-        ArrayList<Short> kartenAbwurf = new ArrayList<>();
-        playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 22);
-        for (int i = 0; i < 4; i++) {
-            kartenAbwurf.add(playground.getActualPlayer().getPlayerDeck().getHand().get(i).getId());
+        try {
+            Playground playground = gameManagement.getGame(gameID).orElseThrow(() -> new NoSuchElementException("Spiel nicht existent")).getPlayground();
+            playground.setActualPhase(Phase.Type.ActionPhase);
+            playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 22));
+            ArrayList<Short> kartenAbwurf = new ArrayList<>();
+            playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 22);
+            for (int i = 0; i < 4; i++) {
+                kartenAbwurf.add(playground.getActualPlayer().getPlayerDeck().getHand().get(i).getId());
+            }
+            ChooseCardResponse theResponse = new ChooseCardResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), kartenAbwurf, 0);
+            bus.post(theResponse);
+            assertTrue(playground.getActualPlayer().getPlayerDeck().getHand().size() == 1);
+        } catch (NoSuchElementException exception) {
+            Assertions.fail(exception.getMessage());
         }
-        ChooseCardResponse theResponse = new ChooseCardResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), kartenAbwurf);
-        bus.post(theResponse);
-        assertTrue(playground.getActualPlayer().getPlayerDeck().getHand().size() == 1);
+    }
+
+    /**
+     * Testet die Karte Thronsaal
+     *
+     * @author Julia
+     * @since Sprint 10
+     */
+    @Test
+    void testThronsaal() {
+        try {
+            Playground playground = gameManagement.getGame(gameID).orElseThrow(() -> new NoSuchElementException("Spiel nicht existent")).getPlayground();
+            playground.setActualPhase(Phase.Type.ActionPhase);
+            playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 24));
+            playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 27));
+            playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 24);
+            ChooseCardResponse theResponse = new ChooseCardResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), (short) 27, 0);
+            bus.post(theResponse);
+            assertEquals(4, playground.getActualPlayer().getAvailableActions());
+            assertEquals(3, playground.getActualPlayer().getAvailableBuys());
+            assertEquals(4, playground.getActualPlayer().getAdditionalMoney());
+        } catch (NoSuchElementException exception) {
+            Assertions.fail(exception.getMessage());
+        }
+    }
+
+    /**
+     * Testet die Karte Geldverleiher
+     *
+     * @author Julia
+     * @since Sprint 10
+     */
+    @Test
+    void testGeldverleiher() {
+        try {
+            Playground playground = gameManagement.getGame(gameID).orElseThrow(() -> new NoSuchElementException("Spiel nicht existent")).getPlayground();
+            playground.setActualPhase(Phase.Type.ActionPhase);
+            playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 20));
+            playground.getActualPlayer().getPlayerDeck().getHand().add(playground.getCardsPackField().getCards().getCardForId((short) 1));
+            playground.getCompositePhase().executeActionPhase(playground.getActualPlayer(), (short) 20);
+            OptionalActionResponse theResponse = new OptionalActionResponse(gameID, playground.getActualPlayer().getTheUserInThePlayer(), true, 0);
+            bus.post(theResponse);
+            assertEquals(5, playground.getActualPlayer().getPlayerDeck().getHand().size());
+            assertEquals(3, playground.getActualPlayer().getAdditionalMoney());
+        } catch (NoSuchElementException exception) {
+            Assertions.fail(exception.getMessage());
+        }
     }
 }

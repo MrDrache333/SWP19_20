@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Julia
  * @since Sprint 3
  */
+@SuppressWarnings("UnstableApiUsage")
 class LobbyServiceTest {
     /**
      * Standard Benutzer, Standard Owner und Standard Lobby zum Testen
