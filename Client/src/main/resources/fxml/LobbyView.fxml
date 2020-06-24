@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.collections.FXCollections?>
+<?import java.lang.*?>
+<?import javafx.collections.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-<?import java.lang.Integer?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="lobbyViewWIP" prefHeight="750.0" prefWidth="1280.0"
-            xmlns="http://javafx.com/javafx/11.0.1">
+
+<AnchorPane fx:id="lobbyView" cache="true" cacheHint="SPEED" prefHeight="750.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <ImageView fitHeight="750.0" fitWidth="1280.0" pickOnBounds="true">
             <image>
-                <Image url="@../images/wood_texture_background.jpg"/>
+                <Image url="@../images/wood_texture_background.jpg" />
             </image>
             <viewport>
-                <Rectangle2D height="1000.0" width="1000.0"/>
+                <Rectangle2D height="1000.0" width="1000.0" />
             </viewport>
         </ImageView>
         <VBox prefHeight="750.0" prefWidth="300.0" style="-fx-border-width: 0,7; -fx-border-color: white;">
@@ -25,23 +24,23 @@
                     <children>
                         <Label fx:id="settingOwner" text="Einstellungen:" textFill="WHITE">
                             <HBox.margin>
-                                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
+                                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                             </HBox.margin>
                             <VBox.margin>
-                                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
+                                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                             </VBox.margin>
                             <font>
-                                <Font name="System Bold" size="12.0"/>
+                                <Font name="System Bold" size="12.0" />
                             </font>
                         </Label>
                         <HBox prefHeight="18.0" prefWidth="300.0">
                             <children>
                                 <Label fx:id="maxSettingOwner" text="Max. Spieler:" textFill="WHITE">
                                     <HBox.margin>
-                                        <Insets bottom="5.0" left="15.0" right="15.0" top="5.0"/>
+                                        <Insets bottom="5.0" left="15.0" right="15.0" top="5.0" />
                                     </HBox.margin>
                                     <font>
-                                        <Font name="System Bold" size="12.0"/>
+                                        <Font name="System Bold" size="12.0" />
                                     </font>
                                 </Label>
 
@@ -60,10 +59,10 @@
                                 </ChoiceBox>
                             </children>
                             <VBox.margin>
-                                <Insets/>
+                                <Insets />
                             </VBox.margin>
                             <padding>
-                                <Insets bottom="5.0" top="5.0"/>
+                                <Insets bottom="5.0" top="5.0" />
                             </padding>
                         </HBox>
 
@@ -71,31 +70,26 @@
                             <children>
                                 <Label text="Persönliche Einstellungen:" textFill="WHITE">
                                     <VBox.margin>
-                                        <Insets bottom="15.0" right="15.0"/>
+                                        <Insets bottom="15.0" right="15.0" />
                                     </VBox.margin>
                                     <font>
-                                        <Font name="System Bold" size="12.0"/>
+                                        <Font name="System Bold" size="12.0" />
                                     </font>
                                 </Label>
 
-                                <Button fx:id="readyButton" mnemonicParsing="false" onAction="#onReadyButtonPressed"
-                                        prefHeight="31.0" prefWidth="419.0" text="Bereit">
+                                <Button fx:id="readyButton" mnemonicParsing="false" onAction="#onReadyButtonPressed" prefHeight="31.0" prefWidth="419.0" text="Bereit">
                                     <font>
-                                        <Font size="15.0"/>
+                                        <Font size="15.0" />
                                     </font>
                                 </Button>
-                                <Button fx:id="gamesettingsButton" alignment="CENTER" mnemonicParsing="false"
-                                        onAction="#onGamesettingsButtonPressed" prefHeight="31.0" prefWidth="419.0"
-                                        text="Spieleinstellungen" visible="false">
+                                <Button fx:id="gamesettingsButton" alignment="CENTER" mnemonicParsing="false" onAction="#onGamesettingsButtonPressed" prefHeight="31.0" prefWidth="419.0" text="Spieleinstellungen" visible="false">
                                     <font>
-                                        <Font size="15.0"/>
+                                        <Font size="15.0" />
                                     </font>
                                 </Button>
-                                <Button fx:id="createBotButton" alignment="CENTER" mnemonicParsing="false"
-                                        onAction="#onCreateBotButtonPressed" prefHeight="31.0" prefWidth="419.0"
-                                        text="Bot hinzufügen" visible="false">
+                                <Button fx:id="createBotButton" alignment="CENTER" mnemonicParsing="false" onAction="#onCreateBotButtonPressed" prefHeight="31.0" prefWidth="419.0" text="Bot hinzufügen" visible="false">
                                     <font>
-                                        <Font size="15.0"/>
+                                        <Font size="15.0" />
                                     </font>
                                 </Button>
                             </children>
@@ -114,51 +108,41 @@
                 </HBox>
                 <HBox opacity="0.73" prefHeight="115.0" prefWidth="300.0" style="-fx-background-color: #3D3D3D;">
                     <children>
-                        <Button fx:id="giveUpButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false"
-                                onAction="#onLeaveLobbyButtonPressed" prefHeight="40.0" prefWidth="118.0"
-                                text="Lobby Verlassen">
+                        <Button fx:id="giveUpButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onLeaveLobbyButtonPressed" prefHeight="40.0" prefWidth="118.0" text="Lobby Verlassen">
                             <HBox.margin>
-                                <Insets bottom="37.5" left="91.0" right="91.0" top="37.5"/>
+                                <Insets bottom="37.5" left="91.0" right="91.0" top="37.5" />
                             </HBox.margin>
                         </Button>
                     </children>
                 </HBox>
             </children>
         </VBox>
-        <HBox fx:id="lobbyHBox" layoutX="300.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-              minWidth="-Infinity" nodeOrientation="RIGHT_TO_LEFT" prefHeight="750.0" prefWidth="980.0" spacing="20"
-              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="0.0"
-              AnchorPane.topAnchor="0.0">
+        <HBox fx:id="lobbyHBox" layoutX="300.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="RIGHT_TO_LEFT" prefHeight="750.0" prefWidth="980.0" spacing="20" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
                 <Pane fx:id="chatView" minHeight="750.0" minWidth="434.0" nodeOrientation="LEFT_TO_RIGHT">
                     <VBox.margin>
-                        <Insets bottom="15.0" left="15.0" right="15.0" top="5.0"/>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="5.0" />
                     </VBox.margin>
                 </Pane>
                 <VBox fx:id="gameSettingsVBox" prefHeight="630" prefWidth="450" spacing="20" visible="false">
                     <children>
-                        <ScrollPane fx:id="scrollPane" maxWidth="620" nodeOrientation="LEFT_TO_RIGHT" opacity="0.73"
-                                    prefHeight="500" prefWidth="620" style="-fx-background-color: #3D3D3D">
-                            <TilePane fx:id="choosableCards" hgap="10" maxWidth="500" prefHeight="500" prefWidth="500"
-                                      style="-fx-background-color: #3D3D3D" vgap="10"/>
+                        <ScrollPane fx:id="scrollPane" maxWidth="620" nodeOrientation="LEFT_TO_RIGHT" opacity="0.73" prefHeight="500" prefWidth="620" style="-fx-background-color: #3D3D3D">
+                            <TilePane fx:id="choosableCards" hgap="10" maxWidth="500" prefHeight="500" prefWidth="500" style="-fx-background-color: #3D3D3D" vgap="10" />
                         </ScrollPane>
-                        <TilePane fx:id="chosenCards" nodeOrientation="LEFT_TO_RIGHT" opacity="0.5" prefHeight="160"
-                                  prefWidth="400" style="-fx-background-color: #3D3D3D">
+                        <TilePane fx:id="chosenCards" nodeOrientation="LEFT_TO_RIGHT" opacity="0.5" prefHeight="160" prefWidth="400" style="-fx-background-color: #3D3D3D">
                             <children>
                                 <TextFlow fx:id="textFlow" prefHeight="50" prefWidth="200" textAlignment="CENTER">
                                     <children>
-                                        <Text fill="white" style="-fx-font-size: 24" text="Wähle Karten aus..."/>
+                                        <Text fill="white" style="-fx-font-size: 24" text="Wähle Karten aus..." />
                                     </children>
                                 </TextFlow>
                             </children>
                         </TilePane>
-                        <Button fx:id="sendCards" onAction="#sendChosenCards" prefHeight="31" prefWidth="450"
-                                text="Auswahl abschicken" visible="false"/>
+                        <Button fx:id="sendCards" onAction="#sendChosenCards" prefHeight="31" prefWidth="450" text="Auswahl abschicken" visible="false" />
                     </children>
                 </VBox>
             </children>
         </HBox>
-        <ImageView fx:id="bigCardImage" fitWidth="250" layoutX="400" layoutY="100" preserveRatio="true"
-                   visible="false"/>
+        <ImageView fx:id="bigCardImage" fitWidth="250" layoutX="400" layoutY="100" preserveRatio="true" visible="false" />
     </children>
 </AnchorPane>

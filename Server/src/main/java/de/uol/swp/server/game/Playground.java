@@ -6,6 +6,7 @@ import de.uol.swp.common.chat.request.NewChatMessageRequest;
 import de.uol.swp.common.game.AbstractPlayground;
 import de.uol.swp.common.game.card.ActionCard;
 import de.uol.swp.common.game.card.Card;
+import de.uol.swp.common.game.card.CurseCard;
 import de.uol.swp.common.game.card.ValueCard;
 import de.uol.swp.common.game.card.parser.JsonCardParser;
 import de.uol.swp.common.game.card.parser.components.CardPack;
@@ -42,10 +43,6 @@ public class Playground extends AbstractPlayground {
     private final List<Player> players = new ArrayList<>();
     private final Map<String, Integer> resultsGame = new TreeMap<>();
     private final Map<Player, Integer> playerTurns = new HashMap<>();
-    private Player actualPlayer;
-    private Player nextPlayer;
-    private Player latestGavedUpPlayer;
-    private Phase.Type actualPhase;
     private final GameService gameService;
     private final UUID theSpecificLobbyID;
     private final CompositePhase compositePhase;
@@ -55,6 +52,10 @@ public class Playground extends AbstractPlayground {
     private final ArrayList<Short> chosenCards;
     private final ArrayList<Card> trash = new ArrayList<>();
     private final UserDTO infoUser = new UserDTO("infoUser", "", "");
+    private Player actualPlayer;
+    private Player nextPlayer;
+    private Player latestGavedUpPlayer;
+    private Phase.Type actualPhase;
 
     /**
      * Erstellt ein neues Spielfeld und übergibt die Spieler. Die Reihenfolge der Spieler wird zufällig zusammengestellt.
@@ -67,19 +68,11 @@ public class Playground extends AbstractPlayground {
     @Inject
     Playground(Lobby lobby, GameService gameService) {
         for (User user : lobby.getUsers()) {
-            if (!user.getIsBot()) {
-                Player player = new Player(user.getUsername());
-                player.setTheUserInThePlayer(user);
-                player.setBot(false);
-                players.add(player);
-                playerTurns.put(player, 0);
-            } else {
-                Player player = new Player(user.getUsername());
-                player.setTheUserInThePlayer(user);
-                player.setBot(true);
-                players.add(player);
-                playerTurns.put(player, 0);
-            }
+            Player player = new Player(user.getUsername());
+            player.setTheUserInThePlayer(user);
+            player.setBot(user.getIsBot());
+            players.add(player);
+            playerTurns.put(player, 0);
         }
         Collections.shuffle(players);
         this.gameService = gameService;
@@ -382,14 +375,22 @@ public class Playground extends AbstractPlayground {
     public List<String> calculateWinners() {
         List<String> winners = new ArrayList<>();
         for (Player player : players) {
-            int victoryPoints;
             Deck deck = player.getPlayerDeck();
             deck.getCardsDeck().addAll(deck.getHand());
             deck.getCardsDeck().addAll(deck.getDiscardPile());
             deck.getHand().clear();
             deck.getDiscardPile().clear();
 
-            victoryPoints = deck.getCardsDeck().stream().filter(card -> card instanceof ValueCard).mapToInt(card -> ((ValueCard) card).getValue()).sum();
+            int victoryPoints = 0;
+            for (Card card : deck.getCardsDeck()) {
+                if (card instanceof ValueCard) {
+                    int value = ((ValueCard) card).getValue();
+                    victoryPoints += value;
+                } else if (card instanceof CurseCard) {
+                    int value = ((CurseCard) card).getValue();
+                    victoryPoints += value;
+                }
+            }
             resultsGame.put(player.getPlayerName(), victoryPoints);
         }
 

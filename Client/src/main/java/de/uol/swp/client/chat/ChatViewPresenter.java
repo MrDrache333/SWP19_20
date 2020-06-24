@@ -3,6 +3,7 @@ package de.uol.swp.client.chat;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.AlertBox;
 import de.uol.swp.client.ClientApp;
 import de.uol.swp.client.Notifyer;
 import de.uol.swp.client.game.GameManagement;
@@ -228,7 +229,7 @@ public class ChatViewPresenter extends AbstractPresenter {
         messageView.addEventFilter(MouseEvent.MOUSE_PRESSED, Event::consume);
 
         //Berechnet die maximale Nachrichtenbreite
-        maxChatMessageWidth = (int) chatViewAnchorPane.getPrefWidth() - 70;
+        maxChatMessageWidth = (int) chatViewAnchorPane.getPrefWidth();
 
         //Nachrichten mit der ENTER-Taste abschicken
         chatTextField.setOnKeyPressed(onKeyPressedinchatTextFieldEvent);
@@ -373,12 +374,17 @@ public class ChatViewPresenter extends AbstractPresenter {
         String message;
         message = chatTextField.getText();
         //Prüfe auf leere Nachricht
-        if (!message.equals("")) {
+        if (!message.equals("") && message.length() <= 1000) {
             LOG.debug("Sende neue Chatnachricht: User= " + loggedInUser.getUsername() + " Msg= " + message + " ChatID= " + chatID);
             ChatMessage newChatMessage = new ChatMessage(loggedInUser, message);
             LOG.debug("Neue Nachricht zum Senden: " + message);
             chatTextField.clear();
             this.chatService.sendMessage(chatID, newChatMessage);
+        }
+        else if (!message.equals("") && message.length() > 1000) {
+            Platform.runLater(() -> {
+                AlertBox alertBox = new AlertBox(Alert.AlertType.WARNING, "Bitte weniger als 1000 Zeichen eingeben!", "Fehler");
+            });
         }
     }
 
