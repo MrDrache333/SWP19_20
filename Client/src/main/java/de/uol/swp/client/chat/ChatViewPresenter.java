@@ -143,6 +143,7 @@ public class ChatViewPresenter extends AbstractPresenter {
     //Wenn bei der Benutzung des TextFeldes eine Taste gedrueckt wird
     private final EventHandler<KeyEvent> onKeyPressedinchatTextFieldEvent = event -> {
         //Abschicken der Nachricht, wenn die ENTER-Taste gedrueckt wurde
+        if (chatTextField.getTooltip() != null) chatTextField.getTooltip().hide();
         if (event.getCode() == KeyCode.ENTER) {
             onSendChatButtonPressed();
         } else {
@@ -390,6 +391,7 @@ public class ChatViewPresenter extends AbstractPresenter {
         message = chatTextField.getText();
         //Prüfe auf leere Nachricht
         if (!message.equals("") && message.length() <= 1000) {
+            if (chatTextField.getTooltip() != null) chatTextField.getTooltip().hide();
             LOG.debug("Sende neue Chatnachricht: User= " + loggedInUser.getUsername() + " Msg= " + message + " ChatID= " + chatID);
             ChatMessage newChatMessage = new ChatMessage(loggedInUser, message);
             LOG.debug("Neue Nachricht zum Senden: " + message);
