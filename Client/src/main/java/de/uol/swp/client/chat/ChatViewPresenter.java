@@ -157,7 +157,8 @@ public class ChatViewPresenter extends AbstractPresenter {
             }
             tooltip.show(ClientApp.getSceneManager().getPrimaryStage(), boundsInScreen.getCenterX() - tooltip.getWidth() / 2, boundsInScreen.getMinY() - chatTextField.getHeight() - 5);
             tooltip.setAutoHide(true);
-            tooltip.setShowDuration(Duration.seconds(3));
+            tooltip.setHideDelay(Duration.seconds(1));
+            tooltip.setShowDuration(Duration.seconds(1));
             chatTextField.setTooltip(tooltip);
         }
     };
@@ -246,6 +247,11 @@ public class ChatViewPresenter extends AbstractPresenter {
 
         //Berechnet die maximale Nachrichtenbreite
         maxChatMessageWidth = (int) chatViewAnchorPane.getPrefWidth();
+
+        //Tooltip des Chatnachrichtenfeldes automatisch entfernen, wenn versucht wird, die Nachricht mit dem SendenButton abzusenden
+        sendButton.setOnMouseMoved(event -> {
+            if (chatTextField.getTooltip() != null) chatTextField.getTooltip().hide();
+        });
 
         //Nachrichten mit der ENTER-Taste abschicken
         chatTextField.setOnKeyPressed(onKeyPressedinchatTextFieldEvent);
