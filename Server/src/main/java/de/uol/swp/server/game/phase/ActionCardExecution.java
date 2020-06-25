@@ -27,28 +27,28 @@ public class ActionCardExecution {
     private final short cardID;
     private final Playground playground;
     private final Player player;
-    private ActionCard theCard;
     private final UUID gameID;
     private final List<Player> players;
     private final List<User> chooseCardPlayers = new ArrayList<>();
     private final List<CardAction> nextActions = new ArrayList<>();
-    private Card inputCard;
-    private boolean useCardExecution;
+    private ActionCard theCard;
     private ActionCardExecution parent;
-    private Integer useCardCounter = 0;
-    private UseCard useAction;
-    private int actionExecutionID;
     private ActionCardExecution execution;
-    private boolean waitedForPlayerInput;
-    private int actualStateIndex;
-    private boolean startedNextActions;
-    private boolean finishedNextActions;
-    private int nextActionIndex;
+    private Card inputCard;
+    private UseCard useAction;
+    private boolean useCardExecution;
     private boolean executeOptionalAction;
     private boolean removeCardAfter;
     private boolean finishedExecution;
+    private boolean startedNextActions;
+    private boolean finishedNextActions;
+    private boolean waitedForPlayerInput;
+    private int useCardCounter = 0;
+    private int actionExecutionID;
+    private int actualStateIndex;
+    private int nextActionIndex;
 
-    public ActionCardExecution(short cardID, Playground playground, boolean useCardExecution, int actionExecutionID) {
+    public ActionCardExecution(short cardID, Playground playground, boolean useCardExecution) {
         this.waitedForPlayerInput = false;
         this.actualStateIndex = 0;
         this.playground = playground;
@@ -62,7 +62,7 @@ public class ActionCardExecution {
         this.executeOptionalAction = false;
         this.startedNextActions = false;
         this.useCardExecution = useCardExecution;
-        this.actionExecutionID = actionExecutionID;
+        this.actionExecutionID = useCardExecution ? 1 : 0;
     }
 
     /**
@@ -97,7 +97,7 @@ public class ActionCardExecution {
             List<Player> p = new ArrayList<>();
             Player helpPlayer = helpMethodToGetThePlayerFromUser(response.getPlayer());
             p.add(helpPlayer);
-            if (cardID == 24 && response.getCards().size() == 1 && (response.getCards().get(0) == 24 || response.getCards().get(0) == 31)) {
+            if (cardID == 24 && response.getCards().size() == 1 && response.getCards().get(0) == 24) {
                 playground.getGameService().sendToSpecificPlayer(helpPlayer, new GameExceptionMessage(response.getGameID(), "Wähle eine andere Aktionskarte!"));
                 reset();
                 execute();
@@ -339,7 +339,7 @@ public class ActionCardExecution {
         if (useCardCounter < action.getCount()) {
             if (useCardCounter == 0) {
                 Card card = player.getPlayerDeck().getHand().stream().filter(c -> c.getId() == action.getCardId()).findFirst().orElse(null);
-                execution = new ActionCardExecution(action.getCardId(), playground, true, 1);
+                execution = new ActionCardExecution(action.getCardId(), playground, true);
                 playground.getGameService().getBus().register(execution);
                 execution.setParent(this);
                 player.getPlayerDeck().getHand().remove(card);
@@ -656,7 +656,7 @@ public class ActionCardExecution {
                 playground.getGameService().sendToAllPlayers(gameID, message);
                 break;
         }
-        MoveCardMessage msg = new MoveCardMessage(gameID, player.getTheUserInThePlayer(), new Move(action.getCardsToMove(), action.getCardSource(), action.getCardDestination()));
+        MoveCardMessage msg = new MoveCardMessage(gameID, player.getTheUserInThePlayer(), new Move(new ArrayList<>(action.getCardsToMove()), action.getCardSource(), action.getCardDestination()));
         //TODO Evtl. Daten, die andere Spieler nicht erhalten dürfen irgendwie unkenntlich machen? (Karten anderer Spieler)
         playground.getGameService().sendToAllPlayers(gameID, msg);
         return true;
@@ -837,7 +837,7 @@ public class ActionCardExecution {
         this.parent = parent;
     }
 
-    public Integer getUseCardCounter() {
+    public int getUseCardCounter() {
         return useCardCounter;
     }
 
