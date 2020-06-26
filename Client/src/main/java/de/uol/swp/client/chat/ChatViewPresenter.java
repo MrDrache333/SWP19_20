@@ -22,6 +22,7 @@ import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -33,6 +34,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -141,8 +143,24 @@ public class ChatViewPresenter extends AbstractPresenter {
     //Wenn bei der Benutzung des TextFeldes eine Taste gedrueckt wird
     private final EventHandler<KeyEvent> onKeyPressedinchatTextFieldEvent = event -> {
         //Abschicken der Nachricht, wenn die ENTER-Taste gedrueckt wurde
+        if (chatTextField.getTooltip() != null) chatTextField.getTooltip().hide();
         if (event.getCode() == KeyCode.ENTER) {
             onSendChatButtonPressed();
+        } else {
+            Tooltip tooltip = chatTextField.getTooltip() != null ? chatTextField.getTooltip() : new Tooltip();
+            Bounds boundsInScreen = chatTextField.localToScreen(chatTextField.getBoundsInLocal());
+            if (chatTextField.getText().length() >= 1000) {
+                tooltip.setText("Zeichenbegrenzung erreicht!");
+                chatTextField.setTooltip(tooltip);
+            } else {
+                tooltip.setText(1000 - (chatTextField.getText().length() + (event.getCode() != KeyCode.BACK_SPACE ? 1 : 0)) + " Zeichen übrig");
+            }
+            tooltip.show(ClientApp.getSceneManager().getPrimaryStage(), (boundsInScreen.getMaxX() + boundsInScreen.getMinX()) / 2.0
+                    - tooltip.getWidth() / 2, boundsInScreen.getMinY() - chatTextField.getHeight() - 5);
+            tooltip.setAutoHide(true);
+            tooltip.setHideDelay(Duration.seconds(1));
+            tooltip.setShowDuration(Duration.seconds(1));
+            chatTextField.setTooltip(tooltip);
         }
     };
 
@@ -230,6 +248,11 @@ public class ChatViewPresenter extends AbstractPresenter {
 
         //Berechnet die maximale Nachrichtenbreite
         maxChatMessageWidth = (int) chatViewAnchorPane.getPrefWidth();
+
+        //Tooltip des Chatnachrichtenfeldes automatisch entfernen, wenn versucht wird, die Nachricht mit dem SendenButton abzusenden
+        sendButton.setOnMouseMoved(event -> {
+            if (chatTextField.getTooltip() != null) chatTextField.getTooltip().hide();
+        });
 
         //Nachrichten mit der ENTER-Taste abschicken
         chatTextField.setOnKeyPressed(onKeyPressedinchatTextFieldEvent);
@@ -375,13 +398,13 @@ public class ChatViewPresenter extends AbstractPresenter {
         message = chatTextField.getText();
         //Prüfe auf leere Nachricht
         if (!message.equals("") && message.length() <= 1000) {
+            if (chatTextField.getTooltip() != null) chatTextField.getTooltip().hide();
             LOG.debug("Sende neue Chatnachricht: User= " + loggedInUser.getUsername() + " Msg= " + message + " ChatID= " + chatID);
             ChatMessage newChatMessage = new ChatMessage(loggedInUser, message);
             LOG.debug("Neue Nachricht zum Senden: " + message);
             chatTextField.clear();
             this.chatService.sendMessage(chatID, newChatMessage);
-        }
-        else if (!message.equals("") && message.length() > 1000) {
+        } else if (!message.equals("")) {
             Platform.runLater(() -> {
                 AlertBox alertBox = new AlertBox(Alert.AlertType.WARNING, "Bitte weniger als 1000 Zeichen eingeben!", "Fehler");
             });
