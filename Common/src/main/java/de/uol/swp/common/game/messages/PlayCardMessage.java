@@ -81,7 +81,7 @@ public class PlayCardMessage extends AbstractServerMessage {
      * @author Darian
      * @since Sprint 9
      */
-    public short getHandCardID() {
+    public Short getHandCardID() {
         return handCardID;
     }
 

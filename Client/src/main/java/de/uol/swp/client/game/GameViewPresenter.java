@@ -867,7 +867,7 @@ public class GameViewPresenter extends AbstractPresenter {
         // Falls diese Message an den currentPlayer geschickt wird, wird das ausspielen der Karte angezeigt.
         if (msg.getGameID().equals(lobbyID)) {
             if (msg.getCurrentUser().getUsername().equals(loggedInUser.getUsername())) {
-                Optional<Node> optionalCard = handcards.getChildren().stream().filter(c -> c.getId().equals(msg.getHandCardID())).findFirst();
+                Optional<Node> optionalCard = handcards.getChildren().stream().filter(c -> c.getId().equals(msg.getHandCardIdAsString())).findFirst();
                 ImageView card = (ImageView) optionalCard.orElse(null);
                 if (msg.getIsPlayed() && card != null) {
                     Platform.runLater(() -> {
@@ -887,7 +887,9 @@ public class GameViewPresenter extends AbstractPresenter {
                         }
                     });
                 } else {
-                    new AlertBox(Alert.AlertType.WARNING, "Du kannst die Karte nicht spielen!", "Fehler");
+                    Platform.runLater(() -> {
+                        new AlertBox(Alert.AlertType.WARNING, "Du kannst die Karte nicht spielen!", "Fehler");
+                    });
                     LOG.debug("Das Spielen der Karte " + msg.getHandCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
                 }
             } else {
