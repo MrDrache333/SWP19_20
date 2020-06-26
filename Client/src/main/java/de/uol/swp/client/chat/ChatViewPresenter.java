@@ -149,7 +149,7 @@ public class ChatViewPresenter extends AbstractPresenter {
         } else {
             Tooltip tooltip = chatTextField.getTooltip() != null ? chatTextField.getTooltip() : new Tooltip();
             Bounds boundsInScreen = chatTextField.localToScreen(chatTextField.getBoundsInLocal());
-            if (chatTextField.getText().length() > 1000) {
+            if (chatTextField.getText().length() >= 1000) {
                 tooltip.setText("Zeichenbegrenzung erreicht!");
                 chatTextField.setTooltip(tooltip);
             } else {
