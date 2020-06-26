@@ -155,7 +155,8 @@ public class ChatViewPresenter extends AbstractPresenter {
             } else {
                 tooltip.setText(1000 - (chatTextField.getText().length() + (event.getCode() != KeyCode.BACK_SPACE ? 1 : 0)) + " Zeichen übrig");
             }
-            tooltip.show(ClientApp.getSceneManager().getPrimaryStage(), boundsInScreen.getCenterX() - tooltip.getWidth() / 2, boundsInScreen.getMinY() - chatTextField.getHeight() - 5);
+            tooltip.show(ClientApp.getSceneManager().getPrimaryStage(), (boundsInScreen.getMaxX() + boundsInScreen.getMinX()) / 2.0
+                    - tooltip.getWidth() / 2, boundsInScreen.getMinY() - chatTextField.getHeight() - 5);
             tooltip.setAutoHide(true);
             tooltip.setHideDelay(Duration.seconds(1));
             tooltip.setShowDuration(Duration.seconds(1));
