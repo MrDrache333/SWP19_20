@@ -58,6 +58,13 @@ public class Player {
         return playerName;
     }
 
+    /**
+     * Gibt zurück ob der Spieler ein Bot ist
+     *
+     * @return Der Spielername
+     */
+    public boolean getIsBot() {return isBot;}
+
     public int getAvailableActions() {
         return availableActions;
     }

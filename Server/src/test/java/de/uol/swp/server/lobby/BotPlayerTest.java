@@ -3,21 +3,35 @@ package de.uol.swp.server.lobby;
 import com.google.common.eventbus.DeadEvent;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import de.uol.swp.common.game.AbstractPlayground;
+import de.uol.swp.common.game.card.Card;
+import de.uol.swp.common.game.card.parser.components.CardAction.Value;
+import de.uol.swp.common.game.card.parser.components.CardAction.request.ChooseCardRequest;
+import de.uol.swp.common.game.messages.*;
+import de.uol.swp.common.game.request.SkipPhaseRequest;
+import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.request.AddBotRequest;
+import de.uol.swp.common.lobby.request.LobbyJoinUserRequest;
+import de.uol.swp.common.lobby.request.UpdateLobbyReadyStatusRequest;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.chat.ChatManagement;
 import de.uol.swp.server.game.GameManagement;
+import de.uol.swp.server.game.player.Player;
+import de.uol.swp.server.game.player.bot.BotPlayer;
+import de.uol.swp.server.game.player.bot.internal.messages.AuthBotInternalRequest;
 import de.uol.swp.server.usermanagement.AuthenticationService;
 import de.uol.swp.server.usermanagement.UserManagement;
 import de.uol.swp.server.usermanagement.store.MainMemoryBasedUserStore;
+import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.UUID;
+import java.sql.Timestamp;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
+import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -139,5 +153,53 @@ class BotPlayerTest {
             assertTrue(lobbyManagement.getLobby(lobbyID).get().getReadyStatus(theBotPlayer));
         }
     }
-    // TODO: Weitere Tests implementieren, wenn die Botlogik ausgebaut wird.
+
+    @Test
+    void botPlayingGameTest() throws InterruptedException {
+        if (lobbyManagement.getLobby(lobbyID).isPresent()) {
+            String[] collectionBotName = {"King Arthur", "Merlin", "Die Queen", "Prinzessin Diana", "Donald Trump"};
+            String theRandomBotName = collectionBotName[(int) (Math.random() * collectionBotName.length)] + (int) (Math.random() * 999);
+            BotPlayer createdBot = new BotPlayer(theRandomBotName, bus, lobbyID);
+            UserDTO userDTO = new UserDTO(createdBot.getTheUserInThePlayer().getUsername(), createdBot.getTheUserInThePlayer().getPassword(), createdBot.getTheUserInThePlayer().getEMail(), true);
+            bus.post(new AuthBotInternalRequest(createdBot));
+            bus.post(new LobbyJoinUserRequest(lobbyID, userDTO, true));
+
+            ArrayList<Short> hand = new ArrayList<Short>();
+            hand.add((short)1);hand.add((short)6);hand.add((short)13);hand.add((short)1);hand.add((short)4);
+
+            bus.post(new DrawHandMessage(hand,lobbyID, (short) 2, createdBot.getTheUserInThePlayer()));
+            Thread.sleep(100);
+            for(Short cardID : hand){
+                assertTrue(createdBot.getCardsOnHandIDs().contains((Short) cardID));
+            }
+
+            ArrayList<Short> cardsToChoose = new ArrayList<Short>();
+            cardsToChoose.add((short)1);cardsToChoose.add((short)6);cardsToChoose.add((short)1);cardsToChoose.add((short)4);
+            Map<Short, Integer> cardField = new HashMap<>();
+            for(int i = 1;i<=38;i++){
+                cardField.put((short)i,10);
+            }
+            bus.post(new SendCardFieldMessage(lobbyID,cardField));
+
+            bus.post(new StartActionPhaseMessage(createdBot.getTheUserInThePlayer(), lobbyID, new Timestamp(System.currentTimeMillis())));
+
+            bus.post(new PlayCardMessage(lobbyID, createdBot.getTheUserInThePlayer(), (short) 13, true, false));
+            Thread.sleep(2000);
+            assertTrue(!createdBot.getCardsOnHandIDs().contains((short) 13));
+
+            bus.post(new ChooseCardRequest(lobbyID, createdBot.getTheUserInThePlayer(), cardsToChoose, new Value((short) 4),  AbstractPlayground.ZoneType.NONE, "", 13));
+            Thread.sleep(2000);
+            assertTrue(Collections.frequency(createdBot.getCardsOnHandIDs(), (short)1)==1);
+
+            bus.post(new StartBuyPhaseMessage(createdBot.getTheUserInThePlayer(), lobbyID));
+            bus.post(new BuyCardMessage(lobbyID, createdBot.getTheUserInThePlayer(), (short)2, 9, (short) 3));
+            Thread.sleep(2000);
+            assertTrue(createdBot.getCardsInPossessionIDs().contains((short) 2));
+
+            bus.post(new StartBuyPhaseMessage(createdBot.getTheUserInThePlayer(), lobbyID));
+            bus.post(new BuyCardMessage(lobbyID, createdBot.getTheUserInThePlayer(), (short)1, 9, (short) 3));
+            Thread.sleep(2000);
+            assertTrue(Collections.frequency(createdBot.getCardsInPossessionIDs(), (short)1)==2);
+        }
+    }
 }

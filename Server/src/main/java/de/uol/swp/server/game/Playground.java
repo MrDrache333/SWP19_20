@@ -228,7 +228,7 @@ public class Playground extends AbstractPlayground {
      */
     public void sendPlayersHand() {
         ArrayList<Short> theIdsFromTheHand = actualPlayer.getPlayerDeck().getHand().stream().map(Card::getId).collect(Collectors.toCollection(() -> new ArrayList<>(5)));
-        DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID, (short) getPlayers().size(), false);
+        DrawHandMessage theHandMessage = new DrawHandMessage(theIdsFromTheHand, theSpecificLobbyID, (short) getPlayers().size(), false, actualPlayer.getTheUserInThePlayer());
         gameService.sendToSpecificPlayer(actualPlayer, theHandMessage);
     }
 
@@ -334,15 +334,15 @@ public class Playground extends AbstractPlayground {
      * @since Sprint 6
      */
     public void sendInitialHands() {
-        for (Player playerhand : players) {
-            ArrayList<Short> theIdsFromInitalPlayerDeck = playerhand.getPlayerDeck().getHand().stream().map(Card::getId).collect(Collectors.toCollection(() -> new ArrayList<>(5)));
-            DrawHandMessage initialHandFromPlayer = new DrawHandMessage(theIdsFromInitalPlayerDeck, theSpecificLobbyID, (short) getPlayers().size(), true);
-            gameService.sendToSpecificPlayer(playerhand, initialHandFromPlayer);
-            int availableAction = playerhand.getAvailableActions();
-            int availableBuy = playerhand.getAvailableBuys();
-            int additionalMoney = playerhand.getAdditionalMoney();
-            int moneyOnHand = playerhand.getPlayerDeck().actualMoneyFromPlayer();
-            gameService.sendToSpecificPlayer(playerhand, new InfoPlayDisplayMessage(theSpecificLobbyID, playerhand.getTheUserInThePlayer(), availableAction, availableBuy, additionalMoney, moneyOnHand, actualPhase));
+        for (Player player : players) {
+            ArrayList<Short> theIdsFromInitalPlayerDeck = player.getPlayerDeck().getHand().stream().map(Card::getId).collect(Collectors.toCollection(() -> new ArrayList<>(5)));
+            DrawHandMessage initialHandFromPlayer = new DrawHandMessage(theIdsFromInitalPlayerDeck, theSpecificLobbyID, (short) getPlayers().size(), true, player.getTheUserInThePlayer());
+            gameService.sendToSpecificPlayer(player, initialHandFromPlayer);
+            int availableAction = player.getAvailableActions();
+            int availableBuy = player.getAvailableBuys();
+            int additionalMoney = player.getAdditionalMoney();
+            int moneyOnHand = player.getPlayerDeck().actualMoneyFromPlayer();
+            gameService.sendToSpecificPlayer(player, new InfoPlayDisplayMessage(theSpecificLobbyID, player.getTheUserInThePlayer(), availableAction, availableBuy, additionalMoney, moneyOnHand, actualPhase));
             // TODO: Bessere Logging Message irgendwann später implementieren..
             LOG.debug("All OK with sending initial Hands...");
         }

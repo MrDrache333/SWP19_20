@@ -11,6 +11,8 @@ import de.uol.swp.common.game.card.parser.components.CardAction.response.ChooseC
 import de.uol.swp.common.game.card.parser.components.CardAction.response.OptionalActionResponse;
 import de.uol.swp.common.game.card.parser.components.CardAction.types.*;
 import de.uol.swp.common.game.messages.*;
+import de.uol.swp.common.game.request.BuyCardRequest;
+import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.user.User;
 import de.uol.swp.server.game.Playground;
 import de.uol.swp.server.game.player.Player;
@@ -98,7 +100,7 @@ public class ActionCardExecution {
             Player helpPlayer = helpMethodToGetThePlayerFromUser(response.getPlayer());
             p.add(helpPlayer);
             if (cardID == 24 && response.getCards().size() == 1 && response.getCards().get(0) == 24) {
-                playground.getGameService().sendToSpecificPlayer(helpPlayer, new GameExceptionMessage(response.getGameID(), "Wähle eine andere Aktionskarte!"));
+                playground.getGameService().sendToSpecificPlayer(helpPlayer, new GameExceptionMessage(response.getGameID(), response.getPlayer(),"Wähle eine andere Aktionskarte!"));
                 reset();
                 execute();
                 return;

@@ -181,7 +181,7 @@ public class GameService extends AbstractService {
                 try {
                     playground.nextPhase();
                 } catch (GamePhaseException e) {
-                    sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(req.getGameID(), e.getMessage()));
+                    sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(req.getGameID(), req.getUser(), e.getMessage()));
                 }
             }
         } else {
@@ -245,7 +245,7 @@ public class GameService extends AbstractService {
                         throw new NotEnoughMoneyException("Dafür hast du nicht genug Geld! ");
                     }
                 } catch (NotEnoughMoneyException notEnoughMoney) {
-                    sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(req.getLobbyID(), notEnoughMoney.getMessage()));
+                    sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(req.getLobbyID(), req.getCurrentUser(), notEnoughMoney.getMessage()));
                 }
             } else {
                 LOG.error("Du bist nicht dran. " + playground.getActualPlayer().getPlayerName() + "ist an der Reihe.");
@@ -280,7 +280,7 @@ public class GameService extends AbstractService {
                     ChatMessage infoMessage = new ChatMessage(infoUser, playground.getActualPlayer().getTheUserInThePlayer().getUsername() + " spielt Karte " + (card != null ? card.getName() : "Undefiniert") + "!");
                     post(new NewChatMessageRequest(gameID.toString(), infoMessage));
                 } catch (IllegalArgumentException e) {
-                    sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(gameID, e.getMessage()));
+                    sendToSpecificPlayer(playground.getActualPlayer(), new GameExceptionMessage(gameID, req.getCurrentUser(), e.getMessage()));
                 }
             }
         } else {

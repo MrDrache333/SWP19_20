@@ -21,12 +21,12 @@ public class DrawHandMessage extends AbstractServerMessage {
      * @author Ferit
      * @since Sprint 5
      */
-    public DrawHandMessage(ArrayList<Short> theIDsFromTheCards, UUID specificLobbyID, Short numberOfPlayers, boolean initialHand) {
+    public DrawHandMessage(ArrayList<Short> theIDsFromTheCards, UUID specificLobbyID, Short numberOfPlayers, boolean initialHand, User player) {
         this.cardsOnHand = theIDsFromTheCards;
         this.theLobbyID = specificLobbyID;
         this.numberOfPlayers = numberOfPlayers;
         this.initialHand = initialHand;
-        this.player = null;
+        this.player = player;
     }
 
     /**
@@ -71,6 +71,13 @@ public class DrawHandMessage extends AbstractServerMessage {
         return theLobbyID;
     }
 
+    /**
+     * Gibt die Nummer der Spieler im Spiel zurück
+     *
+     * @return theLobbyID die LobbyID
+     * @author Darian
+     * @since Sprint 5
+     */
     public Short getNumberOfPlayers() {
         return numberOfPlayers;
     }

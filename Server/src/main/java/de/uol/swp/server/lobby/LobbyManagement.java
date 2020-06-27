@@ -51,7 +51,7 @@ public class LobbyManagement {
             throw new IllegalArgumentException("LobbyID nicht gefunden! ID: " + id);
         }
         lobbies.remove(id);
-        LOG.info("Lobby " + getLobby(id) + "entfernt");
+        LOG.info("Lobby " + getLobby(id) + " entfernt");
     }
 
     /**

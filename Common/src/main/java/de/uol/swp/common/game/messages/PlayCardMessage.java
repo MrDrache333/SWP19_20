@@ -75,13 +75,24 @@ public class PlayCardMessage extends AbstractServerMessage {
     }
 
     /**
+     * Gibt die Handkarten-ID
+     *
+     * @return Die ausgespielte Karte
+     * @author Darian
+     * @since Sprint 9
+     */
+    public Short getHandCardID() {
+        return handCardID;
+    }
+
+    /**
      * Gibt die Handkarten-ID als String zurück
      *
      * @return handCardID.toString() die Handkarten-ID als String (Text)
      * @author Devin
      * @since Sprint 6
      */
-    public String getHandCardID() {
+    public String getHandCardIdAsString() {
         return handCardID.toString();
     }
 

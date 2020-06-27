@@ -69,7 +69,6 @@ public class GameViewPresenter extends AbstractPresenter {
     public static final String fxml = "/fxml/GameView.fxml";
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
     private final UUID lobbyID;
-    private User loggedInUser;
     private User poopInitiator;
     private Short numberOfPlayersInGame;
     private int usableMoney;
@@ -229,9 +228,11 @@ public class GameViewPresenter extends AbstractPresenter {
     private final ChatViewPresenter chatViewPresenter;
     private final Injector injector;
     private final GameManagement gameManagement;
+    private final Map<Short, Label> valueCardLabels = new HashMap<>();
     private final ColorAdjust makeImageDarker = new ColorAdjust();
     private boolean chooseCardBecauseOfActionCard = false;
     private final ColorAdjust notChosenCard = new ColorAdjust();
+    private boolean directHand;
     private final ArrayList<Short> chosenCardsId = new ArrayList<>();
     private final ArrayList<ImageView> chosenCards = new ArrayList<>();
     private final ArrayList<ImageView> cardsToMove = new ArrayList<>();
@@ -293,9 +294,7 @@ public class GameViewPresenter extends AbstractPresenter {
             handcards.getChildren().forEach((n) -> {
                 n.removeEventHandler(MouseEvent.MOUSE_CLICKED, discardCardEventHandler);
                 n.addEventHandler(MouseEvent.MOUSE_CLICKED, handCardEventHandler);
-                if (Short.valueOf(n.getId()) < 4) {
-                    n.setEffect(makeImageDarker);
-                }
+                n.setEffect(null);
             });
             Platform.runLater(() -> {
                 skipPhaseButton.setDisable(false);
@@ -394,8 +393,8 @@ public class GameViewPresenter extends AbstractPresenter {
      * Die Anzahl der Wertkarten wird angezeigt.
      *
      * @param theList    die IDs der Aktionskarten
-     * @param cardsToBuy Die Anzahl der Karten, mit der ID der Karte als Schlüssel
-     * @author Ferit, Fenja, Anna, Rike
+     * @param cardsToBuy Die Anzahl der Wertkarten, mit der ID der Karte als Schlüssel
+     * @author Ferit, Fenja, Anna
      * @since Sprint 7
      */
     private void initalizeCardFieldImages(ArrayList<Short> theList, Map<Short, Integer> cardsToBuy) {
@@ -800,7 +799,7 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @Subscribe
     public void onBuyCardMessage(BuyCardMessage msg) {
-        if (msg.getLobbyID().equals(lobbyID)) {
+        if (msg.getGameID().equals(lobbyID)) {
             if (cardLabels.containsKey(msg.getCardID())) {
                 Platform.runLater(() -> cardLabels.get(msg.getCardID()).setText(String.valueOf(msg.getCounterCard())));
             }
@@ -867,7 +866,7 @@ public class GameViewPresenter extends AbstractPresenter {
         // Falls diese Message an den currentPlayer geschickt wird, wird das ausspielen der Karte angezeigt.
         if (msg.getGameID().equals(lobbyID)) {
             if (msg.getCurrentUser().getUsername().equals(loggedInUser.getUsername())) {
-                Optional<Node> optionalCard = handcards.getChildren().stream().filter(c -> c.getId().equals(msg.getHandCardID())).findFirst();
+                Optional<Node> optionalCard = handcards.getChildren().stream().filter(c -> c.getId().equals(msg.getHandCardIdAsString())).findFirst();
                 ImageView card = (ImageView) optionalCard.orElse(null);
                 if (msg.getIsPlayed() && card != null) {
                     Platform.runLater(() -> {
@@ -881,17 +880,19 @@ public class GameViewPresenter extends AbstractPresenter {
                                 AnimationManagement.deleteCard(card);
                             }
                         }
-                        if (msg.getHandCardID().equals("1") || msg.getHandCardID().equals("2") || msg.getHandCardID().equals("3")) {
-                            usableMoney += Integer.parseInt(msg.getHandCardID());
+                        if (msg.getHandCardIdAsString().equals("1") || msg.getHandCardIdAsString().equals("2") || msg.getHandCardIdAsString().equals("3")) {
+                            usableMoney += Integer.parseInt(msg.getHandCardIdAsString());
                             numberOfMoney.setText(usableMoney + " Geld");
                         }
                     });
                 } else {
-                    new AlertBox(Alert.AlertType.WARNING, "Du kannst die Karte nicht spielen!", "Fehler");
+                    Platform.runLater(() -> {
+                        new AlertBox(Alert.AlertType.WARNING, "Du kannst die Karte nicht spielen!", "Fehler");
+                    });
                     LOG.debug("Das Spielen der Karte " + msg.getHandCardID() + " von " + msg.getCurrentUser() + " ist fehlgeschlagen");
                 }
             } else {
-                ImageView card = new Card(msg.getHandCardID());
+                ImageView card = new Card(msg.getHandCardIdAsString());
                 Platform.runLater(() -> {
                     usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.HAND).getChildren().remove(0);
                     usersContainer.get(msg.getCurrentUser().getUsername()).get(ZoneType.PLAY).getChildren().add(card);
@@ -962,13 +963,13 @@ public class GameViewPresenter extends AbstractPresenter {
                 notChosenCard.setBrightness(-0.7);
                 for (int i = 0; i < 10; i++) {
                     ImageView iv = (ImageView) shopTeppich.getChildren().get(i);
-                    if (!req.getCards().contains(Short.valueOf(iv.getId())) && iv.getEffect() == null) {
+                    if (!req.getCards().contains(Short.valueOf(iv.getId()))) {
                         iv.setEffect(notChosenCard);
                     }
                 }
                 for (int i = 0; i < 7; i++) {
                     ImageView iv = (ImageView) valueCardsBox.getChildren().get(i);
-                    if (!req.getCards().contains(Short.valueOf(iv.getId())) && iv.getEffect() == null) {
+                    if (!req.getCards().contains(Short.valueOf(iv.getId()))) {
                         iv.setEffect(notChosenCard);
                     }
                 }
@@ -1852,7 +1853,7 @@ public class GameViewPresenter extends AbstractPresenter {
      *
      * @param msg die UpdateCounterMessage
      * @author Paula
-     * @since Sprint 9
+     * @since Sprint9
      */
     @Subscribe
     private void onUpdateCardCounterMessage(UpdateCardCounterMessage msg) {
@@ -1865,4 +1866,5 @@ public class GameViewPresenter extends AbstractPresenter {
             }
         }
     }
+
 }
