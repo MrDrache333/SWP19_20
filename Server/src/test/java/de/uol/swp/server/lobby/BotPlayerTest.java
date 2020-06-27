@@ -155,7 +155,7 @@ class BotPlayerTest {
     }
 
     @Test
-    void botPlayingGameTest(){
+    void botPlayingGameTest() throws InterruptedException {
         if (lobbyManagement.getLobby(lobbyID).isPresent()) {
             String[] collectionBotName = {"King Arthur", "Merlin", "Die Queen", "Prinzessin Diana", "Donald Trump"};
             String theRandomBotName = collectionBotName[(int) (Math.random() * collectionBotName.length)] + (int) (Math.random() * 999);
@@ -168,6 +168,7 @@ class BotPlayerTest {
             hand.add((short)1);hand.add((short)6);hand.add((short)13);hand.add((short)1);hand.add((short)4);
 
             bus.post(new DrawHandMessage(hand,lobbyID, (short) 2, createdBot.getTheUserInThePlayer()));
+            Thread.sleep(100);
             for(Short cardID : hand){
                 assertTrue(createdBot.getCardsOnHandIDs().contains((Short) cardID));
             }
@@ -183,17 +184,21 @@ class BotPlayerTest {
             bus.post(new StartActionPhaseMessage(createdBot.getTheUserInThePlayer(), lobbyID, new Timestamp(System.currentTimeMillis())));
 
             bus.post(new PlayCardMessage(lobbyID, createdBot.getTheUserInThePlayer(), (short) 13, true, false));
+            Thread.sleep(2000);
             assertTrue(!createdBot.getCardsOnHandIDs().contains((short) 13));
 
             bus.post(new ChooseCardRequest(lobbyID, createdBot.getTheUserInThePlayer(), cardsToChoose, new Value((short) 4),  AbstractPlayground.ZoneType.NONE, "", 13));
+            Thread.sleep(2000);
             assertTrue(Collections.frequency(createdBot.getCardsOnHandIDs(), (short)1)==1);
 
             bus.post(new StartBuyPhaseMessage(createdBot.getTheUserInThePlayer(), lobbyID));
             bus.post(new BuyCardMessage(lobbyID, createdBot.getTheUserInThePlayer(), (short)2, 9, (short) 3));
+            Thread.sleep(2000);
             assertTrue(createdBot.getCardsInPossessionIDs().contains((short) 2));
 
             bus.post(new StartBuyPhaseMessage(createdBot.getTheUserInThePlayer(), lobbyID));
             bus.post(new BuyCardMessage(lobbyID, createdBot.getTheUserInThePlayer(), (short)1, 9, (short) 3));
+            Thread.sleep(2000);
             assertTrue(Collections.frequency(createdBot.getCardsInPossessionIDs(), (short)1)==2);
         }
     }
