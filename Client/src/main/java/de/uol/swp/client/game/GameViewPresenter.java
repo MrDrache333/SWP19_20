@@ -69,7 +69,6 @@ public class GameViewPresenter extends AbstractPresenter {
     public static final String fxml = "/fxml/GameView.fxml";
     private static final Logger LOG = LogManager.getLogger(MainMenuPresenter.class);
     private final UUID lobbyID;
-    private User loggedInUser;
     private User poopInitiator;
     private Short numberOfPlayersInGame;
     private int usableMoney;
