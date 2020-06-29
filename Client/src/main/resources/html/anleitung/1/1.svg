@@ -3,6 +3,15 @@
 "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg viewBox="0 0 909 1286" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <defs>
+<style type="text/css"><![CDATA[
+.g0_1{
+fill: #4472C4;
+}
+]]></style>
 </defs>
-<image x="0" y="0" width="909" height="1286" xlink:href="img/1.png" />
+<image preserveAspectRatio="none" x="0" y="11" width="909" height="1286" xlink:href="img/1.png"/>
+<path fill-rule="evenodd" d="M106,474.9H803.5v-1.1H106v1.1Z" class="g0_1"/>
+<path fill-rule="evenodd" d="M106,561.6H803.5v-1.1H106v1.1Z" class="g0_1"/>
+<image preserveAspectRatio="none" x="111" y="226" width="688" height="229" xlink:href="img/2.png"/>
+<image preserveAspectRatio="none" x="409" y="643" width="91" height="57" xlink:href="img/3.png"/>
 </svg>
