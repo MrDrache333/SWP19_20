@@ -10,6 +10,7 @@
             xmlns="http://javafx.com/javafx/11.0.1" fx:controller="de.uol.swp.client.register.RegistrationPresenter">
     <stylesheets>
         <URL value="@../css/global.css"/>
+        <URL value="@../css/RegistrationView.css"/>
     </stylesheets>
     <ImageView fitHeight="750.0" fitWidth="1280.0" layoutX="180.0" layoutY="227.0" mouseTransparent="true" opacity="0.9"
                pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
@@ -62,7 +63,7 @@
             <Font size="24.0"/>
         </font>
     </TextField>
-    <Hyperlink fx:id="cancelButton" layoutX="914.0" layoutY="608.0" onAction="#onCancelButtonPressed"
+    <Hyperlink fx:id="cancelButton" layoutX="910.0" layoutY="620.0" onAction="#onCancelButtonPressed"
                text="Ich habe bereits einen Account" textFill="#6f6400">
         <font>
             <Font size="15.0"/>
