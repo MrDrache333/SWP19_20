@@ -149,11 +149,11 @@ public class ChatViewPresenter extends AbstractPresenter {
         } else {
             Tooltip tooltip = chatTextField.getTooltip() != null ? chatTextField.getTooltip() : new Tooltip();
             Bounds boundsInScreen = chatTextField.localToScreen(chatTextField.getBoundsInLocal());
-            if (chatTextField.getText().length() >= 1000) {
+            if (chatTextField.getText().length() >= 160) {
                 tooltip.setText("Zeichenbegrenzung erreicht!");
                 chatTextField.setTooltip(tooltip);
             } else {
-                tooltip.setText(1000 - (chatTextField.getText().length() + (event.getCode() != KeyCode.BACK_SPACE ? 1 : 0)) + " Zeichen übrig");
+                tooltip.setText(160 - (chatTextField.getText().length() + (event.getCode() != KeyCode.BACK_SPACE ? 1 : 0)) + " Zeichen übrig");
             }
             tooltip.show(ClientApp.getSceneManager().getPrimaryStage(), (boundsInScreen.getMaxX() + boundsInScreen.getMinX()) / 2.0
                     - tooltip.getWidth() / 2, boundsInScreen.getMinY() - chatTextField.getHeight() - 5);
@@ -397,7 +397,7 @@ public class ChatViewPresenter extends AbstractPresenter {
         String message;
         message = chatTextField.getText();
         //Prüfe auf leere Nachricht
-        if (!message.equals("") && message.length() <= 1000) {
+        if (!message.equals("") && message.length() <= 160) {
             if (chatTextField.getTooltip() != null) chatTextField.getTooltip().hide();
             LOG.debug("Sende neue Chatnachricht: User= " + loggedInUser.getUsername() + " Msg= " + message + " ChatID= " + chatID);
             ChatMessage newChatMessage = new ChatMessage(loggedInUser, message);
@@ -406,7 +406,7 @@ public class ChatViewPresenter extends AbstractPresenter {
             this.chatService.sendMessage(chatID, newChatMessage);
         } else if (!message.equals("")) {
             Platform.runLater(() -> {
-                AlertBox alertBox = new AlertBox(Alert.AlertType.WARNING, "Bitte weniger als 1000 Zeichen eingeben!", "Fehler");
+                AlertBox alertBox = new AlertBox(Alert.AlertType.WARNING, "Bitte weniger als 160 Zeichen eingeben!", "Fehler");
             });
         }
     }
