@@ -45,14 +45,6 @@
     </dependencies>
 
     <build>
-        <resources>
-            <resource>
-                <directory>../Common/src/main/resources</directory>
-                <includes>
-                    <include>**/*.json</include>
-                </includes>
-            </resource>
-        </resources>
         <plugins>
 
             <plugin>
