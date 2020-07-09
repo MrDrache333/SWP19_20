@@ -1,10 +1,11 @@
 package de.uol.swp.server.game.player;
 
 import de.uol.swp.common.game.card.Card;
+import de.uol.swp.common.game.card.CurseCard;
 import de.uol.swp.common.game.card.MoneyCard;
+import de.uol.swp.common.game.card.ValueCard;
 import de.uol.swp.common.game.card.parser.JsonCardParser;
 import de.uol.swp.common.game.card.parser.components.CardPack;
-import de.uol.swp.common.game.card.ValueCard;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,18 +43,20 @@ public class Deck {
      * Zählt die Siegpunkte und fügt sie dem Attribut hinzu.
      */
     public void countSiegpunkte() {
-            siegpunkte = 0;
-            ArrayList<Card> allCards = new ArrayList<>();
-            allCards.addAll(cardsDeck);
-            allCards.addAll(discardPile);
-            allCards.addAll(hand);
-            allCards.addAll(temp);
-            for (Card card : allCards) {
-                if (card.getCardType().equals(Card.Type.VALUECARD)) {
-                    ValueCard theValueCard = (ValueCard) card;
-                    siegpunkte += (int) theValueCard.getValue();
-                }
+        siegpunkte = 0;
+        ArrayList<Card> allCards = new ArrayList<>();
+        allCards.addAll(cardsDeck);
+        allCards.addAll(discardPile);
+        allCards.addAll(hand);
+        allCards.addAll(temp);
+        for (Card card : allCards) {
+            if (card.getCardType().equals(Card.Type.VALUECARD)) {
+                ValueCard theValueCard = (ValueCard) card;
+                siegpunkte += theValueCard.getValue();
+            } else if (card.getCardType().equals(Card.Type.CURSECARD)) {
+                siegpunkte += ((CurseCard) card).getValue();
             }
+        }
     }
 
 
@@ -166,7 +169,7 @@ public class Deck {
      * @since Sprint 7
      */
     public boolean discardPileWasCleared() {
-        return discardPile.size() == 0;
+        return discardPile.isEmpty();
     }
 
     public ArrayList<Card> getHand() {
@@ -188,6 +191,7 @@ public class Deck {
     public ArrayList<Card> getActionPile() {
         return actionPile;
     }
+
     public int getSiegpunkte() {
         return siegpunkte;
     }

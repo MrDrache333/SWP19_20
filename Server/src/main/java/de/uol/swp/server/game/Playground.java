@@ -191,7 +191,7 @@ public class Playground extends AbstractPlayground {
 
     public void endGame(UUID lobbyID) {
         gameService.dropFinishedGame(lobbyID);
-        gameService.getGameManagement().deleteLobbyWithOnlyBots(lobbyID);
+        gameService.getGameManagement().deleteGame(lobbyID);
     }
 
     /**
