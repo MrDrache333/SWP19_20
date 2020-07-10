@@ -320,7 +320,7 @@ class LobbyServiceTest {
         assertTrue(lobbyManagement.getLobby(lobbyID).isPresent());
 
         // Prüft ob das korrekte Password gesetzt wurde
-        assertEquals(lobbyManagement.getLobby(lobbyID).get().getLobbyPassword(), defaultLobbyPassword);
+        assertEquals(defaultLobbyPassword, lobbyManagement.getLobby(lobbyID).get().getLobbyPassword());
     }
 
     /**

@@ -6,8 +6,6 @@ import de.uol.swp.common.chat.request.NewChatMessageRequest;
 import de.uol.swp.common.game.AbstractPlayground;
 import de.uol.swp.common.game.card.ActionCard;
 import de.uol.swp.common.game.card.Card;
-import de.uol.swp.common.game.card.CurseCard;
-import de.uol.swp.common.game.card.ValueCard;
 import de.uol.swp.common.game.card.parser.JsonCardParser;
 import de.uol.swp.common.game.card.parser.components.CardPack;
 import de.uol.swp.common.game.exception.GamePhaseException;
@@ -376,21 +374,8 @@ public class Playground extends AbstractPlayground {
         List<String> winners = new ArrayList<>();
         for (Player player : players) {
             Deck deck = player.getPlayerDeck();
-            deck.getCardsDeck().addAll(deck.getHand());
-            deck.getCardsDeck().addAll(deck.getDiscardPile());
-            deck.getHand().clear();
-            deck.getDiscardPile().clear();
-
-            int victoryPoints = 0;
-            for (Card card : deck.getCardsDeck()) {
-                if (card instanceof ValueCard) {
-                    int value = ((ValueCard) card).getValue();
-                    victoryPoints += value;
-                } else if (card instanceof CurseCard) {
-                    int value = ((CurseCard) card).getValue();
-                    victoryPoints += value;
-                }
-            }
+            deck.countSiegpunkte();
+            int victoryPoints = deck.getSiegpunkte();
             resultsGame.put(player.getPlayerName(), victoryPoints);
         }
 

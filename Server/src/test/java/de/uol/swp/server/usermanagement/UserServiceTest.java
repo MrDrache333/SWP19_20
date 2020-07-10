@@ -40,7 +40,7 @@ class UserServiceTest {
         final User loggedInUser = userManagement.login(userToRegister.getUsername(), userToRegister.getPassword());
 
         assertNotNull(loggedInUser);
-        assertEquals(loggedInUser, userToRegister);
+        assertEquals(userToRegister, loggedInUser);
     }
 
     /**
@@ -60,7 +60,7 @@ class UserServiceTest {
         final User loggedInUser = userManagement.login(userToRegister.getUsername(), userToRegister.getPassword());
 
         assertNotNull(loggedInUser);
-        assertEquals(loggedInUser, userToRegister);
+        assertEquals(userToRegister, loggedInUser);
         assertNotEquals(loggedInUser.getEMail(), userWithSameName.getEMail());
     }
 
