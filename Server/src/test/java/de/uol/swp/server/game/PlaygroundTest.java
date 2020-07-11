@@ -292,7 +292,7 @@ public class PlaygroundTest {
         Playground playground = gameManagement.getGame(gameID).orElseThrow(() -> new NoSuchElementException("Spiel nicht existent")).getPlayground();
         Player oldActualPlayer = playground.getActualPlayer();
         gameService.onSkipPhaseRequest(new SkipPhaseRequest(playground.getActualPlayer().getTheUserInThePlayer(), gameID));
-        assertTrue(!(playground.getActualPlayer().equals(oldActualPlayer)));
+        assertNotEquals(playground.getActualPlayer(), oldActualPlayer);
     }
 
     /**
@@ -311,7 +311,7 @@ public class PlaygroundTest {
                 gameService.onBuyCardRequest(new BuyCardRequest(gameID, gameManagement.getGame(gameID).get().getPlayground().getActualPlayer().getTheUserInThePlayer(), (short) 1));
 
             }
-            assertTrue(gameManagement.getGame(gameID).get().getPlayground().getNextPlayer().getPlayerDeck().getDiscardPile().get(0).getId() == 1);
+            assertEquals(1, gameManagement.getGame(gameID).get().getPlayground().getNextPlayer().getPlayerDeck().getDiscardPile().get(0).getId());
         } else {
             throw new NoSuchElementException("Spiel nicht vorhanden");
         }

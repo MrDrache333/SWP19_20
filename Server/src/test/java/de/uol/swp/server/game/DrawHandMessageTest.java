@@ -121,7 +121,7 @@ public class DrawHandMessageTest {
         assertTrue(session1.isPresent());
         assertTrue(session2.isPresent());
         List<Session> sessions = authService.getSessions(users);
-        assertEquals(sessions.size(), 2);
+        assertEquals(2, sessions.size());
         assertTrue(sessions.contains(session1.get()));
         assertTrue(sessions.contains(session2.get()));
     }

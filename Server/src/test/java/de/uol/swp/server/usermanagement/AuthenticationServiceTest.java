@@ -163,8 +163,8 @@ class AuthenticationServiceTest {
         lock.await(1000, TimeUnit.MILLISECONDS);
         assertTrue(event instanceof AllOnlineUsersResponse);
 
-        assertEquals(((AllOnlineUsersResponse) event).getUsers().size(), 1);
-        assertEquals(((AllOnlineUsersResponse) event).getUsers().get(0), user);
+        assertEquals(1, ((AllOnlineUsersResponse) event).getUsers().size());
+        assertEquals(user, ((AllOnlineUsersResponse) event).getUsers().get(0));
     }
 
     /**
@@ -192,7 +192,7 @@ class AuthenticationServiceTest {
 
         List<User> returnedUsers = new ArrayList<>(((AllOnlineUsersResponse) event).getUsers());
 
-        assertEquals(returnedUsers.size(), 2);
+        assertEquals(2, returnedUsers.size());
 
         Collections.sort(returnedUsers);
         assertEquals(returnedUsers, users);
@@ -243,7 +243,7 @@ class AuthenticationServiceTest {
 
         List<Session> sessions = authService.getSessions(users);
 
-        assertEquals(sessions.size(), 3);
+        assertEquals(3, sessions.size());
         assertTrue(sessions.contains(session1.get()));
         assertTrue(sessions.contains(session2.get()));
         assertTrue(sessions.contains(session3.get()));
