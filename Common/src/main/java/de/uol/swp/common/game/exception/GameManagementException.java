@@ -15,6 +15,4 @@ public class GameManagementException extends RuntimeException {
     public GameManagementException(String message) {
         super(message);
     }
-
-
 }
