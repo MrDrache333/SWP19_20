@@ -65,7 +65,7 @@ public class SettingsPresenter extends AbstractPresenter {
     @FXML
     private PasswordField currentPasswordField;
     @FXML
-    private ImageView chatMuteImage;
+    private ImageView chatMuteIcon;
     @FXML
     private ToggleButton chatMuteToggleButton;
     @FXML
@@ -175,17 +175,13 @@ public class SettingsPresenter extends AbstractPresenter {
     /**
      * Mutet alle Benachrichtigungen beim Aufruf
      *
-     * @param actionEvent Das ActionEvent
      * @author Keno S.
      * @since Sprint 7
      */
     @FXML
-    public void onChatMuteToggleButtonPressed(ActionEvent actionEvent) {
+    public void onChatMuteToggleButtonPressed() {
         Notifyer.setMuteState(chatMuteToggleButton.isSelected());
-        if (chatMuteToggleButton.isSelected())
-            chatMuteImage.setImage(new Image("/images/chat_on_icon.png"));
-        else
-            chatMuteImage.setImage(new Image("/images/chat_off_icon.png"));
+        chatMuteIcon.setImage(new Image(chatMuteToggleButton.isSelected() ? "/images/chat_on_icon.png" : "/images/chat_off_icon.png"));
     }
 
     /**
