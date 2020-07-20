@@ -4,7 +4,7 @@ import com.google.common.eventbus.EventBus;
 import de.uol.swp.common.message.Message;
 
 @SuppressWarnings("UnstableApiUsage")
-public class AbstractService {
+public abstract class AbstractService {
 
     private final EventBus bus;
 

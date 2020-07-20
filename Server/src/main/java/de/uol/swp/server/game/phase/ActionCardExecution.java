@@ -11,8 +11,6 @@ import de.uol.swp.common.game.card.parser.components.CardAction.response.ChooseC
 import de.uol.swp.common.game.card.parser.components.CardAction.response.OptionalActionResponse;
 import de.uol.swp.common.game.card.parser.components.CardAction.types.*;
 import de.uol.swp.common.game.messages.*;
-import de.uol.swp.common.game.request.BuyCardRequest;
-import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.user.User;
 import de.uol.swp.server.game.Playground;
 import de.uol.swp.server.game.player.Player;
@@ -25,7 +23,7 @@ import java.util.*;
 public class ActionCardExecution {
 
     private static final Logger LOG = LogManager.getLogger(ActionCardExecution.class);
-
+    private static final String CHOOSECARD_MSG = "Bitte die Anzahl der Karten auswählen von dem Bereich der dir angezeigt wird!";
     private final short cardID;
     private final Playground playground;
     private final Player player;
@@ -165,8 +163,8 @@ public class ActionCardExecution {
                     finishedNextActions = false;
                 }
 
-                if (!nextActions.isEmpty() && !waitedForPlayerInput) {
-                    if (!executeNextActions(playerList)) return false;
+                if (!nextActions.isEmpty() && !waitedForPlayerInput && !executeNextActions(playerList)) {
+                    return false;
                 }
             }
             if (action instanceof ComplexCardAction && ((ComplexCardAction) action).isRemoveCardAfter()) {
@@ -381,14 +379,12 @@ public class ActionCardExecution {
                     break;
                 case BUY:
                     playground.getCardsPackField().getCards().getAllCards().forEach(card -> {
-                        if (playground.getCardField().containsKey(card.getId())) {
-                            if (playground.getCardField().get(card.getId()) > 0) {
-                                if (action.getCards() == null) {
-                                    ArrayList<Card> list = new ArrayList<>();
-                                    action.setCards(list);
-                                }
-                                action.getCards().add(card);
+                        if (playground.getCardField().containsKey(card.getId()) && playground.getCardField().get(card.getId()) > 0) {
+                            if (action.getCards() == null) {
+                                ArrayList<Card> list = new ArrayList<>();
+                                action.setCards(list);
                             }
+                            action.getCards().add(card);
                         }
                     });
                     break;
@@ -542,14 +538,14 @@ public class ActionCardExecution {
 
             ChooseCardRequest request;
             if (action.getCount().getMin() == action.getCount().getMax()) {
-                request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount().getMin(), action.getCardSource(), "Bitte die Anzahl der Karten auswählen von dem Bereich der dir angezeigt wird!", actionExecutionID);
+                request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount().getMin(), action.getCardSource(), CHOOSECARD_MSG, actionExecutionID);
                 if (nextActionIndex < nextActions.size() && nextActions.get(nextActionIndex) instanceof UseCard) {
                     request.setUseCard(true);
                 }
             } else if (action.getCount().getMin() == 0) {
-                request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount().getMax(), action.getCardSource(), "Bitte die Anzahl der Karten auswählen von dem Bereich der dir angezeigt wird!", actionExecutionID);
+                request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount().getMax(), action.getCardSource(), CHOOSECARD_MSG, actionExecutionID);
             } else {
-                request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount(), action.getCardSource(), "Bitte die Anzahl der Karten auswählen von dem Bereich der dir angezeigt wird!", actionExecutionID);
+                request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount(), action.getCardSource(), CHOOSECARD_MSG, actionExecutionID);
             }
             playground.getGameService().sendToSpecificPlayer(player, request);
         }
