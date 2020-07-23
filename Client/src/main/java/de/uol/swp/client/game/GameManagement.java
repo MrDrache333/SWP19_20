@@ -213,6 +213,7 @@ public class GameManagement {
         eventBus.register(gameViewPresenter);
         showView(gamePane, lobbyName);
         gameViewPresenter.getInGameUserList(this.id);
+        gameViewPresenter.usableMoney = 0;
     }
 
     /**

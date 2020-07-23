@@ -71,7 +71,7 @@ public class GameViewPresenter extends AbstractPresenter {
     private final UUID lobbyID;
     private User poopInitiator;
     private Short numberOfPlayersInGame;
-    private int usableMoney;
+    public int usableMoney;
 
     @FXML
     Label actualPoints;
@@ -365,6 +365,7 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @FXML
     public void initialize() throws IOException {
+        numberOfMoney.setText(usableMoney + " Geld");
         //FXML laden
         FXMLLoader loader = injector.getInstance(FXMLLoader.class);
         loader.setLocation(getClass().getResource(ChatViewPresenter.fxml));
