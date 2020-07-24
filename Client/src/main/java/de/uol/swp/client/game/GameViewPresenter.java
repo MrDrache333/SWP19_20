@@ -71,7 +71,7 @@ public class GameViewPresenter extends AbstractPresenter {
     private final UUID lobbyID;
     private User poopInitiator;
     private Short numberOfPlayersInGame;
-    public int usableMoney;
+    private int usableMoney;
 
     @FXML
     Label actualPoints;
@@ -1868,4 +1868,11 @@ public class GameViewPresenter extends AbstractPresenter {
         }
     }
 
+    public int getUsableMoney() {
+        return usableMoney;
+    }
+
+    public void setUsableMoney(int usableMoney) {
+        this.usableMoney = usableMoney;
+    }
 }
