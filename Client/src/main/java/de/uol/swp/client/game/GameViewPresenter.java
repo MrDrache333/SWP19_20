@@ -365,6 +365,7 @@ public class GameViewPresenter extends AbstractPresenter {
      */
     @FXML
     public void initialize() throws IOException {
+        numberOfMoney.setText(usableMoney + " Geld");
         //FXML laden
         FXMLLoader loader = injector.getInstance(FXMLLoader.class);
         loader.setLocation(getClass().getResource(ChatViewPresenter.fxml));
@@ -1867,4 +1868,11 @@ public class GameViewPresenter extends AbstractPresenter {
         }
     }
 
+    public int getUsableMoney() {
+        return usableMoney;
+    }
+
+    public void setUsableMoney(int usableMoney) {
+        this.usableMoney = usableMoney;
+    }
 }
