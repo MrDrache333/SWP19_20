@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author Rike
  * @since Sprint10
  */
-
 public class DeleteAccountEventTest {
 
     private static final User defaultUser = new UserDTO("Herbert", "1234", "herbert@muster.de");
@@ -20,6 +19,6 @@ public class DeleteAccountEventTest {
     @Test
     public void createDeleteAccountEvent() {
         DeleteAccountEvent event = new DeleteAccountEvent(defaultUser);
-        assertEquals(event.getUser(), defaultUser);
+        assertEquals(defaultUser, event.getUser());
     }
 }
