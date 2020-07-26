@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Testet die Klasse DeleteAccountEvent
  *
  * @author Rike
- * @since Sprint10
+ * @since Sprint 10
  */
 public class DeleteAccountEventTest {
 
