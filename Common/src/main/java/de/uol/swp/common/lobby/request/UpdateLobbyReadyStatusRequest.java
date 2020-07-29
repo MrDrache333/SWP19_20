@@ -13,7 +13,7 @@ import java.util.UUID;
 public class UpdateLobbyReadyStatusRequest extends AbstractLobbyRequest {
 
     private static final long serialVersionUID = -2904997600691722894L;
-    private boolean Ready;
+    private final boolean Ready;
 
     /**
      * Erstellt einen neuen Update lobby ready status request.

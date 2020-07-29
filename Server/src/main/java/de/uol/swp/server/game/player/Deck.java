@@ -1,7 +1,9 @@
 package de.uol.swp.server.game.player;
 
 import de.uol.swp.common.game.card.Card;
+import de.uol.swp.common.game.card.CurseCard;
 import de.uol.swp.common.game.card.MoneyCard;
+import de.uol.swp.common.game.card.ValueCard;
 import de.uol.swp.common.game.card.parser.JsonCardParser;
 import de.uol.swp.common.game.card.parser.components.CardPack;
 
@@ -19,11 +21,12 @@ public class Deck {
      * @author Paula
      * @since Sprint 5
      */
-    private ArrayList<Card> cardsDeck = new ArrayList<>();
-    private ArrayList<Card> discardPile = new ArrayList<>();
-    private ArrayList<Card> hand = new ArrayList<>();
-    private ArrayList<Card> temp = new ArrayList<>();
+    private final ArrayList<Card> cardsDeck = new ArrayList<>();
+    private final ArrayList<Card> discardPile = new ArrayList<>();
+    private final ArrayList<Card> hand = new ArrayList<>();
+    private final ArrayList<Card> temp = new ArrayList<>();
     private final ArrayList<Card> actionPile = new ArrayList<>();
+    private int siegpunkte;
 
     /**
      * Konstruktor
@@ -35,6 +38,27 @@ public class Deck {
         initialiseStartDeck();
         initialiseHand();
     }
+
+    /**
+     * Zählt die Siegpunkte und fügt sie dem Attribut hinzu.
+     */
+    public void countSiegpunkte() {
+        siegpunkte = 0;
+        ArrayList<Card> allCards = new ArrayList<>();
+        allCards.addAll(cardsDeck);
+        allCards.addAll(discardPile);
+        allCards.addAll(hand);
+        allCards.addAll(temp);
+        for (Card card : allCards) {
+            if (card.getCardType().equals(Card.Type.VALUECARD)) {
+                ValueCard theValueCard = (ValueCard) card;
+                siegpunkte += theValueCard.getValue();
+            } else if (card.getCardType().equals(Card.Type.CURSECARD)) {
+                siegpunkte += ((CurseCard) card).getValue();
+            }
+        }
+    }
+
 
     /**
      * Zieht eine neue Hand. Sind auf dem Nachziehstapel nicht mehr genügend Karten vorhanden,
@@ -56,7 +80,7 @@ public class Deck {
                 tmp.add(cardsDeck.get(i));
             }
             hand.addAll(tmp);
-            tmp.forEach(card -> cardsDeck.remove(card));
+            tmp.forEach(cardsDeck::remove);
         } else {
             initialiseHand();
         }
@@ -65,11 +89,10 @@ public class Deck {
     /**
      * Startdeck wird initialisiert (7x Money, 3x Anwesen)
      *
-     * @return Kartendeck
      * @author Paula
      * @since Sprint 5
      */
-    private ArrayList<Card> initialiseStartDeck() {
+    private void initialiseStartDeck() {
         CardPack cardsPack = new JsonCardParser().loadPack("Basispack");
         for (int i = 0; i < 3; i++) {
             Card card = cardsPack.getCards().getValueCards().get(0);
@@ -79,49 +102,21 @@ public class Deck {
             Card card = cardsPack.getCards().getMoneyCards().get(0);
             cardsDeck.add(card);
         }
-        return cardsDeck;
     }
 
     /**
      * Hand wird initialisiert; 5 Karten aus Startdeck
      *
-     * @return Hand
      * @author Paula
      * @since Sprint 5
      */
-    private ArrayList<Card> initialiseHand() {
+    private void initialiseHand() {
         Collections.shuffle(cardsDeck);
         for (int i = 0; i < 5; i++) {
             Card tmpCard = cardsDeck.get(i);
             hand.add(tmpCard);
         }
-        hand.forEach(card -> cardsDeck.remove(card));
-        return hand;
-    }
-
-
-    /**
-     * Karte wird aus Arrays gelöscht
-     *
-     * @author Pauia
-     * @since Sprint 5
-     */
-    private void deleteCard(Card card) {
-        cardsDeck.remove(card);
-        hand.remove(card);
-        discardPile.remove(card);
-    }
-
-    /**
-     * Hilfsmethode um eine Karte zum Ablagestapel hinzuzufügen
-     *
-     * @param card
-     * @author Paula
-     * @since Sprint 6
-     */
-    public void addCardToDiscardPile(Card card) {
-        discardPile.add(card);
-
+        hand.forEach(cardsDeck::remove);
     }
 
     /**
@@ -151,17 +146,14 @@ public class Deck {
 
     public void discardMoneyCardsForValue(int value) {
         int money = 0;
-        int sizeHand = hand.size();
         ArrayList<Card> removeCards = new ArrayList<>();
-        for (int i=0; i<sizeHand; i++){
-            if (hand.get(i) instanceof MoneyCard) {
-                money += ((MoneyCard) hand.get(i)).getValue();
-                discardPile.add(hand.get(i));
-                removeCards.add(hand.get(i));
-                if (money >= value) {
+        for (Card item : hand) {
+            if (item instanceof MoneyCard) {
+                money += ((MoneyCard) item).getValue();
+                discardPile.add(item);
+                removeCards.add(item);
+                if (money >= value)
                     break;
-                }
-
             }
         }
         for (Card card : removeCards) {
@@ -177,9 +169,8 @@ public class Deck {
      * @since Sprint 7
      */
     public boolean discardPileWasCleared() {
-        return discardPile.size() == 0;
+        return discardPile.isEmpty();
     }
-
 
     public ArrayList<Card> getHand() {
         return hand;
@@ -199,5 +190,9 @@ public class Deck {
 
     public ArrayList<Card> getActionPile() {
         return actionPile;
+    }
+
+    public int getSiegpunkte() {
+        return siegpunkte;
     }
 }

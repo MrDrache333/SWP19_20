@@ -12,24 +12,24 @@ import java.util.UUID;
 public class Game {
 
     /**
-     * The Chat.
+     * Der Chat.
      */
     private final Chat chat;
     /**
-     * The Playground.
+     * Der Playground.
      */
     private final Playground playground;
     /**
-     * The Game id.
+     * Die GameID.
      */
     private final UUID gameID;
 
     /**
-     * Erstellt ein neues Spiel
+     * Erstellt ein neues Spiel.
      *
      * @param lobby Die Lobby, die das Spiel gestartet hat
-     * @param chat  the chat
-     * @author KenoO
+     * @param chat  Der Chat
+     * @author Keno O.
      * @since Sprint 5
      */
     @Inject
@@ -40,7 +40,7 @@ public class Game {
     }
 
     /**
-     * Gibt den Playground zurück
+     * Gibt den Playground zurück.
      *
      * @return playground der Playground
      * @author Ferit
@@ -51,10 +51,10 @@ public class Game {
     }
 
     /**
-     * Gets game id.
+     * Gibt die GameID zurück.
      *
-     * @return the game id
-     * @author KenoO
+     * @return Die GameID
+     * @author Keno O.
      * @since Sprint 5
      */
     public UUID getGameID() {

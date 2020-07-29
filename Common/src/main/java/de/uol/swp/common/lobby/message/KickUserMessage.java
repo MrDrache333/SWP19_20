@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public class KickUserMessage extends AbstractLobbyMessage {
 
-    LobbyDTO lobby;
+    final LobbyDTO lobby;
 
     /**
      * Instanziiert eine KickUserMessage

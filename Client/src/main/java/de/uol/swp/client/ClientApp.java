@@ -10,7 +10,10 @@ import de.uol.swp.client.game.GameService;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.lobby.OpenJoinLobbyRequest;
 import de.uol.swp.client.sound.SoundMediaPlayer;
-import de.uol.swp.common.lobby.message.*;
+import de.uol.swp.common.lobby.message.CreateLobbyMessage;
+import de.uol.swp.common.lobby.message.KickUserMessage;
+import de.uol.swp.common.lobby.message.UserJoinedLobbyMessage;
+import de.uol.swp.common.lobby.message.UserLeftLobbyMessage;
 import de.uol.swp.common.lobby.request.OpenLobbyCreateRequest;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
@@ -27,7 +30,6 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,6 +37,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 import java.util.Optional;
 
+@SuppressWarnings("UnstableApiUsage, unused")
 public class ClientApp extends Application implements ConnectionListener {
 
     private static final Logger LOG = LogManager.getLogger(ClientApp.class);
@@ -119,12 +122,10 @@ public class ClientApp extends Application implements ConnectionListener {
 
         //  close request calls method to close all windows
         primaryStage.setOnCloseRequest(event -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setResizable(false);
-            alert.initModality(Modality.APPLICATION_MODAL);
+            AlertBox alert = new AlertBox(Alert.AlertType.CONFIRMATION);
             alert.getDialogPane().setHeaderText("Möchtest du das Spiel wirklich beenden?");
             Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK) {
+            if (result.isPresent() && result.get() == ButtonType.OK) {
                 userService.hardLogout(user);
                 closeAllWindows();
             } else {
@@ -214,6 +215,11 @@ public class ClientApp extends Application implements ConnectionListener {
         sceneManager.showLoginScreen();
     }
 
+    /**
+     * Methode zum Umgang mit DeadEvents
+     *
+     * @param deadEvent das DeadEvent
+     */
     @Subscribe
     private void handleEventBusError(DeadEvent deadEvent) {
         LOG.error("DeadEvent detected " + deadEvent);
@@ -226,7 +232,6 @@ public class ClientApp extends Application implements ConnectionListener {
      *
      * @param message CreateLobbyMessage vom Server, dass die Lobby erstellt worden ist.
      * @author Paula, Haschem, Ferit, Anna, Darian
-     * @version 0.2
      * @since Sprint 3
      */
     @Subscribe
@@ -237,7 +242,9 @@ public class ClientApp extends Application implements ConnectionListener {
                 sceneManager.closeCreateLobby();
                 LOG.debug("CreateLobbyMessage vom Server erfolgreich angekommen");
             } else {
-                SceneManager.showAlert(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden. Zudem darf er noch nicht vorhanden sein.", "Fehler");
+                Platform.runLater(() -> {
+                    AlertBox alertBox = new AlertBox(Alert.AlertType.WARNING, "Bitte geben Sie einen gültigen Lobby Namen ein!\n\nDieser darf aus Buchstaben, Zahlen und Leerzeichen bestehen, aber nicht mit einem Leerzeichen beginnen oder enden. Zudem darf er noch nicht vorhanden sein.", "Fehler");
+                });
             }
         }
     }
@@ -259,10 +266,11 @@ public class ClientApp extends Application implements ConnectionListener {
             }
             LOG.info("User " + message.getUser().getUsername() + " joined lobby successfully");
         } else if (message.getLobby().getLobbyPassword() == null) {
-            SceneManager.showAlert(Alert.AlertType.WARNING, "Das Passwort ist falsch!", "Fehler");
+            Platform.runLater(() -> {
+                AlertBox alertBox = new AlertBox(Alert.AlertType.WARNING, "Das Passwort ist falsch", "Fehler");
+            });
         }
     }
-
 
     /**
      * Empfängt vom Server die Message, dass User Lobby verlassen hat.
@@ -302,13 +310,10 @@ public class ClientApp extends Application implements ConnectionListener {
      * @author Paula
      * @since Sprint 4
      */
-
     @Subscribe
     public void onOpenCreateLobby(OpenLobbyCreateRequest req) {
         if (req.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showCreateLobbyScreen(req.getUser());
-
-
         }
     }
 
@@ -316,8 +321,6 @@ public class ClientApp extends Application implements ConnectionListener {
     public void onOpenJoinLobby(OpenJoinLobbyRequest req) {
         if (req.getUser().getUsername().equals(user.getUsername())) {
             sceneManager.showJoinLobbyScreen(req.getUser(), req.getLobby());
-
-
         }
     }
 
@@ -388,23 +391,25 @@ public class ClientApp extends Application implements ConnectionListener {
         }
     }
 
-
     // -----------------------------------------------------
     // JavFX Help methods
     // -----------------------------------------------------
 
     /**
-     * Nachdem der Account gelöscht wurde, werden alle Fenster geschlossen und der Login-Screen angezeigt
+     * Nachdem der Account gelöscht wurde, wird der User hart ausgeloggt, alle Fenster geschlossen und der Login-Screen angezeigt
      *
-     * @author Anna
+     * @author Anna, Timo
      * @since Sprint 4
      */
     @Subscribe
     public void onUserDroppedMessage(UserDroppedMessage message) {
-        LOG.info("Löschung des Accounts und Verlassen aller Lobbys erfolgreich.");
         if (user != null && message.getUser().getUsername().equals(user.getUsername())) {
+            userService.hardLogout(message.getUser());
             sceneManager.closeAllStages();
             sceneManager.showLoginScreen();
+            LOG.info("Löschung des Accounts und Verlassen aller Lobbys erfolgreich.");
+        } else {
+            LOG.info("Löschung des Accounts und Verlassen aller Lobbys nicht erfolgreich.");
         }
     }
 

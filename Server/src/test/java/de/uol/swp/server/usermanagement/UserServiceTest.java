@@ -9,6 +9,13 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Testklasse des UserService
+ *
+ * @author Marco
+ * @since Start
+ */
+@SuppressWarnings("UnstableApiUsage")
 class UserServiceTest {
 
     static final User userToRegister = new UserDTO("Marco", "Marco", "Marco@Grawunder.com");
@@ -33,7 +40,7 @@ class UserServiceTest {
         final User loggedInUser = userManagement.login(userToRegister.getUsername(), userToRegister.getPassword());
 
         assertNotNull(loggedInUser);
-        assertEquals(loggedInUser, userToRegister);
+        assertEquals(userToRegister, loggedInUser);
     }
 
     /**
@@ -53,10 +60,8 @@ class UserServiceTest {
         final User loggedInUser = userManagement.login(userToRegister.getUsername(), userToRegister.getPassword());
 
         assertNotNull(loggedInUser);
-        assertEquals(loggedInUser, userToRegister);
-
+        assertEquals(userToRegister, loggedInUser);
         assertNotEquals(loggedInUser.getEMail(), userWithSameName.getEMail());
-
     }
 
 }

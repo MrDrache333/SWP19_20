@@ -12,7 +12,6 @@ import de.uol.swp.common.user.request.LogoutRequest;
 import de.uol.swp.common.user.request.RetrieveAllOnlineUsersRequest;
 import de.uol.swp.common.user.response.AllOnlineUsersResponse;
 import de.uol.swp.server.lobby.LobbyManagement;
-import de.uol.swp.server.lobby.LobbyService;
 import de.uol.swp.server.message.ClientAuthorizedMessage;
 import de.uol.swp.server.message.ServerExceptionMessage;
 import de.uol.swp.server.usermanagement.store.MainMemoryBasedUserStore;
@@ -33,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Marco
  * @since Start
  */
+@SuppressWarnings("UnstableApiUsage, unused")
 class AuthenticationServiceTest {
 
     final User user = new UserDTO("name", "password", "email@test.de");
@@ -41,7 +41,7 @@ class AuthenticationServiceTest {
     final UserStore userStore = new MainMemoryBasedUserStore();
     final EventBus bus = new EventBus();
     final UserManagement userManagement = new UserManagement(userStore);
-    private LobbyManagement lobbyManagement = new LobbyManagement();
+    private final LobbyManagement lobbyManagement = new LobbyManagement();
     final AuthenticationService authService = new AuthenticationService(bus, userManagement, lobbyManagement);
     private final CountDownLatch lock = new CountDownLatch(1);
     private Object event;
@@ -86,7 +86,7 @@ class AuthenticationServiceTest {
     /**
      * Test für einen erfolgreichen Login
      *
-     * @throws InterruptedException
+     * @throws InterruptedException InterruptedException
      * @author Marco
      * @since Start
      */
@@ -105,7 +105,7 @@ class AuthenticationServiceTest {
     /**
      * Test für einen fehlgeschlagenen Login
      *
-     * @throws InterruptedException
+     * @throws InterruptedException InterruptedException
      * @author Marco
      * @since Start
      */
@@ -124,7 +124,7 @@ class AuthenticationServiceTest {
     /**
      * Test für den Logout
      *
-     * @throws InterruptedException
+     * @throws InterruptedException InterruptedException
      * @author Marco
      * @since Start
      */
@@ -149,7 +149,7 @@ class AuthenticationServiceTest {
     /**
      * Testet die retrieveAllOnlineUsers() Methode bei einem eingeloggten User
      *
-     * @throws InterruptedException
+     * @throws InterruptedException InterruptedException
      * @author Marco
      * @since Start
      */
@@ -163,14 +163,14 @@ class AuthenticationServiceTest {
         lock.await(1000, TimeUnit.MILLISECONDS);
         assertTrue(event instanceof AllOnlineUsersResponse);
 
-        assertEquals(((AllOnlineUsersResponse) event).getUsers().size(), 1);
-        assertEquals(((AllOnlineUsersResponse) event).getUsers().get(0), user);
+        assertEquals(1, ((AllOnlineUsersResponse) event).getUsers().size());
+        assertEquals(user, ((AllOnlineUsersResponse) event).getUsers().get(0));
     }
 
     /**
      * Testet die retrieveAllOnlineUsers() Methode bei zwei eingeloggten Usern
      *
-     * @throws InterruptedException
+     * @throws InterruptedException InterruptedException
      * @author Marco
      * @since Start
      */
@@ -192,7 +192,7 @@ class AuthenticationServiceTest {
 
         List<User> returnedUsers = new ArrayList<>(((AllOnlineUsersResponse) event).getUsers());
 
-        assertEquals(returnedUsers.size(), 2);
+        assertEquals(2, returnedUsers.size());
 
         Collections.sort(returnedUsers);
         assertEquals(returnedUsers, users);
@@ -202,7 +202,7 @@ class AuthenticationServiceTest {
     /**
      * Testet die retrieveAllOnlineUsers() Methode bei null eingeloggten Usern
      *
-     * @throws InterruptedException
+     * @throws InterruptedException InterruptedException
      * @author Marco
      * @since Start
      */
@@ -243,7 +243,7 @@ class AuthenticationServiceTest {
 
         List<Session> sessions = authService.getSessions(users);
 
-        assertEquals(sessions.size(), 3);
+        assertEquals(3, sessions.size());
         assertTrue(sessions.contains(session1.get()));
         assertTrue(sessions.contains(session2.get()));
         assertTrue(sessions.contains(session3.get()));

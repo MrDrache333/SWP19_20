@@ -30,7 +30,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author Marco Grawunder
  * @since Start
  */
-
+@SuppressWarnings("UnstableApiUsage, unused")
 public class ClientConnection {
 
     private static final Logger LOG = LogManager.getLogger(ClientConnection.class);
@@ -65,7 +65,7 @@ public class ClientConnection {
     /**
      * Die netty initialisierende Methode
      *
-     * @throws Exception
+     * @throws Exception Exception
      * @author Marco Grawunder
      * @since Start
      */

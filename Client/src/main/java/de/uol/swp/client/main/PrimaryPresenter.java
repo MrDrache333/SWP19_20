@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.AlertBox;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.game.GameManagement;
 import de.uol.swp.client.game.GameService;
@@ -21,18 +22,18 @@ import de.uol.swp.common.user.response.LoginSuccessfulResponse;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.stage.Modality;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("UnstableApiUsage")
+@SuppressWarnings("UnstableApiUsage, unused")
 public class PrimaryPresenter extends AbstractPresenter {
 
     /**
@@ -64,7 +65,6 @@ public class PrimaryPresenter extends AbstractPresenter {
      * @param userService  Der Userservice
      * @param injector     Der Injector
      * @author Fenja Oelrichs Garcia
-     * @version 1.0
      * @since Sprint4
      */
     public void initialise(EventBus eventBus, User loggedInUser, ChatService chatService, LobbyService lobbyService, UserService userService, Injector injector, GameService gameService) {
@@ -133,7 +133,6 @@ public class PrimaryPresenter extends AbstractPresenter {
      *
      * @param actionEvent Das Actionevent
      * @author Julia, Paula
-     * @version 1.0
      * @since Sprint3
      */
     @FXML
@@ -172,7 +171,6 @@ public class PrimaryPresenter extends AbstractPresenter {
      *
      * @param actionEvent das Actionevent
      * @author Keno Oelrichs Garcia
-     * @version 1.0
      * @since Sprint3
      */
     @FXML
@@ -207,8 +205,7 @@ public class PrimaryPresenter extends AbstractPresenter {
      */
     @FXML
     public void onSettingsButtonPressed(ActionEvent actionEvent) {
-        OpenSettingsRequest request = new OpenSettingsRequest(loggedInUser);
-        eventBus.post(request);
+        eventBus.post(new OpenSettingsRequest(loggedInUser));
     }
 
     /**
@@ -217,34 +214,43 @@ public class PrimaryPresenter extends AbstractPresenter {
      * @param currentUser Der aktuelle Nutzer
      * @param title       Der Übergebene Titel aus dem MainMenuPresenter
      * @param lobbyID     Die übergebene LobbyID aus der empfangenen Message in der ClientApp
-     * @author Paula, Haschem, Ferit, Anna
-     * @version 1.0
+     * @author Paula, Haschem, Ferit, Anna, Marvin
      * @since Sprint3
      */
     public void createLobby(User currentUser, String title, UUID lobbyID, UserDTO gameOwner) {
-        Platform.runLater(() -> {
-            //LobbyPresenter neue Instanz mit (name, id) wird erstellt
-            GameManagement gameManagement = new GameManagement(eventBus, lobbyID, title, currentUser, chatService, lobbyService, userService, injector, gameOwner, gameService, this);
+        try {
+            Platform.runLater(() -> {
+                //LobbyPresenter neue Instanz mit (name, id) wird erstellt
+                GameManagement gameManagement = new GameManagement(eventBus, lobbyID, title, currentUser, chatService, lobbyService, userService, injector, gameOwner, gameService, this);
 
-            eventBus.register(gameManagement);
+                eventBus.register(gameManagement);
 
-            //LobbyPresenter und lobbyStage in die jeweilige Map packen, mit lobbyID als Schlüssel
-            games.put(lobbyID, gameManagement);
-            gameManagement.showLobbyView();
+                //LobbyPresenter und lobbyStage in die jeweilige Map packen, mit lobbyID als Schlüssel
+                games.put(lobbyID, gameManagement);
+                gameManagement.showLobbyView();
 
-            //Neuen Tab initialisieren, Pane vom GameManagement übernehmen und der TabView hinzufügen
+                //Neuen Tab initialisieren, Pane vom GameManagement übernehmen und der TabView hinzufügen
 
-            //Auf Schließung des Tabs reagieren
-            gameManagement.getPrimaryTab().setOnCloseRequest(event -> {
-                games.remove(gameManagement.getID());
-                lobbyService.leaveLobby(gameManagement.getID(), (UserDTO) loggedInUser);
-                TabView.getTabs().remove(gameManagement.getPrimaryTab());
-                lobbyService.retrieveAllLobbies();
+                //Auf Schließung des Tabs reagieren
+                gameManagement.getPrimaryTab().setOnCloseRequest(event -> {
+                    AlertBox alert = new AlertBox(Alert.AlertType.CONFIRMATION);
+                    alert.setResizable(false);
+                    alert.initModality(Modality.APPLICATION_MODAL);
+                    alert.getDialogPane().setHeaderText("Möchtest du diesen Tab wirklich schließen?");
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.orElseThrow(() -> new NoSuchElementException("Objekt nicht vorhanden")) == ButtonType.OK) {
+                        gameManagement.getGameService().giveUp(lobbyID, (UserDTO) loggedInUser);
+                        closeTab(lobbyID, true);
+                    } else {
+                        event.consume();
+                    }
+                });
+                TabView.getTabs().add(gameManagement.getPrimaryTab());
+                TabView.getSelectionModel().select(gameManagement.getPrimaryTab());
             });
-            TabView.getTabs().add(gameManagement.getPrimaryTab());
-            TabView.getSelectionModel().select(gameManagement.getPrimaryTab());
-        });
-
+        } catch (NoSuchElementException exception) {
+            LOG.error(exception.getMessage());
+        }
     }
 
     /**
@@ -343,7 +349,6 @@ public class PrimaryPresenter extends AbstractPresenter {
      * und dann die Tabs geschlossen, da man sonst, während man über die Spiele iteriert, Spiele beendet.
      *
      * @author Julia, Paula, Marvin
-     * @Version 1.0
      * @since Sprint3
      */
     public void closeAllTabs() {

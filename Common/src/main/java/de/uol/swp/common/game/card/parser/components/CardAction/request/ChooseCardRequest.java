@@ -23,23 +23,22 @@ public class ChooseCardRequest extends AbstractGameMessage {
     /**
      * Die Karten-ID's, die zur Auswahl stehen.
      */
-    private ArrayList<Short> cards;
+    private final ArrayList<Short> cards;
     /**
      * Die Kartenquelle
      */
-    private AbstractPlayground.ZoneType source;
+    private final AbstractPlayground.ZoneType source;
     /**
      * Die anzuzeigende Nachricht
      */
-    private String message;
+    private final String message;
     /**
      * Die Anzahl an wählbaren Karten
      */
     private Value countV;
-
     private int count;
-    private boolean directHand;
-
+    private final int actionExecutionID;
+    private boolean useCard;
     /**
      * Erstellt einen neuen Request
      *
@@ -47,20 +46,19 @@ public class ChooseCardRequest extends AbstractGameMessage {
      * @param player       Der Spieler, der die Auswahl treffen soll
      * @param cards        Die Karten, die zur Auswahl stehen
      * @param countV       Die Anzahl an wählbaren Karten
-     * @param sourcePlayer Der Spieler, von dem die Karten ausgewählt werden
      * @param source       Die Zone, von welcher die Karten stammen
      * @param message      Die Nachricht, die dem Spieler gezeigt werden soll
      * @author KenoO
      * @since Sprint 7
      */
-    public ChooseCardRequest(UUID id, User player, ArrayList<Short> cards, Value countV, User sourcePlayer, AbstractPlayground.ZoneType source, String message, boolean directHand) {
+    public ChooseCardRequest(UUID id, User player, ArrayList<Short> cards, Value countV, AbstractPlayground.ZoneType source, String message, int actionExecutionID) {
         super(id, player);
         this.cards = cards;
         this.countV = countV;
         this.source = source;
         if (message.equals("")) message = DEFAULT_MESSAGE;
         this.message = message;
-        this.directHand = directHand;
+        this.actionExecutionID = actionExecutionID;
     }
 
     /**
@@ -69,20 +67,19 @@ public class ChooseCardRequest extends AbstractGameMessage {
      * @param id           Die ID des Spiels
      * @param player       Der Spieler, der die Auswahl treffen soll
      * @param cards        Die Karten, die zur Auswahl stehen
-     * @param sourcePlayer Der Spieler, von dem die Karten ausgewählt werden
      * @param source       Die Zone, von welcher die Karten stammen
      * @param message      Die Nachricht, die dem Spieler gezeigt werden soll
      * @author KenoO
      * @since Sprint 7
      */
-    public ChooseCardRequest(UUID id, User player, ArrayList<Short> cards, int count, User sourcePlayer, AbstractPlayground.ZoneType source, String message, boolean directHand) {
+    public ChooseCardRequest(UUID id, User player, ArrayList<Short> cards, int count, AbstractPlayground.ZoneType source, String message, int actionExecutionID) {
         super(id, player);
         this.cards = cards;
         this.count = count;
         this.source = source;
         if (message.equals("")) message = DEFAULT_MESSAGE;
         this.message = message;
-        this.directHand = directHand;
+        this.actionExecutionID = actionExecutionID;
     }
 
     //***********************
@@ -133,11 +130,19 @@ public class ChooseCardRequest extends AbstractGameMessage {
         return count;
     }
 
-    public boolean getDirectHand() {
-        return directHand;
-    }
-
     public Value getCountV() {
         return countV;
+    }
+
+    public int getActionExecutionID() {
+        return actionExecutionID;
+    }
+
+    public boolean isUseCard() {
+        return useCard;
+    }
+
+    public void setUseCard(boolean useCard) {
+        this.useCard = useCard;
     }
 }

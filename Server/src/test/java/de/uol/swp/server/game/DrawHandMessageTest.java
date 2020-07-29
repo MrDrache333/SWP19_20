@@ -11,16 +11,20 @@ import de.uol.swp.server.usermanagement.AuthenticationService;
 import de.uol.swp.server.usermanagement.UserManagement;
 import de.uol.swp.server.usermanagement.store.MainMemoryBasedUserStore;
 import de.uol.swp.server.usermanagement.store.UserStore;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Testklasse der DrawHandMessage
+ *
+ * @author Ferit
+ * @since Sprint 6
+ */
+@SuppressWarnings("UnstableApiUsage")
 public class DrawHandMessageTest {
     static final User defaultOwner = new UserDTO("test1", "test1", "test1@test.de");
     static final User secondPlayer = new UserDTO("test2", "test2", "test2@test2.de");
@@ -37,10 +41,20 @@ public class DrawHandMessageTest {
     static UUID id;
     private Object event;
 
+    /**
+     * Legt eine Lobby an und joint den User
+     *
+     * @author Ferit
+     * @since Sprint 6
+     */
     @BeforeAll
     static void init() {
-        id = lobbyManagement.createLobby(lobbyName, lobbyPassword, defaultOwner);
-        lobbyManagement.getLobby(id).get().joinUser(secondPlayer);
+        try {
+            id = lobbyManagement.createLobby(lobbyName, lobbyPassword, defaultOwner);
+            lobbyManagement.getLobby(id).orElseThrow(() -> new NoSuchElementException("Lobby nicht existent")).joinUser(secondPlayer);
+        } catch (NoSuchElementException exception) {
+            Assertions.fail(exception.getMessage());
+        }
     }
 
     /**
@@ -55,6 +69,12 @@ public class DrawHandMessageTest {
         bus.register(this);
     }
 
+    /**
+     * Erstellt vor jedem Test ein Spiel
+     *
+     * @author Ferit
+     * @since Sprint 6
+     */
     @BeforeEach
     void setUp() {
         gameManagement.createGame(id);
@@ -71,6 +91,12 @@ public class DrawHandMessageTest {
         bus.unregister(this);
     }
 
+    /**
+     * Löscht nach jedem Spiel das Game und den dazugehörigen Chat
+     *
+     * @author Ferit
+     * @since Sprint 6
+     */
     @AfterEach
     void afterEach() {
         gameManagement.deleteGame(id);
@@ -95,11 +121,9 @@ public class DrawHandMessageTest {
         assertTrue(session1.isPresent());
         assertTrue(session2.isPresent());
         List<Session> sessions = authService.getSessions(users);
-        assertEquals(sessions.size(), 2);
+        assertEquals(2, sessions.size());
         assertTrue(sessions.contains(session1.get()));
         assertTrue(sessions.contains(session2.get()));
-
-        //TODO: Implementierung des weiteren Tests
     }
 
     /**
@@ -113,7 +137,6 @@ public class DrawHandMessageTest {
         userManagement.createUser(userToLogin);
         final LoginRequest loginRequest = new LoginRequest(userToLogin.getUsername(), userToLogin.getPassword());
         bus.post(loginRequest);
-
         assertTrue(userManagement.isLoggedIn(userToLogin));
         userManagement.dropUser(userToLogin);
     }

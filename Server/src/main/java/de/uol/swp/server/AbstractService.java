@@ -3,7 +3,8 @@ package de.uol.swp.server;
 import com.google.common.eventbus.EventBus;
 import de.uol.swp.common.message.Message;
 
-public class AbstractService {
+@SuppressWarnings("UnstableApiUsage")
+public abstract class AbstractService {
 
     private final EventBus bus;
 

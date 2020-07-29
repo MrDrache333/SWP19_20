@@ -10,10 +10,7 @@ import de.uol.swp.common.game.card.parser.components.CardAction.request.Optional
 import de.uol.swp.common.game.card.parser.components.CardAction.response.ChooseCardResponse;
 import de.uol.swp.common.game.card.parser.components.CardAction.response.OptionalActionResponse;
 import de.uol.swp.common.game.card.parser.components.CardAction.types.*;
-import de.uol.swp.common.game.messages.ChooseNextActionMessage;
-import de.uol.swp.common.game.messages.MoveCardMessage;
-import de.uol.swp.common.game.messages.ShowCardMessage;
-import de.uol.swp.common.game.messages.UpdateCardCounterMessage;
+import de.uol.swp.common.game.messages.*;
 import de.uol.swp.common.user.User;
 import de.uol.swp.server.game.Playground;
 import de.uol.swp.server.game.player.Player;
@@ -22,47 +19,36 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
+@SuppressWarnings("UnstableApiUsage, unused")
 public class ActionCardExecution {
 
     private static final Logger LOG = LogManager.getLogger(ActionCardExecution.class);
-
-    private short cardID;
-    private Playground playground;
-    private Player player;
+    private static final String CHOOSECARD_MSG = "Bitte die Anzahl der Karten auswählen von dem Bereich der dir angezeigt wird!";
+    private final short cardID;
+    private final Playground playground;
+    private final Player player;
+    private final UUID gameID;
+    private final List<Player> players;
+    private final List<User> chooseCardPlayers = new ArrayList<>();
+    private final List<CardAction> nextActions = new ArrayList<>();
     private ActionCard theCard;
-    private UUID gameID;
-    private List<Player> players;
-    private List<User> chooseCardPlayers = new ArrayList<>();
-    //Liste neuer Handkarten
-    private ArrayList<Short> newHandCards = new ArrayList<>();
-    //Liste aller Unteraktionen einer Aktion
-    private List<CardAction> nextActions = new ArrayList<>();
+    private ActionCardExecution parent;
+    private ActionCardExecution execution;
     private Card inputCard;
-    private AbstractPlayground.ZoneType chooseCardSource;
-    //
-
-    //Ob auf eine Auswahl oder Reaktion des Spielers gewartet werden muss
-    private boolean waitedForPlayerInput;
-
-    //Index der aktuell auszuführenden Aktion
-    private int actualStateIndex;
-
-    private boolean startedNextActions;
-    //Ob alle Unteraktionen einer Aktion ausgeführt wurden
-    private boolean finishedNextActions;
-
-    //Index der aktuell auszuführenden Unteraktion
-    private int nextActionIndex;
-    //Ob eine optionale Aktion ausgeführt werden soll
+    private UseCard useAction;
+    private boolean useCardExecution;
     private boolean executeOptionalAction;
-
-    //Ob die Aktionskarte entsorgt werden soll
     private boolean removeCardAfter;
-
-    //Ob die Ausfühung einer Karte schon fertig ist
     private boolean finishedExecution;
+    private boolean startedNextActions;
+    private boolean finishedNextActions;
+    private boolean waitedForPlayerInput;
+    private int useCardCounter = 0;
+    private int actionExecutionID;
+    private int actualStateIndex;
+    private int nextActionIndex;
 
-    public ActionCardExecution(short cardID, Playground playground) {
+    public ActionCardExecution(short cardID, Playground playground, boolean useCardExecution) {
         this.waitedForPlayerInput = false;
         this.actualStateIndex = 0;
         this.playground = playground;
@@ -75,6 +61,8 @@ public class ActionCardExecution {
         this.finishedNextActions = true;
         this.executeOptionalAction = false;
         this.startedNextActions = false;
+        this.useCardExecution = useCardExecution;
+        this.actionExecutionID = useCardExecution ? 1 : 0;
     }
 
     /**
@@ -87,7 +75,7 @@ public class ActionCardExecution {
     @Subscribe
     public void onOptionalActionResponse(OptionalActionResponse response) {
         LOG.debug("OptionalActionResponse von " + response.getPlayer().getUsername() + " erhalten");
-        if (response.getGameID().equals(gameID)) {
+        if (response.getGameID().equals(gameID) && response.getActionExecutionID() == actionExecutionID) {
             if (!response.isExecute()) actualStateIndex++;
             else executeOptionalAction = true;
             waitedForPlayerInput = false;
@@ -104,45 +92,39 @@ public class ActionCardExecution {
      */
     @Subscribe
     public void onChooseCardResponse(ChooseCardResponse response) {
-        LOG.debug("ChooseCardResponse von " + response.getPlayer().getUsername() + " erhalten");
-        List<Player> p = new ArrayList<>();
-        Player helpPlayer = helpMethodToGetThePlayerFromUser(response.getPlayer());
-        p.add(helpPlayer);
-        if (response.getGameID().equals(gameID) && waitedForPlayerInput && chooseCardPlayers.contains(response.getPlayer())) {
+        if (response.getGameID().equals(gameID) && response.getActionExecutionID() == actionExecutionID && waitedForPlayerInput && chooseCardPlayers.contains(response.getPlayer())) {
+            LOG.debug("ChooseCardResponse von " + response.getPlayer().getUsername() + " erhalten");
+            List<Player> p = new ArrayList<>();
+            Player helpPlayer = helpMethodToGetThePlayerFromUser(response.getPlayer());
+            p.add(helpPlayer);
+            if (cardID == 24 && response.getCards().size() == 1 && response.getCards().get(0) == 24) {
+                playground.getGameService().sendToSpecificPlayer(helpPlayer, new GameExceptionMessage(response.getGameID(), response.getPlayer(),"Wähle eine andere Aktionskarte!"));
+                reset();
+                execute();
+                return;
+            }
             waitedForPlayerInput = false;
             if (!startedNextActions) actualStateIndex++;
+            if (nextActions.get(nextActionIndex) instanceof ChooseCard) nextActionIndex++;
+            if (response.getCards().isEmpty()) {
+                finishedNextActions = true;
+                nextActionIndex = 0;
+                nextActions.clear();
+                execute();
+                return;
+            }
             if (response.getCards().size() == 1) {
                 inputCard = helpMethod2GetTheCard(response.getCards().get(0));
             }
 
             ArrayList<Card> cards = new ArrayList<>();
             response.getCards().forEach(c -> cards.add(helpMethod2GetTheCard(c)));
-
-            if (response.getDirectHand()) {
-                helpPlayer.getPlayerDeck().getHand().addAll(cards);
-                newHandCards.addAll(response.getCards());
-                if (chooseCardSource == AbstractPlayground.ZoneType.BUY) {
-                    Map<Short, Integer> newCount = new HashMap<>();
-                    int size = cards.size();
-                    for (int i = 0; i < size; i++) {
-                        Card card = cards.get(i);
-                        short id = cards.get(i).getId();
-                        int count = playground.getCardField().get(id);
-                        if (count > 0) {
-                            playground.getCardField().replace(id, --count);
-                            newCount.put(id, count);
-                        }
-                        if (cards.size() != size) {
-                            cards.add(i, card);
-                        }
-                    }
-                    UpdateCardCounterMessage message = new UpdateCardCounterMessage(gameID, player.getTheUserInThePlayer(), newCount);
-                    playground.getGameService().sendToAllPlayers(gameID, message);
-                }
-            } else if (nextActions.get(nextActionIndex) instanceof Move) {
+            if (nextActions.get(nextActionIndex) instanceof Move) {
                 ((Move) nextActions.get(nextActionIndex)).setCardsToMove(cards);
             } else if (nextActions.get(nextActionIndex) instanceof ForEach) {
                 ((ForEach) nextActions.get(nextActionIndex)).setCards(cards);
+            } else if (nextActions.get(nextActionIndex) instanceof UseCard) {
+                ((UseCard) nextActions.get(nextActionIndex)).setCardId(response.getCards().get(0));
             }
 
             executeNextActions(p);
@@ -152,7 +134,7 @@ public class ActionCardExecution {
     /**
      * Führt beim Aufruf alle enthaltenen Aktionen der Aktionskarte aus
      *
-     * @return
+     * @return Boolean, ob die Aktionen ausgeführt worden sind
      * @author KenoO, Julia
      * @since Sprint 6
      */
@@ -161,7 +143,7 @@ public class ActionCardExecution {
             startedNextActions = false;
             CardAction action = theCard.getActions().get(actualStateIndex);
             if (action instanceof ComplexCardAction && ((ComplexCardAction) action).isExecutionOptional() && !executeOptionalAction) {
-                playground.getGameService().sendToSpecificPlayer(player, new OptionalActionRequest(gameID, player.getTheUserInThePlayer(), ((ComplexCardAction) action).getExecutionOptionalMessage()));
+                playground.getGameService().sendToSpecificPlayer(player, new OptionalActionRequest(gameID, player.getTheUserInThePlayer(), ((ComplexCardAction) action).getExecutionOptionalMessage(), actionExecutionID));
                 waitedForPlayerInput = true;
             } else {
                 getNextActions(action);
@@ -181,8 +163,8 @@ public class ActionCardExecution {
                     finishedNextActions = false;
                 }
 
-                if (!nextActions.isEmpty() && !waitedForPlayerInput) {
-                    if (!executeNextActions(playerList)) return false;
+                if (!nextActions.isEmpty() && !waitedForPlayerInput && !executeNextActions(playerList)) {
+                    return false;
                 }
             }
             if (action instanceof ComplexCardAction && ((ComplexCardAction) action).isRemoveCardAfter()) {
@@ -215,8 +197,6 @@ public class ActionCardExecution {
                 executeCardAction(action, null, playerList, false);
             }
         }
-
-        //Alle Unteraktionen wurden vollständig ausgeführt
         if (nextActionIndex == nextActions.size() && !waitedForPlayerInput) {
             finishedNextActions = true;
             nextActions.clear();
@@ -225,7 +205,6 @@ public class ActionCardExecution {
                 execute();
             }
         }
-
         return true;
     }
 
@@ -248,15 +227,10 @@ public class ActionCardExecution {
             return executeChooseNextAction((ChooseNextAction) action);
         if (action instanceof ForEach)
             return executeForEach((ForEach) action, thePlayers);
-        if (action instanceof If)
-            return executeIf((If) action, thePlayers);
         if (action instanceof ShowCard)
             return executeShowCard((ShowCard) action, thePlayers);
         if (action instanceof UseCard)
             return executeUseCard((UseCard) action);
-        if (action instanceof While)
-            return executeWhile((While) action, thePlayers);
-
         return false;
     }
 
@@ -280,53 +254,7 @@ public class ActionCardExecution {
             } else if (action instanceof GetCard) {
                 GetCard getAction = (GetCard) action;
                 ArrayList<Card> c = executeGetCard(getAction, player);
-                if (getAction.isDirectHand()) {
-                    int size = c.size();
-                    for (int i = 0; i < size; i++) {
-                        Card card = c.get(i);
-                        player.getPlayerDeck().getHand().add(card);
-                        newHandCards.add(card.getId());
-                    }
-                    List<Card> remove = new ArrayList<>();
-                    if (getAction.getCardSource() == AbstractPlayground.ZoneType.DRAW) {
-                        for (int i = 0; i < size; i++) {
-                            Card card = c.get(i);
-                            player.getPlayerDeck().getCardsDeck().stream().filter(a -> a.getId() == card.getId()).findFirst().ifPresent(remove::add);
-                            if (c.size() != size) {
-                                c.add(i, card);
-                            }
-                        }
-                        remove.forEach(t -> player.getPlayerDeck().getCardsDeck().remove(t));
-                    } else if (getAction.getCardSource() == AbstractPlayground.ZoneType.DISCARD) {
-                        for (int i = 0; i < size; i++) {
-                            Card card = c.get(i);
-                            player.getPlayerDeck().getDiscardPile().stream().filter(a -> a.getId() == card.getId()).findFirst().ifPresent(remove::add);
-                            if (c.size() != size) {
-                                c.add(i, card);
-                            }
-                        }
-                        remove.forEach(t -> player.getPlayerDeck().getDiscardPile().remove(t));
-                    } else if (getAction.getCardSource() == AbstractPlayground.ZoneType.TEMP) {
-                        for (int i = 0; i < size; i++) {
-                            Card card = c.get(i);
-                            player.getPlayerDeck().getTemp().stream().filter(a -> a.getId() == card.getId()).findFirst().ifPresent(remove::add);
-                            if (c.size() != size) {
-                                c.add(i, card);
-                            }
-                        }
-                        remove.forEach(t -> player.getPlayerDeck().getTemp().remove(t));
-                    } else if (getAction.getCardSource() == AbstractPlayground.ZoneType.TRASH) {
-                        for (int i = 0; i < size; i++) {
-                            Card card = c.get(i);
-                            playground.getTrash().stream().filter(a -> a.getId() == card.getId()).findFirst().ifPresent(remove::add);
-                            if (c.size() != size) {
-                                c.add(i, card);
-                            }
-                        }
-                        remove.forEach(t -> playground.getTrash().remove(t));
-                    }
-
-                } else if (!foreach) {
+                if (!foreach) {
                     CardAction nextAction = nextActions.get(nextActionIndex);
                     if (nextAction instanceof Move) {
                         ((Move) nextAction).setCardsToMove(c);
@@ -352,26 +280,26 @@ public class ActionCardExecution {
      * @since Sprint 6
      */
     private ArrayList<Card> filterCards(ComplexCardAction action, ArrayList<Card> cards) {
+        ArrayList<Card> result = new ArrayList<>(cards);
         Card.Type allowedType = action.getAllowedCardType();
         if (allowedType == Card.Type.ACTIONCARD) {
-            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.ACTIONCARD);
+            result.removeIf(c -> c == null || c.getCardType() != Card.Type.ACTIONCARD);
         } else if (allowedType == Card.Type.REACTIONCARD) {
-            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.REACTIONCARD);
+            result.removeIf(c -> c == null || c.getCardType() != Card.Type.REACTIONCARD);
         } else if (allowedType == Card.Type.MONEYCARD) {
-            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.MONEYCARD);
+            result.removeIf(c -> c == null || c.getCardType() != Card.Type.MONEYCARD);
         } else if (allowedType == Card.Type.VALUECARD) {
-            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.VALUECARD);
+            result.removeIf(c -> c == null || c.getCardType() != Card.Type.VALUECARD);
         } else if (allowedType == Card.Type.CURSECARD) {
-            cards.removeIf(c -> c == null || c.getCardType() != Card.Type.CURSECARD);
+            result.removeIf(c -> c == null || c.getCardType() != Card.Type.CURSECARD);
         }
-
         if (action.getHasCost() != null) {
-            cards.removeIf(c -> c == null || c.getCosts() < action.getHasCost().getMin() || c.getCosts() > action.getHasCost().getMax());
+            result.removeIf(c -> c == null || c.getCosts() < action.getHasCost().getMin() || c.getCosts() > action.getHasCost().getMax());
         }
         if (action.getHasWorth() != null) {
-            cards.removeIf(c -> c.getCardType() == Card.Type.ACTIONCARD || c.getCardType() == Card.Type.REACTIONCARD);
+            result.removeIf(c -> c.getCardType() == Card.Type.ACTIONCARD || c.getCardType() == Card.Type.REACTIONCARD);
             List<Card> tmp = new ArrayList<>();
-            cards.forEach(card -> {
+            result.forEach(card -> {
                 if (card.getCardType() == Card.Type.VALUECARD) {
                     if (((ValueCard) card).getValue() < action.getHasWorth().getMin() || ((ValueCard) card).getValue() > action.getHasWorth().getMax()) {
                         tmp.add(card);
@@ -387,40 +315,55 @@ public class ActionCardExecution {
                 }
             });
 
-            cards.removeAll(tmp);
+            result.removeAll(tmp);
         }
 
-        return cards;
+        return result;
     }
 
-    private boolean executeWhile(While action, List<Player> thePlayers) {
-        //TODO
-        return false;
-    }
-
+    /**
+     * Spielt eine Aktionskarte aus
+     *
+     * @param action Die UseCard Action
+     * @return Ob die Ausführung erfolgreich war
+     * @author Keno O., Julia
+     * @since Sprint 6
+     */
     private boolean executeUseCard(UseCard action) {
+        waitedForPlayerInput = true;
+        useAction = action;
         if (action.getCardId() == 0) {
             LOG.debug("No CardId specified! Using current Card(" + cardID + ")");
             action.setCardId(cardID);
         }
-        ActionCardExecution execution = new ActionCardExecution(action.getCardId(), playground);
-
-        for (int i = 0; i < action.getCount(); i++) {
-            if (!execution.execute()) return false;
+        if (useCardCounter < action.getCount()) {
+            if (useCardCounter == 0) {
+                Card card = player.getPlayerDeck().getHand().stream().filter(c -> c.getId() == action.getCardId()).findFirst().orElse(null);
+                execution = new ActionCardExecution(action.getCardId(), playground, true);
+                playground.getGameService().getBus().register(execution);
+                execution.setParent(this);
+                player.getPlayerDeck().getHand().remove(card);
+                PlayCardMessage msg = new PlayCardMessage(gameID, player.getTheUserInThePlayer(), action.getCardId(), true, execution.isRemoveCardAfter());
+                playground.getGameService().sendToAllPlayers(gameID, msg);
+            }
+            execution.reset();
+            execution.execute();
+        } else {
+            playground.getGameService().getBus().unregister(execution);
+            waitedForPlayerInput = false;
+            useCardCounter = 0;
+            List<Player> playerList = new ArrayList<>();
+            playerList.add(player);
+            executeNextActions(playerList);
         }
         return true;
-    }
-
-    private boolean executeIf(If action, List<Player> thePlayers) {
-        //TODO
-        return false;
     }
 
     /**
      * Methode, um eine bestimmte Anzahl Karten aus einer Zone zu bekommen
      *
-     * @param action
-     * @param player
+     * @param action Die Aktion
+     * @param player Der Spieler
      * @return Liste der Karten
      * @author KenoO, Julia
      * @since Sprint 6
@@ -436,10 +379,12 @@ public class ActionCardExecution {
                     break;
                 case BUY:
                     playground.getCardsPackField().getCards().getAllCards().forEach(card -> {
-                        if (playground.getCardField().containsKey(card.getId())) {
-                            if (playground.getCardField().get(card.getId()) > 0) {
-                                action.getCards().add(card);
+                        if (playground.getCardField().containsKey(card.getId()) && playground.getCardField().get(card.getId()) > 0) {
+                            if (action.getCards() == null) {
+                                ArrayList<Card> list = new ArrayList<>();
+                                action.setCards(list);
                             }
+                            action.getCards().add(card);
                         }
                     });
                     break;
@@ -479,7 +424,6 @@ public class ActionCardExecution {
                 }
                 action.setCards(tmp);
             } else action.setCards(cards);
-
         }
         return action.getCards();
     }
@@ -488,7 +432,7 @@ public class ActionCardExecution {
      * Führt eine Reihe von Aktionen auf eine beliebige Anzahl an Karten aus
      *
      * @param action Die ForEach-Aktion
-     * @return
+     * @return Ob die Ausführung erfolgreich war
      * @author KenoO, Julia
      * @since Sprint 6
      */
@@ -541,7 +485,7 @@ public class ActionCardExecution {
      * Sendet eine Message mit der ID der Karte, die angezeigt werden soll und der Zone,
      * in der sie angezeigt werden soll an den aktuellen Spieler.
      *
-     * @param showCard
+     * @param showCard Die anzuzeigende Karte
      * @return true
      * @author Julia
      * @since Sprint 6
@@ -554,31 +498,17 @@ public class ActionCardExecution {
     }
 
     /**
-     * Zählt ein übergebenes KartenArray und übergibt die Größe.
-     *
-     * @return 0 = Übergebenes Array ist leer. | sonst die größe des KartenArrays
-     */
-
-    private int executeCount(Count action) {
-        if (!action.getCards().isEmpty()) {
-            return action.getCards().size();
-        }
-        return 0;
-    }
-
-    /**
      * Schickt den ausgewählten Spielern eine Nachricht, dass sie eine Anzahl an Karten auswählen können.
      *
      * @param action     Die Anzahl der Karten
      * @param thePlayers Die Player, die Karten auswählen dürfen.
-     * @return
+     * @return Ob die Methode erfolgreich war
      * @author Ferit, Julia
      * @since Sprint 7
      */
 
     private boolean executeChooseCard(ChooseCard action, List<Player> thePlayers) {
         waitedForPlayerInput = true;
-        chooseCardSource = action.getCardSource();
         for (Player playerChooseCard : thePlayers) {
             this.chooseCardPlayers.add(playerChooseCard.getTheUserInThePlayer());
             ArrayList<Card> tmp = new ArrayList<>();
@@ -605,13 +535,17 @@ public class ActionCardExecution {
             } else {
                 tmp.forEach(card -> theSelectableCards.add(card.getId()));
             }
+
             ChooseCardRequest request;
             if (action.getCount().getMin() == action.getCount().getMax()) {
-                request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount().getMin(), playerChooseCard.getTheUserInThePlayer(), action.getCardSource(), "Bitte die Anzahl der Karten auswählen von dem Bereich der dir angezeigt wird!", action.isDirectHand());
+                request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount().getMin(), action.getCardSource(), CHOOSECARD_MSG, actionExecutionID);
+                if (nextActionIndex < nextActions.size() && nextActions.get(nextActionIndex) instanceof UseCard) {
+                    request.setUseCard(true);
+                }
             } else if (action.getCount().getMin() == 0) {
-                request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount().getMax(), playerChooseCard.getTheUserInThePlayer(), action.getCardSource(), "Bitte die Anzahl der Karten auswählen von dem Bereich der dir angezeigt wird!", action.isDirectHand());
+                request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount().getMax(), action.getCardSource(), CHOOSECARD_MSG, actionExecutionID);
             } else {
-                request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount(), playerChooseCard.getTheUserInThePlayer(), action.getCardSource(), "Bitte die Anzahl der Karten auswählen von dem Bereich der dir angezeigt wird!", action.isDirectHand());
+                request = new ChooseCardRequest(this.gameID, playerChooseCard.getTheUserInThePlayer(), theSelectableCards, action.getCount(), action.getCardSource(), CHOOSECARD_MSG, actionExecutionID);
             }
             playground.getGameService().sendToSpecificPlayer(player, request);
         }
@@ -622,7 +556,7 @@ public class ActionCardExecution {
     /**
      * Sendet dem Spieler eine Nachricht mit den Aktionen, aus denen er eine auswählen kann
      *
-     * @param chooseNextAction
+     * @param chooseNextAction Die ChooseNextAction
      * @return true
      * @author Julia
      * @since Sprint 6
@@ -641,91 +575,72 @@ public class ActionCardExecution {
      * @since Sprint 8
      */
     private boolean executeMoveAction(Move action, Player player) {
-        ArrayList<Short> theIds = new ArrayList<>();
-        action.getCardsToMove().forEach(c -> theIds.add(c.getId()));
+        ArrayList<Card> cardsToMove = new ArrayList<>(action.getCardsToMove());
         switch (action.getCardDestination()) {
             case DISCARD:
-                player.getPlayerDeck().getDiscardPile().addAll(action.getCardsToMove());
+                player.getPlayerDeck().getDiscardPile().addAll(cardsToMove);
                 break;
             case TRASH:
-                playground.getTrash().addAll(action.getCardsToMove());
+                playground.getTrash().addAll(cardsToMove);
                 break;
             case DRAW:
-                player.getPlayerDeck().getCardsDeck().addAll(action.getCardsToMove());
+                player.getPlayerDeck().getCardsDeck().addAll(cardsToMove);
                 break;
             case TEMP:
-                player.getPlayerDeck().getTemp().addAll(action.getCardsToMove());
+                player.getPlayerDeck().getTemp().addAll(cardsToMove);
                 break;
             case HAND:
-                player.getPlayerDeck().getHand().addAll(action.getCardsToMove());
+                player.getPlayerDeck().getHand().addAll(cardsToMove);
                 break;
         }
-        int size = action.getCardsToMove().size();
-        List<Card> toRemove = new ArrayList<>();
+        ArrayList<Card> toRemove = new ArrayList<>();
         switch (action.getCardSource()) {
             case HAND:
-                for (int i = 0; i < size; i++) {
-                    Card card = action.getCardsToMove().get(i);
+                for (int i = 0; i < cardsToMove.size(); i++) {
+                    Card card = cardsToMove.get(i);
                     player.getPlayerDeck().getHand().stream().filter(c -> c.getId() == card.getId()).findFirst().ifPresent(toRemove::add);
-                    if (action.getCardsToMove().size() != size) {
-                        action.getCardsToMove().add(i, card);
-                    }
                 }
                 toRemove.forEach(c -> player.getPlayerDeck().getHand().remove(c));
                 break;
             case TEMP:
-                for (int i = 0; i < size; i++) {
-                    Card card = action.getCardsToMove().get(i);
+                for (int i = 0; i < cardsToMove.size(); i++) {
+                    Card card = cardsToMove.get(i);
                     player.getPlayerDeck().getTemp().stream().filter(c -> c.getId() == card.getId()).findFirst().ifPresent(toRemove::add);
-                    if (action.getCardsToMove().size() != size) {
-                        action.getCardsToMove().add(i, card);
-                    }
                 }
                 toRemove.forEach(c -> player.getPlayerDeck().getTemp().remove(c));
                 break;
             case DISCARD:
-                for (int i = 0; i < size; i++) {
-                    Card card = action.getCardsToMove().get(i);
+                for (int i = 0; i < cardsToMove.size(); i++) {
+                    Card card = cardsToMove.get(i);
                     player.getPlayerDeck().getDiscardPile().stream().filter(c -> c.getId() == card.getId()).findFirst().ifPresent(toRemove::add);
-                    if (action.getCardsToMove().size() != size) {
-                        action.getCardsToMove().add(i, card);
-                    }
                 }
                 toRemove.forEach(c -> player.getPlayerDeck().getDiscardPile().remove(c));
                 break;
             case DRAW:
-                for (int i = 0; i < size; i++) {
-                    Card card = action.getCardsToMove().get(i);
+                for (int i = 0; i < cardsToMove.size(); i++) {
+                    Card card = cardsToMove.get(i);
                     player.getPlayerDeck().getCardsDeck().stream().filter(c -> c.getId() == card.getId()).findFirst().ifPresent(toRemove::add);
-                    if (action.getCardsToMove().size() != size) {
-                        action.getCardsToMove().add(i, card);
-                    }
                 }
                 toRemove.forEach(c -> player.getPlayerDeck().getCardsDeck().remove(c));
-                action.setCardsToMove((ArrayList) toRemove);
                 break;
             case BUY:
                 Map<Short, Integer> newCount = new HashMap<>();
-                for (int i = 0; i < size; i++) {
-                    Card card = action.getCardsToMove().get(i);
+                for (int i = 0; i < cardsToMove.size(); i++) {
+                    Card card = cardsToMove.get(i);
                     short id = card.getId();
                     int count = playground.getCardField().get(id);
                     if (count > 0) {
                         playground.getCardField().replace(id, --count);
                         newCount.put(id, count);
                     }
-                    if (action.getCardsToMove().size() != size) {
-                        action.getCardsToMove().add(i, card);
-                    }
                 }
                 UpdateCardCounterMessage message = new UpdateCardCounterMessage(gameID, player.getTheUserInThePlayer(), newCount);
                 playground.getGameService().sendToAllPlayers(gameID, message);
                 break;
         }
-        MoveCardMessage msg = new MoveCardMessage(gameID, player.getTheUserInThePlayer(), new Move(action.getCardsToMove(), action.getCardSource(), action.getCardDestination()));
+        MoveCardMessage msg = new MoveCardMessage(gameID, player.getTheUserInThePlayer(), new Move(cardsToMove, action.getCardSource(), action.getCardDestination()));
         //TODO Evtl. Daten, die andere Spieler nicht erhalten dürfen irgendwie unkenntlich machen? (Karten anderer Spieler)
         playground.getGameService().sendToAllPlayers(gameID, msg);
-
         return true;
     }
 
@@ -780,13 +695,13 @@ public class ActionCardExecution {
 
         //Prüfe ob einer der betroffenen Spieler eine Reaktionskarte auf der Hand hat
         if (theCard.getType() == ActionCard.ActionType.Attack) {
+            List<Player> toRemove = new ArrayList<>();
             for (Player p : affectedPlayers) {
-                if (!p.equals(this.player) && checkForReactionCard(p)) {
-                    players.remove(p);
-                    affectedPlayers.remove(p);
+                if (!p.equals(player) && checkForReactionCard(p)) {
+                    toRemove.add(p);
                 }
             }
-
+            toRemove.forEach(affectedPlayers::remove);
         }
         return affectedPlayers;
     }
@@ -802,9 +717,7 @@ public class ActionCardExecution {
     private boolean checkForReactionCard(Player player) {
         for (Card card : player.getPlayerDeck().getHand()) {
             if (card instanceof ActionCard && ((ActionCard) card).getType() == ActionCard.ActionType.Reaction) {
-                player.getPlayerDeck().getHand().remove(card);
-                player.getPlayerDeck().getActionPile().add(card);
-                //TODO: Message an Client
+                playground.getGameService().sendToAllPlayers(gameID, new PlayedReactionCardMessage(card.getId(), player.getTheUserInThePlayer(), gameID));
                 return true;
             }
         }
@@ -821,7 +734,19 @@ public class ActionCardExecution {
         if (actualStateIndex == theCard.getActions().size() && !waitedForPlayerInput && finishedNextActions) {
             if(!finishedExecution) {
                 finishedExecution = true;
-                playground.getCompositePhase().finishedActionCardExecution(player, newHandCards, theCard);
+                if (!removeCardAfter && (!useCardExecution || parent.getUseCardCounter() == 0)) {
+                    player.getPlayerDeck().getActionPile().add(theCard);
+                } else if (!useCardExecution || parent.getUseCardCounter() == 0) {
+                    playground.getTrash().add(theCard);
+                }
+                playground.sendCardsDeckSize();
+                if (useCardExecution) {
+                    parent.setUseCardCounter(parent.getUseCardCounter() + 1);
+                    parent.executeUseCard(parent.getUseAction());
+                } else {
+                    playground.getGameService().getBus().unregister(this);
+                    playground.getCompositePhase().finishedActionCardExecution(player);
+                }
             }
             return true;
         }
@@ -864,7 +789,45 @@ public class ActionCardExecution {
         return playground.getCardsPackField().getCards().getAllCards().stream().filter(c -> c.getId() == id).findFirst().orElse(null);
     }
 
+    /**
+     * Setzt alle Attribute auf ihren ursprünglichen Zustand zurück
+     *
+     * @author Julia
+     * @since Sprint 10
+     */
+    private void reset() {
+        actualStateIndex = 0;
+        nextActionIndex = 0;
+        finishedNextActions = true;
+        executeOptionalAction = false;
+        startedNextActions = false;
+        finishedExecution = false;
+        removeCardAfter = false;
+        waitedForPlayerInput = false;
+        nextActions.clear();
+    }
+
     public boolean isRemoveCardAfter() {
         return removeCardAfter;
+    }
+
+    public ActionCardExecution getParent() {
+        return parent;
+    }
+
+    public void setParent(ActionCardExecution parent) {
+        this.parent = parent;
+    }
+
+    public int getUseCardCounter() {
+        return useCardCounter;
+    }
+
+    public void setUseCardCounter(int count) {
+        useCardCounter = count;
+    }
+
+    public UseCard getUseAction() {
+        return useAction;
     }
 }

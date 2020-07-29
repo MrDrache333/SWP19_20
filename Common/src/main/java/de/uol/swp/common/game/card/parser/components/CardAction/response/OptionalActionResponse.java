@@ -14,14 +14,16 @@ import java.util.UUID;
 public class OptionalActionResponse extends AbstractRequestMessage {
 
     private static final long serialVersionUID = -4612871995662134853L;
-    private boolean execute;
-    private UUID gameID;
-    private User player;
+    private final boolean execute;
+    private final UUID gameID;
+    private final User player;
+    private final int actionExecutionID;
 
-    public OptionalActionResponse(UUID gameID, User player, boolean execute) {
+    public OptionalActionResponse(UUID gameID, User player, boolean execute, int actionExecutionID) {
         this.execute = execute;
         this.gameID = gameID;
         this.player = player;
+        this.actionExecutionID = actionExecutionID;
     }
 
     public boolean isExecute() {
@@ -34,5 +36,9 @@ public class OptionalActionResponse extends AbstractRequestMessage {
 
     public User getPlayer() {
         return player;
+    }
+
+    public int getActionExecutionID() {
+        return actionExecutionID;
     }
 }

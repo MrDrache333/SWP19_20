@@ -5,14 +5,15 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.AlertBox;
 import de.uol.swp.client.Notifyer;
-import de.uol.swp.client.SceneManager;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.settings.event.CloseSettingsEvent;
 import de.uol.swp.client.settings.event.DeleteAccountEvent;
+import de.uol.swp.client.sound.SoundMediaPlayer;
+import de.uol.swp.client.user.UserService;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
-import de.uol.swp.common.user.UserService;
 import de.uol.swp.common.user.message.UpdatedUserMessage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -22,6 +23,7 @@ import javafx.scene.image.ImageView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.util.regex.Pattern;
 
 
@@ -31,6 +33,7 @@ import java.util.regex.Pattern;
  * @author Anna
  * @since Sprint 4
  */
+@SuppressWarnings("UnstableApiUsage, unused")
 public class SettingsPresenter extends AbstractPresenter {
 
     /**
@@ -44,10 +47,10 @@ public class SettingsPresenter extends AbstractPresenter {
     private static final Logger LOG = LogManager.getLogger(SettingsPresenter.class);
 
     private User loggedInUser;
-    private LobbyService lobbyService;
-    private UserService userService;
-    private Injector injector;
-    private EventBus eventBus;
+    private final LobbyService lobbyService;
+    private final UserService userService;
+    private final Injector injector;
+    private final EventBus eventBus;
 
     @FXML
     private Button cancelButton;
@@ -62,18 +65,22 @@ public class SettingsPresenter extends AbstractPresenter {
     @FXML
     private PasswordField currentPasswordField;
     @FXML
-    private ImageView chatMuteImage;
+    private ImageView chatMuteIcon;
     @FXML
     private ToggleButton chatMuteToggleButton;
+    @FXML
+    private ImageView soundIcon;
+    @FXML
+    private ToggleButton soundIconToggleButton;
 
     /**
      * Konstruktor des SettingPresenters
      *
-     * @param loggedInUser
-     * @param lobbyService
-     * @param userService
-     * @param injector
-     * @param eventBus
+     * @param loggedInUser Der eingeloggte User
+     * @param lobbyService DerLobbyService
+     * @param userService Der UserService
+     * @param injector Der injector
+     * @param eventBus Der EventBus
      * @author Julia, Keno S.
      * @since Sprint 4
      */
@@ -89,7 +96,7 @@ public class SettingsPresenter extends AbstractPresenter {
      * Überprüft die Benutzereingaben. Falls alle gültig sind, wird im UserService die Methode updateUser aufgerufen,
      * ansonsten wird eine entsprechende Fehlermeldung angezeigt
      *
-     * @param event
+     * @param event Das ActionEvent
      * @author Julia
      * @since Sprint 4
      */
@@ -107,21 +114,21 @@ public class SettingsPresenter extends AbstractPresenter {
             eventBus.post(new CloseSettingsEvent());
             clearAll();
         } else if (!password.equals(password2)) {
-            SceneManager.showAlert(Alert.AlertType.ERROR, "Die Passwörter stimmen nicht überein", "Fehler");
+            new AlertBox(Alert.AlertType.ERROR, "Die Passwörter stimmen nicht überein", "Fehler");
             passwordField.clear();
             password2Field.clear();
             passwordField.requestFocus();
         } else if (!Strings.isNullOrEmpty(password) && password.contains(" ")) {
-            SceneManager.showAlert(Alert.AlertType.ERROR, "Das Passwort darf keine Leerzeichen enthalten", "Fehler");
+            new AlertBox(Alert.AlertType.ERROR, "Das Passwort darf keine Leerzeichen enthalten", "Fehler");
             passwordField.clear();
             password2Field.clear();
             passwordField.requestFocus();
         } else if (!Strings.isNullOrEmpty(email) && !Pattern.matches("(?:[a-z0-9!#$%&'+/=?^_`{|}~-]+(?:.[a-z0-9!#$%&'+/=?^_`{|}~-]+)|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])\")@(?:(?:[a-z0-9](?:[a-z0-9-][a-z0-9])?.)+[a-z0-9](?:[a-z0-9-][a-z0-9])?|[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+", email)) {
-            SceneManager.showAlert(Alert.AlertType.ERROR, email + " ist keine gültige E-Mail-Adresse", "Fehler");
+            new AlertBox(Alert.AlertType.ERROR, email + " ist keine gültige E-Mail-Adresse", "Fehler");
             emailField.clear();
             emailField.requestFocus();
         } else if (Strings.isNullOrEmpty(currentPassword)) {
-            SceneManager.showAlert(Alert.AlertType.ERROR, "Gib dein aktuelles Passwort ein", "Fehler");
+            new AlertBox(Alert.AlertType.ERROR, "Gib dein aktuelles Passwort ein", "Fehler");
             currentPasswordField.clear();
             currentPasswordField.requestFocus();
         } else {
@@ -143,7 +150,7 @@ public class SettingsPresenter extends AbstractPresenter {
     /**
      * Postet auf den EventBus das Accountlöschung-Event
      *
-     * @param actionEvent
+     * @param actionEvent Das ActionEvent
      * @author Julia
      * @since Sprint 4
      */
@@ -155,7 +162,7 @@ public class SettingsPresenter extends AbstractPresenter {
     /**
      * Postet auf den EventBus das Schließe-Settings-Event
      *
-     * @param actionEvent
+     * @param actionEvent Das ActionEvent
      * @author Julia
      * @since Sprint 4
      */
@@ -168,23 +175,33 @@ public class SettingsPresenter extends AbstractPresenter {
     /**
      * Mutet alle Benachrichtigungen beim Aufruf
      *
-     * @param actionEvent
      * @author Keno S.
      * @since Sprint 7
      */
     @FXML
-    public void onChatMuteToggleButtonPressed(ActionEvent actionEvent) {
+    public void onChatMuteToggleButtonPressed() {
         Notifyer.setMuteState(chatMuteToggleButton.isSelected());
-        if (chatMuteToggleButton.isSelected())
-            chatMuteImage.setImage(new Image("images/chat_on_icon.png"));
-        else
-            chatMuteImage.setImage(new Image("images/chat_off_icon.png"));
+        chatMuteIcon.setImage(new Image(chatMuteToggleButton.isSelected() ? "/images/chat_on_icon.png" : "/images/chat_off_icon.png"));
+    }
+
+    /**
+     * Schaltet den Sound an bzw. aus
+     *
+     * @param actionEvent Das ActionEvent
+     * @author Rike
+     * @since Sprint 9
+     */
+    @FXML
+    public void onSoundIconToggleButtonPressed(ActionEvent actionEvent) {
+        Notifyer.setMuteState(soundIconToggleButton.isSelected());
+        SoundMediaPlayer.setSound(!SoundMediaPlayer.isSoundEnabled());
+        setSoundIcon();
     }
 
     /**
      * Aktualisiert den loggedInUser
      *
-     * @param message
+     * @param message Die UpdatedUserMessage
      * @author Julia
      * @since Sprint 4
      */
@@ -207,5 +224,15 @@ public class SettingsPresenter extends AbstractPresenter {
         passwordField.clear();
         password2Field.clear();
         currentPasswordField.clear();
+    }
+
+    /**
+     * Hilfsmethode die das SoundIcon setzt, falls es außerhalb der Einstellungen (bspw. im Login-Screen oder im Registration-Screen verändert wurde)
+     *
+     * @author Rike
+     * @since Sprint 9
+     */
+    public void setSoundIcon(){
+        soundIcon.setImage(new Image(new File(getClass().getResource(SoundMediaPlayer.isSoundEnabled() ? "/images/sound_on_icon.png" : "/images/sound_off_icon.png").toExternalForm().replace("file:", "")).toURI().toString()));
     }
 }

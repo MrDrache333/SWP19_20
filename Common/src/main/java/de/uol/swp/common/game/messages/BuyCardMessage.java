@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public class BuyCardMessage extends AbstractServerMessage {
 
-    private UUID lobbyID;
+    private UUID gameID;
     private User currentUser;
     private Short cardID;
     private int counterCard;
@@ -19,16 +19,16 @@ public class BuyCardMessage extends AbstractServerMessage {
     /**
      * Die Antwort auf die BuyCardRequest
      *
-     * @param lobbyID     die LobbyID
-     * @param currentUser der User der die Request gestellt hat
-     * @param cardID      die ID der Karte (String)
+     * @param gameID      Die GameID
+     * @param currentUser Der User der die Request gestellt hat
+     * @param cardID      Die ID der Karte (String)
      * @param counterCard Anzahl der Karten (die die selbe ID haben) die man noch kaufen kann
-     * @param costCard    die Kosten der zu kaufenden Karte
+     * @param costCard    Die Kosten der zu kaufenden Karte
      * @author Rike
      * @since Sprint 5
      */
-    public BuyCardMessage(UUID lobbyID, User currentUser, Short cardID, int counterCard, Short costCard) {
-        this.lobbyID = lobbyID;
+    public BuyCardMessage(UUID gameID, User currentUser, Short cardID, int counterCard, Short costCard) {
+        this.gameID = gameID;
         this.currentUser = currentUser;
         this.cardID = cardID;
         this.counterCard = counterCard;
@@ -36,14 +36,14 @@ public class BuyCardMessage extends AbstractServerMessage {
     }
 
     /**
-     * Gibt die LobbyID zurück
+     * Gibt die GameID zurück
      *
-     * @return lobbyID die LobbyID
-     * @author Rike
+     * @return gameID die GameID
+     * @author Rike, Darian
      * @since Sprint 3
      */
-    public UUID getLobbyID() {
-        return lobbyID;
+    public UUID getGameID() {
+        return gameID;
     }
 
     /**
