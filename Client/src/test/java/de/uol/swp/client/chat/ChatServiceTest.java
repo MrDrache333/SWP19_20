@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Anna
  * @since Sprint 10
  */
-public class ChatServiceTest {
+class ChatServiceTest {
 
     /**
      * Standard Benutzer, Nachricht und Chat-ID zum Testen
@@ -125,7 +125,7 @@ public class ChatServiceTest {
     }
 
     /**
-     * Versuch eine NAchricht mit eienr bestimmten Chat-ID zu senden.
+     * Versuch eine Nachricht mit eienr bestimmten Chat-ID zu senden.
      *
      * @throws InterruptedException Die evtl. auftretene Fehlermeldung
      * @author Anna
