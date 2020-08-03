@@ -6,8 +6,6 @@ import com.google.common.eventbus.Subscribe;
 import de.uol.swp.common.game.card.parser.components.CardAction.response.ChooseCardResponse;
 import de.uol.swp.common.game.card.parser.components.CardAction.response.OptionalActionResponse;
 import de.uol.swp.common.game.request.*;
-import de.uol.swp.common.lobby.Lobby;
-import de.uol.swp.common.lobby.dto.LobbyDTO;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import org.junit.jupiter.api.AfterEach;
@@ -30,15 +28,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class GameServiceTest {
     /**
-     * Standard Benutzer, Lobby-ID, Lobby und Karten-ID zum Testen
+     * Standard Benutzer, Lobby- und Karten-ID zum Testen
      *
      * @author Anna
      * @since Sprint 10
      */
     User defaultUser = new UserDTO("Marco", "test", "marco@test.de");
-    User defaultOwner = new UserDTO("Owner", "test", "123@test.de");
     UUID lobbyID = UUID.randomUUID();
-    Lobby defaultLobby = new LobbyDTO("TestLobby", defaultOwner, lobbyID, "test");
     Short cardID = (short) 10;
 
     /**
@@ -86,12 +82,6 @@ class GameServiceTest {
     @AfterEach
     void deregisterBus() {
         bus.unregister(this);
-    }
-
-    @BeforeEach
-    void startGame() {
-        defaultLobby.setReadyStatus(defaultUser, true);
-        defaultLobby.setReadyStatus(defaultOwner, true);
     }
 
     /**
@@ -277,7 +267,6 @@ class GameServiceTest {
         assertEquals(13, res.getActionExecutionID());
         assertEquals(defaultUser, res.getPlayer());
         assertTrue(res.isExecute());
-
         optionalActionFalse();
         assertTrue(event instanceof OptionalActionResponse);
         OptionalActionResponse res2 = (OptionalActionResponse) event;
