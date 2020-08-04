@@ -9,7 +9,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ValueCardTest {
 
 
-
+    /**
+     * Testet, ob eine Karte des Typs Value erstellt werden kann
+     *
+     * @author Paula
+     * @since Sprint10
+     */
     @Test
     public void createCardTest() {
         ValueCard card = new ValueCard("Provinz",(short)02, (short)5, (short) 10);
@@ -20,7 +25,12 @@ public class ValueCardTest {
         assertEquals((short) 5, card.getCosts());
     }
 
-
+    /**
+     * Testet den Setter der ValueCard
+     *
+     * @author Paula
+     * @since Sprint10
+     */
     @Test
     public void setValueCardTest() {
        ValueCard card = new ValueCard("Provinz",(short)02, (short)5, (short) 10);
@@ -31,7 +41,4 @@ public class ValueCardTest {
         assertEquals(Card.Type.VALUECARD, card.getCardType());
         assertEquals((short) 5, card.getCosts());
     }
-
-
-
 }

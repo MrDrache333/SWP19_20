@@ -8,11 +8,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CursedCardTest {
 
-
-
+    /**
+     * Testet, ob eine Karte des Typs Curse erstellt werden kann
+     *
+     * @author Paula
+     * @since Sprint10
+     */
     @Test
     public void createCardTest() {
-        CurseCard card = new CurseCard("Provinz",(short)02, (short)5);
+        CurseCard card = new CurseCard("Provinz", (short) 02, (short) 5);
         assertEquals("Provinz", card.getName());
         assertEquals(02, card.getId());
         assertEquals(5, card.getValue());
@@ -20,10 +24,15 @@ public class CursedCardTest {
         assertEquals((short) 0, card.getCosts());
     }
 
-
+    /**
+     * Testet den Setter der CurseCard
+     *
+     * @author Paula
+     * @since Sprint10
+     */
     @Test
     public void setValueCardTest() {
-        CurseCard card = new CurseCard("Provinz",(short)02, (short)5);
+        CurseCard card = new CurseCard("Provinz", (short) 02, (short) 5);
         card.setValue((short) 100);
         assertEquals("Provinz", card.getName());
         assertEquals(02, card.getId());
@@ -31,7 +40,4 @@ public class CursedCardTest {
         assertEquals(Card.Type.CURSECARD, card.getCardType());
         assertEquals((short) 0, card.getCosts());
     }
-
-
-
 }

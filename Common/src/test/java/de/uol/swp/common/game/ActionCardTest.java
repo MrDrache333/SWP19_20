@@ -12,21 +12,24 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ActionCardTest {
 
+    /**
+     * Testet, ob Karte erstellt wird
+     *
+     * @author Paula
+     * @since Sprint10
+     */
 
     @Test
     public void createCardTest() {
-        ArrayList<CardAction>  actions = new ArrayList<CardAction>();
+        ArrayList<CardAction> actions = new ArrayList<CardAction>();
         UseCard cardAction = new UseCard((short) 12);
         actions.add(cardAction);
-        ActionCard card = new ActionCard("Provinz",(short)02, (short)5, actions, ActionCard.ActionType.Attack);
+        ActionCard card = new ActionCard("Provinz", (short) 02, (short) 5, actions, ActionCard.ActionType.Attack);
         assertEquals("Provinz", card.getName());
         assertEquals(02, card.getId());
         assertEquals(5, card.getCosts());
         assertEquals(ActionCard.ActionType.Attack, card.getType());
         assertEquals(Card.Type.ACTIONCARD, card.getCardType());
         assertEquals(actions, card.getActions());
-
     }
-
-
 }
