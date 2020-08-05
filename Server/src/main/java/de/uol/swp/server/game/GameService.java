@@ -151,7 +151,7 @@ public class GameService extends AbstractService {
      * @since Sprint5
      */
     @Subscribe
-    void startGame(StartGameInternalMessage msg) {
+    public void startGame(StartGameInternalMessage msg) {
         try {
             gameManagement.createGame(msg.getLobbyID());
             if (gameManagement.getGame(msg.getLobbyID()).isPresent()) {
@@ -197,7 +197,7 @@ public class GameService extends AbstractService {
      * @since Sprint5
      */
     @Subscribe
-    void userGivesUp(GameGiveUpRequest req) {
+    public void userGivesUp(GameGiveUpRequest req) {
         if (gameManagement.getGame(req.getLobbyID()).isPresent()) {
             Boolean userRemovedSuccessfully = gameManagement.getGame(req.getLobbyID()).get().getPlayground().playerGaveUp(req.getLobbyID(), req.getGivingUpUser(), req.getGivingUp());
             if (userRemovedSuccessfully && !(gameManagement.lobbyIsNotPresent(req.getLobbyID()))) {
