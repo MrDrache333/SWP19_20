@@ -2,7 +2,6 @@ package de.uol.swp.server;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.chat.ChatManagement;
 import de.uol.swp.server.chat.ChatService;
 import de.uol.swp.server.communication.Server;
@@ -69,12 +68,7 @@ class ServerApp {
 
         UserManagement userManagement = injector.getInstance(UserManagement.class);
 
-        //Wenn der benutzte UserStore lokal ist, sollen Testnutzer erstellt werden
-        if (!test) {
-            // Testuser erstellen für den MainMemoryBasedUserStore
-            for (int i = 1; i <= 10; i++)
-                userManagement.createUser(new UserDTO("test" + i, "test" + i, "test" + i + "@test.de"));
-        }
+
         // Erstelle den globalen Chat
         injector.getInstance(ChatManagement.class).createChat("global");
 
