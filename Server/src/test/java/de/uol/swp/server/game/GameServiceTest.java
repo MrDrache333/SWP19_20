@@ -6,6 +6,7 @@ import de.uol.swp.common.game.card.ActionCard;
 import de.uol.swp.common.game.card.parser.components.CardAction.CardAction;
 import de.uol.swp.common.game.phase.Phase;
 import de.uol.swp.common.game.request.*;
+import de.uol.swp.common.lobby.request.LobbyLeaveUserRequest;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.chat.ChatManagement;
@@ -27,13 +28,11 @@ import java.util.concurrent.CountDownLatch;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GameServiceTest {
+public class GameServiceTest<œTest> {
     static final User defaultOwner = new UserDTO("test1", "test1", "test1@test.de");
     static final User secondPlayer = new UserDTO("test2", "test2", "test2@test2.de");
     static final User thirdPlayer = new UserDTO("test3", "test3", "test3@test3.de");
     ArrayList<CardAction> actions = new ArrayList<CardAction>();
-
-
     ActionCard card = new ActionCard("Provinz", (short) 2, (short) 300, actions, ActionCard.ActionType.Attack);
     static final ChatManagement chatManagement = new ChatManagement();
     static final LobbyManagement lobbyManagement = new LobbyManagement();
@@ -45,7 +44,6 @@ public class GameServiceTest {
     static final GameService gameService = new GameService(bus, gameManagement, authService);
     private final CountDownLatch lock = new CountDownLatch(1);
     private static final ArrayList<Short> chosenCards = new ArrayList<>();
-
     static UUID lobbyId;
 
 
@@ -69,7 +67,10 @@ public class GameServiceTest {
     }
 
     /**
+     * Testet, ob das Spiel gestartet wird
      *
+     * @author Paula
+     * @since Sprint10
      */
     @Test
     public void startGameTest() {
@@ -79,7 +80,8 @@ public class GameServiceTest {
     }
 
     /**
-     *
+     * @author Paula
+     * @since Sprint10
      */
     @Test
     public void startGameFailTest() {
@@ -90,7 +92,10 @@ public class GameServiceTest {
     }
 
     /**
+     * Testet den onSkipPhaseRequest
      *
+     * @author Paula
+     * @since Sprint10
      */
     @Test
     public void onSkipPhaseRequestTest() {
@@ -104,7 +109,8 @@ public class GameServiceTest {
     }
 
     /**
-     *
+     * @author Paula
+     * @since Sprint10
      */
     @Test
     public void onSkipPhaseRequestClearPhaseTest() {
@@ -118,7 +124,8 @@ public class GameServiceTest {
     }
 
     /**
-     *
+     * @author Paula
+     * @since Sprint10
      */
     @Test
     public void onSkipPhaseRequestGamNotPresentTest() {
@@ -128,11 +135,13 @@ public class GameServiceTest {
         gameService.onSkipPhaseRequest(req);
         Optional<Game> game = gameManagement.getGame(req.getGameID());
         assertFalse(game.isPresent());
-
     }
 
     /**
+     * Testet, ob ein fertiges Spiel auch wieder gelöscht wird
      *
+     * @author Paula
+     * @since Sprint10
      */
     @Test
     public void dropFinishedGame() {
@@ -140,27 +149,42 @@ public class GameServiceTest {
         gameService.startGame(new StartGameInternalMessage(lobbyId));
         gameService.dropFinishedGame(lobbyId);
         assertFalse(gameService.getGameManagement().getGame(lobbyId).isPresent());
-        //assertEquals(Optional.empty(), gameManagement.getGame(lobbyId));
-
-
     }
 
     /**
+     * Testet das Aufgeben
      *
+     * @author Paula
+     * @since Sprint10
      */
     @Test
     public void userGivesUp() {
-        UUID lobbyId = UUID.randomUUID();
         gameService.startGame(new StartGameInternalMessage(lobbyId));
+        assertTrue(gameService.getGameManagement().getGame(lobbyId).get().getPlayground().getPlayers().size() == 3);
         GameGiveUpRequest req = new GameGiveUpRequest((UserDTO) thirdPlayer, lobbyId);
         gameService.userGivesUp(req);
-        assertFalse(gameService.getGameManagement().getGame(lobbyId).get().getPlayground().getPlayers().contains(thirdPlayer));
-        // assertFalse(gameManagement.getGame(lobbyId).get().getPlayground().getPlayers().contains(thirdPlayer));
-
+        assertTrue(gameService.getGameManagement().getGame(lobbyId).get().getPlayground().getPlayers().size() == 2);
     }
 
     /**
+     * Testet, ob der User der ein Spiel aufgibt aus der Lobby entfernt wird
      *
+     * @author Paula
+     * @since Sprint10
+     */
+    @Test
+    public void userGavesUpLeavesLobby() {
+        gameService.startGame(new StartGameInternalMessage(lobbyId));
+        LobbyLeaveUserRequest req = new LobbyLeaveUserRequest(lobbyId, (UserDTO) secondPlayer);
+        gameService.userGavesUpLeavesLobby(lobbyId, (UserDTO) secondPlayer);
+        assertFalse(gameService.getGameManagement().getGame(lobbyId).get().getPlayground().getPlayers().contains(secondPlayer));
+    }
+
+    /**
+     * Testet den BuyCardRequest
+     *
+     * @author Paula
+     * @since Sprint10
      */
     @Test
     public void onBuyCardRequest() {
@@ -169,39 +193,31 @@ public class GameServiceTest {
         BuyCardRequest req = new BuyCardRequest(lobbyId, playground.getActualPlayer().getTheUserInThePlayer(), card.getId());
         gameService.onBuyCardRequest(req);
         assertFalse(gameService.getGameManagement().getGame(lobbyId).get().getPlayground().getActualPlayer().getPlayerDeck().getCardsDeck().contains(card));
-
-
     }
 
-    @Test
-    public void onBuyCardRequestNotEnoughMoneyTest() {
-        gameService.startGame(new StartGameInternalMessage(lobbyId));
-        Playground playground = gameManagement.getGame(lobbyId).get().getPlayground();
-        BuyCardRequest req = new BuyCardRequest(lobbyId, playground.getActualPlayer().getTheUserInThePlayer(), card.getId());
-        gameService.onBuyCardRequest(req);
-        assertTrue(gameService.getGameManagement().getGame(lobbyId).get().getPlayground().getActualPlayer().getPlayerDeck().actualMoneyFromPlayer() < card.getCosts());
-        // nöööööööööööö Excp ?
-
-
-    }
 
     /**
-     * bla bla bla bla
+     * Testet den PlayCardRequest
      *
      * @author Paula
      * @since Sprint10
      */
     @Test
-    public void onPlayCardRequest() {
+    public void onPlayCardRequestFailed() {
         gameService.startGame(new StartGameInternalMessage(lobbyId));
         Playground playground = gameManagement.getGame(lobbyId).get().getPlayground();
-        PlayCardRequest req = new PlayCardRequest(lobbyId, defaultOwner, card.getId());
+        PlayCardRequest req = new PlayCardRequest(lobbyId, defaultOwner, (short) 22);
+        playground.setActualPhase(Phase.Type.ActionPhase);
         gameService.onPlayCardRequest(req);
-        assertFalse(gameService.getGameManagement().getGame(lobbyId).get().getPlayground().getActualPlayer().getPlayerDeck().getCardsDeck().contains(card));
-
-
+        assertFalse(playground.getActualPlayer().getPlayerDeck().getCardsDeck().contains(card));
     }
 
+    /**
+     * Testet den PoopBreakRequest
+     *
+     * @author Paula
+     * @since Sprint10
+     */
     @Test
     public void onPoopBreakRequest() {
         gameService.startGame(new StartGameInternalMessage(lobbyId));
@@ -210,13 +226,17 @@ public class GameServiceTest {
         gameService.onPoopBreakRequest(req);
     }
 
+    /**
+     * Testet den CancelPoopBreakRequest
+     *
+     * @author Paula
+     * @since Sprint10
+     */
     @Test
     public void onCancelPoopBreakRequest() {
-
-    }
-
-    @Test
-    public void Clock() {
-
+        gameService.startGame(new StartGameInternalMessage(lobbyId));
+        Playground playground = gameManagement.getGame(lobbyId).get().getPlayground();
+        CancelPoopBreakRequest req = new CancelPoopBreakRequest(thirdPlayer, lobbyId);
+        gameService.onCancelPoopBreakRequest(req);
     }
 }
