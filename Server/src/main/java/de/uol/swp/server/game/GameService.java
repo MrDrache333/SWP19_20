@@ -396,4 +396,17 @@ public class GameService extends AbstractService {
     public GameManagement getGameManagement() {
         return gameManagement;
     }
+
+
+    public User getPoopInitiator() {
+        return poopInitiator;
+    }
+
+    public int getInterval() {
+        return interval;
+    }
+
+    public Map<User, Boolean> getPoopMap() {
+        return poopMap;
+    }
 }

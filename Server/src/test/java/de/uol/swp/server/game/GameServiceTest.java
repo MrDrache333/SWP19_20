@@ -28,11 +28,12 @@ import java.util.concurrent.CountDownLatch;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GameServiceTest<œTest> {
+@SuppressWarnings("UnstableApiUsage")
+public class GameServiceTest {
     static final User defaultOwner = new UserDTO("test1", "test1", "test1@test.de");
     static final User secondPlayer = new UserDTO("test2", "test2", "test2@test2.de");
     static final User thirdPlayer = new UserDTO("test3", "test3", "test3@test3.de");
-    ArrayList<CardAction> actions = new ArrayList<CardAction>();
+    ArrayList<CardAction> actions = new ArrayList<>();
     ActionCard card = new ActionCard("Provinz", (short) 2, (short) 300, actions, ActionCard.ActionType.Attack);
     static final ChatManagement chatManagement = new ChatManagement();
     static final LobbyManagement lobbyManagement = new LobbyManagement();
@@ -232,14 +233,19 @@ public class GameServiceTest<œTest> {
     /**
      * Testet den CancelPoopBreakRequest
      *
-     * @author Paula
+     * @author Paula, Julia
      * @since Sprint10
      */
     @Test
     public void onCancelPoopBreakRequest() {
         gameService.startGame(new StartGameInternalMessage(lobbyId));
-        Playground playground = gameManagement.getGame(lobbyId).get().getPlayground();
+        bus.post(new PoopBreakRequest(thirdPlayer, lobbyId));
+        bus.post(new PoopBreakRequest(secondPlayer, lobbyId));
         CancelPoopBreakRequest req = new CancelPoopBreakRequest(thirdPlayer, lobbyId);
         gameService.onCancelPoopBreakRequest(req);
+        assertEquals(0, gameService.getInterval());
+        assertNull(gameService.getPoopInitiator());
+        assertFalse(gameService.isTimerStarted());
+        assertTrue(gameService.getPoopMap().isEmpty());
     }
 }
