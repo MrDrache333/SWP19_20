@@ -220,10 +220,13 @@ public class GameServiceTest<œTest> {
      */
     @Test
     public void onPoopBreakRequest() {
+
         gameService.startGame(new StartGameInternalMessage(lobbyId));
         Playground playground = gameManagement.getGame(lobbyId).get().getPlayground();
         PoopBreakRequest req = new PoopBreakRequest(thirdPlayer, lobbyId);
+        assertFalse(req.getPoopDecision() == false && req.getPoopInitiator() == thirdPlayer);
         gameService.onPoopBreakRequest(req);
+        assertTrue(req.getPoopInitiator().equals(thirdPlayer) && req.getPoopDecision() == true && gameService.isTimerStarted() == false);
     }
 
     /**
