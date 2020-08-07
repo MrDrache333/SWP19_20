@@ -54,7 +54,7 @@ public class UserService extends AbstractService {
         } catch (Exception e) {
             LOG.error(e);
             //Bei Fehlern die Fehlermeldung an den Sender zurück senden
-            returnMessage = new RegistrationExceptionMessage("Anlegen des folgenden User schlug fehl: " + req.getUser() + " " + e.getMessage());
+            returnMessage = new RegistrationExceptionMessage("\nAnlegen des folgenden User schlug fehl: \n" + req.getUser().getUsername() + " \n" + e.getMessage());
         }
 
         //Wenn ein Kontext in dem Request übergeben wurde, dann übernehme diesen
@@ -64,3 +64,4 @@ public class UserService extends AbstractService {
         post(returnMessage);
     }
 }
+

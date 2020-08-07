@@ -22,7 +22,7 @@ public class RegistrationExceptionMessage extends AbstractResponseMessage {
 
     @Override
     public String toString() {
-        return "RegistrationExceptionMessage " + message;
+        return message;
     }
 
     @Override
@@ -38,3 +38,4 @@ public class RegistrationExceptionMessage extends AbstractResponseMessage {
         return Objects.hash(message);
     }
 }
+
