@@ -116,7 +116,15 @@ public class Playground extends AbstractPlayground {
         }
         for (int i = 0; i < cardsPackField.getCards().getCurseCards().size(); i++) {
             Card card = cardsPackField.getCards().getCurseCards().get(i);
-            cardField.put(card.getId(), 10);
+            if (lobbySizeOnStart == 2) {
+                cardField.put(card.getId(), 10);
+            }
+            if (lobbySizeOnStart == 3) {
+                cardField.put(card.getId(), 20);
+            }
+            if (lobbySizeOnStart == 4) {
+                cardField.put(card.getId(), 30);
+            }
         }
         for (int i = 0; i < cardsPackField.getCards().getMoneyCards().size(); i++) {
             Card card = cardsPackField.getCards().getMoneyCards().get(i);
