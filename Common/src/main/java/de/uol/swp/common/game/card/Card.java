@@ -14,20 +14,20 @@ public abstract class Card implements Serializable {
     /**
      * The Name.
      */
-    private String name;
+    private final String name;
     /**
      * The Id.
      */
-    private short id;
+    private final short id;
     /**
      * The Cardtype.
      */
-    private Type cardType;
+    private final Type cardType;
     /**
      * The Costs.
      */
     @SerializedName("cost")
-    private short costs;
+    private final short costs;
 
     /**
      * Erstellt eine neue Spielkarte

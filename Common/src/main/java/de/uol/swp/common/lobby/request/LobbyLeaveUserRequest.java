@@ -10,12 +10,13 @@ import java.util.UUID;
  * @author Julia
  * @since Sprint 3
  */
-
 public class LobbyLeaveUserRequest extends AbstractLobbyRequest {
-
 
     private static final long serialVersionUID = -1015160817744213145L;
 
+    /**
+     * Konstruktor für Serialisierung
+     */
     public LobbyLeaveUserRequest() {
     }
 
@@ -30,5 +31,4 @@ public class LobbyLeaveUserRequest extends AbstractLobbyRequest {
     public LobbyLeaveUserRequest(UUID lobbyID, UserDTO user) {
         super(lobbyID, user);
     }
-
 }

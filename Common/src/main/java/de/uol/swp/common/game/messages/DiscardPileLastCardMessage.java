@@ -8,9 +8,9 @@ import java.util.UUID;
 public class DiscardPileLastCardMessage extends AbstractServerMessage {
     private static final long serialVersionUID = -2520194284028927062L;
 
-    private UUID gameID;
-    private short cardID;
-    private User user;
+    private final UUID gameID;
+    private final short cardID;
+    private final User user;
 
     /**
      * Konstruktor, welcher die KartenID der letzten Karte vom Ablegestapel übergibt.

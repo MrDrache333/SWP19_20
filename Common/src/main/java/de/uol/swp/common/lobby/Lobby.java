@@ -73,13 +73,6 @@ public interface Lobby {
     UUID getLobbyID();
 
     /**
-     * Setzt die Lobby ID für die Lobby.
-     *
-     * @param lobbyID Die Lobby ID
-     */
-    void setLobbyID(UUID lobbyID);
-
-    /**
      * Gibt die Anzahl der Spieler zurück.
      *
      * @return Die Spieler
@@ -153,7 +146,7 @@ public interface Lobby {
     /**
      * Setzt die ausgewählten Karten in der Lobby
      *
-     * @param chosenCards
+     * @param chosenCards Die gewählten Karten
      */
     void setChosenCards(ArrayList<Short> chosenCards);
 }

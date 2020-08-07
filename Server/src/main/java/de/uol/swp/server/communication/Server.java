@@ -30,6 +30,7 @@ import java.net.InetSocketAddress;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+@SuppressWarnings("UnstableApiUsage, unused")
 public class Server implements ServerHandlerDelegate {
 
     private static final Logger LOG = LogManager.getLogger(Server.class);
@@ -213,8 +214,10 @@ public class Server implements ServerHandlerDelegate {
 
     private void putSession(ChannelHandlerContext ctx, Session newSession) {
 
-        // TODO: check if session is already bound to connection
-        activeSessions.put(ctx, newSession);
+        // TODO: check better if session is already bound to connection
+        if (!activeSessions.containsKey(newSession)) {
+                activeSessions.put(ctx, newSession);
+        }
     }
 
     private void removeSession(ChannelHandlerContext ctx) {

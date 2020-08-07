@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
+<?import javafx.scene.effect.ColorAdjust?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-
+<?import javafx.scene.text.Font?>
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="420.0" prefWidth="400.0" stylesheets="@../css/SettingsPresenter.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <ImageView fitHeight="420.0" fitWidth="400.0" opacity="0.9" pickOnBounds="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -28,11 +28,23 @@
                 <Font size="30.0" />
             </font>
         </Label>
-      <ToggleButton fx:id="chatMuteToggleButton" contentDisplay="CENTER" graphicTextGap="0.0" layoutX="328.0" layoutY="24.0" mnemonicParsing="false" onAction="#onChatMuteToggleButtonPressed" opacity="0.0" prefHeight="30.0" prefWidth="30.0" AnchorPane.rightAnchor="42.0" />
-      <ImageView fx:id="chatMuteImage" layoutX="328.0" layoutY="24.0">
+      <ImageView fx:id="chatMuteIcon" layoutX="350.0" layoutY="24.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../images/chat_off_icon.png" />
          </image>
+         <effect>
+            <ColorAdjust />
+         </effect>
       </ImageView>
+      <ToggleButton fx:id="chatMuteToggleButton" contentDisplay="CENTER" graphicTextGap="0.0" layoutX="350.0" layoutY="24.0" mnemonicParsing="false" onAction="#onChatMuteToggleButtonPressed" opacity="0.0" prefHeight="30.0" prefWidth="30.0" AnchorPane.rightAnchor="20.0" />
+        <ImageView fx:id="soundIcon" fitHeight="40.0" fitWidth="40.0" layoutX="20.0" layoutY="24.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/sound_on_icon.png" />
+         </image>
+         <effect>
+            <ColorAdjust brightness="-1.0" />
+         </effect>
+      </ImageView>
+      <ToggleButton fx:id="soundIconToggleButton" contentDisplay="CENTER" graphicTextGap="0.0" layoutX="20.0" layoutY="24.0" mnemonicParsing="false" onAction="#onSoundIconToggleButtonPressed" opacity="0.0" prefHeight="30.0" prefWidth="40.0" />
     </children>
 </AnchorPane>

@@ -2,6 +2,7 @@ package de.uol.swp.common.game.card.parser;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
 import de.uol.swp.common.game.card.ActionCard;
 import de.uol.swp.common.game.card.CurseCard;
 import de.uol.swp.common.game.card.MoneyCard;
@@ -14,8 +15,10 @@ import de.uol.swp.common.game.card.parser.components.deserializer.ValueCardDeSer
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.FileReader;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Objects;
 
 /**
  * JSonCardParser representiert eine Möglichkeit, Karten aus einer JSon-Datei zu laden und als Objekt zurück zu geben.
@@ -33,25 +36,30 @@ public class JsonCardParser {
      * @since Sprint 5
      */
     public CardPack loadPack(String packname) {
-        GsonBuilder gsonobj = new GsonBuilder().
+        GsonBuilder gsonObj = new GsonBuilder().
                 registerTypeAdapter(ActionCard.class, new ActionCardDeSerializer()).
                 registerTypeAdapter(ValueCard.class, new ValueCardDeSerializer()).
                 registerTypeAdapter(MoneyCard.class, new MoneyCardDeSerializer()).
                 registerTypeAdapter(CurseCard.class, new CurseCardDeSerializer());
 
-        Gson gsonRealObj = gsonobj.create();
+        Gson gsonRealObj = gsonObj.create();
         CardPack pack = null;
-        FileReader fr;
+        BufferedReader br;
         try {
-            fr = new FileReader(this.getClass().getResource("/cards/packs/" + packname + "/" + packname + ".json").toExternalForm().replace("file:", ""));
+
+            br = new BufferedReader(new InputStreamReader(
+                    Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("cards/packs/" + packname + "/" + packname + ".json"))
+            ));
 
             try {
-                pack = gsonRealObj.fromJson(fr, CardPack.class);
+                pack = gsonRealObj.fromJson(br, CardPack.class);
+            } catch (JsonParseException ex) {
+                LOG.debug("Fehler beim Parsen des Kartenpacketes:\n" + ex.getMessage());
             } finally {
-                fr.close();
+                br.close();
             }
         } catch (IOException e) {
-            LOG.debug("Fehler beim Laden des Kartenpaketes!");
+            LOG.debug("Fehler beim Laden des Kartenpaketes!\n" + e.getMessage());
         }
         return pack;
     }

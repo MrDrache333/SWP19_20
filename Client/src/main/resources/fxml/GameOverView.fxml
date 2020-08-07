@@ -4,20 +4,38 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
-<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="275.0" prefWidth="440.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
-    <ImageView fx:id="background" fitHeight="300.0" fitWidth="440.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <Image url="@../images/burgHohenzollern.jpg" />
+<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="280.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/10.0.2-internal"
+            xmlns:fx="http://javafx.com/fxml/1">
+    <ImageView fx:id="background" fitHeight="500.0" fitWidth="450.0" pickOnBounds="true" preserveRatio="true"
+               AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="34.0">
+        <Image url="@../images/burgHohenzollern.jpg"/>
     </ImageView>
-    <ImageView fx:id="bannerDrawing" fitWidth="300.0" layoutX="70.0" layoutY="55.0" preserveRatio="true" rotate="-2.7" AnchorPane.bottomAnchor="84.55000305175781" AnchorPane.leftAnchor="70.0" AnchorPane.rightAnchor="70.0" AnchorPane.topAnchor="55.0">
-        <Image url="@../images/bannerDrawing.png" />
+    <HBox fx:id="showResults" alignment="CENTER" opacity="0.7" prefHeight="20" prefWidth="450.0" spacing="20"
+          style="-fx-background-color: black" AnchorPane.topAnchor="0.0">
+    </HBox>
+    <ImageView fx:id="bannerDrawing" fitWidth="300.0" layoutX="40.0" layoutY="120.0" preserveRatio="true" rotate="-2.7">
+        <Image url="@../images/bannerDrawing.png"/>
     </ImageView>
-     <Text fx:id="bannerText" layoutX="105.0" layoutY="116.0" style="-fx-font-size: 18" text="12345678901 hat gewonnen!">
+    <HBox fx:id="bannerTextBox" alignment="CENTER" layoutX="80.0" layoutY="160.0" prefWidth="180">
+        <Text fx:id="bannerText" style="-fx-font-size: 18" text="Du hast gewonnen!">
         </Text>
-    <Text fx:id="bannerTextSmall" layoutX="121.0" layoutY="136.0" style="-fx-font-size: 12" text="Vielleicht klappt's beim nächsten Mal.">
-    </Text>
-    <ImageView fx:id="trophy" fitWidth="35.0" layoutX="240.0" layoutY="175.0" preserveRatio="true" visible="false">
-        <Image url="@../images/trophy.png" />
+    </HBox>
+    <HBox fx:id="bannerTextSmallBox" alignment="CENTER" layoutX="75" layoutY="195" prefWidth="185">
+
+        <Text fx:id="bannerTextSmall" style="-fx-font-size: 12" text="Herzlichen Glückwunsch.">
+        </Text>
+    </HBox>
+    <ImageView fx:id="trophy" fitWidth="35.0" layoutX="250.0" layoutY="160.0" preserveRatio="true" visible="true">
+        <Image url="@../images/trophy.png"/>
     </ImageView>
-      <Button defaultButton="true" layoutX="289.0" layoutY="232.0" mnemonicParsing="false" onAction="#onAgainButtonPressed" text="nochmal" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="70.0" AnchorPane.topAnchor="230.0" />
-      <Button layoutX="73.0" layoutY="232.0" mnemonicParsing="false" onAction="#onReturnButtonPressed" text="aufhören" AnchorPane.leftAnchor="70.0" AnchorPane.rightAnchor="300.0" AnchorPane.topAnchor="230.0" />
+    <HBox alignment="BASELINE_RIGHT" layoutX="265.0" layoutY="245.0" prefHeight="20" prefWidth="150" spacing="7.0"
+          AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="20.0">
+        <children>
+            <Button defaultButton="true" layoutX="280.0" layoutY="250.0" mnemonicParsing="false"
+                    onAction="#onAgainButtonPressed" text="nochmal"/>
+            <Button layoutX="355.0" layoutY="250.0" mnemonicParsing="false" onAction="#onReturnButtonPressed"
+                    text="aufhören"/>
+        </children>
+    </HBox>
 </AnchorPane>

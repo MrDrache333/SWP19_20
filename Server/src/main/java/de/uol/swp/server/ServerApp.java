@@ -2,7 +2,6 @@ package de.uol.swp.server;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.chat.ChatManagement;
 import de.uol.swp.server.chat.ChatService;
 import de.uol.swp.server.communication.Server;
@@ -64,17 +63,14 @@ class ServerApp {
      * @since Sprint 0
      */
     private static void createServices(Injector injector) {
+
+        boolean test = injector.getInstance(ServerModule.class).isDatabaseBasedUserStore();
+
         UserManagement userManagement = injector.getInstance(UserManagement.class);
-        ChatManagement chatManagement = injector.getInstance(ChatManagement.class);
-        GameManagement gameManagement = injector.getInstance(GameManagement.class);
-        
-        // TODO: Nach der Registrierung entfernen (Von Marco --> Nur übersetzt)
-        for (int i = 0; i < 100; i++) {
-            userManagement.createUser(new UserDTO("test" + i, "test" + i, "test" + i + "@test.de"));
-        }
+
 
         // Erstelle den globalen Chat
-        chatManagement.createChat("global");
+        injector.getInstance(ChatManagement.class).createChat("global");
 
         // Bemerkung: Da diese Dienste von keiner anderen Klasse referenziert werden,
         // müssen wir hier Instanzen erzeugen (und Abhängigkeiten injizieren).

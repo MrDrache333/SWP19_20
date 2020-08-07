@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Injector;
 import de.uol.swp.client.AbstractPresenter;
+import de.uol.swp.client.ClientApp;
 import de.uol.swp.client.chat.ChatService;
 import de.uol.swp.client.chat.ChatViewPresenter;
 import de.uol.swp.client.lobby.LobbyPresenter;
@@ -40,33 +41,33 @@ import java.util.UUID;
  * @author Keno O.
  * @since Sprint 3
  */
-@SuppressWarnings("UnstableApiUsage")
+@SuppressWarnings("UnstableApiUsage, unused")
 public class GameManagement {
 
     static final Logger LOG = LogManager.getLogger(GameManagement.class);
     static final String styleSheet = "css/global.css";
 
-    private LobbyPresenter lobbyPresenter;
-    private GameViewPresenter gameViewPresenter;
-    private ChatViewPresenter chatViewPresenter;
-    private UUID id;    //Die Lobby, Chat and GameID
+    private final LobbyPresenter lobbyPresenter;
+    private final GameViewPresenter gameViewPresenter;
+    private final ChatViewPresenter chatViewPresenter;
+    private final UUID id;    //Die Lobby, Chat and GameID
     private User loggedInUser;  //Der aktuell angemeldete Benutzer
-    private UserDTO gameOwner;
-    private String lobbyName;
+    private final UserDTO gameOwner;
+    private final String lobbyName;
 
     private Pane gamePane;
     private Pane lobbyPane;
     private Scene gameOverScene;
 
-    private Tab primaryTab;
-    private PrimaryPresenter primaryPresenter;
+    private final Tab primaryTab;
+    private final PrimaryPresenter primaryPresenter;
 
-    private Injector injector;
-    private EventBus eventBus;
+    private final Injector injector;
+    private final EventBus eventBus;
 
-    private Stage gameOverStage;
+    private final Stage gameOverStage;
 
-    private GameService gameService;
+    private final GameService gameService;
 
 
     /**
@@ -113,7 +114,7 @@ public class GameManagement {
      * @since Sprint 5
      */
     @Subscribe
-    private void userGivedUp(UserGaveUpMessage msg) {
+    private void userGaveUp(UserGaveUpMessage msg) {
         if (msg.getLobbyID().equals(id) && msg.getUserGivedUp() && msg.getTheUser().equals(loggedInUser)) {
             primaryPresenter.closeTab(msg.getLobbyID(), true);
             LOG.debug("Game mit folgender ID geschlossen: " + id);
@@ -130,14 +131,14 @@ public class GameManagement {
     }
 
     @Subscribe
-    private void userLeftAllLobbys(UserLeftAllLobbiesMessage msg) {
+    private void userLeftAllLobbies(UserLeftAllLobbiesMessage msg) {
         if (msg.getUser().getUsername().equals(loggedInUser.getUsername())) {
             primaryPresenter.closeAllTabs();
         }
     }
 
     @Subscribe
-    private void userDrppedAccount(UserDroppedMessage msg) {
+    private void userDroppedAccount(UserDroppedMessage msg) {
         if (msg.getUser().getUsername().equals(loggedInUser.getUsername())) {
             primaryPresenter.closeAllTabs();
         }
@@ -145,7 +146,7 @@ public class GameManagement {
 /*
     @Subscribe
     private void lobbyCreated(CreateLobbyMessage msg) {
-        if (msg.getUser().getUsername().equals(loggedInUser.getUsername())) {
+        if (msg.getUser.getUsername().equals(loggedInUser.getUsername())) {
             primaryPresenter.showTab(msg.getChatID());
         }
     }
@@ -212,6 +213,7 @@ public class GameManagement {
         eventBus.register(gameViewPresenter);
         showView(gamePane, lobbyName);
         gameViewPresenter.getInGameUserList(this.id);
+        gameViewPresenter.setUsableMoney(0);
     }
 
     /**
@@ -233,6 +235,9 @@ public class GameManagement {
                 gameOverStage.setScene(gameOverScene);
                 gameOverStage.setTitle("Spielergebnis");
                 gameOverStage.setResizable(false);
+                Stage primaryStage = ClientApp.getSceneManager().getPrimaryStage();
+                gameOverStage.setX(primaryStage.getX() + primaryStage.getWidth() / 2 - gameOverStage.getScene().getWidth() / 2);
+                gameOverStage.setY(primaryStage.getY() + primaryStage.getHeight() / 2 - gameOverStage.getScene().getHeight() / 2);
                 gameOverStage.show();
                 gameOverStage.toFront();
                 gameOverStage.setOnCloseRequest(windowEvent -> closeGameOverViewAndLeaveLobby());
@@ -247,7 +252,7 @@ public class GameManagement {
      * @since Sprint 6
      */
     public void closeGameOverView() {
-        Platform.runLater(() -> gameOverStage.close());
+        Platform.runLater(gameOverStage::close);
     }
 
     /**
@@ -257,9 +262,8 @@ public class GameManagement {
      * @since Sprint 6
      */
     public void closeGameOverViewAndLeaveLobby() {
-        Platform.runLater(() -> gameOverStage.close());
+        Platform.runLater(gameOverStage::close);
         primaryPresenter.closeTab(id, true);
-        lobbyPresenter.getLobbyService().leaveLobby(id, new UserDTO(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getEMail()));
     }
 
     /**

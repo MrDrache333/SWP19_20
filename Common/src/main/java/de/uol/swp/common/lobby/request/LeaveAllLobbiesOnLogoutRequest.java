@@ -12,6 +12,9 @@ public class LeaveAllLobbiesOnLogoutRequest extends AbstractLobbyRequest {
 
     private static final long serialVersionUID = -6775833613653810675L;
 
+    /**
+     * Konstruktor für Serialisierung
+     */
     public LeaveAllLobbiesOnLogoutRequest() {
     }
 

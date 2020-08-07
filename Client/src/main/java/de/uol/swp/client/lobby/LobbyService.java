@@ -2,6 +2,7 @@ package de.uol.swp.client.lobby;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
+import de.uol.swp.client.ClientApp;
 import de.uol.swp.common.lobby.Lobby;
 import de.uol.swp.common.lobby.LobbyUser;
 import de.uol.swp.common.lobby.request.*;
@@ -27,6 +28,7 @@ import java.util.UUID;
  * @author Marco
  * @since Start
  */
+@SuppressWarnings("UnstableApiUsage")
 public class LobbyService {
 
     private static final Logger LOG = LogManager.getLogger(LobbyService.class);
@@ -57,6 +59,7 @@ public class LobbyService {
     public void joinLobby(UUID lobbyID, UserDTO user, Boolean isBot) {
         LobbyJoinUserRequest request = new LobbyJoinUserRequest(lobbyID, user, isBot);
         bus.post(request);
+        LOG.info("LobbyJoinUserRequest wurde gesendet.");
     }
 
     /**
@@ -138,12 +141,12 @@ public class LobbyService {
      * Erstellt einen SendChosenCardsRequest, um die ausgewählten Karten an den Server zu schicken.
      *
      * @param lobbyID     die ID der Lobby
-     * @param chosencards die gewählten Aktionskarten
+     * @param chosenCards die gewählten Aktionskarten
      * @author Anna, Fenja
      * @since Sprint 7
      */
-    public void sendChosenCards(UUID lobbyID, ArrayList<Short> chosencards) {
-        SendChosenCardsRequest requestMessage = new SendChosenCardsRequest(lobbyID, chosencards);
+    public void sendChosenCards(UUID lobbyID, ArrayList<Short> chosenCards) {
+        SendChosenCardsRequest requestMessage = new SendChosenCardsRequest(lobbyID, chosenCards);
         bus.post(requestMessage);
     }
 
@@ -168,6 +171,9 @@ public class LobbyService {
 
         primaryStage.setTitle("Dominion - Spieleanleitung");
         primaryStage.setScene(scene);
+        Stage mainStage = ClientApp.getSceneManager().getPrimaryStage();
+        primaryStage.setX(mainStage.getX() + mainStage.getWidth() / 2 - primaryStage.getScene().getWidth() / 2);
+        primaryStage.setY(mainStage.getY() + mainStage.getHeight() / 2 - primaryStage.getScene().getHeight() / 2);
         primaryStage.show();
     }
 }

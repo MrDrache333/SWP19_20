@@ -3,45 +3,8 @@
 "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg viewBox="0 0 909 1286" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <defs>
-<clipPath id="c0"><path d="M.4,148.7V6.2H909V148.7Z"/></clipPath>
-<clipPath id="c1"><path d="M.4,291.1V148.7H909V291.1Z"/></clipPath>
-<clipPath id="c2"><path d="M.4,433.6V291.1H909V433.6Z"/></clipPath>
-<clipPath id="c3"><path d="M.4,576V433.6H909V576Z"/></clipPath>
-<clipPath id="c4"><path d="M.4,718.5V576H909V718.5Z"/></clipPath>
-<clipPath id="c5"><path d="M.4,860.9V718.5H909V860.9Z"/></clipPath>
-<clipPath id="c6"><path d="M.4,1003.4V860.9H909v142.5Z"/></clipPath>
-<clipPath id="c7"><path d="M.4,1145.8V1003.4H909v142.4Z"/></clipPath>
-<style type="text/css"><![CDATA[
-.g0{
-fill: #FFFFFF;
-}
-]]></style>
 </defs>
-<g clip-path="url(#c0)">
-<path fill-rule="evenodd" d="M.6,148.5H909.2V6.4H.6V148.5Z" class="g0"/>
-</g>
-<g clip-path="url(#c1)">
-<path fill-rule="evenodd" d="M.6,290.9H909.2v-142H.6v142Z" class="g0"/>
-</g>
-<g clip-path="url(#c2)">
-<path fill-rule="evenodd" d="M.6,433.4H909.2V291.3H.6V433.4Z" class="g0"/>
-</g>
-<g clip-path="url(#c3)">
-<path fill-rule="evenodd" d="M.6,575.8H909.2v-142H.6v142Z" class="g0"/>
-</g>
-<g clip-path="url(#c4)">
-<path fill-rule="evenodd" d="M.6,718.3H909.2V576.2H.6V718.3Z" class="g0"/>
-</g>
-<g clip-path="url(#c5)">
-<path fill-rule="evenodd" d="M.6,860.7H909.2v-142H.6v142Z" class="g0"/>
-</g>
-<g clip-path="url(#c6)">
-<path fill-rule="evenodd" d="M.6,1003.2H909.2V861.1H.6v142.1Z" class="g0"/>
-</g>
-<g clip-path="url(#c7)">
-<path fill-rule="evenodd" d="M.6,1145.6H909.2v-142H.6v142Z" class="g0"/>
-</g>
-<image preserveAspectRatio="none" x="0" y="1146" width="909" height="141" xlink:href="img/1.png"/>
+<image preserveAspectRatio="none" x="0" y="7" width="909" height="1286" xlink:href="img/1.png"/>
 <image preserveAspectRatio="none" x="136" y="335" width="693" height="161" xlink:href="img/2.png"/>
 <image preserveAspectRatio="none" x="136" y="684" width="693" height="153" xlink:href="img/3.png"/>
 </svg>

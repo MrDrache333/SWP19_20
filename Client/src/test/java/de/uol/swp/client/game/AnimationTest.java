@@ -17,8 +17,10 @@ import java.util.List;
 
 /**
  * Klasse zum Testen der Kartenanimationen.
+ *
+ * @author Anna
+ * @since Sprint 5
  */
-
 public class AnimationTest extends Application {
 
     public static void main(String[] args) {
@@ -159,24 +161,18 @@ public class AnimationTest extends Application {
             deckPane.getChildren().add(card);
         }
 
-        for (int i = 0; i < cards.size(); i++) {
-            AnimationManagement.addToHand(cards.get(i), i);
-            deckPane.getChildren().remove(cards.get(i));
-            handcards.getChildren().add(cards.get(i));
+        for (ImageView card : cards) {
+            AnimationManagement.addToHand(card, handcards);
+            deckPane.getChildren().remove(card);
+            handcards.getChildren().add(card);
         }
-
-
-        //Wenn auf die Karte geklickt wird, spielt der Gegenspieler eine Karte aus
-        cardToPlayByOpponent.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            AnimationManagement.opponentPlaysCard(cardToPlayByOpponent, 0);
-        });
 
         //Wenn auf die Karte geklickt wird, spielt der Spieler sie aus
 
         GeneralLayoutContainer pclc = new GeneralLayoutContainer(700, 500, 100, 200, "My.PCLC");
 
         cardToPlay.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            AnimationManagement.playCard(cardToPlay, 0, pclc );
+            AnimationManagement.playCard(cardToPlay, 0, pclc);
             if (cards.contains(cardToPlay)) {
                 cards.remove(cardToPlay);
                 handcards.getChildren().remove(cardToPlay);
@@ -185,9 +181,7 @@ public class AnimationTest extends Application {
         });
 
         //Wenn auf die Karte geklickt wird, wird sie vom Spieler gekauft
-        cardToBuy.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            AnimationManagement.buyCard(cardToBuy);
-        });
+        cardToBuy.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> AnimationManagement.buyCard(cardToBuy, new GeneralLayoutContainer(300, 200, 100, 100, ""), 0));
 
         //Wenn auf die Karte geklickt wird, wird sie auf den Müll gelegt
         cardToDelete.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {

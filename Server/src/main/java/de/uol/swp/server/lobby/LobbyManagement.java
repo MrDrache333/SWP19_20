@@ -10,7 +10,6 @@ import de.uol.swp.common.user.UserDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.security.KeyException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,19 +27,15 @@ public class LobbyManagement {
      * Erstellt eine Lobby mit den übergebenen Parametern. Überprüft, ob die Lobby mit dem Namen schon existiert.
      *
      * @author Paula, Haschem, Ferit, Rike
-     * @version 0.1
      * lobbyID hat folgende Form: 067e6162-3b6f-4ae2-a171-2470b63dff00  (Beispiel) / UUID Object
      */
 
     public UUID createLobby(String name, String lobbyPassword, User owner) {
-        if (lobbies.containsKey(name)) {
-            throw new IllegalArgumentException("Lobby " + name + " existiert bereits!");
-        }
-        // Erstellen der UUID für die Lobbys.
         UUID lobbyID = UUID.randomUUID();
         LOG.info("Die Lobby " + name + " hat folgende UUID erstellt bekommen: " + lobbyID);
         lobbies.put(lobbyID, new LobbyDTO(name, owner, lobbyID, lobbyPassword));
         return lobbyID;
+
     }
 
     /**
@@ -56,7 +51,7 @@ public class LobbyManagement {
             throw new IllegalArgumentException("LobbyID nicht gefunden! ID: " + id);
         }
         lobbies.remove(id);
-        LOG.info("Lobby " + getLobby(id) + "entfernt");
+        LOG.info("Lobby " + getLobby(id) + " entfernt");
     }
 
     /**
@@ -119,20 +114,26 @@ public class LobbyManagement {
      * @throws LeaveLobbyException Wenn die Lobby nicht existiert.
      * @author Marvin
      */
-    public void leaveLobby(UUID id, User user) {
+    public boolean leaveLobby(UUID id, User user) {
         Optional<Lobby> lobby = this.getLobby(id);
         if (lobby.isPresent()) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("User " + user.getUsername() + " verlässt die Lobby " + getLobby(id).get());
+            try {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("User " + user.getUsername() + " verlässt die Lobby " + getLobby(id).orElseThrow(() -> new NoSuchElementException("Lobby nicht existent")));
+                }
+            } catch (NoSuchElementException exception) {
+                LOG.error(exception.getMessage());
             }
             lobby.get().leaveUser(user);
             if (lobby.get().getPlayers() == 0) {
                 this.dropLobby(id);
+                return true;
             }
-        }
-        else{
+            return true;
+        } else {
             throw new LeaveLobbyException("Die zu verlassende Lobby existiert nicht.");
         }
+
     }
 
     /**
@@ -167,7 +168,7 @@ public class LobbyManagement {
                 updatedLobbies.put(lobbyToUpdate.getLobbyID(), lobbyToUpdate);
             }
         }
-        updatedLobbies.entrySet().forEach(l -> lobbies.replace(l.getKey(), l.getValue()));
+        updatedLobbies.forEach(lobbies::replace);
     }
 
     /**
@@ -183,7 +184,7 @@ public class LobbyManagement {
     public void kickUser(UUID id, User userToKick, User owner) {
         Optional<Lobby> lobby = this.getLobby(id);
         if (lobby.isPresent()) {
-            if(lobby.get().getOwner().getUsername().equals(owner.getUsername())) {
+            if (lobby.get().getOwner().getUsername().equals(owner.getUsername())) {
                 lobby.get().leaveUser(userToKick);
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("User " + userToKick.getUsername() + " ist von der Lobby gekickt worden " + getLobby(id));
@@ -191,12 +192,10 @@ public class LobbyManagement {
                 if (lobby.get().getPlayers() == 0) {
                     this.dropLobby(id);
                 }
+            } else {
+                throw new KickPlayerException("Benutzer kann nicht aus der Lobby gekickt werden, da " + owner + " nicht der Lobbybesitzer ist.");
             }
-            else{
-                throw new KickPlayerException("Benutzer kann nicht aus der Lobby gekickt werden, da "+owner+" nicht der Lobbybesitzer ist.");
-            }
-        }
-        else{
+        } else {
             throw new KickPlayerException("Die Lobby existiert nicht, in der der Benutzer gekickt werden soll.");
         }
     }
@@ -247,14 +246,29 @@ public class LobbyManagement {
      */
     public void setMaxPlayer(UUID lobbyID, User loggedInUser, Integer maxPlayerValue) {
         if (lobbies.get(lobbyID).getOwner().equals(loggedInUser)) {
-            if (maxPlayerValue >= getLobby(lobbyID).get().getPlayers()){
-                lobbies.get(lobbyID).setMaxPlayer(maxPlayerValue);
-            }
-            else {
-                throw new SetMaxPlayerException("Es sind zu viele Benutzer in der Lobby, um die maximale Spierleranzahl ändern.");
+            try {
+                if (maxPlayerValue >= getLobby(lobbyID).orElseThrow(() -> new NoSuchElementException("Lobby nicht existent")).getPlayers()) {
+                    lobbies.get(lobbyID).setMaxPlayer(maxPlayerValue);
+                } else {
+                    throw new SetMaxPlayerException("Es sind zu viele Benutzer in der Lobby, um die maximale Spierleranzahl ändern.");
+                }
+            } catch (NoSuchElementException exception) {
+                LOG.error(exception.getMessage());
             }
         } else {
-            throw new SetMaxPlayerException(loggedInUser+" ist nicht der Lobbybesitzer und kann nicht die maximale Spierleranzahl ändern.");
+            throw new SetMaxPlayerException(loggedInUser + " ist nicht der Lobbybesitzer und kann nicht die maximale Spierleranzahl ändern.");
         }
+    }
+
+    /**
+     * Überprüft, ob sich der User in einer Lobby befindet.
+     *
+     * @param user Der User
+     * @return true wenn ja, sonst false
+     * @author Julia
+     * @since Sprint 9
+     */
+    public boolean userInLobby(User user) {
+        return lobbies.values().stream().flatMap(l -> l.getUsers().stream()).anyMatch(u -> u.equals(user));
     }
 }

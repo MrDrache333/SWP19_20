@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Julia
  * @since Sprint 3
  */
+@SuppressWarnings("UnstableApiUsage")
 class LobbyServiceTest {
     /**
      * Standard Benutzer, Standard Owner und Standard Lobby zum Testen
@@ -50,7 +51,6 @@ class LobbyServiceTest {
     EventBus bus = new EventBus();
     CountDownLatch lock = new CountDownLatch(1);
     Object event;
-
 
     /**
      * Methode zum Behandeln von auf dem Bus aufgetretene Dead-Events.
@@ -92,7 +92,7 @@ class LobbyServiceTest {
     /**
      * Überprüfen, ob alle Lobbys angegeben werden
      *
-     * @throws InterruptedException
+     * @throws InterruptedException die Exception
      * @author Julia
      * @since Sprint 3
      */
@@ -101,9 +101,7 @@ class LobbyServiceTest {
     void retrieveAllLobbiesTest() throws InterruptedException {
         LobbyService lobbyService = new LobbyService(bus);
         lobbyService.retrieveAllLobbies();
-
         lock.await(1000, TimeUnit.MILLISECONDS);
-
         assertTrue(event instanceof RetrieveAllOnlineLobbiesRequest);
     }
 
@@ -130,9 +128,7 @@ class LobbyServiceTest {
     @Test
     void joinLobbyTest() throws InterruptedException {
         joinLobby();
-
         assertTrue(event instanceof LobbyJoinUserRequest);
-
         LobbyJoinUserRequest lobbyJoinUserRequest = (LobbyJoinUserRequest) event;
         assertEquals(defaultLobby.getLobbyID(), lobbyJoinUserRequest.getLobbyID());
         assertEquals(defaultUser, lobbyJoinUserRequest.getUser());
@@ -148,18 +144,12 @@ class LobbyServiceTest {
     @Test
     void leaveLobbyTest() throws InterruptedException {
         joinLobby();
-
         event = null;
-
         LobbyService lobbyService = new LobbyService(bus);
         lobbyService.leaveLobby(defaultLobby.getLobbyID(), new UserDTO(defaultUser.getUsername(), defaultUser.getPassword(), defaultUser.getEMail()));
-
         lock.await(1000, TimeUnit.MILLISECONDS);
-
         assertTrue(event instanceof LobbyLeaveUserRequest);
-
         LobbyLeaveUserRequest lobbyLeaveUserRequest = (LobbyLeaveUserRequest) event;
-
         assertEquals(defaultLobby.getLobbyID(), lobbyLeaveUserRequest.getLobbyID());
         assertEquals(defaultUser, lobbyLeaveUserRequest.getUser());
     }
@@ -174,15 +164,10 @@ class LobbyServiceTest {
     @Test
     void leaveAllLobbiesOnLogoutTest() throws InterruptedException {
         joinLobby();
-
         event = null;
-
         UserService userService = new UserService(bus);
         userService.logout(defaultUser);
-
-
         lock.await(1000, TimeUnit.MILLISECONDS);
-
         assertTrue(event instanceof LogoutRequest);
     }
 }

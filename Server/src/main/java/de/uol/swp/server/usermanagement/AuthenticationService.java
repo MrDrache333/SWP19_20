@@ -35,6 +35,7 @@ import java.util.*;
  * @author Marco Grawunder
  * @since Start
  */
+@SuppressWarnings("UnstableApiUsage, unused")
 public class AuthenticationService extends AbstractService {
     private static final Logger LOG = LogManager.getLogger(AuthenticationService.class);
 
@@ -120,7 +121,7 @@ public class AuthenticationService extends AbstractService {
             returnMessage.setSession(newSession);
         } catch (Exception e) {
             LOG.error(e);
-            returnMessage = new ServerExceptionMessage(new LoginException("Authentifizierung des Users " + req.getUsername() + " fehlgeschlagen!"));
+            returnMessage = new ServerExceptionMessage(new LoginException(e.getMessage()));
         }
         if (req.getMessageContext().isPresent()) {
             returnMessage.setMessageContext(req.getMessageContext().get());
@@ -202,47 +203,57 @@ public class AuthenticationService extends AbstractService {
      */
     @Subscribe
     public void onUpdateUserRequest(UpdateUserRequest req) {
-        userSessions.put(req.getSession().get(), req.getUser());
-        req.getSession().get().updateUser(req.getUser());
-        ServerMessage returnMessage;
         try {
-            User user = userManagement.updateUser(req.getUser(), req.getOldUser(), req.getCurrentPassword());
-            returnMessage = new UpdatedUserMessage(user, req.getOldUser());
-            LOG.info("User " + req.getOldUser().getUsername() + " erfolreich aktualisiert");
-            post(new UpdateLobbiesRequest((UserDTO) user, (UserDTO) req.getOldUser()));
-        } catch (UserUpdateException e) {
-            userSessions.replace(req.getSession().get(), req.getOldUser());
-            req.getSession().get().updateUser(req.getOldUser());
-            returnMessage = new UpdateUserFailedMessage(req.getOldUser(), e.getMessage());
-            LOG.info("Aktualisierung des Users " + req.getOldUser().getUsername() + " fehlgeschlagen");
+            if (lobbyManagement.userInLobby(req.getOldUser())) {
+                sendToUser(new UpdateUserFailedMessage(req.getOldUser(), "Du kannst deine Daten nicht ändern,\nwenn du in einer Lobby bist."), req.getOldUser());
+            } else {
+                userSessions.put(req.getSession().orElseThrow(() -> new NoSuchElementException("Usersession nicht vorhanden")), req.getUser());
+                req.getSession().get().updateUser(req.getUser());
+                ServerMessage returnMessage;
+                try {
+                    User user = userManagement.updateUser(req.getUser(), req.getOldUser(), req.getCurrentPassword());
+                    returnMessage = new UpdatedUserMessage(user, req.getOldUser());
+                    LOG.info("User " + req.getOldUser().getUsername() + " erfolreich aktualisiert");
+                    post(new UpdateLobbiesRequest((UserDTO) user, (UserDTO) req.getOldUser()));
+                } catch (UserUpdateException e) {
+                    userSessions.replace(req.getSession().get(), req.getOldUser());
+                    req.getSession().get().updateUser(req.getOldUser());
+                    returnMessage = new UpdateUserFailedMessage(req.getOldUser(), e.getMessage());
+                    LOG.info("Aktualisierung des Users " + req.getOldUser().getUsername() + " fehlgeschlagen");
+                }
+                sendToLoggedInPlayers(returnMessage);
+            }
+        } catch (NoSuchElementException exception) {
+            LOG.error(exception.getMessage());
         }
-        sendToLoggedInPlayers(returnMessage);
     }
 
     /**
      * Der Nutzer wird gelöscht und eine entprechende Message zurückgesendet
      *
-     * @author Anna, Julia, Darian
+     * @author Anna, Julia, Darian, Timo
      * @since Sprint 4
      */
     @Subscribe
     public void onDropUserRequest(DropUserRequest req) {
-        User userToDrop = req.getUser();
-
-        // Could be already logged out/removed or he is in a game
-        if (userToDrop != null) {
-            if (!lobbyManagement.isUserIngame(userToDrop)) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Lösche User " + userToDrop.getUsername());
+        try {
+            User userToDrop = req.getUser();
+            // Could be already logged out/removed or he is in a game
+            if (userToDrop != null) {
+                if (!lobbyManagement.isUserIngame(userToDrop)) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Lösche User " + userToDrop.getUsername());
+                    }
+                    sendToLoggedInPlayers(new UserDroppedMessage(userToDrop));
+                    userManagement.dropUser(userToDrop);
+                    userSessions.remove(req.getSession().orElseThrow(() -> new NoSuchElementException("Usersession nicht vorhanden")));
+                } else {
+                    UpdateUserFailedMessage returnMessage = new UpdateUserFailedMessage(userToDrop, "Der Account befindet sich in einem laufenden Spiel. Du kannst deinen Account nicht löschen!");
+                    sendToLoggedInPlayers(returnMessage);
                 }
-                userSessions.remove(req.getSession().get());
-                userManagement.dropUser(userToDrop);
-
-                sendToLoggedInPlayers(new UserDroppedMessage(userToDrop));
-            } else {
-                UpdateUserFailedMessage returnMessage = new UpdateUserFailedMessage(userToDrop, "Der Account befindet sich in einem laufenden Spiel. Du kannst deinen Account nicht löschen!");
-                sendToLoggedInPlayers(returnMessage);
             }
+        } catch (NoSuchElementException exception) {
+            LOG.error(exception.getMessage());
         }
     }
 
@@ -253,7 +264,6 @@ public class AuthenticationService extends AbstractService {
      * @author Keno S.
      * @since Sprint 7
      */
-
     public void sendToLoggedInPlayers(ServerMessage msg) {
         if(!userSessions.isEmpty()) {
             msg.setReceiver(getSessions(new TreeSet<>(userSessions.values())));

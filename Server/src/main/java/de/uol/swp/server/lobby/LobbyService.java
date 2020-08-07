@@ -27,10 +27,7 @@ import de.uol.swp.server.usermanagement.AuthenticationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Die Klasse LobbyService, welche eine Lobby erstellt
@@ -38,6 +35,7 @@ import java.util.UUID;
  * @author KenoO
  * @since Sprint 2
  */
+@SuppressWarnings("UnstableApiUsage, unused")
 public class LobbyService extends AbstractService {
     private static final Logger LOG = LogManager.getLogger(LobbyService.class);
 
@@ -76,7 +74,6 @@ public class LobbyService extends AbstractService {
      *
      * @param req Enthält den Request vom Client mit den benötigten Daten, um die Lobby zu erstellen.
      * @author Haschem, Ferit, Rike, Marvin, Paula
-     * @version 0.2
      * @since Sprint 2
      */
     @Subscribe
@@ -86,15 +83,18 @@ public class LobbyService extends AbstractService {
             ServerMessage returnMessage = new CreateLobbyMessage(null, null, req.getUser(), null, null);
             authenticationService.sendToLoggedInPlayers(returnMessage);
         } else {
-            UUID chatID = lobbyManagement.createLobby(req.getLobbyName(), req.getLobbyPassword(), new LobbyUser(req.getOwner()));
-            chatManagement.createChat(chatID.toString());
-            LOG.info("Der Chat mit der UUID " + chatID + " wurde erfolgreich erstellt!");
-            Optional<Lobby> lobby = lobbyManagement.getLobby(chatID);
-            ServerMessage returnMessage = new CreateLobbyMessage(req.getLobbyName(), req.getLobbyPassword(), req.getUser(), chatID, (LobbyDTO) lobby.get());
-            authenticationService.sendToLoggedInPlayers(returnMessage);
-            LOG.info("onCreateLobbyRequest wird auf dem Server aufgerufen.");
+            try {
+                UUID chatID = lobbyManagement.createLobby(req.getLobbyName(), req.getLobbyPassword(), new LobbyUser(req.getOwner()));
+                chatManagement.createChat(chatID.toString());
+                LOG.info("Der Chat mit der UUID " + chatID + " wurde erfolgreich erstellt!");
+                Optional<Lobby> lobby = lobbyManagement.getLobby(chatID);
+                ServerMessage returnMessage = new CreateLobbyMessage(req.getLobbyName(), req.getLobbyPassword(), req.getUser(), chatID, (LobbyDTO) lobby.orElseThrow(() -> new NoSuchElementException("Lobby nicht existent")));
+                authenticationService.sendToLoggedInPlayers(returnMessage);
+                LOG.info("onCreateLobbyRequest wird auf dem Server aufgerufen.");
+            } catch (NoSuchElementException exception) {
+                LOG.error(exception.getMessage());
+            }
         }
-
     }
 
     /**
@@ -109,7 +109,7 @@ public class LobbyService extends AbstractService {
     public void onLobbyJoinUserRequest(LobbyJoinUserRequest req) {
         Optional<Lobby> lobby = lobbyManagement.getLobby(req.getLobbyID());
         if (lobby.isPresent() && !lobby.get().getUsers().contains(req.getUser()) && lobby.get().getPlayers() < lobby.get().getMaxPlayer() && !lobby.get().getInGame()) {
-            LOG.info("User " + req.getUser().getUsername() + " is joining lobby " + lobby.get().getName());
+            LOG.info("User " + req.getUser().getUsername() + " tritt der Lobby " + lobby.get().getName() + " bei.");
             LobbyUser theLobbyUser = new LobbyUser(req.getUser());
             lobby.get().joinUser(theLobbyUser);
             ServerMessage returnMessage = new UserJoinedLobbyMessage(req.getLobbyID(), req.getUser(), (UserDTO) lobby.get().getOwner(), (LobbyDTO) lobby.get());
@@ -117,7 +117,7 @@ public class LobbyService extends AbstractService {
             if (req.getBot()) {
                 lobby.get().setReadyStatus(req.getUser(), true);
                 ServerMessage msg2 = new UpdatedLobbyReadyStatusMessage(lobby.get().getLobbyID(), req.getUser(), lobby.get().getReadyStatus(req.getUser()));
-                LOG.debug("Sending Updated Status of Bot: " + req.getUser().getUsername() + " to true in Lobby: " + lobby.get().getLobbyID());
+                LOG.debug("Ändere den Update-Status vom Bot " + req.getUser().getUsername() + " auf true in Lobby " + lobby.get().getName());
                 authenticationService.sendToLoggedInPlayers(msg2);
                 allPlayersReady(lobby.get());
             }
@@ -131,27 +131,34 @@ public class LobbyService extends AbstractService {
      * LobbyManagement wird aufgerufen und übergibt Namen der Lobby und User.
      * UserLeftLobbyMessage wird an Client gesendet
      *
-     * @param req Der LobbyLeaveUserRequest
+     * @param msg Der LobbyLeaveUserRequest
      * @author Julia, Paula, Darian, Marvin
      * @since Sprint 3
      */
     @Subscribe
-    public void onLobbyLeaveUserRequest(LobbyLeaveUserRequest req) {
-        try{
-            lobbyManagement.leaveLobby(req.getLobbyID(), req.getUser());
-            Optional<Lobby> lobby = lobbyManagement.getLobby(req.getLobbyID());
-            ServerMessage returnMessage;
-            if(lobby.isPresent()) {
-                LOG.info("User " + req.getUser().getUsername() + " verlässt die Lobby " + req.getLobbyID());
-                returnMessage = new UserLeftLobbyMessage(req.getLobbyID(), req.getUser(), (UserDTO) lobby.get().getOwner(), (LobbyDTO) lobby.get());
+    public void onLobbyLeaveUserRequest(LobbyLeaveUserRequest msg) {
+        try {
+            //Falls der Besitzer der Lobby aus der Lobby geht wird dieser aktualisiert
+            boolean leavedLobbySuccessful = lobbyManagement.leaveLobby(msg.getLobbyID(), msg.getUser());
+            if (leavedLobbySuccessful && lobbyManagement.getLobby(msg.getLobbyID()).isPresent() && !(lobbyManagement.getLobby(msg.getLobbyID()).get().onlyBotsLeft(msg.getLobbyID()))) {
+                Optional<Lobby> lobby = lobbyManagement.getLobby(msg.getLobbyID());
+                LOG.info("User " + msg.getUser().getUsername() + " verlässt die Lobby " + msg.getLobbyID());
+                ServerMessage returnMessage;
+                returnMessage = lobby.map(value -> new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), (UserDTO) value.getOwner(), (LobbyDTO) value)).orElseGet(() -> new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), null, null));
+                authenticationService.sendToLoggedInPlayers(returnMessage);
+            } else if (leavedLobbySuccessful && lobbyManagement.getLobby(msg.getLobbyID()).isPresent() &&
+                    (lobbyManagement.getLobby(msg.getLobbyID()).get().onlyBotsLeft(msg.getLobbyID()))) {
+                lobbyManagement.dropLobby(msg.getLobbyID());
+                ServerMessage returnMessage;
+                returnMessage = new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), null, null);
+                authenticationService.sendToLoggedInPlayers(returnMessage);
+            } else {
+                ServerMessage returnMessage;
+                returnMessage = new UserLeftLobbyMessage(msg.getLobbyID(), msg.getUser(), null, null);
+                authenticationService.sendToLoggedInPlayers(returnMessage);
             }
-            else{
-                returnMessage = new UserLeftLobbyMessage(req.getLobbyID(), req.getUser(), null, null);
-                LOG.info("User " + req.getUser().getUsername() + " verlässt die Lobby " + req.getLobbyID() + " und die Lobby wird geschlossen.");
-            }
-            authenticationService.sendToLoggedInPlayers(returnMessage);
-        } catch(LeaveLobbyException e) {
-            authenticationService.sendToUser(new LobbyExceptionMessage(req.getLobbyID(), e.getMessage()), req.getUser());
+        } catch (LeaveLobbyException e) {
+            authenticationService.sendToUser(new LobbyExceptionMessage(msg.getLobbyID(), e.getMessage()), msg.getUser());
             LOG.error(e.getMessage());
         }
     }
@@ -223,14 +230,20 @@ public class LobbyService extends AbstractService {
 
     /**
      * Hilfmethode, ob nur noch Bots in der Lobby sind.
+     *
      * @param lobbyID Die LobbyID
      * @return Wahrheitswert
      */
     public Boolean onlyBotsLeft(UUID lobbyID) {
-        for (User user : lobbyManagement.getLobby(lobbyID).get().getUsers()) {
-            if (!user.getIsBot()) {
-                return false;
+        try {
+            for (User user : lobbyManagement.getLobby(lobbyID).orElseThrow(() -> new NoSuchElementException("Lobby nicht existent")).getUsers()) {
+                if (!user.getIsBot()) {
+                    return false;
+                }
             }
+            return true;
+        } catch (NoSuchElementException exception) {
+            LOG.error(exception.getMessage());
         }
         return true;
     }
@@ -291,12 +304,13 @@ public class LobbyService extends AbstractService {
         try {
             lobbyManagement.kickUser(req.getLobbyID(), req.getUserToKick(), req.getUser());
             LOG.info("User " + req.getUser().getUsername() + " wurde von der Lobby mit folgender ID " + req.getLobbyID() + " gekickt!");
-            ServerMessage returnMessage = new KickUserMessage(req.getLobbyID(), req.getUserToKick(), (LobbyDTO) lobbyManagement.getLobby(req.getLobbyID()).get());
+            ServerMessage returnMessage = new KickUserMessage(req.getLobbyID(), req.getUserToKick(), (LobbyDTO) lobbyManagement.getLobby(req.getLobbyID()).orElseThrow(() -> new NoSuchElementException("Lobby nicht existent")));
             authenticationService.sendToLoggedInPlayers(returnMessage);
-        }
-        catch (KickPlayerException e){
+        } catch (KickPlayerException e) {
             authenticationService.sendToUser(new LobbyExceptionMessage(req.getLobbyID(), e.getMessage()), req.getUser());
             LOG.error(e.getMessage());
+        } catch (NoSuchElementException exception) {
+            LOG.error(exception.getMessage());
         }
     }
 
@@ -309,16 +323,17 @@ public class LobbyService extends AbstractService {
      */
     @Subscribe
     public void onSetMaxPlayerRequest(SetMaxPlayerRequest req) {
-        LobbyDTO lobby = (LobbyDTO) lobbyManagement.getLobby(req.getLobbyID()).get();
-         try{
+        try {
+            LobbyDTO lobby = (LobbyDTO) lobbyManagement.getLobby(req.getLobbyID()).orElseThrow(() -> new NoSuchElementException("Lobby nicht existent"));
             lobbyManagement.setMaxPlayer(req.getLobbyID(), req.getUser(), req.getMaxPlayerValue());
-            ServerMessage returnMessage = new SetMaxPlayerMessage(req.getMaxPlayerValue(), req.getLobbyID(), lobbyManagement.getLobbyOwner(req.getLobbyID()).get(), lobby);
+            ServerMessage returnMessage = new SetMaxPlayerMessage(req.getMaxPlayerValue(), req.getLobbyID(), lobbyManagement.getLobbyOwner(req.getLobbyID()).orElseThrow(() -> new NoSuchElementException("Lobby nicht existent")), lobby);
             authenticationService.sendToLoggedInPlayers(returnMessage);
-        }
-        catch(SetMaxPlayerException e){
+        } catch (SetMaxPlayerException e) {
             ServerMessage returnMessage2 = new LobbyExceptionMessage(req.getLobbyID(), e.getMessage());
-            authenticationService.sendToUser(returnMessage2, lobby.getOwner());
+            authenticationService.sendToUser(returnMessage2, lobbyManagement.getLobby(req.getLobbyID()).orElseThrow(() -> new NoSuchElementException("Lobby nicht existent")).getOwner());
             LOG.debug(e.getMessage());
+        } catch (NoSuchElementException exception) {
+            LOG.error(exception.getMessage());
         }
     }
 
@@ -331,14 +346,17 @@ public class LobbyService extends AbstractService {
      */
     @Subscribe
     public void onSendChosenCardsRequest(SendChosenCardsRequest req) {
-        LOG.debug("Ausgewählte Karten erhalten");
-        LobbyDTO lobby = (LobbyDTO) lobbyManagement.getLobby(req.getLobbyID()).get();
-        lobby.setChosenCards(req.getChosenCards());
-
-        SetChosenCardsResponse response = new SetChosenCardsResponse(req.getLobbyID(), true);
-        response.initWithMessage(req);
-        post(response);
-        sendToAll(req.getLobbyID(), new NewChatMessage(req.getLobbyID().toString(), new ChatMessage(new UserDTO("server", "", ""), "Karten wurden ausgewählt")));
+        try {
+            LOG.debug("Ausgewählte Karten erhalten");
+            LobbyDTO lobby = (LobbyDTO) lobbyManagement.getLobby(req.getLobbyID()).orElseThrow(() -> new NoSuchElementException("Lobby nicht existent"));
+            lobby.setChosenCards(req.getChosenCards());
+            SetChosenCardsResponse response = new SetChosenCardsResponse(req.getLobbyID(), true);
+            response.initWithMessage(req);
+            post(response);
+            sendToAll(req.getLobbyID(), new NewChatMessage(req.getLobbyID().toString(), new ChatMessage(new UserDTO("server", "", ""), "Karten wurden ausgewählt")));
+        } catch (NoSuchElementException exception) {
+            LOG.error(exception.getMessage());
+        }
     }
 
     //--------------------------------------
@@ -349,7 +367,7 @@ public class LobbyService extends AbstractService {
      * Hilfsmethode, die die Nachricht an alle Spieler in der Lobby sendet
      *
      * @param lobbyID Die LobbyID
-     * @param msg Die Nachricht
+     * @param msg     Die Nachricht
      * @author KenoO, Paula, Marvin
      * @since Sprint 2
      */
@@ -358,8 +376,7 @@ public class LobbyService extends AbstractService {
         if (lobby.isPresent()) {
             msg.setReceiver(authenticationService.getSessions(lobby.get().getUsers()));
             post(msg);
-        }
-        else {
+        } else {
             LOG.error("Die Lobby mit der LobbyID " + lobbyID + " konnte nicht gefunden werden!");
         }
     }
@@ -405,14 +422,18 @@ public class LobbyService extends AbstractService {
      */
     @Subscribe
     public void createBotRequest(AddBotRequest request) {
-        Lobby thisLobby = lobbyManagement.getLobby(request.getLobbyID()).get();
-        String[] collectionBotName = {"King Arthur", "Merlin", "Die Queen", "Prinzessin Diana", "Donald Trump"};
-        if (thisLobby.getUsers().size() < thisLobby.getMaxPlayer()) {
-            String theRandomBotName = collectionBotName[(int) (Math.random() * collectionBotName.length)] + (int) (Math.random() * 999);
-            BotPlayer createdBot = new BotPlayer(theRandomBotName, eventBus, request.getLobbyID());
-            UserDTO userDT = new UserDTO(createdBot.getTheUserInThePlayer().getUsername(), createdBot.getTheUserInThePlayer().getPassword(), createdBot.getTheUserInThePlayer().getEMail(), true);
-            eventBus.post(new AuthBotInternalRequest(createdBot));
-            eventBus.post(new LobbyJoinUserRequest(thisLobby.getLobbyID(), userDT, true));
+        try {
+            Lobby thisLobby = lobbyManagement.getLobby(request.getLobbyID()).orElseThrow(() -> new NoSuchElementException("Lobby nicht existent"));
+            String[] collectionBotName = {"Arthur", "Merlin", "Queen", "Diana"};
+            if (thisLobby.getUsers().size() < thisLobby.getMaxPlayer()) {
+                String theRandomBotName = collectionBotName[(int) (Math.random() * collectionBotName.length)] + (int) (Math.random() * 999);
+                BotPlayer createdBot = new BotPlayer(theRandomBotName, eventBus, request.getLobbyID());
+                UserDTO userDT = new UserDTO(createdBot.getTheUserInThePlayer().getUsername(), createdBot.getTheUserInThePlayer().getPassword(), createdBot.getTheUserInThePlayer().getEMail(), true);
+                eventBus.post(new AuthBotInternalRequest(createdBot));
+                eventBus.post(new LobbyJoinUserRequest(thisLobby.getLobbyID(), userDT, true));
+            }
+        } catch (NoSuchElementException exception) {
+            LOG.error(exception.getMessage());
         }
     }
 }

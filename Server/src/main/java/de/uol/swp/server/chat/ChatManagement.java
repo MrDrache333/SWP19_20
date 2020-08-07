@@ -13,7 +13,7 @@ import java.util.UUID;
  */
 public class ChatManagement extends AbstractChatManagement {
 
-    private final short CHATMESSAGEHISTORYSIZE = 20;
+    private final static short CHATMESSAGEHISTORYSIZE = 20;
 
     private final SortedMap<String, Chat> chats = new TreeMap<>();
 

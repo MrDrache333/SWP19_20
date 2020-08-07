@@ -14,8 +14,6 @@ public class PlayCardMessage extends AbstractServerMessage {
     private final User currentUser;
     private final Short handCardID;
     private final Boolean isPlayed;
-    private Short userPlaceNumber = null;
-    private Short enemyPlaceNumber = null;
     private boolean removeCardAfter;
 
     /**
@@ -43,18 +41,14 @@ public class PlayCardMessage extends AbstractServerMessage {
      * @param currentUser      Der Spieler der die Request stellt
      * @param handCardID       Die ID der angeklickten Karte
      * @param isPlayed         Sagt aus, ob die Karte ausgespielt werden darf
-     * @param enemyPlaceNumber Die Platznummer des Gegners
-     * @param userPlaceNumber  Die Platznummer des Users
      * @author Rike, Devin
      * @since Sprint 5
      */
-    public PlayCardMessage(UUID gameID, User currentUser, Short handCardID, Boolean isPlayed, Short userPlaceNumber, Short enemyPlaceNumber, boolean removeCardAfter) {
+    public PlayCardMessage(UUID gameID, User currentUser, Short handCardID, Boolean isPlayed, boolean removeCardAfter) {
         this.gameID = gameID;
         this.currentUser = currentUser;
         this.handCardID = handCardID;
         this.isPlayed = isPlayed;
-        this.userPlaceNumber = userPlaceNumber;
-        this.enemyPlaceNumber = enemyPlaceNumber;
         this.removeCardAfter = removeCardAfter;
     }
 
@@ -81,13 +75,24 @@ public class PlayCardMessage extends AbstractServerMessage {
     }
 
     /**
+     * Gibt die Handkarten-ID
+     *
+     * @return Die ausgespielte Karte
+     * @author Darian
+     * @since Sprint 9
+     */
+    public Short getHandCardID() {
+        return handCardID;
+    }
+
+    /**
      * Gibt die Handkarten-ID als String zurück
      *
      * @return handCardID.toString() die Handkarten-ID als String (Text)
      * @author Devin
      * @since Sprint 6
      */
-    public String getHandCardID() {
+    public String getHandCardIdAsString() {
         return handCardID.toString();
     }
 
@@ -100,28 +105,6 @@ public class PlayCardMessage extends AbstractServerMessage {
      */
     public Boolean getIsPlayed() {
         return isPlayed;
-    }
-
-    /**
-     *Gibt die gegnerische Platznummer zurück
-     *
-     * @return enemyPlaceNumber die gegnerische Platznummer
-     * @author Devin
-     * @since Sprint 6
-     */
-    public Short getEnemyPlaceNumber() {
-        return enemyPlaceNumber;
-    }
-
-    /**
-     * Gibt die Nummer des eigenen Userplatzes zurück
-     *
-     * @return userPlaceNumber die Nummer des eingenen Userplatzes
-     * @author Devin
-     * @since Sprint 6
-     */
-    public Short getUserPlaceNumber() {
-        return userPlaceNumber;
     }
 
     public boolean isRemoveCardAfter() {

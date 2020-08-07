@@ -12,6 +12,12 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Testklasse für die LobbyDTO
+ *
+ * @author Marco
+ * @since Start
+ */
 class LobbyDTOTest {
 
     private static final User defaultUser = new UserDTO("marco", "marco", "marco@grawunder.de");

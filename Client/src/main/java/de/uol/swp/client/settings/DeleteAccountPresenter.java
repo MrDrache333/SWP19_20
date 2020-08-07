@@ -5,6 +5,7 @@ import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.settings.event.CloseDeleteAccountEvent;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
+import de.uol.swp.common.user.request.DropUserRequest;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import org.apache.logging.log4j.LogManager;
@@ -16,7 +17,7 @@ import org.apache.logging.log4j.Logger;
  * @author Anna
  * @since Sprint 4
  */
-@SuppressWarnings("UnstableApiUsage")
+@SuppressWarnings("UnstableApiUsage, unused")
 public class DeleteAccountPresenter {
 
     /**
@@ -29,10 +30,10 @@ public class DeleteAccountPresenter {
     public static final String css = "css/DeleteAccountPresenter.css";
     private static final Logger LOG = LogManager.getLogger(DeleteAccountPresenter.class);
 
-    private User loggedInUser;
-    private LobbyService lobbyService;
-    private UserService userService;
-    private EventBus eventBus;
+    private final User loggedInUser;
+    private final LobbyService lobbyService;
+    private final UserService userService;
+    private final EventBus eventBus;
 
     /**
      * Instanziert ein neuen DeleteAccountPresenter.
@@ -60,8 +61,10 @@ public class DeleteAccountPresenter {
      */
     @FXML
     public void onYesButtonPressed(ActionEvent actionEvent) {
-        LOG.debug("Der Benutzer " + loggedInUser.getUsername() + " löscht seinen Account!");
-        userService.dropUser(loggedInUser);
+        if (loggedInUser != null) {
+            DropUserRequest request = new DropUserRequest(loggedInUser);
+            eventBus.post(request);
+        }
     }
 
     /**

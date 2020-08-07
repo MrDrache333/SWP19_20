@@ -14,8 +14,8 @@ import java.util.UUID;
 public class SkipPhaseRequest extends AbstractRequestMessage {
 
     private static final long serialVersionUID = -1742210033562469726L;
-    private User user;
-    private UUID gameID;
+    private final User user;
+    private final UUID gameID;
 
     /**
      * Konstruktor der SkipPhaseRequest
