@@ -1,10 +1,12 @@
 package de.uol.swp.client.settings;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import de.uol.swp.client.lobby.LobbyService;
 import de.uol.swp.client.settings.event.CloseDeleteAccountEvent;
 import de.uol.swp.common.user.User;
 import de.uol.swp.common.user.UserService;
+import de.uol.swp.common.user.message.UpdatedUserMessage;
 import de.uol.swp.common.user.request.DropUserRequest;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -30,7 +32,7 @@ public class DeleteAccountPresenter {
     public static final String css = "css/DeleteAccountPresenter.css";
     private static final Logger LOG = LogManager.getLogger(DeleteAccountPresenter.class);
 
-    private final User loggedInUser;
+    private User loggedInUser;
     private final LobbyService lobbyService;
     private final UserService userService;
     private final EventBus eventBus;
@@ -77,5 +79,19 @@ public class DeleteAccountPresenter {
     @FXML
     public void onNoButtonPressed(ActionEvent actionEvent) {
         eventBus.post(new CloseDeleteAccountEvent());
+    }
+
+    /**
+     * Aktualisiert den loggedInUser
+     *
+     * @param message Die UpdatedUserMessage
+     * @author Julia
+     * @since Sprint 10
+     */
+    @Subscribe
+    public void updatedUser(UpdatedUserMessage message) {
+        if (loggedInUser.getUsername().equals(message.getOldUser().getUsername())) {
+            loggedInUser = message.getUser();
+        }
     }
 }
