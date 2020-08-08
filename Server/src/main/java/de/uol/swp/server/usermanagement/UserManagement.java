@@ -110,7 +110,10 @@ public class UserManagement extends AbstractUserManagement {
         if (mails.contains(userToUpdate.getEMail()) && !userToUpdate.getEMail().equals(oldUser.getEMail())) {
             throw new UserUpdateException("Diese Email ist bereits vergeben!");
         }
-        return userStore.updateUser(userToUpdate.getUsername(), userToUpdate.getPassword(), userToUpdate.getEMail(), oldUser, currentPassword);
+        User usr = userStore.updateUser(userToUpdate.getUsername(), userToUpdate.getPassword(), userToUpdate.getEMail(), oldUser, currentPassword);
+        loggedInUsers.remove(oldUser.getUsername());
+        loggedInUsers.put(userToUpdate.getUsername(), usr);
+        return usr;
     }
 
     /**
