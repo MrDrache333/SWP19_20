@@ -193,8 +193,6 @@ class UserManagementTest {
 
         assertFalse(management.isLoggedIn(userToUpdate));
         management.updateUser(updatedUser, updatedUser, userToUpdate.getPassword());
-
-        management.login(updatedUser.getUsername(), updatedUser.getPassword());
         assertTrue(management.isLoggedIn(updatedUser));
     }
 
@@ -210,9 +208,8 @@ class UserManagementTest {
         User userToUpdate = users.get(0);
         User updatedUser = new UserDTO(userToUpdate.getUsername(), "newPassword", "newMail@mail.com");
 
-        management.updateUser(updatedUser, updatedUser, userToUpdate.getPassword());
+        User user = management.updateUser(updatedUser, updatedUser, userToUpdate.getPassword());
 
-        User user = management.login(updatedUser.getUsername(), updatedUser.getPassword());
         assertTrue(management.isLoggedIn(updatedUser));
         assertEquals(user.getEMail(), updatedUser.getEMail());
     }
