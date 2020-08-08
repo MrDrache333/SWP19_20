@@ -410,7 +410,21 @@ public class BotPlayer extends Player {
      * @return costs  Kosten der Karte
      */
     private short getCardCosts(short cardID) {
-        return cardpack.getCards().getCardForId(cardID).getCosts();
+            return cardpack.getCards().getCardForId(cardID).getCosts();
+    }
+
+    /**
+     * Es wird überprüft ob die Karten-ID gültig ist
+     *
+     * @author Darian
+     * @since Sprint10
+     * @return ob die Karte implementiert ist
+     */
+    public boolean implementedCardID(short cardID) {
+        if (cardID == 12 || cardID == 17 || cardID == 18 || cardID == 25 || cardID == 26 || (cardID >= 29 && cardID <=37)){
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -501,7 +515,7 @@ public class BotPlayer extends Player {
                 short highestCost = 0;
                 ArrayList<Short> cardsToBuyIDs = new ArrayList<>();
                 for (short cardID : cardField.keySet()) {
-                    if (cardID > 6 && cardID != 38 && getCardCosts(cardID) <= usingMoney) {
+                    if (cardID > 6 && cardID != 38 && implementedCardID(cardID) && getCardCosts(cardID) <= usingMoney) {
                         if (highestCost < getCardCosts(cardID)) {
                             highestCost = getCardCosts(cardID);
                             cardsToBuyIDs.clear();
