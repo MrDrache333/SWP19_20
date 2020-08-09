@@ -6,7 +6,6 @@ import de.uol.swp.common.user.UserDTO;
 import de.uol.swp.server.usermanagement.UserUpdateException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.mariadb.jdbc.MariaDbDataSource;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -29,35 +28,38 @@ public class DatabaseBasedUserStore extends AbstractUserStore implements UserSto
 
     private static final String SQL_SELECT_ALL_USER = "SELECT username, password, email FROM user";
     private static final String SQL_SELECT_USER = "SELECT username, password, email FROM user WHERE username = ?";
-    private static final String SQL_SELECT_USER_PWD = "SELECT username, password, email FROM user WHERE username = ? AND password = PASSWORD(?)";
+    private static final String SQL_SELECT_USER_PWD = "SELECT username, password, email FROM user WHERE username = ? AND password = ?";
     private static final String SQL_DELETE_USER = "DELETE FROM user WHERE username = ?";
-    private static final String SQL_UPDATE_USER = "UPDATE user SET username = ?, password = PASSWORD(?), email = ? WHERE username = ? AND password = PASSWORD(?)";
-    private static final String SQL_INSERT_USER = "INSERT INTO user (username, password, email) VALUES (?, PASSWORD(?), ?);";
+    private static final String SQL_UPDATE_USER = "UPDATE user SET username = ?, password = ?, email = ? WHERE username = ? AND password = PASSWORD(?)";
+    private static final String SQL_INSERT_USER = "INSERT INTO user (username, password, email) VALUES (?, ?, ?);";
 
     /**
      * Diese Hilfsmethode stellt eine Verbindung mit einer Datenbank her und gibt diese zurück.
      *
-     * @author Keno S.
      * @return Die neue Datenbankverbindung
+     * @author Keno S.
      * @since Sprint 9
-     *
      */
     private Connection establishConnection() {
 
         Connection conn = null;
 
         try {
-            MariaDbDataSource dataSource = new MariaDbDataSource();
+            Class.forName("org.sqlite.JDBC");
+            conn = DriverManager.getConnection("jdbc:sqlite:db.sqlite");
 
-            dataSource.setUser("SWP_DB_Admin");
-            dataSource.setPassword("Salatsoße11223440");
-            dataSource.setUrl("jdbc:mariadb://kog-nas.synology.me:3307/SWP");
-
-            conn = dataSource.getConnection();
-
-        } catch (SQLException e) {
-            LOG.error(e.getMessage());
+            Statement statement = conn.createStatement();
+            String sql = "CREATE TABLE IF NOT EXISTS user (" +
+                    "username VARCHAR(50) NOT NULL PRIMARY KEY," +
+                    "email VARCHAR(100) NOT NULL," +
+                    "password VARCHAR(100) NOT NULL" +
+                    ")";
+            statement.executeUpdate(sql);
+            statement.close();
+        } catch (Exception e) {
+            LOG.debug(e.getClass().getName() + ": " + e.getMessage());
         }
+        LOG.debug("Opened database successfully");
         return conn;
     }
 

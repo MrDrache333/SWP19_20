@@ -17,7 +17,7 @@ public class ServerModule extends AbstractModule {
     /**
      * Hier kann zwischen MainMemoryBasedUserStrore oder DatabaseBasedUserStore gewählt werden.
      */
-    private final boolean isDatabaseBasedUserStore = false;
+    private final boolean isDatabaseBasedUserStore = true;
 
     private final EventBus bus = new EventBus();
     private final UserStore store = setUserStore();
