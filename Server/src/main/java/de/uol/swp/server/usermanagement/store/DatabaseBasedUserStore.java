@@ -43,9 +43,7 @@ public class DatabaseBasedUserStore extends AbstractUserStore implements UserSto
     private Connection establishConnection() {
 
         Connection conn = null;
-
         try {
-            Class.forName("org.sqlite.JDBC");
             conn = DriverManager.getConnection("jdbc:sqlite:db.sqlite");
 
             Statement statement = conn.createStatement();
