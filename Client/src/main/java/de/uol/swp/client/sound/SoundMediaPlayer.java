@@ -6,8 +6,8 @@ import org.apache.logging.log4j.Logger;
 
 import javax.sound.sampled.*;
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * Die Klasse SoundMediaPlayer.
@@ -75,9 +75,9 @@ public class SoundMediaPlayer implements MediaPlayer {
         if (soundEnabled)
             Platform.runLater(() -> {
                 try {
-
                     //Sound laden
-                    AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(getClass().getResource(sound.getPath()).toExternalForm().replace("file:", "")));  //Sound als Stream oeffnen
+                    AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(
+                            new BufferedInputStream((Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(sound.path)))));  //Sound als Stream oeffnen
                     BufferedInputStream bufferedInputStream = new BufferedInputStream(audioInputStream);    //Stream Buffer erstellen
                     AudioFormat af = audioInputStream.getFormat();  //AudioFormat laden
                     int size = (int) (af.getFrameSize() * audioInputStream.getFrameLength());   //Sounddatenlaenge bestimmen
@@ -207,32 +207,32 @@ public class SoundMediaPlayer implements MediaPlayer {
         /**
          * Intro sound.
          */
-        Intro("/music/intro.wav"),
+        Intro("music/intro.wav"),
 
         /**
          * Button hover sound.
          */
-        Button_Hover("/sounds/button_mouseover.wav"),
+        Button_Hover("sounds/button_mouseover.wav"),
 
         /**
          * Button pressed sound.
          */
-        Button_Pressed("/sounds/button_pressed.wav"),
+        Button_Pressed("sounds/button_pressed.wav"),
 
         /**
          * Window opened sound.
          */
-        Window_Opened("/sounds/window_opened.wav"),
+        Window_Opened("sounds/window_opened.wav"),
 
         /**
          * Message send sound.
          */
-        Message_Send("/sounds/message_send.wav"),
+        Message_Send("sounds/message_send.wav"),
 
         /**
          * Message receive sound.
          */
-        Message_Receive("/sounds/message_receive.wav");
+        Message_Receive("sounds/message_receive.wav");
 
         private final String path;
 
