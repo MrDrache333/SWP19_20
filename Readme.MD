@@ -1,7 +1,5 @@
-SWP Basissystem	
+Softwareprojekt 2019/2020	
 ===============
-
-Der folgende Code sollte als Basis für das Software Projekt verwendet werden.
 
 
 Maven
