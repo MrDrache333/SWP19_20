@@ -1,6 +1,8 @@
 Softwareprojekt 2019/2020	- Dominion SP & MP
 ===============
 
+Das Ziel des Softwareprojektes war es, eine digitale Spielversion des Brettspiels "Dominion" mittels agiler Methoden zu entwickeln. Die Besonderheit in dieser Iteration des Softwareprojektes war, dass wir ein Grundgerüst gegeben hatten und auf Basis eben dieses das Spiel entwickeln mussten.
+
 
 Maven
 -----
